@@ -8,4 +8,117 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    /* Paleta de colores Agro365 - Diseño Agrícola Premium */
+    --color-agro-green-dark: #2d5016;      /* Verde Oscuro - Agricultura, Crecimiento, Sostenibilidad */
+    --color-agro-green: #4a7c59;           /* Verde Medio */
+    --color-agro-green-light: #6bcf7f;     /* Verde Claro - Frescura, Juventud, Vida */
+    --color-agro-green-bright: #a8e6cf;    /* Verde Muy Claro - Campos */
+    --color-agro-green-bg: #f0fdf4;        /* Fondo Verde Muy Claro */
+    --color-agro-blue: #3b82f6;            /* Azul - Tecnología, Digital, Confianza */
+    --color-agro-blue-light: #dbeafe;      /* Azul Claro - Cielo */
+    --color-agro-brown: #8b6f47;           /* Marrón - Tierra, Estabilidad, Tradición */
+    --color-agro-brown-light: #d4c4a8;     /* Marrón Claro - Tierra */
+    --color-agro-yellow: #fbbf24;          /* Amarillo - Sol, Cosecha */
+    --color-agro-yellow-light: #fef3c7;    /* Amarillo Claro */
+    --color-agro-white: #ffffff;           /* Blanco - Claridad, Limpieza */
+    
+    /* Glassmorphism y Efectos Premium */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    
+    /* Sombras Avanzadas */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+    --shadow-premium: 0 20px 40px rgba(45, 80, 22, 0.15), 0 8px 16px rgba(45, 80, 22, 0.1);
+    
+    /* Animaciones */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Utilidades personalizadas */
+@layer utilities {
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+    }
+    
+    .hover-lift {
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-premium);
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn var(--transition-smooth) ease-in;
+    }
+    
+    .animate-slide-in-right {
+        animation: slideInRight var(--transition-base) ease-out;
+    }
+    
+    .animate-scale-in {
+        animation: scaleIn var(--transition-base) ease-out;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-agro-green-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-agro-green-light);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-agro-green);
 }

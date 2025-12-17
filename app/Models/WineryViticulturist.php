@@ -88,4 +88,114 @@ class WineryViticulturist extends Model
     {
         return $this->source === self::SOURCE_VITICULTURIST;
     }
+
+    /**
+     * Scope para obtener viticultores visibles para un viticultor
+     * Usa las relaciones existentes para optimizar queries
+     */
+    public function scopeVisibleTo($query, User $viticulturist, $wineryId = null)
+    {
+        if (!$viticulturist->isViticulturist()) {
+            return $query->whereRaw('1 = 0');
+        }
+        
+        // Usar atributo cacheado del supervisor (optimizado)
+        $supervisor = $viticulturist->supervisor;
+        $supervisorId = $supervisor?->id;
+        
+        // Usar atributo cacheado de wineries (optimizado)
+        $wineries = $viticulturist->wineries;
+        $wineryIds = $wineries->pluck('id');
+        
+        // SIEMPRE puede ver los viticultores que creó, incluso sin winery ni supervisor
+        return $query->where(function ($q) use ($viticulturist, $supervisorId, $wineryIds, $wineryId) {
+            // 1. Viticultores creados por este viticultor (SIEMPRE visibles)
+            $q->where(function ($subQ) use ($viticulturist) {
+                $subQ->where('parent_viticulturist_id', $viticulturist->id)
+                     ->where('source', self::SOURCE_VITICULTURIST);
+            });
+            
+            // 2. Si tiene supervisor: viticultores del pool del supervisor
+            if ($supervisorId) {
+                $q->orWhere(function ($subQ) use ($supervisorId, $wineryId) {
+                    $subQ->where('source', self::SOURCE_SUPERVISOR)
+                         ->where('supervisor_id', $supervisorId);
+                    
+                    if ($wineryId) {
+                        $subQ->where('winery_id', $wineryId);
+                    }
+                });
+            }
+            
+            // 3. Si tiene winery: viticultores de sus wineries
+            if ($wineryIds->isNotEmpty()) {
+                $q->orWhere(function ($subQ) use ($wineryIds, $wineryId) {
+                    $subQ->whereIn('winery_id', $wineryIds)
+                         ->where(function ($wineryQ) {
+                             $wineryQ->where('source', self::SOURCE_OWN)
+                                     ->orWhere('source', self::SOURCE_VITICULTURIST);
+                         });
+                    
+                    if ($wineryId) {
+                        $subQ->where('winery_id', $wineryId);
+                    }
+                });
+            }
+        })
+        ->where('viticulturist_id', '!=', $viticulturist->id)
+        ->when($wineryId, fn($q) => $q->where('winery_id', $wineryId))
+        ->with(['viticulturist', 'winery', 'parentViticulturist']); // Eager loading para evitar N+1
+    }
+
+    /**
+     * Scope para obtener viticultores que puede editar (solo los que creó)
+     */
+    public function scopeEditableBy($query, User $viticulturist)
+    {
+        if (!$viticulturist->isViticulturist()) {
+            return $query->whereRaw('1 = 0');
+        }
+        
+        return $query->where('parent_viticulturist_id', $viticulturist->id)
+                     ->where('source', self::SOURCE_VITICULTURIST);
+    }
+
+    /**
+     * Verificar si un viticultor es visible para otro viticultor
+     */
+    public function isVisibleTo(User $viticulturist): bool
+    {
+        if (!$viticulturist->isViticulturist()) {
+            return false;
+        }
+        
+        // Si es el mismo usuario, no es visible
+        if ($this->viticulturist_id === $viticulturist->id) {
+            return false;
+        }
+        
+        // Si fue creado por este viticultor, siempre es visible
+        if ($this->parent_viticulturist_id === $viticulturist->id && 
+            $this->source === self::SOURCE_VITICULTURIST) {
+            return true;
+        }
+        
+        // Verificar si tiene supervisor y este viticultor viene de su pool
+        $supervisor = $viticulturist->supervisor;
+        if ($supervisor && 
+            $this->source === self::SOURCE_SUPERVISOR && 
+            $this->supervisor_id === $supervisor->id) {
+            return true;
+        }
+        
+        // Verificar si tiene winery y este viticultor está en su winery
+        $wineries = $viticulturist->wineries;
+        if ($wineries->isNotEmpty() && 
+            $wineries->contains('id', $this->winery_id) &&
+            ($this->source === self::SOURCE_OWN || $this->source === self::SOURCE_VITICULTURIST)) {
+            return true;
+        }
+        
+        return false;
+    }
 }

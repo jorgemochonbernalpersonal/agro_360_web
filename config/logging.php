@@ -54,7 +54,7 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', (string) env('LOG_STACK', 'daily')),
             'ignore_exceptions' => false,
         ],
 
@@ -69,7 +69,25 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 14),
+            'days' => (int) env('LOG_DAILY_DAYS', 30), // Retención: 30 días por defecto
+            'replace_placeholders' => true,
+        ],
+
+        // Canal específico para autenticación
+        'auth' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/auth.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'days' => (int) env('LOG_DAILY_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
+        // Canal específico para errores críticos
+        'errors' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/errors.log'),
+            'level' => env('LOG_LEVEL', 'error'),
+            'days' => (int) env('LOG_DAILY_DAYS', 60), // Errores se mantienen más tiempo
             'replace_placeholders' => true,
         ],
 
@@ -124,7 +142,11 @@ return [
         ],
 
         'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
+            'driver' => 'daily',
+            'path' => storage_path('logs/emergency.log'),
+            'level' => 'emergency',
+            'days' => (int) env('LOG_DAILY_DAYS', 90), // Emergencias se mantienen 90 días
+            'replace_placeholders' => true,
         ],
 
     ],

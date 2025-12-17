@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: agro365_mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - agro365_network
+    restart: unless-stopped
+
+networks:
+  agro365_network:
+    driver: bridge
+

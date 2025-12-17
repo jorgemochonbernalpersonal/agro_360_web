@@ -15,11 +15,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->command->info('🌱 Iniciando seeders...');
+        
+        // Ejecutar seeders en orden de dependencias
+        $this->call([
+            AutonomousCommunitySeeder::class,  // Primero: Comunidades autónomas
+            ProvinceSeeder::class,              // Segundo: Provincias (depende de comunidades)
+            MunicipalitySeeder::class,          // Tercero: Municipios (depende de provincias)
         ]);
+        
+        $this->command->info('✅ Seeders completados.');
+        
+        // Crear usuario de prueba (opcional)
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
     }
 }

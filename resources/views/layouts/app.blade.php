@@ -13,32 +13,45 @@
     @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
-    <nav class="bg-white dark:bg-gray-800 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{{ route('home') }}" class="text-xl font-bold text-gray-900 dark:text-white">
-                        Agro365
-                    </a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('home') }}" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Inicio
-                    </a>
-                    <a href="{{ route('counter') }}" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Contador
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body class="bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 min-h-screen">
+    @auth
+        <!-- Sidebar -->
+        <x-sidebar />
+        
+        <!-- Top Bar -->
+        <x-top-bar />
+    @endauth
     
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {{ $slot }}
+    <!-- Main Content -->
+    <main class="min-h-screen pt-16 lg:pl-72 transition-all duration-300" id="main-content">
+        <div class="p-4 lg:p-8">
+            {{ $slot }}
+        </div>
     </main>
     
     @livewireScripts
+    
+    <!-- Script para ajustar el main con el sidebar colapsable -->
+    <script>
+        if (typeof window.mainContentObserver === 'undefined') {
+            window.mainContentObserver = setInterval(() => {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('main-content');
+                
+                if (sidebar && mainContent && window.innerWidth >= 1024) {
+                    const isCollapsed = sidebar.getAttribute('data-collapsed') === 'true';
+                    
+                    if (isCollapsed) {
+                        mainContent.classList.remove('lg:pl-72');
+                        mainContent.classList.add('lg:pl-20');
+                    } else {
+                        mainContent.classList.remove('lg:pl-20');
+                        mainContent.classList.add('lg:pl-72');
+                    }
+                }
+            }, 100);
+        }
+    </script>
 </body>
 </html>
 
