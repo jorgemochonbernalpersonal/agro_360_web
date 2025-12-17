@@ -1,20 +1,20 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 p-4 sm:p-6 lg:p-8">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 py-6 px-4">
     <!-- Elementos decorativos -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div class="absolute top-0 right-0 w-96 h-96 bg-[var(--color-agro-green-light)]/10 rounded-full blur-3xl"></div>
         <div class="absolute bottom-0 left-0 w-96 h-96 bg-[var(--color-agro-green)]/10 rounded-full blur-3xl"></div>
     </div>
     
-    <div class="w-full max-w-md relative z-10">
-        <div class="text-center mb-6">
-            <div class="inline-block max-w-[280px] mx-auto mb-4">
+    <div class="w-full max-w-md mx-auto relative z-10">
+        <div class="text-center mb-3">
+            <div class="inline-block max-w-[180px] mx-auto mb-2">
                 <img 
                     src="{{ asset('images/logo.png') }}" 
                     alt="Agro365 Logo" 
-                    class="w-full h-auto max-h-48 object-contain drop-shadow-2xl"
+                    class="w-full h-auto max-h-24 object-contain drop-shadow-lg"
                 >
             </div>
-            <p class="text-gray-600 text-base font-medium">Gestión agrícola inteligente</p>
+            <p class="text-gray-600 text-sm font-medium">Gestión agrícola inteligente</p>
         </div>
         
         <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">

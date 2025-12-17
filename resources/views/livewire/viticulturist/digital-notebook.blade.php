@@ -100,263 +100,193 @@
     @endif
 
     <!-- Filtros -->
-    <div class="glass-card rounded-xl p-6">
-        <div class="flex items-center gap-3 mb-4">
-            <svg class="w-5 h-5 text-[var(--color-agro-green-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-            </svg>
-            <h2 class="text-lg font-semibold text-[var(--color-agro-green-dark)]">Filtros de Búsqueda</h2>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-            <!-- Filtro por Parcela -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Parcela</label>
-                <select 
-                    wire:model.live="selectedPlot" 
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                >
-                    <option value="">Todas las parcelas</option>
-                    @foreach($plots as $plot)
-                        <option value="{{ $plot->id }}">{{ $plot->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+    <x-filter-section title="Filtros de Búsqueda" color="green">
+        <x-filter-select wire:model.live="selectedPlot">
+            <option value="">Todas las parcelas</option>
+            @foreach($plots as $plot)
+                <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+            @endforeach
+        </x-filter-select>
 
-            <!-- Filtro por Tipo de Actividad -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Tipo de Actividad</label>
-                <select 
-                    wire:model.live="activityType" 
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                >
-                    <option value="">Todas las actividades</option>
-                    <option value="phytosanitary">Tratamientos Fitosanitarios</option>
-                    <option value="fertilization">Fertilizaciones</option>
-                    <option value="irrigation">Riegos</option>
-                    <option value="cultural">Labores Culturales</option>
-                    <option value="observation">Observaciones</option>
-                </select>
-            </div>
+        <x-filter-select wire:model.live="activityType">
+            <option value="">Todas las actividades</option>
+            <option value="phytosanitary">Tratamientos Fitosanitarios</option>
+            <option value="fertilization">Fertilizaciones</option>
+            <option value="irrigation">Riegos</option>
+            <option value="cultural">Labores Culturales</option>
+            <option value="observation">Observaciones</option>
+        </x-filter-select>
 
-            <!-- Filtro por Producto (solo si es tratamiento fitosanitario) -->
-            @if($activityType === 'phytosanitary' && $products->count() > 0)
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Producto</label>
-                    <select 
-                        wire:model.live="productFilter" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                    >
-                        <option value="">Todos los productos</option>
-                        @foreach($products as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            @endif
-
-            <!-- Filtro por Fecha Desde -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha Desde</label>
-                <input 
-                    type="date" 
-                    wire:model.live="dateFrom"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                >
-            </div>
-
-            <!-- Filtro por Fecha Hasta -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha Hasta</label>
-                <input 
-                    type="date" 
-                    wire:model.live="dateTo"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                >
-            </div>
-
-            <!-- Búsqueda -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Búsqueda</label>
-                <input 
-                    type="text" 
-                    wire:model.live.debounce.300ms="search"
-                    placeholder="Buscar en notas, parcelas, productos..."
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                >
-            </div>
-        </div>
-
-        <!-- Botón Limpiar Filtros -->
-        @if($selectedPlot || $activityType || $search || $dateFrom || $dateTo || $productFilter)
-            <div class="flex justify-end">
-                <button 
-                    wire:click="clearFilters"
-                    class="px-4 py-2 text-sm font-semibold text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-bg)] rounded-lg transition-colors"
-                >
-                    Limpiar Filtros
-                </button>
-            </div>
+        @if($activityType === 'phytosanitary' && $products->count() > 0)
+            <x-filter-select wire:model.live="productFilter">
+                <option value="">Todos los productos</option>
+                @foreach($products as $product)
+                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                @endforeach
+            </x-filter-select>
         @endif
-    </div>
+
+        <x-filter-input 
+            wire:model.live="dateFrom" 
+            type="date"
+            placeholder="Fecha desde..."
+            icon="calendar"
+        />
+
+        <x-filter-input 
+            wire:model.live="dateTo" 
+            type="date"
+            placeholder="Fecha hasta..."
+            icon="calendar"
+        />
+
+        <x-filter-input 
+            wire:model.live.debounce.300ms="search" 
+            placeholder="Buscar en notas, parcelas, productos..."
+        />
+
+        <x-slot:actions>
+            @if($selectedPlot || $activityType || $search || $dateFrom || $dateTo || $productFilter)
+                <x-button wire:click="clearFilters" variant="ghost" size="sm">
+                    Limpiar Filtros
+                </x-button>
+            @endif
+        </x-slot:actions>
+    </x-filter-section>
 
     <!-- Tabla de Actividades -->
-    <div class="glass-card rounded-2xl overflow-hidden shadow-xl">
+    @php
+        $headers = [
+            ['label' => 'Fecha', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
+            ['label' => 'Parcela', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>'],
+            ['label' => 'Tipo', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>'],
+            ['label' => 'Detalle', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'],
+            ['label' => 'Cuadrilla', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>'],
+            ['label' => 'Notas', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>'],
+            'Acciones',
+        ];
+    @endphp
+
+    <x-data-table 
+        :headers="$headers" 
+        empty-message="No hay actividades registradas" 
+        empty-description="{{ ($selectedPlot || $activityType || $search || $dateFrom || $dateTo || $productFilter) ? 'No se encontraron actividades con los filtros seleccionados' : 'Comienza registrando tu primera actividad agrícola' }}"
+        color="green"
+    >
         @if($activities->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-bright)]/30">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-[var(--color-agro-green-dark)] uppercase">Fecha</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-[var(--color-agro-green-dark)] uppercase">Parcela</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-[var(--color-agro-green-dark)] uppercase">Tipo</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-[var(--color-agro-green-dark)] uppercase">Detalle</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-[var(--color-agro-green-dark)] uppercase">Cuadrilla</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-[var(--color-agro-green-dark)] uppercase">Notas</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-[var(--color-agro-green-dark)] uppercase">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                        @foreach($activities as $activity)
-                            <tr class="hover:bg-[var(--color-agro-green-bg)]/40 transition-all">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-sm font-semibold text-gray-900">
-                                        {{ $activity->activity_date->format('d/m/Y') }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-sm font-medium text-gray-900">{{ $activity->plot->name }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($activity->activity_type === 'phytosanitary')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-700 ring-1 ring-red-600/20">
-                                            Tratamiento
-                                        </span>
-                                    @elseif($activity->activity_type === 'fertilization')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 ring-1 ring-blue-600/20">
-                                            Fertilización
-                                        </span>
-                                    @elseif($activity->activity_type === 'irrigation')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-cyan-50 text-cyan-700 ring-1 ring-cyan-600/20">
-                                            Riego
-                                        </span>
-                                    @elseif($activity->activity_type === 'cultural')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-yellow-50 text-yellow-700 ring-1 ring-yellow-600/20">
-                                            Labor
-                                        </span>
-                                    @elseif($activity->activity_type === 'observation')
-                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-gray-50 text-gray-700 ring-1 ring-gray-600/20">
-                                            Observación
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($activity->phytosanitaryTreatment)
-                                        <div class="text-sm">
-                                            <span class="font-semibold text-gray-900">{{ $activity->phytosanitaryTreatment->product->name }}</span>
-                                            @if($activity->phytosanitaryTreatment->area_treated)
-                                                <span class="text-gray-600"> - {{ number_format($activity->phytosanitaryTreatment->area_treated, 3) }} ha</span>
-                                            @endif
-                                            @if($activity->phytosanitaryTreatment->target_pest)
-                                                <div class="text-xs text-gray-500 mt-1">Objetivo: {{ $activity->phytosanitaryTreatment->target_pest }}</div>
-                                            @endif
-                                        </div>
-                                    @elseif($activity->fertilization)
-                                        <div class="text-sm">
-                                            <span class="font-semibold text-gray-900">{{ $activity->fertilization->fertilizer_name ?: 'Fertilización' }}</span>
-                                            @if($activity->fertilization->quantity)
-                                                <span class="text-gray-600"> - {{ number_format($activity->fertilization->quantity, 2) }} kg</span>
-                                            @endif
-                                        </div>
-                                    @elseif($activity->irrigation)
-                                        <div class="text-sm">
-                                            <span class="font-semibold text-gray-900">Riego</span>
-                                            @if($activity->irrigation->water_volume)
-                                                <span class="text-gray-600"> - {{ number_format($activity->irrigation->water_volume, 2) }} L</span>
-                                            @endif
-                                        </div>
-                                    @elseif($activity->culturalWork)
-                                        <div class="text-sm">
-                                            <span class="font-semibold text-gray-900">{{ $activity->culturalWork->work_type ?: 'Labor cultural' }}</span>
-                                            @if($activity->culturalWork->hours_worked)
-                                                <span class="text-gray-600"> - {{ number_format($activity->culturalWork->hours_worked, 2) }} h</span>
-                                            @endif
-                                        </div>
-                                    @elseif($activity->observation)
-                                        <div class="text-sm">
-                                            <span class="font-semibold text-gray-900">{{ $activity->observation->observation_type ?: 'Observación' }}</span>
-                                            @if($activity->observation->severity)
-                                                <span class="text-gray-600"> - {{ ucfirst($activity->observation->severity) }}</span>
-                                            @endif
-                                        </div>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-sm text-gray-700">{{ $activity->crew->name ?? '-' }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($activity->notes)
-                                        <span class="text-sm text-gray-600">{{ Str::limit($activity->notes, 50) }}</span>
-                                    @else
-                                        <span class="text-sm text-gray-400">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        @can('view', $activity)
-                                            <button 
-                                                class="px-3 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                                                title="Ver detalles"
-                                            >
-                                                Ver
-                                            </button>
-                                        @endcan
-                                        @can('update', $activity)
-                                            <button 
-                                                class="px-3 py-1 text-xs font-semibold text-green-600 hover:bg-green-50 rounded-lg transition"
-                                                title="Editar"
-                                            >
-                                                Editar
-                                            </button>
-                                        @endcan
-                                        @can('delete', $activity)
-                                            <button 
-                                                wire:click="deleteActivity({{ $activity->id }})"
-                                                wire:confirm="¿Estás seguro de eliminar esta actividad?"
-                                                class="px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition"
-                                                title="Eliminar"
-                                            >
-                                                Eliminar
-                                            </button>
-                                        @endcan
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Paginación -->
-            <div class="px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-[var(--color-agro-green-bg)]/30 to-transparent">
+            @foreach($activities as $activity)
+                <x-table-row>
+                    <x-table-cell>
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--color-agro-blue-light)] text-[var(--color-agro-blue)] text-sm font-semibold">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ $activity->activity_date->format('d/m/Y') }}
+                        </span>
+                    </x-table-cell>
+                    <x-table-cell>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-900">{{ $activity->plot->name }}</span>
+                        </div>
+                    </x-table-cell>
+                    <x-table-cell>
+                        @if($activity->activity_type === 'phytosanitary')
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-700 ring-1 ring-red-600/20">
+                                Tratamiento
+                            </span>
+                        @elseif($activity->activity_type === 'fertilization')
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 ring-1 ring-blue-600/20">
+                                Fertilización
+                            </span>
+                        @elseif($activity->activity_type === 'irrigation')
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-cyan-50 text-cyan-700 ring-1 ring-cyan-600/20">
+                                Riego
+                            </span>
+                        @elseif($activity->activity_type === 'cultural')
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-yellow-50 text-yellow-700 ring-1 ring-yellow-600/20">
+                                Labor
+                            </span>
+                        @elseif($activity->activity_type === 'observation')
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-gray-50 text-gray-700 ring-1 ring-gray-600/20">
+                                Observación
+                            </span>
+                        @endif
+                    </x-table-cell>
+                    <x-table-cell>
+                        @if($activity->phytosanitaryTreatment)
+                            <div class="text-sm">
+                                <span class="font-semibold text-gray-900">{{ $activity->phytosanitaryTreatment->product->name }}</span>
+                                @if($activity->phytosanitaryTreatment->area_treated)
+                                    <span class="text-gray-600"> - {{ number_format($activity->phytosanitaryTreatment->area_treated, 3) }} ha</span>
+                                @endif
+                                @if($activity->phytosanitaryTreatment->target_pest)
+                                    <div class="text-xs text-gray-500 mt-1">Objetivo: {{ $activity->phytosanitaryTreatment->target_pest }}</div>
+                                @endif
+                            </div>
+                        @elseif($activity->fertilization)
+                            <div class="text-sm">
+                                <span class="font-semibold text-gray-900">{{ $activity->fertilization->fertilizer_name ?: 'Fertilización' }}</span>
+                                @if($activity->fertilization->quantity)
+                                    <span class="text-gray-600"> - {{ number_format($activity->fertilization->quantity, 2) }} kg</span>
+                                @endif
+                            </div>
+                        @elseif($activity->irrigation)
+                            <div class="text-sm">
+                                <span class="font-semibold text-gray-900">Riego</span>
+                                @if($activity->irrigation->water_volume)
+                                    <span class="text-gray-600"> - {{ number_format($activity->irrigation->water_volume, 2) }} L</span>
+                                @endif
+                            </div>
+                        @elseif($activity->culturalWork)
+                            <div class="text-sm">
+                                <span class="font-semibold text-gray-900">{{ $activity->culturalWork->work_type ?: 'Labor cultural' }}</span>
+                                @if($activity->culturalWork->hours_worked)
+                                    <span class="text-gray-600"> - {{ number_format($activity->culturalWork->hours_worked, 2) }} h</span>
+                                @endif
+                            </div>
+                        @elseif($activity->observation)
+                            <div class="text-sm">
+                                <span class="font-semibold text-gray-900">{{ $activity->observation->observation_type ?: 'Observación' }}</span>
+                                @if($activity->observation->severity)
+                                    <span class="text-gray-600"> - {{ ucfirst($activity->observation->severity) }}</span>
+                                @endif
+                            </div>
+                        @endif
+                    </x-table-cell>
+                    <x-table-cell>
+                        <span class="text-sm text-gray-700">{{ $activity->crew->name ?? '-' }}</span>
+                    </x-table-cell>
+                    <x-table-cell>
+                        @if($activity->notes)
+                            <span class="text-sm text-gray-600">{{ Str::limit($activity->notes, 50) }}</span>
+                        @else
+                            <span class="text-sm text-gray-400">-</span>
+                        @endif
+                    </x-table-cell>
+                    <x-table-actions align="right">
+                        @can('view', $activity)
+                            <x-action-button variant="view" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id]) }}" />
+                        @endcan
+                        @can('update', $activity)
+                            <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id, 'edit' => true]) }}" />
+                        @endcan
+                        @can('delete', $activity)
+                            <x-action-button 
+                                variant="delete" 
+                                wireClick="deleteActivity({{ $activity->id }})"
+                                wireConfirm="¿Estás seguro de eliminar esta actividad?"
+                            />
+                        @endcan
+                    </x-table-actions>
+                </x-table-row>
+            @endforeach
+            <x-slot name="pagination">
                 {{ $activities->links() }}
-            </div>
-        @else
-            <!-- Empty State -->
-            <div class="p-16 text-center">
-                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">No hay actividades registradas</h3>
-                <p class="text-gray-500 mb-6">
-                    @if($selectedPlot || $activityType || $search || $dateFrom || $dateTo)
-                        No se encontraron actividades con los filtros seleccionados
-                    @else
-                        Comienza registrando tu primera actividad agrícola
-                    @endif
-                </p>
-            </div>
+            </x-slot>
         @endif
-    </div>
+    </x-data-table>
 </div>
 

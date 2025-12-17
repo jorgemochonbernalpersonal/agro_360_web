@@ -153,6 +153,37 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(CrewMember::class, 'viticulturist_id');
     }
 
+    // Relaciones de perfil y suscripciones
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class)
+            ->where('status', Subscription::STATUS_ACTIVE)
+            ->where('ends_at', '>', now());
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Verificar si el usuario tiene una suscripción activa
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeSubscription()->exists();
+    }
+
     /**
      * Trabajadores individuales gestionados por este viticultor
      */
@@ -247,6 +278,26 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('parent_viticulturist_id', $this->id)
             ->where('source', WineryViticulturist::SOURCE_VITICULTURIST)
             ->exists();
+    }
+
+    /**
+     * Verificar si el usuario puede seleccionar viticultores
+     * Admin, supervisor y winery siempre pueden seleccionar
+     * Viticultores solo pueden seleccionar si tienen viticultores creados
+     */
+    public function canSelectViticulturist(): bool
+    {
+        // Admin, supervisor y winery siempre pueden seleccionar
+        if (in_array($this->role, ['admin', 'supervisor', 'winery'])) {
+            return true;
+        }
+        
+        // Viticultores solo pueden seleccionar si tienen viticultores creados
+        if ($this->isViticulturist()) {
+            return WineryViticulturist::editableBy($this)->exists();
+        }
+        
+        return false;
     }
 
     /**

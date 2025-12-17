@@ -17,12 +17,12 @@
     <div class="h-20 flex items-center justify-between px-6 border-b border-[var(--color-agro-green-light)]/30 bg-gradient-to-r from-[var(--color-agro-green-bg)]/50 to-transparent">
         <a href="{{ route($user->role . '.dashboard') }}" class="flex items-center space-x-3 group overflow-hidden">
             <div class="relative flex-shrink-0">
-                <!-- Icon Logo SVG -->
-                <svg class="h-10 w-10 text-[var(--color-agro-green-dark)] transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L4 6v6c0 5.25 3.5 10.16 8 12 4.5-1.84 8-6.75 8-12V6l-8-4z" fill="currentColor" opacity="0.2"/>
-                    <path d="M12 2L4 6v6c0 5.25 3.5 10.16 8 12 4.5-1.84 8-6.75 8-12V6l-8-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <!-- Logo Image -->
+                <img 
+                    src="{{ asset('images/logo.png') }}" 
+                    alt="Agro365 Logo" 
+                    class="h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-110"
+                >
             </div>
             <div class="flex flex-col sidebar-text">
                 <span class="text-2xl font-bold bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] bg-clip-text text-transparent whitespace-nowrap">
@@ -172,7 +172,7 @@
             @csrf
             <button 
                 type="submit" 
-                class="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-brown)] to-[var(--color-agro-brown-light)] text-white hover:from-[var(--color-agro-brown-light)] hover:to-[var(--color-agro-brown)] transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                class="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>

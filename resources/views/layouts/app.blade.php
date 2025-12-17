@@ -3,7 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Laravel') }} - Agro365</title>
+    <title>Agro365</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -23,8 +27,8 @@
     @endauth
     
     <!-- Main Content -->
-    <main class="min-h-screen pt-16 lg:pl-72 transition-all duration-300" id="main-content">
-        <div class="p-4 lg:p-8">
+    <main class="min-h-screen transition-all duration-300 @auth pt-16 lg:pl-72 @endauth" id="main-content">
+        <div class="@auth p-4 lg:p-8 @else p-0 @endauth">
             {{ $slot }}
         </div>
     </main>

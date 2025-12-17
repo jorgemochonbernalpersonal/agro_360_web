@@ -22,6 +22,8 @@ Route::middleware(['auth', 'require.password.change', 'verified'])->group(functi
     require __DIR__ . '/sigpac.php';
     require __DIR__ . '/config.php';
     require __DIR__ . '/profile.php';
+    require __DIR__ . '/subscription.php';
+    require __DIR__ . '/payment.php';
 
     // Dashboards por rol
     require __DIR__ . '/admin.php';

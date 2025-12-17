@@ -30,12 +30,8 @@ class PlotPolicy
             return false;
         }
         
-        // Para viticultores: solo pueden crear si tienen viticultores propios
-        if ($user->isViticulturist()) {
-            return WineryViticulturist::editableBy($user)->exists();
-        }
-        
         // Admin, supervisor y winery siempre pueden crear
+        // Los viticultores también pueden crear parcelas para ellos mismos o para viticultores que hayan creado
         return true;
     }
 

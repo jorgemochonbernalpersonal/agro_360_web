@@ -33,14 +33,12 @@
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
-            <a href="{{ route('viticulturist.campaign.index') }}" class="group">
-                <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                    Volver
-                </button>
-            </a>
+            <x-button href="{{ route('viticulturist.campaign.index') }}" variant="secondary">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver
+            </x-button>
         </x-slot:actionButton>
     </x-page-header>
 
@@ -59,57 +57,42 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
                     <div>
-                        <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Nombre de la Campaña *
-                        </label>
-                        <input 
+                        <x-label for="name" required>Nombre de la Campaña</x-label>
+                        <x-input 
                             wire:model="name" 
                             type="text" 
                             id="name"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
                             placeholder="Ej: Campaña 2025"
+                            :error="$errors->first('name')"
                             required
-                        >
-                        @error('name') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                        />
                     </div>
 
                     <!-- Año -->
                     <div>
-                        <label for="year" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Año *
-                        </label>
-                        <input 
+                        <x-label for="year" required>Año</x-label>
+                        <x-input 
                             wire:model="year" 
                             type="number" 
                             min="2000"
                             max="{{ now()->year + 5 }}"
                             id="year"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
+                            :error="$errors->first('year')"
                             required
-                        >
-                        @error('year') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                        />
                     </div>
                 </div>
 
                 <!-- Descripción -->
                 <div class="mt-6">
-                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Descripción
-                    </label>
-                    <textarea 
+                    <x-label for="description">Descripción</x-label>
+                    <x-textarea 
                         wire:model="description" 
                         id="description"
                         rows="3"
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
                         placeholder="Descripción de la campaña..."
-                    ></textarea>
-                    @error('description') 
-                        <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                    @enderror
+                        :error="$errors->first('description')"
+                    />
                 </div>
             </div>
 
@@ -125,34 +108,24 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Fecha Inicio -->
                     <div>
-                        <label for="start_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Fecha de Inicio
-                        </label>
-                        <input 
+                        <x-label for="start_date">Fecha de Inicio</x-label>
+                        <x-input 
                             wire:model="start_date" 
                             type="date" 
                             id="start_date"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                        >
-                        @error('start_date') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                            :error="$errors->first('start_date')"
+                        />
                     </div>
 
                     <!-- Fecha Fin -->
                     <div>
-                        <label for="end_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Fecha de Fin
-                        </label>
-                        <input 
+                        <x-label for="end_date">Fecha de Fin</x-label>
+                        <x-input 
                             wire:model="end_date" 
                             type="date" 
                             id="end_date"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
-                        >
-                        @error('end_date') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                            :error="$errors->first('end_date')"
+                        />
                     </div>
                 </div>
             </div>
@@ -188,18 +161,12 @@
 
             <!-- Botones -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                <a 
-                    href="{{ route('viticulturist.campaign.index') }}" 
-                    class="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all font-semibold"
-                >
+                <x-button href="{{ route('viticulturist.campaign.index') }}" variant="secondary">
                     Cancelar
-                </a>
-                <button 
-                    type="submit"
-                    class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
-                >
+                </x-button>
+                <x-button type="submit" variant="primary">
                     Guardar Cambios
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

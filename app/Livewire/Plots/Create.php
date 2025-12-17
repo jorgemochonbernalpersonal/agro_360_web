@@ -40,23 +40,19 @@ class Create extends Component
             abort(403);
         }
 
-        // Validar winery_id para viticultores antes de mostrar el formulario
-        if (Auth::user()->isViticulturist()) {
-            $wineries = Auth::user()->wineries;
-            if ($wineries->isEmpty()) {
-                session()->flash('error', 'Debes estar asociado a una bodega para crear parcelas.');
-                return $this->redirect(route('plots.index'), navigate: true);
-            }
-        }
-
         // Auto-asignar bodega si es winery
         if (Auth::user()->isWinery()) {
             $this->winery_id = Auth::id();
         }
         
-        // Auto-asignar viticultor si es viticulturist y NO puede seleccionar (no tiene viticultores creados)
-        if (Auth::user()->isViticulturist() && !$this->canSelectViticulturist()) {
-            $this->viticulturist_id = Auth::id();
+        // Auto-asignar viticultor si es viticulturist
+        // Siempre se auto-asigna el viticultor a sí mismo, a menos que pueda seleccionar otros viticultores
+        if (Auth::user()->isViticulturist()) {
+            if (!$this->canSelectViticulturist()) {
+                // Si NO puede seleccionar viticultores (no tiene viticultores creados), se auto-asigna
+                $this->viticulturist_id = Auth::id();
+            }
+            // Si puede seleccionar, dejamos el campo vacío para que elija
         }
     }
 
@@ -131,7 +127,7 @@ class Create extends Component
                 $wineries = Auth::user()->wineries;
                 if ($wineries->isEmpty()) {
                     throw ValidationException::withMessages([
-                        'winery_id' => 'Debes estar asociado a una bodega para crear parcelas.',
+                        'general' => 'No tienes ninguna bodega asociada. Debes estar asociado a una bodega para crear parcelas. Por favor, contacta con tu administrador o supervisor.',
                     ]);
                 }
                 $data['winery_id'] = $wineries->first()->id;

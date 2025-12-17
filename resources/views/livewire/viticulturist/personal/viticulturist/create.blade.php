@@ -33,14 +33,12 @@
         icon-color="from-[var(--color-agro-blue)] to-blue-700"
     >
         <x-slot:actionButton>
-            <a href="{{ route('viticulturist.personal.index') }}" class="group">
-                <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                    Volver
-                </button>
-            </a>
+            <x-button href="{{ route('viticulturist.personal.index') }}" variant="secondary">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver
+            </x-button>
         </x-slot:actionButton>
     </x-page-header>
 
@@ -59,60 +57,45 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
                     <div>
-                        <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Nombre Completo *
-                        </label>
-                        <input 
+                        <x-label for="name" required>Nombre Completo</x-label>
+                        <x-input 
                             wire:model="name" 
                             type="text" 
                             id="name"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-blue)] focus:border-transparent transition-all"
                             placeholder="Ej: Juan Pérez"
+                            :error="$errors->first('name')"
                             required
-                        >
-                        @error('name') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                        />
                     </div>
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Email *
-                        </label>
-                        <input 
+                        <x-label for="email" required>Email</x-label>
+                        <x-input 
                             wire:model="email" 
                             type="email" 
                             id="email"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-blue)] focus:border-transparent transition-all"
                             placeholder="correo@ejemplo.com"
+                            :error="$errors->first('email')"
                             required
-                        >
-                        @error('email') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                        />
                     </div>
                 </div>
 
                 <!-- Bodega (opcional) -->
                 @if($wineries->isNotEmpty())
                 <div class="mt-6">
-                    <label for="winery_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Bodega <span class="text-gray-500 font-normal">(opcional)</span>
-                    </label>
-                    <select 
+                    <x-label for="winery_id">Bodega <span class="text-gray-500 font-normal">(opcional)</span></x-label>
+                    <x-select 
                         wire:model="winery_id" 
                         id="winery_id"
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-blue)] focus:border-transparent transition-all"
+                        :error="$errors->first('winery_id')"
                     >
                         <option value="">Sin bodega</option>
                         @foreach($wineries as $winery)
                             <option value="{{ $winery->id }}">{{ $winery->name }}</option>
                         @endforeach
-                    </select>
-                    @error('winery_id') 
-                        <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                    @enderror
+                    </x-select>
                 </div>
                 @endif
             </div>
@@ -135,18 +118,8 @@
 
             <!-- Botones -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                <a 
-                    href="{{ route('viticulturist.personal.index') }}" 
-                    class="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all font-semibold"
-                >
-                    Cancelar
-                </a>
-                <button 
-                    type="submit"
-                    class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-blue)] to-blue-700 text-white hover:from-blue-700 hover:to-[var(--color-agro-blue)] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
-                >
-                    Crear Viticultor
-                </button>
+                <x-button href="{{ route('viticulturist.personal.index') }}" variant="secondary">Cancelar</x-button>
+                <x-button type="submit" variant="primary">Crear Viticultor</x-button>
             </div>
         </form>
     </div>

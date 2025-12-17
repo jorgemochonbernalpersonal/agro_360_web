@@ -1,0 +1,24 @@
+{
+  "user": {
+    "email": "viticulturist@example.com",
+    "password": "password",
+    "name": "Test Viticulturist",
+    "role": "viticulturist"
+  },
+  "campaign": {
+    "name": "Campaña de Prueba E2E",
+    "year": "2025",
+    "description": "Descripción de prueba para tests E2E"
+  },
+  "crew": {
+    "name": "Cuadrilla de Prueba E2E",
+    "description": "Descripción de prueba para tests E2E"
+  },
+  "machinery": {
+    "name": "Tractor de Prueba E2E",
+    "type": "Tractor",
+    "brand": "Marca Test",
+    "model": "Modelo Test"
+  }
+}
+

@@ -1,65 +1,52 @@
-<div class="p-6">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-[var(--color-agro-green-dark)]">Editar Parcela</h1>
-        <p class="text-gray-600 mt-1">Modifica los datos de la parcela</p>
-    </div>
+@php
+    $plotIcon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>';
+@endphp
 
-    <div class="bg-white rounded-lg shadow-lg p-8 max-w-4xl">
-        <form wire:submit="update" class="space-y-6">
-            <!-- Información Básica -->
-            <div class="border-b pb-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Información Básica</h3>
+<x-form-card
+    title="Editar Parcela"
+    description="Modifica los datos de la parcela"
+    :icon="$plotIcon"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+    :back-url="route('plots.index')"
+>
+    <form wire:submit="update" class="space-y-8">
+        <x-form-section title="Información Básica" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
                     <div>
-                        <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Nombre de la Parcela *
-                        </label>
-                        <input 
+                        <x-label for="name" required>Nombre de la Parcela</x-label>
+                        <x-input 
                             wire:model="name" 
                             type="text" 
                             id="name"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
+                            :error="$errors->first('name')"
                             required
-                        >
-                        @error('name') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                        />
                     </div>
 
                     <!-- Área -->
                     <div>
-                        <label for="area" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Área (hectáreas)
-                        </label>
-                        <input 
+                        <x-label for="area">Área (hectáreas)</x-label>
+                        <x-input 
                             wire:model="area" 
                             type="number" 
                             step="0.001"
                             id="area"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
-                        >
-                        @error('area') 
-                            <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                        @enderror
+                            :error="$errors->first('area')"
+                        />
                     </div>
                 </div>
 
                 <!-- Descripción -->
                 <div class="mt-6">
-                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Descripción
-                    </label>
-                    <textarea 
+                    <x-label for="description">Descripción</x-label>
+                    <x-textarea 
                         wire:model="description" 
                         id="description"
                         rows="3"
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
-                    ></textarea>
-                    @error('description') 
-                        <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                    @enderror
+                        :error="$errors->first('description')"
+                    />
                 </div>
 
                 <!-- Activa -->
@@ -76,98 +63,79 @@
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
                     @enderror
                 </div>
-            </div>
+        </x-form-section>
 
-            <!-- Asignaciones -->
-            @if($this->canSelectWinery() || $this->canSelectViticulturist())
-                <div class="border-b pb-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Asignaciones</h3>
+        <!-- Asignaciones -->
+        @if($this->canSelectWinery() || $this->canSelectViticulturist())
+            <x-form-section title="Asignaciones" color="green">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Bodega (Solo admin/supervisor) -->
                         @if($this->canSelectWinery())
                             <div>
-                                <label for="winery_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Bodega *
-                                </label>
-                                <select 
+                                <x-label for="winery_id" required>Bodega</x-label>
+                                <x-select 
                                     wire:model="winery_id" 
                                     id="winery_id"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
+                                    :error="$errors->first('winery_id')"
                                     required
                                 >
                                     <option value="">Seleccionar bodega...</option>
                                     @foreach($this->wineries as $winery)
                                         <option value="{{ $winery->id }}">{{ $winery->name }}</option>
                                     @endforeach
-                                </select>
-                                @error('winery_id') 
-                                    <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                                @enderror
+                                </x-select>
                             </div>
                         @endif
 
                         <!-- Viticultor (Solo admin/supervisor/winery) -->
                         @if($this->canSelectViticulturist())
                             <div>
-                                <label for="viticulturist_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Viticultor Asignado
-                                </label>
-                                <select 
+                                <x-label for="viticulturist_id">Viticultor Asignado</x-label>
+                                <x-select 
                                     wire:model="viticulturist_id" 
                                     id="viticulturist_id"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
+                                    :error="$errors->first('viticulturist_id')"
                                 >
                                     <option value="">Sin asignar</option>
                                     @foreach($this->viticulturists as $viticulturist)
                                         <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}</option>
                                     @endforeach
-                                </select>
-                                @error('viticulturist_id') 
-                                    <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                                @enderror
+                                </x-select>
                             </div>
                         @endif
                     </div>
-                </div>
-            @endif
+            </x-form-section>
+        @endif
 
-            <!-- Ubicación -->
-            @if($this->canSelectLocation())
-                <div class="border-b pb-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Ubicación</h3>
+        <!-- Ubicación -->
+        @if($this->canSelectLocation())
+            <x-form-section title="Ubicación" color="green">
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Comunidad Autónoma -->
                         <div>
-                            <label for="autonomous_community_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Comunidad Autónoma *
-                            </label>
-                            <select 
+                            <x-label for="autonomous_community_id" required>Comunidad Autónoma</x-label>
+                            <x-select 
                                 wire:model.live="autonomous_community_id" 
                                 id="autonomous_community_id"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
+                                :error="$errors->first('autonomous_community_id')"
                                 required
                             >
                                 <option value="">Seleccionar...</option>
                                 @foreach($autonomousCommunities as $community)
                                     <option value="{{ $community->id }}">{{ $community->name }}</option>
                                 @endforeach
-                            </select>
-                            @error('autonomous_community_id') 
-                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                            @enderror
+                            </x-select>
                         </div>
 
                         <!-- Provincia -->
                         <div>
-                            <label for="province_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Provincia *
-                            </label>
-                            <select 
+                            <x-label for="province_id" required>Provincia</x-label>
+                            <x-select 
                                 wire:model.live="province_id" 
                                 id="province_id"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                :error="$errors->first('province_id')"
                                 required
                                 @if(!$autonomous_community_id) disabled @endif
                             >
@@ -175,21 +143,16 @@
                                 @foreach($provinces as $province)
                                     <option value="{{ $province->id }}">{{ $province->name }}</option>
                                 @endforeach
-                            </select>
-                            @error('province_id') 
-                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                            @enderror
+                            </x-select>
                         </div>
 
                         <!-- Municipio -->
                         <div>
-                            <label for="municipality_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Municipio *
-                            </label>
-                            <select 
+                            <x-label for="municipality_id" required>Municipio</x-label>
+                            <x-select 
                                 wire:model.live="municipality_id" 
                                 id="municipality_id"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                :error="$errors->first('municipality_id')"
                                 required
                                 @if(!$province_id) disabled @endif
                             >
@@ -197,19 +160,15 @@
                                 @foreach($municipalities as $municipality)
                                     <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
                                 @endforeach
-                            </select>
-                            @error('municipality_id') 
-                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                            @enderror
+                            </x-select>
                         </div>
                     </div>
-                </div>
-            @endif
+            </x-form-section>
+        @endif
 
-            <!-- SIGPAC -->
-            @if($this->canSelectSigpac())
-                <div class="border-b pb-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Datos SIGPAC</h3>
+        <!-- SIGPAC -->
+        @if($this->canSelectSigpac())
+            <x-form-section title="Datos SIGPAC" color="green">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Usos SIGPAC -->
@@ -256,12 +215,11 @@
                             @enderror
                         </div>
                     </div>
-                </div>
+            </x-form-section>
 
-                <!-- Coordenadas Multiparte -->
-                <div class="border-b pb-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Coordenadas Multiparte</h3>
+            <!-- Coordenadas Multiparte -->
+            <x-form-section title="Coordenadas Multiparte" color="green">
+                <div class="flex justify-end mb-4">
                         <button 
                             type="button"
                             wire:click="addCoordinate"
@@ -312,24 +270,12 @@
                             </div>
                         </div>
                     @endforeach
-                </div>
-            @endif
+            </x-form-section>
+        @endif
 
-            <!-- Botones -->
-            <div class="flex gap-4 pt-4">
-                <button 
-                    type="submit"
-                    class="flex-1 bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white py-3.5 px-4 rounded-lg font-bold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-agro-green-dark)] transition-all transform hover:scale-[1.02] shadow-lg"
-                >
-                    Actualizar Parcela
-                </button>
-                <a 
-                    href="{{ route('plots.index') }}" 
-                    class="px-6 py-3.5 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition"
-                >
-                    Cancelar
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
+        <x-form-actions 
+            :cancel-url="route('plots.index')"
+            submit-label="Actualizar Parcela"
+        />
+    </form>
+</x-form-card>

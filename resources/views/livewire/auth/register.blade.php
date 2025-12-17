@@ -1,19 +1,19 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 p-4 sm:p-6 lg:p-8">
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 py-6 px-4">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div class="absolute top-0 right-0 w-96 h-96 bg-[var(--color-agro-green-light)]/10 rounded-full blur-3xl"></div>
         <div class="absolute bottom-0 left-0 w-96 h-96 bg-[var(--color-agro-green)]/10 rounded-full blur-3xl"></div>
     </div>
     
-    <div class="w-full max-w-md relative z-10">
-        <div class="text-center mb-6">
-            <div class="inline-block max-w-[280px] mx-auto mb-4">
+    <div class="w-full max-w-md mx-auto relative z-10">
+        <div class="text-center mb-3">
+            <div class="inline-block max-w-[180px] mx-auto mb-2">
                 <img 
                     src="{{ asset('images/logo.png') }}" 
                     alt="Agro365 Logo" 
-                    class="w-full h-auto max-h-48 object-contain drop-shadow-2xl"
+                    class="w-full h-auto max-h-24 object-contain drop-shadow-lg"
                 >
             </div>
-            <p class="text-gray-600 text-base font-medium">
+            <p class="text-gray-600 text-sm font-medium">
                 @auth
                     Crear nuevo usuario
                 @else
@@ -82,18 +82,18 @@
                     >
                         @if(auth()->check())
                             @foreach($this->getAllowedRoles(auth()->user()) as $allowedRole)
-                                <option value="{{ $allowedRole }}">
-                                    {{ match($allowedRole) {
-                                        'admin' => 'Administrador',
-                                        'supervisor' => 'Supervisor',
-                                        'winery' => 'Bodega',
-                                        'viticulturist' => 'Viticultor',
-                                        default => ucfirst($allowedRole),
-                                    } }}
-                                </option>
+                                @if($allowedRole !== 'winery')
+                                    <option value="{{ $allowedRole }}">
+                                        {{ match($allowedRole) {
+                                            'admin' => 'Administrador',
+                                            'supervisor' => 'Supervisor',
+                                            'viticulturist' => 'Viticultor',
+                                            default => ucfirst($allowedRole),
+                                        } }}
+                                    </option>
+                                @endif
                             @endforeach
                         @else
-                            <option value="winery">Bodega</option>
                             <option value="viticulturist">Viticultor</option>
                         @endif
                     </select>
@@ -102,7 +102,7 @@
                     @enderror
                     @if(!auth()->check())
                         <p class="mt-1 text-xs text-gray-500">
-                            Selecciona si eres una bodega o un viticultor
+                            Selecciona si eres un viticultor
                         </p>
                     @endif
                 </div>
