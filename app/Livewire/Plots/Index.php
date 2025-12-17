@@ -19,14 +19,16 @@ class Index extends Component
     public function render()
     {
         $query = Plot::forUser(Auth::user())
+            ->select([
+                'id', 'name', 'description', 'area', 'active',
+                'winery_id', 'viticulturist_id', 'municipality_id',
+                'created_at', 'updated_at'
+            ])
             ->with([
-                'winery', 
-                'viticulturist', 
-                'autonomousCommunity', 
-                'province', 
-                'municipality', 
-                'sigpacUses',
-                'sigpacCodes'
+                'winery:id,name',
+                'viticulturist:id,name',
+                'municipality:id,name,province_id',
+                'municipality.province:id,name'
             ]);
 
         if ($this->search) {

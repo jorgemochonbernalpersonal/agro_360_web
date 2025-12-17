@@ -27,17 +27,7 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['icon' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($profileIcon),'title' => 'Mi Perfil','description' => 'Vista general de tu información personal y configuración','icon-color' => 'from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]']); ?>
-             <?php $__env->slot('actionButton', null, []); ?> 
-                <a href="<?php echo e(route('profile.edit')); ?>" class="group">
-                    <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                        <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                        Editar Perfil
-                    </button>
-                </a>
-             <?php $__env->endSlot(); ?>
-         <?php echo $__env->renderComponent(); ?>
+<?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginalf8d4ea307ab1e58d4e472a43c8548d8e)): ?>
 <?php $attributes = $__attributesOriginalf8d4ea307ab1e58d4e472a43c8548d8e; ?>
@@ -46,36 +36,6 @@
 <?php if (isset($__componentOriginalf8d4ea307ab1e58d4e472a43c8548d8e)): ?>
 <?php $component = $__componentOriginalf8d4ea307ab1e58d4e472a43c8548d8e; ?>
 <?php unset($__componentOriginalf8d4ea307ab1e58d4e472a43c8548d8e); ?>
-<?php endif; ?>
-
-        
-        <?php if (isset($component)) { $__componentOriginal40edf33d2c377a0037b40037f6cdc014 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal40edf33d2c377a0037b40037f6cdc014 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.info-card','data' => ['gradient' => 'from-[var(--color-agro-green-dark)] via-[var(--color-agro-green)] to-[var(--color-agro-green-light)]','icon' => $infoIcon]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('info-card'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['gradient' => 'from-[var(--color-agro-green-dark)] via-[var(--color-agro-green)] to-[var(--color-agro-green-light)]','icon' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($infoIcon)]); ?>
-            <div>
-                <h2 class="text-3xl font-bold text-white mb-3">
-                    ¡Hola, <?php echo e($user->name); ?>!
-                </h2>
-                <p class="text-white/90 text-lg">
-                    Bienvenido a tu panel de perfil. Aquí puedes ver y gestionar toda tu información personal.
-                </p>
-            </div>
-         <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal40edf33d2c377a0037b40037f6cdc014)): ?>
-<?php $attributes = $__attributesOriginal40edf33d2c377a0037b40037f6cdc014; ?>
-<?php unset($__attributesOriginal40edf33d2c377a0037b40037f6cdc014); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal40edf33d2c377a0037b40037f6cdc014)): ?>
-<?php $component = $__componentOriginal40edf33d2c377a0037b40037f6cdc014; ?>
-<?php unset($__componentOriginal40edf33d2c377a0037b40037f6cdc014); ?>
 <?php endif; ?>
 
         
@@ -96,9 +56,14 @@
                     </div>
                     <div class="p-6 space-y-4">
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center flex-shrink-0 shadow-lg">
-                                <span class="text-white text-xl font-bold"><?php echo e(strtoupper(substr($user->name, 0, 1))); ?></span>
-                            </div>
+                            
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile && $profile->profile_image): ?>
+                                <img src="<?php echo e(Storage::url($profile->profile_image)); ?>" alt="<?php echo e($user->name); ?>" class="w-16 h-16 rounded-full object-cover border-4 border-gray-200 shadow-lg flex-shrink-0">
+                            <?php else: ?>
+                                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center flex-shrink-0 shadow-lg">
+                                    <span class="text-white text-2xl font-bold"><?php echo e(strtoupper(substr($user->name, 0, 1))); ?></span>
+                                </div>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-gray-500">Nombre Completo</p>
                                 <p class="text-lg font-bold text-gray-900 truncate"><?php echo e($user->name); ?></p>
@@ -124,6 +89,63 @@
                                 <p class="text-base font-bold text-green-900"><?php echo e(\App\Helpers\NavigationHelper::getRoleName($user->role)); ?></p>
                             </div>
                         </div>
+
+                        
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile): ?>
+                            <div class="pt-4 border-t border-gray-200">
+                                <h4 class="text-sm font-bold text-gray-700 mb-3">Información de Contacto</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile->phone): ?>
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Teléfono</p>
+                                                <p class="text-sm font-semibold text-gray-900"><?php echo e($profile->phone); ?></p>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile->city): ?>
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Ciudad</p>
+                                                <p class="text-sm font-semibold text-gray-900"><?php echo e($profile->city); ?></p>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile->province_id): ?>
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Provincia</p>
+                                                <p class="text-sm font-semibold text-gray-900"><?php echo e($profile->province->name ?? 'N/A'); ?></p>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile->address): ?>
+                                        <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg md:col-span-2">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Dirección</p>
+                                                <p class="text-sm font-semibold text-gray-900"><?php echo e($profile->address); ?></p>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
                 </div>
 

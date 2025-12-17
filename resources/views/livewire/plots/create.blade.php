@@ -9,7 +9,7 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('plots.index')"
 >
-    <form wire:submit="save" class="space-y-8">
+    <form wire:submit.prevent="save" class="space-y-8">
         @error('general')
             <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
                 <div class="flex items-start">
@@ -26,52 +26,53 @@
         
         <x-form-section title="Información Básica" color="green">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nombre -->
-                    <div>
-                        <x-label for="name" required>Nombre de la Parcela</x-label>
-                        <x-input 
-                            wire:model="name" 
-                            type="text" 
-                            id="name"
-                            placeholder="Ej: Parcela Norte"
-                            :error="$errors->first('name')"
-                            required
-                        />
-                    </div>
-
-                    <!-- Área -->
-                    <div>
-                        <x-label for="area">Área (hectáreas)</x-label>
-                        <x-input 
-                            wire:model="area" 
-                            type="number" 
-                            step="0.001"
-                            id="area"
-                            placeholder="0.000"
-                            :error="$errors->first('area')"
-                        />
-                    </div>
-                </div>
-
-                <!-- Descripción -->
-                <div class="mt-6">
-                    <x-label for="description">Descripción</x-label>
-                    <x-textarea 
-                        wire:model="description" 
-                        id="description"
-                        rows="3"
-                        placeholder="Descripción de la parcela..."
-                        :error="$errors->first('description')"
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nombre -->
+                <div>
+                    <x-label for="name" required>Nombre de la Parcela</x-label>
+                    <x-input 
+                        wire:model="name" 
+                        type="text" 
+                        id="name"
+                        placeholder="Ej: Parcela Norte"
+                        :error="$errors->first('name')"
+                        required
                     />
                 </div>
 
+                <!-- Área -->
+                <div>
+                    <x-label for="area">Área (hectáreas)</x-label>
+                    <x-input 
+                        wire:model="area" 
+                        type="number" 
+                        step="0.001"
+                        id="area"
+                        placeholder="0.000"
+                        :error="$errors->first('area')"
+                    />
+                </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="mt-6">
+                <x-label for="description">Descripción</x-label>
+                <x-textarea 
+                    wire:model="description" 
+                    id="description"
+                    rows="3"
+                    placeholder="Descripción de la parcela..."
+                    :error="$errors->first('description')"
+                />
+            </div>
+
             <!-- Activa -->
             <div class="mt-6">
-                <label class="flex items-center">
+                <label for="active" class="flex items-center cursor-pointer">
                     <input 
                         wire:model="active" 
                         type="checkbox"
+                        id="active"
                         class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
                     >
                     <span class="ml-2 text-sm font-semibold text-gray-700">Parcela activa</span>
@@ -132,7 +133,7 @@
                     <div>
                         <x-label for="autonomous_community_id" required>Comunidad Autónoma</x-label>
                         <x-select 
-                            wire:model.live="autonomous_community_id" 
+                            wire:model="autonomous_community_id" 
                             id="autonomous_community_id"
                             :error="$errors->first('autonomous_community_id')"
                             required
@@ -148,11 +149,11 @@
                     <div>
                         <x-label for="province_id" required>Provincia</x-label>
                         <x-select 
-                            wire:model.live="province_id" 
+                            wire:model="province_id" 
                             id="province_id"
                             :error="$errors->first('province_id')"
                             required
-                            {{ !$autonomous_community_id ? 'disabled' : '' }}
+                            @disabled(!$autonomous_community_id)
                         >
                             <option value="">Seleccionar...</option>
                             @foreach($provinces as $province)
@@ -165,11 +166,11 @@
                     <div>
                         <x-label for="municipality_id" required>Municipio</x-label>
                         <x-select 
-                            wire:model.live="municipality_id" 
+                            wire:model="municipality_id" 
                             id="municipality_id"
                             :error="$errors->first('municipality_id')"
                             required
-                            {{ !$province_id ? 'disabled' : '' }}
+                            @disabled(!$province_id)
                         >
                             <option value="">Seleccionar...</option>
                             @foreach($municipalities as $municipality)

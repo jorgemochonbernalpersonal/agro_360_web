@@ -3,11 +3,13 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class NavigationHelper
 {
     /**
      * Obtener el menú de navegación según el rol del usuario
+     * Cacheado por 1 hora para mejorar rendimiento
      */
     public static function getMenu(): array
     {
@@ -16,6 +18,18 @@ class NavigationHelper
         if (!$user) {
             return [];
         }
+
+        // Cachear el menú por usuario durante 1 hora
+        return Cache::remember('menu_' . $user->id . '_' . request()->path(), 3600, function() use ($user) {
+            return static::buildMenu($user);
+        });
+    }
+
+    /**
+     * Construir el menú (método interno)
+     */
+    private static function buildMenu($user): array
+    {
 
         $menu = [
             'main' => [

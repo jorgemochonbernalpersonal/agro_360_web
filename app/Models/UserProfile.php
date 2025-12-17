@@ -12,9 +12,10 @@ class UserProfile extends Model
         'address',
         'city',
         'postal_code',
-        'province',
+        'province_id',
         'country',
         'phone',
+        'profile_image',
     ];
 
     /**
@@ -23,5 +24,13 @@ class UserProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relación con la provincia
+     */
+    public function province(): BelongsTo
+    {
+        return $this->belongsTo(Province::class);
     }
 }

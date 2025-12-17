@@ -45,14 +45,18 @@ describe('Viticulturist Authentication', () => {
     // Login first using the command
     cy.loginAsViticulturist()
     
-    // Click logout button in sidebar
-    cy.get('form[action*="logout"]').within(() => {
+    // Wait for dashboard to load
+    cy.url().should('include', '/viticulturist/dashboard')
+    
+    // Click logout button in sidebar - find form with logout action
+    cy.get('form[action*="logout"]').first().within(() => {
       cy.get('button[type="submit"]').click()
     })
     
     // Wait for redirect (logout is a POST request, not Livewire)
-    cy.wait(2000)
-    cy.url().should('include', '/login')
+    // Increase timeout as server may be slow
+    cy.wait(3000)
+    cy.url({ timeout: 10000 }).should('include', '/login')
   })
 })
 

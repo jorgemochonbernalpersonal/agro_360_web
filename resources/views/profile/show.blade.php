@@ -13,33 +13,7 @@
             title="Mi Perfil"
             description="Vista general de tu información personal y configuración"
             icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-        >
-            <x-slot:actionButton>
-                <a href="{{ route('profile.edit') }}" class="group">
-                    <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                        <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                        Editar Perfil
-                    </button>
-                </a>
-            </x-slot:actionButton>
-        </x-page-header>
-
-        {{-- Welcome Card --}}
-        <x-info-card
-            gradient="from-[var(--color-agro-green-dark)] via-[var(--color-agro-green)] to-[var(--color-agro-green-light)]"
-            :icon="$infoIcon"
-        >
-            <div>
-                <h2 class="text-3xl font-bold text-white mb-3">
-                    ¡Hola, {{ $user->name }}!
-                </h2>
-                <p class="text-white/90 text-lg">
-                    Bienvenido a tu panel de perfil. Aquí puedes ver y gestionar toda tu información personal.
-                </p>
-            </div>
-        </x-info-card>
+        />
 
         {{-- Main Content Grid --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -59,9 +33,14 @@
                     </div>
                     <div class="p-6 space-y-4">
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center flex-shrink-0 shadow-lg">
-                                <span class="text-white text-xl font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                            </div>
+                            {{-- Mostrar imagen de perfil o inicial --}}
+                            @if($profile && $profile->profile_image)
+                                <img src="{{ Storage::url($profile->profile_image) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover border-4 border-gray-200 shadow-lg flex-shrink-0">
+                            @else
+                                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center flex-shrink-0 shadow-lg">
+                                    <span class="text-white text-2xl font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                </div>
+                            @endif
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-gray-500">Nombre Completo</p>
                                 <p class="text-lg font-bold text-gray-900 truncate">{{ $user->name }}</p>
@@ -87,6 +66,63 @@
                                 <p class="text-base font-bold text-green-900">{{ \App\Helpers\NavigationHelper::getRoleName($user->role) }}</p>
                             </div>
                         </div>
+
+                        {{-- Información de Contacto Integrada --}}
+                        @if($profile)
+                            <div class="pt-4 border-t border-gray-200">
+                                <h4 class="text-sm font-bold text-gray-700 mb-3">Información de Contacto</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    @if($profile->phone)
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Teléfono</p>
+                                                <p class="text-sm font-semibold text-gray-900">{{ $profile->phone }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if($profile->city)
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Ciudad</p>
+                                                <p class="text-sm font-semibold text-gray-900">{{ $profile->city }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if($profile->province_id)
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Provincia</p>
+                                                <p class="text-sm font-semibold text-gray-900">{{ $profile->province->name ?? 'N/A' }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if($profile->address)
+                                        <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg md:col-span-2">
+                                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500">Dirección</p>
+                                                <p class="text-sm font-semibold text-gray-900">{{ $profile->address }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

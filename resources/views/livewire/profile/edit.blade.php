@@ -1,29 +1,5 @@
-@php
-    $profileIcon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>';
-@endphp
-
-<x-app-layout>
+<div>
     <div class="space-y-6 animate-fade-in">
-        {{-- Header --}}
-        <x-page-header
-            :icon="$profileIcon"
-            title="Mi Perfil"
-            description="Gestiona tu información personal y configuración de cuenta"
-            icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-        >
-            <x-slot:actionButton>
-                <a href="{{ route('profile.show') }}" class="group">
-                    <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-gray-500 to-gray-700 text-white hover:from-gray-600 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        Ver Perfil
-                    </button>
-                </a>
-            </x-slot:actionButton>
-        </x-page-header>
-
         {{-- Tabs Navigation --}}
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             <div class="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
@@ -47,7 +23,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
-                            Seguridad
+                           Cambiar Contraseña
                         </div>
                     </button>
                     <button
@@ -56,8 +32,7 @@
                     >
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
                             Contacto
                         </div>
@@ -66,8 +41,8 @@
             </div>
 
             {{-- Tab Content --}}
-            <div class="p-6">
-                {{-- Personal Info Tab --}}
+            <div class="p-8">
+                {{-- Personal Tab --}}
                 @if($activeTab === 'personal')
                     <div class="animate-fade-in">
                         @if (session()->has('message'))
@@ -111,23 +86,62 @@
                                     </div>
                                 </div>
 
-                                <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                    <div class="flex items-start">
-                                        <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <div>
-                                            <p class="text-sm font-medium text-green-800">Información de cuenta</p>
-                                            <p class="text-sm text-green-700 mt-1">
-                                                Rol: <span class="font-bold">{{ \App\Helpers\NavigationHelper::getRoleName(auth()->user()->role) }}</span>
-                                            </p>
+                                {{-- Imagen de Perfil --}}
+                                <div class="mt-6">
+                                    <x-label for="profile_image">Foto de Perfil</x-label>
+                                    <div class="mt-2 flex items-center gap-6">
+                                        {{-- Preview con imagen temporal o actual --}}
+                                        <div class="flex-shrink-0">
+                                            @if($profile_image)
+                                                {{-- Preview de la imagen NUEVA (temporal) --}}
+                                                <img src="{{ $profile_image->temporaryUrl() }}" alt="Preview" class="w-20 h-20 rounded-full object-cover border-4 border-[var(--color-agro-green)] shadow-lg animate-pulse">
+                                            @elseif($current_profile_image)
+                                                {{-- Imagen actual guardada --}}
+                                                <img src="{{ Storage::url($current_profile_image) }}" alt="Profile" class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-md">
+                                            @else
+                                                {{-- Placeholder con inicial --}}
+                                                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md">
+                                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="flex-1">
+                                            <input 
+                                                type="file" 
+                                                wire:model="profile_image" 
+                                                id="profile_image"
+                                                accept="image/*"
+                                                class="block w-full text-sm text-gray-500
+                                                    file:mr-4 file:py-2 file:px-4
+                                                    file:rounded-lg file:border-0
+                                                    file:text-sm file:font-semibold
+                                                    file:bg-green-50 file:text-[var(--color-agro-green-dark)]
+                                                    hover:file:bg-green-100
+                                                    cursor-pointer"
+                                            >
+                                            <p class="mt-1 text-xs text-gray-500">JPG, PNG o GIF (Máx. 2MB)</p>
+                                            
+                                            @if($profile_image)
+                                                <p class="mt-1 text-xs text-[var(--color-agro-green-dark)] font-semibold">
+                                                    ✓ Nueva imagen seleccionada. Click "Guardar Cambios" para confirmar.
+                                                </p>
+                                            @endif
+                                            
+                                            @error('profile_image') 
+                                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
+                                            @enderror
+                                            
+                                            <div wire:loading wire:target="profile_image" class="mt-2">
+                                                <p class="text-sm text-[var(--color-agro-green-dark)]">⏳ Cargando preview...</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </x-form-section>
 
                             <div class="flex justify-end">
-                                <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-blue)] to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
+                                <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
                                     Guardar Cambios
                                 </button>
                             </div>
@@ -166,59 +180,51 @@
                                         />
                                     </div>
 
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <x-label for="password" required>Nueva Contraseña</x-label>
-                                            <x-input 
-                                                wire:model="password" 
-                                                type="password" 
-                                                id="password"
-                                                placeholder="Nueva contraseña"
-                                                :error="$errors->first('password')"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <x-label for="password_confirmation" required>Confirmar Contraseña</x-label>
-                                            <x-input 
-                                                wire:model="password_confirmation" 
-                                                type="password" 
-                                                id="password_confirmation"
-                                                placeholder="Confirma tu contraseña"
-                                                required
-                                            />
-                                        </div>
+                                    <div>
+                                        <x-label for="password" required>Nueva Contraseña</x-label>
+                                        <x-input 
+                                            wire:model="password" 
+                                            type="password" 
+                                            id="password"
+                                            placeholder="Nueva contraseña"
+                                            :error="$errors->first('password')"
+                                            required
+                                        />
                                     </div>
 
-                                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                        <div class="flex items-start">
-                                            <svg class="w-5 h-5 text-yellow-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                            </svg>
-                                            <div>
-                                                <p class="text-sm font-medium text-yellow-800">Requisitos de contraseña</p>
-                                                <ul class="text-sm text-yellow-700 mt-1 list-disc list-inside">
-                                                    <li>Mínimo 8 caracteres</li>
-                                                    <li>Al menos una letra mayúscula y minúscula</li>
-                                                    <li>Al menos un número</li>
-                                                </ul>
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <x-label for="password_confirmation" required>Confirmar Nueva Contraseña</x-label>
+                                        <x-input 
+                                            wire:model="password_confirmation" 
+                                            type="password" 
+                                            id="password_confirmation"
+                                            placeholder="Confirma la nueva contraseña"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                                        <p class="text-sm font-medium text-green-800">Requisitos de contraseña:</p>
+                                        <ul class="mt-2 text-xs text-green-700 list-disc list-inside space-y-1">
+                                            <li>Mínimo 8 caracteres</li>
+                                            <li>Al menos una letra mayúscula</li>
+                                            <li>Al menos una letra minúscula</li>
+                                            <li>Al menos un número</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </x-form-section>
 
                             <div class="flex justify-end">
-                                <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-blue)] to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
-                                     Actualizar Contraseña
+                                <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
+                                    Actualizar Contraseña
                                 </button>
                             </div>
                         </form>
                     </div>
                 @endif
 
-                {{-- Contact Info Tab --}}
+                {{-- Contact Tab --}}
                 @if($activeTab === 'contact')
                     <div class="animate-fade-in">
                         @if (session()->has('contact_message'))
@@ -271,28 +277,20 @@
                                     </div>
 
                                     <div>
-                                        <x-label for="province">Provincia</x-label>
-                                        <x-input 
-                                            wire:model="province" 
-                                            type="text" 
-                                            id="province"
-                                            placeholder="Tu provincia"
-                                            :error="$errors->first('province')"
-                                        />
+                                        <x-label for="province_id">Provincia</x-label>
+                                        <x-select 
+                                            wire:model="province_id" 
+                                            id="province_id"
+                                            :error="$errors->first('province_id')"
+                                        >
+                                            <option value="">Seleccionar provincia...</option>
+                                            @foreach($this->provinces as $province)
+                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                            @endforeach
+                                        </x-select>
                                     </div>
 
                                     <div>
-                                        <x-label for="country">País</x-label>
-                                        <x-input 
-                                            wire:model="country" 
-                                            type="text" 
-                                            id="country"
-                                            placeholder="España"
-                                            :error="$errors->first('country')"
-                                        />
-                                    </div>
-
-                                    <div class="md:col-span-2">
                                         <x-label for="phone">Teléfono</x-label>
                                         <x-input 
                                             wire:model="phone" 
@@ -306,8 +304,8 @@
                             </x-form-section>
 
                             <div class="flex justify-end">
-                                <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-blue)] to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
-                                    Guardar Información
+                                <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
+                                    Guardar Contacto
                                 </button>
                             </div>
                         </form>
@@ -316,4 +314,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</div>

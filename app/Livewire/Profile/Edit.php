@@ -4,16 +4,22 @@ namespace App\Livewire\Profile;
 
 use App\Models\UserProfile;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class Edit extends Component
 {
+    use WithFileUploads;
+    
     // Información Personal
     public $name;
     public $email;
+    public $profile_image;
+    public $current_profile_image;
     
     // Cambio de Contraseña
     public $current_password = '';
@@ -24,7 +30,7 @@ class Edit extends Component
     public $address;
     public $city;
     public $postal_code;
-    public $province;
+    public $province_id;
     public $country = 'España';
     public $phone;
     
@@ -45,10 +51,16 @@ class Edit extends Component
             $this->address = $profile->address;
             $this->city = $profile->city;
             $this->postal_code = $profile->postal_code;
-            $this->province = $profile->province;
-            $this->country = $profile->country;
+            $this->province_id = $profile->province_id;
+            $this->country = $profile->country ?? 'España';
             $this->phone = $profile->phone;
+            $this->current_profile_image = $profile->profile_image;
         }
+    }
+    
+    public function getProvincesProperty()
+    {
+        return \App\Models\Province::orderBy('name')->get();
     }
 
     public function updatePersonalInfo()
@@ -56,12 +68,33 @@ class Edit extends Component
         $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
+            'profile_image' => ['nullable', 'image', 'max:2048'], // Max 2MB
         ]);
 
         $user = Auth::user();
         $user->name = $this->name;
         $user->email = $this->email;
         $user->save();
+
+        // Manejar subida de imagen
+        if ($this->profile_image) {
+            // Eliminar imagen anterior si existe
+            if ($user->profile && $user->profile->profile_image) {
+                Storage::disk('public')->delete($user->profile->profile_image);
+            }
+            
+            // Guardar nueva imagen
+            $path = $this->profile_image->store('profile-images', 'public');
+            
+            // Actualizar o crear perfil con la imagen
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['profile_image' => $path]
+            );
+            
+            $this->current_profile_image = $path;
+            $this->profile_image = null; // Reset el input
+        }
 
         session()->flash('message', 'Información personal actualizada correctamente.');
         $this->dispatch('profile-updated');
@@ -92,8 +125,7 @@ class Edit extends Component
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'postal_code' => 'nullable|string|max:10',
-            'province' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
+            'province_id' => 'nullable|exists:provinces,id',
             'phone' => 'nullable|string|max:20',
         ]);
 
@@ -105,8 +137,8 @@ class Edit extends Component
                 'address' => $this->address,
                 'city' => $this->city,
                 'postal_code' => $this->postal_code,
-                'province' => $this->province,
-                'country' => $this->country,
+                'province_id' => $this->province_id,
+                'country' => 'España', // Siempre España
                 'phone' => $this->phone,
             ]
         );
