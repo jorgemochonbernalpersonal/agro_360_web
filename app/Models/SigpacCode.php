@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 
 class SigpacCode extends Model
 {
@@ -12,7 +12,7 @@ class SigpacCode extends Model
 
     protected $fillable = [
         'code',
-        'description',
+        // description removido según requerimiento
     ];
 
     public function plots(): BelongsToMany

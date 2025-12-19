@@ -73,7 +73,7 @@ class Plot extends Model
     }
 
     /**
-     * Códigos SIGPAC (many-to-many)
+     * Códigos SIGPAC (many-to-many) - estructura antigua
      */
     public function sigpacCodes(): BelongsToMany
     {
@@ -81,7 +81,36 @@ class Plot extends Model
     }
 
     /**
-     * Coordenadas multiparte SIGPAC
+     * Códigos SIGPAC (nueva estructura - many-to-many con geometrías)
+     */
+    public function sigpacs(): BelongsToMany
+    {
+        return $this->belongsToMany(Sigpac::class, 'multiple_plot_sigpac', 'plot_id', 'sigpac_id')
+            ->withPivot('plot_geometry_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relaciones múltiples plot-sigpac (para acceder a geometrías)
+     */
+    public function multiplePlotSigpacs(): HasMany
+    {
+        return $this->hasMany(MultiplePlotSigpac::class, 'plot_id');
+    }
+
+    /**
+     * Geometrías de la parcela
+     */
+    public function plotGeometries(): HasMany
+    {
+        return $this->hasMany(PlotGeometry::class, 'id', 'plot_geometry_id')
+            ->whereHas('multiplePlotSigpacs', function($q) {
+                $q->where('plot_id', $this->id);
+            });
+    }
+
+    /**
+     * Coordenadas multiparte SIGPAC (estructura antigua)
      */
     public function multipartCoordinates(): HasMany
     {

@@ -206,6 +206,16 @@
 <?php $component = $__componentOriginald4c6978101b1c254eb70511d3c21c03f; ?>
 <?php unset($__componentOriginald4c6978101b1c254eb70511d3c21c03f); ?>
 <?php endif; ?>
+                        <a
+                            href="<?php echo e(route('sigpac.geometry.edit', ['sigpacId' => $code->id])); ?>"
+                            class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                            title="Crear/Editar Mapa"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                            </svg>
+                            <span class="ml-1">🗺️</span>
+                        </a>
                      <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal35f57f4e82a16e7ad7641b9fb6c7f399)): ?>

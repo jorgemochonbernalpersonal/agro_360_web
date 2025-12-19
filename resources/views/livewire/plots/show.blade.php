@@ -126,18 +126,98 @@
                     @endif
 
                     @if($plot->sigpacCodes->count() > 0)
-                        <div>
+                        <div class="mb-4">
                             <label class="text-sm font-semibold text-gray-500 block mb-2">Códigos SIGPAC</label>
                             <div class="flex flex-wrap gap-2">
                                 @foreach($plot->sigpacCodes as $code)
                                     <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                                        {{ $code->code }}@if($code->description) - {{ $code->description }}@endif
+                                        {{ $code->code }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($plot->sigpacs->count() > 0)
+                        <div class="mb-4">
+                            <label class="text-sm font-semibold text-gray-500 block mb-2">Códigos SIGPAC (Nuevos)</label>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach($plot->sigpacs as $sigpac)
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        {{ $sigpac->full_code }}
                                     </span>
                                 @endforeach
                             </div>
                         </div>
                     @endif
                 </div>
+            @endif
+
+            <!-- Mapa de Geometrías SIGPAC -->
+            @php
+                $geometries = $plot->multiplePlotSigpacs()
+                    ->with(['sigpac', 'plotGeometry'])
+                    ->whereNotNull('plot_geometry_id')
+                    ->get();
+            @endphp
+            @if($geometries->count() > 0)
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-4">Mapa de Geometrías SIGPAC</h2>
+                    
+                    @foreach($geometries as $geometry)
+                        <div class="mb-6 last:mb-0">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    Código: {{ $geometry->sigpac->full_code }}
+                                </h3>
+                                <a
+                                    href="{{ route('sigpac.geometry.edit-plot', ['sigpacId' => $geometry->sigpac_id, 'plotId' => $plot->id]) }}"
+                                    class="text-sm text-blue-600 hover:text-blue-800"
+                                >
+                                    Editar
+                                </a>
+                            </div>
+                            <div 
+                                id="map-geometry-{{ $geometry->id }}" 
+                                style="height: 300px; width: 100%;" 
+                                class="rounded-lg border border-gray-300"
+                                data-coordinates="{{ json_encode($geometry->plotGeometry->getCoordinatesAsArray()) }}"
+                            ></div>
+                        </div>
+                    @endforeach
+                </div>
+
+                @push('scripts')
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    @foreach($geometries as $geometry)
+                        (function() {
+                            const mapId = 'map-geometry-{{ $geometry->id }}';
+                            const mapElement = document.getElementById(mapId);
+                            if (!mapElement) return;
+
+                            const coords = JSON.parse(mapElement.dataset.coordinates || '[]');
+                            if (coords.length === 0) return;
+
+                            const map = L.map(mapId).setView([coords[0].lat, coords[0].lng], 13);
+                            
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© OpenStreetMap contributors'
+                            }).addTo(map);
+
+                            const polygon = L.polygon(
+                                coords.map(c => [c.lat, c.lng]),
+                                {color: '#10b981', fillColor: '#10b981', fillOpacity: 0.3, weight: 2}
+                            ).addTo(map);
+                            
+                            map.fitBounds(polygon.getBounds());
+                        })();
+                    @endforeach
+                });
+                </script>
+                @endpush
             @endif
 
             <!-- Coordenadas Multiparte -->

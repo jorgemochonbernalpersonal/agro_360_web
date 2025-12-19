@@ -22,14 +22,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] flex items-center justify-center shadow-md">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                        </svg>
-                    </div>
-                    <span class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
-                </div>
+                <a href="<?php echo e(url('/')); ?>" class="flex items-center">
+                    <img 
+                        src="<?php echo e(asset('images/logo.png')); ?>" 
+                        alt="Agro365" 
+                        class="h-20 w-auto object-contain"
+                    >
+                </a>
                 
                 <!-- Auth Links -->
                 <div class="flex items-center gap-4">
@@ -92,17 +91,34 @@
                     </div>
                 </div>
                 
-                <!-- Hero Visual -->
+                <!-- Hero Visual - Dashboard Preview -->
                 <div class="relative lg:h-[600px] animate-scale-in">
-                    <div class="glass-card rounded-3xl p-8 hover-lift h-full flex items-center justify-center">
-                        <img 
-                            src="<?php echo e(asset('images/logo.png')); ?>" 
-                            alt="Agro365 Logo" 
-                            class="w-full h-auto max-w-sm object-contain drop-shadow-2xl"
-                        >
+                    <div class="relative h-full flex items-center justify-center">
+                        <!-- Browser Mockup Frame -->
+                        <div class="glass-card rounded-2xl overflow-hidden shadow-2xl hover-lift w-full max-w-3xl border-4 border-gray-200/50">
+                            <!-- Browser Header -->
+                            <div class="bg-gray-100 px-4 py-3 flex items-center gap-2 border-b border-gray-200">
+                                <div class="flex gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                                <div class="flex-1 mx-4">
+                                    <div class="bg-white rounded px-3 py-1 text-xs text-gray-500 border border-gray-200">
+                                        agro365.app/dashboard
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Dashboard Screenshot -->
+                            <img 
+                                src="<?php echo e(asset('images/dashboard-preview.png')); ?>" 
+                                alt="Agro365 Dashboard - Gestión de viñedos" 
+                                class="w-full h-auto object-cover"
+                            >
+                        </div>
                         <!-- Decorative Elements -->
-                        <div class="absolute top-8 right-8 w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] opacity-20 animate-pulse"></div>
-                        <div class="absolute bottom-8 left-8 w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-agro-yellow)] to-[var(--color-agro-brown)] opacity-20 animate-pulse" style="animation-delay: 1s;"></div>
+                        <div class="absolute -top-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] opacity-20 animate-pulse blur-xl"></div>
+                        <div class="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-yellow)] to-[var(--color-agro-brown)] opacity-20 animate-pulse blur-xl" style="animation-delay: 1s;"></div>
                     </div>
                 </div>
             </div>

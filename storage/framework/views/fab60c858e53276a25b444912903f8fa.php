@@ -9,14 +9,13 @@
         <!-- Logo y Header -->
         <div class="text-center mb-8">
             <a href="<?php echo e(route('home')); ?>" class="inline-block group">
-                <div class="inline-block max-w-[180px] mx-auto mb-2">
+                <div class="inline-block max-w-[180px] mx-auto mb-3">
                     <img 
                         src="<?php echo e(asset('images/logo.png')); ?>" 
                         alt="Agro365 Logo" 
                         class="w-full h-auto max-h-24 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-200"
                     >
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-1 group-hover:text-[var(--color-agro-green-dark)] transition-colors">Agro365</h1>
             </a>
             <p class="text-gray-600 text-sm font-medium">Cuaderno de campo digital para viticultores</p>
         </div>
