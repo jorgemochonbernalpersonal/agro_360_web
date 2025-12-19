@@ -97,7 +97,11 @@
                         </span>
                     </x-table-cell>
                     <x-table-actions align="right">
-                        <x-action-button variant="view" href="{{ route('viticulturist.personal.show', $crew) }}" />
+                        <x-action-button 
+                            variant="view" 
+                            href="{{ route('viticulturist.personal.show', $crew) }}#miembros"
+                            title="Ver / agregar miembros"
+                        />
                         @can('update', $crew)
                             <x-action-button variant="edit" href="{{ route('viticulturist.personal.edit', $crew) }}" />
                         @endcan

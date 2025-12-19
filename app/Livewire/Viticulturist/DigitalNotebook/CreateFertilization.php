@@ -8,14 +8,16 @@ use App\Models\Fertilization;
 use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\Machinery;
+use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreateFertilization extends Component
 {
-    use WithViticulturistValidation;
+    use WithViticulturistValidation, WithToastNotifications;
     public $plot_id = '';
     public $activity_date = '';
     public $fertilizer_type = '';
@@ -24,7 +26,9 @@ class CreateFertilization extends Component
     public $npk_ratio = '';
     public $application_method = '';
     public $area_applied = '';
+    public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
+    public $crew_member_id = '';
     public $machinery_id = '';
     public $weather_conditions = '';
     public $temperature = '';
@@ -44,7 +48,7 @@ class CreateFertilization extends Component
         
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
-            session()->flash('error', 'No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
             return redirect()->route('viticulturist.campaign.create');
         }
         
@@ -64,6 +68,7 @@ class CreateFertilization extends Component
             'application_method' => 'nullable|string|max:50',
             'area_applied' => 'nullable|numeric|min:0',
             'crew_id' => 'nullable|exists:crews,id',
+            'crew_member_id' => 'nullable|exists:crew_members,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
@@ -77,11 +82,47 @@ class CreateFertilization extends Component
 
         $user = Auth::user();
 
+        // Validar que se haya seleccionado un tipo de trabajo
+        if (!$this->workType) {
+            $this->addError('workType', 'Debes seleccionar si el trabajo lo realizó un equipo completo o un viticultor individual.');
+            return;
+        }
+
+        // Validar según el tipo seleccionado
+        if ($this->workType === 'crew' && !$this->crew_id) {
+            $this->addError('crew_id', 'Debes seleccionar un equipo.');
+            return;
+        }
+
+        if ($this->workType === 'individual' && !$this->crew_member_id) {
+            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
+            return;
+        }
+
         // Validar que la parcela pertenece al viticultor usando el trait
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
             DB::transaction(function () use ($user) {
+                $crewMemberId = null;
+                
+                // Si es trabajo individual, buscar o crear CrewMember
+                if ($this->workType === 'individual' && $this->crew_member_id) {
+                    $viticulturistId = $this->crew_member_id;
+                    
+                    $crewMember = CrewMember::firstOrCreate(
+                        [
+                            'viticulturist_id' => $viticulturistId,
+                            'assigned_by' => $user->id,
+                        ],
+                        [
+                            'crew_id' => null,
+                        ]
+                    );
+                    
+                    $crewMemberId = $crewMember->id;
+                }
+                
                 // Crear la actividad base
                 $activity = AgriculturalActivity::create([
                     'plot_id' => $this->plot_id,
@@ -89,7 +130,8 @@ class CreateFertilization extends Component
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'fertilization',
                     'activity_date' => $this->activity_date,
-                    'crew_id' => $this->crew_id ?: null,
+                    'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
+                    'crew_member_id' => $crewMemberId,
                     'machinery_id' => $this->machinery_id ?: null,
                     'weather_conditions' => $this->weather_conditions,
                     'temperature' => $this->temperature ?: null,
@@ -108,7 +150,7 @@ class CreateFertilization extends Component
                 ]);
             });
 
-            session()->flash('message', 'Fertilización registrada correctamente.');
+            $this->toastSuccess('Fertilización registrada correctamente.');
             return redirect()->route('viticulturist.digital-notebook');
         } catch (\Exception $e) {
             \Log::error('Error al registrar fertilización', [
@@ -118,7 +160,7 @@ class CreateFertilization extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al registrar la fertilización. Por favor, intenta de nuevo.');
+            $this->toastError('Error al registrar la fertilización. Por favor, intenta de nuevo.');
             return;
         }
     }
@@ -141,6 +183,22 @@ class CreateFertilization extends Component
             ->orderBy('name')
             ->get();
 
+        $individualWorkers = CrewMember::whereNull('crew_id')
+            ->where('assigned_by', $user->id)
+            ->with('viticulturist')
+            ->get()
+            ->sortBy(fn ($worker) => $worker->viticulturist->name)
+            ->values();
+        
+        // También obtener todos los viticultores visibles para selección individual
+        $allViticulturists = \App\Models\WineryViticulturist::editableBy($user)
+            ->with('viticulturist')
+            ->get()
+            ->pluck('viticulturist')
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
+
         $campaign = Campaign::find($this->campaign_id);
 
         return view('livewire.viticulturist.digital-notebook.create-fertilization', [
@@ -148,6 +206,8 @@ class CreateFertilization extends Component
             'crews' => $crews,
             'machinery' => $machinery,
             'campaign' => $campaign,
+            'individualWorkers' => $individualWorkers,
+            'allViticulturists' => $allViticulturists,
         ])->layout('layouts.app');
     }
 }

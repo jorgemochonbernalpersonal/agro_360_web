@@ -29,7 +29,7 @@ class CreateTest extends TestCase
 
         $this->actingAs($creator);
 
-        $component = Livewire::test(\App\Livewire\Viticulturist\Personal\Viticulturist\Create::class)
+        $component = Livewire::test(\App\Livewire\Viticulturist\Viticulturists\Create::class)
             ->set('name', 'Nuevo Viticultor')
             ->set('email', 'nuevo@example.com')
             ->call('save');
@@ -53,7 +53,7 @@ class CreateTest extends TestCase
 
         $this->actingAs($creator);
 
-        Livewire::test(\App\Livewire\Viticulturist\Personal\Viticulturist\Create::class)
+        Livewire::test(\App\Livewire\Viticulturist\Viticulturists\Create::class)
             ->set('name', 'Nuevo Viticultor')
             ->set('email', 'nuevo@example.com')
             ->call('save');
@@ -77,7 +77,7 @@ class CreateTest extends TestCase
 
         $this->actingAs($creator);
 
-        Livewire::test(\App\Livewire\Viticulturist\Personal\Viticulturist\Create::class)
+        Livewire::test(\App\Livewire\Viticulturist\Viticulturists\Create::class)
             ->set('name', 'Nuevo Viticultor')
             ->set('email', 'nuevo@example.com')
             ->call('save');
@@ -97,7 +97,7 @@ class CreateTest extends TestCase
 
         $this->actingAs($creator);
 
-        Livewire::test(\App\Livewire\Viticulturist\Personal\Viticulturist\Create::class)
+        Livewire::test(\App\Livewire\Viticulturist\Viticulturists\Create::class)
             ->set('name', 'Nuevo Viticultor')
             ->set('email', 'nuevo@example.com')
             ->call('save');
@@ -116,7 +116,7 @@ class CreateTest extends TestCase
 
         $this->actingAs($creator);
 
-        Livewire::test(\App\Livewire\Viticulturist\Personal\Viticulturist\Create::class)
+        Livewire::test(\App\Livewire\Viticulturist\Viticulturists\Create::class)
             ->set('name', '')
             ->set('email', 'invalid-email')
             ->call('save')
@@ -141,7 +141,7 @@ class CreateTest extends TestCase
 
         $this->actingAs($creator);
 
-        Livewire::test(\App\Livewire\Viticulturist\Personal\Viticulturist\Create::class)
+        Livewire::test(\App\Livewire\Viticulturist\Viticulturists\Create::class)
             ->set('name', 'Nuevo Viticultor')
             ->set('email', 'nuevo@example.com')
             ->set('winery_id', $winery->id)

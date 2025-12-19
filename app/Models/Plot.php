@@ -14,7 +14,6 @@ class Plot extends Model
     protected $fillable = [
         'name',
         'description',
-        'winery_id',
         'viticulturist_id',
         'area',
         'active',
@@ -98,6 +97,22 @@ class Plot extends Model
     }
 
     /**
+     * Alias para facilitar acceso a actividades
+     */
+    public function activities(): HasMany
+    {
+        return $this->agriculturalActivities();
+    }
+
+    /**
+     * Plantaciones de variedades de uva en la parcela
+     */
+    public function plantings(): HasMany
+    {
+        return $this->hasMany(PlotPlanting::class);
+    }
+
+    /**
      * Tratamientos fitosanitarios de la parcela
      */
     public function phytosanitaryTreatments()
@@ -139,12 +154,21 @@ class Plot extends Model
     {
         return match ($user->role) {
             'admin' => $query,
-            'supervisor' => $query->whereIn('winery_id', function($q) use ($user) {
-                $q->select('winery_id')
-                  ->from('supervisor_winery')
-                  ->where('supervisor_id', $user->id);
+            'supervisor' => $query->whereIn('viticulturist_id', function($q) use ($user) {
+                // Obtener viticultores pertenecientes a las wineries supervisadas
+                $q->select('viticulturist_id')
+                  ->from('winery_viticulturist')
+                  ->whereIn('winery_id', function($sq) use ($user) {
+                      $sq->select('winery_id')
+                         ->from('supervisor_winery')
+                         ->where('supervisor_id', $user->id);
+                  });
             }),
-            'winery' => $query->where('winery_id', $user->id),
+            'winery' => $query->whereIn('viticulturist_id', function($q) use ($user) {
+                $q->select('viticulturist_id')
+                  ->from('winery_viticulturist')
+                  ->where('winery_id', $user->id);
+            }),
             'viticulturist' => $query->forViticulturist($user),
             default => $query->whereRaw('1 = 0'),
         };

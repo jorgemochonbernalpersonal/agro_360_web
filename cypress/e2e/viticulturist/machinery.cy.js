@@ -86,5 +86,25 @@ describe('Viticulturist Machinery', () => {
       }
     })
   })
+
+  it('should edit existing machinery', () => {
+    // Click first edit action in the table
+    cy.get('a[title="Editar"]').first().click()
+    cy.waitForLivewire()
+
+    // We should be on the edit page
+    cy.url().should('include', '/viticulturist/machinery/')
+
+    // Modify basic fields
+    cy.get('input#name').clear().type('Maquinaria Editada E2E')
+
+    // Submit form
+    cy.get('button[type="submit"]').contains('Actualizar Maquinaria').click()
+    cy.wait(5000)
+
+    // Back on index with updated machinery visible
+    cy.url().should('include', '/viticulturist/machinery')
+    cy.contains('Maquinaria Editada E2E').should('be.visible')
+  })
 })
 

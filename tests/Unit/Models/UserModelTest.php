@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use App\Models\SupervisorViticulturist;
-use App\Models\ViticulturistHierarchy;
 use App\Models\Crew;
 use App\Models\CrewMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -171,40 +170,6 @@ class UserModelTest extends TestCase
 
         $this->assertCount(1, $viticulturist->supervisorRelationsAsViticulturist);
         $this->assertEquals($supervisor->id, $viticulturist->supervisorRelationsAsViticulturist->first()->supervisor_id);
-    }
-
-    public function test_viticulturist_has_parent_hierarchies_relationship(): void
-    {
-        $parentViticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $childViticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $winery = User::factory()->create(['role' => 'winery']);
-
-        ViticulturistHierarchy::create([
-            'parent_viticulturist_id' => $parentViticulturist->id,
-            'child_viticulturist_id' => $childViticulturist->id,
-            'winery_id' => $winery->id,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $this->assertCount(1, $parentViticulturist->parentHierarchies);
-        $this->assertEquals($childViticulturist->id, $parentViticulturist->parentHierarchies->first()->child_viticulturist_id);
-    }
-
-    public function test_viticulturist_has_child_hierarchies_relationship(): void
-    {
-        $parentViticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $childViticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $winery = User::factory()->create(['role' => 'winery']);
-
-        ViticulturistHierarchy::create([
-            'parent_viticulturist_id' => $parentViticulturist->id,
-            'child_viticulturist_id' => $childViticulturist->id,
-            'winery_id' => $winery->id,
-            'assigned_by' => $winery->id,
-        ]);
-
-        $this->assertCount(1, $childViticulturist->childHierarchies);
-        $this->assertEquals($parentViticulturist->id, $childViticulturist->childHierarchies->first()->parent_viticulturist_id);
     }
 
     public function test_user_implements_must_verify_email(): void

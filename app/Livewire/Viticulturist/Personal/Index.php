@@ -30,8 +30,9 @@ class Index extends Component
             ->with(['winery', 'viticulturist'])
             ->withCount(['members', 'activities'])
             ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
+                $search = '%' . strtolower($this->search) . '%';
+                $query->whereRaw('LOWER(name) LIKE ?', [$search])
+                      ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
             })
             ->when($this->wineryFilter, fn($q) => $q->forWinery($this->wineryFilter))
             ->orderBy('created_at', 'desc')

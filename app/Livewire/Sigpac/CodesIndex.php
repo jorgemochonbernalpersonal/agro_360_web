@@ -28,16 +28,17 @@ class CodesIndex extends Component
                 $query->whereIn('plots.id', $plotIds);
             })
             ->when($this->search, function($query) {
-                $query->where(function($q) {
-                    $q->where('code', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
+                $search = '%' . strtolower($this->search) . '%';
+                $query->where(function($q) use ($search) {
+                    $q->whereRaw('LOWER(code) LIKE ?', [$search])
+                      ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
                 });
             })
             ->withCount(['plots' => function($query) use ($plotIds) {
                 $query->whereIn('plots.id', $plotIds);
             }])
             ->orderBy('code')
-            ->paginate(20);
+            ->paginate(10);
 
         return view('livewire.sigpac.codes-index', [
             'codes' => $codes,

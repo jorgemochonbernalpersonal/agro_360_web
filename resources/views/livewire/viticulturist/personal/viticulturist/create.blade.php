@@ -109,8 +109,9 @@
                     <div>
                         <p class="text-sm font-semibold text-blue-800 mb-1">Nota importante:</p>
                         <p class="text-sm text-blue-800">
-                            Se generará una contraseña aleatoria y un PDF con las credenciales. 
-                            El viticultor podrá hacer login inmediatamente sin verificación de email.
+                            El viticultor que crees se añadirá para gestión interna (cuadrillas, parcelas, etc.), 
+                            pero no tendrá acceso a la aplicación hasta que se active su cuenta por parte de un administrador
+                            o mediante un flujo de registro propio.
                         </p>
                     </div>
                 </div>

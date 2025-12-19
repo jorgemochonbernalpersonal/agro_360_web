@@ -3,6 +3,8 @@
 namespace App\Livewire\Viticulturist\Machinery;
 
 use App\Models\Machinery;
+use App\Models\MachineryType;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -10,12 +12,12 @@ use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithToastNotifications;
 
     public Machinery $machinery;
     
     public $name = '';
-    public $type = '';
+    public $machinery_type_id = '';
     public $brand = '';
     public $model = '';
     public $serial_number = '';
@@ -41,7 +43,7 @@ class Edit extends Component
 
         $this->machinery = $machinery;
         $this->name = $machinery->name;
-        $this->type = $machinery->type;
+        $this->machinery_type_id = $machinery->machinery_type_id;
         $this->brand = $machinery->brand ?? '';
         $this->model = $machinery->model ?? '';
         $this->serial_number = $machinery->serial_number ?? '';
@@ -62,7 +64,7 @@ class Edit extends Component
     {
         return [
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'machinery_type_id' => 'required|exists:machinery_types,id',
             'brand' => 'nullable|string|max:255',
             'model' => 'nullable|string|max:255',
             'serial_number' => 'nullable|string|max:255',
@@ -88,6 +90,12 @@ class Edit extends Component
 
         try {
             DB::transaction(function () use ($user) {
+                $typeName = null;
+
+                if ($this->machinery_type_id) {
+                    $type = MachineryType::find($this->machinery_type_id);
+                    $typeName = $type?->name;
+                }
                 $imagePath = $this->current_image;
                 
                 // Si hay una nueva imagen, guardarla y eliminar la anterior
@@ -101,7 +109,8 @@ class Edit extends Component
 
                 $this->machinery->update([
                     'name' => $this->name,
-                    'type' => $this->type,
+                    'type' => $typeName ?: null,
+                    'machinery_type_id' => $this->machinery_type_id ?: null,
                     'brand' => $this->brand ?: null,
                     'model' => $this->model ?: null,
                     'serial_number' => $this->serial_number ?: null,
@@ -119,7 +128,7 @@ class Edit extends Component
                 ]);
             });
 
-            session()->flash('message', 'Maquinaria actualizada correctamente.');
+            $this->toastSuccess('Maquinaria actualizada correctamente.');
             return redirect()->route('viticulturist.machinery.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar maquinaria', [
@@ -129,14 +138,20 @@ class Edit extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al actualizar la maquinaria. Por favor, intenta de nuevo.');
+            $this->toastError('Error al actualizar la maquinaria. Por favor, intenta de nuevo.');
             return;
         }
     }
 
     public function render()
     {
-        return view('livewire.viticulturist.machinery.edit')
+        $types = MachineryType::where('active', true)
+            ->orderBy('name')
+            ->get();
+
+        return view('livewire.viticulturist.machinery.edit', [
+                'machineryTypes' => $types,
+            ])
             ->layout('layouts.app');
     }
 }

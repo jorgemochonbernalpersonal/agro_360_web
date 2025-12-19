@@ -48,9 +48,10 @@ describe('Viticulturist Authentication', () => {
     // Wait for dashboard to load
     cy.url().should('include', '/viticulturist/dashboard')
     
-    // Click logout button in sidebar - find form with logout action
+    // Click logout button in user dropdown - the button may be inside a hidden menu,
+    // so we force the click to submit the form
     cy.get('form[action*="logout"]').first().within(() => {
-      cy.get('button[type="submit"]').click()
+      cy.get('button[type="submit"]').click({ force: true })
     })
     
     // Wait for redirect (logout is a POST request, not Livewire)

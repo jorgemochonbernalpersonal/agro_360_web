@@ -25,6 +25,17 @@ Route::middleware('auth')->group(function () {
 
     // Rutas de verificación de email
     Route::get('/email/verify', function () {
+        $user = auth()->user();
+
+        // Si el email ya está verificado, redirigir directamente al dashboard según el rol
+        if ($user && $user->hasVerifiedEmail()) {
+            $dashboardRoute = $user->isAdmin() ? 'admin.dashboard'
+                : ($user->isSupervisor() ? 'supervisor.dashboard'
+                : ($user->isWinery() ? 'winery.dashboard' : 'viticulturist.dashboard'));
+
+            return redirect()->route($dashboardRoute);
+        }
+
         return view('auth.verify-email');
     })->name('verification.notice');
 

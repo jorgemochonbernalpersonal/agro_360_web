@@ -38,8 +38,8 @@ class Subscription extends Model
     public const STATUS_EXPIRED = 'expired';
 
     // Constantes para precios
-    public const PRICE_MONTHLY = 8.00;
-    public const PRICE_YEARLY = 90.00;
+    public const PRICE_MONTHLY = 12.00;
+    public const PRICE_YEARLY = 120.00;
 
     /**
      * Relación con el usuario

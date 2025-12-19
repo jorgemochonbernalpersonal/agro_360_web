@@ -3,13 +3,14 @@
 namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public $search = '';
     public $yearFilter = '';
@@ -36,9 +37,10 @@ class Index extends Component
             ->orderBy('year', 'desc');
 
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+            $search = '%' . strtolower($this->search) . '%';
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
             });
         }
 
@@ -66,13 +68,13 @@ class Index extends Component
         $campaign = Campaign::findOrFail($campaignId);
 
         if (!Auth::user()->can('activate', $campaign)) {
-            session()->flash('error', 'No tienes permiso para activar esta campaña.');
+            $this->toastError('No tienes permiso para activar esta campaña.');
             return;
         }
 
         try {
             $campaign->activate();
-            session()->flash('message', 'Campaña activada correctamente.');
+            $this->toastSuccess('Campaña activada correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al activar campaña', [
                 'error' => $e->getMessage(),
@@ -80,7 +82,7 @@ class Index extends Component
                 'user_id' => Auth::id(),
             ]);
 
-            session()->flash('error', 'Error al activar la campaña. Por favor, intenta de nuevo.');
+            $this->toastError('Error al activar la campaña. Por favor, intenta de nuevo.');
         }
     }
 
@@ -89,19 +91,19 @@ class Index extends Component
         $campaign = Campaign::withCount('activities')->findOrFail($campaignId);
 
         if (!Auth::user()->can('delete', $campaign)) {
-            session()->flash('error', 'No tienes permiso para eliminar esta campaña.');
+            $this->toastError('No tienes permiso para eliminar esta campaña.');
             return;
         }
 
         // Validar que no tenga actividades
         if ($campaign->activities_count > 0) {
-            session()->flash('error', 'No se puede eliminar una campaña que tiene actividades registradas.');
+            $this->toastError('No se puede eliminar una campaña que tiene actividades registradas.');
             return;
         }
 
         try {
             $campaign->delete();
-            session()->flash('message', 'Campaña eliminada correctamente.');
+            $this->toastSuccess('Campaña eliminada correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al eliminar campaña', [
                 'error' => $e->getMessage(),
@@ -109,7 +111,7 @@ class Index extends Component
                 'user_id' => Auth::id(),
             ]);
 
-            session()->flash('error', 'Error al eliminar la campaña. Por favor, intenta de nuevo.');
+            $this->toastError('Error al eliminar la campaña. Por favor, intenta de nuevo.');
         }
     }
 

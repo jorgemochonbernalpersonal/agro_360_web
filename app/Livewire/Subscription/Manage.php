@@ -143,6 +143,6 @@ class Manage extends Component
 
     public function render()
     {
-        return view('livewire.subscription.manage');
+        return view('livewire.subscription.manage')->layout('layouts.app');
     }
 }

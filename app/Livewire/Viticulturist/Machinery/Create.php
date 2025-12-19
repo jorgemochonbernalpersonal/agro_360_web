@@ -3,6 +3,8 @@
 namespace App\Livewire\Viticulturist\Machinery;
 
 use App\Models\Machinery;
+use App\Models\MachineryType;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -10,10 +12,10 @@ use Livewire\WithFileUploads;
 
 class Create extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithToastNotifications;
 
     public $name = '';
-    public $type = '';
+    public $machinery_type_id = '';
     public $brand = '';
     public $model = '';
     public $serial_number = '';
@@ -41,7 +43,7 @@ class Create extends Component
     {
         return [
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'machinery_type_id' => 'required|exists:machinery_types,id',
             'brand' => 'nullable|string|max:255',
             'model' => 'nullable|string|max:255',
             'serial_number' => 'nullable|string|max:255',
@@ -67,6 +69,13 @@ class Create extends Component
 
         try {
             DB::transaction(function () use ($user) {
+                $typeName = null;
+
+                if ($this->machinery_type_id) {
+                    $type = MachineryType::find($this->machinery_type_id);
+                    $typeName = $type?->name;
+                }
+
                 $imagePath = null;
                 
                 // Guardar imagen si existe
@@ -76,7 +85,8 @@ class Create extends Component
 
                 Machinery::create([
                     'name' => $this->name,
-                    'type' => $this->type,
+                    'type' => $typeName ?: null,
+                    'machinery_type_id' => $this->machinery_type_id ?: null,
                     'brand' => $this->brand ?: null,
                     'model' => $this->model ?: null,
                     'serial_number' => $this->serial_number ?: null,
@@ -95,7 +105,7 @@ class Create extends Component
                 ]);
             });
 
-            session()->flash('message', 'Maquinaria creada correctamente.');
+            $this->toastSuccess('Maquinaria creada correctamente.');
             return redirect()->route('viticulturist.machinery.index');
         } catch (\Exception $e) {
             \Log::error('Error al crear maquinaria', [
@@ -104,14 +114,20 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al crear la maquinaria. Por favor, intenta de nuevo.');
+            $this->toastError('Error al crear la maquinaria. Por favor, intenta de nuevo.');
             return;
         }
     }
 
     public function render()
     {
-        return view('livewire.viticulturist.machinery.create')
+        $types = MachineryType::where('active', true)
+            ->orderBy('name')
+            ->get();
+
+        return view('livewire.viticulturist.machinery.create', [
+                'machineryTypes' => $types,
+            ])
             ->layout('layouts.app');
     }
 }

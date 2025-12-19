@@ -66,33 +66,102 @@
         </x-form-section>
 
         <x-form-section title="Información Adicional" color="green" class="pb-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <x-label for="crew_id">Cuadrilla</x-label>
-                        <x-select wire:model="crew_id" id="crew_id" :error="$errors->first('crew_id')">
-                            <option value="">Sin cuadrilla asignada</option>
-                            @foreach($crews as $crew)
-                                <option value="{{ $crew->id }}">{{ $crew->name }}</option>
-                            @endforeach
-                        </x-select>
+                <!-- ¿Quién realizó el trabajo? -->
+                <div class="mb-6">
+                    <x-label class="mb-3 block font-semibold text-gray-700">¿Quién realizó el trabajo?</x-label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Opción: Equipo completo -->
+                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'crew' ? 'border-[var(--color-agro-green)] bg-[var(--color-agro-green-bg)]' : 'border-gray-200 hover:border-gray-300' }}">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="workType" 
+                                    value="crew" 
+                                    class="w-5 h-5 text-[var(--color-agro-green)] focus:ring-[var(--color-agro-green)]"
+                                />
+                                <div class="flex-1">
+                                    <span class="font-semibold text-gray-900">Equipo completo</span>
+                                    <p class="text-sm text-gray-500 mt-1">Todo el equipo trabajó en esta actividad</p>
+                                </div>
+                            </label>
+                            @if($workType === 'crew')
+                                <div class="mt-4">
+                                    <x-label for="crew_id" class="text-sm">Selecciona el equipo</x-label>
+                                    <x-select 
+                                        wire:model="crew_id" 
+                                        id="crew_id"
+                                        class="mt-1"
+                                        :error="$errors->first('crew_id')"
+                                    >
+                                        <option value="">Selecciona un equipo</option>
+                                        @foreach($crews as $crew)
+                                            <option value="{{ $crew->id }}">{{ $crew->name }}</option>
+                                        @endforeach
+                                    </x-select>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Opción: Viticultor individual -->
+                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'individual' ? 'border-[var(--color-agro-green)] bg-[var(--color-agro-green-bg)]' : 'border-gray-200 hover:border-gray-300' }}">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    wire:model.live="workType" 
+                                    value="individual" 
+                                    class="w-5 h-5 text-[var(--color-agro-green)] focus:ring-[var(--color-agro-green)]"
+                                />
+                                <div class="flex-1">
+                                    <span class="font-semibold text-gray-900">Viticultor individual</span>
+                                    <p class="text-sm text-gray-500 mt-1">Un viticultor específico realizó el trabajo</p>
+                                </div>
+                            </label>
+                            @if($workType === 'individual')
+                                <div class="mt-4">
+                                    <x-label for="crew_member_id" class="text-sm">Selecciona el viticultor</x-label>
+                                    <x-select 
+                                        wire:model="crew_member_id" 
+                                        id="crew_member_id"
+                                        class="mt-1"
+                                        :error="$errors->first('crew_member_id')"
+                                    >
+                                        <option value="">Selecciona un viticultor</option>
+                                        @if(isset($allViticulturists))
+                                            @foreach($allViticulturists as $viticulturist)
+                                                <option value="{{ $viticulturist->id }}">
+                                                    {{ $viticulturist->name }} ({{ $viticulturist->email }})
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </x-select>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    <div>
-                        <x-label for="machinery_id">Maquinaria</x-label>
-                        <x-select wire:model="machinery_id" id="machinery_id" :error="$errors->first('machinery_id')">
-                            <option value="">Sin maquinaria asignada</option>
-                            @foreach($machinery as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->type }})</option>
-                            @endforeach
-                        </x-select>
-                    </div>
+                    @error('workType')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Maquinaria -->
+                <div>
+                    <x-label for="machinery_id">Maquinaria</x-label>
+                    <x-select wire:model="machinery_id" id="machinery_id" :error="$errors->first('machinery_id')">
+                        <option value="">Sin maquinaria asignada</option>
+                        @foreach($machinery as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->type }})</option>
+                        @endforeach
+                    </x-select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div>
                         <x-label for="weather_conditions">Condiciones Meteorológicas</x-label>
                         <x-input wire:model="weather_conditions" type="text" id="weather_conditions" placeholder="Ej: Soleado, nublado" :error="$errors->first('weather_conditions')" />
                     </div>
-                </div>
-                <div class="mt-6">
-                    <x-label for="temperature">Temperatura (°C)</x-label>
-                    <x-input wire:model="temperature" type="number" step="0.1" id="temperature" placeholder="20.0" :error="$errors->first('temperature')" />
+                    <div>
+                        <x-label for="temperature">Temperatura (°C)</x-label>
+                        <x-input wire:model="temperature" type="number" step="0.1" id="temperature" placeholder="20.0" :error="$errors->first('temperature')" />
+                    </div>
                 </div>
                 <div class="mt-6">
                     <x-label for="notes">Notas</x-label>

@@ -3,13 +3,14 @@
 namespace App\Livewire\Viticulturist\Machinery;
 
 use App\Models\Machinery;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public $search = '';
     public $typeFilter = '';
@@ -39,12 +40,13 @@ class Index extends Component
             ->orderBy('name');
 
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('brand', 'like', '%' . $this->search . '%')
-                  ->orWhere('model', 'like', '%' . $this->search . '%')
-                  ->orWhere('serial_number', 'like', '%' . $this->search . '%')
-                  ->orWhere('roma_registration', 'like', '%' . $this->search . '%');
+            $search = '%' . strtolower($this->search) . '%';
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(brand) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(model) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(serial_number) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(roma_registration) LIKE ?', [$search]);
             });
         }
 
@@ -76,19 +78,19 @@ class Index extends Component
         $machinery = Machinery::withCount('activities')->findOrFail($machineryId);
 
         if (!Auth::user()->can('delete', $machinery)) {
-            session()->flash('error', 'No tienes permiso para eliminar esta maquinaria.');
+            $this->toastError('No tienes permiso para eliminar esta maquinaria.');
             return;
         }
 
         // Validar que no tenga actividades
         if ($machinery->activities_count > 0) {
-            session()->flash('error', 'No se puede eliminar una maquinaria que tiene actividades registradas.');
+            $this->toastError('No se puede eliminar una maquinaria que tiene actividades registradas.');
             return;
         }
 
         try {
             $machinery->delete();
-            session()->flash('message', 'Maquinaria eliminada correctamente.');
+            $this->toastSuccess('Maquinaria eliminada correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al eliminar maquinaria', [
                 'error' => $e->getMessage(),
@@ -96,7 +98,7 @@ class Index extends Component
                 'user_id' => Auth::id(),
             ]);
 
-            session()->flash('error', 'Error al eliminar la maquinaria. Por favor, intenta de nuevo.');
+            $this->toastError('Error al eliminar la maquinaria. Por favor, intenta de nuevo.');
         }
     }
 

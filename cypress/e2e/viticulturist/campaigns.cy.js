@@ -75,5 +75,26 @@ describe('Viticulturist Campaigns', () => {
       }
     })
   })
+
+  it('should edit an existing campaign', () => {
+    // Click first edit action in the table
+    cy.get('a[title="Editar"]').first().click()
+    cy.waitForLivewire()
+
+    // We should be on the edit page
+    cy.url().should('include', '/viticulturist/campaign/')
+
+    // Modify basic fields
+    cy.get('input#name').clear().type('Campaña Editada E2E')
+    cy.get('input#year').clear().type('2026')
+
+    // Submit form
+    cy.get('button[type="submit"]').contains('Guardar Cambios').click()
+    cy.wait(5000)
+
+    // Back on index with updated campaign visible
+    cy.url().should('include', '/viticulturist/campaign')
+    cy.contains('Campaña Editada E2E').should('be.visible')
+  })
 })
 

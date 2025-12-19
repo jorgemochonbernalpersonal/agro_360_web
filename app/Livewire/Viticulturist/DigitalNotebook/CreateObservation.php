@@ -8,6 +8,7 @@ use App\Models\Observation;
 use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\Machinery;
+use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,9 @@ class CreateObservation extends Component
     public $description = '';
     public $severity = '';
     public $action_taken = '';
+    public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
+    public $crew_member_id = '';
     public $machinery_id = '';
     public $weather_conditions = '';
     public $temperature = '';
@@ -42,7 +45,7 @@ class CreateObservation extends Component
         
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
-            session()->flash('error', 'No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
             return redirect()->route('viticulturist.campaign.create');
         }
         
@@ -60,6 +63,7 @@ class CreateObservation extends Component
             'severity' => 'nullable|string|in:leve,moderada,grave',
             'action_taken' => 'nullable|string',
             'crew_id' => 'nullable|exists:crews,id',
+            'crew_member_id' => 'nullable|exists:crew_members,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
@@ -73,11 +77,47 @@ class CreateObservation extends Component
 
         $user = Auth::user();
 
+        // Validar que se haya seleccionado un tipo de trabajo
+        if (!$this->workType) {
+            $this->addError('workType', 'Debes seleccionar si el trabajo lo realizó un equipo completo o un viticultor individual.');
+            return;
+        }
+
+        // Validar según el tipo seleccionado
+        if ($this->workType === 'crew' && !$this->crew_id) {
+            $this->addError('crew_id', 'Debes seleccionar un equipo.');
+            return;
+        }
+
+        if ($this->workType === 'individual' && !$this->crew_member_id) {
+            $this->addError('crew_member_id', 'Debes seleccionar un viticultor.');
+            return;
+        }
+
         // Validar que la parcela pertenece al viticultor usando el trait
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
 
         try {
             DB::transaction(function () use ($user) {
+                $crewMemberId = null;
+                
+                // Si es trabajo individual, buscar o crear CrewMember
+                if ($this->workType === 'individual' && $this->crew_member_id) {
+                    $viticulturistId = $this->crew_member_id;
+                    
+                    $crewMember = CrewMember::firstOrCreate(
+                        [
+                            'viticulturist_id' => $viticulturistId,
+                            'assigned_by' => $user->id,
+                        ],
+                        [
+                            'crew_id' => null,
+                        ]
+                    );
+                    
+                    $crewMemberId = $crewMember->id;
+                }
+                
                 // Crear la actividad base
                 $activity = AgriculturalActivity::create([
                     'plot_id' => $this->plot_id,
@@ -85,7 +125,8 @@ class CreateObservation extends Component
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'observation',
                     'activity_date' => $this->activity_date,
-                    'crew_id' => $this->crew_id ?: null,
+                    'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
+                    'crew_member_id' => $crewMemberId,
                     'machinery_id' => $this->machinery_id ?: null,
                     'weather_conditions' => $this->weather_conditions,
                     'temperature' => $this->temperature ?: null,
@@ -103,7 +144,7 @@ class CreateObservation extends Component
                 ]);
             });
 
-            session()->flash('message', 'Observación registrada correctamente.');
+            $this->toastSuccess('Observación registrada correctamente.');
             return redirect()->route('viticulturist.digital-notebook');
         } catch (\Exception $e) {
             \Log::error('Error al registrar observación', [
@@ -113,7 +154,7 @@ class CreateObservation extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al registrar la observación. Por favor, intenta de nuevo.');
+            $this->toastError('Error al registrar la observación. Por favor, intenta de nuevo.');
             return;
         }
     }
@@ -136,6 +177,22 @@ class CreateObservation extends Component
             ->orderBy('name')
             ->get();
 
+        $individualWorkers = CrewMember::whereNull('crew_id')
+            ->where('assigned_by', $user->id)
+            ->with('viticulturist')
+            ->get()
+            ->sortBy(fn ($worker) => $worker->viticulturist->name)
+            ->values();
+        
+        // También obtener todos los viticultores visibles para selección individual
+        $allViticulturists = \App\Models\WineryViticulturist::editableBy($user)
+            ->with('viticulturist')
+            ->get()
+            ->pluck('viticulturist')
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
+
         $campaign = Campaign::find($this->campaign_id);
 
         return view('livewire.viticulturist.digital-notebook.create-observation', [
@@ -143,6 +200,8 @@ class CreateObservation extends Component
             'crews' => $crews,
             'machinery' => $machinery,
             'campaign' => $campaign,
+            'individualWorkers' => $individualWorkers,
+            'allViticulturists' => $allViticulturists,
         ])->layout('layouts.app');
     }
 }

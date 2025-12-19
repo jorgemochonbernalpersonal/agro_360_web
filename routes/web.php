@@ -5,8 +5,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
-        // Si está autenticado, redirigir a su dashboard según el rol
         $user = auth()->user();
+        
+        // PRIMERO verificar si necesita cambiar contraseña
+        if ($user->password_must_reset) {
+            return redirect()->route('password.force-reset');
+        }
+        
+        // LUEGO redirigir a dashboard
         return redirect()->route($user->role . '.dashboard');
     }
     // Si no está autenticado, redirigir al login
@@ -15,9 +21,18 @@ Route::get('/', function () {
 
 Route::get('/counter', Counter::class)->name('counter');
 
+// Ruta para forzar cambio de contraseña (debe estar fuera del middleware 'auth' principal)
+Route::middleware('auth')->get('/password/force-reset', \App\Livewire\Auth\ForcePasswordReset::class)    ->name('password.force-reset');
+
 require __DIR__ . '/auth.php';
 
-Route::middleware(['auth', 'require.password.change', 'verified'])->group(function () {
+Route::middleware(['auth', 'password.changed'])->group(function () {
+    // password.changed debe ejecutarse ANTES de verified
+    // Si tiene password_must_reset, redirige a force-reset sin verificar email
+})->withoutMiddleware('verified'); // Asegurar que verified no se ejecute aquí
+
+// Rutas protegidas: password cambiado Y email verificado
+Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
     require __DIR__ . '/plots.php';
     require __DIR__ . '/sigpac.php';
     require __DIR__ . '/config.php';

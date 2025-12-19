@@ -13,11 +13,12 @@ use App\Livewire\Viticulturist\Machinery\Create as MachineryCreate;
 use App\Livewire\Viticulturist\Machinery\Edit as MachineryEdit;
 use App\Livewire\Viticulturist\Machinery\Index as MachineryIndex;
 use App\Livewire\Viticulturist\Machinery\Show as MachineryShow;
-use App\Livewire\Viticulturist\Personal\Hierarchy\Index as HierarchyIndex;
-use App\Livewire\Viticulturist\Personal\Workers\Index as WorkersIndex;
+use App\Livewire\Viticulturist\PhytosanitaryProducts\Index as PhytosanitaryProductsIndex;
+use App\Livewire\Viticulturist\PhytosanitaryProducts\Create as PhytosanitaryProductsCreate;
+use App\Livewire\Viticulturist\PhytosanitaryProducts\Edit as PhytosanitaryProductsEdit;
 use App\Livewire\Viticulturist\Personal\Create as PersonalCreate;
 use App\Livewire\Viticulturist\Personal\Edit as PersonalEdit;
-use App\Livewire\Viticulturist\Personal\Index as PersonalIndex;
+use App\Livewire\Viticulturist\Personal\UnifiedIndex as PersonalUnifiedIndex;
 use App\Livewire\Viticulturist\Personal\Show as PersonalShow;
 use App\Livewire\Viticulturist\Calendar;
 use App\Livewire\Viticulturist\DigitalNotebook;
@@ -49,14 +50,23 @@ Route::middleware(['role:viticulturist'])
             Route::get('/observation/create', CreateObservation::class)->name('observation.create');
         });
 
-        // Personal (Cuadrillas)
+        // Personal (Equipos y Personal unificado)
+        // Redirigir viticultores a personal
+        Route::prefix('viticulturists')->name('viticulturists.')->group(function () {
+            Route::get('/', function () {
+                return redirect()->route('viticulturist.personal.index', ['viewMode' => 'personal']);
+            })->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Viticulturists\Create::class)->name('create');
+        });
+
         Route::prefix('personal')->name('personal.')->group(function () {
-            Route::get('/', PersonalIndex::class)->name('index');
+            Route::get('/', PersonalUnifiedIndex::class)->name('index');
             Route::get('/create', PersonalCreate::class)->name('create');
-            // Jerarquía y Workers deben ir antes de {crew} para evitar conflictos
-            Route::get('/hierarchy', HierarchyIndex::class)->name('hierarchy');
-            Route::get('/workers', WorkersIndex::class)->name('workers');
-            Route::get('/viticulturist/create', \App\Livewire\Viticulturist\Personal\Viticulturist\Create::class)->name('viticulturist.create');
+            // Redirigir workers a personal
+            Route::get('/workers', function () {
+                return redirect()->route('viticulturist.personal.index', ['viewMode' => 'personal']);
+            })->name('workers');
+            Route::get('/viticulturist/create', \App\Livewire\Viticulturist\Viticulturists\Create::class)->name('viticulturist.create');
             Route::get('/viticulturist/download-credentials', function (\Illuminate\Http\Request $request) {
                 $viticulturistId = $request->query('id');
 
@@ -108,5 +118,13 @@ Route::middleware(['role:viticulturist'])
             Route::get('/{machinery}', MachineryShow::class)->name('show');
             Route::get('/{machinery}/edit', MachineryEdit::class)->name('edit');
         });
+
+        // Productos fitosanitarios
+        Route::prefix('phytosanitary-products')->name('phytosanitary-products.')->group(function () {
+            Route::get('/', PhytosanitaryProductsIndex::class)->name('index');
+            Route::get('/create', PhytosanitaryProductsCreate::class)->name('create');
+            Route::get('/{product}/edit', PhytosanitaryProductsEdit::class)->name('edit');
+        });
+
         Route::get('/calendar', Calendar::class)->name('calendar');
     });

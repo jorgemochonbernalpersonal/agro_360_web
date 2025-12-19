@@ -17,14 +17,13 @@ class Show extends Component
         }
 
         $this->plot = $plot->load([
-            'winery',
             'viticulturist',
             'autonomousCommunity',
             'province',
             'municipality',
             'sigpacUses',
             'sigpacCodes',
-            'multipartCoordinates.sigpacCode'
+            'multipartCoordinates.sigpacCode',
         ]);
     }
 

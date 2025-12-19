@@ -4,6 +4,7 @@ namespace App\Livewire\Concerns;
 
 use App\Models\Plot;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 trait WithViticulturistValidation
 {
@@ -24,7 +25,19 @@ trait WithViticulturistValidation
      */
     protected function authorizeCreateActivity(): void
     {
-        if (!Auth::user()->can('create', \App\Models\AgriculturalActivity::class)) {
+        $user = Auth::user();
+
+        if (!$user) {
+            abort(403, 'No tienes permiso para crear actividades agrícolas.');
+        }
+
+        // Permitimos viticultores, bodegas, supervisores y admins
+        if (
+            ! $user->isViticulturist() &&
+            ! $user->isWinery() &&
+            ! $user->isSupervisor() &&
+            ! $user->isAdmin()
+        ) {
             abort(403, 'No tienes permiso para crear actividades agrícolas.');
         }
     }
@@ -38,7 +51,9 @@ trait WithViticulturistValidation
         
         $plot = Plot::findOrFail($plotId);
         
-        if (!Auth::user()->can('create', [\App\Models\AgriculturalActivity::class, $plot])) {
+        // Usar la misma lógica que para editar la parcela:
+        // si el usuario puede actualizar la parcela, puede crear actividades sobre ella.
+        if (!Auth::user()->can('update', $plot)) {
             abort(403, 'No tienes permiso para crear actividades en esta parcela.');
         }
         

@@ -3,12 +3,14 @@
 namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Create extends Component
 {
+    use WithToastNotifications;
     public $name = '';
     public $year = '';
     public $start_date = '';
@@ -76,7 +78,7 @@ class Create extends Component
                 }
             });
 
-            session()->flash('message', 'Campaña creada correctamente.');
+            $this->toastSuccess('Campaña creada correctamente.');
             return redirect()->route('viticulturist.campaign.index');
         } catch (\Exception $e) {
             \Log::error('Error al crear campaña', [
@@ -86,7 +88,7 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al crear la campaña. Por favor, intenta de nuevo.');
+            $this->toastError('Error al crear la campaña. Por favor, intenta de nuevo.');
             return;
         }
     }

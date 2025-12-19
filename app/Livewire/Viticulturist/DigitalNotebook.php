@@ -78,7 +78,7 @@ class DigitalNotebook extends Component
 
         // Obtener actividades
         $query = AgriculturalActivity::forViticulturist($user->id)
-            ->with(['plot', 'crew', 'campaign'])
+            ->with(['plot', 'crew', 'crewMember.viticulturist', 'campaign'])
             ->orderBy('activity_date', 'desc');
 
         // Filtrar por campaña (siempre)
@@ -103,16 +103,17 @@ class DigitalNotebook extends Component
         }
 
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('notes', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('plot', function($plotQuery) {
-                      $plotQuery->where('name', 'like', '%' . $this->search . '%');
+            $search = '%' . strtolower($this->search) . '%';
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(notes) LIKE ?', [$search])
+                  ->orWhereHas('plot', function($plotQuery) use ($search) {
+                      $plotQuery->whereRaw('LOWER(name) LIKE ?', [$search]);
                   })
-                  ->orWhereHas('phytosanitaryTreatment.product', function($productQuery) {
-                      $productQuery->where('name', 'like', '%' . $this->search . '%');
+                  ->orWhereHas('phytosanitaryTreatment.product', function($productQuery) use ($search) {
+                      $productQuery->whereRaw('LOWER(name) LIKE ?', [$search]);
                   })
-                  ->orWhereHas('fertilization', function($fertQuery) {
-                      $fertQuery->where('fertilizer_name', 'like', '%' . $this->search . '%');
+                  ->orWhereHas('fertilization', function($fertQuery) use ($search) {
+                      $fertQuery->whereRaw('LOWER(fertilizer_name) LIKE ?', [$search]);
                   });
             });
         }
@@ -142,7 +143,7 @@ class DigitalNotebook extends Component
         $fertilizationCount = (clone $baseQuery)->ofType('fertilization')->count();
         $irrigationCount = (clone $baseQuery)->ofType('irrigation')->count();
 
-        $activities = $query->paginate(15);
+        $activities = $query->paginate(10);
 
         // Productos para filtro (solo si es tipo phytosanitary)
         $products = $this->activityType === 'phytosanitary' 

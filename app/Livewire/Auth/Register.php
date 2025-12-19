@@ -31,6 +31,11 @@ class Register extends Component
                 'winery' => 'viticulturist', // Winery solo crea viticulturist
                 default => 'viticulturist',
             };
+        } else {
+            // Prefijar email desde enlace de invitación, si viene en la URL
+            if (request()->has('email')) {
+                $this->email = request()->query('email');
+            }
         }
     }
 
@@ -38,7 +43,8 @@ class Register extends Component
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            // La unicidad se gestionará manualmente en register() para permitir activar viticultores pre-creados
+            'email' => 'required|string|email|max:255',
             'password' => ['required', 'confirmed', Password::defaults()],
         ];
 
@@ -74,11 +80,64 @@ class Register extends Component
     {
         $this->validate();
 
+        $existing = User::where('email', $this->email)->first();
+
+        // Registro público (sin usuario autenticado): puede ser alta nueva o activación de viticultor pre-creado
+        if (!Auth::check()) {
+            if ($existing) {
+                // Activar viticultor que fue creado previamente sin acceso (can_login = false)
+                if ($existing->role === User::ROLE_VITICULTURIST && $existing->can_login === false) {
+                    $existing->update([
+                        'name' => $this->name,
+                        'password' => Hash::make($this->password),
+                        'can_login' => true,
+                        'password_must_reset' => false,
+                        // Ya ha demostrado que controla este email (ha usado el enlace de invitación),
+                        // así que marcamos el email como verificado directamente.
+                        'email_verified_at' => now(),
+                    ]);
+
+                    // Loguear al usuario y llevarlo directamente a su dashboard
+                    Auth::login($existing);
+                    session()->regenerate();
+                    session()->flash('message', 'Cuenta activada correctamente. Ya puedes empezar a usar Agro365.');
+
+                    return $this->redirect(route($this->getDashboardRoute()), navigate: true);
+                }
+
+                // Cualquier otro caso: email ya usado por una cuenta activa
+                $this->addError('email', 'Este email ya está registrado.');
+                return;
+            }
+        } else {
+            // Creación interna (admin/supervisor/winery/viticultor): no permitir reutilizar emails
+            if ($existing) {
+                $this->addError('email', 'Este email ya está registrado.');
+                return;
+            }
+        }
+
+        // Detectar si viticultor esta creando otro viticultor (requiere password temporal)
+        $isViticulturistCreatingViticulturist = Auth::check() 
+            && Auth::user()->isViticulturist() 
+            && $this->role === 'viticulturist';
+        
+        // Generar contraseña temporal si es necesario
+        $temporaryPassword = null;
+        if ($isViticulturistCreatingViticulturist) {
+            $temporaryPassword = \Illuminate\Support\Str::random(12);
+            $password = Hash::make($temporaryPassword);
+        } else {
+            $password = Hash::make($this->password);
+        }
+
         $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
-            'password' => Hash::make($this->password),
+            'password' => $password,
             'role' => $this->role,
+            'password_must_reset' => $isViticulturistCreatingViticulturist,
+            'can_login' => true,
         ]);
 
         // Crear relaciones automáticas si está autenticado
@@ -124,10 +183,41 @@ class Register extends Component
                 ]);
             }
 
-            // Enviar email de verificación cuando un usuario autenticado crea otro usuario
-            $user->sendEmailVerificationNotification();
+            // Enviar email según el tipo de usuario creado
+            if ($isViticulturistCreatingViticulturist) {
+                // Generar PDF con credenciales
+                $pdf = \PDF::loadView('pdf.credentials', [
+                    'email' => $user->email,
+                    'password' => $temporaryPassword,
+                    'created_at' => now()->format('d/m/Y H:i'),
+                ]);
+                
+                // Guardar PDF temporalmente
+                $pdfPath = storage_path('app/temp/credentials_' . $user->id . '_' . time() . '.pdf');
+                if (!file_exists(dirname($pdfPath))) {
+                    mkdir(dirname($pdfPath), 0755, true);
+                }
+                $pdf->save($pdfPath);
+                
+                // Enviar email con PDF adjunto
+                $user->notify(new \App\Notifications\TemporaryPasswordNotification($temporaryPassword, $pdfPath));
+                
+                session()->flash('message', 'Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.');
+                session()->flash('pdf_download', base64_encode($pdf->output()));
+                session()->flash('pdf_filename', 'credenciales_' . str_replace(['@', '.'], '_', $user->email) . '.pdf');
+                
+                // Eliminar PDF temp después de 1 minuto (dar tiempo a enviar email)
+                dispatch(function() use ($pdfPath) {
+                    if (file_exists($pdfPath)) {
+                        unlink($pdfPath);
+                    }
+                })->delay(now()->addMinute());
+            } else {
+                // Enviar email de verificación tradicional
+                $user->sendEmailVerificationNotification();
+                session()->flash('message', 'Usuario creado correctamente. Se ha enviado un email de verificación.');
+            }
 
-            session()->flash('message', 'Usuario creado correctamente. Se ha enviado un email de verificación.');
             return $this->redirect(route($this->getRedirectRoute()), navigate: true);
         }
 

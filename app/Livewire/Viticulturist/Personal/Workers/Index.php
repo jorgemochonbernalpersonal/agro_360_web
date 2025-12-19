@@ -42,7 +42,7 @@ class Index extends Component
         // Obtener trabajadores individuales asignados por este viticultor
         $query = CrewMember::whereNull('crew_id')
             ->where('assigned_by', $user->id)
-            ->with('viticulturist')
+            ->with(['viticulturist', 'crew'])
             ->when($this->wineryFilter, function ($q) {
                 // Filtrar por bodega a través de WineryViticulturist
                 $viticulturistIds = WineryViticulturist::where('winery_id', $this->wineryFilter)
@@ -120,28 +120,14 @@ class Index extends Component
 
         $user = Auth::user();
 
-        // Validar visibilidad usando el método isVisibleTo
-        // Si hay winery seleccionada, validar que el viticultor esté en esa winery
-        if ($this->selectedWineryId) {
-            $wineryRelation = WineryViticulturist::where('viticulturist_id', $this->newWorkerId)
-                ->where('winery_id', $this->selectedWineryId)
-                ->first();
+        // Validar que el viticultor seleccionado sea realmente visible para el usuario
+        $visibleRelationExists = WineryViticulturist::visibleTo($user, $this->selectedWineryId ?: null)
+            ->where('viticulturist_id', $this->newWorkerId)
+            ->exists();
 
-            if (!$wineryRelation || !$wineryRelation->isVisibleTo($user)) {
-                session()->flash('error', 'No tienes permiso para gestionar este viticultor.');
-                return;
-            }
-        } else {
-            // Si no hay winery, solo validar que sea un viticultor creado por el usuario
-            $wineryRelation = WineryViticulturist::where('viticulturist_id', $this->newWorkerId)
-                ->where('parent_viticulturist_id', $user->id)
-                ->where('source', WineryViticulturist::SOURCE_VITICULTURIST)
-                ->first();
-
-            if (!$wineryRelation) {
-                session()->flash('error', 'Solo puedes gestionar viticultores que hayas creado.');
-                return;
-            }
+        if (! $visibleRelationExists) {
+            session()->flash('error', 'No tienes permiso para gestionar este viticultor.');
+            return;
         }
 
         // Validar que no sea el mismo usuario
@@ -150,13 +136,11 @@ class Index extends Component
             return;
         }
 
-        // Validar que no exista ya como trabajador individual
-        $exists = CrewMember::where('viticulturist_id', $this->newWorkerId)
-            ->whereNull('crew_id')
-            ->exists();
+        // Validar que no exista ya como trabajador (individual o en cuadrilla)
+        $exists = CrewMember::where('viticulturist_id', $this->newWorkerId)->exists();
 
         if ($exists) {
-            session()->flash('error', 'Este viticultor ya es un trabajador individual.');
+            session()->flash('error', 'Este viticultor ya está dado de alta como trabajador (individual o en una cuadrilla).');
             return;
         }
 

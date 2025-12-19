@@ -82,5 +82,25 @@ describe('Viticulturist Crews (Cuadrillas)', () => {
       }
     })
   })
+
+  it('should edit an existing crew', () => {
+    // Click first edit action in the table
+    cy.get('a[title="Editar"]').first().click()
+    cy.waitForLivewire()
+
+    // We should be on the edit page
+    cy.url().should('include', '/viticulturist/personal/')
+
+    // Modify basic fields
+    cy.get('input#name').clear().type('Cuadrilla Editada E2E')
+
+    // Submit form
+    cy.get('button[type="submit"]').contains('Guardar Cambios').click()
+    cy.wait(5000)
+
+    // Back on index with updated crew visible
+    cy.url().should('include', '/viticulturist/personal')
+    cy.contains('Cuadrilla Editada E2E').should('be.visible')
+  })
 })
 

@@ -20,19 +20,27 @@ class Index extends Component
     {
         $query = Plot::forUser(Auth::user())
             ->select([
-                'id', 'name', 'description', 'area', 'active',
-                'winery_id', 'viticulturist_id', 'municipality_id',
-                'created_at', 'updated_at'
+                'id',
+                'name',
+                'description',
+                'area',
+                'active',
+                // `winery_id` eliminado: la propiedad se deduce por viticultor
+                'viticulturist_id',
+                'municipality_id',
+                'created_at',
+                'updated_at',
             ])
             ->with([
-                'winery:id,name',
+                // 'winery:id,name', // relación ya no tiene columna física en plots
                 'viticulturist:id,name',
                 'municipality:id,name,province_id',
                 'municipality.province:id,name'
             ]);
 
         if ($this->search) {
-            $query->where('name', 'like', '%' . $this->search . '%');
+            $search = '%' . strtolower($this->search) . '%';
+            $query->whereRaw('LOWER(name) LIKE ?', [$search]);
         }
 
         if ($this->activeFilter !== '') {
@@ -53,6 +61,6 @@ class Index extends Component
         }
 
         $plot->delete();
-        session()->flash('message', 'Parcela eliminada correctamente.');
+        $this->toastSuccess('Parcela eliminada correctamente.');
     }
 }

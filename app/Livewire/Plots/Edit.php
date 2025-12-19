@@ -8,9 +8,9 @@ use App\Models\SigpacCode;
 use App\Models\AutonomousCommunity;
 use App\Models\Province;
 use App\Models\Municipality;
-use App\Models\MultipartPlotSigpac;
 use App\Livewire\Concerns\WithRoleBasedFields;
 use App\Livewire\Concerns\WithWineryFilter;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,12 +19,11 @@ use Illuminate\Validation\ValidationException;
 
 class Edit extends Component
 {
-    use WithRoleBasedFields, WithWineryFilter;
+    use WithRoleBasedFields, WithWineryFilter, WithToastNotifications;
 
     public Plot $plot;
     public $name = '';
     public $description = '';
-    public $winery_id = '';
     public $viticulturist_id = '';
     public $area = '';
     public $active = true;
@@ -33,7 +32,6 @@ class Edit extends Component
     public $municipality_id = '';
     public $sigpac_use = [];
     public $sigpac_code = [];
-    public $multipart_coordinates = [];
 
     public function mount(Plot $plot)
     {
@@ -44,15 +42,13 @@ class Edit extends Component
         $this->plot = $plot->load([
             'sigpacUses',
             'sigpacCodes',
-            'multipartCoordinates',
             'autonomousCommunity',
             'province',
-            'municipality'
+            'municipality',
         ]);
 
         $this->name = $plot->name;
         $this->description = $plot->description;
-        $this->winery_id = $plot->winery_id;
         $this->viticulturist_id = $plot->viticulturist_id;
         $this->area = $plot->area;
         $this->active = $plot->active;
@@ -61,15 +57,6 @@ class Edit extends Component
         $this->municipality_id = $plot->municipality_id;
         $this->sigpac_use = $plot->sigpacUses->pluck('id')->toArray();
         $this->sigpac_code = $plot->sigpacCodes->pluck('id')->toArray();
-        
-        // Cargar coordenadas multiparte
-        $this->multipart_coordinates = $plot->multipartCoordinates->map(function ($coord) {
-            return [
-                'id' => $coord->id,
-                'coordinates' => $coord->coordinates,
-                'sigpac_code_id' => $coord->sigpac_code_id,
-            ];
-        })->toArray();
     }
 
     protected function rules(): array
@@ -81,9 +68,7 @@ class Edit extends Component
             'active' => 'boolean',
         ];
 
-        if ($this->canSelectWinery()) {
-            $rules['winery_id'] = 'required|exists:users,id';
-        }
+        // `winery_id` removed: do not validate here.
 
         if ($this->canSelectViticulturist()) {
             $rules['viticulturist_id'] = 'nullable|exists:users,id';
@@ -98,7 +83,8 @@ class Edit extends Component
         if ($this->canSelectSigpac()) {
             $rules['sigpac_use'] = 'required|array|min:1';
             $rules['sigpac_use.*'] = 'exists:sigpac_use,id';
-            $rules['sigpac_code'] = 'required|array|min:1';
+            // Igual que en Create: códigos SIGPAC opcionales
+            $rules['sigpac_code'] = 'nullable|array';
             $rules['sigpac_code.*'] = 'exists:sigpac_code,id';
         }
 
@@ -149,9 +135,7 @@ class Edit extends Component
                 'active' => $this->active,
             ];
 
-            if ($this->canSelectWinery()) {
-                $data['winery_id'] = $this->winery_id;
-            }
+            // `winery_id` removed: plots now tracked by `viticulturist_id`.
 
             if ($this->canSelectViticulturist() && $this->viticulturist_id) {
                 // Validar que el viticultor fue creado por el usuario
@@ -196,30 +180,9 @@ class Edit extends Component
                 $this->plot->sigpacCodes()->sync($this->sigpac_code);
             }
 
-            // Actualizar coordenadas multiparte
-            $existingIds = collect($this->multipart_coordinates)->pluck('id')->filter()->toArray();
-            $this->plot->multipartCoordinates()->whereNotIn('id', $existingIds)->delete();
-
-            foreach ($this->multipart_coordinates as $coord) {
-                if (!empty($coord['coordinates'])) {
-                    if (isset($coord['id'])) {
-                        MultipartPlotSigpac::where('id', $coord['id'])->update([
-                            'coordinates' => $coord['coordinates'],
-                            'sigpac_code_id' => $coord['sigpac_code_id'] ?? null,
-                        ]);
-                    } else {
-                        MultipartPlotSigpac::create([
-                            'plot_id' => $this->plot->id,
-                            'coordinates' => $coord['coordinates'],
-                            'sigpac_code_id' => $coord['sigpac_code_id'] ?? null,
-                        ]);
-                    }
-                }
-            }
-
             DB::commit();
 
-            session()->flash('message', 'Parcela actualizada correctamente.');
+            $this->toastSuccess('Parcela actualizada correctamente.');
             return $this->redirect(route('plots.index'), navigate: true);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -234,24 +197,6 @@ class Edit extends Component
                 'general' => 'Error al actualizar la parcela. Por favor, intenta de nuevo.',
             ]);
         }
-    }
-
-    public function addCoordinate()
-    {
-        $this->multipart_coordinates[] = [
-            'coordinates' => '',
-            'sigpac_code_id' => null,
-        ];
-    }
-
-    public function removeCoordinate($index)
-    {
-        $coord = $this->multipart_coordinates[$index];
-        if (isset($coord['id'])) {
-            MultipartPlotSigpac::where('id', $coord['id'])->delete();
-        }
-        unset($this->multipart_coordinates[$index]);
-        $this->multipart_coordinates = array_values($this->multipart_coordinates);
     }
 
     public function render()

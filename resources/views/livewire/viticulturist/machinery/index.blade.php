@@ -6,7 +6,7 @@
         :icon="$icon"
         title="Maquinaria"
         description="Gestiona tu maquinaria y equipos agrícolas"
-        icon-color="from-[var(--color-agro-brown)] to-[var(--color-agro-brown-light)]"
+        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
             @can('create', \App\Models\Machinery::class)
@@ -20,7 +20,7 @@
         </x-slot:actionButton>
     </x-page-header>
 
-    <x-filter-section title="Filtros de Búsqueda" color="brown">
+    <x-filter-section title="Filtros de Búsqueda" color="green">
         <x-filter-input 
             wire:model.live.debounce.300ms="search" 
             placeholder="Buscar por nombre, marca, modelo..."
@@ -57,13 +57,13 @@
         ];
     @endphp
 
-    <x-data-table :headers="$headers" empty-message="No hay maquinaria registrada" empty-description="Comienza agregando tu primera maquinaria o equipo agrícola" color="brown">
+    <x-data-table :headers="$headers" empty-message="No hay maquinaria registrada" empty-description="Comienza agregando tu primera maquinaria o equipo agrícola" color="green">
         @if($machinery->count() > 0)
             @foreach($machinery as $item)
                 <x-table-row>
                     <x-table-cell>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--color-agro-brown)]/20 to-[var(--color-agro-brown-light)] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>

@@ -2,28 +2,27 @@
 
 namespace App\Livewire\Plots;
 
-use App\Models\Plot;
-use App\Models\SigpacUse;
-use App\Models\SigpacCode;
-use App\Models\AutonomousCommunity;
-use App\Models\Province;
-use App\Models\Municipality;
-use App\Models\MultipartPlotSigpac;
 use App\Livewire\Concerns\WithRoleBasedFields;
 use App\Livewire\Concerns\WithWineryFilter;
-use Livewire\Component;
+use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\AutonomousCommunity;
+use App\Models\Municipality;
+use App\Models\Plot;
+use App\Models\Province;
+use App\Models\SigpacCode;
+use App\Models\SigpacUse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Livewire\Component;
 
 class Create extends Component
 {
-    use WithRoleBasedFields, WithWineryFilter;
+    use WithRoleBasedFields, WithWineryFilter, WithToastNotifications;
 
     public $name = '';
     public $description = '';
-    public $winery_id = '';
     public $viticulturist_id = '';
     public $area = '';
     public $active = true;
@@ -32,7 +31,6 @@ class Create extends Component
     public $municipality_id = '';
     public $sigpac_use = [];
     public $sigpac_code = [];
-    public $multipart_coordinates = []; // Array de coordenadas
 
     public function mount()
     {
@@ -40,11 +38,8 @@ class Create extends Component
             abort(403);
         }
 
-        // Auto-asignar bodega si es winery
-        if (Auth::user()->isWinery()) {
-            $this->winery_id = Auth::id();
-        }
-        
+        // (winery_id removed) no auto-assign here
+
         // Auto-asignar viticultor si es viticulturist
         // Siempre se auto-asigna el viticultor a sí mismo, a menos que pueda seleccionar otros viticultores
         if (Auth::user()->isViticulturist()) {
@@ -65,10 +60,7 @@ class Create extends Component
             'active' => 'boolean',
         ];
 
-        // Validar solo si el campo es visible
-        if ($this->canSelectWinery()) {
-            $rules['winery_id'] = 'required|exists:users,id';
-        }
+        // Validar solo si el campo es visible (winery_id removed)
 
         if ($this->canSelectViticulturist()) {
             $rules['viticulturist_id'] = 'nullable|exists:users,id';
@@ -83,7 +75,8 @@ class Create extends Component
         if ($this->canSelectSigpac()) {
             $rules['sigpac_use'] = 'required|array|min:1';
             $rules['sigpac_use.*'] = 'exists:sigpac_use,id';
-            $rules['sigpac_code'] = 'required|array|min:1';
+            // `sigpac_code` is optional in this deployment (legacy usage only sigpac_use)
+            $rules['sigpac_code'] = 'nullable|array';
             $rules['sigpac_code.*'] = 'exists:sigpac_code,id';
         }
 
@@ -105,6 +98,18 @@ class Create extends Component
 
     public function save()
     {
+        // Registrar intento de validación/creación
+        Log::info('Intentando crear parcela (inicio save)', [
+            'user_id' => Auth::id(),
+            'name' => $this->name,
+            'viticulturist_id' => $this->viticulturist_id ?? null,
+            'autonomous_community_id' => $this->autonomous_community_id ?? null,
+            'province_id' => $this->province_id ?? null,
+            'municipality_id' => $this->municipality_id ?? null,
+            'sigpac_use' => $this->sigpac_use,
+            'sigpac_code' => $this->sigpac_code,
+        ]);
+
         $this->validate();
 
         try {
@@ -117,27 +122,12 @@ class Create extends Component
                 'active' => $this->active,
             ];
 
-            // Solo agregar campos si son visibles
-            if ($this->canSelectWinery()) {
-                $data['winery_id'] = $this->winery_id;
-            } elseif (Auth::user()->isWinery()) {
-                $data['winery_id'] = Auth::id(); // Auto-asignar si es winery
-            } elseif (Auth::user()->isViticulturist()) {
-                // Para viticultores, obtener la primera winery asociada
-                $wineries = Auth::user()->wineries;
-                if ($wineries->isEmpty()) {
-                    throw ValidationException::withMessages([
-                        'general' => 'No tienes ninguna bodega asociada. Debes estar asociado a una bodega para crear parcelas. Por favor, contacta con tu administrador o supervisor.',
-                    ]);
-                }
-                $data['winery_id'] = $wineries->first()->id;
-            }
+            // No asignar `winery_id` — columna eliminada, la pista de pertenencia es `viticulturist_id`.
 
             if ($this->canSelectViticulturist() && $this->viticulturist_id) {
-                // Validar que el viticultor fue creado por el usuario
                 $user = Auth::user();
                 $canAssign = false;
-                
+
                 if ($user->isWinery()) {
                     $canAssign = \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
                         ->where('winery_id', $user->id)
@@ -147,15 +137,15 @@ class Create extends Component
                 } elseif ($user->isViticulturist()) {
                     $canAssign = $user->canEditViticulturist($this->viticulturist_id);
                 } else {
-                    $canAssign = true; // Admin y supervisor
+                    $canAssign = true;  // Admin y supervisor
                 }
-                
+
                 if (!$canAssign) {
                     throw ValidationException::withMessages([
                         'viticulturist_id' => 'Solo puedes asignar parcelas a viticultores que has creado.',
                     ]);
                 }
-                
+
                 $data['viticulturist_id'] = $this->viticulturist_id;
             } elseif (Auth::user()->isViticulturist()) {
                 // Auto-asignar viticultor si es viticulturist y no puede seleccionar o no seleccionó ninguno
@@ -170,6 +160,13 @@ class Create extends Component
 
             $plot = Plot::create($data);
 
+            // Log resultado de create
+            Log::info('Plot::create result', [
+                'user_id' => Auth::id(),
+                'plot_id' => $plot->id ?? null,
+                'plot' => $plot->toArray(),
+            ]);
+
             // Sincronizar relaciones many-to-many
             if ($this->canSelectSigpac() && !empty($this->sigpac_use)) {
                 $plot->sigpacUses()->sync($this->sigpac_use);
@@ -179,62 +176,50 @@ class Create extends Component
                 $plot->sigpacCodes()->sync($this->sigpac_code);
             }
 
-            // Guardar coordenadas multiparte
-            if (!empty($this->multipart_coordinates)) {
-                foreach ($this->multipart_coordinates as $coords) {
-                    if (!empty($coords['coordinates'])) {
-                        MultipartPlotSigpac::create([
-                            'plot_id' => $plot->id,
-                            'coordinates' => $coords['coordinates'],
-                            'sigpac_code_id' => $coords['sigpac_code_id'] ?? null,
-                        ]);
-                    }
-                }
-            }
-
             DB::commit();
 
-            session()->flash('message', 'Parcela creada correctamente.');
+            Log::info('Parcela creada y transacción confirmada', [
+                'user_id' => Auth::id(),
+                'plot_id' => $plot->id ?? null,
+            ]);
+
+            $this->toastSuccess('Parcela creada correctamente.');
             return $this->redirect(route('plots.index'), navigate: true);
         } catch (\Exception $e) {
             DB::rollBack();
+
+            // Registrar la excepción completa para debugging
             Log::error('Error al crear parcela: ' . $e->getMessage(), [
                 'user_id' => Auth::id(),
                 'data' => $data ?? [],
                 'exception' => $e
             ]);
-            
-            throw ValidationException::withMessages([
-                'general' => 'Error al crear la parcela. Por favor, intenta de nuevo.',
-            ]);
+
+            // Mostrar el mensaje de error real en la UI temporalmente para depuración
+            // Nota: esto debe revertirse en producción una vez esté resuelto.
+            $this->addError('general', $e->getMessage());
+
+            return;
         }
-    }
-
-    public function addCoordinate()
-    {
-        $this->multipart_coordinates[] = [
-            'coordinates' => '',
-            'sigpac_code_id' => null,
-        ];
-    }
-
-    public function removeCoordinate($index)
-    {
-        unset($this->multipart_coordinates[$index]);
-        $this->multipart_coordinates = array_values($this->multipart_coordinates);
     }
 
     public function render()
     {
         return view('livewire.plots.create', [
+            // Usos SIGPAC para el select múltiple
             'sigpacUses' => SigpacUse::orderBy('code')->get(),
-            'sigpacCodes' => SigpacCode::orderBy('code')->get(),
+
+            // Comunidades autónomas y ubicación jerárquica
             'autonomousCommunities' => AutonomousCommunity::orderBy('name')->get(),
-            'provinces' => $this->autonomous_community_id 
-                ? Province::where('autonomous_community_id', $this->autonomous_community_id)->orderBy('name')->get()
+            'provinces' => $this->autonomous_community_id
+                ? Province::where('autonomous_community_id', $this->autonomous_community_id)
+                    ->orderBy('name')
+                    ->get()
                 : collect(),
             'municipalities' => $this->province_id
-                ? Municipality::where('province_id', $this->province_id)->orderBy('name')->get()
+                ? Municipality::where('province_id', $this->province_id)
+                    ->orderBy('name')
+                    ->get()
                 : collect(),
         ])->layout('layouts.app');
     }

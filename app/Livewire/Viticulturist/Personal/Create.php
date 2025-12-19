@@ -4,10 +4,10 @@ namespace App\Livewire\Viticulturist\Personal;
 
 use App\Models\Crew;
 use App\Models\WineryViticulturist;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Component;
 
 class Create extends Component
 {
@@ -34,12 +34,12 @@ class Create extends Component
     protected function rules(): array
     {
         $user = Auth::user();
-        
+
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'winery_id' => [
-                'nullable', // Cambiar de 'required' a 'nullable'
+                'nullable',
                 'exists:users,id',
                 function ($attribute, $value, $fail) use ($user) {
                     if ($value) {
@@ -47,7 +47,7 @@ class Create extends Component
                         $exists = WineryViticulturist::where('viticulturist_id', $user->id)
                             ->where('winery_id', $value)
                             ->exists();
-                        
+
                         if (!$exists) {
                             $fail('No estás asignado a esta bodega.');
                         }
@@ -69,7 +69,7 @@ class Create extends Component
                     'name' => $this->name,
                     'description' => $this->description,
                     'viticulturist_id' => $user->id,
-                    'winery_id' => $this->winery_id ?: null, // Convertir cadena vacía a NULL
+                    'winery_id' => $this->winery_id ?: null,  // Convertir cadena vacía a NULL
                 ]);
             });
 
@@ -91,7 +91,7 @@ class Create extends Component
     public function render()
     {
         $user = Auth::user();
-        
+
         // Obtener wineries usando relación
         $wineries = $user->wineries;
 
@@ -100,4 +100,3 @@ class Create extends Component
         ])->layout('layouts.app');
     }
 }
-

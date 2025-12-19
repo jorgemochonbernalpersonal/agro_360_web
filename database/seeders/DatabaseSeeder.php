@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             AutonomousCommunitySeeder::class,  // Primero: Comunidades autónomas
             ProvinceSeeder::class,              // Segundo: Provincias (depende de comunidades)
             MunicipalitySeeder::class,          // Tercero: Municipios (depende de provincias)
+            GrapeVarietySeeder::class,          // Variedades de uva base
+            MachineryTypeSeeder::class,         // Tipos de maquinaria base
+            TrainingSystemSeeder::class,        // Sistemas de conducción base
         ]);
         
         $this->command->info('✅ Seeders completados.');

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\CrewMember;
 
 class AgriculturalActivity extends Model
 {
@@ -15,6 +16,7 @@ class AgriculturalActivity extends Model
         'activity_type',
         'activity_date',
         'crew_id',
+        'crew_member_id',
         'machinery_id',
         'weather_conditions',
         'temperature',
@@ -56,6 +58,14 @@ class AgriculturalActivity extends Model
     public function crew(): BelongsTo
     {
         return $this->belongsTo(Crew::class);
+    }
+
+    /**
+     * Trabajador individual que realizó la actividad (opcional)
+     */
+    public function crewMember(): BelongsTo
+    {
+        return $this->belongsTo(CrewMember::class, 'crew_member_id');
     }
 
     /**

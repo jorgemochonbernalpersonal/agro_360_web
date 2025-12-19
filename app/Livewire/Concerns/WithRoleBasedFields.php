@@ -42,6 +42,8 @@ trait WithRoleBasedFields
                 'autonomous_community_id',
                 'province_id',
                 'municipality_id',
+                'sigpac_use',
+                'sigpac_code',
             ]),
             default => $baseFields,
         };
@@ -81,6 +83,6 @@ trait WithRoleBasedFields
     
     public function canSelectSigpac(): bool
     {
-        return in_array(auth()->user()->role, ['admin', 'supervisor', 'winery']);
+        return in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']);
     }
 }

@@ -61,6 +61,11 @@ class NavigationHelper
                             'active' => request()->routeIs('plots.index'),
                         ],
                         [
+                            'label' => 'Ver Plantaciones',
+                            'route' => 'plots.plantings.index',
+                            'active' => request()->routeIs('plots.plantings.index'),
+                        ],
+                        [
                             'label' => 'Crear Parcela',
                             'route' => 'plots.create',
                             'active' => request()->routeIs('plots.create'),
@@ -100,6 +105,11 @@ class NavigationHelper
                             'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*'),
                         ],
                         [
+                            'label' => 'Productos fitosanitarios',
+                            'route' => 'viticulturist.phytosanitary-products.index',
+                            'active' => request()->routeIs('viticulturist.phytosanitary-products.*'),
+                        ],
+                        [
                             'label' => 'Registrar Tratamiento',
                             'route' => 'viticulturist.digital-notebook.treatment.create',
                             'active' => request()->routeIs('viticulturist.digital-notebook.treatment.*'),
@@ -126,38 +136,23 @@ class NavigationHelper
                         ],
                     ],
                 ]] : []),
-                // Personal solo para viticultor
+                // Personal y Equipos (unificado) solo para viticultor
                 ...($user->role === 'viticulturist' ? [[
                     'icon' => '👥',
                     'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>',
-                    'label' => 'Personal',
+                    'label' => 'Equipos y Personal',
                     'route' => 'viticulturist.personal.index',
-                    'active' => request()->routeIs('viticulturist.personal*'),
+                    'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*'),
                     'submenu' => [
                         [
-                            'label' => 'Ver Cuadrillas',
-                            'route' => 'viticulturist.personal.index',
-                            'active' => request()->routeIs('viticulturist.personal.index'),
-                        ],
-                        [
-                            'label' => 'Crear Cuadrilla',
+                            'label' => 'Crear Equipo',
                             'route' => 'viticulturist.personal.create',
                             'active' => request()->routeIs('viticulturist.personal.create'),
                         ],
                         [
                             'label' => 'Crear Viticultor',
-                            'route' => 'viticulturist.personal.viticulturist.create',
-                            'active' => request()->routeIs('viticulturist.personal.viticulturist.create'),
-                        ],
-                        [
-                            'label' => 'Trabajadores Individuales',
-                            'route' => 'viticulturist.personal.workers',
-                            'active' => request()->routeIs('viticulturist.personal.workers'),
-                        ],
-                        [
-                            'label' => 'Jerarquía',
-                            'route' => 'viticulturist.personal.hierarchy',
-                            'active' => request()->routeIs('viticulturist.personal.hierarchy'),
+                            'route' => 'viticulturist.viticulturists.create',
+                            'active' => request()->routeIs('viticulturist.viticulturists.create'),
                         ],
                     ],
                 ]] : []),
@@ -177,24 +172,6 @@ class NavigationHelper
                     'route' => 'viticulturist.calendar',
                     'active' => request()->routeIs('viticulturist.calendar*'),
                 ]] : []),
-            ],
-            'system' => [
-                [
-                    'icon' => '⚙️',
-                    'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
-                    'label' => 'Configuración',
-                    'route' => 'config.index',
-                    'active' => request()->routeIs('config.*'),
-                ],
-            ],
-            'user' => [
-                [
-                    'icon' => '👤',
-                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
-                    'label' => 'Mi Perfil',
-                    'route' => 'profile.show',
-                    'active' => request()->routeIs('profile.*'),
-                ],
             ],
         ];
 

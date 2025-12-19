@@ -9,16 +9,29 @@
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
-            @can('create', \App\Models\Plot::class)
-                <a href="{{ route('plots.create') }}" class="group">
-                    <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                        <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            <div class="flex items-center gap-3">
+                @can('create', \App\Models\Plot::class)
+                    <a href="{{ route('plots.create') }}" class="group">
+                        <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
+                            <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Nueva Parcela
+                        </button>
+                    </a>
+                @endcan
+
+                <a href="{{ route('plots.plantings.index') }}" class="group">
+                    <button
+                        class="flex items-center gap-2 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md font-semibold">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M5 3v4a1 1 0 001 1h3m10-5v4a1 1 0 01-1 1h-3M5 21v-4a1 1 0 011-1h3m10 5v-4a1 1 0 00-1-1h-3"/>
                         </svg>
-                        Nueva Parcela
+                        Ver plantaciones
                     </button>
                 </a>
-            @endcan
+            </div>
         </x-slot:actionButton>
     </x-page-header>
 
@@ -44,6 +57,7 @@
     @php
         $headers = [
             ['label' => 'Nombre', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>'],
+            // Bodega ahora se deriva de la(s) winery(s) del viticultor de la parcela
             ['label' => 'Bodega', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>'],
         ];
         
@@ -76,7 +90,14 @@
                         </div>
                     </x-table-cell>
                     <x-table-cell>
-                        <span class="text-sm font-medium text-gray-900">{{ $plot->winery->name }}</span>
+                        @php
+                            // La bodega se infiere de las wineries asociadas al viticultor de la parcela
+                            $wineryName = '-';
+                            if ($plot->viticulturist && $plot->viticulturist->wineries->isNotEmpty()) {
+                                $wineryName = $plot->viticulturist->wineries->first()->name;
+                            }
+                        @endphp
+                        <span class="text-sm font-medium text-gray-900">{{ $wineryName }}</span>
                     </x-table-cell>
                     @if(auth()->user()->canSelectViticulturist())
                         <x-table-cell>
@@ -97,6 +118,15 @@
                     <x-table-actions align="right">
                         <x-action-button variant="view" href="{{ route('plots.show', $plot) }}" />
                         @can('update', $plot)
+                            {{-- Crear plantación sobre esta parcela --}}
+                            <a href="{{ route('plots.plantings.create', $plot) }}"
+                               class="p-2 rounded-lg transition-all duration-200 group/btn text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-bg)]"
+                               title="Añadir plantación">
+                                <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </a>
+
                             <x-action-button variant="edit" href="{{ route('plots.edit', $plot) }}" />
                         @endcan
                         @can('delete', $plot)

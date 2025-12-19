@@ -61,7 +61,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="text-sm font-semibold text-gray-500">Bodega</label>
-                        <p class="text-gray-900">{{ $plot->winery->name }}</p>
+                        @php
+                            $wineryName = '-';
+                            if ($plot->viticulturist && $plot->viticulturist->wineries->isNotEmpty()) {
+                                $wineryName = $plot->viticulturist->wineries->first()->name;
+                            }
+                        @endphp
+                        <p class="text-gray-900">{{ $wineryName }}</p>
                     </div>
 
                     @if($plot->viticulturist)

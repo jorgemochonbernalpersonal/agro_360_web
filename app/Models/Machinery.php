@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\MachineryType;
 
 class Machinery extends Model
 {
@@ -16,6 +17,7 @@ class Machinery extends Model
     protected $fillable = [
         'name',
         'type',
+        'machinery_type_id',
         'brand',
         'model',
         'serial_number',
@@ -49,6 +51,14 @@ class Machinery extends Model
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
+    }
+
+    /**
+     * Tipo de maquinaria (catálogo).
+     */
+    public function machineryType(): BelongsTo
+    {
+        return $this->belongsTo(MachineryType::class, 'machinery_type_id');
     }
 
     /**

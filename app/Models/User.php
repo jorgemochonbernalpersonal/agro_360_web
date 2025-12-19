@@ -22,6 +22,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
+        'password_must_reset',
+        'can_login',
     ];
 
     /**
@@ -52,6 +54,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_must_reset' => 'boolean',
+            'can_login' => 'boolean',
         ];
     }
 
@@ -131,16 +135,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function wineryRelationsAsViticulturist()
     {
         return $this->hasMany(WineryViticulturist::class, 'viticulturist_id');
-    }
-
-    public function parentHierarchies()
-    {
-        return $this->hasMany(ViticulturistHierarchy::class, 'parent_viticulturist_id');
-    }
-
-    public function childHierarchies()
-    {
-        return $this->hasMany(ViticulturistHierarchy::class, 'child_viticulturist_id');
     }
 
     public function ledCrews()

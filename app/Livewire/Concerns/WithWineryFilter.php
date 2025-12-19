@@ -36,10 +36,30 @@ trait WithWineryFilter
             'supervisor' => User::whereIn('id', 
                 $user->supervisedViticulturists->pluck('viticulturist_id')
             )->get(),
+            // Winery users see viticultores creados por la winery
             'winery' => $this->getEditableViticulturistsForWinery($user),
-            'viticulturist' => $this->getEditableViticulturistsForViticulturist($user),
+            // Viticulturist users must ALWAYS see only the viticultores that THEY created,
+            // independientemente de si están asociados a alguna winery.
+            'viticulturist' => $this->getCreatedViticulturists($user),
             default => collect(),
         };
+    }
+
+    /**
+     * Obtener viticultores creados por este viticultor (source = 'viticulturist').
+     * Esto garantiza que aunque el viticultor esté asociado a una winery, el listado
+     * de opciones mostrará solo los viticultores que él creó personalmente.
+     */
+    protected function getCreatedViticulturists(User $user)
+    {
+        return \App\Models\WineryViticulturist::where('parent_viticulturist_id', $user->id)
+            ->where('source', \App\Models\WineryViticulturist::SOURCE_VITICULTURIST)
+            ->with('viticulturist')
+            ->get()
+            ->pluck('viticulturist')
+            ->filter()
+            ->unique('id')
+            ->values();
     }
 
     /**

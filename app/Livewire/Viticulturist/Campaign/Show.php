@@ -4,11 +4,13 @@ namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
 use App\Models\AgriculturalActivity;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
 class Show extends Component
 {
+    use WithToastNotifications;
     public Campaign $campaign;
 
     public function mount(Campaign $campaign)
@@ -41,14 +43,14 @@ class Show extends Component
     public function activate()
     {
         if (!Auth::user()->can('activate', $this->campaign)) {
-            session()->flash('error', 'No tienes permiso para activar esta campaña.');
+            $this->toastError('No tienes permiso para activar esta campaña.');
             return;
         }
 
         try {
             $this->campaign->activate();
             $this->campaign->refresh();
-            session()->flash('message', 'Campaña activada correctamente.');
+            $this->toastSuccess('Campaña activada correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al activar campaña', [
                 'error' => $e->getMessage(),
@@ -56,7 +58,7 @@ class Show extends Component
                 'user_id' => Auth::id(),
             ]);
 
-            session()->flash('error', 'Error al activar la campaña. Por favor, intenta de nuevo.');
+            $this->toastError('Error al activar la campaña. Por favor, intenta de nuevo.');
         }
     }
 

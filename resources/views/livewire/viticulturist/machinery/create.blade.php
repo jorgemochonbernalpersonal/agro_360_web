@@ -6,11 +6,11 @@
     title="Nueva Maquinaria"
     description="Registra una nueva maquinaria o equipo agrícola"
     :icon="$icon"
-    icon-color="from-[var(--color-agro-brown)] to-[var(--color-agro-brown-light)]"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.machinery.index')"
 >
     <form wire:submit="save" class="space-y-8" enctype="multipart/form-data">
-        <x-form-section title="Información Básica" color="brown">
+        <x-form-section title="Información Básica" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
@@ -28,15 +28,18 @@
 
                     <!-- Tipo -->
                     <div>
-                        <x-label for="type" required>Tipo</x-label>
-                        <x-input 
-                            wire:model="type" 
-                            type="text" 
-                            id="type"
-                            placeholder="Ej: Tractor, Pulverizador, Vendimiadora"
-                            :error="$errors->first('type')"
+                        <x-label for="machinery_type_id" required>Tipo</x-label>
+                        <x-select 
+                            wire:model="machinery_type_id" 
+                            id="machinery_type_id"
+                            :error="$errors->first('machinery_type_id')"
                             required
-                        />
+                        >
+                            <option value="">Selecciona un tipo</option>
+                            @foreach($machineryTypes as $type)
+                                <option value="{{ $type->id }}">{{ $type->name }}</option>
+                            @endforeach
+                        </x-select>
                     </div>
 
                     <!-- Marca -->
@@ -90,7 +93,7 @@
                 </div>
         </x-form-section>
 
-        <x-form-section title="Registro y Propiedad" color="brown">
+        <x-form-section title="Registro y Propiedad" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Inscripción ROMA -->
@@ -135,7 +138,7 @@
                 @enderror
         </x-form-section>
 
-        <x-form-section title="Fechas y Valores" color="brown">
+        <x-form-section title="Fechas y Valores" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Fecha de Compra -->
@@ -190,7 +193,7 @@
                 </div>
         </x-form-section>
 
-        <x-form-section title="Imagen y Notas" color="brown">
+        <x-form-section title="Imagen y Notas" color="green">
                 
                 <!-- Imagen -->
                 <div class="mb-6">
@@ -202,7 +205,7 @@
                         type="file" 
                         accept="image/*"
                         id="image"
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-brown-dark)] focus:border-transparent transition-all"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
                     >
                     @error('image') 
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
@@ -227,14 +230,14 @@
                 </div>
         </x-form-section>
 
-        <x-form-section title="Opciones" color="brown" class="pb-6">
+        <x-form-section title="Opciones" color="green" class="pb-6">
                 
                 <div class="flex items-center">
                     <input 
                         wire:model="active" 
                         type="checkbox"
                         id="active"
-                        class="w-4 h-4 text-[var(--color-agro-brown-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-brown-dark)]"
+                        class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
                         checked
                     >
                     <label for="active" class="ml-3 text-sm font-semibold text-gray-700">

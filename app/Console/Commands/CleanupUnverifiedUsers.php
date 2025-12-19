@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\SupervisorWinery;
 use App\Models\SupervisorViticulturist;
 use App\Models\WineryViticulturist;
-use App\Models\ViticulturistHierarchy;
 use App\Models\Crew;
 use App\Models\CrewMember;
 use App\Models\Plot;
@@ -67,8 +66,6 @@ class CleanupUnverifiedUsers extends Command
 
                 SupervisorViticulturist::where('viticulturist_id', $user->id)->delete();
                 WineryViticulturist::where('viticulturist_id', $user->id)->delete();
-                ViticulturistHierarchy::where('parent_viticulturist_id', $user->id)->delete();
-                ViticulturistHierarchy::where('child_viticulturist_id', $user->id)->delete();
                 Crew::where('viticulturist_id', $user->id)->delete();
                 CrewMember::where('viticulturist_id', $user->id)->delete();
                 Plot::where('viticulturist_id', $user->id)->delete();

@@ -6,11 +6,11 @@
     title="Nueva Cuadrilla"
     description="Crea un nuevo equipo de trabajo"
     :icon="$icon"
-    icon-color="from-[var(--color-agro-blue)] to-blue-700"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.personal.index')"
 >
     <form wire:submit="save" class="space-y-8">
-        <x-form-section title="Información Básica" color="blue">
+        <x-form-section title="Información Básica" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->

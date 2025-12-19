@@ -3,12 +3,14 @@
 namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Edit extends Component
 {
+    use WithToastNotifications;
     public Campaign $campaign;
     
     public $name = '';
@@ -82,7 +84,7 @@ class Edit extends Component
                 }
             });
 
-            session()->flash('message', 'Campaña actualizada correctamente.');
+            $this->toastSuccess('Campaña actualizada correctamente.');
             return redirect()->route('viticulturist.campaign.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar campaña', [
@@ -92,7 +94,7 @@ class Edit extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al actualizar la campaña. Por favor, intenta de nuevo.');
+            $this->toastError('Error al actualizar la campaña. Por favor, intenta de nuevo.');
             return;
         }
     }

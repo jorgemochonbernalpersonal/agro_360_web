@@ -1,0 +1,1 @@
+<div>Test Component</div><?php /**PATH C:\Users\jorge\Desktop\cue\agro365_web\storage\framework\views/0b6adde096d89185d685c658b575210c.blade.php ENDPATH**/ ?>

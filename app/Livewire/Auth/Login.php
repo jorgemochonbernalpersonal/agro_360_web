@@ -21,17 +21,19 @@ class Login extends Component
 
     public function login()
     {
-        // Rate limiting: 5 intentos por minuto por IP
+        // Rate limiting: por IP. En producción más estricto, en entornos de desarrollo/test más laxo
         $key = 'login.' . request()->ip();
+        $maxAttempts = app()->environment('production') ? 5 : 100;
+        $decaySeconds = app()->environment('production') ? 60 : 10;
         
-        if (RateLimiter::tooManyAttempts($key, 5)) {
+        if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
                 'email' => "Demasiados intentos. Por favor, intenta de nuevo en {$seconds} segundos.",
             ]);
         }
 
-        RateLimiter::hit($key, 60); // 60 segundos = 1 minuto
+        RateLimiter::hit($key, $decaySeconds);
 
         $this->validate();
 
@@ -42,6 +44,17 @@ class Login extends Component
         }
 
         $user = Auth::user();
+
+        // Bloquear acceso si la cuenta no está activada para iniciar sesión
+        if (property_exists($user, 'can_login') && $user->can_login === false) {
+            Auth::logout();
+            session()->invalidate();
+            session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Tu cuenta aún no está activada. Por favor, contacta con quien te dio de alta o regístrate para activar tu acceso.',
+            ]);
+        }
 
         // Verificar si el email está verificado
         // Permitir login sin verificación si fue creado por otro usuario (viticultor, winery o supervisor)
