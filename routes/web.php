@@ -15,8 +15,9 @@ Route::get('/', function () {
         // LUEGO redirigir a dashboard
         return redirect()->route($user->role . '.dashboard');
     }
-    // Si no está autenticado, redirigir al login
-    return redirect()->route('login');
+    
+    // Si no está autenticado, mostrar landing page
+    return view('welcome');
 })->name('home');
 
 Route::get('/counter', Counter::class)->name('counter');

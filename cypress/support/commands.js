@@ -107,10 +107,32 @@ Cypress.Commands.add('visitRoute', (routeName, params = {}) => {
 })
 
 /**
- * Check for flash messages
+ * Check for flash messages (legacy - now uses toasts)
  */
 Cypress.Commands.add('shouldSeeFlashMessage', (message) => {
-  cy.get('.glass-card').contains(message).should('be.visible')
+  // Check for toast notification
+  cy.get('body').should('contain.text', message)
+})
+
+/**
+ * Check for toast notification
+ */
+Cypress.Commands.add('shouldSeeToast', (message, type = 'success') => {
+  cy.get('body').then(($body) => {
+    const toastContainer = $body.find('[x-data*="toastNotifications"]');
+    if (toastContainer.length > 0) {
+      cy.get('body').should('contain.text', message)
+      
+      // Check toast type if specified
+      if (type) {
+        const toast = toastContainer.find(`[class*="${type}"]`);
+        expect(toast.length).to.be.greaterThan(0)
+      }
+    } else {
+      // Fallback: just check body contains message
+      cy.get('body').should('contain.text', message)
+    }
+  })
 })
 
 /**

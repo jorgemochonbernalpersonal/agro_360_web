@@ -57,8 +57,12 @@ describe('Viticulturist Machinery', () => {
     // Fill form
     cy.get('input#name').clear().type('Tractor de Prueba E2E')
     
-    // Type is an input field, not a select
-    cy.get('input#type').clear().type('Tractor')
+    // Type is now a select field (machinery_type_id)
+    cy.get('select#machinery_type_id').then(($select) => {
+      if ($select.length > 0 && $select.find('option').length > 1) {
+        cy.get('select#machinery_type_id').select(1, { force: true })
+      }
+    })
     
     // Brand and model are also input fields
     cy.get('input#brand').clear().type('Marca Test')

@@ -6,13 +6,15 @@
     
     <div class="w-full max-w-md mx-auto relative z-10">
         <div class="text-center mb-3">
-            <div class="inline-block max-w-[180px] mx-auto mb-2">
-                <img 
-                    src="<?php echo e(asset('images/logo.png')); ?>" 
-                    alt="Agro365 Logo" 
-                    class="w-full h-auto max-h-24 object-contain drop-shadow-lg"
-                >
-            </div>
+            <a href="<?php echo e(route('home')); ?>" class="inline-block group">
+                <div class="inline-block max-w-[180px] mx-auto mb-2">
+                    <img 
+                        src="<?php echo e(asset('images/logo.png')); ?>" 
+                        alt="Agro365 Logo" 
+                        class="w-full h-auto max-h-24 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-200"
+                    >
+                </div>
+            </a>
             <p class="text-gray-600 text-sm font-medium">
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->guard()->check()): ?>
                     Crear nuevo usuario

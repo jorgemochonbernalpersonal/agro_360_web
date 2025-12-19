@@ -1,12 +1,12 @@
-describe('Viticulturist Crews (Cuadrillas)', () => {
+describe('Viticulturist Crews (Cuadrillas) - Legacy Tests', () => {
   beforeEach(() => {
     cy.loginAsViticulturist()
-    cy.visit('/viticulturist/personal')
+    cy.visit('/viticulturist/personal?viewMode=crews')
     cy.waitForLivewire()
   })
 
   it('should display crews list', () => {
-    cy.contains('Gestión de Cuadrillas').should('be.visible')
+    cy.contains('Equipos y Personal').should('be.visible')
     cy.contains('Filtros de Búsqueda').should('be.visible')
   })
 
@@ -44,13 +44,13 @@ describe('Viticulturist Crews (Cuadrillas)', () => {
   })
 
   it('should navigate to create crew', () => {
-    cy.contains('Nueva Cuadrilla').click()
+    cy.contains('Nuevo Equipo').click()
     cy.waitForLivewire()
     cy.url().should('include', '/viticulturist/personal/create')
   })
 
   it('should create a new crew', () => {
-    cy.contains('Nueva Cuadrilla').click()
+    cy.contains('Nuevo Equipo').click()
     cy.waitForLivewire()
     
     // Wait for form to load
