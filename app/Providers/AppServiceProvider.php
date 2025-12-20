@@ -48,11 +48,24 @@ class AppServiceProvider extends ServiceProvider
     {
         // Personalizar email de verificación de Laravel para Agro365
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
+            // Solo forzar HTTPS en producción
+            if (app()->environment('production')) {
+                $url = str_replace('http://', 'https://', $url);
+            }
+            
+            // Generar URL absoluta para la imagen
+            $logoUrl = url('images/logo.png');
+            
+            // Solo forzar HTTPS en producción
+            if (app()->environment('production')) {
+                $logoUrl = str_replace('http://', 'https://', $logoUrl);
+            }
+            
             return (new MailMessage)
                 ->subject('Verifica tu cuenta en Agro365')
                 ->line(new HtmlString(
                     '<div style="text-align:center; margin-bottom: 16px;">
-                        <img src="'.asset('images/logo.png').'" alt="Agro365"
+                        <img src="'.$logoUrl.'" alt="Agro365"
                              style="max-width: 160px; height: auto;">
                      </div>'
                 ))
@@ -63,5 +76,10 @@ class AppServiceProvider extends ServiceProvider
                 ->line('Si no has solicitado esta cuenta, puedes ignorar este mensaje sin problemas.')
                 ->salutation("Saludos,\nAgro365");
         });
+
+        // Registrar observers para stock tracking
+        \App\Models\Harvest::observe(\App\Observers\HarvestObserver::class);
+        \App\Models\Invoice::observe(\App\Observers\InvoiceObserver::class);
+        \App\Models\InvoiceItem::observe(\App\Observers\InvoiceItemObserver::class);
     }
 }

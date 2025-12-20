@@ -6,101 +6,60 @@ use App\Models\Tax;
 use App\Models\UserTax;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Livewire\WithPagination;
 use App\Livewire\Concerns\WithToastNotifications;
 
 class Taxes extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithToastNotifications;
 
-    public $selectedTaxes = [];
-    public $search = '';
-
-    protected $queryString = [
-        'search' => ['except' => ''],
-    ];
+    public $activeTaxId = null; // Solo uno activo a la vez
 
     public function mount()
     {
         $user = Auth::user();
-        // Cargar impuestos seleccionados por el usuario
-        $this->selectedTaxes = UserTax::where('user_id', $user->id)
-            ->pluck('tax_id')
-            ->toArray();
-    }
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function toggleTax($taxId)
-    {
-        $user = Auth::user();
         
-        if (in_array($taxId, $this->selectedTaxes)) {
-            // Desactivar
-            UserTax::where('user_id', $user->id)
-                ->where('tax_id', $taxId)
-                ->delete();
-            $this->selectedTaxes = array_values(array_diff($this->selectedTaxes, [$taxId]));
-            $this->toastSuccess('Impuesto desactivado.');
-        } else {
-            // Activar
-            UserTax::firstOrCreate([
-                'user_id' => $user->id,
-                'tax_id' => $taxId,
-            ], [
-                'is_default' => false,
-                'order' => 0,
-            ]);
-            $this->selectedTaxes[] = $taxId;
-            $this->toastSuccess('Impuesto activado.');
-        }
+        // Obtener el impuesto activo (solo puede haber 1)
+        $activeTax = UserTax::where('user_id', $user->id)
+            ->where('is_default', true)
+            ->first();
+
+        $this->activeTaxId = $activeTax?->tax_id;
     }
 
-    public function setDefault($taxId)
+    /**
+     * Seleccionar impuesto (solo uno a la vez)
+     */
+    public function selectTax($taxId)
     {
         $user = Auth::user();
-        
-        // Quitar default de todos
-        UserTax::where('user_id', $user->id)
-            ->update(['is_default' => false]);
-        
-        // Establecer este como default
-        $userTax = UserTax::firstOrCreate([
+
+        // Eliminar TODOS los impuestos del usuario
+        UserTax::where('user_id', $user->id)->delete();
+
+        // Crear el nuevo impuesto como default
+        UserTax::create([
             'user_id' => $user->id,
             'tax_id' => $taxId,
+            'is_default' => true,
+            'order' => 0,
         ]);
-        $userTax->update(['is_default' => true]);
-        
-        $this->toastSuccess('Impuesto por defecto actualizado.');
+
+        $this->activeTaxId = $taxId;
+
+        $tax = Tax::find($taxId);
+        $this->toastSuccess("Impuesto configurado: {$tax->name}");
     }
 
     public function render()
     {
-        $query = Tax::query()->active();
-
-        if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('code', 'like', '%' . $this->search . '%')
-                  ->orWhere('region', 'like', '%' . $this->search . '%');
-            });
-        }
-
-        $taxes = $query->orderBy('region')
-            ->orderBy('rate', 'desc')
-            ->paginate(20);
-
-        $user = Auth::user();
-        $userTaxes = UserTax::where('user_id', $user->id)
-            ->pluck('tax_id', 'tax_id')
-            ->toArray();
+        // Obtener los 3 impuestos principales
+        $taxes = Tax::active()
+            ->whereIn('code', ['EXENTO', 'IVA', 'IGIC'])
+            ->orderByRaw("FIELD(code, 'EXENTO', 'IVA', 'IGIC')")
+            ->get();
 
         return view('livewire.viticulturist.settings.taxes', [
             'taxes' => $taxes,
-            'userTaxes' => $userTaxes,
         ])->layout('layouts.app');
     }
 }

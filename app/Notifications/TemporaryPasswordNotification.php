@@ -38,13 +38,20 @@ class TemporaryPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $loginUrl = url('/login');
+        
+        // Solo forzar HTTPS en producción
+        if (app()->environment('production')) {
+            $loginUrl = str_replace('http://', 'https://', $loginUrl);
+        }
+        
         $mail = (new MailMessage)
                     ->subject('Bienvenido a Agro365 - Credenciales de Acceso')
                     ->greeting('¡Bienvenido a Agro365!')
                     ->line('Se ha creado una cuenta para ti en Agro365.')
                     ->line('Adjunto encontrarás un PDF con tus credenciales de acceso.')
                     ->line('Por motivos de seguridad, **deberás cambiar tu contraseña** al iniciar sesión por primera vez.')
-                    ->action('Iniciar Sesión', url('/login'))
+                    ->action('Iniciar Sesión', $loginUrl)
                     ->line('Si no solicitaste esta cuenta, por favor contacta con el administrador.');
         
         // Adjuntar PDF si existe

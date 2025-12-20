@@ -321,6 +321,26 @@
                                     </button>
                                 @endif
 
+                                {{-- Botón para enviar invitación --}}
+                                @if(!$v->can_login && $v->invitation_sent_at === null)
+                                    <button
+                                        wire:click="sendInvitation({{ $v->id }})"
+                                        wire:target="sendInvitation"
+                                        class="p-2 text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-bg)] rounded-lg transition-colors"
+                                        title="Enviar invitación por email"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                    </button>
+                                @elseif($v->invitation_sent_at !== null)
+                                    <span class="p-2 text-green-500" title="Invitación enviada el {{ $v->invitation_sent_at->format('d/m/Y H:i') }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </span>
+                                @endif
+
                                 <x-action-button 
                                     variant="delete"
                                     wire:click="deleteViticulturist({{ $v->id }})"

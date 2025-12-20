@@ -7,6 +7,7 @@ use App\Models\Crew;
 use App\Models\CrewMember;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use App\Notifications\ViticulturistInvitationNotification;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -188,6 +189,59 @@ class UnifiedIndex extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
             $this->toastError('Hubo un error al eliminar el equipo. Por favor, inténtalo de nuevo.');
+        }
+    }
+
+    public function sendInvitation(int $viticulturistId): void
+    {
+        $user = Auth::user();
+
+        // Verificar que el viticultor pertenece al usuario actual
+        $canEdit = WineryViticulturist::editableBy($user)
+            ->where('viticulturist_id', $viticulturistId)
+            ->exists();
+
+        if (!$canEdit) {
+            $this->toastError('No tienes permiso para gestionar este viticultor.');
+            return;
+        }
+
+        $viticulturist = User::find($viticulturistId);
+
+        if (!$viticulturist) {
+            $this->toastError('Viticultor no encontrado.');
+            return;
+        }
+
+        // Verificar que no se haya enviado ya la invitación
+        if ($viticulturist->invitation_sent_at !== null) {
+            $this->toastError('La invitación ya fue enviada anteriormente.');
+            return;
+        }
+
+        // Verificar que el viticultor aún no puede hacer login (estado inicial)
+        if ($viticulturist->can_login) {
+            $this->toastError('Este viticultor ya puede iniciar sesión. No es necesario enviar invitación.');
+            return;
+        }
+
+        try {
+            $viticulturist->notify(new ViticulturistInvitationNotification($user));
+            
+            // Marcar que se envió la invitación
+            $viticulturist->update([
+                'invitation_sent_at' => now(),
+            ]);
+
+            $this->toastSuccess('Invitación enviada correctamente por email.');
+        } catch (\Exception $e) {
+            Log::error('Error al enviar invitación', [
+                'error' => $e->getMessage(),
+                'viticulturist_id' => $viticulturistId,
+                'user_id' => $user->id,
+            ]);
+
+            $this->toastError('Error al enviar la invitación. Por favor, intenta de nuevo.');
         }
     }
 

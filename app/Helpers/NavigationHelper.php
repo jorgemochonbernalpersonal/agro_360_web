@@ -187,13 +187,21 @@ class NavigationHelper
                         ],
                     ],
                 ]] : []),
+                // Clientes solo para viticultor
+                ...($user->role === 'viticulturist' ? [[
+                    'icon' => '👤',
+                    'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
+                    'label' => 'Clientes',
+                    'route' => 'viticulturist.clients.index',
+                    'active' => request()->routeIs('viticulturist.clients.*'),
+                ]] : []),
                 // Personal y Equipos (unificado) solo para viticultor
                 ...($user->role === 'viticulturist' ? [[
                     'icon' => '👥',
                     'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>',
                     'label' => 'Equipos y Personal',
                     'route' => 'viticulturist.personal.index',
-                    'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*') || request()->routeIs('viticulturist.clients.*'),
+                    'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*'),
                     'submenu' => [
                         [
                             'label' => 'Crear Equipo',
@@ -204,11 +212,6 @@ class NavigationHelper
                             'label' => 'Crear Viticultor',
                             'route' => 'viticulturist.viticulturists.create',
                             'active' => request()->routeIs('viticulturist.viticulturists.create'),
-                        ],
-                        [
-                            'label' => 'Clientes',
-                            'route' => 'viticulturist.clients.index',
-                            'active' => request()->routeIs('viticulturist.clients.*'),
                         ],
                     ],
                 ]] : []),

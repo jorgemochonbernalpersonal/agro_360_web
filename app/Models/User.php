@@ -24,6 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'password_must_reset',
         'can_login',
+        'invitation_sent_at',
     ];
 
     /**
@@ -56,6 +57,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'password_must_reset' => 'boolean',
             'can_login' => 'boolean',
+            'invitation_sent_at' => 'datetime',
         ];
     }
 

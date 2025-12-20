@@ -31,13 +31,27 @@ class ViticulturistInvitationNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        // Generar URL de registro
         $registerUrl = route('register', ['email' => $notifiable->email]);
+        
+        // Solo forzar HTTPS en producción
+        if (app()->environment('production')) {
+            $registerUrl = str_replace('http://', 'https://', $registerUrl);
+        }
+        
+        // Generar URL absoluta para la imagen
+        $logoUrl = url('images/logo.png');
+        
+        // Solo forzar HTTPS en producción
+        if (app()->environment('production')) {
+            $logoUrl = str_replace('http://', 'https://', $logoUrl);
+        }
 
         return (new MailMessage)
             ->subject('Invitación a Agro365')
             ->line(new HtmlString(
                 '<div style="text-align:center; margin-bottom: 16px;">
-                    <img src="'.asset('images/logo.png').'" alt="Agro365"
+                    <img src="'.$logoUrl.'" alt="Agro365"
                          style="max-width: 160px; height: auto;">
                  </div>'
             ))

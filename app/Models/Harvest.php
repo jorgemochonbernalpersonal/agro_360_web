@@ -175,4 +175,104 @@ class Harvest extends Model
     {
         return $this->invoiceItems()->exists();
     }
+
+    /**
+     * Movimientos de stock de esta cosecha
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(HarvestStock::class);
+    }
+
+    /**
+     * Obtener el estado actual del stock
+     */
+    public function getCurrentStock(): array
+    {
+        $latest = $this->stockMovements()->latest()->first();
+        
+        if (!$latest) {
+            return [
+                'total' => 0,
+                'available' => 0,
+                'reserved' => 0,
+                'sold' => 0,
+                'gifted' => 0,
+                'lost' => 0,
+            ];
+        }
+        
+        return [
+            'total' => $latest->quantity_after,
+            'available' => $latest->available_qty,
+            'reserved' => $latest->reserved_qty,
+            'sold' => $latest->sold_qty,
+            'gifted' => $latest->gifted_qty,
+            'lost' => $latest->lost_qty,
+        ];
+    }
+
+    /**
+     * Verificar si hay stock disponible
+     */
+    public function hasAvailableStock(float $quantity = null): bool
+    {
+        $stock = $this->getCurrentStock();
+        
+        if ($quantity === null) {
+            return $stock['available'] > 0;
+        }
+        
+        return $stock['available'] >= $quantity;
+    }
+
+    /**
+     * Obtener cantidad disponible
+     */
+    public function getAvailableQuantity(): float
+    {
+        $stock = $this->getCurrentStock();
+        return $stock['available'];
+    }
+
+    /**
+     * Obtener cantidad reservada
+     */
+    public function getReservedQuantity(): float
+    {
+        $stock = $this->getCurrentStock();
+        return $stock['reserved'];
+    }
+
+    /**
+     * Obtener cantidad vendida
+     */
+    public function getSoldQuantity(): float
+    {
+        $stock = $this->getCurrentStock();
+        return $stock['sold'];
+    }
+
+    /**
+     * Verificar si el stock está completamente vendido
+     */
+    public function isFullySold(): bool
+    {
+        $stock = $this->getCurrentStock();
+        return $stock['available'] <= 0 && $stock['reserved'] <= 0;
+    }
+
+    /**
+     * Obtener porcentaje vendido
+     */
+    public function getSoldPercentage(): float
+    {
+        $stock = $this->getCurrentStock();
+        
+        if ($stock['total'] <= 0) {
+            return 0;
+        }
+
+        return round(($stock['sold'] / $stock['total']) * 100, 2);
+    }
 }

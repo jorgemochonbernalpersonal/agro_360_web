@@ -4,94 +4,72 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Tax;
+use Illuminate\Support\Facades\DB;
 
 class TaxSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * Sistema simplificado: solo 3 impuestos (Exento, IVA, IGIC)
      */
     public function run(): void
     {
+        // Limpiar impuestos existentes
+        $this->command->info('🗑️  Limpiando impuestos antiguos...');
+        DB::table('user_taxes')->truncate();
+        DB::table('taxes')->truncate();
+
+        $this->command->info('📝 Creando impuestos simplificados...');
+
         $taxes = [
-            // IVA España
-            [
-                'name' => 'IVA General',
-                'code' => 'IVA',
-                'rate' => 21.00,
-                'region' => 'España',
-                'is_default' => true,
-                'active' => true,
-                'description' => 'IVA General del 21% aplicable en España peninsular',
-            ],
-            [
-                'name' => 'IVA Reducido',
-                'code' => 'IVA',
-                'rate' => 10.00,
-                'region' => 'España',
-                'is_default' => false,
-                'active' => true,
-                'description' => 'IVA Reducido del 10%',
-            ],
-            [
-                'name' => 'IVA Superreducido',
-                'code' => 'IVA',
-                'rate' => 4.00,
-                'region' => 'España',
-                'is_default' => false,
-                'active' => true,
-                'description' => 'IVA Superreducido del 4%',
-            ],
-            // IGIC Canarias
-            [
-                'name' => 'IGIC General',
-                'code' => 'IGIC',
-                'rate' => 7.00,
-                'region' => 'Canarias',
-                'is_default' => true,
-                'active' => true,
-                'description' => 'IGIC General del 7% aplicable en Canarias',
-            ],
-            [
-                'name' => 'IGIC Reducido',
-                'code' => 'IGIC',
-                'rate' => 3.00,
-                'region' => 'Canarias',
-                'is_default' => false,
-                'active' => true,
-                'description' => 'IGIC Reducido del 3%',
-            ],
-            [
-                'name' => 'IGIC Incrementado',
-                'code' => 'IGIC',
-                'rate' => 9.50,
-                'region' => 'Canarias',
-                'is_default' => false,
-                'active' => true,
-                'description' => 'IGIC Incrementado del 9.5%',
-            ],
             // Exento
             [
                 'name' => 'Exento',
                 'code' => 'EXENTO',
                 'rate' => 0.00,
-                'region' => null,
+                'region' => 'General',
                 'is_default' => false,
                 'active' => true,
-                'description' => 'Operación exenta de impuestos',
+                'description' => 'Exento de impuestos (0%)',
+            ],
+            
+            // IVA España Peninsular
+            [
+                'name' => 'IVA (21%)',
+                'code' => 'IVA',
+                'rate' => 21.00,
+                'region' => 'España Peninsular',
+                'is_default' => false,
+                'active' => true,
+                'description' => 'Impuesto sobre el Valor Añadido - Tipo general',
+            ],
+            
+            // IGIC Canarias
+            [
+                'name' => 'IGIC (7%)',
+                'code' => 'IGIC',
+                'rate' => 7.00,
+                'region' => 'Islas Canarias',
+                'is_default' => false,
+                'active' => true,
+                'description' => 'Impuesto General Indirecto Canario - Tipo general',
             ],
         ];
 
         foreach ($taxes as $tax) {
-            Tax::firstOrCreate(
-                [
-                    'code' => $tax['code'],
-                    'rate' => $tax['rate'],
-                    'region' => $tax['region'],
-                ],
-                $tax
-            );
+            Tax::create($tax);
+            $this->command->info("  ✓ {$tax['name']} ({$tax['rate']}%)");
         }
 
-        $this->command->info('✅ Impuestos creados correctamente');
+        $this->command->info('');
+        $this->command->line('┌─────────────────────────────────────────┐');
+        $this->command->line('│ ✅ Sistema de impuestos simplificado   │');
+        $this->command->line('│                                         │');
+        $this->command->line('│ • Exento (0%)                          │');
+        $this->command->line('│ • IVA (21%) - España Peninsular        │');
+        $this->command->line('│ • IGIC (7%) - Islas Canarias           │');
+        $this->command->line('│                                         │');
+        $this->command->line('│ Configuración: /viticulturist/settings │');
+        $this->command->line('└─────────────────────────────────────────┘');
     }
 }

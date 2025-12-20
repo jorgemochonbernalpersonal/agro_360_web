@@ -4,7 +4,6 @@ namespace App\Livewire\Viticulturist\Viticulturists;
 
 use App\Models\User;
 use App\Models\WineryViticulturist;
-use App\Notifications\ViticulturistInvitationNotification;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -74,6 +73,7 @@ class Create extends Component
                     'password' => Hash::make($password),
                     'role' => 'viticulturist',
                     'can_login' => false,
+                    'invitation_sent_at' => null,
                 ]);
 
                 WineryViticulturist::create([
@@ -85,11 +85,7 @@ class Create extends Component
                 ]);
             });
 
-            if ($viticulturist) {
-                $viticulturist->notify(new ViticulturistInvitationNotification($creator));
-            }
-
-            session()->flash('message', 'Viticultor creado correctamente. Se ha enviado una invitación por email para que active su cuenta.');
+            session()->flash('message', 'Viticultor creado correctamente. Puedes enviar la invitación desde la tabla de acciones.');
             return $this->redirect(route('viticulturist.personal.index', ['viewMode' => 'personal']), navigate: true);
         } catch (\Exception $e) {
             Log::error('Error al crear viticultor', [
