@@ -55,5 +55,5 @@ Thumbs.db
 /database/*.sqlite
 
 # Build
-/public/build
+# /public/build  # Comentado para subir el build compilado a git (Hostinger no tiene npm)
 /public/hot

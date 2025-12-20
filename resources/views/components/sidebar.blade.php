@@ -86,8 +86,15 @@
                                     }
                                 @endphp
                                 @if($canShow)
+                                    @php
+                                        // Agregar query string si existe en el item
+                                        $routeUrl = route($subitem['route']);
+                                        if (isset($subitem['query'])) {
+                                            $routeUrl .= '?' . http_build_query($subitem['query']);
+                                        }
+                                    @endphp
                                     <a 
-                                        href="{{ route($subitem['route']) }}" 
+                                        href="{{ $routeUrl }}" 
                                         class="flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200
                                                {{ $subitem['active'] 
                                                    ? 'bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] font-medium border-l-4 border-[var(--color-agro-green-dark)]' 

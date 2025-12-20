@@ -178,8 +178,13 @@ Route::middleware(['role:viticulturist'])
         });
 
         // Configuración
-        Route::prefix('settings')->name('settings.')->group(function () {
-            Route::get('/taxes', \App\Livewire\Viticulturist\Settings\Taxes::class)->name('taxes');
-            Route::get('/invoicing', \App\Livewire\Viticulturist\Settings\Invoicing::class)->name('invoicing');
+        Route::get('/settings', \App\Livewire\Viticulturist\Settings::class)->name('settings');
+        
+        // Rutas legacy - redirigen a settings con tab
+        Route::get('/settings/taxes', function() {
+            return redirect()->route('viticulturist.settings', ['tab' => 'taxes']);
+        });
+        Route::get('/settings/invoicing', function() {
+            return redirect()->route('viticulturist.settings', ['tab' => 'invoicing']);
         });
     });
