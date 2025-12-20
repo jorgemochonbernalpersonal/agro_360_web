@@ -35,7 +35,9 @@ class Index extends Component
                 // 'winery:id,name', // relación ya no tiene columna física en plots
                 'viticulturist:id,name',
                 'municipality:id,name,province_id',
-                'municipality.province:id,name'
+                'municipality.province:id,name',
+                'sigpacCodes:id,code',
+                'multiplePlotSigpacs:plot_id,plot_geometry_id'
             ]);
 
         if ($this->search) {

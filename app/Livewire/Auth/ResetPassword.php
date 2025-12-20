@@ -5,9 +5,11 @@ namespace App\Livewire\Auth;
 use Livewire\Component;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Models\User;
 
 class ResetPassword extends Component
 {
@@ -15,11 +17,54 @@ class ResetPassword extends Component
     public $password = '';
     public $password_confirmation = '';
     public $token = '';
+    public $tokenValid = false;
 
     public function mount($token, $email = null)
     {
         $this->token = $token;
-        $this->email = $email ?? '';
+        
+        // Obtener email del query string si no viene como parámetro
+        if (!$email && request()->has('email')) {
+            $email = request()->query('email');
+        }
+        
+        // Decodificar email si viene codificado en la URL
+        if ($email) {
+            $this->email = urldecode($email);
+            
+            // Validar que el email existe
+            $user = User::where('email', $this->email)->first();
+            if (!$user) {
+                session()->flash('error', 'El email proporcionado no existe en nuestro sistema.');
+                return $this->redirect(route('password.request'), navigate: true);
+            }
+            
+            // Validar token al cargar la página
+            // Verificar si existe un registro de reset para este email y si no ha expirado
+            $expireMinutes = config('auth.passwords.users.expire', 120);
+            
+            $resetRecord = DB::table('password_reset_tokens')
+                ->where('email', $this->email)
+                ->first();
+            
+            if (!$resetRecord) {
+                $this->tokenValid = false;
+                session()->flash('error', 'No se encontró una solicitud de restablecimiento para este email. Por favor, solicita uno nuevo.');
+            } else {
+                // Verificar si el token ha expirado
+                $createdAt = \Carbon\Carbon::parse($resetRecord->created_at);
+                $expireTime = $createdAt->addMinutes($expireMinutes);
+                
+                if (now()->greaterThan($expireTime)) {
+                    $this->tokenValid = false;
+                    session()->flash('error', 'El enlace de restablecimiento ha expirado. Por favor, solicita uno nuevo.');
+                } else {
+                    // El token existe y no ha expirado
+                    // La validación final del token se hará cuando se envíe el formulario
+                    $this->tokenValid = true;
+                }
+            }
+        }
     }
 
     protected function rules(): array
@@ -27,6 +72,17 @@ class ResetPassword extends Component
         return [
             'email' => 'required|email',
             'password' => ['required', 'confirmed', PasswordRule::defaults()],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'email.required' => 'El campo email es obligatorio.',
+            'email.email' => 'El email debe ser una dirección de correo válida.',
+            'password.required' => 'El campo contraseña es obligatorio.',
+            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
         ];
     }
 

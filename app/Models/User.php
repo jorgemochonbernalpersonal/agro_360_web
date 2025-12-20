@@ -204,6 +204,22 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Tickets de soporte creados por el usuario
+     */
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
+    /**
+     * Tickets de soporte asignados al usuario
+     */
+    public function assignedTickets()
+    {
+        return $this->hasMany(SupportTicket::class, 'assigned_to');
+    }
+
+    /**
      * Verificar si el usuario tiene una suscripción activa
      */
     public function hasActiveSubscription(): bool

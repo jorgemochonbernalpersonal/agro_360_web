@@ -167,15 +167,17 @@ Route::middleware(['role:viticulturist'])
             Route::get('/', \App\Livewire\Viticulturist\Invoices\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Viticulturist\Invoices\Create::class)->name('create');
             
-            // Facturar cosechas (debe ir antes de las rutas dinámicas)
-            Route::prefix('harvest')->name('harvest.')->group(function () {
-                Route::get('/', \App\Livewire\Viticulturist\Invoices\Harvest\Index::class)->name('index');
-            });
+            // Rutas estáticas primero (antes de rutas dinámicas)
+            Route::get('/harvest', \App\Livewire\Viticulturist\Invoices\Harvest\Index::class)->name('harvest.index');
             
-            // Rutas dinámicas al final
-            Route::get('/{invoice}', \App\Livewire\Viticulturist\Invoices\Show::class)->name('show');
+            // Rutas dinámicas: más específicas primero
             Route::get('/{invoice}/edit', \App\Livewire\Viticulturist\Invoices\Edit::class)->name('edit');
+            Route::get('/{invoice}', \App\Livewire\Viticulturist\Invoices\Show::class)->name('show');
         });
+
+        // Support / Soporte
+        Route::get('/support', \App\Livewire\Viticulturist\Support\Index::class)->name('support.index');
+        Route::get('/support/create', \App\Livewire\Viticulturist\Support\CreateTicket::class)->name('support.create');
 
         // Configuración
         Route::get('/settings', \App\Livewire\Viticulturist\Settings::class)->name('settings');

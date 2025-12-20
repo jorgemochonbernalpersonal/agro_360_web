@@ -21,6 +21,16 @@ class ChangePasswordRequired extends Component
         ];
     }
 
+    protected function messages(): array
+    {
+        return [
+            'current_password.required' => 'El campo contraseña actual es obligatorio.',
+            'password.required' => 'El campo nueva contraseña es obligatorio.',
+            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        ];
+    }
+
     public function mount()
     {
         $user = Auth::user();

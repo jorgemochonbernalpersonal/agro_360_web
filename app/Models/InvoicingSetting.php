@@ -177,4 +177,18 @@ class InvoicingSetting extends Model
             'last_reset_year' => date('Y'),
         ]);
     }
+
+    /**
+     * Obtener o crear configuración para un usuario
+     */
+    public static function getOrCreateForUser(int $userId): self
+    {
+        $settings = self::forUser($userId)->first();
+        
+        if (!$settings) {
+            $settings = self::createDefaultForUser($userId);
+        }
+        
+        return $settings;
+    }
 }

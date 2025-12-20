@@ -5,6 +5,7 @@ namespace App\Livewire\Sigpac;
 use App\Models\SigpacCode;
 use App\Models\Plot;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Rules\SigpacCodeFormat;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,72 +14,116 @@ class Create extends Component
 {
     use WithToastNotifications;
 
-    public $code = '';
-    public $code_polygon = '';
-    public $code_plot = '';
-    public $code_enclosure = '';
-    public $code_aggregate = '';
-    public $code_province = '';
-    public $code_zone = '';
-    public $code_municipality = '';
     public $plot_id = '';
+    public $sigpacCodes = []; // Array para múltiples códigos
+
+    public function mount()
+    {
+        // Si viene desde la vista de parcela, pre-seleccionar desde query string
+        $plotId = request()->query('plot_id');
+        if ($plotId) {
+            $this->plot_id = $plotId;
+        }
+        
+        // Inicializar con al menos un código
+        $this->addSigpacCode();
+    }
 
     protected function rules(): array
     {
-        return [
-            'code' => 'required|string|max:255|unique:sigpac_code,code',
-            'code_polygon' => 'nullable|string|max:10',
-            'code_plot' => 'nullable|string|max:10',
-            'code_enclosure' => 'nullable|string|max:10',
-            'code_aggregate' => 'nullable|string|max:10',
-            'code_province' => 'nullable|string|max:10',
-            'code_zone' => 'nullable|string|max:10',
-            'code_municipality' => 'nullable|string|max:10',
-            'plot_id' => 'nullable|exists:plots,id',
+        $rules = [
+            'plot_id' => 'required|exists:plots,id',
+            'sigpacCodes' => 'required|array|min:1',
         ];
+
+        // Validar cada código SIGPAC
+        foreach ($this->sigpacCodes as $index => $code) {
+            $rules["sigpacCodes.{$index}.code"] = [
+                'required',
+                'string',
+                new SigpacCodeFormat(),
+                function ($attribute, $value, $fail) use ($index) {
+                    // Verificar que no exista ya
+                    try {
+                        $parsed = SigpacCode::parseSigpacCode($value);
+                        $exists = SigpacCode::where('code', $parsed['code'])->exists();
+                        if ($exists) {
+                            $fail("El código SIGPAC {$value} ya existe.");
+                        }
+                    } catch (\InvalidArgumentException $e) {
+                        // La validación de formato ya se hace con la regla
+                    }
+                }
+            ];
+        }
+
+        return $rules;
+    }
+
+    public function addSigpacCode()
+    {
+        $this->sigpacCodes[] = [
+            'code' => '',
+        ];
+    }
+
+    public function removeSigpacCode($index)
+    {
+        unset($this->sigpacCodes[$index]);
+        $this->sigpacCodes = array_values($this->sigpacCodes);
     }
 
     public function save()
     {
         $this->validate();
-
+        
         try {
             DB::beginTransaction();
-
-            $sigpacCode = SigpacCode::create([
-                'code' => $this->code,
-                'code_polygon' => $this->code_polygon ?: null,
-                'code_plot' => $this->code_plot ?: null,
-                'code_enclosure' => $this->code_enclosure ?: null,
-                'code_aggregate' => $this->code_aggregate ?: null,
-                'code_province' => $this->code_province ?: null,
-                'code_zone' => $this->code_zone ?: null,
-                'code_municipality' => $this->code_municipality ?: null,
-            ]);
-
-            // Si se seleccionó una parcela, asociarla
-            if ($this->plot_id) {
-                $plot = Plot::findOrFail($this->plot_id);
-                if (Auth::user()->can('update', $plot)) {
-                    $plot->sigpacCodes()->attach($sigpacCode->id);
+            
+            $plot = Plot::findOrFail($this->plot_id);
+            
+            // Verificar permisos
+            if (!Auth::user()->can('update', $plot)) {
+                throw new \Exception('No tienes permisos para asociar códigos SIGPAC a esta parcela.');
+            }
+            
+            $createdCodes = [];
+            
+            foreach ($this->sigpacCodes as $sigpacData) {
+                // Parsear el código y extraer todos los campos
+                $parsed = SigpacCode::parseSigpacCode($sigpacData['code']);
+                
+                // Verificar que no exista (doble verificación)
+                $exists = SigpacCode::where('code', $parsed['code'])->exists();
+                if ($exists) {
+                    throw new \Exception("El código {$sigpacData['code']} ya existe.");
                 }
+                
+                // Crear el código SIGPAC con todos los campos parseados
+                $sigpacCode = SigpacCode::create($parsed);
+                
+                // Asociar con la parcela
+                $plot->sigpacCodes()->attach($sigpacCode->id);
+                $createdCodes[] = $sigpacCode;
             }
-
+            
             DB::commit();
-
-            $this->toastSuccess('Código SIGPAC creado correctamente.');
             
-            if ($this->plot_id) {
-                return $this->redirect(route('sigpac.geometry.edit-plot', [
-                    'sigpacId' => $sigpacCode->id,
-                    'plotId' => $this->plot_id
-                ]));
-            }
+            $count = count($createdCodes);
+            $message = $count === 1 
+                ? 'Código SIGPAC creado correctamente.'
+                : "{$count} códigos SIGPAC creados correctamente.";
             
-            return $this->redirect(route('sigpac.codes'));
+            $this->toastSuccess($message);
+            
+            return $this->redirect(route('plots.show', $plot->id));
+            
+        } catch (\InvalidArgumentException $e) {
+            DB::rollBack();
+            $this->toastError('Error de formato: ' . $e->getMessage());
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->toastError('Error al crear el código SIGPAC: ' . $e->getMessage());
+            $this->toastError('Error: ' . $e->getMessage());
         }
     }
 

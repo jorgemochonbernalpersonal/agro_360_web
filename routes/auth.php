@@ -10,7 +10,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
     Route::get('/forgot-password', \App\Livewire\Auth\ForgotPassword::class)->name('password.request');
-    Route::get('/reset-password/{token}', \App\Livewire\Auth\ResetPassword::class)->name('password.reset');
+    Route::get('/reset-password/{token}', \App\Livewire\Auth\ResetPassword::class)
+        ->name('password.reset')
+        ->where('token', '.*'); // Permitir cualquier carácter en el token (incluye caracteres especiales)
 });
 
 Route::middleware('auth')->group(function () {

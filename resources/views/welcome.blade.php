@@ -83,7 +83,7 @@
             'foundingDate' => '2024',
             'contactPoint' => [
                 '@type' => 'ContactPoint',
-                'email' => 'soporte@agro365.com',
+                'email' => 'info@agro365.es',
                 'contactType' => 'customer service',
                 'availableLanguage' => ['Spanish']
             ],
@@ -517,7 +517,7 @@
     <!-- Footer -->
     <footer class="bg-[var(--color-agro-green-dark)] text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
@@ -545,6 +545,18 @@
                     <ul class="space-y-2 text-white/70">
                         <li><a href="{{ route('login') }}" class="hover:text-white transition-colors">Iniciar Sesión</a></li>
                         <li><a href="{{ route('register') }}" class="hover:text-white transition-colors">Registrarse</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Contacto</h4>
+                    <ul class="space-y-2 text-white/70">
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <a href="mailto:info@agro365.es" class="hover:text-white transition-colors">info@agro365.es</a>
+                        </li>
                     </ul>
                 </div>
             </div>

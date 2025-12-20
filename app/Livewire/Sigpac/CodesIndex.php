@@ -31,6 +31,9 @@ class CodesIndex extends Component
                 $search = '%' . strtolower($this->search) . '%';
                 $query->whereRaw('LOWER(code) LIKE ?', [$search]);
             })
+            ->with(['plots' => function($query) use ($plotIds) {
+                $query->whereIn('plots.id', $plotIds)->limit(1);
+            }])
             ->withCount(['plots' => function($query) use ($plotIds) {
                 $query->whereIn('plots.id', $plotIds);
             }])

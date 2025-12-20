@@ -37,7 +37,7 @@ class AgriculturalActivityFactory extends Factory
     /**
      * Indicate that the activity belongs to a specific viticulturist.
      */
-    public function for(User $viticulturist): static
+    public function forViticulturist(User $viticulturist): static
     {
         return $this->state(fn (array $attributes) => [
             'viticulturist_id' => $viticulturist->id,

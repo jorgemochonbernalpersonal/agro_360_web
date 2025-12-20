@@ -28,6 +28,9 @@ class EditGeometry extends Component
         $this->sigpacId = $sigpacId;
         $this->plotId = $plotId;
         
+        // Verificar si viene en modo solo lectura desde query string
+        $this->viewOnly = request()->query('view') === 'true';
+        
         // Si hay plotId, buscar geometría existente
         if ($plotId) {
             $mps = MultipartPlotSigpac::where('plot_id', $plotId)
@@ -39,8 +42,10 @@ class EditGeometry extends Component
             if ($mps && $mps->plotGeometry) {
                 $this->geometryId = $mps->plot_geometry_id;
                 $this->coordinates = $mps->plotGeometry->getCoordinatesAsArray();
-                // Si hay geometría, mostrar el mapa automáticamente en modo solo lectura
-                $this->viewOnly = true;
+                // Si es modo solo lectura, no mostrar editor
+                if ($this->viewOnly) {
+                    $this->showMap = false; // No mostrar editor, solo vista
+                }
             }
         } else {
             // Si no hay plotId pero hay geometría, también mostrar en modo solo lectura
@@ -52,7 +57,9 @@ class EditGeometry extends Component
             if ($mps && $mps->plotGeometry) {
                 $this->geometryId = $mps->plot_geometry_id;
                 $this->coordinates = $mps->plotGeometry->getCoordinatesAsArray();
-                $this->viewOnly = true;
+                if ($this->viewOnly) {
+                    $this->showMap = false;
+                }
             }
         }
     }

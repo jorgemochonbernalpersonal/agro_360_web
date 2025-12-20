@@ -118,6 +118,45 @@
                     <x-table-actions align="right">
                         <x-action-button variant="view" href="{{ route('plots.show', $plot) }}" />
                         @can('update', $plot)
+                            {{-- Botón Generar Mapa si tiene códigos SIGPAC --}}
+                            @php
+                                $hasSigpacCodes = $plot->sigpacCodes->count() > 0;
+                                $hasGeometry = $plot->multiplePlotSigpacs()
+                                    ->whereNotNull('plot_geometry_id')
+                                    ->exists();
+                                $firstSigpacCode = $plot->sigpacCodes->first();
+                            @endphp
+                            
+                            @if($hasSigpacCodes && $firstSigpacCode)
+                                @if($hasGeometry)
+                                    {{-- Botón Ver Mapa (solo lectura) --}}
+                                    <a href="{{ route('sigpac.geometry.edit-plot', [
+                                        'sigpacId' => $firstSigpacCode->id, 
+                                        'plotId' => $plot->id,
+                                        'view' => 'true'
+                                    ]) }}"
+                                       class="p-2 rounded-lg transition-all duration-200 group/btn text-green-600 hover:bg-green-50"
+                                       title="Ver Mapa">
+                                        <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </a>
+                                @else
+                                    {{-- Botón Generar Mapa --}}
+                                    <a href="{{ route('sigpac.geometry.edit-plot', [
+                                        'sigpacId' => $firstSigpacCode->id, 
+                                        'plotId' => $plot->id
+                                    ]) }}"
+                                       class="p-2 rounded-lg transition-all duration-200 group/btn text-purple-600 hover:bg-purple-50"
+                                       title="Generar Mapa">
+                                        <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                        </svg>
+                                    </a>
+                                @endif
+                            @endif
+
                             {{-- Crear plantación sobre esta parcela --}}
                             <a href="{{ route('plots.plantings.create', $plot) }}"
                                class="p-2 rounded-lg transition-all duration-200 group/btn text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-bg)]"

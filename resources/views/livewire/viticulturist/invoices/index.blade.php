@@ -64,47 +64,67 @@
         </div>
     </div>
 
-    <!-- Tabla -->
-    <div class="glass-card rounded-xl overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Número</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($invoices as $invoice)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $invoice->invoice_number }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $invoice->client->full_name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $invoice->invoice_date->format('d/m/Y') }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ number_format($invoice->total_amount, 2) }} €</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $invoice->payment_status === 'paid' ? 'bg-green-100 text-green-800' : ($invoice->payment_status === 'overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                    {{ ucfirst($invoice->payment_status) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('viticulturist.invoices.show', $invoice->id) }}" class="text-blue-600 hover:text-blue-900 mr-3">Ver</a>
-                                <a href="{{ route('viticulturist.invoices.edit', $invoice->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">No se encontraron facturas</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <div class="px-6 py-4">
-            {{ $invoices->links() }}
-        </div>
-    </div>
+
+    @php
+        $headers = [
+            ['label' => 'Número', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
+            ['label' => 'Cliente', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>'],
+            ['label' => 'Fecha', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
+            ['label' => 'Total', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
+            ['label' => 'Estado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
+            'Acciones',
+        ];
+    @endphp
+
+    <x-data-table 
+        :headers="$headers" 
+        empty-message="No hay facturas registradas" 
+        empty-description="Comienza creando tu primera factura"
+        color="green"
+    >
+        @if($invoices->count() > 0)
+            @foreach($invoices as $invoice)
+                <x-table-row>
+                    <x-table-cell>
+                        <span class="text-sm font-bold text-gray-900">{{ $invoice->invoice_number }}</span>
+                    </x-table-cell>
+                    
+                    <x-table-cell>
+                        <span class="text-sm text-gray-700">{{ $invoice->client->full_name }}</span>
+                    </x-table-cell>
+                    
+                    <x-table-cell>
+                        <span class="text-sm text-gray-700">{{ $invoice->invoice_date->format('d/m/Y') }}</span>
+                    </x-table-cell>
+                    
+                    <x-table-cell>
+                        <span class="text-sm font-semibold text-gray-900">{{ number_format($invoice->total_amount, 2) }} €</span>
+                    </x-table-cell>
+                    
+                    <x-table-cell>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $invoice->payment_status === 'paid' ? 'bg-green-100 text-green-800' : ($invoice->payment_status === 'overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                            {{ ucfirst($invoice->payment_status) }}
+                        </span>
+                    </x-table-cell>
+                    
+                    <x-table-cell>
+                        <x-table-actions align="right">
+                            <x-action-button 
+                                variant="view" 
+                                href="{{ route('viticulturist.invoices.show', $invoice->id) }}"
+                            />
+                            <x-action-button 
+                                variant="edit" 
+                                href="{{ route('viticulturist.invoices.edit', $invoice->id) }}"
+                            />
+                        </x-table-actions>
+                    </x-table-cell>
+                </x-table-row>
+            @endforeach
+
+            <x-slot name="pagination">
+                {{ $invoices->links() }}
+            </x-slot>
+        @endif
+    </x-data-table>
 </div>

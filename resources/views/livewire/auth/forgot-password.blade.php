@@ -32,6 +32,12 @@
                 </div>
             @endif
             
+            @if(session('error'))
+                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-600 rounded-lg">
+                    <p class="text-sm font-semibold text-red-800">{{ session('error') }}</p>
+                </div>
+            @endif
+            
             <form wire:submit="sendResetLink" class="space-y-5">
                 <div>
                     <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">

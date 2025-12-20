@@ -62,6 +62,28 @@
                 </div>
             </x-form-section>
 
+            <x-form-section title="Código de Albarán" color="blue">
+                <div class="max-w-md">
+                    <x-label for="delivery_note_code" required>Código de Albarán</x-label>
+                    <x-input 
+                        wire:model.live="delivery_note_code" 
+                        id="delivery_note_code" 
+                        type="text" 
+                        required
+                        placeholder="Ej: ALB-2025-0001"
+                    />
+                    @error('delivery_note_code')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-2 text-xs text-gray-500">
+                        💡 El código se genera automáticamente de forma secuencial. Puedes modificarlo si lo necesitas.
+                        @if($delivery_note_code_modified)
+                            <span class="text-orange-600 font-semibold">⚠️ Has modificado el código automático.</span>
+                        @endif
+                    </p>
+                </div>
+            </x-form-section>
+
             <x-form-section title="Seleccionar Cosecha para Facturar" color="purple">
                 @if($fromHarvestRoute)
                     <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

@@ -11,40 +11,125 @@ class InvoiceObserver
 {
     /**
      * Handle the Invoice "updated" event.
-     * Cuando una factura cambia de estado, actualizar el stock
+     * Cuando una factura cambia de estado o delivery_status, actualizar el stock y fechas
      */
     public function updated(Invoice $invoice): void
     {
         $oldStatus = $invoice->getOriginal('status');
         $newStatus = $invoice->status;
-
-        // Si no cambió el estado, no hacer nada
-        if ($oldStatus === $newStatus) {
-            return;
-        }
+        $oldDeliveryStatus = $invoice->getOriginal('delivery_status');
+        $newDeliveryStatus = $invoice->delivery_status;
+        $oldPaymentStatus = $invoice->getOriginal('payment_status');
+        $newPaymentStatus = $invoice->payment_status;
 
         try {
-            // Draft → Approved/Sent: Convertir reservas en ventas
-            if ($oldStatus === 'draft' && in_array($newStatus, ['approved', 'sent'])) {
-                $this->convertReservationsToSales($invoice);
+            // Manejar cambios de delivery_status (prioridad principal para stock)
+            if ($oldDeliveryStatus !== $newDeliveryStatus) {
+                $this->handleDeliveryStatusChange($invoice, $oldDeliveryStatus, $newDeliveryStatus);
+            }
+            // Solo si NO hubo cambio de delivery_status, manejar cambios de status
+            elseif ($oldStatus !== $newStatus) {
+                $this->handleStatusChange($invoice, $oldStatus, $newStatus);
             }
             
-            // Approved/Sent → Draft: Convertir ventas en reservas (raro pero posible)
-            elseif (in_array($oldStatus, ['approved', 'sent']) && $newStatus === 'draft') {
-                $this->convertSalesToReservations($invoice);
-            }
-            
-            // Cualquier estado → Cancelled: Liberar todo el stock
-            elseif ($newStatus === 'cancelled') {
-                $this->releaseAllStock($invoice);
+            // Manejar cambios de payment_status (independiente de stock)
+            if ($oldPaymentStatus !== $newPaymentStatus) {
+                $this->handlePaymentStatusChange($invoice, $oldPaymentStatus, $newPaymentStatus);
             }
         } catch (\Exception $e) {
             Log::error('Error al actualizar estado de factura', [
                 'invoice_id' => $invoice->id,
                 'old_status' => $oldStatus,
                 'new_status' => $newStatus,
+                'old_delivery_status' => $oldDeliveryStatus,
+                'new_delivery_status' => $newDeliveryStatus,
+                'old_payment_status' => $oldPaymentStatus,
+                'new_payment_status' => $newPaymentStatus,
                 'error' => $e->getMessage(),
             ]);
+        }
+    }
+
+    /**
+     * Manejar cambios en delivery_status (controla stock principalmente)
+     */
+    protected function handleDeliveryStatusChange(Invoice $invoice, string $oldStatus, string $newStatus): void
+    {
+        // pending → delivered: Convertir reservas a ventas
+        if ($oldStatus === 'pending' && $newStatus === 'delivered') {
+            $this->convertReservationsToSales($invoice);
+            // Guardar fecha de entrega si no existe
+            if (!$invoice->delivery_note_date) {
+                $invoice->updateQuietly(['delivery_note_date' => now()]);
+            }
+        }
+        
+        // delivered → pending: Convertir ventas a reservas
+        elseif ($oldStatus === 'delivered' && $newStatus === 'pending') {
+            $this->convertSalesToReservations($invoice);
+        }
+        
+        // delivered → in_transit: No cambiar stock (sigue como sold)
+        elseif ($oldStatus === 'delivered' && $newStatus === 'in_transit') {
+            // No hacer nada, el stock sigue vendido
+        }
+        
+        // in_transit → delivered: No cambiar stock (sigue como sold)
+        elseif ($oldStatus === 'in_transit' && $newStatus === 'delivered') {
+            // No hacer nada, el stock sigue vendido
+            // Guardar fecha de entrega si no existe
+            if (!$invoice->delivery_note_date) {
+                $invoice->updateQuietly(['delivery_note_date' => now()]);
+            }
+        }
+        
+        // Cualquier estado → cancelled: Liberar todo el stock
+        elseif ($newStatus === 'cancelled') {
+            $this->releaseAllStock($invoice);
+        }
+    }
+
+    /**
+     * Manejar cambios en status (solo si no hubo cambio de delivery_status)
+     */
+    protected function handleStatusChange(Invoice $invoice, string $oldStatus, string $newStatus): void
+    {
+        // Draft → Sent: Convertir reservas en ventas y generar código de factura
+        if ($oldStatus === 'draft' && $newStatus === 'sent') {
+            // Generar código de factura si no existe
+            if (!$invoice->invoice_number) {
+                $settings = \App\Models\InvoicingSetting::getOrCreateForUser($invoice->user_id);
+                $invoiceNumber = $settings->generateInvoiceCode();
+                $settings->incrementInvoiceCounter();
+                $invoice->updateQuietly(['invoice_number' => $invoiceNumber]);
+            }
+            $this->convertReservationsToSales($invoice);
+        }
+        
+        // Sent → Draft: Convertir ventas en reservas
+        elseif ($oldStatus === 'sent' && $newStatus === 'draft') {
+            $this->convertSalesToReservations($invoice);
+        }
+        
+        // Cualquier estado → Cancelled: Liberar todo el stock
+        elseif ($newStatus === 'cancelled') {
+            $this->releaseAllStock($invoice);
+        }
+    }
+
+    /**
+     * Manejar cambios en payment_status
+     */
+    protected function handlePaymentStatusChange(Invoice $invoice, string $oldStatus, string $newStatus): void
+    {
+        // Cualquier estado → paid: Guardar fecha de pago
+        if ($newStatus === 'paid' && !$invoice->payment_date) {
+            $invoice->updateQuietly(['payment_date' => now()]);
+        }
+        
+        // paid → otro status: Limpiar fecha de pago
+        elseif ($oldStatus === 'paid' && $newStatus !== 'paid') {
+            $invoice->updateQuietly(['payment_date' => null]);
         }
     }
 

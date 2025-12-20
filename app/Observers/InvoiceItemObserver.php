@@ -27,7 +27,7 @@ class InvoiceItemObserver
                 $this->reserveStock($item);
             }
             // Si la factura ya está aprobada, marcar como vendido directamente
-            elseif (in_array($item->invoice->status, ['approved', 'sent', 'paid'])) {
+            elseif (in_array($item->invoice->status, ['sent', 'paid'])) {
                 $this->markAsSold($item);
             }
         } catch (\Exception $e) {

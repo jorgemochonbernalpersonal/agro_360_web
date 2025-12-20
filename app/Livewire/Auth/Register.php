@@ -61,6 +61,22 @@ class Register extends Component
         return $rules;
     }
 
+    protected function messages(): array
+    {
+        return [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'email.required' => 'El campo email es obligatorio.',
+            'email.email' => 'El email debe ser una dirección de correo válida.',
+            'email.max' => 'El email no puede tener más de 255 caracteres.',
+            'password.required' => 'El campo contraseña es obligatorio.',
+            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'role.required' => 'Debes seleccionar un rol.',
+            'role.in' => 'El rol seleccionado no es válido.',
+        ];
+    }
+
     public function getAllowedRoles(?User $user = null): array
     {
         if (!$user) {

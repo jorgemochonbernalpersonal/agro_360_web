@@ -20,6 +20,16 @@ class ForcePasswordReset extends Component
         ];
     }
 
+    protected function messages(): array
+    {
+        return [
+            'current_password.required' => 'El campo contraseña temporal es obligatorio.',
+            'new_password.required' => 'El campo nueva contraseña es obligatorio.',
+            'new_password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
+            'new_password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        ];
+    }
+
     public function updatePassword()
     {
         $this->validate();

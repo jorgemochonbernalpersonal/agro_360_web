@@ -70,25 +70,37 @@ class AppServiceProvider extends ServiceProvider
                              style="max-width: 160px; height: auto;">
                      </div>'
                 ))
-                ->greeting('Hola ' . ($notifiable->name ?: ''))
+                ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
                 ->line('Gracias por registrarte en Agro365, tu cuaderno de campo digital para viticultores.')
                 ->line('Para activar tu cuenta y empezar a utilizar la plataforma, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:')
                 ->action('Verificar mi email', $url)
+                ->line('Este enlace de verificación expirará en 24 horas.')
                 ->line('Si no has solicitado esta cuenta, puedes ignorar este mensaje sin problemas.')
-                ->salutation("Saludos,\nAgro365");
+                ->line('Si tienes alguna pregunta, puedes contactarnos en info@agro365.es')
+                ->salutation("Saludos,\nEl equipo de Agro365");
         });
 
         // Personalizar email de reset de contraseña de Laravel para Agro365
         ResetPassword::toMailUsing(function ($notifiable, string $token) {
-            // Generar URL de reset con el token
-            $url = url(route('password.reset', [
-                'token' => $token,
-                'email' => $notifiable->getEmailForPasswordReset(),
-            ], false));
+            $email = $notifiable->getEmailForPasswordReset();
             
-            // Solo forzar HTTPS en producción
+            // Generar URL de reset con el token
+            // Construir URL con token en la ruta y email como query parameter
+            $url = route('password.reset', ['token' => $token]) . '?email=' . urlencode($email);
+            
+            // En producción, forzar HTTPS
             if (app()->environment('production')) {
                 $url = str_replace('http://', 'https://', $url);
+            }
+            
+            // Log solo en desarrollo para debugging
+            if (app()->environment('local')) {
+                \Log::info('Password reset URL generated', [
+                    'email' => $email,
+                    'token_length' => strlen($token),
+                    'url' => $url,
+                    'environment' => app()->environment(),
+                ]);
             }
             
             // Generar URL absoluta para la imagen
@@ -107,13 +119,14 @@ class AppServiceProvider extends ServiceProvider
                              style="max-width: 160px; height: auto;">
                      </div>'
                 ))
-                ->greeting('Hola ' . ($notifiable->name ?: ''))
+                ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
                 ->line('Has solicitado restablecer tu contraseña en Agro365.')
                 ->line('Haz clic en el siguiente botón para crear una nueva contraseña:')
                 ->action('Restablecer Contraseña', $url)
-                ->line('Este enlace expirará en 60 minutos.')
+                ->line('Este enlace expirará en 2 horas.')
                 ->line('Si no solicitaste restablecer tu contraseña, puedes ignorar este mensaje sin problemas.')
-                ->salutation("Saludos,\nAgro365");
+                ->line('Si tienes alguna pregunta, puedes contactarnos en info@agro365.es')
+                ->salutation("Saludos,\nEl equipo de Agro365");
         });
 
         // Registrar observers para stock tracking

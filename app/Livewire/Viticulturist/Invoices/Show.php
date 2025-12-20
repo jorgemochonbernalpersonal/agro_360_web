@@ -9,20 +9,18 @@ use Illuminate\Support\Facades\Auth;
 class Show extends Component
 {
     public Invoice $invoice;
-    public $invoice_id;
 
     public function mount($invoice)
     {
-        $this->invoice_id = $invoice;
-        $this->loadInvoice();
-    }
-
-    public function loadInvoice()
-    {
-        $user = Auth::user();
-        $this->invoice = Invoice::forUser($user->id)
-            ->with(['client', 'clientAddress', 'items.tax', 'items.harvest'])
-            ->findOrFail($this->invoice_id);
+        // Si es un modelo, usarlo directamente; si es un ID, buscarlo
+        if ($invoice instanceof Invoice) {
+            $this->invoice = $invoice;
+        } else {
+            $user = Auth::user();
+            $this->invoice = Invoice::forUser($user->id)
+                ->with(['client', 'clientAddress', 'items.tax', 'items.harvest'])
+                ->findOrFail($invoice);
+        }
     }
 
     public function render()

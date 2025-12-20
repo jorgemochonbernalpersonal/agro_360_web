@@ -23,6 +23,9 @@ class Create extends Component
     public $items = [];
     public $observations = '';
     public $observations_invoice = '';
+    public $delivery_note_code = ''; // Código de albarán (editable)
+    public $delivery_note_code_auto = ''; // Código generado automáticamente
+    public $delivery_note_code_modified = false; // Flag para saber si el usuario lo modificó
 
     public $availableClients = [];
     public $availableAddresses = [];
@@ -48,6 +51,12 @@ class Create extends Component
         }
         
         $this->loadData();
+        
+        // Generar código de albarán automáticamente
+        $user = Auth::user();
+        $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
+        $this->delivery_note_code_auto = $settings->generateDeliveryNoteCode();
+        $this->delivery_note_code = $this->delivery_note_code_auto;
         
         // Si hay una cosecha requerida, añadirla automáticamente después de cargar datos
         if ($this->requiredHarvestId && !$this->harvestAdded) {
@@ -159,6 +168,16 @@ class Create extends Component
         }
     }
 
+    public function updatedDeliveryNoteCode($value)
+    {
+        // Marcar como modificado si el usuario cambió el código
+        if ($value !== $this->delivery_note_code_auto) {
+            $this->delivery_note_code_modified = true;
+        } else {
+            $this->delivery_note_code_modified = false;
+        }
+    }
+
     public function addItem()
     {
         $this->items[] = [
@@ -212,6 +231,7 @@ class Create extends Component
             'items.*.concept_type' => 'nullable|in:harvest,service,product,other',
             'observations' => 'nullable|string',
             'observations_invoice' => 'nullable|string',
+            'delivery_note_code' => 'required|string|max:255',
         ];
         
         // Si viene desde la ruta de facturar cosecha, validar que haya al menos una cosecha
@@ -254,8 +274,20 @@ class Create extends Component
 
         try {
             DB::transaction(function () use ($user) {
-                // Generar número de factura
-                $invoiceNumber = $this->generateInvoiceNumber($user->id);
+                // Obtener settings de invoicing
+                $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
+                
+                // Usar el código de albarán del usuario si lo modificó, sino usar el generado
+                $deliveryNoteCode = $this->delivery_note_code_modified 
+                    ? $this->delivery_note_code 
+                    : $settings->generateDeliveryNoteCode();
+                
+                // Solo incrementar contador de albarán si el usuario NO modificó el código
+                if (!$this->delivery_note_code_modified) {
+                    $settings->incrementDeliveryNoteCounter();
+                }
+                
+                // NO generamos invoice_number aquí, solo cuando se aprueba la factura (en el observer)
 
                 // Calcular totales
                 $subtotal = 0;
@@ -278,13 +310,15 @@ class Create extends Component
 
                 $totalAmount = $subtotal + $taxAmount;
 
-                // Crear factura
+                // Crear factura (sin invoice_number, se asignará cuando se apruebe)
                 $invoice = Invoice::create([
                     'user_id' => $user->id,
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
-                    'invoice_number' => $invoiceNumber,
+                    // invoice_number se asignará cuando se apruebe la factura (en InvoiceObserver)
+                    'delivery_note_code' => $deliveryNoteCode,
                     'invoice_date' => $this->invoice_date,
+                    'delivery_note_date' => now(), // Generar albarán al crear
                     'due_date' => $this->due_date ?: null,
                     'subtotal' => $subtotal,
                     'discount_amount' => $discountAmount,
@@ -293,6 +327,8 @@ class Create extends Component
                     'tax_amount' => $taxAmount,
                     'total_amount' => $totalAmount,
                     'status' => 'draft',
+                    'delivery_status' => 'pending', // Estado inicial de entrega
+                    'payment_status' => 'unpaid', // Estado inicial de pago
                     'observations' => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
@@ -334,19 +370,6 @@ class Create extends Component
         } catch (\Exception $e) {
             $this->toastError('Error al crear la factura: ' . $e->getMessage());
         }
-    }
-
-    protected function generateInvoiceNumber($userId): string
-    {
-        $year = now()->year;
-        $lastInvoice = Invoice::forUser($userId)
-            ->whereYear('invoice_date', $year)
-            ->orderBy('current_invoice_code', 'desc')
-            ->first();
-
-        $nextNumber = $lastInvoice ? $lastInvoice->current_invoice_code + 1 : 1;
-
-        return sprintf('FAC-%d-%04d', $year, $nextNumber);
     }
 
     public function render()

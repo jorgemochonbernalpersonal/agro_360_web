@@ -125,18 +125,54 @@
                         </div>
                     @endif
 
-                    @if($plot->sigpacCodes->count() > 0)
-                        <div class="mb-4">
-                            <label class="text-sm font-semibold text-gray-500 block mb-2">Códigos SIGPAC</label>
-                            <div class="flex flex-wrap gap-2">
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-semibold text-gray-500">Códigos SIGPAC</label>
+                            <a href="{{ route('sigpac.codes.create', ['plot_id' => $plot->id]) }}"
+                               class="text-sm text-[var(--color-agro-green)] hover:text-[var(--color-agro-green-dark)] 
+                                      font-medium flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Añadir código SIGPAC
+                            </a>
+                        </div>
+                        @if($plot->sigpacCodes->count() > 0)
+                            <div class="space-y-2">
                                 @foreach($plot->sigpacCodes as $code)
-                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                                        {{ $code->code }}
-                                    </span>
+                                    @php
+                                        $hasGeometry = $plot->multiplePlotSigpacs()
+                                            ->where('sigpac_code_id', $code->id)
+                                            ->whereNotNull('plot_geometry_id')
+                                            ->exists();
+                                    @endphp
+                                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                                            {{ $code->formatted_code ?? $code->code }}
+                                        </span>
+                                        @can('update', $plot)
+                                            <a href="{{ route('sigpac.geometry.edit-plot', [
+                                                'sigpacId' => $code->id, 
+                                                'plotId' => $plot->id
+                                            ]) }}"
+                                               class="text-xs px-3 py-1 rounded-lg transition-colors font-medium {{ $hasGeometry 
+                                                   ? 'text-green-600 bg-green-50 hover:bg-green-100' 
+                                                   : 'text-blue-600 bg-blue-50 hover:bg-blue-100' }}">
+                                                <span class="flex items-center gap-1">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                                    </svg>
+                                                    {{ $hasGeometry ? 'Ver/Editar Mapa' : 'Generar Mapa' }}
+                                                </span>
+                                            </a>
+                                        @endcan
+                                    </div>
                                 @endforeach
                             </div>
-                        </div>
-                    @endif
+                        @else
+                            <p class="text-sm text-gray-400 italic">No hay códigos SIGPAC asociados</p>
+                        @endif
+                    </div>
                 </div>
             @endif
 

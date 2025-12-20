@@ -32,27 +32,38 @@
         <!-- Mapa -->
         <div class="glass-card rounded-xl p-6">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-900">Geometría de la Parcela</h3>
-                <div class="flex gap-2">
-                    @if($geometryId)
+                <h3 class="text-lg font-bold text-gray-900">
+                    {{ $viewOnly ? 'Visualización de Mapa' : 'Geometría de la Parcela' }}
+                </h3>
+                @if(!$viewOnly)
+                    <div class="flex gap-2">
+                        @if($geometryId)
+                            <button
+                                wire:click="delete"
+                                wire:confirm="¿Estás seguro de eliminar esta geometría?"
+                                class="px-4 py-2 text-sm font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                            >
+                                Eliminar
+                            </button>
+                        @endif
                         <button
-                            wire:click="delete"
-                            wire:confirm="¿Estás seguro de eliminar esta geometría?"
-                            class="px-4 py-2 text-sm font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                            wire:click="$set('showMap', true)"
+                            class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
                         >
-                            Eliminar
+                            {{ $geometryId ? 'Editar Mapa' : 'Crear Mapa' }}
                         </button>
-                    @endif
-                    <button
-                        wire:click="$set('showMap', true)"
+                    </div>
+                @else
+                    <a
+                        href="{{ route('sigpac.geometry.edit-plot', ['sigpacId' => $sigpacId, 'plotId' => $plotId]) }}"
                         class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
                     >
-                        {{ $geometryId ? 'Editar Mapa' : 'Crear Mapa' }}
-                    </button>
-                </div>
+                        Editar Mapa
+                    </a>
+                @endif
             </div>
 
-            @if($showMap)
+            @if($showMap && !$viewOnly)
                 <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <p class="text-sm text-blue-800 mb-2">
                         <strong>Instrucciones:</strong> Haz clic en el mapa para añadir puntos. Haz clic en "Guardar" cuando termines.
@@ -77,21 +88,24 @@
                     </button>
                 </div>
             @elseif($geometryId && !empty($coordinates))
-                <!-- Mostrar mapa existente (solo lectura) -->
-                <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <p class="text-sm text-green-800">
-                        <strong>Mapa de geometría:</strong> Esta es la geometría guardada para este código SIGPAC.
+                <!-- Mostrar mapa existente (solo lectura o modo edición) -->
+                <div class="mb-4 p-4 {{ $viewOnly ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200' }} border rounded-lg">
+                    <p class="text-sm {{ $viewOnly ? 'text-blue-800' : 'text-green-800' }}">
+                        <strong>{{ $viewOnly ? 'Vista del mapa:' : 'Mapa de geometría:' }}</strong> 
+                        {{ $viewOnly ? 'Visualización de la geometría guardada para este código SIGPAC.' : 'Esta es la geometría guardada para este código SIGPAC.' }}
                     </p>
                 </div>
                 <div id="map-view" style="height: 500px; width: 100%;" class="rounded-lg border border-gray-300"></div>
-                <div class="mt-4 flex justify-end gap-2">
-                    <button
-                        wire:click="$set('showMap', true)"
-                        class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
-                    >
-                        Editar Geometría
-                    </button>
-                </div>
+                @if(!$viewOnly)
+                    <div class="mt-4 flex justify-end gap-2">
+                        <button
+                            wire:click="$set('showMap', true)"
+                            class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
+                        >
+                            Editar Geometría
+                        </button>
+                    </div>
+                @endif
             @else
                 <p class="text-sm text-gray-500 text-center py-8">No hay geometría guardada. Haz clic en "Crear Mapa" para añadir una.</p>
             @endif

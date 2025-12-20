@@ -155,6 +155,12 @@ class Edit extends Component
         $this->validate([
             'current_password' => ['required', 'current_password'],
             'password' => ['required', 'confirmed', Password::defaults()],
+        ], [
+            'current_password.required' => 'El campo contraseña actual es obligatorio.',
+            'current_password.current_password' => 'La contraseña actual no es correcta.',
+            'password.required' => 'El campo nueva contraseña es obligatorio.',
+            'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
         ]);
 
         $user = Auth::user();

@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Tax;
-use Illuminate\Support\Facades\DB;
 
 class TaxSeeder extends Seeder
 {
@@ -14,12 +13,7 @@ class TaxSeeder extends Seeder
      */
     public function run(): void
     {
-        // Limpiar impuestos existentes
-        $this->command->info('🗑️  Limpiando impuestos antiguos...');
-        DB::table('user_taxes')->truncate();
-        DB::table('taxes')->truncate();
-
-        $this->command->info('📝 Creando impuestos simplificados...');
+        $this->command->info('📝 Creando/actualizando impuestos simplificados...');
 
         $taxes = [
             // Exento
@@ -57,8 +51,19 @@ class TaxSeeder extends Seeder
         ];
 
         foreach ($taxes as $tax) {
-            Tax::create($tax);
-            $this->command->info("  ✓ {$tax['name']} ({$tax['rate']}%)");
+            // Usar updateOrCreate para evitar duplicados y no romper foreign keys
+            $existing = Tax::where('code', $tax['code'])
+                ->where('rate', $tax['rate'])
+                ->where('region', $tax['region'])
+                ->first();
+            
+            if ($existing) {
+                $existing->update($tax);
+                $this->command->info("  ↻ {$tax['name']} ({$tax['rate']}%) - actualizado");
+            } else {
+                Tax::create($tax);
+                $this->command->info("  ✓ {$tax['name']} ({$tax['rate']}%) - creado");
+            }
         }
 
         $this->command->info('');
