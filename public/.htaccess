@@ -1,9 +1,43 @@
+####################################
+# Security Headers
+####################################
+<IfModule mod_headers.c>
+    # Prevenir clickjacking - No permitir que el sitio se cargue en iframes externos
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevenir MIME type sniffing - Forzar al navegador a respetar el Content-Type
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # XSS Protection - Activar protección contra Cross-Site Scripting en navegadores antiguos
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # HSTS - Forzar HTTPS (solo si tienes SSL configurado en producción)
+    # Descomenta la siguiente línea cuando subas a producción con SSL
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Referrer Policy - Controlar qué información se envía en el header Referer
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy - Controlar qué funcionalidades del navegador puede usar el sitio
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+    
+    # Content Security Policy (básico) - Descomenta y ajusta según necesites
+    # Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+</IfModule>
+
+####################################
+# Laravel Rewrite Rules
+####################################
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
+
+    # Forzar HTTPS en producción (descomenta cuando subas a producción con SSL)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

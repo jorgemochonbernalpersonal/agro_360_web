@@ -1,0 +1,363 @@
+<?php
+
+namespace App\Livewire\Viticulturist\Invoices;
+
+use App\Models\Invoice;
+use App\Models\Client;
+use App\Models\Tax;
+use App\Models\Harvest;
+use App\Models\Campaign;
+use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class Create extends Component
+{
+    use WithToastNotifications;
+
+    public $client_id = '';
+    public $client_address_id = '';
+    public $invoice_date = '';
+    public $due_date = '';
+    public $items = [];
+    public $observations = '';
+    public $observations_invoice = '';
+
+    public $availableClients = [];
+    public $availableAddresses = [];
+    public $availableTaxes = [];
+    public $availableHarvests = [];
+    public $selectedHarvestId = '';
+    public $selectedCampaign = '';
+    public $fromHarvestRoute = false; // Indica si viene desde la ruta de facturar cosecha
+    public $requiredHarvestId = null; // ID de cosecha requerida si viene desde harvest route
+    public $harvestAdded = false; // Flag para evitar añadir la cosecha múltiples veces
+
+    public function mount()
+    {
+        $this->invoice_date = now()->format('Y-m-d');
+        
+        // Detectar si viene desde la ruta de facturar cosecha o tiene harvest_id en query
+        $harvestId = request()->query('harvest_id');
+        $this->fromHarvestRoute = $harvestId !== null;
+        
+        // Si viene con harvest_id, cargarlo automáticamente
+        if ($harvestId && $this->fromHarvestRoute) {
+            $this->requiredHarvestId = $harvestId;
+        }
+        
+        $this->loadData();
+        
+        // Si hay una cosecha requerida, añadirla automáticamente después de cargar datos
+        if ($this->requiredHarvestId && !$this->harvestAdded) {
+            $this->selectedHarvestId = $this->requiredHarvestId;
+            $this->addHarvestToInvoice();
+            $this->harvestAdded = true;
+        }
+    }
+
+    public function loadData()
+    {
+        $user = Auth::user();
+        $this->availableClients = Client::forUser($user->id)->active()->get();
+        $this->availableTaxes = Tax::active()->get();
+        $this->loadHarvests();
+    }
+
+    public function loadHarvests()
+    {
+        $user = Auth::user();
+        
+        $query = Harvest::whereHas('activity', function($q) use ($user) {
+            $q->where('viticulturist_id', $user->id);
+        })
+        ->with(['activity.plot', 'plotPlanting.grapeVariety', 'activity.campaign'])
+        ->whereDoesntHave('invoiceItems'); // Solo cosechas sin facturar
+
+        if ($this->selectedCampaign) {
+            $query->whereHas('activity', function($q) {
+                $q->where('campaign_id', $this->selectedCampaign);
+            });
+        }
+
+        $this->availableHarvests = $query->orderBy('harvest_start_date', 'desc')->get();
+    }
+
+    public function updatedSelectedCampaign()
+    {
+        $this->loadHarvests();
+        $this->selectedHarvestId = '';
+    }
+
+    public function addHarvestToInvoice()
+    {
+        if (!$this->selectedHarvestId) {
+            return;
+        }
+
+        $harvest = Harvest::with(['activity.plot', 'plotPlanting.grapeVariety'])
+            ->find($this->selectedHarvestId);
+
+        if (!$harvest) {
+            $this->toastError('Cosecha no encontrada.');
+            return;
+        }
+
+        // Verificar que la cosecha no esté ya en los items
+        foreach ($this->items as $item) {
+            if (isset($item['harvest_id']) && $item['harvest_id'] == $harvest->id) {
+                $this->toastError('Esta cosecha ya está en la factura.');
+                return;
+            }
+        }
+
+        // Obtener el impuesto por defecto del usuario si existe
+        $defaultTax = null;
+        $user = Auth::user();
+        $userDefaultTax = $user->defaultTax()->first();
+        if ($userDefaultTax) {
+            $defaultTax = $userDefaultTax;
+        } else {
+            // Si no hay impuesto por defecto, usar el primero disponible o el IVA general
+            $defaultTax = $this->availableTaxes->where('code', 'IVA')->where('rate', 21)->first() 
+                        ?? $this->availableTaxes->first();
+        }
+
+        // Crear item con datos de la cosecha
+        $grapeVarietyName = $harvest->plotPlanting->grapeVariety->name ?? 'Uva';
+        $plotName = $harvest->activity->plot->name ?? '';
+        $itemName = $grapeVarietyName . ($plotName ? ' - ' . $plotName : '');
+
+        $this->items[] = [
+            'harvest_id' => $harvest->id,
+            'name' => $itemName,
+            'description' => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') . 
+                           ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
+            'sku' => 'HARV-' . $harvest->id,
+            'quantity' => $harvest->total_weight,
+            'unit_price' => $harvest->price_per_kg ?? 0,
+            'discount_percentage' => 0,
+            'tax_id' => $defaultTax ? $defaultTax->id : null,
+            'concept_type' => 'harvest',
+        ];
+
+        $this->selectedHarvestId = '';
+        $this->harvestAdded = true;
+        $this->toastSuccess('Cosecha añadida a la factura.');
+    }
+
+    public function updatedClientId($value)
+    {
+        if ($value) {
+            $client = Client::with('addresses')->find($value);
+            $this->availableAddresses = $client ? $client->addresses : collect();
+            $this->client_address_id = '';
+        } else {
+            $this->availableAddresses = collect();
+            $this->client_address_id = '';
+        }
+    }
+
+    public function addItem()
+    {
+        $this->items[] = [
+            'name' => '',
+            'description' => '',
+            'sku' => '',
+            'quantity' => 1,
+            'unit_price' => 0,
+            'discount_percentage' => 0,
+            'tax_id' => null,
+            'concept_type' => 'other',
+        ];
+    }
+
+    public function removeItem($index)
+    {
+        // Si viene desde harvest route y es el último item con cosecha, no permitir eliminar
+        if ($this->fromHarvestRoute && isset($this->items[$index]['harvest_id']) && $this->items[$index]['harvest_id']) {
+            $harvestItemsCount = 0;
+            foreach ($this->items as $item) {
+                if (isset($item['harvest_id']) && $item['harvest_id']) {
+                    $harvestItemsCount++;
+                }
+            }
+            
+            if ($harvestItemsCount <= 1) {
+                $this->toastError('Debes mantener al menos una cosecha en la factura.');
+                return;
+            }
+        }
+        
+        unset($this->items[$index]);
+        $this->items = array_values($this->items);
+    }
+
+    protected function rules(): array
+    {
+        $rules = [
+            'client_id' => 'required|exists:clients,id',
+            'client_address_id' => 'nullable|exists:client_addresses,id',
+            'invoice_date' => 'required|date',
+            'due_date' => 'nullable|date|after_or_equal:invoice_date',
+            'items' => 'required|array|min:1',
+            'items.*.name' => 'required|string|max:255',
+            'items.*.description' => 'nullable|string',
+            'items.*.sku' => 'nullable|string|max:255',
+            'items.*.quantity' => 'required|numeric|min:0.001',
+            'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'items.*.tax_id' => 'nullable|exists:taxes,id',
+            'items.*.concept_type' => 'nullable|in:harvest,service,product,other',
+            'observations' => 'nullable|string',
+            'observations_invoice' => 'nullable|string',
+        ];
+        
+        // Si viene desde la ruta de facturar cosecha, validar que haya al menos una cosecha
+        if ($this->fromHarvestRoute) {
+            $rules['items'] = 'required|array|min:1';
+        }
+        
+        return $rules;
+    }
+    
+    protected function messages(): array
+    {
+        return [
+            'items.required' => 'Debes seleccionar al menos una cosecha para facturar.',
+            'items.min' => 'Debes seleccionar al menos una cosecha para facturar.',
+        ];
+    }
+
+    public function save()
+    {
+        // Validación adicional: si viene desde harvest route, debe tener al menos una cosecha
+        if ($this->fromHarvestRoute) {
+            $hasHarvest = false;
+            foreach ($this->items as $item) {
+                if (isset($item['harvest_id']) && $item['harvest_id']) {
+                    $hasHarvest = true;
+                    break;
+                }
+            }
+            
+            if (!$hasHarvest) {
+                $this->addError('items', 'Debes seleccionar al menos una cosecha para facturar.');
+                return;
+            }
+        }
+        
+        $this->validate();
+
+        $user = Auth::user();
+
+        try {
+            DB::transaction(function () use ($user) {
+                // Generar número de factura
+                $invoiceNumber = $this->generateInvoiceNumber($user->id);
+
+                // Calcular totales
+                $subtotal = 0;
+                $discountAmount = 0;
+                $taxAmount = 0;
+
+                foreach ($this->items as $itemData) {
+                    $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
+                    $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
+                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
+                    
+                    $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
+                    $taxRate = $tax ? $tax->rate : 0;
+                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
+
+                    $subtotal += $itemSubtotalAfterDiscount;
+                    $discountAmount += $itemDiscount;
+                    $taxAmount += $itemTax;
+                }
+
+                $totalAmount = $subtotal + $taxAmount;
+
+                // Crear factura
+                $invoice = Invoice::create([
+                    'user_id' => $user->id,
+                    'client_id' => $this->client_id,
+                    'client_address_id' => $this->client_address_id ?: null,
+                    'invoice_number' => $invoiceNumber,
+                    'invoice_date' => $this->invoice_date,
+                    'due_date' => $this->due_date ?: null,
+                    'subtotal' => $subtotal,
+                    'discount_amount' => $discountAmount,
+                    'tax_base' => $subtotal,
+                    'tax_rate' => $taxAmount > 0 ? ($taxAmount / $subtotal) * 100 : 0,
+                    'tax_amount' => $taxAmount,
+                    'total_amount' => $totalAmount,
+                    'status' => 'draft',
+                    'observations' => $this->observations ?: null,
+                    'observations_invoice' => $this->observations_invoice ?: null,
+                ]);
+
+                // Crear items
+                foreach ($this->items as $itemData) {
+                    $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
+                    $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
+                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
+                    
+                    $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
+                    $taxRate = $tax ? $tax->rate : 0;
+                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
+                    $itemTotal = $itemSubtotalAfterDiscount + $itemTax;
+
+                    $invoice->items()->create([
+                        'harvest_id' => $itemData['harvest_id'] ?? null,
+                        'name' => $itemData['name'],
+                        'description' => $itemData['description'] ?? null,
+                        'sku' => $itemData['sku'] ?? null,
+                        'quantity' => $itemData['quantity'],
+                        'unit_price' => $itemData['unit_price'],
+                        'discount_percentage' => $itemData['discount_percentage'] ?? 0,
+                        'discount_amount' => $itemDiscount,
+                        'tax_id' => $itemData['tax_id'] ?: null,
+                        'tax_name' => $tax ? $tax->name : null,
+                        'tax_rate' => $taxRate,
+                        'tax_base' => $itemSubtotalAfterDiscount,
+                        'tax_amount' => $itemTax,
+                        'subtotal' => $itemSubtotalAfterDiscount,
+                        'total' => $itemTotal,
+                        'concept_type' => $itemData['concept_type'] ?? 'other',
+                    ]);
+                }
+            });
+
+            $this->toastSuccess('Factura creada exitosamente.');
+            return redirect()->route('viticulturist.invoices.index');
+        } catch (\Exception $e) {
+            $this->toastError('Error al crear la factura: ' . $e->getMessage());
+        }
+    }
+
+    protected function generateInvoiceNumber($userId): string
+    {
+        $year = now()->year;
+        $lastInvoice = Invoice::forUser($userId)
+            ->whereYear('invoice_date', $year)
+            ->orderBy('current_invoice_code', 'desc')
+            ->first();
+
+        $nextNumber = $lastInvoice ? $lastInvoice->current_invoice_code + 1 : 1;
+
+        return sprintf('FAC-%d-%04d', $year, $nextNumber);
+    }
+
+    public function render()
+    {
+        $user = Auth::user();
+        $campaigns = Campaign::where('viticulturist_id', $user->id)
+            ->orderBy('year', 'desc')
+            ->get();
+
+        return view('livewire.viticulturist.invoices.create', [
+            'campaigns' => $campaigns,
+        ])->layout('layouts.app');
+    }
+}

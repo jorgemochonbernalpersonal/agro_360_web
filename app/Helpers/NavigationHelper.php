@@ -85,6 +85,11 @@ class NavigationHelper
                             'active' => request()->routeIs('sigpac.codes'),
                         ],
                         [
+                            'label' => 'Crear Código SIGPAC',
+                            'route' => 'sigpac.codes.create',
+                            'active' => request()->routeIs('sigpac.codes.create'),
+                        ],
+                        [
                             'label' => 'Usos SIGPAC',
                             'route' => 'sigpac.uses',
                             'active' => request()->routeIs('sigpac.uses'),
@@ -97,7 +102,15 @@ class NavigationHelper
                     'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                     'label' => 'Cuaderno Digital',
                     'route' => 'viticulturist.digital-notebook',
-                    'active' => request()->routeIs('viticulturist.digital-notebook*'),
+                    'active' => request()->routeIs('viticulturist.digital-notebook') 
+                        || request()->routeIs('viticulturist.digital-notebook.treatment.*')
+                        || request()->routeIs('viticulturist.digital-notebook.fertilization.*')
+                        || request()->routeIs('viticulturist.digital-notebook.irrigation.*')
+                        || request()->routeIs('viticulturist.digital-notebook.cultural.*')
+                        || request()->routeIs('viticulturist.digital-notebook.observation.*')
+                        || request()->routeIs('viticulturist.digital-notebook.harvest.*')
+                        || request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')
+                        || request()->routeIs('viticulturist.phytosanitary-products.*'),
                     'submenu' => [
                         [
                             'label' => 'Ver Actividades',
@@ -134,6 +147,44 @@ class NavigationHelper
                             'route' => 'viticulturist.digital-notebook.observation.create',
                             'active' => request()->routeIs('viticulturist.digital-notebook.observation.*'),
                         ],
+                        [
+                            'label' => 'Registrar Cosecha',
+                            'route' => 'viticulturist.digital-notebook.harvest.create',
+                            'active' => request()->routeIs('viticulturist.digital-notebook.harvest.create'),
+                        ],
+                        [
+                            'label' => 'Rendimientos Estimados',
+                            'route' => 'viticulturist.digital-notebook.estimated-yields.index',
+                            'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*'),
+                        ],
+                    ],
+                ]] : []),
+                // Contenedores solo para viticultor
+                ...($user->role === 'viticulturist' ? [[
+                    'icon' => '📦',
+                    'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
+                    'label' => 'Contenedores',
+                    'route' => 'viticulturist.digital-notebook.containers.index',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.containers.*'),
+                ]] : []),
+                // Facturación solo para viticultor
+                ...($user->role === 'viticulturist' ? [[
+                    'icon' => '🧾',
+                    'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
+                    'label' => 'Facturación',
+                    'route' => 'viticulturist.invoices.index',
+                    'active' => request()->routeIs('viticulturist.invoices.*') || request()->routeIs('viticulturist.invoices.harvest.*'),
+                    'submenu' => [
+                        [
+                            'label' => 'Pedidos',
+                            'route' => 'viticulturist.invoices.index',
+                            'active' => request()->routeIs('viticulturist.invoices.index') || request()->routeIs('viticulturist.invoices.create') || request()->routeIs('viticulturist.invoices.edit') || request()->routeIs('viticulturist.invoices.show'),
+                        ],
+                        [
+                            'label' => 'Facturar Cosecha',
+                            'route' => 'viticulturist.invoices.harvest.index',
+                            'active' => request()->routeIs('viticulturist.invoices.harvest.*'),
+                        ],
                     ],
                 ]] : []),
                 // Personal y Equipos (unificado) solo para viticultor
@@ -142,7 +193,7 @@ class NavigationHelper
                     'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>',
                     'label' => 'Equipos y Personal',
                     'route' => 'viticulturist.personal.index',
-                    'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*'),
+                    'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*') || request()->routeIs('viticulturist.clients.*'),
                     'submenu' => [
                         [
                             'label' => 'Crear Equipo',
@@ -153,6 +204,11 @@ class NavigationHelper
                             'label' => 'Crear Viticultor',
                             'route' => 'viticulturist.viticulturists.create',
                             'active' => request()->routeIs('viticulturist.viticulturists.create'),
+                        ],
+                        [
+                            'label' => 'Clientes',
+                            'route' => 'viticulturist.clients.index',
+                            'active' => request()->routeIs('viticulturist.clients.*'),
                         ],
                     ],
                 ]] : []),
@@ -171,6 +227,21 @@ class NavigationHelper
                     'label' => 'Calendario',
                     'route' => 'viticulturist.calendar',
                     'active' => request()->routeIs('viticulturist.calendar*'),
+                ]] : []),
+                // Configuración solo para viticultor
+                ...($user->role === 'viticulturist' ? [[
+                    'icon' => '⚙️',
+                    'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+                    'label' => 'Configuración',
+                    'route' => 'viticulturist.settings.taxes',
+                    'active' => request()->routeIs('viticulturist.settings.*'),
+                    'submenu' => [
+                        [
+                            'label' => 'Impuestos',
+                            'route' => 'viticulturist.settings.taxes',
+                            'active' => request()->routeIs('viticulturist.settings.taxes'),
+                        ],
+                    ],
                 ]] : []),
             ],
         ];

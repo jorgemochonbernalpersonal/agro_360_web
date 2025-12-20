@@ -58,22 +58,27 @@
         </x-form-section>
 
         <!-- Asignaciones -->
-        @if ($this->canSelectWinery() || $this->canSelectViticulturist())
+        @if ($this->canSelectWinery() || $this->canSelectViticulturist() || $this->canSelectSigpac())
             <x-form-section title="Asignaciones" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Bodega removed: plots now belong to viticultor, not directly to a winery -->
 
                     <!-- Viticultor (Solo admin/supervisor/winery) -->
-                    @if ($this->canSelectViticulturist())
+                    @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']))
                         <div>
-                            <x-label for="viticulturist_id">Viticultor Asignado</x-label>
+                            <x-label for="viticulturist_id" required>Viticultor Asignado</x-label>
                             <x-select wire:model="viticulturist_id" id="viticulturist_id"
-                                :error="$errors->first('viticulturist_id')">
-                                <option value="">Sin asignar</option>
-                                @foreach ($this->viticulturists as $viticulturist)
+                                :error="$errors->first('viticulturist_id')" required>
+                                <option value="">Seleccionar...</option>
+                                @forelse ($this->viticulturists as $viticulturist)
                                     <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}</option>
-                                @endforeach
+                                @empty
+                                    <option value="" disabled>No hay viticultores disponibles</option>
+                                @endforelse
                             </x-select>
+                            @error('viticulturist_id')
+                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p>
+                            @enderror
                         </div>
                     @endif
 
@@ -82,12 +87,14 @@
                         <div>
                             <x-label for="sigpac_use" required>Usos SIGPAC</x-label>
                             <x-select wire:model="sigpac_use" id="sigpac_use" multiple size="5"
-                                :error="$errors->first('sigpac_use')">
-                                @foreach ($sigpacUses as $use)
+                                :error="$errors->first('sigpac_use')" required>
+                                @forelse ($sigpacUses as $use)
                                     <option value="{{ $use->id }}">
                                         {{ $use->code }} - {{ $use->description }}
                                     </option>
-                                @endforeach
+                                @empty
+                                    <option value="" disabled>No hay usos SIGPAC disponibles</option>
+                                @endforelse
                             </x-select>
                             <p class="mt-1 text-xs text-gray-500">
                                 Mantén pulsado Ctrl (o Cmd en Mac) para seleccionar varios usos.

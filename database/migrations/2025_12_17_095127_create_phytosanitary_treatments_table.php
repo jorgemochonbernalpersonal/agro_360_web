@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('phytosanitary_treatments', function (Blueprint $table) {
             $table->id();
-            $table->integer('activity_id');
-            $table->integer('product_id');
+            $table->unsignedBigInteger('activity_id');
+            $table->unsignedBigInteger('product_id');
             $table->decimal('dose_per_hectare', 10, 3)->nullable();
             $table->decimal('total_dose', 10, 3)->nullable();
             $table->decimal('area_treated', 10, 3)->nullable();

@@ -39,6 +39,13 @@ class SigpacUseSeeder extends Seeder
             ['code' => 'ZI', 'description' => 'Zonas improductivas'],
         ];
 
-        DB::table('sigpac_use')->insert($uses);
+        foreach ($uses as $use) {
+            DB::table('sigpac_use')->updateOrInsert(
+                ['code' => $use['code']],
+                ['description' => $use['description']]
+            );
+        }
+        
+        $this->command->info('✅ Usos SIGPAC creados/actualizados correctamente.');
     }
 }

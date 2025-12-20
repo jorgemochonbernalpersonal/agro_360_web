@@ -22,12 +22,17 @@ class DatabaseSeeder extends Seeder
             AutonomousCommunitySeeder::class,  // Primero: Comunidades autónomas
             ProvinceSeeder::class,              // Segundo: Provincias (depende de comunidades)
             MunicipalitySeeder::class,          // Tercero: Municipios (depende de provincias)
+            SigpacUseSeeder::class,            // Usos SIGPAC
             GrapeVarietySeeder::class,          // Variedades de uva base
             MachineryTypeSeeder::class,         // Tipos de maquinaria base
             TrainingSystemSeeder::class,        // Sistemas de conducción base
+            TaxSeeder::class,                   // Impuestos (IVA, IGIC)
         ]);
         
         $this->command->info('✅ Seeders completados.');
+        
+        // Opcional: Crear usuario completo para tests (comentar si no se necesita)
+        // $this->call(CompleteTestUserSeeder::class);
         
         // Crear usuario de prueba (opcional)
         // User::factory()->create([

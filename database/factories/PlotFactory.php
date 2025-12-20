@@ -27,7 +27,6 @@ class PlotFactory extends Factory
         return [
             'name' => fake()->words(3, true) . ' Parcela',
             'description' => fake()->sentence(),
-            'winery_id' => User::factory(),
             'viticulturist_id' => User::factory(),
             'autonomous_community_id' => $autonomousCommunity?->id ?? 1,
             'province_id' => $province?->id ?? 1,

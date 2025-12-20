@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');  // Ej: "Campaña 2025"
             $table->integer('year');  // Año de la campaña
-            $table->integer('viticulturist_id');  // FK a users
+            $table->unsignedBigInteger('viticulturist_id');  // FK a users
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->boolean('active')->default(false);  // Solo una activa por viticultor

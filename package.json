@@ -8,7 +8,9 @@
         "cypress:open": "cypress open",
         "cypress:run": "cypress run",
         "cypress:run:headed": "cypress run --headed",
-        "test:e2e": "cypress run"
+        "cypress:test": "scripts\\cypress-test.bat",
+        "test:e2e": "cypress run",
+        "clear": "scripts\\clear-cache.bat"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

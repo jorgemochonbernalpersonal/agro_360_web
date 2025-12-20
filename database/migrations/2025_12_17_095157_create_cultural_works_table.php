@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cultural_works', function (Blueprint $table) {
             $table->id();
-            $table->integer('activity_id');
+            $table->unsignedBigInteger('activity_id');
             $table->string('work_type', 100)->nullable(); // 'poda', 'vendimia', 'deshojado', 'acolchado', etc.
             $table->decimal('hours_worked', 5, 2)->nullable();
             $table->integer('workers_count')->nullable();

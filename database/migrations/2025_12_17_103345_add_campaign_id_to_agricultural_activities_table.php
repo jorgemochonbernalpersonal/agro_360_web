@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('agricultural_activities', function (Blueprint $table) {
             // Agregar la columna como nullable inicialmente
-            $table->integer('campaign_id')->nullable()->after('viticulturist_id');
+            $table->unsignedBigInteger('campaign_id')->nullable()->after('viticulturist_id');
             
             // Crear índice
             $table->index('campaign_id');

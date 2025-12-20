@@ -91,19 +91,41 @@
                                     <x-label for="profile_image">Foto de Perfil</x-label>
                                     <div class="mt-2 flex items-center gap-6">
                                         {{-- Preview con imagen temporal o actual --}}
-                                        <div class="flex-shrink-0">
-                                            @if($profile_image)
+                                        <div class="flex-shrink-0 relative">
+                                            @if($profile_image_preview)
                                                 {{-- Preview de la imagen NUEVA (temporal) --}}
-                                                <img src="{{ $profile_image->temporaryUrl() }}" alt="Preview" class="w-20 h-20 rounded-full object-cover border-4 border-[var(--color-agro-green)] shadow-lg animate-pulse">
+                                                <img id="profile-preview-img" src="{{ $profile_image_preview }}" alt="Preview" class="w-20 h-20 rounded-full object-cover border-4 border-[var(--color-agro-green)] shadow-lg">
+                                                <div class="absolute -top-1 -right-1 w-6 h-6 bg-[var(--color-agro-green)] rounded-full flex items-center justify-center z-10">
+                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
                                             @elseif($current_profile_image)
                                                 {{-- Imagen actual guardada --}}
-                                                <img src="{{ Storage::url($current_profile_image) }}" alt="Profile" class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-md">
+                                                <img 
+                                                    src="{{ Storage::disk('public')->url($current_profile_image) }}" 
+                                                    alt="Profile" 
+                                                    class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-md"
+                                                    wire:key="profile-image-{{ $current_profile_image }}"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                                >
+                                                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md" style="display: none;">
+                                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                                </div>
                                             @else
                                                 {{-- Placeholder con inicial --}}
                                                 <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md">
                                                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                                 </div>
                                             @endif
+                                            
+                                            {{-- Indicador de carga --}}
+                                            <div wire:loading wire:target="profile_image" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-full">
+                                                <svg class="animate-spin h-6 w-6 text-[var(--color-agro-green)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            </div>
                                         </div>
 
                                         <div class="flex-1">
@@ -111,30 +133,51 @@
                                                 type="file" 
                                                 wire:model="profile_image" 
                                                 id="profile_image"
-                                                accept="image/*"
+                                                accept="image/jpeg,image/png,image/gif,image/webp"
+                                                x-on:change="
+                                                    const file = $event.target.files[0];
+                                                    if (file) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = function(e) {
+                                                            const previewImg = document.querySelector('#profile-preview-img');
+                                                            if (previewImg) {
+                                                                previewImg.src = e.target.result;
+                                                                previewImg.style.display = 'block';
+                                                                const placeholder = previewImg.nextElementSibling;
+                                                                if (placeholder) placeholder.style.display = 'none';
+                                                            }
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                "
                                                 class="block w-full text-sm text-gray-500
                                                     file:mr-4 file:py-2 file:px-4
                                                     file:rounded-lg file:border-0
                                                     file:text-sm file:font-semibold
                                                     file:bg-green-50 file:text-[var(--color-agro-green-dark)]
                                                     hover:file:bg-green-100
-                                                    cursor-pointer"
+                                                    cursor-pointer
+                                                    @error('profile_image') border-red-300 @enderror"
                                             >
-                                            <p class="mt-1 text-xs text-gray-500">JPG, PNG o GIF (Máx. 2MB)</p>
+                                            <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF o WEBP (Máx. 2MB)</p>
                                             
-                                            @if($profile_image)
-                                                <p class="mt-1 text-xs text-[var(--color-agro-green-dark)] font-semibold">
-                                                    ✓ Nueva imagen seleccionada. Click "Guardar Cambios" para confirmar.
+                                            @if($profile_image_preview)
+                                                <p class="mt-1 text-xs text-[var(--color-agro-green-dark)] font-semibold flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                    Nueva imagen seleccionada. Click "Guardar Cambios" para confirmar.
                                                 </p>
                                             @endif
                                             
                                             @error('profile_image') 
-                                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
+                                                <p class="mt-1 text-sm text-red-600 font-medium flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    {{ $message }}
+                                                </p> 
                                             @enderror
-                                            
-                                            <div wire:loading wire:target="profile_image" class="mt-2">
-                                                <p class="text-sm text-[var(--color-agro-green-dark)]">⏳ Cargando preview...</p>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -314,4 +357,16 @@
             </div>
         </div>
     </div>
+    
+    @script
+    <script>
+        // Escuchar cuando se actualiza el perfil para refrescar el header
+        $wire.on('profile-updated', () => {
+            // Recargar la página después de un breve delay para que se guarde la imagen
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        });
+    </script>
+    @endscript
 </div>

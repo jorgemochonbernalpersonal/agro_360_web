@@ -14,21 +14,19 @@ return new class extends Migration
     {
         // Función helper para verificar si el índice existe
         $indexExists = function($table, $index) {
-            $connection = config('database.default');
-            if ($connection === 'pgsql') {
+            $driver = DB::connection()->getDriverName();
+            if ($driver === 'pgsql') {
                 $result = DB::select("SELECT indexname FROM pg_indexes WHERE tablename = ? AND indexname = ?", [$table, $index]);
                 return !empty($result);
             }
-            // Para MySQL
+            // Para MySQL/MariaDB
             $result = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$index]);
             return !empty($result);
         };
 
         // Índices para la tabla plots
+        // Nota: winery_id fue eliminado de plots en una migración posterior (2025_12_18_101200)
         Schema::table('plots', function (Blueprint $table) use ($indexExists) {
-            if (!$indexExists('plots', 'idx_plots_winery')) {
-                $table->index('winery_id', 'idx_plots_winery');
-            }
             if (!$indexExists('plots', 'idx_plots_viticulturist')) {
                 $table->index('viticulturist_id', 'idx_plots_viticulturist');
             }
@@ -37,9 +35,6 @@ return new class extends Migration
             }
             if (!$indexExists('plots', 'idx_plots_name')) {
                 $table->index('name', 'idx_plots_name');
-            }
-            if (!$indexExists('plots', 'idx_plots_winery_active')) {
-                $table->index(['winery_id', 'active'], 'idx_plots_winery_active');
             }
             if (!$indexExists('plots', 'idx_plots_municipality')) {
                 $table->index('municipality_id', 'idx_plots_municipality');
@@ -103,11 +98,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('plots', function (Blueprint $table) {
-            $table->dropIndex('idx_plots_winery');
             $table->dropIndex('idx_plots_viticulturist');
             $table->dropIndex('idx_plots_active');
             $table->dropIndex('idx_plots_name');
-            $table->dropIndex('idx_plots_winery_active');
             $table->dropIndex('idx_plots_municipality');
         });
 

@@ -106,6 +106,9 @@
                         <a href="<?php echo e(route('viticulturist.digital-notebook.observation.create')); ?>" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
                             + Observación
                         </a>
+                        <a href="<?php echo e(route('viticulturist.digital-notebook.harvest.create')); ?>" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition text-sm font-semibold shadow-md">
+                            🍇 Cosecha
+                        </a>
                     </div>
                 </div>
             <?php endif; ?>
@@ -164,6 +167,7 @@
             <option value="irrigation">Riegos</option>
             <option value="cultural">Labores Culturales</option>
             <option value="observation">Observaciones</option>
+            <option value="harvest">Cosechas / Vendimias</option>
          <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal4e9104b073735a9cf7ecaeefab5771b0)): ?>
@@ -419,6 +423,10 @@
                             <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-gray-50 text-gray-700 ring-1 ring-gray-600/20">
                                 Observación
                             </span>
+                        <?php elseif($activity->activity_type === 'harvest'): ?>
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-purple-50 text-purple-700 ring-1 ring-purple-600/20">
+                                🍇 Cosecha
+                            </span>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                      <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
@@ -449,6 +457,48 @@
                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($activity->phytosanitaryTreatment->target_pest): ?>
                                     <div class="text-xs text-gray-500 mt-1">Objetivo: <?php echo e($activity->phytosanitaryTreatment->target_pest); ?></div>
                                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                
+                                
+                                <?php
+                                    $product = $activity->phytosanitaryTreatment->product;
+                                    $safetyDays = $product->withdrawal_period_days ?? 0;
+                                    
+                                    if ($safetyDays > 0) {
+                                        $treatmentDate = \Carbon\Carbon::parse($activity->activity_date);
+                                        $safeDate = $treatmentDate->copy()->addDays($safetyDays);
+                                        $isPassed = \Carbon\Carbon::today() >= $safeDate;
+                                        $daysRemaining = \Carbon\Carbon::today()->diffInDays($safeDate, false);
+                                    }
+                                ?>
+                                
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($safetyDays > 0): ?>
+                                    <div class="mt-2">
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($isPassed): ?>
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Puede cosechar (desde <?php echo e($safeDate->format('d/m/Y')); ?>)
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Esperar <?php echo e(abs($daysRemaining)); ?> día<?php echo e(abs($daysRemaining) != 1 ? 's' : ''); ?> (hasta <?php echo e($safeDate->format('d/m/Y')); ?>)
+                                            </span>
+                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    </div>
+                                <?php elseif($safetyDays === 0): ?>
+                                    <div class="mt-2">
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Sin plazo definido
+                                        </span>
+                                    </div>
+                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                             </div>
                         <?php elseif($activity->fertilization): ?>
                             <div class="text-sm">
@@ -477,6 +527,22 @@
                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($activity->observation->severity): ?>
                                     <span class="text-gray-600"> - <?php echo e(ucfirst($activity->observation->severity)); ?></span>
                                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                            </div>
+                        <?php elseif($activity->harvest): ?>
+                            <div class="text-sm">
+                                <span class="font-semibold text-purple-900">🍇 Vendimia</span>
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($activity->harvest->plotPlanting && $activity->harvest->plotPlanting->grapeVariety): ?>
+                                    <span class="text-purple-700"> - <?php echo e($activity->harvest->plotPlanting->grapeVariety->name); ?></span>
+                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                <div class="flex gap-3 mt-1">
+                                    <span class="text-xs font-semibold text-gray-700"><?php echo e(number_format($activity->harvest->total_weight, 0)); ?> kg</span>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($activity->harvest->yield_per_hectare): ?>
+                                        <span class="text-xs text-gray-600">(<?php echo e(number_format($activity->harvest->yield_per_hectare, 0)); ?> kg/ha)</span>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($activity->harvest->total_value): ?>
+                                        <span class="text-xs font-semibold text-green-700"><?php echo e(number_format($activity->harvest->total_value, 2)); ?>€</span>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                </div>
                             </div>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                      <?php echo $__env->renderComponent(); ?>
@@ -557,8 +623,27 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['align' => 'right']); ?>
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view', $activity)): ?>
-                            <?php if (isset($component)) { $__componentOriginald4c6978101b1c254eb70511d3c21c03f = $component; } ?>
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($activity->harvest): ?>
+                            
+                            <a 
+                                href="<?php echo e(route('viticulturist.digital-notebook.harvest.show', $activity->harvest->id)); ?>"
+                                class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition"
+                                title="Ver detalle de cosecha"
+                            >
+                                Ver
+                            </a>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('update', $activity)): ?>
+                                <a 
+                                    href="<?php echo e(route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id)); ?>"
+                                    class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                                    title="Editar cosecha"
+                                >
+                                    Editar
+                                </a>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view', $activity)): ?>
+                                <?php if (isset($component)) { $__componentOriginald4c6978101b1c254eb70511d3c21c03f = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald4c6978101b1c254eb70511d3c21c03f = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.action-button','data' => ['variant' => 'view','href' => ''.e(route('viticulturist.digital-notebook', ['activity' => $activity->id])).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('action-button'); ?>
@@ -578,9 +663,9 @@
 <?php $component = $__componentOriginald4c6978101b1c254eb70511d3c21c03f; ?>
 <?php unset($__componentOriginald4c6978101b1c254eb70511d3c21c03f); ?>
 <?php endif; ?>
-                        <?php endif; ?>
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('update', $activity)): ?>
-                            <?php if (isset($component)) { $__componentOriginald4c6978101b1c254eb70511d3c21c03f = $component; } ?>
+                            <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('update', $activity)): ?>
+                                <?php if (isset($component)) { $__componentOriginald4c6978101b1c254eb70511d3c21c03f = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald4c6978101b1c254eb70511d3c21c03f = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.action-button','data' => ['variant' => 'edit','href' => ''.e(route('viticulturist.digital-notebook', ['activity' => $activity->id, 'edit' => true])).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('action-button'); ?>
@@ -600,9 +685,9 @@
 <?php $component = $__componentOriginald4c6978101b1c254eb70511d3c21c03f; ?>
 <?php unset($__componentOriginald4c6978101b1c254eb70511d3c21c03f); ?>
 <?php endif; ?>
-                        <?php endif; ?>
-                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('delete', $activity)): ?>
-                            <?php if (isset($component)) { $__componentOriginald4c6978101b1c254eb70511d3c21c03f = $component; } ?>
+                            <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('delete', $activity)): ?>
+                                <?php if (isset($component)) { $__componentOriginald4c6978101b1c254eb70511d3c21c03f = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald4c6978101b1c254eb70511d3c21c03f = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.action-button','data' => ['variant' => 'delete','wireClick' => 'deleteActivity('.e($activity->id).')','wireConfirm' => '¿Estás seguro de eliminar esta actividad?']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('action-button'); ?>
@@ -622,7 +707,8 @@
 <?php $component = $__componentOriginald4c6978101b1c254eb70511d3c21c03f; ?>
 <?php unset($__componentOriginald4c6978101b1c254eb70511d3c21c03f); ?>
 <?php endif; ?>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                      <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal35f57f4e82a16e7ad7641b9fb6c7f399)): ?>

@@ -93,6 +93,9 @@
                         <a href="{{ route('viticulturist.digital-notebook.observation.create') }}" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
                             + Observación
                         </a>
+                        <a href="{{ route('viticulturist.digital-notebook.harvest.create') }}" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition text-sm font-semibold shadow-md">
+                            🍇 Cosecha
+                        </a>
                     </div>
                 </div>
             @endcan
@@ -115,6 +118,7 @@
             <option value="irrigation">Riegos</option>
             <option value="cultural">Labores Culturales</option>
             <option value="observation">Observaciones</option>
+            <option value="harvest">Cosechas / Vendimias</option>
         </x-filter-select>
 
         @if($activityType === 'phytosanitary' && $products->count() > 0)
@@ -213,6 +217,10 @@
                             <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-gray-50 text-gray-700 ring-1 ring-gray-600/20">
                                 Observación
                             </span>
+                        @elseif($activity->activity_type === 'harvest')
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-purple-50 text-purple-700 ring-1 ring-purple-600/20">
+                                🍇 Cosecha
+                            </span>
                         @endif
                     </x-table-cell>
                     <x-table-cell>
@@ -224,6 +232,48 @@
                                 @endif
                                 @if($activity->phytosanitaryTreatment->target_pest)
                                     <div class="text-xs text-gray-500 mt-1">Objetivo: {{ $activity->phytosanitaryTreatment->target_pest }}</div>
+                                @endif
+                                
+                                {{-- Safety Interval Badge --}}
+                                @php
+                                    $product = $activity->phytosanitaryTreatment->product;
+                                    $safetyDays = $product->withdrawal_period_days ?? 0;
+                                    
+                                    if ($safetyDays > 0) {
+                                        $treatmentDate = \Carbon\Carbon::parse($activity->activity_date);
+                                        $safeDate = $treatmentDate->copy()->addDays($safetyDays);
+                                        $isPassed = \Carbon\Carbon::today() >= $safeDate;
+                                        $daysRemaining = \Carbon\Carbon::today()->diffInDays($safeDate, false);
+                                    }
+                                @endphp
+                                
+                                @if($safetyDays > 0)
+                                    <div class="mt-2">
+                                        @if($isPassed)
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Puede cosechar (desde {{ $safeDate->format('d/m/Y') }})
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Esperar {{ abs($daysRemaining) }} día{{ abs($daysRemaining) != 1 ? 's' : '' }} (hasta {{ $safeDate->format('d/m/Y') }})
+                                            </span>
+                                        @endif
+                                    </div>
+                                @elseif($safetyDays === 0)
+                                    <div class="mt-2">
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Sin plazo definido
+                                        </span>
+                                    </div>
                                 @endif
                             </div>
                         @elseif($activity->fertilization)
@@ -254,6 +304,22 @@
                                     <span class="text-gray-600"> - {{ ucfirst($activity->observation->severity) }}</span>
                                 @endif
                             </div>
+                        @elseif($activity->harvest)
+                            <div class="text-sm">
+                                <span class="font-semibold text-purple-900">🍇 Vendimia</span>
+                                @if($activity->harvest->plotPlanting && $activity->harvest->plotPlanting->grapeVariety)
+                                    <span class="text-purple-700"> - {{ $activity->harvest->plotPlanting->grapeVariety->name }}</span>
+                                @endif
+                                <div class="flex gap-3 mt-1">
+                                    <span class="text-xs font-semibold text-gray-700">{{ number_format($activity->harvest->total_weight, 0) }} kg</span>
+                                    @if($activity->harvest->yield_per_hectare)
+                                        <span class="text-xs text-gray-600">({{ number_format($activity->harvest->yield_per_hectare, 0) }} kg/ha)</span>
+                                    @endif
+                                    @if($activity->harvest->total_value)
+                                        <span class="text-xs font-semibold text-green-700">{{ number_format($activity->harvest->total_value, 2) }}€</span>
+                                    @endif
+                                </div>
+                            </div>
                         @endif
                     </x-table-cell>
                     <x-table-cell>
@@ -277,19 +343,39 @@
                         @endif
                     </x-table-cell>
                     <x-table-actions align="right">
-                        @can('view', $activity)
-                            <x-action-button variant="view" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id]) }}" />
-                        @endcan
-                        @can('update', $activity)
-                            <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id, 'edit' => true]) }}" />
-                        @endcan
-                        @can('delete', $activity)
-                            <x-action-button 
-                                variant="delete" 
-                                wireClick="deleteActivity({{ $activity->id }})"
-                                wireConfirm="¿Estás seguro de eliminar esta actividad?"
-                            />
-                        @endcan
+                        @if($activity->harvest)
+                            {{-- Para cosechas, mostrar botón de ver detalle --}}
+                            <a 
+                                href="{{ route('viticulturist.digital-notebook.harvest.show', $activity->harvest->id) }}"
+                                class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition"
+                                title="Ver detalle de cosecha"
+                            >
+                                Ver
+                            </a>
+                            @can('update', $activity)
+                                <a 
+                                    href="{{ route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id) }}"
+                                    class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                                    title="Editar cosecha"
+                                >
+                                    Editar
+                                </a>
+                            @endcan
+                        @else
+                            @can('view', $activity)
+                                <x-action-button variant="view" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id]) }}" />
+                            @endcan
+                            @can('update', $activity)
+                                <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id, 'edit' => true]) }}" />
+                            @endcan
+                            @can('delete', $activity)
+                                <x-action-button 
+                                    variant="delete" 
+                                    wireClick="deleteActivity({{ $activity->id }})"
+                                    wireConfirm="¿Estás seguro de eliminar esta actividad?"
+                                />
+                            @endcan
+                        @endif
                     </x-table-actions>
                 </x-table-row>
             @endforeach

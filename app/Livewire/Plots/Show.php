@@ -24,6 +24,8 @@ class Show extends Component
             'sigpacUses',
             'sigpacCodes',
             'multipartCoordinates.sigpacCode',
+            'multiplePlotSigpacs.sigpacCode',
+            'multiplePlotSigpacs.plotGeometry',
         ]);
     }
 

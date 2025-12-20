@@ -12,14 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('plots', function (Blueprint $table) {
-            // Índice compuesto para búsquedas comunes: winery_id + active
-            $table->index(['winery_id', 'active'], 'idx_plots_winery_active');
-            
             // Índice compuesto para búsquedas comunes: viticulturist_id + active
+            // Nota: winery_id fue eliminado de plots en una migración posterior (2025_12_18_101200)
             $table->index(['viticulturist_id', 'active'], 'idx_plots_viticulturist_active');
-            
-            // Índice compuesto para búsquedas comunes: winery_id + viticulturist_id + active
-            $table->index(['winery_id', 'viticulturist_id', 'active'], 'idx_plots_winery_viticulturist_active');
             
             // Índice para búsquedas por nombre (si se usa frecuentemente)
             $table->index('name', 'idx_plots_name');
@@ -32,11 +27,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('plots', function (Blueprint $table) {
-            $table->dropIndex('idx_plots_winery_active');
             $table->dropIndex('idx_plots_viticulturist_active');
-            $table->dropIndex('idx_plots_winery_viticulturist_active');
             $table->dropIndex('idx_plots_name');
         });
     }
 };
-

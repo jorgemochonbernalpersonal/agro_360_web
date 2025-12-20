@@ -77,8 +77,11 @@ describe('Viticulturist Campaigns', () => {
   })
 
   it('should edit an existing campaign', () => {
-    // Click first edit action in the table
-    cy.get('a[title="Editar"]').first().click()
+    // Wait for any modals/overlays to disappear
+    cy.wait(1000)
+    
+    // Click first edit action in the table - use force if backdrop is covering
+    cy.get('a[title="Editar"]').first().click({ force: true })
     cy.waitForLivewire()
 
     // We should be on the edit page

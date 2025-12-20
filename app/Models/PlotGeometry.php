@@ -11,8 +11,11 @@ class PlotGeometry extends Model
     protected $table = 'plot_geometry';
     
     protected $fillable = [
+        'id',
         'coordinates',
         'centroid',
+        'created_at',
+        'updated_at',
     ];
     
     /**
@@ -20,7 +23,7 @@ class PlotGeometry extends Model
      */
     public function multiplePlotSigpacs(): HasMany
     {
-        return $this->hasMany(MultiplePlotSigpac::class, 'plot_geometry_id');
+        return $this->hasMany(MultipartPlotSigpac::class, 'plot_geometry_id');
     }
     
     /**

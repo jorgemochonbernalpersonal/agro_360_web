@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('fertilizations', function (Blueprint $table) {
             $table->id();
-            $table->integer('activity_id');
+            $table->unsignedBigInteger('activity_id');
             $table->string('fertilizer_type', 100)->nullable(); // 'orgánico', 'mineral', 'compost', etc.
             $table->string('fertilizer_name')->nullable();
             $table->decimal('quantity', 10, 3)->nullable(); // kg o litros

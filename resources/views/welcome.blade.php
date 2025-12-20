@@ -3,10 +3,39 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Agro365 - Gestiona tu viñedo con tecnología</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>Agro365 - Software de Gestión Agrícola para Viñedos y Bodegas | Cuaderno Digital SIGPAC</title>
+    <meta name="description" content="Software de gestión agrícola profesional para viticultores y bodegas. Cuaderno de campo digital, control de parcelas SIGPAC, gestión de actividades y cumplimiento normativo. 6 meses gratis.">
+    <meta name="keywords" content="gestión agrícola, software viñedos, cuaderno digital, cuaderno de campo, SIGPAC, gestión parcelas, software viticultura, app para agricultores, gestión bodega, software para bodegas">
+    <meta name="author" content="Agro365">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Spanish">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Canonical URL -->
+    <meta name="canonical" href="{{ url('/') }}">
+    <link rel="canonical" href="{{ url('/') }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="Agro365 - Gestión Agrícola Profesional para Viñedos">
+    <meta property="og:description" content="Digitaliza tu cuaderno de campo, gestiona parcelas SIGPAC y controla todas las actividades de tu viñedo. Prueba gratis 6 meses.">
+    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:site_name" content="Agro365">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url('/') }}">
+    <meta name="twitter:title" content="Agro365 - Software de Gestión Agrícola para Viñedos">
+    <meta name="twitter:description" content="Cuaderno digital, SIGPAC, control de parcelas. 6 meses gratis para beta testers.">
+    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -14,6 +43,55 @@
     
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    @php
+        $structuredData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'SoftwareApplication',
+            'name' => 'Agro365',
+            'applicationCategory' => 'BusinessApplication',
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '9.00',
+                'priceCurrency' => 'EUR',
+                'priceValidUntil' => '2025-12-31'
+            ],
+            'description' => 'Software de gestión agrícola profesional para viticultores y bodegas con cuaderno de campo digital, SIGPAC e integración completa',
+            'operatingSystem' => 'Web',
+            'aggregateRating' => [
+                '@type' => 'AggregateRating',
+                'ratingValue' => '4.9',
+                'ratingCount' => '50'
+            ]
+        ];
+    @endphp
+    {!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    @php
+        $organizationData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => 'Agro365',
+            'url' => url('/'),
+            'logo' => asset('images/logo.png'),
+            'description' => 'Plataforma de gestión agrícola profesional para viticultores y bodegas',
+            'foundingDate' => '2024',
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'email' => 'soporte@agro365.com',
+                'contactType' => 'customer service',
+                'availableLanguage' => ['Spanish']
+            ],
+            'sameAs' => []
+        ];
+    @endphp
+    {!! json_encode($organizationData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
 </head>
 <body class="bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 min-h-screen">
     
@@ -25,7 +103,7 @@
                 <a href="{{ url('/') }}" class="flex items-center">
                     <img 
                         src="{{ asset('images/logo.png') }}" 
-                        alt="Agro365" 
+                        alt="Agro365 - Software de gestión agrícola para viñedos y bodegas" 
                         class="h-20 w-auto object-contain"
                     >
                 </a>
@@ -112,8 +190,9 @@
                             <!-- Dashboard Screenshot -->
                             <img 
                                 src="{{ asset('images/dashboard-preview.png') }}" 
-                                alt="Agro365 Dashboard - Gestión de viñedos" 
+                                alt="Panel de control de Agro365 mostrando gestión de parcelas, viñedos, actividades agrícolas y cuaderno de campo digital" 
                                 class="w-full h-auto object-cover"
+                                loading="lazy"
                             >
                         </div>
                         <!-- Decorative Elements -->

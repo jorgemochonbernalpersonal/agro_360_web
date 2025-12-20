@@ -12,7 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('winery_viticulturist', function (Blueprint $table) {
-            $table->integer('winery_id')->nullable()->change();
+            // Eliminar foreign key primero
+            $table->dropForeign(['winery_id']);
+        });
+        
+        Schema::table('winery_viticulturist', function (Blueprint $table) {
+            $table->unsignedBigInteger('winery_id')->nullable()->change();
+        });
+        
+        Schema::table('winery_viticulturist', function (Blueprint $table) {
+            // Recrear foreign key
+            $table->foreign('winery_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -22,9 +32,19 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('winery_viticulturist', function (Blueprint $table) {
+            // Eliminar foreign key primero
+            $table->dropForeign(['winery_id']);
+        });
+        
+        Schema::table('winery_viticulturist', function (Blueprint $table) {
             // Eliminar relaciones sin winery antes de hacer NOT NULL
             \DB::table('winery_viticulturist')->whereNull('winery_id')->delete();
-            $table->integer('winery_id')->nullable(false)->change();
+            $table->unsignedBigInteger('winery_id')->nullable(false)->change();
+        });
+        
+        Schema::table('winery_viticulturist', function (Blueprint $table) {
+            // Recrear foreign key
+            $table->foreign('winery_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 };

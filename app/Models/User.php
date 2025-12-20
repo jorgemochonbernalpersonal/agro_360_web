@@ -170,6 +170,37 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Payment::class);
     }
 
+    // Relaciones de facturación
+    public function clients()
+    {
+        return $this->hasMany(Client::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function invoiceGroups()
+    {
+        return $this->hasMany(InvoiceGroup::class);
+    }
+
+    public function taxes()
+    {
+        return $this->belongsToMany(Tax::class, 'user_taxes')
+            ->withPivot('is_default', 'order')
+            ->withTimestamps();
+    }
+
+    public function defaultTax()
+    {
+        return $this->belongsToMany(Tax::class, 'user_taxes')
+            ->wherePivot('is_default', true)
+            ->withPivot('is_default', 'order')
+            ->withTimestamps();
+    }
+
     /**
      * Verificar si el usuario tiene una suscripción activa
      */

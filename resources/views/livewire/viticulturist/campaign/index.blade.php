@@ -136,7 +136,7 @@
                         @if(!$campaign->active)
                             @can('activate', $campaign)
                                 <x-action-button 
-                                    variant="info" 
+                                    variant="activate"
                                     wireClick="activate({{ $campaign->id }})"
                                 />
                             @endcan
@@ -145,8 +145,8 @@
                             @if($campaign->activities_count === 0)
                                 <x-action-button 
                                     variant="delete" 
-                                    wire:click="delete({{ $campaign->id }})"
-                                    wire:confirm="¿Estás seguro de eliminar esta campaña?"
+                                    wireClick="delete({{ $campaign->id }})"
+                                    wireConfirm="¿Estás seguro de eliminar esta campaña?"
                                 />
                             @else
                                 <x-action-button variant="delete" disabled title="No se puede eliminar: tiene actividades" />

@@ -11,17 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Índices para tabla pivot plot_sigpac_use
-        Schema::table('plot_sigpac_use', function (Blueprint $table) {
-            $table->index('plot_id', 'plot_sigpac_use_plot_idx');
-            $table->index('sigpac_use_id', 'plot_sigpac_use_use_idx');
-        });
+        // Índices para tabla pivot plot_sigpac_use (si existe)
+        if (Schema::hasTable('plot_sigpac_use')) {
+            Schema::table('plot_sigpac_use', function (Blueprint $table) {
+                $table->index('plot_id', 'plot_sigpac_use_plot_idx');
+                $table->index('sigpac_use_id', 'plot_sigpac_use_use_idx');
+            });
+        }
 
-        // Índices para tabla pivot plot_sigpac_code
-        Schema::table('plot_sigpac_code', function (Blueprint $table) {
-            $table->index('plot_id', 'plot_sigpac_code_plot_idx');
-            $table->index('sigpac_code_id', 'plot_sigpac_code_code_idx');
-        });
+        // Índices para tabla pivot plot_sigpac_code (si existe)
+        if (Schema::hasTable('plot_sigpac_code')) {
+            Schema::table('plot_sigpac_code', function (Blueprint $table) {
+                $table->index('plot_id', 'plot_sigpac_code_plot_idx');
+                $table->index('sigpac_code_id', 'plot_sigpac_code_code_idx');
+            });
+        }
 
         // Índices para relación winery_viticulturist
         Schema::table('winery_viticulturist', function (Blueprint $table) {
@@ -32,12 +36,14 @@ return new class extends Migration
             $table->index('supervisor_id', 'wv_supervisor_idx');
         });
 
-        // Índices para viticulturist_hierarchy
-        Schema::table('viticulturist_hierarchy', function (Blueprint $table) {
-            $table->index('parent_viticulturist_id', 'vh_parent_idx');
-            $table->index('child_viticulturist_id', 'vh_child_idx');
-            $table->index('winery_id', 'vh_winery_idx');
-        });
+        // Índices para viticulturist_hierarchy (si existe)
+        if (Schema::hasTable('viticulturist_hierarchy')) {
+            Schema::table('viticulturist_hierarchy', function (Blueprint $table) {
+                $table->index('parent_viticulturist_id', 'vh_parent_idx');
+                $table->index('child_viticulturist_id', 'vh_child_idx');
+                $table->index('winery_id', 'vh_winery_idx');
+            });
+        }
     }
 
     /**
@@ -45,15 +51,19 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('plot_sigpac_use', function (Blueprint $table) {
-            $table->dropIndex('plot_sigpac_use_plot_idx');
-            $table->dropIndex('plot_sigpac_use_use_idx');
-        });
+        if (Schema::hasTable('plot_sigpac_use')) {
+            Schema::table('plot_sigpac_use', function (Blueprint $table) {
+                $table->dropIndex('plot_sigpac_use_plot_idx');
+                $table->dropIndex('plot_sigpac_use_use_idx');
+            });
+        }
 
-        Schema::table('plot_sigpac_code', function (Blueprint $table) {
-            $table->dropIndex('plot_sigpac_code_plot_idx');
-            $table->dropIndex('plot_sigpac_code_code_idx');
-        });
+        if (Schema::hasTable('plot_sigpac_code')) {
+            Schema::table('plot_sigpac_code', function (Blueprint $table) {
+                $table->dropIndex('plot_sigpac_code_plot_idx');
+                $table->dropIndex('plot_sigpac_code_code_idx');
+            });
+        }
 
         Schema::table('winery_viticulturist', function (Blueprint $table) {
             $table->dropIndex('wv_winery_idx');
@@ -63,12 +73,12 @@ return new class extends Migration
             $table->dropIndex('wv_supervisor_idx');
         });
 
-        Schema::table('viticulturist_hierarchy', function (Blueprint $table) {
-            $table->dropIndex('vh_parent_idx');
-            $table->dropIndex('vh_child_idx');
-            $table->dropIndex('vh_winery_idx');
-        });
+        if (Schema::hasTable('viticulturist_hierarchy')) {
+            Schema::table('viticulturist_hierarchy', function (Blueprint $table) {
+                $table->dropIndex('vh_parent_idx');
+                $table->dropIndex('vh_child_idx');
+                $table->dropIndex('vh_winery_idx');
+            });
+        }
     }
 };
-
-

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('observations', function (Blueprint $table) {
             $table->id();
-            $table->integer('activity_id');
+            $table->unsignedBigInteger('activity_id');
             $table->string('observation_type', 50)->nullable(); // 'plaga', 'enfermedad', 'fenología', 'general'
             $table->text('description')->nullable();
             $table->json('photos')->nullable(); // Array de rutas de fotos

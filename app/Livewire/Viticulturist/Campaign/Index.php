@@ -20,6 +20,16 @@ class Index extends Component
         'yearFilter' => ['except' => ''],
     ];
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingYearFilter()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         // Validar autorización

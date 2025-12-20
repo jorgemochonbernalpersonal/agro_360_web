@@ -12,6 +12,15 @@
 >
     <form wire:submit.prevent="save" class="space-y-8">
         <x-form-section title="Datos de la Plantación" color="green">
+            <!-- Nombre de la plantación -->
+            <div class="mb-6">
+                <x-label for="name">Nombre de la plantación (Opcional)</x-label>
+                <x-input wire:model="name" type="text" id="name"
+                    :error="$errors->first('name')" 
+                    placeholder="Ej: Parcela Norte - Tempranillo, Bloque A, etc." />
+                <p class="mt-1 text-xs text-gray-500">Útil para diferenciar múltiples plantaciones en la misma parcela</p>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Variedad de uva -->
                 <div>
@@ -33,6 +42,27 @@
                     <x-input wire:model="area_planted" type="number" step="0.001" id="area_planted"
                         :error="$errors->first('area_planted')" required />
                 </div>
+            </div>
+
+            <!-- Límite de cosecha -->
+            <div class="mt-6">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-semibold text-blue-900">Límite de Cosecha (Opcional)</h4>
+                            <p class="text-xs text-blue-800 mt-1">
+                                Establece un límite máximo de cosecha para esta plantación. Útil para controlar cuotas, restricciones legales o planificación comercial.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <x-label for="harvest_limit_kg">Límite máximo de cosecha (kg)</x-label>
+                <x-input wire:model="harvest_limit_kg" type="number" step="0.001" id="harvest_limit_kg"
+                    :error="$errors->first('harvest_limit_kg')" placeholder="Ej: 10000" />
+                <p class="mt-1 text-xs text-gray-500">Deja vacío si no hay límite establecido</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">

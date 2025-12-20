@@ -149,6 +149,45 @@
                         <option value="otro">Otro</option>
                     </x-select>
                 </div>
+                
+                {{-- Safety Interval Information --}}
+                @if($this->selectedProduct && $this->selectedProduct->withdrawal_period_days)
+                    <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-amber-900">Plazo de Seguridad</h4>
+                                <p class="text-sm text-amber-800 mt-1">
+                                    <span class="font-semibold">{{ $this->selectedProduct->withdrawal_period_days }} días</span> entre aplicación y cosecha
+                                </p>
+                                @if($activity_date)
+                                    @php
+                                        $safeDate = \Carbon\Carbon::parse($activity_date)->addDays($this->selectedProduct->withdrawal_period_days);
+                                    @endphp
+                                    <p class="text-xs text-amber-700 mt-2">
+                                        🍇 Podrá cosechar a partir del: <span class="font-semibold">{{ $safeDate->format('d/m/Y') }}</span>
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @elseif($this->selectedProduct && !$this->selectedProduct->withdrawal_period_days)
+                    <div class="mt-6 p-4 bg-gray-50 border-l-4 border-gray-400 rounded-r-lg">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-gray-700">Sin Plazo Definido</h4>
+                                <p class="text-xs text-gray-600 mt-1">
+                                    Este producto no tiene plazo de seguridad registrado. Consulta la etiqueta del producto o actualiza la información.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
         </x-form-section>
 
         <x-form-section title="Condiciones Meteorológicas" color="green">

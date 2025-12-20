@@ -23,7 +23,7 @@
         <!-- Breadcrumbs -->
         <div class="flex-1 flex items-center overflow-x-auto">
             <nav class="flex items-center space-x-2 text-sm">
-                <?php $__currentLoopData = $breadcrumbs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $crumb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $breadcrumbs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $crumb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($index > 0): ?>
                         <!-- Separador -->
                         <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,10 @@
                     
                     <!-- Avatar con foto real -->
                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile && $profile->profile_image): ?>
-                        <img src="<?php echo e(Storage::url($profile->profile_image)); ?>" alt="<?php echo e($user->name); ?>" class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-agro-green)] shadow-md">
+                        <img src="<?php echo e(Storage::disk('public')->url($profile->profile_image)); ?>" alt="<?php echo e($user->name); ?>" class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-agro-green)] shadow-md" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center shadow-md" style="display: none;">
+                            <span class="text-white text-sm font-bold"><?php echo e(strtoupper(substr($user->name, 0, 1))); ?></span>
+                        </div>
                     <?php else: ?>
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center shadow-md">
                             <span class="text-white text-sm font-bold"><?php echo e(strtoupper(substr($user->name, 0, 1))); ?></span>

@@ -9,11 +9,11 @@
         <div class="w-full max-w-md relative z-10">
             <!-- Logo -->
             <div class="text-center mb-6">
-                <div class="inline-block max-w-[200px] mx-auto mb-4">
+                <div class="inline-block mx-auto mb-4">
                     <img 
                         src="{{ asset('images/logo.png') }}" 
                         alt="Agro365 Logo" 
-                        class="w-full h-auto object-contain drop-shadow-2xl"
+                        class="h-16 w-auto object-contain drop-shadow-lg"
                     >
                 </div>
             </div>

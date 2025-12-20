@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('agricultural_activities', function (Blueprint $table) {
             $table->id();
-            $table->integer('plot_id');
-            $table->integer('viticulturist_id');
+            $table->unsignedBigInteger('plot_id');
+            $table->unsignedBigInteger('viticulturist_id');
             $table->string('activity_type', 50); // 'phytosanitary', 'fertilization', 'irrigation', 'cultural', 'observation'
             $table->date('activity_date');
-            $table->integer('crew_id')->nullable();
-            $table->integer('machinery_id')->nullable(); // Para futuro
+            $table->unsignedBigInteger('crew_id')->nullable();
+            $table->unsignedBigInteger('machinery_id')->nullable(); // Para futuro
             $table->string('weather_conditions')->nullable();
             $table->decimal('temperature', 5, 2)->nullable();
             $table->text('notes')->nullable();

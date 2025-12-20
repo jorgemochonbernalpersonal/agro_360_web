@@ -34,9 +34,11 @@
     30 => 'Carbon\\Laravel\\ServiceProvider',
     31 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     32 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    33 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
-    34 => 'App\\Providers\\AppServiceProvider',
-    35 => 'App\\Providers\\VoltServiceProvider',
+    33 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
+    34 => 'Spatie\\Sitemap\\SitemapServiceProvider',
+    35 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
+    36 => 'App\\Providers\\AppServiceProvider',
+    37 => 'App\\Providers\\VoltServiceProvider',
   ),
   'eager' => 
   array (
@@ -58,9 +60,11 @@
     15 => 'Carbon\\Laravel\\ServiceProvider',
     16 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     17 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    18 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
-    19 => 'App\\Providers\\AppServiceProvider',
-    20 => 'App\\Providers\\VoltServiceProvider',
+    18 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
+    19 => 'Spatie\\Sitemap\\SitemapServiceProvider',
+    20 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
+    21 => 'App\\Providers\\AppServiceProvider',
+    22 => 'App\\Providers\\VoltServiceProvider',
   ),
   'deferred' => 
   array (

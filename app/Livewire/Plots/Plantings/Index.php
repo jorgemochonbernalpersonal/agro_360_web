@@ -54,12 +54,13 @@ class Index extends Component
         if ($this->search) {
             $search = '%' . strtolower($this->search) . '%';
             $query->where(function ($q) use ($search) {
-                $q->whereHas('plot', function ($sub) use ($search) {
-                    $sub->whereRaw('LOWER(name) LIKE ?', [$search]);
-                })->orWhereHas('grapeVariety', function ($sub) use ($search) {
-                    $sub->whereRaw('LOWER(name) LIKE ?', [$search])
-                        ->orWhereRaw('LOWER(code) LIKE ?', [$search]);
-                });
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                    ->orWhereHas('plot', function ($sub) use ($search) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', [$search]);
+                    })->orWhereHas('grapeVariety', function ($sub) use ($search) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', [$search])
+                            ->orWhereRaw('LOWER(code) LIKE ?', [$search]);
+                    });
             });
         }
 

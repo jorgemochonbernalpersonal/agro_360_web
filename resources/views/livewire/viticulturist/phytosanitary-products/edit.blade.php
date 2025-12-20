@@ -73,6 +73,7 @@
                             id="withdrawal_period_days"
                             :error="$errors->first('withdrawal_period_days')"
                         />
+                        <p class="mt-1 text-xs text-gray-500">⚠️ Días mínimos entre aplicación y cosecha (obligatorio por ley)</p>
                     </div>
                 </div>
         </x-form-section>

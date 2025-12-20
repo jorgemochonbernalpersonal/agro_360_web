@@ -4,7 +4,6 @@ namespace App\Livewire\Plots;
 
 use App\Models\Plot;
 use App\Models\SigpacUse;
-use App\Models\SigpacCode;
 use App\Models\AutonomousCommunity;
 use App\Models\Province;
 use App\Models\Municipality;
@@ -31,7 +30,6 @@ class Edit extends Component
     public $province_id = '';
     public $municipality_id = '';
     public $sigpac_use = [];
-    public $sigpac_code = [];
 
     public function mount(Plot $plot)
     {
@@ -41,7 +39,6 @@ class Edit extends Component
 
         $this->plot = $plot->load([
             'sigpacUses',
-            'sigpacCodes',
             'autonomousCommunity',
             'province',
             'municipality',
@@ -56,7 +53,6 @@ class Edit extends Component
         $this->province_id = $plot->province_id;
         $this->municipality_id = $plot->municipality_id;
         $this->sigpac_use = $plot->sigpacUses->pluck('id')->toArray();
-        $this->sigpac_code = $plot->sigpacCodes->pluck('id')->toArray();
     }
 
     protected function rules(): array
@@ -70,8 +66,9 @@ class Edit extends Component
 
         // `winery_id` removed: do not validate here.
 
-        if ($this->canSelectViticulturist()) {
-            $rules['viticulturist_id'] = 'nullable|exists:users,id';
+        // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
+        if (in_array(Auth::user()->role, ['admin', 'supervisor', 'winery', 'viticulturist'])) {
+            $rules['viticulturist_id'] = 'required|exists:users,id';
         }
 
         if ($this->canSelectLocation()) {
@@ -83,9 +80,6 @@ class Edit extends Component
         if ($this->canSelectSigpac()) {
             $rules['sigpac_use'] = 'required|array|min:1';
             $rules['sigpac_use.*'] = 'exists:sigpac_use,id';
-            // Igual que en Create: códigos SIGPAC opcionales
-            $rules['sigpac_code'] = 'nullable|array';
-            $rules['sigpac_code.*'] = 'exists:sigpac_code,id';
         }
 
         return $rules;
@@ -176,10 +170,6 @@ class Edit extends Component
                 $this->plot->sigpacUses()->sync($this->sigpac_use);
             }
 
-            if ($this->canSelectSigpac() && !empty($this->sigpac_code)) {
-                $this->plot->sigpacCodes()->sync($this->sigpac_code);
-            }
-
             DB::commit();
 
             $this->toastSuccess('Parcela actualizada correctamente.');
@@ -203,7 +193,6 @@ class Edit extends Component
     {
         return view('livewire.plots.edit', [
             'sigpacUses' => SigpacUse::orderBy('code')->get(),
-            'sigpacCodes' => SigpacCode::orderBy('code')->get(),
             'autonomousCommunities' => AutonomousCommunity::orderBy('name')->get(),
             'provinces' => $this->autonomous_community_id 
                 ? Province::where('autonomous_community_id', $this->autonomous_community_id)->orderBy('name')->get()

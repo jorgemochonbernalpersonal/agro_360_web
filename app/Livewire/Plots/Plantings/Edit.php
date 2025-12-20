@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Plots\Plantings;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\PlotPlanting;
 use App\Models\TrainingSystem;
@@ -10,10 +11,13 @@ use Livewire\Component;
 
 class Edit extends Component
 {
+    use WithToastNotifications;
     public PlotPlanting $planting;
 
+    public $name = '';
     public $grape_variety_id = '';
     public $area_planted = '';
+    public $harvest_limit_kg = '';
     public $planting_year = '';
     public $planting_date = '';
     public $vine_count = '';
@@ -35,8 +39,10 @@ class Edit extends Component
             abort(403);
         }
 
+        $this->name = $this->planting->name;
         $this->grape_variety_id = $this->planting->grape_variety_id;
         $this->area_planted = $this->planting->area_planted;
+        $this->harvest_limit_kg = $this->planting->harvest_limit_kg;
         $this->planting_year = $this->planting->planting_year;
         $this->planting_date = optional($this->planting->planting_date)->format('Y-m-d');
         $this->vine_count = $this->planting->vine_count;
@@ -53,8 +59,10 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
+            'name' => 'nullable|string|max:255',
             'grape_variety_id' => 'nullable|exists:grape_varieties,id',
             'area_planted' => 'required|numeric|min:0.001',
+            'harvest_limit_kg' => 'nullable|numeric|min:0',
             'planting_year' => 'nullable|integer|min:1900|max:' . now()->year,
             'planting_date' => 'nullable|date',
             'vine_count' => 'nullable|integer|min:0',
@@ -74,8 +82,10 @@ class Edit extends Component
         $this->validate();
 
         $this->planting->update([
+            'name' => $this->name ?: null,
             'grape_variety_id' => $this->grape_variety_id ?: null,
             'area_planted' => $this->area_planted,
+            'harvest_limit_kg' => $this->harvest_limit_kg ?: null,
             'planting_year' => $this->planting_year ?: null,
             'planting_date' => $this->planting_date ?: null,
             'vine_count' => $this->vine_count ?: null,

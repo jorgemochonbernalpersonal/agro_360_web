@@ -109,6 +109,14 @@ class AgriculturalActivity extends Model
     }
 
     /**
+     * Cosecha (si activity_type es 'harvest')
+     */
+    public function harvest(): HasOne
+    {
+        return $this->hasOne(Harvest::class, 'activity_id');
+    }
+
+    /**
      * Maquinaria utilizada en la actividad
      */
     public function machinery(): BelongsTo

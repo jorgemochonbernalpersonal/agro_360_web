@@ -8,7 +8,16 @@
         title="Códigos SIGPAC"
         description="Gestiona los códigos de identificación SIGPAC"
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-    />
+    >
+        <x-slot:actionButton>
+            <a 
+                href="{{ route('sigpac.codes.create') }}"
+                class="px-4 py-2 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all font-semibold"
+            >
+                + Crear Código SIGPAC
+            </a>
+        </x-slot:actionButton>
+    </x-page-header>
 
     <!-- Búsqueda -->
     <x-filter-section title="Buscar código" color="green">
@@ -66,16 +75,39 @@
                             href="{{ route('plots.index', ['sigpac_code' => $code->id]) }}"
                             title="Ver parcelas"
                         />
-                        <a
-                            href="{{ route('sigpac.geometry.edit', ['sigpacId' => $code->id]) }}"
-                            class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
-                            title="Crear/Editar Mapa"
-                        >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                            </svg>
-                            <span class="ml-1">🗺️</span>
-                        </a>
+                        <x-action-button 
+                            variant="edit" 
+                            href="{{ route('sigpac.codes.edit', $code->id) }}"
+                            title="Editar código"
+                        />
+                        @php
+                            $hasGeometry = \App\Models\MultipartPlotSigpac::where('sigpac_code_id', $code->id)
+                                ->whereNotNull('plot_geometry_id')
+                                ->exists();
+                        @endphp
+                        @if($hasGeometry)
+                            <a
+                                href="{{ route('sigpac.geometry.edit', ['sigpacId' => $code->id]) }}"
+                                class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-200"
+                                title="Ver Mapa"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                </svg>
+                                <span class="ml-1">Ver Mapa</span>
+                            </a>
+                        @else
+                            <a
+                                href="{{ route('sigpac.geometry.edit', ['sigpacId' => $code->id]) }}"
+                                class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                                title="Generar Mapa"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                </svg>
+                                <span class="ml-1">Generar Mapa</span>
+                            </a>
+                        @endif
                     </x-table-actions>
                 </x-table-row>
             @endforeach

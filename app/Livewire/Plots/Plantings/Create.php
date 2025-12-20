@@ -17,8 +17,10 @@ class Create extends Component
 
     public Plot $plot;
 
+    public $name = '';
     public $grape_variety_id = '';
     public $area_planted = '';
+    public $harvest_limit_kg = '';
     public $planting_year = '';
     public $planting_date = '';
     public $vine_count = '';
@@ -43,8 +45,10 @@ class Create extends Component
     protected function rules(): array
     {
         return [
+            'name' => 'nullable|string|max:255',
             'grape_variety_id' => 'nullable|exists:grape_varieties,id',
             'area_planted' => 'required|numeric|min:0.001',
+            'harvest_limit_kg' => 'nullable|numeric|min:0',
             'planting_year' => 'nullable|integer|min:1900|max:' . now()->year,
             'planting_date' => 'nullable|date',
             'vine_count' => 'nullable|integer|min:0',
@@ -65,8 +69,10 @@ class Create extends Component
 
         PlotPlanting::create([
             'plot_id' => $this->plot->id,
+            'name' => $this->name ?: null,
             'grape_variety_id' => $this->grape_variety_id ?: null,
             'area_planted' => $this->area_planted,
+            'harvest_limit_kg' => $this->harvest_limit_kg ?: null,
             'planting_year' => $this->planting_year ?: null,
             'planting_date' => $this->planting_date ?: null,
             'vine_count' => $this->vine_count ?: null,

@@ -78,7 +78,20 @@
                 </div>
             @elseif($geometryId && !empty($coordinates))
                 <!-- Mostrar mapa existente (solo lectura) -->
-                <div id="map-view" style="height: 400px; width: 100%;" class="rounded-lg border border-gray-300"></div>
+                <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p class="text-sm text-green-800">
+                        <strong>Mapa de geometría:</strong> Esta es la geometría guardada para este código SIGPAC.
+                    </p>
+                </div>
+                <div id="map-view" style="height: 500px; width: 100%;" class="rounded-lg border border-gray-300"></div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button
+                        wire:click="$set('showMap', true)"
+                        class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
+                    >
+                        Editar Geometría
+                    </button>
+                </div>
             @else
                 <p class="text-sm text-gray-500 text-center py-8">No hay geometría guardada. Haz clic en "Crear Mapa" para añadir una.</p>
             @endif

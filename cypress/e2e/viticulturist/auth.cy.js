@@ -48,15 +48,29 @@ describe('Viticulturist Authentication', () => {
     // Wait for dashboard to load
     cy.url().should('include', '/viticulturist/dashboard')
     
-    // Click logout button in user dropdown - the button may be inside a hidden menu,
-    // so we force the click to submit the form
-    cy.get('form[action*="logout"]').first().within(() => {
-      cy.get('button[type="submit"]').click({ force: true })
+    // Find and click logout button
+    // The logout form might be in a dropdown, so we need to handle it carefully
+    cy.get('body').then(($body) => {
+      // Try to find logout form - it might be in a dropdown menu
+      const logoutForm = $body.find('form[action*="logout"]')
+      
+      if (logoutForm.length > 0) {
+        // If form exists, submit it
+        cy.wrap(logoutForm.first()).within(() => {
+          cy.get('button[type="submit"]').click({ force: true })
+        })
+      } else {
+        // If form not found, try to find logout link/button
+        cy.contains('button', 'Cerrar sesión').click({ force: true })
+      }
     })
     
-    // Wait for redirect (logout is a POST request, not Livewire)
-    // Increase timeout as server may be slow
-    cy.wait(3000)
+    // Wait for redirect (logout is a POST request)
+    // After logout, should redirect to login
+    cy.url({ timeout: 15000 }).should('include', '/login')
+    
+    // Verify we're logged out by trying to access dashboard
+    cy.visit('/viticulturist/dashboard')
     cy.url({ timeout: 10000 }).should('include', '/login')
   })
 })

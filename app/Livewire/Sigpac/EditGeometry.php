@@ -1,11 +1,12 @@
 <?php
 
+
 namespace App\Livewire\Sigpac;
 
 use App\Models\Plot;
-use App\Models\Sigpac;
+use App\Models\SigpacCode;
 use App\Models\PlotGeometry;
-use App\Models\MultiplePlotSigpac;
+use App\Models\MultipartPlotSigpac;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ class EditGeometry extends Component
     public $geometryId = null;
     public $coordinates = [];
     public $showMap = false;
+    public $viewOnly = false;
 
     public function mount($sigpacId, $plotId = null)
     {
@@ -28,8 +30,8 @@ class EditGeometry extends Component
         
         // Si hay plotId, buscar geometría existente
         if ($plotId) {
-            $mps = MultiplePlotSigpac::where('plot_id', $plotId)
-                ->where('sigpac_id', $sigpacId)
+            $mps = MultipartPlotSigpac::where('plot_id', $plotId)
+                ->where('sigpac_code_id', $sigpacId)
                 ->whereNotNull('plot_geometry_id')
                 ->with('plotGeometry')
                 ->first();
@@ -37,6 +39,20 @@ class EditGeometry extends Component
             if ($mps && $mps->plotGeometry) {
                 $this->geometryId = $mps->plot_geometry_id;
                 $this->coordinates = $mps->plotGeometry->getCoordinatesAsArray();
+                // Si hay geometría, mostrar el mapa automáticamente en modo solo lectura
+                $this->viewOnly = true;
+            }
+        } else {
+            // Si no hay plotId pero hay geometría, también mostrar en modo solo lectura
+            $mps = MultipartPlotSigpac::where('sigpac_code_id', $sigpacId)
+                ->whereNotNull('plot_geometry_id')
+                ->with('plotGeometry')
+                ->first();
+            
+            if ($mps && $mps->plotGeometry) {
+                $this->geometryId = $mps->plot_geometry_id;
+                $this->coordinates = $mps->plotGeometry->getCoordinatesAsArray();
+                $this->viewOnly = true;
             }
         }
     }
@@ -98,11 +114,11 @@ class EditGeometry extends Component
                 ]);
             }
 
-            // Crear o actualizar relación plot-sigpac-geometry
-            MultiplePlotSigpac::updateOrCreate(
+            // Crear o actualizar relación plot-sigpacCode-geometry
+            MultipartPlotSigpac::updateOrCreate(
                 [
                     'plot_id' => $this->plotId,
-                    'sigpac_id' => $this->sigpacId,
+                    'sigpac_code_id' => $this->sigpacId,
                     'plot_geometry_id' => $geometryId,
                 ],
                 [
@@ -144,8 +160,8 @@ class EditGeometry extends Component
             DB::beginTransaction();
 
             // Eliminar relación
-            MultiplePlotSigpac::where('plot_id', $this->plotId)
-                ->where('sigpac_id', $this->sigpacId)
+            MultipartPlotSigpac::where('plot_id', $this->plotId)
+                ->where('sigpac_code_id', $this->sigpacId)
                 ->where('plot_geometry_id', $this->geometryId)
                 ->delete();
 
@@ -168,27 +184,24 @@ class EditGeometry extends Component
 
     public function render()
     {
-        $sigpac = Sigpac::findOrFail($this->sigpacId);
+        $sigpacCode = SigpacCode::findOrFail($this->sigpacId);
         $plot = $this->plotId ? Plot::find($this->plotId) : null;
         
-        // Obtener parcelas del usuario que tienen este sigpac o pueden tenerlo
+        // Obtener parcelas del usuario que tienen este código SIGPAC
         $user = Auth::user();
         $availablePlots = Plot::forUser($user)
             ->get()
-            ->filter(function($plot) use ($sigpac) {
-                // Incluir si ya tiene este sigpac o si tiene sigpac codes relacionados
-                return $plot->sigpacs->contains('id', $sigpac->id) ||
-                       $plot->sigpacCodes->contains(function($code) use ($sigpac) {
-                           return str_contains($code->code, $sigpac->full_code) ||
-                                  str_contains($sigpac->full_code, $code->code);
-                       });
+            ->filter(function($plot) use ($sigpacCode) {
+                // Incluir si ya tiene este código SIGPAC
+                return $plot->sigpacCodes->contains('id', $sigpacCode->id) ||
+                       $plot->sigpacCodesOld->contains('id', $sigpacCode->id);
             });
 
         return view('livewire.sigpac.edit-geometry', [
-            'sigpac' => $sigpac,
+            'sigpac' => $sigpacCode,
             'plot' => $plot,
             'availablePlots' => $availablePlots,
-        ])->layout('layouts.app');
+        ]);
     }
 }
 

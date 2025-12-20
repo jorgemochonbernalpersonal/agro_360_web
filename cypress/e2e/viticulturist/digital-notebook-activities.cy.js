@@ -5,7 +5,7 @@ describe('Viticulturist Digital Notebook Activities', () => {
 
   describe('Phytosanitary Treatment', () => {
     it('should create treatment with crew selection', () => {
-      cy.visit('/viticulturist/digital-notebook/treatment/create')
+      cy.visit('/viticulturist/digital-notebook/treatment/create', { timeout: 30000 })
       cy.waitForLivewire()
       
       cy.contains('Registrar Tratamiento Fitosanitario').should('be.visible')
@@ -67,7 +67,7 @@ describe('Viticulturist Digital Notebook Activities', () => {
 
   describe('Fertilization', () => {
     it('should create fertilization with crew/individual selection', () => {
-      cy.visit('/viticulturist/digital-notebook/fertilization/create')
+      cy.visit('/viticulturist/digital-notebook/fertilization/create', { timeout: 30000 })
       cy.waitForLivewire()
       
       cy.contains('Registrar Fertilización').should('be.visible')

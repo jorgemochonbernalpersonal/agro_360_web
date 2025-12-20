@@ -1,2 +1,48 @@
+# Agro365 - Robots.txt
+# Gestión agrícola profesional
+
 User-agent: *
-Disallow:
+
+# Permitir páginas públicas
+Allow: /
+Allow: /*.css$
+Allow: /*.js$
+Allow: /build/
+
+# Bloquear dashboards y áreas privadas
+Disallow: /admin/
+Disallow: /viticulturist/
+Disallow: /winery/
+Disallow: /supervisor/
+Disallow: /logs
+Disallow: /log-viewer/
+
+# Bloquear API y endpoints internos
+Disallow: /api/
+Disallow: /livewire/
+Disallow: /_debugbar/
+
+# Bloquear directorios del sistema
+Disallow: /storage/
+Disallow: /vendor/
+Disallow: /config/
+Disallow: /database/
+
+# Bloquear rutas de autenticación
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /email/
+
+# Bloquear perfiles y configuración
+Disallow: /profile/
+Disallow: /config/
+Disallow: /settings/
+
+# Bloquear gestión de parcelas (privado)
+Disallow: /plots/
+Disallow: /sigpac/
+Disallow: /campaigns/
+
+# Sitemap - Ayuda a Google a indexar el sitio
+Sitemap: https://tudominio.com/sitemap.xml

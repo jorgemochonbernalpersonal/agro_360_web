@@ -9,7 +9,6 @@ use App\Models\AutonomousCommunity;
 use App\Models\Municipality;
 use App\Models\Plot;
 use App\Models\Province;
-use App\Models\SigpacCode;
 use App\Models\SigpacUse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +29,6 @@ class Create extends Component
     public $province_id = '';
     public $municipality_id = '';
     public $sigpac_use = [];
-    public $sigpac_code = [];
 
     public function mount()
     {
@@ -41,13 +39,13 @@ class Create extends Component
         // (winery_id removed) no auto-assign here
 
         // Auto-asignar viticultor si es viticulturist
-        // Siempre se auto-asigna el viticultor a sí mismo, a menos que pueda seleccionar otros viticultores
+        // Si es viticultor y no puede seleccionar otros viticultores, se auto-asigna
         if (Auth::user()->isViticulturist()) {
             if (!$this->canSelectViticulturist()) {
                 // Si NO puede seleccionar viticultores (no tiene viticultores creados), se auto-asigna
                 $this->viticulturist_id = Auth::id();
             }
-            // Si puede seleccionar, dejamos el campo vacío para que elija
+            // Si puede seleccionar, el campo queda vacío para que elija (pero es requerido)
         }
     }
 
@@ -62,8 +60,9 @@ class Create extends Component
 
         // Validar solo si el campo es visible (winery_id removed)
 
-        if ($this->canSelectViticulturist()) {
-            $rules['viticulturist_id'] = 'nullable|exists:users,id';
+        // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
+        if (in_array(Auth::user()->role, ['admin', 'supervisor', 'winery', 'viticulturist'])) {
+            $rules['viticulturist_id'] = 'required|exists:users,id';
         }
 
         if ($this->canSelectLocation()) {
@@ -75,9 +74,6 @@ class Create extends Component
         if ($this->canSelectSigpac()) {
             $rules['sigpac_use'] = 'required|array|min:1';
             $rules['sigpac_use.*'] = 'exists:sigpac_use,id';
-            // `sigpac_code` is optional in this deployment (legacy usage only sigpac_use)
-            $rules['sigpac_code'] = 'nullable|array';
-            $rules['sigpac_code.*'] = 'exists:sigpac_code,id';
         }
 
         return $rules;
@@ -98,18 +94,6 @@ class Create extends Component
 
     public function save()
     {
-        // Registrar intento de validación/creación
-        Log::info('Intentando crear parcela (inicio save)', [
-            'user_id' => Auth::id(),
-            'name' => $this->name,
-            'viticulturist_id' => $this->viticulturist_id ?? null,
-            'autonomous_community_id' => $this->autonomous_community_id ?? null,
-            'province_id' => $this->province_id ?? null,
-            'municipality_id' => $this->municipality_id ?? null,
-            'sigpac_use' => $this->sigpac_use,
-            'sigpac_code' => $this->sigpac_code,
-        ]);
-
         $this->validate();
 
         try {
@@ -160,28 +144,12 @@ class Create extends Component
 
             $plot = Plot::create($data);
 
-            // Log resultado de create
-            Log::info('Plot::create result', [
-                'user_id' => Auth::id(),
-                'plot_id' => $plot->id ?? null,
-                'plot' => $plot->toArray(),
-            ]);
-
             // Sincronizar relaciones many-to-many
             if ($this->canSelectSigpac() && !empty($this->sigpac_use)) {
                 $plot->sigpacUses()->sync($this->sigpac_use);
             }
 
-            if ($this->canSelectSigpac() && !empty($this->sigpac_code)) {
-                $plot->sigpacCodes()->sync($this->sigpac_code);
-            }
-
             DB::commit();
-
-            Log::info('Parcela creada y transacción confirmada', [
-                'user_id' => Auth::id(),
-                'plot_id' => $plot->id ?? null,
-            ]);
 
             $this->toastSuccess('Parcela creada correctamente.');
             return $this->redirect(route('plots.index'), navigate: true);

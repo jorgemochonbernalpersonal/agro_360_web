@@ -251,6 +251,24 @@
     }
     </script>
     
+    <!-- Manejo de errores CSRF expirados (419) -->
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('request', ({ fail }) => {
+                fail(({ status, preventDefault }) => {
+                    if (status === 419) { // CSRF Token Mismatch
+                        preventDefault();
+                        
+                        // Mostrar mensaje y recargar
+                        if (confirm('Tu sesión ha expirado. ¿Recargar la página para continuar?')) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    
     <!-- Script para ajustar el main con el sidebar colapsable -->
     <script>
         if (typeof window.mainContentObserver === 'undefined') {

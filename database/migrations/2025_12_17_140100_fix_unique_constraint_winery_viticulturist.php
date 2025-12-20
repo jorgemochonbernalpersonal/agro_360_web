@@ -12,28 +12,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // En PostgreSQL, podemos usar un índice parcial único
-        // que solo se aplica cuando winery_id IS NOT NULL
-        // Esto permite múltiples filas con winery_id = NULL y el mismo viticulturist_id
+        // Eliminar constraint único existente si existe
+        try {
+            Schema::table('winery_viticulturist', function (Blueprint $table) {
+                $table->dropUnique('winery_viticulturist_winery_id_viticulturist_id_unique');
+            });
+        } catch (\Exception $e) {
+            // Si no existe, continuar
+        }
         
-        // Primero eliminar el constraint único existente
-        DB::statement('ALTER TABLE winery_viticulturist DROP CONSTRAINT IF EXISTS winery_viticulturist_winery_id_viticulturist_id_unique');
-        
-        // Crear índice parcial único que solo se aplica cuando winery_id no es NULL
-        // Esto permite múltiples relaciones sin winery para el mismo viticultor
-        DB::statement('
-            CREATE UNIQUE INDEX winery_viticulturist_unique_partial 
-            ON winery_viticulturist (winery_id, viticulturist_id) 
-            WHERE winery_id IS NOT NULL
-        ');
-        
-        // También crear un índice único parcial para viticultores sin winery
-        // pero con parent_viticulturist_id para evitar duplicados
-        DB::statement('
-            CREATE UNIQUE INDEX winery_viticulturist_unique_no_winery 
-            ON winery_viticulturist (viticulturist_id, parent_viticulturist_id, source) 
-            WHERE winery_id IS NULL AND parent_viticulturist_id IS NOT NULL
-        ');
+        // Para MySQL/MariaDB: índice único normal
+        // MySQL permite múltiples NULLs en índices únicos, así que esto funciona
+        // cuando winery_id es NULL, permite múltiples filas con el mismo viticulturist_id
+        Schema::table('winery_viticulturist', function (Blueprint $table) {
+            $table->unique(['winery_id', 'viticulturist_id'], 'winery_viticulturist_winery_id_viticulturist_id_unique');
+        });
     }
 
     /**
@@ -41,9 +34,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Eliminar índices parciales
-        DB::statement('DROP INDEX IF EXISTS winery_viticulturist_unique_partial');
-        DB::statement('DROP INDEX IF EXISTS winery_viticulturist_unique_no_winery');
+        try {
+            Schema::table('winery_viticulturist', function (Blueprint $table) {
+                $table->dropUnique('winery_viticulturist_winery_id_viticulturist_id_unique');
+            });
+        } catch (\Exception $e) {
+            // Si no existe, continuar
+        }
         
         // Restaurar constraint único original
         Schema::table('winery_viticulturist', function (Blueprint $table) {
@@ -51,4 +48,3 @@ return new class extends Migration
         });
     }
 };
-

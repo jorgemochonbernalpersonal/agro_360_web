@@ -95,6 +95,14 @@ class CreatePhytosanitaryTreatment extends Component
         }
     }
 
+    public function getSelectedProductProperty()
+    {
+        if (!$this->product_id) {
+            return null;
+        }
+        return PhytosanitaryProduct::find($this->product_id);
+    }
+
     public function save()
     {
         $this->validate();

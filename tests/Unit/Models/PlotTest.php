@@ -28,19 +28,16 @@ class PlotTest extends TestCase
         ]);
     }
 
-    public function test_plot_belongs_to_viticulturist_and_winery(): void
+    public function test_plot_belongs_to_viticulturist(): void
     {
-        $winery = User::factory()->create(['role' => 'winery']);
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         $plot = Plot::factory()
             ->state([
-                'winery_id' => $winery->id,
                 'viticulturist_id' => $viticulturist->id,
             ])
             ->create();
 
-        $this->assertEquals($winery->id, $plot->winery->id);
         $this->assertEquals($viticulturist->id, $plot->viticulturist->id);
     }
 

@@ -13,30 +13,48 @@
  * @param {string} email - User email
  * @param {string} password - User password
  */
-Cypress.Commands.add('loginAsViticulturist', (email = 'viticulturist@example.com', password = 'password') => {
+Cypress.Commands.add('loginAsViticulturist', (email = 'bernalmochonjorge@gmail.com', password = 'cocoteq22') => {
   cy.session([email, password], () => {
     cy.visit('/login')
-    cy.get('input[wire\\:model="email"]').clear().type(email)
-    cy.get('input[wire\\:model="password"]').clear().type(password)
-    cy.get('button[type="submit"]').click()
+    
+    // Wait for page to load completely
+    cy.get('input[wire\\:model="email"]').should('be.visible')
+    cy.wait(500) // Wait for any overlays/tooltips to disappear
+    
+    // Clear and type email - use force if needed to bypass overlays
+    cy.get('input[wire\\:model="email"]').clear({ force: true }).type(email, { force: true })
+    cy.wait(200)
+    
+    // Clear and type password - use force if needed
+    cy.get('input[wire\\:model="password"]').clear({ force: true }).type(password, { force: true })
+    cy.wait(200)
+    
+    // Click submit button
+    cy.get('button[type="submit"]').click({ force: true })
     
     // Wait for Livewire to process the request
-    cy.wait(3000)
+    cy.wait(3000) // Give Livewire time to process
     
-    // Verify we're on the dashboard (or handle error if credentials are wrong)
-    cy.url().then((url) => {
+    // Wait for URL to change from /login to dashboard
+    cy.url({ timeout: 15000 }).then((url) => {
+      // Check if we're no longer on login page
       if (url.includes('/login')) {
-        // Still on login, might be credentials issue
-        cy.log('⚠ Warning: Still on login page. User may not exist. Run: php artisan db:seed --class=ViticulturistTestUserSeeder')
+        // Still on login - might be an error, check for error messages
+        cy.get('body').then(($body) => {
+          if ($body.text().includes('credenciales') || $body.text().includes('error')) {
+            throw new Error('Login failed - invalid credentials or user does not exist')
+          }
+        })
       } else {
-        cy.url().should('include', '/viticulturist/dashboard')
+        // Should be on dashboard
+        expect(url).to.include('/viticulturist/dashboard')
       }
     })
   })
   
   // After session is created, visit dashboard to ensure we're logged in
   cy.visit('/viticulturist/dashboard')
-  cy.url().should('include', '/viticulturist/dashboard')
+  cy.url({ timeout: 10000 }).should('include', '/viticulturist/dashboard')
 })
 
 /**

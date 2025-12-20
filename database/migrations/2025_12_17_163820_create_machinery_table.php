@@ -28,7 +28,7 @@ return new class extends Migration
             $table->date('last_revision_date')->nullable(); // Fecha de última revisión
             $table->string('image')->nullable(); // Imagen
             $table->text('notes')->nullable(); // Notas (textarea)
-            $table->integer('viticulturist_id');
+            $table->unsignedBigInteger('viticulturist_id');
             $table->boolean('active')->default(true);
             $table->timestamps();
             

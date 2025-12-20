@@ -6,9 +6,15 @@ use App\Livewire\Viticulturist\Campaign\Index as CampaignIndex;
 use App\Livewire\Viticulturist\Campaign\Show as CampaignShow;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateCulturalWork;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateFertilization;
+use App\Livewire\Viticulturist\DigitalNotebook\CreateHarvest;
+use App\Livewire\Viticulturist\DigitalNotebook\EditHarvest;
+use App\Livewire\Viticulturist\DigitalNotebook\ShowHarvest;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateIrrigation;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateObservation;
 use App\Livewire\Viticulturist\DigitalNotebook\CreatePhytosanitaryTreatment;
+use App\Livewire\Viticulturist\DigitalNotebook\Containers\Index as ContainersIndex;
+use App\Livewire\Viticulturist\DigitalNotebook\Containers\Create as ContainersCreate;
+use App\Livewire\Viticulturist\DigitalNotebook\Containers\Edit as ContainersEdit;
 use App\Livewire\Viticulturist\Machinery\Create as MachineryCreate;
 use App\Livewire\Viticulturist\Machinery\Edit as MachineryEdit;
 use App\Livewire\Viticulturist\Machinery\Index as MachineryIndex;
@@ -48,6 +54,23 @@ Route::middleware(['role:viticulturist'])
             Route::get('/irrigation/create', CreateIrrigation::class)->name('irrigation.create');
             Route::get('/cultural/create', CreateCulturalWork::class)->name('cultural.create');
             Route::get('/observation/create', CreateObservation::class)->name('observation.create');
+            Route::get('/harvest/create', CreateHarvest::class)->name('harvest.create');
+            Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
+            Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');
+            
+            // Contenedores
+            Route::prefix('containers')->name('containers.')->group(function () {
+                Route::get('/', ContainersIndex::class)->name('index');
+                Route::get('/create', ContainersCreate::class)->name('create');
+                Route::get('/{container}/edit', ContainersEdit::class)->name('edit');
+            });
+            
+            // Rendimientos Estimados
+            Route::prefix('estimated-yields')->name('estimated-yields.')->group(function () {
+                Route::get('/', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Index::class)->name('index');
+                Route::get('/create', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Create::class)->name('create');
+                Route::get('/{estimatedYield}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Edit::class)->name('edit');
+            });
         });
 
         // Personal (Equipos y Personal unificado)
@@ -127,4 +150,32 @@ Route::middleware(['role:viticulturist'])
         });
 
         Route::get('/calendar', Calendar::class)->name('calendar');
+
+        // Clientes
+        Route::prefix('clients')->name('clients.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Clients\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Clients\Create::class)->name('create');
+            Route::get('/{client}', \App\Livewire\Viticulturist\Clients\Show::class)->name('show');
+            Route::get('/{client}/edit', \App\Livewire\Viticulturist\Clients\Edit::class)->name('edit');
+        });
+
+        // Facturas/Pedidos
+        Route::prefix('invoices')->name('invoices.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Invoices\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Invoices\Create::class)->name('create');
+            
+            // Facturar cosechas (debe ir antes de las rutas dinámicas)
+            Route::prefix('harvest')->name('harvest.')->group(function () {
+                Route::get('/', \App\Livewire\Viticulturist\Invoices\Harvest\Index::class)->name('index');
+            });
+            
+            // Rutas dinámicas al final
+            Route::get('/{invoice}', \App\Livewire\Viticulturist\Invoices\Show::class)->name('show');
+            Route::get('/{invoice}/edit', \App\Livewire\Viticulturist\Invoices\Edit::class)->name('edit');
+        });
+
+        // Configuración
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/taxes', \App\Livewire\Viticulturist\Settings\Taxes::class)->name('taxes');
+        });
     });

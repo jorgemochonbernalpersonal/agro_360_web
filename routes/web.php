@@ -20,6 +20,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Rutas públicas legales
+Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
+Route::get('/cookies', fn() => view('legal.privacy'))->name('cookies'); // Misma vista que privacidad
+
 Route::get('/counter', Counter::class)->name('counter');
 
 // Ruta para forzar cambio de contraseña (debe estar fuera del middleware 'auth' principal)
@@ -34,6 +38,14 @@ Route::middleware(['auth', 'password.changed'])->group(function () {
 
 // Rutas protegidas: password cambiado Y email verificado
 Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
+    // Laravel Log Viewer - Solo para administradores
+    Route::get('logs', function () {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'No tienes permiso para acceder a los logs.');
+        }
+        return app('\Rap2hpoutre\LaravelLogViewer\LogViewerController')->index();
+    })->name('logs');
+    
     require __DIR__ . '/plots.php';
     require __DIR__ . '/sigpac.php';
     require __DIR__ . '/config.php';

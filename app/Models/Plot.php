@@ -27,11 +27,6 @@ class Plot extends Model
         'active' => 'boolean',
     ];
 
-    public function winery(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'winery_id');
-    }
-
     /**
      * Viticultor asignado a la parcela
      */
@@ -73,9 +68,9 @@ class Plot extends Model
     }
 
     /**
-     * Códigos SIGPAC (many-to-many) - estructura antigua
+     * Códigos SIGPAC (relación antigua via plot_sigpac_code)
      */
-    public function sigpacCodes(): BelongsToMany
+    public function sigpacCodesOld(): BelongsToMany
     {
         return $this->belongsToMany(SigpacCode::class, 'plot_sigpac_code', 'plot_id', 'sigpac_code_id');
     }
@@ -83,9 +78,9 @@ class Plot extends Model
     /**
      * Códigos SIGPAC (nueva estructura - many-to-many con geometrías)
      */
-    public function sigpacs(): BelongsToMany
+    public function sigpacCodes(): BelongsToMany
     {
-        return $this->belongsToMany(Sigpac::class, 'multiple_plot_sigpac', 'plot_id', 'sigpac_id')
+        return $this->belongsToMany(SigpacCode::class, 'multipart_plot_sigpac', 'plot_id', 'sigpac_code_id')
             ->withPivot('plot_geometry_id')
             ->withTimestamps();
     }
@@ -95,19 +90,24 @@ class Plot extends Model
      */
     public function multiplePlotSigpacs(): HasMany
     {
-        return $this->hasMany(MultiplePlotSigpac::class, 'plot_id');
+        return $this->hasMany(MultipartPlotSigpac::class, 'plot_id');
     }
 
     /**
-     * Geometrías de la parcela
+     * Geometrías de la parcela (via multiple_plot_sigpac)
      */
-    public function plotGeometries(): HasMany
+    public function plotGeometries()
     {
-        return $this->hasMany(PlotGeometry::class, 'id', 'plot_geometry_id')
-            ->whereHas('multiplePlotSigpacs', function($q) {
-                $q->where('plot_id', $this->id);
-            });
+        return $this->hasManyThrough(
+            PlotGeometry::class,
+            MultipartPlotSigpac::class,
+            'plot_id',          // FK en multiple_plot_sigpac
+            'id',               // FK en plot_geometry
+            'id',               // Local key en plots
+            'plot_geometry_id'  // Local key en multiple_plot_sigpac
+        );
     }
+
 
     /**
      * Coordenadas multiparte SIGPAC (estructura antigua)
