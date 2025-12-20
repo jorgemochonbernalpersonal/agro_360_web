@@ -19,12 +19,20 @@
             </a>
             <p class="text-gray-600 text-sm font-medium">Cuaderno de campo digital para viticultores</p>
         </div>
-        <!-- Login Form -->
+        
+        <!-- Formulario -->
         <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <h2 class="text-2xl font-bold text-gray-900 mb-1 text-center">Iniciar Sesión</h2>
-            <p class="text-gray-500 mb-6 text-center text-sm">Ingresa tus credenciales para continuar</p>
+            <h2 class="text-2xl font-bold text-gray-900 mb-1 text-center">Restablecer Contraseña</h2>
+            <p class="text-gray-500 mb-6 text-center text-sm">Ingresa tu nueva contraseña</p>
             
-            <form wire:submit="login" class="space-y-5">
+            <!-- Mensajes Flash -->
+            @if(session('status'))
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-600 rounded-lg">
+                    <p class="text-sm font-semibold text-green-800">{{ session('status') }}</p>
+                </div>
+            @endif
+            
+            <form wire:submit="resetPassword" class="space-y-5">
                 <div>
                     <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
                         Email
@@ -36,6 +44,7 @@
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
                         placeholder="correo@ejemplo.com"
                         required
+                        autofocus
                     >
                     @error('email') 
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
@@ -44,7 +53,7 @@
 
                 <div>
                     <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Contraseña
+                        Nueva Contraseña
                     </label>
                     <input 
                         wire:model="password" 
@@ -57,23 +66,26 @@
                     @error('password') 
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
                     @enderror
+                    <p class="mt-1 text-xs text-gray-500">
+                        La contraseña debe tener al menos 8 caracteres.
+                    </p>
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input 
-                            wire:model="remember" 
-                            type="checkbox" 
-                            id="remember"
-                            class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
-                        >
-                        <label for="remember" class="ml-2 block text-sm text-gray-700">
-                            Recordarme
-                        </label>
-                    </div>
-                    <a href="{{ route('password.request') }}" class="text-sm text-[var(--color-agro-green-dark)] hover:underline font-medium">
-                        ¿Olvidaste tu contraseña?
-                    </a>
+                <div>
+                    <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Confirmar Nueva Contraseña
+                    </label>
+                    <input 
+                        wire:model="password_confirmation" 
+                        type="password" 
+                        id="password_confirmation"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
+                        placeholder="••••••••"
+                        required
+                    >
+                    @error('password_confirmation') 
+                        <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
+                    @enderror
                 </div>
 
                 <button 
@@ -81,24 +93,22 @@
                     wire:loading.attr="disabled"
                     class="w-full bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white py-3.5 px-4 rounded-lg font-bold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-agro-green-dark)] transition-all transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                    <span wire:loading.remove>Iniciar Sesión</span>
+                    <span wire:loading.remove>Restablecer Contraseña</span>
                     <span wire:loading class="flex items-center gap-2">
                         <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Iniciando sesión...
+                        Restableciendo...
                     </span>
                 </button>
             </form>
 
             <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600">
-                    ¿No tienes cuenta? 
-                    <a href="{{ route('register') }}" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">
-                        Regístrate aquí
-                    </a>
-                </p>
+                <a href="{{ route('login') }}" class="text-sm text-[var(--color-agro-green-dark)] hover:underline font-medium">
+                    ← Volver al inicio de sesión
+                </a>
+            </div>
         </div>
     </div>
 </div>

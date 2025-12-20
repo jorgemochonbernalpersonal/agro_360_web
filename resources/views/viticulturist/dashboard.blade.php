@@ -1,44 +1,33 @@
 @php
     use App\Models\Plot;
     use App\Models\AgriculturalActivity;
-    use App\Models\SigpacCode;
     use App\Models\PlotPlanting;
-    use App\Models\Invoice;
-    use App\Models\Client;
     use App\Models\Harvest;
     use App\Models\HarvestContainer;
     use App\Models\Campaign;
     
     $user = auth()->user();
     
-    // KPIs Básicos
+    // =======================
+    // KPIs AGRÍCOLAS
+    // =======================
+    
+    // Parcelas
     $totalPlots = Plot::forUser($user)->count();
     $totalArea = Plot::forUser($user)->sum('area') ?? 0;
+    $averageAreaPerPlot = $totalPlots > 0 ? $totalArea / $totalPlots : 0;
+    
+    // Actividades
     $activitiesThisYear = AgriculturalActivity::where('viticulturist_id', $user->id)
         ->whereYear('created_at', date('Y'))
         ->count();
-    $averageAreaPerPlot = $totalPlots > 0 ? $totalArea / $totalPlots : 0;
     
-    // KPIs Financieros
-    $totalInvoiced = Invoice::forUser($user->id)
-        ->whereYear('invoice_date', date('Y'))
-        ->where('status', '!=', 'cancelled')
-        ->sum('total_amount') ?? 0;
-    
-    $pendingInvoices = Invoice::forUser($user->id)
-        ->where('payment_status', 'unpaid')
-        ->where('status', '!=', 'cancelled')
+    $activitiesThisMonth = AgriculturalActivity::where('viticulturist_id', $user->id)
+        ->whereMonth('created_at', date('m'))
+        ->whereYear('created_at', date('Y'))
         ->count();
     
-    $uninvoicedHarvests = Harvest::whereHas('activity', function($q) use ($user) {
-        $q->where('viticulturist_id', $user->id);
-    })
-    ->whereDoesntHave('invoiceItems')
-    ->count();
-    
-    $activeClients = Client::forUser($user->id)->where('active', true)->count();
-    
-    // KPIs de Cosecha
+    // Cosechas
     $totalHarvested = Harvest::whereHas('activity', function($q) use ($user) {
         $q->where('viticulturist_id', $user->id)
           ->whereYear('activity_date', date('Y'));
@@ -52,8 +41,18 @@
     })
     ->count();
     
-    // Contenedores - disponibles (sin asignar a cosecha)
+    // Contenedores disponibles
     $availableContainers = HarvestContainer::whereDoesntHave('harvests')->count();
+    
+    // Tratamientos activos (actividades de tipo treatment en últimos 30 días)
+    $activeTreatments = AgriculturalActivity::where('viticulturist_id', $user->id)
+        ->where('activity_type', 'treatment')
+        ->where('created_at', '>=', now()->subDays(30))
+        ->count();
+    
+    // =======================
+    // GRÁFICOS Y LISTAS
+    // =======================
     
     // Distribución por variedad
     $userPlotIds = Plot::forUser($user)->pluck('id');
@@ -65,107 +64,66 @@
         ->with('grapeVariety')
         ->get();
     
-    // Actividades por tipo (últimos 30 días)
-    $activitiesByType = AgriculturalActivity::selectRaw('activity_type, COUNT(*) as count')
-        ->where('viticulturist_id', $user->id)
-        ->where('created_at', '>=', now()->subDays(30))
-        ->groupBy('activity_type')
+    // Actividades recientes (últimas 10)
+    $recentActivities = AgriculturalActivity::where('viticulturist_id', $user->id)
+        ->with(['plot', 'campaign'])
+        ->orderBy('activity_date', 'desc')
+        ->take(10)
         ->get();
     
-    // Últimas 5 cosechas
+    // Próximas actividades programadas (si existe campo de fecha futura)
+    // Por ahora, mostrar las más recientes como placeholder
+    
+    // Cosechas recientes
     $recentHarvests = Harvest::whereHas('activity', function($q) use ($user) {
         $q->where('viticulturist_id', $user->id);
     })
-    ->with(['activity.plot', 'plotPlanting.grapeVariety'])
+    ->with(['activity.plot', 'plotPlanting.grapeVariety', 'container'])
     ->orderBy('harvest_start_date', 'desc')
-    ->take(5)
+    ->take(8)
     ->get();
     
-    // Facturas pendientes
-    $pendingInvoicesList = Invoice::forUser($user->id)
-        ->where('payment_status', 'unpaid')
-        ->where('status', '!=', 'cancelled')
-        ->with('client')
-        ->orderBy('due_date', 'asc')
-        ->take(5)
-        ->get();
+    // =======================
+    // ALERTAS AGRÍCOLAS
+    // =======================
     
-    // Top clientes - calcular total facturado manualmente
-    $topClients = Client::forUser($user->id)
-        ->with('invoices')
-        ->get()
-        ->map(function($client) {
-            $client->total_invoiced = $client->invoices()
-                ->where('status', '!=', 'cancelled')
-                ->sum('total_amount') ?? 0;
-            return $client;
-        })
-        ->sortByDesc('total_invoiced')
-        ->take(5)
-        ->values();
-    
-    // Ingresos mensuales (últimos 6 meses)
-    $monthlyIncome = [];
-    for ($i = 5; $i >= 0; $i--) {
-        $month = now()->subMonths($i);
-        $income = Invoice::forUser($user->id)
-            ->whereYear('invoice_date', $month->year)
-            ->whereMonth('invoice_date', $month->month)
-            ->where('status', '!=', 'cancelled')
-            ->sum('total_amount') ?? 0;
-        $monthlyIncome[] = [
-            'month' => $month->format('M Y'),
-            'income' => $income
-        ];
-    }
-    
-    // Alertas
     $alerts = [];
     
-    // Facturas próximas a vencer (7 días)
-    $upcomingDueInvoices = Invoice::forUser($user->id)
-        ->where('payment_status', 'unpaid')
-        ->where('status', '!=', 'cancelled')
-        ->whereNotNull('due_date')
-        ->whereBetween('due_date', [now(), now()->addDays(7)])
-        ->count();
-    if ($upcomingDueInvoices > 0) {
+    // Parcelas con plazo de seguridad activo (sacar de PlotApplicationWithdrawals si existe)
+    // Por ahora, ejemplo de alertas:
+    
+    // Contenedores bajos
+    if ($availableContainers < 5) {
         $alerts[] = [
             'type' => 'warning',
-            'message' => "{$upcomingDueInvoices} factura(s) próxima(s) a vencer en 7 días",
-            'route' => route('viticulturist.invoices.index')
+            'message' => "Solo quedan {$availableContainers} contenedores disponibles",
+            'route' => route('viticulturist.digital-notebook.containers.index')
         ];
     }
     
-    // Cosechas sin facturar (más de 30 días)
-    $oldUninvoicedHarvests = Harvest::whereHas('activity', function($q) use ($user) {
-        $q->where('viticulturist_id', $user->id)
-          ->where('activity_date', '<=', now()->subDays(30));
-    })
-    ->whereDoesntHave('invoiceItems')
-    ->count();
-    if ($oldUninvoicedHarvests > 0) {
+    // Actividades este mes
+    if ($activitiesThisMonth === 0) {
         $alerts[] = [
             'type' => 'info',
-            'message' => "{$oldUninvoicedHarvests} cosecha(s) sin facturar (más de 30 días)",
-            'route' => route('viticulturist.invoices.harvest.index')
+            'message' => "No has registrado actividades este mes",
+            'route' => route('viticulturist.digital-notebook')
         ];
     }
     
-    $dashboardIcon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>';
+    $dashboardIcon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>';
 @endphp
 
 <x-app-layout>
     <div class="space-y-6 animate-fade-in">
-        <!-- Header -->
+        {{-- Header --}}
         <x-page-header
             :icon="$dashboardIcon"
             title="Dashboard"
-            description="Resumen general de tu actividad agrícola y financiera"
+            description="Gestión operativa de tu viñedo"
             icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
         />
 
-        <!-- Alertas -->
+        {{-- Alertas --}}
         @if(count($alerts) > 0)
             <div class="space-y-2">
                 @foreach($alerts as $alert)
@@ -188,9 +146,9 @@
             </div>
         @endif
 
-        <!-- KPI Cards - Primera Fila (Básicos) -->
+        {{-- KPI Cards - Primera Fila (Básicos) --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Total Parcelas -->
+            {{-- Total Parcelas --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center justify-between">
                     <div>
@@ -205,7 +163,7 @@
                 </div>
             </div>
 
-            <!-- Área Total -->
+            {{-- Área Total --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center justify-between">
                     <div>
@@ -221,12 +179,13 @@
                 </div>
             </div>
 
-            <!-- Actividades Año -->
+            {{-- Actividades Este Mes --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Actividades {{ date('Y') }}</p>
-                        <p class="text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ $activitiesThisYear }}</p>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Actividades</p>
+                        <p class="text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ $activitiesThisMonth }}</p>
+                        <p class="text-xs text-gray-400 mt-1">este mes</p>
                     </div>
                     <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
                         <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,110 +195,47 @@
                 </div>
             </div>
 
-            <!-- Promedio Área -->
+            {{-- Total Cosechado --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Promedio/Parcela</p>
-                        <p class="text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ number_format($averageAreaPerPlot, 1) }}</p>
-                        <p class="text-xs text-gray-400 mt-1">ha/parcela</p>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Cosechado {{ date('Y') }}</p>
+                        <p class="text-4xl font-bold text-[var(--color-agro-green-dark)]">{{ number_format($totalHarvested / 1000, 1) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">toneladas</p>
                     </div>
                     <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
                         <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                         </svg>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- KPI Cards - Segunda Fila (Financieros y Cosecha) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-            <!-- Total Facturado -->
+        {{-- KPI Cards - Segunda Fila (Operativos) --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {{-- Tratamientos Activos --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Facturado {{ date('Y') }}</p>
-                        <p class="text-2xl font-bold text-green-600">{{ number_format($totalInvoiced, 2) }} €</p>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Tratamientos</p>
+                        <p class="text-3xl font-bold text-green-600">{{ $activeTreatments }}</p>
+                        <p class="text-xs text-gray-400 mt-1">últimos 30 días</p>
                     </div>
                     <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <!-- Facturas Pendientes -->
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Pendientes</p>
-                        <p class="text-2xl font-bold text-orange-600">{{ $pendingInvoices }}</p>
-                        <p class="text-xs text-gray-400 mt-1">facturas</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cosechas Sin Facturar -->
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Sin Facturar</p>
-                        <p class="text-2xl font-bold text-red-600">{{ $uninvoicedHarvests }}</p>
-                        <p class="text-xs text-gray-400 mt-1">cosechas</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Cosechado -->
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Cosechado {{ date('Y') }}</p>
-                        <p class="text-2xl font-bold text-purple-600">{{ number_format($totalHarvested, 0) }}</p>
-                        <p class="text-xs text-gray-400 mt-1">kg</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Clientes Activos -->
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Clientes</p>
-                        <p class="text-2xl font-bold text-indigo-600">{{ $activeClients }}</p>
-                        <p class="text-xs text-gray-400 mt-1">activos</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contenedores Disponibles -->
+            {{-- Contenedores Disponibles --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 mb-1">Contenedores</p>
-                        <p class="text-2xl font-bold text-teal-600">{{ $availableContainers }}</p>
+                        <p class="text-3xl font-bold text-teal-600">{{ $availableContainers }}</p>
                         <p class="text-xs text-gray-400 mt-1">disponibles</p>
                     </div>
                     <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
@@ -349,45 +245,27 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Enlace a Estadísticas Financieras --}}
+            <a href="{{ route('viticulturist.invoices.index') }}" wire:navigate class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg border-2 border-indigo-200 p-6 hover:shadow-xl hover:border-indigo-300 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-indigo-600 mb-1">📊 Facturación</p>
+                        <p class="text-lg font-bold text-indigo-900">Ver estadísticas</p>
+                        <p class="text-xs text-indigo-500 mt-1">Análisis comercial completo</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-indigo-200 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </a>
         </div>
 
-        <!-- Charts Row -->
+        {{-- Charts Row --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Ingresos Mensuales -->
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-gray-900">Ingresos Mensuales</h3>
-                    <a href="{{ route('viticulturist.invoices.index') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
-                        Ver todas →
-                    </a>
-                </div>
-                
-                @if(count($monthlyIncome) > 0)
-                    <div class="space-y-3">
-                        @php
-                            $maxIncome = max(array_column($monthlyIncome, 'income'));
-                        @endphp
-                        @foreach($monthlyIncome as $month)
-                            @php
-                                $percentage = $maxIncome > 0 ? ($month['income'] / $maxIncome) * 100 : 0;
-                            @endphp
-                            <div>
-                                <div class="flex items-center justify-between mb-1">
-                                    <span class="text-sm font-medium text-gray-700">{{ $month['month'] }}</span>
-                                    <span class="text-sm font-bold text-gray-900">{{ number_format($month['income'], 2) }} €</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-3">
-                                    <div class="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-gray-500 text-center py-8">No hay ingresos registrados</p>
-                @endif
-            </div>
-
-            <!-- Distribución por Variedad -->
+            {{-- Distribución por Variedad --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-bold text-gray-900">Distribución por Variedad</h3>
@@ -420,135 +298,72 @@
                     <p class="text-gray-500 text-center py-8">No hay datos de variedades disponibles</p>
                 @endif
             </div>
-        </div>
 
-        <!-- Bottom Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Cosechas Recientes -->
+            {{-- Actividades Recientes --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-gray-900">Cosechas Recientes</h3>
-                    <a href="{{ route('viticulturist.invoices.harvest.index') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
-                        Facturar →
+                    <h3 class="text-lg font-bold text-gray-900">Actividades Recientes</h3>
+                    <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
+                        Ver todas →
                     </a>
                 </div>
                 
-                @if($recentHarvests->count() > 0)
-                    <div class="space-y-4">
-                        @foreach($recentHarvests as $harvest)
-                            @php
-                                $isInvoiced = $harvest->invoiceItems()->exists();
-                            @endphp
-                            <div class="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                @if($recentActivities->count() > 0)
+                    <div class="space-y-3">
+                        @foreach($recentActivities->take(5) as $activity)
+                            <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900">{{ ucfirst($activity->activity_type) }}</p>
+                                    <p class="text-xs text-gray-500">{{ $activity->plot->name ?? 'Sin parcela' }} - {{ $activity->activity_date->format('d/m/Y') }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-gray-500 text-center py-8">No hay actividades registradas</p>
+                @endif
+            </div>
+        </div>
+
+        {{-- Cosechas Recientes --}}
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold text-gray-900">Cosechas Recientes</h3>
+                <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
+                    Ver registro →
+                </a>
+            </div>
+            
+            @if($recentHarvests->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @foreach($recentHarvests as $harvest)
+                        <div class="p-4 rounded-lg border border-gray-200 hover:border-[var(--color-agro-green)] hover:shadow-md transition-all">
+                            <div class="flex items-start gap-3">
                                 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                                     </svg>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">
-                                        {{ $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }} - {{ $harvest->activity->plot->name ?? 'Sin parcela' }}
+                                    <p class="text-sm font-semibold text-gray-900 truncate">
+                                        {{ $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}
                                     </p>
-                                    <p class="text-xs text-gray-500">
-                                        {{ number_format($harvest->total_weight, 2) }} kg - {{ $harvest->harvest_start_date->format('d/m/Y') }}
-                                    </p>
-                                    @if($isInvoiced)
-                                        <span class="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">Facturada</span>
-                                    @else
-                                        <span class="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800">Sin facturar</span>
-                                    @endif
+                                    <p class="text-xs text-gray-500 truncate">{{ $harvest->activity->plot->name ?? 'Sin parcela' }}</p>
+                                    <p class="text-xs font-bold text-purple-600 mt-1">{{ number_format($harvest->total_weight, 0) }} kg</p>
+                                    <p class="text-xs text-gray-400">{{ $harvest->harvest_start_date->format('d/m/Y') }}</p>
                                 </div>
-                                @if(!$isInvoiced)
-                                    <a href="{{ route('viticulturist.invoices.create', ['harvest_id' => $harvest->id]) }}" wire:navigate class="text-green-600 hover:text-green-800">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                    </a>
-                                @endif
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-gray-500 text-center py-8">No hay cosechas registradas</p>
-                @endif
-            </div>
-
-            <!-- Facturas Pendientes -->
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-gray-900">Facturas Pendientes</h3>
-                    <a href="{{ route('viticulturist.invoices.index') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
-                        Ver todas →
-                    </a>
+                        </div>
+                    @endforeach
                 </div>
-                
-                @if($pendingInvoicesList->count() > 0)
-                    <div class="space-y-4">
-                        @foreach($pendingInvoicesList as $invoice)
-                            @php
-                                $isOverdue = $invoice->due_date && $invoice->due_date < now();
-                            @endphp
-                            <div class="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors {{ $isOverdue ? 'bg-red-50 border border-red-200' : '' }}">
-                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">{{ $invoice->invoice_number }}</p>
-                                    <p class="text-xs text-gray-500">{{ $invoice->client->full_name ?? 'Sin cliente' }}</p>
-                                    <p class="text-xs font-semibold text-gray-900 mt-1">{{ number_format($invoice->total_amount, 2) }} €</p>
-                                    @if($isOverdue)
-                                        <span class="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800">Vencida</span>
-                                    @elseif($invoice->due_date)
-                                        <span class="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Vence: {{ $invoice->due_date->format('d/m/Y') }}</span>
-                                    @endif
-                                </div>
-                                <a href="{{ route('viticulturist.invoices.show', $invoice->id) }}" wire:navigate class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)]">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-gray-500 text-center py-8">No hay facturas pendientes</p>
-                @endif
-            </div>
-
-            <!-- Top Clientes -->
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-gray-900">Top Clientes</h3>
-                    <a href="{{ route('viticulturist.clients.index') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
-                        Ver todos →
-                    </a>
-                </div>
-                
-                @if($topClients->count() > 0)
-                    <div class="space-y-4">
-                        @foreach($topClients as $index => $client)
-                            <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-lg font-bold text-indigo-600">{{ $index + 1 }}</span>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">{{ $client->full_name }}</p>
-                                    <p class="text-xs text-gray-500">{{ number_format($client->total_invoiced ?? 0, 2) }} € facturado</p>
-                                </div>
-                                <a href="{{ route('viticulturist.clients.show', $client->id) }}" wire:navigate class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)]">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-gray-500 text-center py-8">No hay clientes registrados</p>
-                @endif
-            </div>
+            @else
+                <p class="text-gray-500 text-center py-8">No hay cosechas registradas</p>
+            @endif
         </div>
     </div>
 </x-app-layout>

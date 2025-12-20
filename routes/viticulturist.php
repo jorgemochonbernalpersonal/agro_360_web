@@ -38,6 +38,9 @@ Route::middleware(['role:viticulturist'])
             return view('viticulturist.dashboard');
         })->name('dashboard');
 
+        // Estadísticas Financieras
+        Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
+
         // Campañas
         Route::prefix('campaign')->name('campaign.')->group(function () {
             Route::get('/', CampaignIndex::class)->name('index');
@@ -177,5 +180,6 @@ Route::middleware(['role:viticulturist'])
         // Configuración
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/taxes', \App\Livewire\Viticulturist\Settings\Taxes::class)->name('taxes');
+            Route::get('/invoicing', \App\Livewire\Viticulturist\Settings\Invoicing::class)->name('invoicing');
         });
     });

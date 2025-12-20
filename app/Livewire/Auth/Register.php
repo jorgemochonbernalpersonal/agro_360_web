@@ -87,22 +87,26 @@ class Register extends Component
             if ($existing) {
                 // Activar viticultor que fue creado previamente sin acceso (can_login = false)
                 if ($existing->role === User::ROLE_VITICULTURIST && $existing->can_login === false) {
+                    // Actualizar el usuario en la base de datos
                     $existing->update([
                         'name' => $this->name,
                         'password' => Hash::make($this->password),
                         'can_login' => true,
                         'password_must_reset' => false,
-                        // Ya ha demostrado que controla este email (ha usado el enlace de invitación),
-                        // así que marcamos el email como verificado directamente.
-                        'email_verified_at' => now(),
+                        // NO marcamos email_verified_at - el usuario debe verificar desde el email
                     ]);
 
-                    // Loguear al usuario y llevarlo directamente a su dashboard
+                    // Loguear al usuario
                     Auth::login($existing);
                     session()->regenerate();
-                    session()->flash('message', 'Cuenta activada correctamente. Ya puedes empezar a usar Agro365.');
+                    
+                    // Enviar email de verificación después del registro
+                    $existing->sendEmailVerificationNotification();
+                    
+                    session()->flash('message', 'Cuenta activada correctamente. Se ha enviado un email de verificación. Por favor, verifica tu email antes de continuar.');
 
-                    return $this->redirect(route($this->getDashboardRoute()), navigate: true);
+                    // Redirigir a la página de verificación de email
+                    return $this->redirect(route('verification.notice'), navigate: true);
                 }
 
                 // Cualquier otro caso: email ya usado por una cuenta activa

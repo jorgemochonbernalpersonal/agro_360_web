@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\HtmlString;
 use App\Models\Plot;
@@ -74,6 +75,44 @@ class AppServiceProvider extends ServiceProvider
                 ->line('Para activar tu cuenta y empezar a utilizar la plataforma, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:')
                 ->action('Verificar mi email', $url)
                 ->line('Si no has solicitado esta cuenta, puedes ignorar este mensaje sin problemas.')
+                ->salutation("Saludos,\nAgro365");
+        });
+
+        // Personalizar email de reset de contraseña de Laravel para Agro365
+        ResetPassword::toMailUsing(function ($notifiable, string $token) {
+            // Generar URL de reset con el token
+            $url = url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+            
+            // Solo forzar HTTPS en producción
+            if (app()->environment('production')) {
+                $url = str_replace('http://', 'https://', $url);
+            }
+            
+            // Generar URL absoluta para la imagen
+            $logoUrl = url('images/logo.png');
+            
+            // Solo forzar HTTPS en producción
+            if (app()->environment('production')) {
+                $logoUrl = str_replace('http://', 'https://', $logoUrl);
+            }
+            
+            return (new MailMessage)
+                ->subject('Restablece tu contraseña en Agro365')
+                ->line(new HtmlString(
+                    '<div style="text-align:center; margin-bottom: 16px;">
+                        <img src="'.$logoUrl.'" alt="Agro365"
+                             style="max-width: 160px; height: auto;">
+                     </div>'
+                ))
+                ->greeting('Hola ' . ($notifiable->name ?: ''))
+                ->line('Has solicitado restablecer tu contraseña en Agro365.')
+                ->line('Haz clic en el siguiente botón para crear una nueva contraseña:')
+                ->action('Restablecer Contraseña', $url)
+                ->line('Este enlace expirará en 60 minutos.')
+                ->line('Si no solicitaste restablecer tu contraseña, puedes ignorar este mensaje sin problemas.')
                 ->salutation("Saludos,\nAgro365");
         });
 

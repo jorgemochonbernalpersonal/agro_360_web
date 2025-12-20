@@ -226,6 +226,7 @@ class UnifiedIndex extends Component
         }
 
         try {
+            // Enviar solo la invitación (el email de verificación se enviará cuando se registre)
             $viticulturist->notify(new ViticulturistInvitationNotification($user));
             
             // Marcar que se envió la invitación

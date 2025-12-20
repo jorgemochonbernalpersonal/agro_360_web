@@ -52,6 +52,11 @@ class ChangePasswordRequired extends Component
         // Actualizar contraseña
         $user->password = Hash::make($this->password);
         
+        // Limpiar flag de cambio obligatorio si existe
+        if ($user->password_must_reset) {
+            $user->password_must_reset = false;
+        }
+        
         // Verificar email automáticamente cuando cambia la contraseña
         if (!$user->hasVerifiedEmail()) {
             $user->email_verified_at = now();
