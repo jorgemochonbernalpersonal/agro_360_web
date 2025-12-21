@@ -24,5 +24,3 @@ function refreshCsrfToken() {
 const REFRESH_INTERVAL = 30 * 60 * 1000; // 30 minutos
 setInterval(refreshCsrfToken, REFRESH_INTERVAL);
 
-// Log inicial
-console.log('🔒 CSRF auto-refresh initialized (every 30 minutes)');
