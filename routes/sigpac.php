@@ -7,7 +7,7 @@ use App\Livewire\Sigpac\EditGeometry;
 use App\Livewire\Sigpac\Create;
 use App\Livewire\Sigpac\Edit;
 
-Route::middleware(['auth', 'verified'])
+Route::middleware(['auth', 'verified', 'check.beta'])
     ->prefix('sigpac')
     ->name('sigpac.')
     ->group(function () {

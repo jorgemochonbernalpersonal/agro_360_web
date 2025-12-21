@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])
+Route::middleware(['auth', 'verified', 'check.beta'])
     ->prefix('config')
     ->name('config.')
     ->group(function () {

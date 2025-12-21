@@ -1,15 +1,16 @@
-<div>
+<div class="space-y-6">
     @php
         $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>';
     @endphp
 
-    <x-form-card 
-        title="Crear Códigos SIGPAC" 
-        description="Añade uno o más códigos SIGPAC a la parcela. Completa cada campo según el formato SIGPAC."
+    <x-page-header
         :icon="$icon"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]" 
-        :back-url="route('sigpac.codes')"
-    >
+        title="SIGPAC"
+        description="Crear Códigos SIGPAC - Añade códigos SIGPAC a la parcela. Completa cada campo según el formato SIGPAC."
+        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+    />
+
+    <div class="glass-card rounded-xl p-8">
         <form wire:submit.prevent="save" class="space-y-8">
             <!-- Parcela OBLIGATORIA -->
             <x-form-section title="Parcela" color="blue">
@@ -353,5 +354,5 @@
                 </button>
             </div>
         </form>
-    </x-form-card>
+    </div>
 </div>

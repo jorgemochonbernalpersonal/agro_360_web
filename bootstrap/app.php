@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'require.password.change' => \App\Http\Middleware\RequirePasswordChange::class,
             'password.changed' => \App\Http\Middleware\EnsurePasswordIsChanged::class,
+            'check.beta' => \App\Http\Middleware\CheckBetaAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

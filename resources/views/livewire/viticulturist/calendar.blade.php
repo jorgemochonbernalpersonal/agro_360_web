@@ -30,7 +30,7 @@
         :icon="$icon"
         title="Calendario de Actividades"
         :description="$currentCampaign ? 'Campaña ' . $currentCampaign->name . ' - ' . $currentCampaign->year : 'Visualiza todas tus actividades agrícolas'"
-        icon-color="from-[var(--color-agro-yellow)] to-yellow-600"
+        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
             @if($currentCampaign)
@@ -38,7 +38,7 @@
                     <span class="text-sm font-semibold text-gray-700">Campaña:</span>
                     <select 
                         wire:model.live="selectedCampaign" 
-                        class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-600 focus:border-transparent transition-all bg-white"
+                        class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green)] focus:border-transparent transition-all bg-white"
                     >
                         @foreach($campaigns as $campaign)
                             <option value="{{ $campaign->id }}">
@@ -85,7 +85,7 @@
     <!-- Filtros -->
     <div class="glass-card rounded-xl p-6">
         <div class="flex items-center gap-3 mb-4">
-            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-[var(--color-agro-green-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
             </svg>
             <h2 class="text-lg font-semibold text-gray-900">Filtros</h2>
@@ -97,7 +97,7 @@
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Tipo de Actividad</label>
                 <select 
                     wire:model.live="activityType" 
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-600 focus:border-transparent transition-all"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green)] focus:border-transparent transition-all"
                 >
                     <option value="">Todas las actividades</option>
                     <option value="phytosanitary">Tratamientos Fitosanitarios</option>
@@ -139,7 +139,7 @@
             </div>
             <button 
                 wire:click="goToToday"
-                class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-semibold"
+                class="px-4 py-2 bg-[var(--color-agro-green)] text-white rounded-lg hover:bg-[var(--color-agro-green-dark)] transition-colors font-semibold"
             >
                 Hoy
             </button>
@@ -160,12 +160,12 @@
                 <div 
                     class="min-h-[100px] border-2 rounded-lg p-2 transition-all cursor-pointer hover:shadow-md
                         {{ $day['isCurrentMonth'] ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100 opacity-60' }}
-                        {{ $day['isToday'] ? 'ring-2 ring-yellow-500 border-yellow-500' : '' }}
+                        {{ $day['isToday'] ? 'ring-2 ring-[var(--color-agro-green)] border-[var(--color-agro-green)]' : '' }}
                     "
                     wire:click="selectDate('{{ $day['dateKey'] }}')"
                 >
                     <div class="flex items-center justify-between mb-1">
-                        <span class="text-sm font-semibold {{ $day['isToday'] ? 'text-yellow-600' : ($day['isCurrentMonth'] ? 'text-gray-900' : 'text-gray-400') }}">
+                        <span class="text-sm font-semibold {{ $day['isToday'] ? 'text-[var(--color-agro-green-dark)]' : ($day['isCurrentMonth'] ? 'text-gray-900' : 'text-gray-400') }}">
                             {{ $day['day'] }}
                         </span>
                         @if($day['activityCount'] > 0)

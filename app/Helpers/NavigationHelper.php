@@ -194,6 +194,18 @@ class NavigationHelper
                     'label' => 'Clientes',
                     'route' => 'viticulturist.clients.index',
                     'active' => request()->routeIs('viticulturist.clients.*'),
+                    'submenu' => [
+                        [
+                            'label' => 'Ver Clientes',
+                            'route' => 'viticulturist.clients.index',
+                            'active' => request()->routeIs('viticulturist.clients.index'),
+                        ],
+                        [
+                            'label' => 'Crear Cliente',
+                            'route' => 'viticulturist.clients.create',
+                            'active' => request()->routeIs('viticulturist.clients.create'),
+                        ],
+                    ],
                 ]] : []),
                 // Personal y Equipos (unificado) solo para viticultor
                 ...($user->role === 'viticulturist' ? [[
@@ -222,6 +234,18 @@ class NavigationHelper
                     'label' => 'Maquinaria',
                     'route' => 'viticulturist.machinery.index',
                     'active' => request()->routeIs('viticulturist.machinery*'),
+                    'submenu' => [
+                        [
+                            'label' => 'Ver Maquinaria',
+                            'route' => 'viticulturist.machinery.index',
+                            'active' => request()->routeIs('viticulturist.machinery.index'),
+                        ],
+                        [
+                            'label' => 'Crear Maquinaria',
+                            'route' => 'viticulturist.machinery.create',
+                            'active' => request()->routeIs('viticulturist.machinery.create'),
+                        ],
+                    ],
                 ]] : []),
                 // Calendario solo para viticultor
                 ...($user->role === 'viticulturist' ? [[

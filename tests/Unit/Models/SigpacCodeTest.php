@@ -47,7 +47,7 @@ class SigpacCodeTest extends TestCase
         $code = SigpacCode::buildCodeFromFields($fields);
 
         // buildCodeFromFields genera: 13(2) + 28(2) + 079(3) + 0(1) + 0(1) + 12(2) + 00045(5) + 003(3) = 19 dígitos
-        $this->assertEquals('13280790001200045003', $code);
+        $this->assertEquals('1328079001200045003', $code);
         $this->assertEquals(19, strlen($code));
     }
 
@@ -66,7 +66,7 @@ class SigpacCodeTest extends TestCase
 
         $code = SigpacCode::buildCodeFromFields($fields);
 
-        $this->assertEquals('01080790002000450003', $code);
+        $this->assertEquals('0108079000200045003', $code);
         $this->assertEquals(19, strlen($code));
     }
 
@@ -85,7 +85,7 @@ class SigpacCodeTest extends TestCase
 
         $code = SigpacCode::buildCodeFromFields($fields);
 
-        $this->assertEquals('13280790001200045003', $code);
+        $this->assertEquals('1328079001200045003', $code);
     }
 
     public function test_build_code_from_fields_with_empty_aggregate_defaults_to_zero(): void
@@ -103,7 +103,7 @@ class SigpacCodeTest extends TestCase
 
         $code = SigpacCode::buildCodeFromFields($fields);
 
-        $this->assertEquals('13280790001200045003', $code);
+        $this->assertEquals('1328079001200045003', $code);
     }
 
     // ============================================
@@ -113,7 +113,7 @@ class SigpacCodeTest extends TestCase
     public function test_parse_sigpac_code_throws_exception_on_invalid_length(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('El código SIGPAC debe tener exactamente 20 dígitos');
+        $this->expectExceptionMessage('El código SIGPAC debe tener exactamente 19 dígitos');
 
         SigpacCode::parseSigpacCode('13280790001200045'); // 17 dígitos
     }
@@ -121,7 +121,7 @@ class SigpacCodeTest extends TestCase
     public function test_parse_sigpac_code_throws_exception_on_too_long(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('El código SIGPAC debe tener exactamente 20 dígitos');
+        $this->expectExceptionMessage('El código SIGPAC debe tener exactamente 19 dígitos');
 
         SigpacCode::parseSigpacCode('1328079000120004500300'); // 21 dígitos
     }
@@ -136,19 +136,19 @@ class SigpacCodeTest extends TestCase
 
     public function test_parse_sigpac_code_handles_edge_cases(): void
     {
-        // Código con todos los valores en 0 (20 dígitos)
-        $code = '00000000000000000000';
+        // Código con todos los valores en 0 (19 dígitos)
+        $code = '0000000000000000000';
         $parsed = SigpacCode::parseSigpacCode($code);
 
-        $this->assertEquals('00000000000000000000', $parsed['code']);
+        $this->assertEquals('0000000000000000000', $parsed['code']);
         $this->assertEquals('00', $parsed['code_autonomous_community']);
         $this->assertEquals('00', $parsed['code_province']);
 
-        // Código con valores máximos (20 dígitos)
-        $code = '99999999999999999999';
+        // Código con valores máximos (19 dígitos)
+        $code = '9999999999999999999';
         $parsed = SigpacCode::parseSigpacCode($code);
 
-        $this->assertEquals('99999999999999999999', $parsed['code']);
+        $this->assertEquals('9999999999999999999', $parsed['code']);
     }
 
     // ============================================
@@ -157,14 +157,14 @@ class SigpacCodeTest extends TestCase
 
     public function test_validate_sigpac_format_returns_true_for_valid_code(): void
     {
-        $this->assertTrue(SigpacCode::validateSigpacFormat('00000000000000000000'));
-        $this->assertTrue(SigpacCode::validateSigpacFormat('00-00-000-0-0-00-00000-000'));
+        $this->assertTrue(SigpacCode::validateSigpacFormat('0000000000000000000')); // 19 dígitos
+        $this->assertTrue(SigpacCode::validateSigpacFormat('00-00-000-0-0-00-00000-000')); // 19 dígitos con guiones
     }
 
     public function test_validate_sigpac_format_returns_false_for_invalid_length(): void
     {
-        $this->assertFalse(SigpacCode::validateSigpacFormat('13280790001200045'));
-        $this->assertFalse(SigpacCode::validateSigpacFormat('1328079000120004500300'));
+        $this->assertFalse(SigpacCode::validateSigpacFormat('13280790001200045')); // 17 dígitos
+        $this->assertFalse(SigpacCode::validateSigpacFormat('1328079000120004500300')); // 21 dígitos
     }
 
     public function test_validate_sigpac_format_returns_false_for_non_numeric(): void
@@ -201,10 +201,10 @@ class SigpacCodeTest extends TestCase
     public function test_full_code_returns_code_when_present(): void
     {
         $sigpacCode = SigpacCode::create([
-            'code' => '13280790001200045003',
+            'code' => '1328079001200045003',
         ]);
 
-        $this->assertEquals('13280790001200045003', $sigpacCode->full_code);
+        $this->assertEquals('1328079001200045003', $sigpacCode->full_code);
     }
 
     public function test_full_code_constructs_from_fields_when_code_missing(): void
@@ -228,7 +228,7 @@ class SigpacCodeTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         $sigpacCode = SigpacCode::create([
-            'code' => '13280790001200045003',
+            'code' => '1328079001200045003',
             'code_autonomous_community' => '13',
             'code_province' => '28',
             'code_municipality' => '079',
@@ -254,7 +254,7 @@ class SigpacCodeTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         $sigpacCode = SigpacCode::create([
-            'code' => '13280790001200045003',
+            'code' => '1328079001200045003',
             'code_autonomous_community' => '13',
             'code_province' => '28',
             'code_municipality' => '079',

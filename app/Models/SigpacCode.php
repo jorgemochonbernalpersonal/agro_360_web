@@ -78,7 +78,7 @@ class SigpacCode extends Model
      * Construir código SIGPAC completo desde campos individuales
      *
      * Formato: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)
-     * Total: 20 dígitos
+     * Total: 19 dígitos
      *
      * @param array $fields Campos individuales
      * @return string Código completo sin guiones
@@ -100,9 +100,9 @@ class SigpacCode extends Model
     /**
      * Parsear y validar código SIGPAC completo
      *
-     * Formato esperado: 13-28-079-0-0-12-00045-003 o 13280790001200045003
+     * Formato esperado: 13-28-079-0-0-12-00045-003 o 1328079001200045003
      * Estructura: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)
-     * Total: 20 dígitos
+     * Total: 19 dígitos
      *
      * @param string $code Código completo con o sin guiones
      * @return array Array con los campos parseados
@@ -120,10 +120,10 @@ class SigpacCode extends Model
             );
         }
 
-        // Validar longitud exacta (20 dígitos)
-        if (strlen($cleanCode) !== 20) {
+        // Validar longitud exacta (19 dígitos)
+        if (strlen($cleanCode) !== 19) {
             throw new \InvalidArgumentException(
-                'El código SIGPAC debe tener exactamente 20 dígitos. Recibido: ' . strlen($cleanCode) . ' dígitos. '
+                'El código SIGPAC debe tener exactamente 19 dígitos. Recibido: ' . strlen($cleanCode) . ' dígitos. '
                 . 'Formato esperado: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)'
             );
         }
@@ -169,7 +169,7 @@ class SigpacCode extends Model
      */
     public function getFormattedCodeAttribute(): string
     {
-        if (!$this->code || strlen($this->code) !== 20) {
+        if (!$this->code || strlen($this->code) !== 19) {
             return $this->code ?? 'N/A';
         }
 

@@ -255,12 +255,15 @@ class Register extends Component
             return $this->redirect(route($this->getRedirectRoute()), navigate: true);
         }
 
-        // Para registro público: enviar email de verificación
+        // Para registro público: enviar email de verificación y activar beta
         $user->sendEmailVerificationNotification();
+        
+        // Activar acceso beta (6 meses gratis)
+        $user->grantBetaAccess();
         
         Auth::login($user);
         session()->regenerate();
-        session()->flash('message', 'Registro exitoso. Por favor, verifica tu email antes de continuar.');
+        session()->flash(' message', 'Registro exitoso. Por favor, verifica tu email antes de continuar.');
 
         return $this->redirect(route('verification.notice'), navigate: true);
     }

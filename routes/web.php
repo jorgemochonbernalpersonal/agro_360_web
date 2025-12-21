@@ -50,6 +50,10 @@ Route::get('/cookies', fn() => view('legal.privacy'))->name('cookies'); // Misma
 
 Route::get('/counter', Counter::class)->name('counter');
 
+// Ruta de beta expirada (requiere auth)
+Route::middleware('auth')->get('/beta/expired', \App\Livewire\Beta\Expired::class)->name('beta.expired');
+
+
 // Ruta para forzar cambio de contraseña (debe estar fuera del middleware 'auth' principal)
 Route::middleware('auth')->get('/password/force-reset', \App\Livewire\Auth\ForcePasswordReset::class)    ->name('password.force-reset');
 
@@ -72,7 +76,7 @@ Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
     
     require __DIR__ . '/plots.php';
     require __DIR__ . '/sigpac.php';
-    require __DIR__ . '/config.php';
+    // require __DIR__ . '/config.php'; // Eliminado - no es útil
     require __DIR__ . '/profile.php';
     require __DIR__ . '/subscription.php';
     require __DIR__ . '/payment.php';

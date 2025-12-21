@@ -59,6 +59,24 @@ export default defineConfig({
         try {
           const projectRoot = resolve(__dirname)
           const envCypressPath = resolve(projectRoot, '.env.cypress')
+          const envPath = resolve(projectRoot, '.env')
+          const fs = require('fs')
+
+          // IMPORTANTE: Configurar .env del servidor para que use BD de test
+          if (fs.existsSync(envCypressPath)) {
+            // Guardar .env actual si existe
+            if (fs.existsSync(envPath)) {
+              const backupPath = resolve(projectRoot, '.env.backup')
+              fs.copyFileSync(envPath, backupPath)
+              console.log('💾 .env guardado como .env.backup')
+            }
+            
+            // Copiar .env.cypress a .env para que el servidor use BD de test
+            fs.copyFileSync(envCypressPath, envPath)
+            console.log('✅ Servidor configurado para usar BD de test')
+          } else {
+            throw new Error('No se encuentra .env.cypress')
+          }
 
           // Cargar variables de entorno desde .env.cypress
           const env = loadEnvFile(envCypressPath)
@@ -74,14 +92,33 @@ export default defineConfig({
           })
           console.log('✅ Migraciones ejecutadas')
 
-          // Ejecutar seeder completo para tener todos los datos de prueba
-          console.log('🌱 Ejecutando seeders...')
-          execSync('php artisan db:seed --class=CompleteTestUserSeeder --force', {
+          // Ejecutar seeders base primero
+          console.log('🌱 Ejecutando seeders base...')
+          execSync('php artisan db:seed --force', {
             stdio: 'inherit',
             cwd: projectRoot,
             shell: true,
             env: env
           })
+          
+          // Crear usuarios de prueba genéricos para Cypress
+          console.log('👤 Creando usuarios de prueba para Cypress...')
+          execSync('php artisan db:seed --class=CypressTestUserSeeder --force', {
+            stdio: 'inherit',
+            cwd: projectRoot,
+            shell: true,
+            env: env
+          })
+          
+          // Ejecutar seeder completo para tener todos los datos de prueba (opcional, solo si se necesita)
+          // console.log('🌱 Ejecutando seeder completo...')
+          // execSync('php artisan db:seed --class=CompleteTestUserSeeder --force', {
+          //   stdio: 'inherit',
+          //   cwd: projectRoot,
+          //   shell: true,
+          //   env: env
+          // })
+          
           console.log('✅ Datos de prueba creados')
           console.log('✅ Base de datos lista para los tests\n')
         } catch (error) {
@@ -99,6 +136,9 @@ export default defineConfig({
         try {
           const projectRoot = resolve(__dirname)
           const envCypressPath = resolve(projectRoot, '.env.cypress')
+          const envPath = resolve(projectRoot, '.env')
+          const backupPath = resolve(projectRoot, '.env.backup')
+          const fs = require('fs')
 
           // Cargar variables de entorno desde .env.cypress
           const env = loadEnvFile(envCypressPath)
@@ -109,7 +149,16 @@ export default defineConfig({
             shell: true,
             env: env
           })
-          console.log('✅ Base de datos de test limpiada\n')
+          console.log('✅ Base de datos de test limpiada')
+
+          // Restaurar .env original si existe backup
+          if (fs.existsSync(backupPath)) {
+            fs.copyFileSync(backupPath, envPath)
+            fs.unlinkSync(backupPath)
+            console.log('✅ .env restaurado a configuración original\n')
+          } else {
+            console.log('⚠️  No se encontró .env.backup para restaurar\n')
+          }
         } catch (error) {
           console.error('❌ Error limpiando BD:', error.message)
           // No lanzar error aquí para no afectar el resultado de los tests

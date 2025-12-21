@@ -9,7 +9,7 @@ use App\Livewire\Plots\Plantings\Create as PlantingCreate;
 use App\Livewire\Plots\Plantings\Edit as PlantingEdit;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist'])
+Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist', 'check.beta'])
     ->prefix('plots')
     ->name('plots.')
     ->group(function () {

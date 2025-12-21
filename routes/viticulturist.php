@@ -30,7 +30,7 @@ use App\Livewire\Viticulturist\Calendar;
 use App\Livewire\Viticulturist\DigitalNotebook;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['role:viticulturist'])
+Route::middleware(['role:viticulturist', 'check.beta'])
     ->prefix('viticulturist')
     ->name('viticulturist.')
     ->group(function () {
