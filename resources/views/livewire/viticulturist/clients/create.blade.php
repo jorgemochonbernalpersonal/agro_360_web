@@ -89,6 +89,143 @@
                 </div>
             </x-form-section>
 
+            <x-form-section title="Direcciones" color="blue">
+                <div class="space-y-4">
+                    @foreach($addresses as $index => $address)
+                        <div class="border-2 border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:border-blue-300 transition-colors">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-gray-900">Dirección #{{ $index + 1 }}</h4>
+                                    @if($address['is_default'])
+                                        <span class="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
+                                            Por defecto
+                                        </span>
+                                    @endif
+                                    @if($address['is_delivery_note_address'])
+                                        <span class="px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-700 rounded-full">
+                                            Albarán
+                                        </span>
+                                    @endif
+                                </div>
+                                
+                                <div class="flex gap-2">
+                                    @if(!$address['is_default'])
+                                        <button 
+                                            type="button"
+                                            wire:click="setDefaultAddress({{ $index }})"
+                                            class="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                                        >
+                                            Marcar por defecto
+                                        </button>
+                                    @endif
+                                    
+                                    @if(count($addresses) > 1)
+                                        <button 
+                                            type="button"
+                                            wire:click="removeAddress({{ $index }})"
+                                            class="text-red-600 hover:text-red-800 text-xs font-medium flex items-center gap-1"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            Eliminar
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <x-label for="addresses_{{ $index }}_name">Alias (ej: Oficina, Almacén...)</x-label>
+                                    <x-input wire:model="addresses.{{ $index }}.name" id="addresses_{{ $index }}_name" placeholder="Nombre identificativo" />
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <x-label for="addresses_{{ $index }}_address" required>Dirección completa</x-label>
+                                    <x-input 
+                                        wire:model="addresses.{{ $index }}.address" 
+                                        id="addresses_{{ $index }}_address" 
+                                        placeholder="Calle, número, piso, puerta..."
+                                        :error="$errors->first('addresses.' . $index . '.address')"
+                                        required 
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_autonomous_community_id">Comunidad Autónoma</x-label>
+                                    <x-select wire:model.live="addresses.{{ $index }}.autonomous_community_id" id="addresses_{{ $index }}_autonomous_community_id">
+                                        <option value="">Seleccionar...</option>
+                                        @foreach($autonomousCommunities as $ca)
+                                            <option value="{{ $ca->id }}">{{ $ca->name }}</option>
+                                        @endforeach
+                                    </x-select>
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_province_id">Provincia</x-label>
+                                    <x-select wire:model.live="addresses.{{ $index }}.province_id" id="addresses_{{ $index }}_province_id">
+                                        <option value="">Seleccionar...</option>
+                                        @if(isset($provinces[$index]))
+                                            @foreach($provinces[$index] as $province)
+                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </x-select>
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_municipality_id">Municipio</x-label>
+                                    <x-select wire:model.live="addresses.{{ $index }}.municipality_id" id="addresses_{{ $index }}_municipality_id">
+                                        <option value="">Seleccionar...</option>
+                                        @if(isset($municipalities[$index]))
+                                            @foreach($municipalities[$index] as $municipality)
+                                                <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </x-select>
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_postal_code">Código Postal</x-label>
+                                    <x-input wire:model="addresses.{{ $index }}.postal_code" id="addresses_{{ $index }}_postal_code" placeholder="28001" />
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_description">Observaciones</x-label>
+                                    <x-input wire:model="addresses.{{ $index }}.description" id="addresses_{{ $index }}_description" placeholder="Notas adicionales..." />
+                                </div>
+                                
+                                <div class="md:col-span-2 flex flex-wrap items-center gap-4 pt-2 border-t border-gray-200">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            wire:model="addresses.{{ $index }}.is_delivery_note_address"
+                                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <span class="text-sm font-medium text-gray-700">Usar para albaranes</span>
+                                    </label>
+                                    
+                                    <p class="text-xs text-gray-500 ml-auto">
+                                        💡 Puedes tener múltiples direcciones para diferentes propósitos
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    
+                    <button 
+                        type="button"
+                        wire:click="addAddress"
+                        class="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-gray-600 hover:text-blue-600 font-semibold flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Añadir otra dirección
+                    </button>
+                </div>
+            </x-form-section>
+
             <x-form-section title="Notas" color="green">
                 <div>
                     <x-label for="notes">Notas</x-label>

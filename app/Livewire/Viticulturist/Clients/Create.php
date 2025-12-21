@@ -3,6 +3,9 @@
 namespace App\Livewire\Viticulturist\Clients;
 
 use App\Models\Client;
+use App\Models\AutonomousCommunity;
+use App\Models\Province;
+use App\Models\Municipality;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +30,122 @@ class Create extends Component
     public $cae_number = '';
     public $active = true;
     public $notes = '';
+    
+    // Direcciones
+    public $addresses = [];
+    
+    // Datos geográficos
+    public $autonomousCommunities;
+    public $provinces = [];
+    public $municipalities = [];
+
+    public function mount()
+    {
+        // Cargar comunidades autónomas
+        $this->autonomousCommunities = AutonomousCommunity::orderBy('name')->get();
+        
+        // Inicializar con una dirección por defecto
+        $this->addresses = [[
+            'name' => '',
+            'address' => '',
+            'postal_code' => '',
+            'municipality_id' => null,
+            'province_id' => null,
+            'autonomous_community_id' => null,
+            'is_default' => true,
+            'is_delivery_note_address' => false,
+            'description' => '',
+        ]];
+    }
+
+    public function addAddress()
+    {
+        $this->addresses[] = [
+            'name' => '',
+            'address' => '',
+            'postal_code' => '',
+            'municipality_id' => null,
+            'province_id' => null,
+            'autonomous_community_id' => null,
+            'is_default' => false,
+            'is_delivery_note_address' => false,
+            'description' => '',
+        ];
+    }
+
+    public function removeAddress($index)
+    {
+        if (count($this->addresses) > 1) {
+            unset($this->addresses[$index]);
+            $this->addresses = array_values($this->addresses);
+            
+            // Asegurar que al menos una esté marcada como default
+            $hasDefault = false;
+            foreach ($this->addresses as $address) {
+                if ($address['is_default']) {
+                    $hasDefault = true;
+                    break;
+                }
+            }
+            if (!$hasDefault && count($this->addresses) > 0) {
+                $this->addresses[0]['is_default'] = true;
+            }
+        }
+    }
+
+    public function setDefaultAddress($index)
+    {
+        foreach ($this->addresses as $key => $address) {
+            $this->addresses[$key]['is_default'] = ($key === $index);
+        }
+    }
+    
+    public function updatedAddresses($value, $key)
+    {
+        // Si cambia la comunidad autónoma de alguna dirección
+        if (str_contains($key, '.autonomous_community_id')) {
+            $index = (int) explode('.', $key)[0];
+            $this->loadProvinces($index);
+            // Limpiar provincia y municipio
+            $this->addresses[$index]['province_id'] = null;
+            $this->addresses[$index]['municipality_id'] = null;
+            $this->provinces[$index] = [];
+            $this->municipalities[$index] = [];
+        }
+        
+        // Si cambia la provincia
+        if (str_contains($key, '.province_id')) {
+            $index = (int) explode('.', $key)[0];
+            $this->loadMunicipalities($index);
+            // Limpiar municipio
+            $this->addresses[$index]['municipality_id'] = null;
+            $this->municipalities[$index] = [];
+        }
+    }
+    
+    public function loadProvinces($index)
+    {
+        $caId = $this->addresses[$index]['autonomous_community_id'] ?? null;
+        if ($caId) {
+            $this->provinces[$index] = Province::where('autonomous_community_id', $caId)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->provinces[$index] = [];
+        }
+    }
+    
+    public function loadMunicipalities($index)
+    {
+        $provinceId = $this->addresses[$index]['province_id'] ?? null;
+        if ($provinceId) {
+            $this->municipalities[$index] = Municipality::where('province_id', $provinceId)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->municipalities[$index] = [];
+        }
+    }
 
     protected function rules(): array
     {
@@ -46,6 +165,18 @@ class Create extends Component
             'cae_number' => 'nullable|string|max:255',
             'active' => 'boolean',
             'notes' => 'nullable|string',
+            
+            // Validación de direcciones
+            'addresses' => 'required|array|min:1',
+            'addresses.*.name' => 'nullable|string|max:100',
+            'addresses.*.address' => 'required|string|max:255',
+            'addresses.*.postal_code' => 'nullable|string|max:10',
+            'addresses.*.municipality_id' => 'nullable|exists:municipalities,id',
+            'addresses.*.province_id' => 'nullable|exists:provinces,id',
+            'addresses.*.autonomous_community_id' => 'nullable|exists:autonomous_communities,id',
+            'addresses.*.is_default' => 'boolean',
+            'addresses.*.is_delivery_note_address' => 'boolean',
+            'addresses.*.description' => 'nullable|string|max:500',
         ];
 
         return $rules;
@@ -59,7 +190,7 @@ class Create extends Component
 
         try {
             DB::transaction(function () use ($user) {
-                Client::create([
+                $client = Client::create([
                     'user_id' => $user->id,
                     'client_type' => $this->client_type,
                     'first_name' => $this->first_name ?: null,
@@ -77,6 +208,23 @@ class Create extends Component
                     'active' => $this->active,
                     'notes' => $this->notes ?: null,
                 ]);
+                
+                // Guardar direcciones
+                foreach ($this->addresses as $addressData) {
+                    if (!empty($addressData['address'])) {
+                        $client->addresses()->create([
+                            'name' => $addressData['name'] ?: null,
+                            'address' => $addressData['address'],
+                            'postal_code' => $addressData['postal_code'] ?: null,
+                            'municipality_id' => $addressData['municipality_id'] ?: null,
+                            'province_id' => $addressData['province_id'] ?: null,
+                            'autonomous_community_id' => $addressData['autonomous_community_id'] ?: null,
+                            'is_default' => $addressData['is_default'] ?? false,
+                            'is_delivery_note_address' => $addressData['is_delivery_note_address'] ?? false,
+                            'description' => $addressData['description'] ?: null,
+                        ]);
+                    }
+                }
             });
 
             $this->toastSuccess('Cliente creado exitosamente.');
