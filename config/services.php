@@ -35,4 +35,20 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google reCAPTCHA v2
+    |--------------------------------------------------------------------------
+    |
+    | Configuración de Google reCAPTCHA v2 para protección contra bots.
+    | Obtén tus claves en: https://www.google.com/recaptcha/admin
+    |
+    */
+
+    'recaptcha' => [
+        'enabled' => env('RECAPTCHA_ENABLED', false),
+        'site_key' => env('RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'), // Clave de prueba
+        'secret_key' => env('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'), // Clave de prueba
+    ],
+
 ];

@@ -20,8 +20,32 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Health Check Endpoint para UptimeRobot y monitoreo
+Route::get('/health', function () {
+    try {
+        // Verificar conexión a base de datos
+        \DB::connection()->getPdo();
+        
+        // Verificar que la aplicación está funcionando
+        $checks = [
+            'status' => 'ok',
+            'database' => 'connected',
+            'timestamp' => now()->toIso8601String(),
+        ];
+        
+        return response()->json($checks, 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Service unavailable',
+            'timestamp' => now()->toIso8601String(),
+        ], 503);
+    }
+})->name('health');
+
 // Rutas públicas legales
 Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
+Route::get('/terminos', fn() => view('legal.terms'))->name('terms');
 Route::get('/cookies', fn() => view('legal.privacy'))->name('cookies'); // Misma vista que privacidad
 
 Route::get('/counter', Counter::class)->name('counter');

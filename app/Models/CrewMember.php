@@ -13,6 +13,12 @@ class CrewMember extends Model
         'crew_id',
         'viticulturist_id',
         'assigned_by',
+        'phytosanitary_license_number',
+        'license_expiry_date',
+    ];
+
+    protected $casts = [
+        'license_expiry_date' => 'date',
     ];
 
     /**
@@ -62,5 +68,47 @@ class CrewMember extends Model
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');
+    }
+
+    /**
+     * Verificar si el carnet fitosanitario está vigente
+     */
+    public function hasValidPhytosanitaryLicense(): bool
+    {
+        if (!$this->phytosanitary_license_number) {
+            return false;
+        }
+        
+        if (!$this->license_expiry_date) {
+            return true; // Si no hay fecha de expiración, asumimos vigente
+        }
+        
+        return \Carbon\Carbon::parse($this->license_expiry_date)->isFuture();
+    }
+
+    /**
+     * Obtener estado del carnet (para mostrar en UI)
+     */
+    public function getLicenseStatusAttribute(): string
+    {
+        if (!$this->phytosanitary_license_number) {
+            return 'No registrado';
+        }
+        
+        if (!$this->license_expiry_date) {
+            return 'Vigente';
+        }
+        
+        $expiryDate = \Carbon\Carbon::parse($this->license_expiry_date);
+        
+        if ($expiryDate->isPast()) {
+            return 'Caducado';
+        }
+        
+        if ($expiryDate->diffInDays(now()) <= 30) {
+            return 'Próximo a caducar';
+        }
+        
+        return 'Vigente';
     }
 }

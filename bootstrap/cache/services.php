@@ -25,20 +25,23 @@
     21 => 'Illuminate\\Validation\\ValidationServiceProvider',
     22 => 'Illuminate\\View\\ViewServiceProvider',
     23 => 'Barryvdh\\DomPDF\\ServiceProvider',
-    24 => 'Laravel\\Pail\\PailServiceProvider',
-    25 => 'Laravel\\Sail\\SailServiceProvider',
-    26 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    27 => 'Flux\\FluxServiceProvider',
-    28 => 'Livewire\\LivewireServiceProvider',
-    29 => 'Livewire\\Volt\\VoltServiceProvider',
-    30 => 'Carbon\\Laravel\\ServiceProvider',
-    31 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    32 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    33 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
-    34 => 'Spatie\\Sitemap\\SitemapServiceProvider',
-    35 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
-    36 => 'App\\Providers\\AppServiceProvider',
-    37 => 'App\\Providers\\VoltServiceProvider',
+    24 => 'Laravel\\Breeze\\BreezeServiceProvider',
+    25 => 'Laravel\\Pail\\PailServiceProvider',
+    26 => 'Laravel\\Sail\\SailServiceProvider',
+    27 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    28 => 'Flux\\FluxServiceProvider',
+    29 => 'Livewire\\LivewireServiceProvider',
+    30 => 'Livewire\\Volt\\VoltServiceProvider',
+    31 => 'Carbon\\Laravel\\ServiceProvider',
+    32 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    33 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    34 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
+    35 => 'Sentry\\Laravel\\ServiceProvider',
+    36 => 'Sentry\\Laravel\\Tracing\\ServiceProvider',
+    37 => 'Spatie\\Sitemap\\SitemapServiceProvider',
+    38 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
+    39 => 'App\\Providers\\AppServiceProvider',
+    40 => 'App\\Providers\\VoltServiceProvider',
   ),
   'eager' => 
   array (
@@ -61,10 +64,12 @@
     16 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     17 => 'Termwind\\Laravel\\TermwindServiceProvider',
     18 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
-    19 => 'Spatie\\Sitemap\\SitemapServiceProvider',
-    20 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
-    21 => 'App\\Providers\\AppServiceProvider',
-    22 => 'App\\Providers\\VoltServiceProvider',
+    19 => 'Sentry\\Laravel\\ServiceProvider',
+    20 => 'Sentry\\Laravel\\Tracing\\ServiceProvider',
+    21 => 'Spatie\\Sitemap\\SitemapServiceProvider',
+    22 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
+    23 => 'App\\Providers\\AppServiceProvider',
+    24 => 'App\\Providers\\VoltServiceProvider',
   ),
   'deferred' => 
   array (
@@ -222,6 +227,7 @@
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
+    'Laravel\\Breeze\\Console\\InstallCommand' => 'Laravel\\Breeze\\BreezeServiceProvider',
     'Laravel\\Sail\\Console\\InstallCommand' => 'Laravel\\Sail\\SailServiceProvider',
     'Laravel\\Sail\\Console\\PublishCommand' => 'Laravel\\Sail\\SailServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
@@ -265,6 +271,9 @@
     array (
     ),
     'Illuminate\\Validation\\ValidationServiceProvider' => 
+    array (
+    ),
+    'Laravel\\Breeze\\BreezeServiceProvider' => 
     array (
     ),
     'Laravel\\Sail\\SailServiceProvider' => 

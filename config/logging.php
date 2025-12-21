@@ -90,6 +90,15 @@ return [
             'days' => (int) env('LOG_DAILY_DAYS', 60), // Errores se mantienen más tiempo
             'replace_placeholders' => true,
         ],
+        
+        // Canal específico para eventos de seguridad
+        'security' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/security.log'),
+            'level' => 'info',  // Info, warning, alert para diferentes niveles
+            'days' => 60,  // Mantener logs de seguridad durante 60 días
+            'replace_placeholders' => true,
+        ],
 
         'slack' => [
             'driver' => 'slack',

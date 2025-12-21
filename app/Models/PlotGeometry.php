@@ -33,7 +33,7 @@ class PlotGeometry extends Model
     public function setCoordinatesFromArray(array $points): void
     {
         if (empty($points) || count($points) < 3) {
-            return;
+            throw new \InvalidArgumentException('Se necesitan al menos 3 puntos para crear un polígono.');
         }
         
         // Cerrar el polígono si no está cerrado
@@ -43,19 +43,56 @@ class PlotGeometry extends Model
             $points[] = $firstPoint;
         }
         
-        // Construir WKT (Well-Known Text) para MySQL
+        // Construir WKT (Well-Known Text) con validación estricta de tipos
         $wktPoints = collect($points)->map(function($point) {
-            return "{$point['lng']} {$point['lat']}";
+            // Validar y castear a float para prevenir SQL injection
+            $lng = filter_var($point['lng'], FILTER_VALIDATE_FLOAT);
+            $lat = filter_var($point['lat'], FILTER_VALIDATE_FLOAT);
+            
+            if ($lng === false || $lat === false) {
+                throw new \InvalidArgumentException('Coordenadas inválidas: deben ser valores numéricos.');
+            }
+            
+            // Validar rangos geográficos válidos
+            if ($lat < -90 || $lat > 90) {
+                throw new \InvalidArgumentException("Latitud inválida: $lat. Debe estar entre -90 y 90.");
+            }
+            if ($lng < -180 || $lng > 180) {
+                throw new \InvalidArgumentException("Longitud inválida: $lng. Debe estar entre -180 y 180.");
+            }
+            
+            return "$lng $lat";
         })->join(', ');
         
         $wkt = "POLYGON(($wktPoints))";
         
-        // Escapar comillas simples en WKT
-        $wkt = str_replace("'", "''", $wkt);
-        
-        // Usar DB::raw para insertar geometry en MySQL
-        $this->coordinates = DB::raw("ST_GeomFromText('$wkt', 4326)");
-        $this->centroid = DB::raw("ST_Centroid(ST_GeomFromText('$wkt', 4326))");
+        // Guardar usando prepared statement - el ID se asignará después del save
+        $this->_pending_wkt = $wkt;
+    }
+    
+    /**
+     * Hook que se ejecuta después de guardar el modelo
+     * Actualiza las coordenadas usando prepared statements seguros
+     */
+    protected static function booted()
+    {
+        static::saved(function ($geometry) {
+            if (isset($geometry->_pending_wkt)) {
+                $wkt = $geometry->_pending_wkt;
+                
+                // Usar prepared statement seguro
+                DB::statement(
+                    "UPDATE plot_geometry SET 
+                        coordinates = ST_GeomFromText(?, 4326),
+                        centroid = ST_Centroid(ST_GeomFromText(?, 4326)),
+                        updated_at = NOW()
+                    WHERE id = ?",
+                    [$wkt, $wkt, $geometry->id]
+                );
+                
+                unset($geometry->_pending_wkt);
+            }
+        });
     }
     
     /**

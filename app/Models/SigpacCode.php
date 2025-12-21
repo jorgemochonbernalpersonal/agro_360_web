@@ -11,14 +11,15 @@ class SigpacCode extends Model
     protected $table = 'sigpac_code';
 
     protected $fillable = [
+        'code_autonomous_community',
+        'code_province',
+        'code_municipality',
+        'code_aggregate',
+        'code_zone',
         'code_polygon',
         'code_plot',
         'code_enclosure',
-        'code_aggregate',
-        'code_province',
-        'code_zone',
         'code',
-        'code_municipality',
     ];
 
     /**
@@ -74,10 +75,34 @@ class SigpacCode extends Model
     }
 
     /**
+     * Construir código SIGPAC completo desde campos individuales
+     *
+     * Formato: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)
+     * Total: 20 dígitos
+     *
+     * @param array $fields Campos individuales
+     * @return string Código completo sin guiones
+     */
+    public static function buildCodeFromFields(array $fields): string
+    {
+        $autonomousCommunity = str_pad($fields['code_autonomous_community'] ?? '', 2, '0', STR_PAD_LEFT);
+        $province = str_pad($fields['code_province'] ?? '', 2, '0', STR_PAD_LEFT);
+        $municipality = str_pad($fields['code_municipality'] ?? '', 3, '0', STR_PAD_LEFT);
+        $aggregate = str_pad($fields['code_aggregate'] ?? '0', 1, '0', STR_PAD_LEFT);
+        $zone = str_pad($fields['code_zone'] ?? '0', 1, '0', STR_PAD_LEFT);
+        $polygon = str_pad($fields['code_polygon'] ?? '', 2, '0', STR_PAD_LEFT);
+        $plot = str_pad($fields['code_plot'] ?? '', 5, '0', STR_PAD_LEFT);
+        $enclosure = str_pad($fields['code_enclosure'] ?? '', 3, '0', STR_PAD_LEFT);
+
+        return $autonomousCommunity . $province . $municipality . $aggregate . $zone . $polygon . $plot . $enclosure;
+    }
+
+    /**
      * Parsear y validar código SIGPAC completo
      *
-     * Formato esperado: 28-005-1-0032-015-002 o 2800510032015002
-     * Estructura: Provincia(2) - Municipio(3) - Zona(1) - Polígono(4) - Parcela(3) - Recinto(3)
+     * Formato esperado: 13-28-079-0-0-12-00045-003 o 13280790001200045003
+     * Estructura: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)
+     * Total: 20 dígitos
      *
      * @param string $code Código completo con o sin guiones
      * @return array Array con los campos parseados
@@ -91,35 +116,38 @@ class SigpacCode extends Model
         // Validar que solo contenga dígitos
         if (!preg_match('/^\d+$/', $cleanCode)) {
             throw new \InvalidArgumentException(
-                'El código SIGPAC solo puede contener números y guiones. Formato esperado: 28-005-1-0032-015-002'
+                'El código SIGPAC solo puede contener números y guiones. Formato esperado: 13-28-079-0-0-12-00045-003'
             );
         }
 
-        // Validar longitud exacta (16 dígitos)
-        if (strlen($cleanCode) !== 16) {
+        // Validar longitud exacta (20 dígitos)
+        if (strlen($cleanCode) !== 20) {
             throw new \InvalidArgumentException(
-                'El código SIGPAC debe tener exactamente 16 dígitos. Recibido: ' . strlen($cleanCode) . ' dígitos. '
-                . 'Formato esperado: Provincia(2) - Municipio(3) - Zona(1) - Polígono(4) - Parcela(3) - Recinto(3)'
+                'El código SIGPAC debe tener exactamente 20 dígitos. Recibido: ' . strlen($cleanCode) . ' dígitos. '
+                . 'Formato esperado: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)'
             );
         }
 
         // Extraer cada parte según la estructura SIGPAC
-        $province = substr($cleanCode, 0, 2);  // Posiciones 0-1 (2 dígitos)
-        $municipality = substr($cleanCode, 2, 3);  // Posiciones 2-4 (3 dígitos)
-        $zone = substr($cleanCode, 5, 1);  // Posición 5 (1 dígito)
-        $polygon = substr($cleanCode, 6, 4);  // Posiciones 6-9 (4 dígitos)
-        $plot = substr($cleanCode, 10, 3);  // Posiciones 10-12 (3 dígitos)
-        $enclosure = substr($cleanCode, 13, 3);  // Posiciones 13-15 (3 dígitos)
+        $autonomousCommunity = substr($cleanCode, 0, 2);  // Posiciones 0-1 (2 dígitos)
+        $province = substr($cleanCode, 2, 2);  // Posiciones 2-3 (2 dígitos)
+        $municipality = substr($cleanCode, 4, 3);  // Posiciones 4-6 (3 dígitos)
+        $aggregate = substr($cleanCode, 7, 1);  // Posición 7 (1 dígito)
+        $zone = substr($cleanCode, 8, 1);  // Posición 8 (1 dígito)
+        $polygon = substr($cleanCode, 9, 2);  // Posiciones 9-10 (2 dígitos)
+        $plot = substr($cleanCode, 11, 5);  // Posiciones 11-15 (5 dígitos)
+        $enclosure = substr($cleanCode, 16, 3);  // Posiciones 16-18 (3 dígitos)
 
         return [
             'code' => $cleanCode,  // Guardar sin guiones
+            'code_autonomous_community' => $autonomousCommunity,
             'code_province' => $province,
             'code_municipality' => $municipality,
+            'code_aggregate' => $aggregate,
             'code_zone' => $zone,
             'code_polygon' => $polygon,
             'code_plot' => $plot,
             'code_enclosure' => $enclosure,
-            'code_aggregate' => null,  // Opcional, se puede añadir después si es necesario
         ];
     }
 
@@ -141,19 +169,21 @@ class SigpacCode extends Model
      */
     public function getFormattedCodeAttribute(): string
     {
-        if (!$this->code || strlen($this->code) !== 16) {
+        if (!$this->code || strlen($this->code) !== 20) {
             return $this->code ?? 'N/A';
         }
 
-        // Formatear: 28-005-1-0032-015-002
+        // Formatear: 13-28-079-0-0-12-00045-003
         return sprintf(
-            '%s-%s-%s-%s-%s-%s',
-            substr($this->code, 0, 2),  // Provincia
-            substr($this->code, 2, 3),  // Municipio
-            substr($this->code, 5, 1),  // Zona
-            substr($this->code, 6, 4),  // Polígono
-            substr($this->code, 10, 3),  // Parcela
-            substr($this->code, 13, 3)  // Recinto
+            '%s-%s-%s-%s-%s-%s-%s-%s',
+            substr($this->code, 0, 2),  // CA
+            substr($this->code, 2, 2),  // Provincia
+            substr($this->code, 4, 3),  // Municipio
+            substr($this->code, 7, 1),  // Agregado
+            substr($this->code, 8, 1),  // Zona
+            substr($this->code, 9, 2),  // Polígono
+            substr($this->code, 11, 5),  // Parcela
+            substr($this->code, 16, 3)  // Recinto
         );
     }
 }

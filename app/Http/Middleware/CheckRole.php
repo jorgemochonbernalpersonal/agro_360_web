@@ -22,6 +22,13 @@ class CheckRole
         }
 
         if (!in_array($user->role, $roles)) {
+            // Loguear intento de acceso denegado
+            \App\Services\SecurityLogger::logAccessDenied(
+                $user->id,
+                $request->fullUrl(),
+                'role_mismatch: required=' . implode(',', $roles) . ' actual=' . $user->role
+            );
+            
             abort(403, 'No tienes permiso para acceder a esta página.');
         }
 

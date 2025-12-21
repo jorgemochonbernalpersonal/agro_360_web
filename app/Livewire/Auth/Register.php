@@ -94,6 +94,20 @@ class Register extends Component
 
     public function register()
     {
+        // Honeypot: Si está lleno, es un bot
+        if (!empty($this->honeypot)) {
+            \App\Services\SecurityLogger::logSecurityEvent('honeypot_triggered_register', [
+                'email' => $this->email,
+                'name' => $this->name,
+                'honeypot_value' => substr($this->honeypot, 0, 50),
+            ]);
+            
+            // Simular éxito para confundir al bot
+            sleep(2);
+            session()->flash('success', 'Registro completado. Revisa tu email para verificar tu cuenta.');
+            return;
+        }
+        
         $this->validate();
 
         $existing = User::where('email', $this->email)->first();

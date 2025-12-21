@@ -66,8 +66,24 @@ class EditGeometry extends Component
 
     public function save()
     {
-        if (empty($this->coordinates) || count($this->coordinates) < 3) {
-            $this->toastError('Se necesitan al menos 3 puntos para crear un polígono.');
+        // Validar coordenadas con Livewire
+        try {
+            $this->validate([
+                'coordinates' => 'required|array|min:3',
+                'coordinates.*.lat' => 'required|numeric|between:-90,90',
+                'coordinates.*.lng' => 'required|numeric|between:-180,180',
+            ], [
+                'coordinates.required' => 'Las coordenadas son obligatorias.',
+                'coordinates.min' => 'Se necesitan al menos 3 puntos para crear un polígono.',
+                'coordinates.*.lat.required' => 'La latitud es obligatoria.',
+                'coordinates.*.lat.numeric' => 'La latitud debe ser un valor numérico.',
+                'coordinates.*.lat.between' => 'La latitud debe estar entre -90 y 90.',
+                'coordinates.*.lng.required' => 'La longitud es obligatoria.',
+                'coordinates.*.lng.numeric' => 'La longitud debe ser un valor numérico.',
+                'coordinates.*.lng.between' => 'La longitud debe estar entre -180 y 180.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->toastError('Error de validación: ' . $e->validator->errors()->first());
             return;
         }
 
@@ -86,7 +102,7 @@ class EditGeometry extends Component
         try {
             DB::beginTransaction();
 
-            // Construir WKT
+            // Construir WKT con validación estricta (usando el mismo código seguro del modelo)
             $points = $this->coordinates;
             $firstPoint = $points[0];
             $lastPoint = end($points);
@@ -94,14 +110,22 @@ class EditGeometry extends Component
                 $points[] = $firstPoint;
             }
             
+            // Validar y construir WKT con tipos estrictos
             $wktPoints = collect($points)->map(function($point) {
-                return "{$point['lng']} {$point['lat']}";
+                // Validar y castear a float para prevenir SQL injection
+                $lng = filter_var($point['lng'], FILTER_VALIDATE_FLOAT);
+                $lat = filter_var($point['lat'], FILTER_VALIDATE_FLOAT);
+                
+                if ($lng === false || $lat === false) {
+                    throw new \InvalidArgumentException('Coordenadas inválidas: deben ser valores numéricos.');
+                }
+                
+                return "$lng $lat";
             })->join(', ');
             
             $wkt = "POLYGON(($wktPoints))";
-            $wktEscaped = str_replace("'", "''", $wkt);
 
-            // Crear o actualizar geometría usando SQL directo para MySQL
+            // Crear o actualizar geometría usando prepared statements seguros
             if ($this->geometryId) {
                 $geometryId = $this->geometryId;
                 DB::statement(
@@ -110,15 +134,23 @@ class EditGeometry extends Component
                         centroid = ST_Centroid(ST_GeomFromText(?, 4326)),
                         updated_at = NOW()
                     WHERE id = ?",
-                    [$wktEscaped, $wktEscaped, $geometryId]
+                    [$wkt, $wkt, $geometryId]
                 );
             } else {
+                // Insertar con prepared statement
                 $geometryId = DB::table('plot_geometry')->insertGetId([
-                    'coordinates' => DB::raw("ST_GeomFromText('$wktEscaped', 4326)"),
-                    'centroid' => DB::raw("ST_Centroid(ST_GeomFromText('$wktEscaped', 4326))"),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+                
+                // Actualizar geometría con prepared statement
+                DB::statement(
+                    "UPDATE plot_geometry SET 
+                        coordinates = ST_GeomFromText(?, 4326),
+                        centroid = ST_Centroid(ST_GeomFromText(?, 4326))
+                    WHERE id = ?",
+                    [$wkt, $wkt, $geometryId]
+                );
             }
 
             // Crear o actualizar relación plot-sigpacCode-geometry
@@ -147,13 +179,21 @@ class EditGeometry extends Component
             
             // Emitir evento para refrescar vista
             $this->dispatch('geometry-saved');
+        } catch (\InvalidArgumentException $e) {
+            DB::rollBack();
+            \Log::warning('Invalid geometry data', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id(),
+            ]);
+            $this->toastError($e->getMessage());
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Error saving geometry', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
             ]);
-            $this->toastError('Error al guardar la geometría: ' . $e->getMessage());
+            $this->toastError('Error al guardar la geometría. Por favor, intenta de nuevo.');
         }
     }
 

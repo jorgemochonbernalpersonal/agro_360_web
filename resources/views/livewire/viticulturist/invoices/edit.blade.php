@@ -143,10 +143,10 @@
                 </div>
             </x-form-section>
 
-            <x-form-section title="Seleccionar Cosecha para Facturar" color="purple">
+            <x-form-section title="Cosechas para Facturar" color="purple">
                 <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <p class="text-sm text-blue-800">
-                        <strong>💡 Tip:</strong> Puedes añadir más cosechas a esta factura o añadir items manualmente.
+                        <strong>💡 Tip:</strong> Puedes añadir más cosechas a esta factura seleccionándolas del dropdown.
                     </p>
                 </div>
                 <div class="space-y-4">
@@ -161,31 +161,28 @@
                             </x-select>
                         </div>
                         <div class="md:col-span-2">
-                            <x-label for="selectedHarvestId">Cosecha</x-label>
-                            <div class="flex gap-2">
-                                <x-select wire:model="selectedHarvestId" id="selectedHarvestId" class="flex-1">
-                                    <option value="">Selecciona una cosecha sin facturar</option>
-                                    @foreach($availableHarvests as $harvest)
-                                        <option value="{{ $harvest->id }}">
-                                            {{ $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }} - 
-                                            {{ $harvest->activity->plot->name ?? 'Sin parcela' }} - 
-                                            {{ $harvest->harvest_start_date->format('d/m/Y') }} - 
-                                            {{ number_format($harvest->total_weight, 2) }} kg
-                                            @if($harvest->price_per_kg)
-                                                ({{ number_format($harvest->price_per_kg, 4) }} €/kg)
-                                            @endif
-                                        </option>
-                                    @endforeach
-                                </x-select>
-                                <x-button 
-                                    type="button" 
-                                    wire:click="addHarvestToInvoice"
-                                    variant="primary"
-                                    :disabled="!$selectedHarvestId"
-                                >
-                                    Añadir
-                                </x-button>
-                            </div>
+                            <x-label for="selectedHarvestId">Selecciona una cosecha para añadir</x-label>
+                            <x-select 
+                                wire:model.live="selectedHarvestId" 
+                                wire:change="addHarvestToInvoice"
+                                id="selectedHarvestId"
+                            >
+                                <option value="">-- Selecciona una cosecha sin facturar --</option>
+                                @foreach($availableHarvests as $harvest)
+                                    <option value="{{ $harvest->id }}">
+                                        {{ $harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }} - 
+                                        {{ $harvest->activity->plot->name ?? 'Sin parcela' }} - 
+                                        {{ $harvest->harvest_start_date->format('d/m/Y') }} - 
+                                        {{ number_format($harvest->total_weight, 2) }} kg
+                                        @if($harvest->price_per_kg)
+                                            ({{ number_format($harvest->price_per_kg, 4) }} €/kg)
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </x-select>
+                            <p class="mt-2 text-xs text-gray-500">
+                                💡 La cosecha se añadirá automáticamente como item al seleccionarla
+                            </p>
                         </div>
                     </div>
                     @if($availableHarvests->isEmpty())
@@ -200,19 +197,14 @@
             </x-form-section>
 
             <x-form-section title="Items de la Factura" color="green">
-                <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p class="text-sm text-blue-800">
-                        <strong>💡 Tip:</strong> Puedes añadir items manualmente o seleccionar una cosecha arriba para pre-llenar automáticamente.
-                    </p>
-                </div>
                 <div class="space-y-4">
                     @forelse($items as $index => $item)
-                        <div class="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 hover:border-blue-300 transition-colors">
-                            <div class="flex justify-between items-center mb-4">
+                        <div class="border-2 border-gray-200 rounded-lg p-4 bg-white hover:border-green-300 transition-colors shadow-sm">
+                            <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center gap-2">
-                                    <h4 class="text-lg font-semibold text-gray-900">Item #{{ $index + 1 }}</h4>
+                                    <h4 class="text-base font-bold text-gray-900">Item #{{ $index + 1 }}</h4>
                                     @if(isset($item['harvest_id']) && $item['harvest_id'])
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">
                                             🍇 Cosecha
                                         </span>
                                     @endif
@@ -221,7 +213,7 @@
                                     <button 
                                         type="button" 
                                         wire:click="removeItem({{ $index }})" 
-                                        class="text-red-600 hover:text-red-800 font-medium text-sm flex items-center gap-1"
+                                        class="text-red-600 hover:text-red-800 font-medium text-xs flex items-center gap-1"
                                     >
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -357,26 +349,30 @@
                     @empty
                         <div class="text-center py-8 border-2 border-dashed border-gray-300 rounded-xl">
                             <p class="text-gray-500 mb-4">
-                                No hay items en la factura
+                                No hay items en la factura.
                             </p>
-                            <button type="button" wire:click="addItem" class="text-blue-600 hover:text-blue-800 font-medium">
-                                + Añadir primer item
-                            </button>
+                            <p class="text-sm text-gray-400">
+                                Selecciona una cosecha arriba o añade un concepto manual
+                            </p>
                         </div>
                     @endforelse
 
-                    <div class="flex justify-center pt-4">
+                    <!-- Botón para añadir conceptos manuales (no cosechas) -->
+                    <div class="flex justify-center pt-4 border-t border-gray-200 mt-6">
                         <button 
                             type="button" 
                             wire:click="addItem" 
-                            class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition font-semibold shadow-sm"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Añadir Item
+                            Añadir Concepto Manual
                         </button>
                     </div>
+                    <p class="text-xs text-center text-gray-500 mt-2">
+                        Para servicios, productos u otros conceptos que no sean cosechas
+                    </p>
                 </div>
             </x-form-section>
 

@@ -42,6 +42,20 @@
                     @enderror
                 </div>
 
+                {{-- Honeypot: Campo oculto anti-bots --}}
+                {{-- Los bots automáticos lo rellenan, los humanos no lo ven --}}
+                <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true" tabindex="-1">
+                    <label for="website">Website (do not fill)</label>
+                    <input 
+                        wire:model="honeypot" 
+                        type="text" 
+                        id="website" 
+                        name="website" 
+                        autocomplete="off"
+                        tabindex="-1"
+                    >
+                </div>
+
                 <div>
                     <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
                         Contraseña
@@ -75,6 +89,55 @@
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
                     @enderror
                 </div>
+
+                {{-- reCAPTCHA v2 - Solo se muestra después de 3 intentos fallidos --}}
+                @if($showCaptcha)
+                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p class="text-sm text-yellow-800 mb-3 font-medium">
+                            <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            Por motivos de seguridad, por favor verifica que no eres un robot
+                        </p>
+                        
+                        <div class="flex justify-center" 
+                             x-data="{ 
+                                 recaptchaLoaded: false,
+                                 widgetId: null,
+                                 init() {
+                                     if (typeof grecaptcha === 'undefined') {
+                                         const script = document.createElement('script');
+                                         script.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
+                                         script.async = true;
+                                         script.defer = true;
+                                         document.head.appendChild(script);
+                                     } else {
+                                         this.renderCaptcha();
+                                     }
+                                     
+                                     window.onRecaptchaLoad = () => {
+                                         this.recaptchaLoaded = true;
+                                         this.renderCaptcha();
+                                     };
+                                 },
+                                 renderCaptcha() {
+                                     if (this.widgetId === null && typeof grecaptcha !== 'undefined' && grecaptcha.render) {
+                                         this.widgetId = grecaptcha.render('recaptcha-container', {
+                                             'sitekey': '{{ config('services.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI') }}',
+                                             'callback': (token) => {
+                                                 @this.set('recaptchaToken', token);
+                                             },
+                                             'expired-callback': () => {
+                                                 @this.set('recaptchaToken', '');
+                                             }
+                                         });
+                                     }
+                                 }
+                             }">
+                            <div id="recaptcha-container"></div>
+                        </div>
+                    </div>
+                @endif
 
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">

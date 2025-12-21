@@ -84,13 +84,42 @@
                 @if($crew->members->count() > 0)
                     @foreach($crew->members as $member)
                         <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-[var(--color-agro-green)] transition-colors">
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 flex-1">
                                 <div class="w-10 h-10 rounded-full bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white font-bold">
                                     {{ substr($member->viticulturist->name, 0, 1) }}
                                 </div>
-                                <div>
-                                    <div class="font-semibold text-gray-900">{{ $member->viticulturist->name }}</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2">
+                                        <div class="font-semibold text-gray-900">{{ $member->viticulturist->name }}</div>
+                                        @if($member->phytosanitary_license_number)
+                                            @php
+                                                $statusColors = [
+                                                    'Vigente' => 'bg-green-100 text-green-800 border-green-300',
+                                                    'Próximo a caducar' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                                                    'Caducado' => 'bg-red-100 text-red-800 border-red-300',
+                                                    'No registrado' => 'bg-gray-100 text-gray-800 border-gray-300'
+                                                ];
+                                                $status = $member->license_status;
+                                                $colorClass = $statusColors[$status] ?? 'bg-gray-100 text-gray-800 border-gray-300';
+                                            @endphp
+                                            <span class="px-2 py-0.5 text-xs font-medium rounded-full border {{ $colorClass }}">
+                                                {{ $status }}
+                                            </span>
+                                        @else
+                                            <span class="px-2 py-0.5 text-xs font-medium rounded-full border bg-gray-100 text-gray-600 border-gray-300">
+                                                Sin carnet
+                                            </span>
+                                        @endif
+                                    </div>
                                     <div class="text-sm text-gray-500">{{ $member->viticulturist->email }}</div>
+                                    @if($member->phytosanitary_license_number)
+                                        <div class="text-xs text-gray-600 mt-1">
+                                            <span class="font-medium">Carnet:</span> {{ $member->phytosanitary_license_number }}
+                                            @if($member->license_expiry_date)
+                                                · <span class="font-medium">Vence:</span> {{ \Carbon\Carbon::parse($member->license_expiry_date)->format('d/m/Y') }}
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             <button 

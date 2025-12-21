@@ -27,6 +27,17 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\EstimatedYield;
 use App\Models\Tax;
+use App\Models\SigpacCode;
+use App\Models\PlotGeometry;
+use App\Models\MultipartPlotSigpac;
+use App\Models\UserProfile;
+use App\Models\Subscription;
+use App\Models\Payment;
+use App\Models\InvoicingSetting;
+use App\Models\SupportTicket;
+use App\Models\SupportTicketComment;
+use App\Models\HarvestStock;
+use App\Models\InvoiceGroup;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -63,6 +74,23 @@ class CompleteTestUserSeeder extends Seeder
             }
             
             $this->command->info("✅ Usuario: {$user->email}");
+            
+            // 1.1. Crear perfil de usuario
+            $this->createUserProfile($user);
+            $this->command->info("✅ Perfil de usuario creado");
+            
+            // 1.2. Crear suscripción activa
+            $this->createSubscription($user);
+            $this->command->info("✅ Suscripción creada");
+            
+            // 1.3. Crear configuración de facturación
+            $this->createInvoicingSettings($user);
+            $this->command->info("✅ Configuración de facturación creada");
+            
+            // 1.4. Asegurar que los impuestos existen
+            $taxSeeder = new TaxSeeder();
+            $taxSeeder->setCommand($this->command);
+            $taxSeeder->run();
             
             // 2. Crear campañas (2024 para tests unitarios, 2025 para Cypress)
             $campaign2024 = Campaign::firstOrCreate(
@@ -128,6 +156,10 @@ class CompleteTestUserSeeder extends Seeder
             
             $this->command->info("✅ Parcelas creadas: " . count($plots));
             
+            // 3.1. Crear códigos SIGPAC para las parcelas
+            $sigpacCodes = $this->createSigpacCodes($plots);
+            $this->command->info("✅ Códigos SIGPAC creados: " . count($sigpacCodes));
+            
             // 4. Crear plantaciones en las parcelas
             $grapeVarieties = GrapeVariety::take(3)->get();
             $trainingSystems = TrainingSystem::take(2)->get();
@@ -174,6 +206,14 @@ class CompleteTestUserSeeder extends Seeder
             }
             
             $this->command->info("✅ Cuadrillas creadas: " . count($crews));
+            
+            // 5.1. Crear trabajadores individuales (sin cuadrilla)
+            $this->createIndividualWorkers($user);
+            $this->command->info("✅ Trabajadores individuales creados");
+            
+            // 5.2. Asignar trabajadores a cuadrillas
+            $this->assignWorkersToCrews($user, $crews);
+            $this->command->info("✅ Trabajadores asignados a cuadrillas");
             
             // 6. Crear maquinaria (20 máquinas)
             $machineryTypes = \App\Models\MachineryType::take(3)->get();
@@ -240,12 +280,24 @@ class CompleteTestUserSeeder extends Seeder
             $this->createEstimatedYields($user, $campaign2024, $campaign2025);
             $this->command->info("✅ Rendimientos estimados creados");
             
-            // 13. Crear facturas (mínimo 20, algunas con cosechas)
+            // 13. Crear grupos de facturas
+            $invoiceGroups = $this->createInvoiceGroups($user);
+            $this->command->info("✅ Grupos de facturas creados: " . count($invoiceGroups));
+            
+            // 14. Crear facturas (mínimo 20, algunas con cosechas)
             $harvests = Harvest::whereHas('activity', function($q) use ($user) {
                 $q->where('viticulturist_id', $user->id);
             })->get();
-            $this->createInvoices($user, $clients, $harvests);
+            $this->createInvoices($user, $clients, $harvests, $invoiceGroups);
             $this->command->info("✅ Facturas creadas");
+            
+            // 15. Crear movimientos de stock para cosechas
+            $this->createHarvestStock($user, $harvests);
+            $this->command->info("✅ Movimientos de stock creados");
+            
+            // 16. Crear tickets de soporte
+            $this->createSupportTickets($user);
+            $this->command->info("✅ Tickets de soporte creados");
             
             DB::commit();
             
@@ -269,6 +321,13 @@ class CompleteTestUserSeeder extends Seeder
             $this->command->info("   - Clientes: " . Client::where('user_id', $user->id)->count());
             $this->command->info("   - Facturas: " . Invoice::where('user_id', $user->id)->count());
             $this->command->info("   - Rendimientos estimados: " . EstimatedYield::whereHas('plotPlanting.plot', function($q) use ($user) {
+                $q->where('viticulturist_id', $user->id);
+            })->count());
+            $this->command->info("   - Códigos SIGPAC: " . SigpacCode::whereHas('plots', function($q) use ($user) {
+                $q->where('viticulturist_id', $user->id);
+            })->count());
+            $this->command->info("   - Tickets de soporte: " . SupportTicket::where('user_id', $user->id)->count());
+            $this->command->info("   - Movimientos de stock: " . HarvestStock::whereHas('harvest.activity', function($q) use ($user) {
                 $q->where('viticulturist_id', $user->id);
             })->count());
             
@@ -587,9 +646,345 @@ class CompleteTestUserSeeder extends Seeder
     }
     
     /**
+     * Crear perfil de usuario
+     */
+    private function createUserProfile(User $user): void
+    {
+        $provinces = \App\Models\Province::take(5)->get();
+        $province = $provinces->random();
+        
+        UserProfile::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'address' => 'Calle Principal ' . rand(1, 100),
+                'city' => 'Ciudad Test',
+                'postal_code' => str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
+                'province_id' => $province->id,
+                'country' => 'España',
+                'phone' => '6' . str_pad(rand(0, 99999999), 8, '0', STR_PAD_LEFT),
+            ]
+        );
+    }
+    
+    /**
+     * Crear suscripción activa
+     */
+    private function createSubscription(User $user): void
+    {
+        Subscription::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'status' => Subscription::STATUS_ACTIVE,
+            ],
+            [
+                'plan_type' => Subscription::PLAN_YEARLY,
+                'amount' => Subscription::PRICE_YEARLY,
+                'starts_at' => now()->subMonths(6),
+                'ends_at' => now()->addMonths(6),
+                'cancelled_at' => null,
+            ]
+        );
+    }
+    
+    /**
+     * Crear configuración de facturación
+     */
+    private function createInvoicingSettings(User $user): void
+    {
+        InvoicingSetting::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'invoice_prefix' => 'FAC-{YEAR}-',
+                'invoice_padding' => 4,
+                'invoice_counter' => 1,
+                'invoice_year_reset' => true,
+                'delivery_note_prefix' => 'ALB-{YEAR}-',
+                'delivery_note_padding' => 4,
+                'delivery_note_counter' => 1,
+                'delivery_note_year_reset' => true,
+                'last_reset_year' => now()->year,
+            ]
+        );
+    }
+    
+    /**
+     * Crear códigos SIGPAC para las parcelas
+     */
+    private function createSigpacCodes(array $plots): array
+    {
+        $sigpacCodes = [];
+        $autonomousCommunity = \App\Models\AutonomousCommunity::first();
+        $province = \App\Models\Province::where('autonomous_community_id', $autonomousCommunity?->id)->first();
+        $municipality = \App\Models\Municipality::where('province_id', $province?->id)->first();
+        
+        foreach ($plots as $index => $plot) {
+            // Crear 1-3 códigos SIGPAC por parcela
+            $codesPerPlot = rand(1, 3);
+            
+            for ($j = 0; $j < $codesPerPlot; $j++) {
+                $fields = [
+                    'code_autonomous_community' => str_pad($autonomousCommunity?->code ?? '13', 2, '0', STR_PAD_LEFT),
+                    'code_province' => str_pad($province?->code ?? '28', 2, '0', STR_PAD_LEFT),
+                    'code_municipality' => str_pad($municipality?->code ?? '079', 3, '0', STR_PAD_LEFT),
+                    'code_aggregate' => '0',
+                    'code_zone' => '0',
+                    'code_polygon' => str_pad(rand(1, 99), 2, '0', STR_PAD_LEFT),
+                    'code_plot' => str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT),
+                    'code_enclosure' => str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT),
+                ];
+                
+                $fullCode = SigpacCode::buildCodeFromFields($fields);
+                
+                $sigpacCode = SigpacCode::firstOrCreate(
+                    ['code' => $fullCode],
+                    $fields
+                );
+                
+                $sigpacCodes[] = $sigpacCode;
+                
+                // Crear geometría para el código SIGPAC
+                $geometry = PlotGeometry::create([
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                
+                // Crear coordenadas simples (polígono rectangular de ejemplo)
+                $lat = 40.0 + (rand(0, 100) / 1000); // 40.0 a 40.1
+                $lng = -3.0 - (rand(0, 100) / 1000); // -3.0 a -3.1
+                $offset = 0.01; // ~1km
+                
+                $wkt = sprintf(
+                    "POLYGON((%f %f, %f %f, %f %f, %f %f, %f %f))",
+                    $lng, $lat,
+                    $lng + $offset, $lat,
+                    $lng + $offset, $lat + $offset,
+                    $lng, $lat + $offset,
+                    $lng, $lat
+                );
+                
+                // Actualizar geometría con coordenadas
+                DB::statement(
+                    "UPDATE plot_geometry SET 
+                        coordinates = ST_GeomFromText(?, 4326),
+                        centroid = ST_Centroid(ST_GeomFromText(?, 4326))
+                    WHERE id = ?",
+                    [$wkt, $wkt, $geometry->id]
+                );
+                
+                // Crear relación plot-sigpac-geometry
+                MultipartPlotSigpac::firstOrCreate(
+                    [
+                        'plot_id' => $plot->id,
+                        'sigpac_code_id' => $sigpacCode->id,
+                        'plot_geometry_id' => $geometry->id,
+                    ]
+                );
+            }
+        }
+        
+        return $sigpacCodes;
+    }
+    
+    /**
+     * Crear trabajadores individuales (sin cuadrilla)
+     */
+    private function createIndividualWorkers(User $user): void
+    {
+        $workerNames = ['Pedro', 'María', 'Luis', 'Ana', 'Carlos', 'Carmen', 'José', 'Laura'];
+        
+        for ($i = 1; $i <= 10; $i++) {
+            $worker = User::firstOrCreate(
+                ['email' => "trabajador{$i}@test.com"],
+                [
+                    'name' => $workerNames[array_rand($workerNames)] . " Trabajador {$i}",
+                    'password' => Hash::make('password'),
+                    'role' => 'viticulturist',
+                    'email_verified_at' => now(),
+                    'can_login' => false,
+                    'password_must_reset' => true,
+                ]
+            );
+            
+            // Crear como trabajador individual (sin crew_id)
+            CrewMember::firstOrCreate(
+                [
+                    'viticulturist_id' => $worker->id,
+                    'assigned_by' => $user->id,
+                    'crew_id' => null,
+                ],
+                [
+                    'phytosanitary_license_number' => rand(0, 1) === 1 ? 'LIC-' . rand(1000, 9999) : null,
+                    'license_expiry_date' => rand(0, 1) === 1 ? now()->addMonths(rand(1, 24))->format('Y-m-d') : null,
+                ]
+            );
+        }
+    }
+    
+    /**
+     * Asignar trabajadores a cuadrillas
+     */
+    private function assignWorkersToCrews(User $user, array $crews): void
+    {
+        $workers = User::where('role', 'viticulturist')
+            ->where('id', '!=', $user->id)
+            ->whereDoesntHave('crewMemberships')
+            ->take(30)
+            ->get();
+        
+        if ($workers->isEmpty()) {
+            // Crear trabajadores adicionales si no hay suficientes
+            for ($i = 1; $i <= 30; $i++) {
+                $worker = User::create([
+                    'name' => "Trabajador Cuadrilla {$i}",
+                    'email' => "crewworker{$i}@test.com",
+                    'password' => Hash::make('password'),
+                    'role' => 'viticulturist',
+                    'email_verified_at' => now(),
+                    'can_login' => false,
+                    'password_must_reset' => true,
+                ]);
+                $workers->push($worker);
+            }
+        }
+        
+        $workersCollection = collect($workers);
+        foreach ($crews as $crew) {
+            // Asignar 2-5 trabajadores por cuadrilla
+            $workersPerCrew = rand(2, 5);
+            $crewWorkers = $workersCollection->random(min($workersPerCrew, $workersCollection->count()));
+            
+            foreach ($crewWorkers as $worker) {
+                CrewMember::firstOrCreate(
+                    [
+                        'crew_id' => $crew->id,
+                        'viticulturist_id' => $worker->id,
+                        'assigned_by' => $user->id,
+                    ],
+                    [
+                        'phytosanitary_license_number' => rand(0, 1) === 1 ? 'LIC-' . rand(1000, 9999) : null,
+                        'license_expiry_date' => rand(0, 1) === 1 ? now()->addMonths(rand(1, 24))->format('Y-m-d') : null,
+                    ]
+                );
+            }
+        }
+    }
+    
+    /**
+     * Crear grupos de facturas
+     */
+    private function createInvoiceGroups(User $user): array
+    {
+        $groups = [];
+        $groupNames = ['Facturación Q1 2024', 'Facturación Q2 2024', 'Facturación Q3 2024', 'Facturación Q4 2024', 'Facturación Q1 2025'];
+        
+        foreach ($groupNames as $name) {
+            $group = InvoiceGroup::firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'name' => $name,
+                ],
+                [
+                    'description' => "Grupo de facturas para {$name}",
+                ]
+            );
+            $groups[] = $group;
+        }
+        
+        return $groups;
+    }
+    
+    /**
+     * Crear movimientos de stock para cosechas
+     */
+    private function createHarvestStock(User $user, $harvests): void
+    {
+        foreach ($harvests->take(15) as $harvest) {
+            // Movimiento inicial
+            $initialQuantity = $harvest->total_weight ?? rand(1000, 10000);
+            
+            HarvestStock::firstOrCreate(
+                [
+                    'harvest_id' => $harvest->id,
+                    'movement_type' => 'initial',
+                ],
+                [
+                    'user_id' => $user->id,
+                    'quantity_before' => 0,
+                    'quantity_change' => $initialQuantity,
+                    'quantity_after' => $initialQuantity,
+                    'available_qty' => $initialQuantity * 0.8, // 80% disponible
+                    'reserved_qty' => $initialQuantity * 0.1, // 10% reservado
+                    'sold_qty' => 0,
+                    'gifted_qty' => 0,
+                    'lost_qty' => 0,
+                    'notes' => 'Movimiento inicial de stock',
+                ]
+            );
+            
+            // Algunos movimientos de venta
+            if (rand(0, 1) === 1) {
+                $soldQuantity = rand(100, (int)($initialQuantity * 0.5));
+                $currentStock = HarvestStock::where('harvest_id', $harvest->id)
+                    ->latest()
+                    ->first();
+                
+                if ($currentStock) {
+                    HarvestStock::create([
+                        'harvest_id' => $harvest->id,
+                        'user_id' => $user->id,
+                        'movement_type' => 'sale',
+                        'quantity_before' => $currentStock->quantity_after,
+                        'quantity_change' => -$soldQuantity,
+                        'quantity_after' => $currentStock->quantity_after - $soldQuantity,
+                        'available_qty' => max(0, $currentStock->available_qty - $soldQuantity),
+                        'reserved_qty' => $currentStock->reserved_qty,
+                        'sold_qty' => $currentStock->sold_qty + $soldQuantity,
+                        'gifted_qty' => $currentStock->gifted_qty,
+                        'lost_qty' => $currentStock->lost_qty,
+                        'notes' => 'Venta de cosecha',
+                    ]);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Crear tickets de soporte
+     */
+    private function createSupportTickets(User $user): void
+    {
+        $ticketTypes = ['bug', 'feature', 'improvement', 'question'];
+        $priorities = ['low', 'medium', 'high', 'urgent'];
+        $statuses = ['open', 'in_progress', 'resolved', 'closed'];
+        
+        for ($i = 1; $i <= 10; $i++) {
+            $status = $statuses[array_rand($statuses)];
+            $ticket = SupportTicket::create([
+                'user_id' => $user->id,
+                'title' => "Ticket de soporte {$i}",
+                'description' => "Descripción del ticket de soporte número {$i}. Este es un ticket de prueba para verificar el funcionamiento del sistema de soporte.",
+                'type' => $ticketTypes[array_rand($ticketTypes)],
+                'status' => $status,
+                'priority' => $priorities[array_rand($priorities)],
+                'resolved_at' => in_array($status, ['resolved', 'closed']) ? now()->subDays(rand(1, 30)) : null,
+                'closed_at' => $status === 'closed' ? now()->subDays(rand(1, 15)) : null,
+            ]);
+            
+            // Agregar comentarios a algunos tickets
+            if (rand(0, 1) === 1) {
+                SupportTicketComment::create([
+                    'ticket_id' => $ticket->id,
+                    'user_id' => $user->id,
+                    'comment' => "Comentario de prueba para el ticket {$i}",
+                ]);
+            }
+        }
+    }
+    
+    /**
      * Crear facturas con items
      */
-    private function createInvoices(User $user, array $clients, $harvests): void
+    private function createInvoices(User $user, array $clients, $harvests, array $invoiceGroups = []): void
     {
         $taxes = Tax::where('active', true)->get();
         $defaultTax = $taxes->where('code', 'IVA')->where('rate', 21)->first() ?? $taxes->first();
@@ -618,6 +1013,8 @@ class CompleteTestUserSeeder extends Seeder
                 $invoiceNumber = 'FAC-' . $year . '-' . str_pad($invoiceCounter, 4, '0', STR_PAD_LEFT);
             }
             
+            $invoiceGroup = !empty($invoiceGroups) && rand(0, 1) === 1 ? collect($invoiceGroups)->random() : null;
+            
             $invoice = Invoice::create([
                 'user_id' => $user->id,
                 'client_id' => $client->id,
@@ -635,6 +1032,7 @@ class CompleteTestUserSeeder extends Seeder
                 'status' => ['draft', 'sent', 'paid'][rand(0, 2)],
                 'payment_status' => ['unpaid', 'partial', 'paid'][rand(0, 2)],
                 'payment_type' => ['cash', 'transfer', 'check'][rand(0, 2)],
+                'invoice_group_id' => $invoiceGroup?->id,
                 'observations' => "Factura de prueba generada automáticamente",
             ]);
             
@@ -692,6 +1090,8 @@ class CompleteTestUserSeeder extends Seeder
                 $invoiceNumber = 'FAC-' . $year . '-' . str_pad($invoiceCounter, 4, '0', STR_PAD_LEFT);
             }
             
+            $invoiceGroup = !empty($invoiceGroups) && rand(0, 1) === 1 ? collect($invoiceGroups)->random() : null;
+            
             $invoice = Invoice::create([
                 'user_id' => $user->id,
                 'client_id' => $client->id,
@@ -709,6 +1109,7 @@ class CompleteTestUserSeeder extends Seeder
                 'status' => ['draft', 'sent', 'paid'][rand(0, 2)],
                 'payment_status' => ['unpaid', 'partial', 'paid'][rand(0, 2)],
                 'payment_type' => ['cash', 'transfer'][rand(0, 1)],
+                'invoice_group_id' => $invoiceGroup?->id,
                 'observations' => "Factura de prueba generada automáticamente",
             ]);
             

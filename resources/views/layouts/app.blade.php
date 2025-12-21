@@ -9,6 +9,9 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
+    <!-- Canonical URL - SEO: indica que agro365.es es el dominio principal -->
+    <link rel="canonical" href="https://agro365.es{{ request()->getRequestUri() }}">
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />

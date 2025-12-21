@@ -18,18 +18,15 @@ class HarvestFactory extends Factory
         
         return [
             'activity_id' => AgriculturalActivity::factory(),
-            'plot_planting_id' => PlotPlanting::factory(),
-            'container_id' => HarvestContainer::factory(),
+            'plot_planting_id' => null, // Se debe proporcionar explícitamente o crear manualmente
+            'container_id' => null, // Se debe proporcionar explícitamente o crear manualmente
             'harvest_start_date' => now(),
             'harvest_end_date' => now()->addDays(1),
             'total_weight' => $totalWeight,
-            'unit' => 'kg',
-            'quality_rating' => $this->faker->optional()->numberBetween(1, 10),
-            'brix_degree' => $this->faker->optional()->randomFloat(1, 10, 25),
-            'observations' => $this->faker->optional()->sentence(),
-            'weather_conditions' => $this->faker->optional()->word(),
-            'estimated_value' => $this->faker->optional()->randomFloat(2, 100, 5000),
+            'brix_degree' => $this->faker->optional()->randomFloat(2, 10, 25),
+            'price_per_kg' => $this->faker->optional()->randomFloat(4, 0.5, 5.0),
             'total_value' => null,
+            'status' => 'active',
         ];
     }
 

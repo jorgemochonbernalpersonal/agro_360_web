@@ -71,6 +71,19 @@
                     @enderror
                 </div>
 
+                {{-- Honeypot: Campo oculto anti-bots --}}
+                <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true" tabindex="-1">
+                    <label for="company">Company (leave blank)</label>
+                    <input 
+                        wire:model="honeypot" 
+                        type="text" 
+                        id="company" 
+                        name="company" 
+                        autocomplete="off"
+                        tabindex="-1"
+                    >
+                </div>
+
                 <!-- Rol -->
                 <div>
                     <label for="role" class="block text-sm font-semibold text-gray-700 mb-2">
