@@ -27,7 +27,11 @@ class Show extends Component
 
     public function render()
     {
+        $clientName = $this->client->full_name;
         return view('livewire.viticulturist.clients.show')
-            ->layout('layouts.app');
+            ->layout('layouts.app', [
+                'title' => $clientName . ' - Cliente - Agro365',
+                'description' => 'Detalles del cliente ' . $clientName . '. Información de contacto, direcciones, facturas y estadísticas de facturación.',
+            ]);
     }
 }

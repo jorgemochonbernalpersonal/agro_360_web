@@ -193,7 +193,17 @@
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-900">{{ $activity->plot->name }}</span>
+                            <div>
+                                <span class="text-sm font-medium text-gray-900">{{ $activity->plot->name }}</span>
+                                @if($activity->plotPlanting)
+                                    <br><span class="text-xs text-gray-600">
+                                        {{ $activity->plotPlanting->name }}
+                                        @if($activity->plotPlanting->grapeVariety)
+                                            - {{ $activity->plotPlanting->grapeVariety->name }}
+                                        @endif
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                     </x-table-cell>
                     <x-table-cell>

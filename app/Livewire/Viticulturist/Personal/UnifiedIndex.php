@@ -415,7 +415,10 @@ class UnifiedIndex extends Component
             'unassignedCount' => $unassignedCount,
             'crewsCount' => $crewsCount,
             'wineriesByViticulturist' => $wineriesByViticulturist,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Personal y Equipos - Agro365',
+            'description' => 'Gestiona tu equipo de trabajo: viticultores, cuadrillas y asignaciones. Organiza tu personal para optimizar las labores del viñedo.',
+        ]);
     }
 
     private function renderCrewsView($user, $wineries)
@@ -459,7 +462,10 @@ class UnifiedIndex extends Component
             'wineries' => $wineries,
             'viticulturistsCount' => $allViticulturists,
             'crewsCount' => $crewsCount,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Personal y Equipos - Agro365',
+            'description' => 'Gestiona tu equipo de trabajo: viticultores, cuadrillas y asignaciones. Organiza tu personal para optimizar las labores del viñedo.',
+        ]);
     }
 }
 

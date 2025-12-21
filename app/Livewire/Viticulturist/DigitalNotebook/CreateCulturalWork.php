@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
 use App\Models\Plot;
+use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\CulturalWork;
 use App\Models\Campaign;
@@ -18,6 +19,8 @@ class CreateCulturalWork extends Component
 {
     use WithViticulturistValidation;
     public $plot_id = '';
+    public $plot_planting_id = '';
+    public $availablePlantings = [];
     public $activity_date = '';
     public $work_type = '';
     public $hours_worked = '';
@@ -52,10 +55,42 @@ class CreateCulturalWork extends Component
         $this->campaign_id = $campaign->id;
     }
 
+    public function updatedPlotId($value)
+    {
+        $this->plot_planting_id = '';
+        if ($value) {
+            $this->availablePlantings = PlotPlanting::where('plot_id', $value)
+                ->where('status', 'active')
+                ->with('grapeVariety')
+                ->orderBy('name')
+                ->get();
+        } else {
+            $this->availablePlantings = [];
+        }
+    }
+
     protected function rules(): array
     {
         return [
             'plot_id' => 'required|exists:plots,id',
+            'plot_planting_id' => [
+                'nullable',
+                'exists:plot_plantings,id',
+                function ($attribute, $value, $fail) {
+                    if ($this->plot_id) {
+                        $plot = Plot::find($this->plot_id);
+                        if ($plot && $plot->plantings()->where('status', 'active')->exists()) {
+                            if (!$value) {
+                                $fail('Debes seleccionar una plantación para esta parcela.');
+                            } elseif (!PlotPlanting::where('id', $value)
+                                ->where('plot_id', $this->plot_id)
+                                ->exists()) {
+                                $fail('La plantación seleccionada no pertenece a esta parcela.');
+                            }
+                        }
+                    }
+                },
+            ],
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
             'work_type' => 'nullable|string|max:100',
@@ -121,6 +156,7 @@ class CreateCulturalWork extends Component
                 // Crear la actividad base
                 $activity = AgriculturalActivity::create([
                     'plot_id' => $this->plot_id,
+                    'plot_planting_id' => $this->plot_planting_id ?: null,
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'cultural',

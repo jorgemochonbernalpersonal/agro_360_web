@@ -48,6 +48,10 @@ Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
 Route::get('/terminos', fn() => view('legal.terms'))->name('terms');
 Route::get('/cookies', fn() => view('legal.privacy'))->name('cookies'); // Misma vista que privacidad
 
+// Verificación pública de informes oficiales
+Route::get('/verify-report/{code}', [App\Http\Controllers\ReportVerificationController::class, 'verify'])
+    ->name('reports.verify');
+
 Route::get('/counter', Counter::class)->name('counter');
 
 // Ruta de beta expirada (requiere auth)

@@ -70,7 +70,10 @@ class Index extends Component
         return view('livewire.viticulturist.campaign.index', [
             'campaigns' => $campaigns,
             'years' => $years,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Campañas Agrícolas - Agro365',
+            'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
+        ]);
     }
 
     public function activate($campaignId)

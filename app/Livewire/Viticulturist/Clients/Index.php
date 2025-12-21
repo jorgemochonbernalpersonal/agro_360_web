@@ -99,7 +99,10 @@ class Index extends Component
             'clients' => $clients,
             'stats' => $stats,
             'advancedStats' => $advancedStats,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Clientes - Agro365',
+            'description' => 'Gestiona tus clientes y analiza tu cartera. Control completo de clientes particulares y empresas.',
+        ]);
     }
 
     private function getAdvancedStatistics($user)

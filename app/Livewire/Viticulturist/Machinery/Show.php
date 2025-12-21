@@ -32,6 +32,9 @@ class Show extends Component
 
         return view('livewire.viticulturist.machinery.show', [
             'recentActivities' => $recentActivities,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => $this->machinery->name . ' - Maquinaria - Agro365',
+            'description' => 'Detalles de la maquinaria ' . $this->machinery->name . '. Especificaciones técnicas, registro ROMA y historial de uso en actividades.',
+        ]);
     }
 }

@@ -58,7 +58,10 @@ class Index extends Component
         return view('livewire.viticulturist.phytosanitary-products.index', [
             'products' => $products,
             'types' => $types,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Productos Fitosanitarios - Agro365',
+            'description' => 'Catálogo completo de productos fitosanitarios. Gestiona tratamientos, plazos de seguridad y cumplimiento normativo para tu viñedo.',
+        ]);
     }
 
     public function clearFilters(): void

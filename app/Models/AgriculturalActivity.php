@@ -14,6 +14,7 @@ class AgriculturalActivity extends Model
 
     protected $fillable = [
         'plot_id',
+        'plot_planting_id',
         'viticulturist_id',
         'campaign_id',
         'activity_type',
@@ -37,6 +38,14 @@ class AgriculturalActivity extends Model
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
+    }
+
+    /**
+     * Plantación donde se realizó la actividad
+     */
+    public function plotPlanting(): BelongsTo
+    {
+        return $this->belongsTo(PlotPlanting::class, 'plot_planting_id');
     }
 
     /**
@@ -144,6 +153,14 @@ class AgriculturalActivity extends Model
     }
 
     /**
+     * Scope para filtrar por usuario (alias genérico de forViticulturist)
+     */
+    public function scopeForUser($query, int $userId)
+    {
+        return $query->where('viticulturist_id', $userId);
+    }
+
+    /**
      * Scope para filtrar por parcela
      */
     public function scopeForPlot($query, int $plotId)
@@ -157,5 +174,13 @@ class AgriculturalActivity extends Model
     public function scopeForCampaign($query, int $campaignId)
     {
         return $query->where('campaign_id', $campaignId);
+    }
+
+    /**
+     * Scope para filtrar por plantación
+     */
+    public function scopeForPlanting($query, int $plotPlantingId)
+    {
+        return $query->where('plot_planting_id', $plotPlantingId);
     }
 }

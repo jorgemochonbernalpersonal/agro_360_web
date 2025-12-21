@@ -5,6 +5,7 @@ namespace App\Livewire\Viticulturist;
 use App\Models\Tax;
 use App\Models\UserTax;
 use App\Models\InvoicingSetting;
+use App\Models\OfficialReport;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Concerns\WithToastNotifications;
@@ -33,10 +34,15 @@ class Settings extends Component
     public $invoicePreview;
     public $deliveryNotePreview;
 
+    // === SIGNATURE TAB ===
+    public $signatureStats = [];
+    public $recentSignatures = [];
+
     public function mount()
     {
         $this->loadTaxes();
         $this->loadInvoicing();
+        $this->loadSignatureData();
     }
 
     public function switchTab($tab)
@@ -177,8 +183,37 @@ class Settings extends Component
         $this->toastInfo('Contador de albaranes resetado. Haz clic en Guardar para aplicar.');
     }
 
+    // ==========================================
+    // SIGNATURE TAB METHODS
+    // ==========================================
+
+    public function loadSignatureData()
+    {
+        $user = Auth::user();
+        
+        // Estadísticas
+        $reports = OfficialReport::forUser($user->id)->get();
+        
+        $this->signatureStats = [
+            'total_signed' => $reports->count(),
+            'total_valid' => $reports->where('is_valid', true)->count(),
+            'last_signed' => $reports->sortByDesc('signed_at')->first(),
+            'total_verifications' => $reports->sum('verification_count'),
+            'most_verified' => $reports->sortByDesc('verification_count')->first(),
+        ];
+
+        // Actividad reciente (últimos 10)
+        $this->recentSignatures = OfficialReport::forUser($user->id)
+            ->orderBy('signed_at', 'desc')
+            ->limit(10)
+            ->get();
+    }
+
     public function render()
     {
-        return view('livewire.viticulturist.settings')->layout('layouts.app');
+        return view('livewire.viticulturist.settings')->layout('layouts.app', [
+            'title' => 'Configuración - Agro365',
+            'description' => 'Gestiona la configuración de tu cuenta: impuestos, numeración de facturas y albaranes, y preferencias de facturación.',
+        ]);
     }
 }

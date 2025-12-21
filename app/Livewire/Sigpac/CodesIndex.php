@@ -42,7 +42,10 @@ class CodesIndex extends Component
 
         return view('livewire.sigpac.codes-index', [
             'codes' => $codes,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Códigos SIGPAC - Agro365',
+            'description' => 'Gestiona los códigos de identificación SIGPAC de tus parcelas. Integración completa con el sistema SIGPAC para cumplimiento normativo.',
+        ]);
     }
 }
 

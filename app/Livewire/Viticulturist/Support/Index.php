@@ -131,6 +131,9 @@ class Index extends Component
         return view('livewire.viticulturist.support.index', [
             'tickets' => $tickets,
             'stats' => $stats,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Soporte Técnico - Agro365',
+            'description' => 'Centro de soporte y ayuda. Gestiona tus consultas, reporta incidencias y obtén asistencia técnica para tu cuenta.',
+        ]);
     }
 }

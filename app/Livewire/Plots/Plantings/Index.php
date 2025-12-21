@@ -82,7 +82,10 @@ class Index extends Component
         return view('livewire.plots.plantings.index', [
             'plantings' => $plantings,
             'years' => $years,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Plantaciones - Agro365',
+            'description' => 'Gestiona las plantaciones de tus parcelas. Variedades de uva, años de plantación, hectáreas y estado de cada viñedo.',
+        ]);
     }
 }
 

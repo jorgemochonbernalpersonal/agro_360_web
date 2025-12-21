@@ -177,6 +177,14 @@
                             </div>
                             <div>
                                 <span class="text-sm font-medium text-gray-900">{{ $activity->plot->name }}</span>
+                                @if($activity->plotPlanting)
+                                    <span class="ml-2 text-xs text-gray-600">
+                                        - {{ $activity->plotPlanting->name }}
+                                        @if($activity->plotPlanting->grapeVariety)
+                                            ({{ $activity->plotPlanting->grapeVariety->name }})
+                                        @endif
+                                    </span>
+                                @endif
                                 <span class="ml-2 text-xs text-gray-500">
                                     @if($activity->activity_type === 'phytosanitary')
                                         Tratamiento

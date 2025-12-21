@@ -53,7 +53,10 @@ class Index extends Component
 
         return view('livewire.plots.index', [
             'plots' => $plots,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Gestión de Parcelas - Agro365',
+            'description' => 'Administra y visualiza todas tus parcelas agrícolas. Control total de viñedos con integración SIGPAC.',
+        ]);
     }
 
     public function delete(Plot $plot)

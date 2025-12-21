@@ -15,16 +15,22 @@ class GenerateSitemap extends Command
     {
         $this->info('Generating sitemap...');
 
+        $baseUrl = config('app.url');
+
         Sitemap::create()
-            ->add(Url::create('/')
+            ->add(Url::create($baseUrl . '/')
                 ->setLastModificationDate(now())
                 ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
                 ->setPriority(1.0))
-            ->add(Url::create('/privacidad')
+            ->add(Url::create($baseUrl . '/privacidad')
                 ->setLastModificationDate(now())
                 ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
                 ->setPriority(0.3))
-            ->add(Url::create('/cookies')
+            ->add(Url::create($baseUrl . '/terminos')
+                ->setLastModificationDate(now())
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                ->setPriority(0.3))
+            ->add(Url::create($baseUrl . '/cookies')
                 ->setLastModificationDate(now())
                 ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
                 ->setPriority(0.3))

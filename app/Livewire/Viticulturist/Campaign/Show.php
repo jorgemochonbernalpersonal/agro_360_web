@@ -66,13 +66,16 @@ class Show extends Component
     {
         // Obtener últimas actividades
         $recentActivities = AgriculturalActivity::forCampaign($this->campaign->id)
-            ->with(['plot', 'phytosanitaryTreatment.product', 'fertilization', 'irrigation', 'culturalWork', 'observation'])
+            ->with(['plot', 'plotPlanting.grapeVariety', 'phytosanitaryTreatment.product', 'fertilization', 'irrigation', 'culturalWork', 'observation'])
             ->orderBy('activity_date', 'desc')
             ->limit(10)
             ->get();
 
         return view('livewire.viticulturist.campaign.show', [
             'recentActivities' => $recentActivities,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => $this->campaign->name . ' (' . $this->campaign->year . ') - Campaña - Agro365',
+            'description' => 'Detalles de la campaña ' . $this->campaign->name . ' del año ' . $this->campaign->year . '. Actividades, estadísticas y rendimientos.',
+        ]);
     }
 }

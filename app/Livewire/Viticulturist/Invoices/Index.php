@@ -81,6 +81,9 @@ class Index extends Component
         return view('livewire.viticulturist.invoices.index', [
             'invoices' => $invoices,
             'stats' => $stats,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Facturas / Pedidos - Agro365',
+            'description' => 'Gestiona tus facturas y pedidos. Facturación integrada desde la vendimia hasta el pago.',
+        ]);
     }
 }

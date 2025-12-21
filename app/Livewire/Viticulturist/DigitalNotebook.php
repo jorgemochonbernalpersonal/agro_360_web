@@ -78,7 +78,7 @@ class DigitalNotebook extends Component
 
         // Obtener actividades
         $query = AgriculturalActivity::forViticulturist($user->id)
-            ->with(['plot', 'crew', 'crewMember.viticulturist', 'campaign'])
+            ->with(['plot', 'plotPlanting.grapeVariety', 'crew', 'crewMember.viticulturist', 'campaign'])
             ->orderBy('activity_date', 'desc');
 
         // Filtrar por campaña (siempre)
@@ -170,7 +170,10 @@ class DigitalNotebook extends Component
                 'fertilization' => $fertilizationCount,
                 'irrigation' => $irrigationCount,
             ],
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Cuaderno de Campo Digital - Agro365',
+            'description' => 'Registra y gestiona todas tus actividades agrícolas: tratamientos fitosanitarios, fertilizaciones, riegos y labores culturales. Cumplimiento normativo garantizado.',
+        ]);
     }
 
     public function clearFilters()

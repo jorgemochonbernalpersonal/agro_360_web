@@ -70,7 +70,10 @@ class Show extends Component
     {
         $this->crew->load(['members.viticulturist', 'activities']);
         
-        return view('livewire.viticulturist.personal.show')->layout('layouts.app');
+        return view('livewire.viticulturist.personal.show')->layout('layouts.app', [
+            'title' => $this->crew->name . ' - Equipo - Agro365',
+            'description' => 'Detalles del equipo ' . $this->crew->name . '. Miembros, actividades realizadas y estadísticas de rendimiento.',
+        ]);
     }
 }
 

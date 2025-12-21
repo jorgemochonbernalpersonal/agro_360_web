@@ -278,7 +278,7 @@ class Create extends Component
             
             $this->toastSuccess($message);
             
-            return $this->redirect(route('plots.show', $plot->id));
+            return $this->redirect(route('sigpac.codes'));
             
         } catch (\Exception $e) {
             DB::rollBack();

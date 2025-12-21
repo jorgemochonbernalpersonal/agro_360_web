@@ -175,6 +175,9 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/{invoice}', \App\Livewire\Viticulturist\Invoices\Show::class)->name('show');
         });
 
+        // Informes Oficiales
+        Route::get('/official-reports', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('official-reports.index');
+
         // Support / Soporte
         Route::get('/support', \App\Livewire\Viticulturist\Support\Index::class)->name('support.index');
         Route::get('/support/create', \App\Livewire\Viticulturist\Support\CreateTicket::class)->name('support.create');

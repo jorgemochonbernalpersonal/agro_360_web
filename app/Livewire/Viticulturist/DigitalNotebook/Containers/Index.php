@@ -165,7 +165,10 @@ class Index extends Component
             'campaigns' => $campaigns,
             'harvests' => $harvests,
             'stats' => $stats,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Contenedores de Cosecha - Agro365',
+            'description' => 'Gestiona tus contenedores de cosecha. Control de peso, ubicación y asignación a vendimias. Trazabilidad completa de la uva.',
+        ]);
     }
 }
 

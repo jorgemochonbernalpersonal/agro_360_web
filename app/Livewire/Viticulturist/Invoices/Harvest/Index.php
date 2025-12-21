@@ -87,7 +87,10 @@ class Index extends Component
             'harvests' => $harvests,
             'availableClients' => $availableClients,
             'advancedStats' => $advancedStats,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Facturación de Cosechas - Agro365',
+            'description' => 'Factura tus cosechas directamente desde la vendimia. Gestión completa de facturación de uva con análisis de rendimientos y precios.',
+        ]);
     }
 
     private function getAdvancedStatistics($user)

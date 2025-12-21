@@ -70,7 +70,10 @@ class Index extends Component
         return view('livewire.viticulturist.machinery.index', [
             'machinery' => $machinery,
             'types' => $types,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Maquinaria Agrícola - Agro365',
+            'description' => 'Gestiona tu flota de maquinaria agrícola. Control de equipos, mantenimiento y registro de uso en actividades del viñedo.',
+        ]);
     }
 
     public function delete($machineryId)

@@ -35,6 +35,17 @@
                     </svg>
                     <span>Numeración</span>
                 </button>
+                
+                <button 
+                    wire:click="switchTab('signature')"
+                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
+                        {{ $currentTab === 'signature' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span>Firma Digital</span>
+                </button>
             </nav>
         </div>
 
@@ -284,6 +295,195 @@
                         </button>
                     </div>
                 </form>
+            @endif
+
+            {{-- SIGNATURE TAB --}}
+            @if($currentTab === 'signature')
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">🔐 Seguridad de Firma Digital</h3>
+                        <p class="text-sm text-gray-600">Visualiza la actividad de tus firmas electrónicas y configuración de seguridad</p>
+                    </div>
+
+                    {{-- Estadísticas --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {{-- Total Documentos Firmados --}}
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-3xl">📄</div>
+                                <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <p class="text-3xl font-bold text-blue-900">{{ $signatureStats['total_signed'] ?? 0 }}</p>
+                            <p class="text-sm text-blue-700 mt-1">Documentos Firmados</p>
+                        </div>
+
+                        {{-- Documentos Válidos --}}
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-green-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-3xl">✅</div>
+                                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <p class="text-3xl font-bold text-green-900">{{ $signatureStats['total_valid'] ?? 0 }}</p>
+                            <p class="text-sm text-green-700 mt-1">Válidos Actualmente</p>
+                        </div>
+
+                        {{-- Total Verificaciones --}}
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-3xl">🔍</div>
+                                <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <p class="text-3xl font-bold text-purple-900">{{ $signatureStats['total_verifications'] ?? 0 }}</p>
+                            <p class="text-sm text-purple-700 mt-1">Verificaciones Totales</p>
+                        </div>
+
+                        {{-- Última Firma --}}
+                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border-2 border-orange-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-3xl">🕐</div>
+                                <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            @if($signatureStats['last_signed'])
+                                <p class="text-lg font-bold text-orange-900">{{ $signatureStats['last_signed']->signed_at->format('d/m/Y') }}</p>
+                                <p class="text-xs text-orange-700 mt-1">{{ $signatureStats['last_signed']->signed_at->diffForHumans() }}</p>
+                            @else
+                                <p class="text-sm text-orange-700 mt-1">Sin firmas aún</p>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Actividad Reciente --}}
+                    <div class="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
+                        <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b-2 border-gray-200">
+                            <h4 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Actividad Reciente
+                            </h4>
+                            <p class="text-sm text-gray-600">Últimas 10 firmas realizadas</p>
+                        </div>
+
+                        @if($recentSignatures->count() > 0)
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Firmado</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verificaciones</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach($recentSignatures as $signature)
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <span class="text-xl mr-2">{{ $signature->report_icon }}</span>
+                                                        <span class="text-sm font-medium text-gray-900">{{ $signature->report_type_name }}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    {{ $signature->period_start->format('d/m/Y') }} - {{ $signature->period_end->format('d/m/Y') }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    {{ $signature->signed_at->format('d/m/Y H:i') }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <code class="text-xs bg-gray-100 px-2 py-1 rounded">{{ $signature->signed_ip }}</code>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    <span class="inline-flex items-center gap-1">
+                                                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                        </svg>
+                                                        {{ $signature->verification_count }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    @if($signature->isValid())
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                            ✓ Válido
+                                                        </span>
+                                                    @else
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                            ✗ Invalidado
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="p-12 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">No hay firmas aún</h3>
+                                <p class="mt-1 text-sm text-gray-500">Genera tu primer informe oficial para ver tu actividad aquí.</p>
+                                <div class="mt-4">
+                                    <a href="{{ route('viticulturist.official-reports.index') }}" 
+                                       class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white rounded-lg hover:shadow-lg transition-all font-semibold">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        Generar Informe
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Información de Seguridad --}}
+                    <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500 p-6 rounded-r-xl">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-yellow-900 mb-2">Seguridad de tu Firma</h4>
+                                <ul class="space-y-2 text-sm text-yellow-800">
+                                    <li class="flex items-start gap-2">
+                                        <span class="font-bold">•</span>
+                                        <span>Tu contraseña se verifica en cada firma para garantizar la autenticidad</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="font-bold">•</span>
+                                        <span>Cada documento genera un hash SHA-256 único e irreversible</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="font-bold">•</span>
+                                        <span>Registramos la IP y dispositivo de cada firma para auditoría</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="font-bold">•</span>
+                                        <span>Los documentos firmados no pueden modificarse sin invalidar la firma</span>
+                                    </li>
+                                </ul>
+                                <div class="mt-4 pt-4 border-t border-yellow-300">
+                                    <p class="text-xs text-yellow-700">
+                                        <strong>Cambiar contraseña:</strong> Puedes cambiar tu contraseña desde tu perfil. 
+                                        Los documentos ya firmados permanecerán válidos.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @endif
         </div>
     </div>

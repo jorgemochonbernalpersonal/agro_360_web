@@ -31,8 +31,6 @@ use App\Models\SigpacCode;
 use App\Models\PlotGeometry;
 use App\Models\MultipartPlotSigpac;
 use App\Models\UserProfile;
-use App\Models\Subscription;
-use App\Models\Payment;
 use App\Models\InvoicingSetting;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketComment;
@@ -79,15 +77,11 @@ class CompleteTestUserSeeder extends Seeder
             $this->createUserProfile($user);
             $this->command->info("✅ Perfil de usuario creado");
             
-            // 1.2. Crear suscripción activa
-            $this->createSubscription($user);
-            $this->command->info("✅ Suscripción creada");
-            
-            // 1.3. Crear configuración de facturación
+            // 1.2. Crear configuración de facturación
             $this->createInvoicingSettings($user);
             $this->command->info("✅ Configuración de facturación creada");
             
-            // 1.4. Asegurar que los impuestos existen
+            // 1.3. Asegurar que los impuestos existen
             $taxSeeder = new TaxSeeder();
             $taxSeeder->setCommand($this->command);
             $taxSeeder->run();
@@ -662,26 +656,6 @@ class CompleteTestUserSeeder extends Seeder
                 'province_id' => $province->id,
                 'country' => 'España',
                 'phone' => '6' . str_pad(rand(0, 99999999), 8, '0', STR_PAD_LEFT),
-            ]
-        );
-    }
-    
-    /**
-     * Crear suscripción activa
-     */
-    private function createSubscription(User $user): void
-    {
-        Subscription::firstOrCreate(
-            [
-                'user_id' => $user->id,
-                'status' => Subscription::STATUS_ACTIVE,
-            ],
-            [
-                'plan_type' => Subscription::PLAN_YEARLY,
-                'amount' => Subscription::PRICE_YEARLY,
-                'starts_at' => now()->subMonths(6),
-                'ends_at' => now()->addMonths(6),
-                'cancelled_at' => null,
             ]
         );
     }

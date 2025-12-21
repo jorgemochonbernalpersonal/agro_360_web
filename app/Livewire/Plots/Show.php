@@ -31,6 +31,9 @@ class Show extends Component
 
     public function render()
     {
-        return view('livewire.plots.show')->layout('layouts.app');
+        return view('livewire.plots.show')->layout('layouts.app', [
+            'title' => $this->plot->name . ' - Parcela - Agro365',
+            'description' => 'Detalles de la parcela ' . $this->plot->name . '. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',
+        ]);
     }
 }

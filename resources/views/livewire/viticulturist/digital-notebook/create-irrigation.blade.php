@@ -14,13 +14,36 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-label for="plot_id" required>Parcela</x-label>
-                        <x-select wire:model="plot_id" id="plot_id" :error="$errors->first('plot_id')" required>
+                        <x-select wire:model.live="plot_id" id="plot_id" :error="$errors->first('plot_id')" required>
                             <option value="">Selecciona una parcela</option>
                             @foreach($plots as $plot)
                                 <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                             @endforeach
                         </x-select>
                     </div>
+                    @if($plot_id)
+                        <div>
+                            <x-label for="plot_planting_id" :required="count($availablePlantings) > 0">
+                                Plantación
+                                @if(count($availablePlantings) > 0)
+                                    <span class="text-red-500">*</span>
+                                @else
+                                    <span class="text-gray-500 text-sm">(Opcional)</span>
+                                @endif
+                            </x-label>
+                            <x-select wire:model="plot_planting_id" id="plot_planting_id" :error="$errors->first('plot_planting_id')" :required="count($availablePlantings) > 0">
+                                <option value="">-- Selecciona una plantación --</option>
+                                @foreach($availablePlantings as $planting)
+                                    <option value="{{ $planting->id }}">
+                                        {{ $planting->name }}
+                                        @if($planting->grapeVariety)
+                                            - {{ $planting->grapeVariety->name }}
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
+                    @endif
                     <div>
                         <x-label for="activity_date" required>Fecha</x-label>
                         <x-input wire:model="activity_date" type="date" id="activity_date" :error="$errors->first('activity_date')" required />

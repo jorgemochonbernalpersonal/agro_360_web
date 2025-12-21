@@ -240,7 +240,10 @@ class Calendar extends Component
             'calendarDays' => $calendarDays,
             'stats' => $stats,
             'monthName' => $monthName,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Calendario de Actividades - Agro365',
+            'description' => 'Visualiza todas tus actividades agrícolas en un calendario interactivo. Planifica tratamientos, riegos y labores culturales por fecha.',
+        ]);
     }
 }
 

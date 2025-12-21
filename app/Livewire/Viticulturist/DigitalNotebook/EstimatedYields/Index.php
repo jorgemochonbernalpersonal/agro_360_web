@@ -114,7 +114,10 @@ class Index extends Component
             'estimatedYields' => $estimatedYields,
             'campaigns' => $campaigns,
             'stats' => $stats,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => 'Rendimientos Estimados - Agro365',
+            'description' => 'Gestiona las estimaciones de producción de tus viñedos. Compara rendimientos estimados vs reales y optimiza tu planificación.',
+        ]);
     }
 }
 
