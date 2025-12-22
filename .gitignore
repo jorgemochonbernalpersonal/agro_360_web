@@ -72,3 +72,4 @@ Thumbs.db
 # /public/build  # SIEMPRE COMENTADO - No descomentar nunca
 # /public/hot ya está ignorado arriba
 bootstrap/cache/
+/public/sitemap.xml
