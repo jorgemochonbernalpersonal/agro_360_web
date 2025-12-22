@@ -76,9 +76,46 @@
                         ];
                     @endphp
                     <span class="text-gray-400 mx-2">|</span>
-                    <span class="px-2 py-1 rounded-lg bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] text-xs font-semibold flex items-center gap-1">
-                        <span>{{ $tabs[$currentTab]['icon'] ?? '💰' }}</span>
-                        <span>{{ $tabs[$currentTab]['label'] ?? 'Impuestos' }}</span>
+                    <span 
+                        id="settings-tab-indicator"
+                        x-data="{
+                            currentTab: '{{ $currentTab }}',
+                            tabs: {
+                                'taxes': { label: 'Impuestos', icon: '💰' },
+                                'invoicing': { label: 'Numeración', icon: '🔢' },
+                                'signature': { label: 'Firma Digital', icon: '🔐' }
+                            },
+                            updateTab() {
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const newTab = urlParams.get('tab') || 'taxes';
+                                if (this.currentTab !== newTab) {
+                                    this.currentTab = newTab;
+                                }
+                            },
+                            init() {
+                                // Actualizar tab inicial
+                                this.updateTab();
+                                
+                                // Escuchar cuando Livewire actualiza la URL después de cada actualización
+                                if (typeof Livewire !== 'undefined') {
+                                    Livewire.hook('morph.updated', () => {
+                                        setTimeout(() => this.updateTab(), 100);
+                                    });
+                                }
+                                
+                                // Escuchar navegación de Livewire
+                                document.addEventListener('livewire:navigated', () => {
+                                    this.updateTab();
+                                });
+                                
+                                // Escuchar cambios directos en la URL (botones atrás/adelante del navegador)
+                                window.addEventListener('popstate', () => this.updateTab());
+                            }
+                        }"
+                        class="px-2 py-1 rounded-lg bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] text-xs font-semibold flex items-center gap-1"
+                    >
+                        <span x-text="tabs[currentTab]?.icon || '💰'"></span>
+                        <span x-text="tabs[currentTab]?.label || 'Impuestos'"></span>
                     </span>
                 @endif
             </nav>
