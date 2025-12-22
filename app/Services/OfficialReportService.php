@@ -6,6 +6,7 @@ use App\Models\OfficialReport;
 use App\Models\User;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
+use App\Models\DigitalSignature;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -30,11 +31,16 @@ class OfficialReportService
         Carbon $endDate,
         string $password
     ): OfficialReport {
-        // 1. Validar contraseña del usuario
+        // 1. Validar contraseña de firma digital
         $user = User::findOrFail($userId);
+        $digitalSignature = DigitalSignature::forUser($userId);
         
-        if (!Hash::check($password, $user->password)) {
-            throw new \Exception('Contraseña incorrecta. No se puede firmar el informe.');
+        if (!$digitalSignature) {
+            throw new \Exception('No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.');
+        }
+        
+        if (!$digitalSignature->verifyPassword($password)) {
+            throw new \Exception('Contraseña de firma digital incorrecta. No se puede firmar el informe.');
         }
 
         // 2. Obtener datos de tratamientos fitosanitarios
@@ -158,11 +164,16 @@ class OfficialReportService
         int $campaignId,
         string $password
     ): OfficialReport {
-        // 1. Validar contraseña
+        // 1. Validar contraseña de firma digital
         $user = User::findOrFail($userId);
+        $digitalSignature = DigitalSignature::forUser($userId);
         
-        if (!Hash::check($password, $user->password)) {
-            throw new \Exception('Contraseña incorrecta. No se puede firmar el informe.');
+        if (!$digitalSignature) {
+            throw new \Exception('No tienes una contraseña de firma digital configurada. Por favor, créala en Configuración → Firma Digital.');
+        }
+        
+        if (!$digitalSignature->verifyPassword($password)) {
+            throw new \Exception('Contraseña de firma digital incorrecta. No se puede firmar el informe.');
         }
 
         // 2. Obtener campaña

@@ -6,7 +6,7 @@
     title="Registrar Fertilización"
     description="Registra una nueva fertilización en el cuaderno digital"
     :icon="$icon"
-    icon-color="from-blue-600 to-blue-700"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
     <form wire:submit="save" class="space-y-8">

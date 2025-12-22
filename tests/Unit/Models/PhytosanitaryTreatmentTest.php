@@ -6,6 +6,8 @@ use App\Models\PhytosanitaryTreatment;
 use App\Models\PhytosanitaryProduct;
 use App\Models\AgriculturalActivity;
 use App\Models\Plot;
+use App\Models\PlotPlanting;
+use App\Models\GrapeVariety;
 use App\Models\Campaign;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
@@ -29,11 +31,31 @@ class PhytosanitaryTreatmentTest extends TestCase
             MunicipalitySeeder::class,
         ]);
     }
+    
+    /**
+     * Helper para crear una plantación activa en una parcela
+     */
+    private function createPlantingForPlot(Plot $plot): PlotPlanting
+    {
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+        
+        return PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+    }
 
     public function test_phytosanitary_treatment_belongs_to_activity(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -47,6 +69,7 @@ class PhytosanitaryTreatmentTest extends TestCase
 
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -68,6 +91,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -81,6 +105,7 @@ class PhytosanitaryTreatmentTest extends TestCase
 
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -102,6 +127,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -115,6 +141,7 @@ class PhytosanitaryTreatmentTest extends TestCase
 
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -139,6 +166,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -152,6 +180,7 @@ class PhytosanitaryTreatmentTest extends TestCase
 
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -180,6 +209,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -194,6 +224,7 @@ class PhytosanitaryTreatmentTest extends TestCase
         $activityDate = now()->subDays(5);
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -219,6 +250,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -232,6 +264,7 @@ class PhytosanitaryTreatmentTest extends TestCase
 
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -255,6 +288,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -268,6 +302,7 @@ class PhytosanitaryTreatmentTest extends TestCase
 
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -291,6 +326,7 @@ class PhytosanitaryTreatmentTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $planting = $this->createPlantingForPlot($plot);
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
         $product = PhytosanitaryProduct::create([
@@ -304,6 +340,7 @@ class PhytosanitaryTreatmentTest extends TestCase
 
         $activity = AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',

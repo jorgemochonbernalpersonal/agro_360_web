@@ -6,7 +6,7 @@
     title="Registrar Cosecha"
     description="Registra una nueva cosecha (vendimia) en el cuaderno digital"
     :icon="$icon"
-    icon-color="from-purple-600 to-purple-700"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
     <form wire:submit="save" class="space-y-8">

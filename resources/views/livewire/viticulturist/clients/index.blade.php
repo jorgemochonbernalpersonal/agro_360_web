@@ -9,9 +9,14 @@
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
-            <x-button href="{{ route('viticulturist.clients.create') }}" variant="primary">
-                Nuevo Cliente
-            </x-button>
+            <a href="{{ route('viticulturist.clients.create') }}" class="group">
+                <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
+                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Nuevo Cliente
+                </button>
+            </a>
         </x-slot:actionButton>
     </x-page-header>
 
@@ -86,58 +91,106 @@
                     </div>
 
                     {{-- Tabla --}}
-                    <div class="bg-white rounded-xl overflow-hidden border border-gray-200">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contacto</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse($clients as $client)
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $client->full_name }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $client->client_type === 'company' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
-                                                    {{$client->client_type === 'company' ? 'Empresa' : 'Particular' }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $client->email ?? $client->phone ?? 'N/A' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                @if($client->active)
-                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
-                                                @else
-                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Inactivo</span>
+                    @php
+                        $headers = [
+                            ['label' => 'Nombre', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>'],
+                            ['label' => 'Tipo', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>'],
+                            ['label' => 'Contacto', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>'],
+                            ['label' => 'Dirección', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'],
+                            ['label' => 'Estado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
+                            'Acciones',
+                        ];
+                    @endphp
+
+                    <x-data-table :headers="$headers" empty-message="No se encontraron clientes" empty-description="Comienza agregando tu primer cliente al sistema">
+                        @if($clients->count() > 0)
+                            @foreach($clients as $client)
+                                <x-table-row>
+                                    <x-table-cell>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200">
+                                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-bold text-gray-900">{{ $client->full_name }}</div>
+                                                @if($client->company_name && $client->client_type === 'company')
+                                                    <div class="text-xs text-gray-500 mt-1">{{ $client->company_name }}</div>
                                                 @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('viticulturist.clients.show', $client->id) }}" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] mr-3">Ver</a>
-                                                <a href="{{ route('viticulturist.clients.edit', $client->id) }}" class="text-blue-600 hover:text-blue-900">Editar</a>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5" class="px-6 py-8 text-center">
-                                                <p class="text-gray-500">No se encontraron clientes</p>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                            {{ $clients->links() }}
-                        </div>
-                    </div>
+                                            </div>
+                                        </div>
+                                    </x-table-cell>
+                                    <x-table-cell>
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $client->client_type === 'company' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
+                                            {{ $client->client_type === 'company' ? 'Empresa' : 'Particular' }}
+                                        </span>
+                                    </x-table-cell>
+                                    <x-table-cell>
+                                        <div class="text-sm text-gray-700">
+                                            @if($client->email)
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span>{{ $client->email }}</span>
+                                                </div>
+                                            @endif
+                                            @if($client->phone)
+                                                <div class="flex items-center gap-1 mt-1">
+                                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                                    </svg>
+                                                    <span>{{ $client->phone }}</span>
+                                                </div>
+                                            @endif
+                                            @if(!$client->email && !$client->phone)
+                                                <span class="text-gray-400">N/A</span>
+                                            @endif
+                                        </div>
+                                    </x-table-cell>
+                                    <x-table-cell>
+                                        @if($client->addresses && $client->addresses->count() > 0)
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                <span class="text-sm text-gray-700">
+                                                    {{ $client->addresses->count() }} {{ $client->addresses->count() === 1 ? 'dirección' : 'direcciones' }}
+                                                </span>
+                                            </div>
+                                        @else
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                                <span class="text-sm text-gray-400">Sin dirección</span>
+                                            </div>
+                                        @endif
+                                    </x-table-cell>
+                                    <x-table-cell>
+                                        <x-status-badge :active="$client->active" />
+                                    </x-table-cell>
+                                    <x-table-actions align="right">
+                                        <x-action-button variant="view" href="{{ route('viticulturist.clients.show', $client->id) }}" />
+                                        <x-action-button variant="edit" href="{{ route('viticulturist.clients.edit', $client->id) }}" />
+                                    </x-table-actions>
+                                </x-table-row>
+                            @endforeach
+                            <x-slot name="pagination">
+                                {{ $clients->links() }}
+                            </x-slot>
+                        @else
+                            <x-slot name="emptyAction">
+                                <x-button href="{{ route('viticulturist.clients.create') }}" variant="primary">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    Crear mi primer cliente
+                                </x-button>
+                            </x-slot>
+                        @endif
+                    </x-data-table>
                 </div>
             @endif
 

@@ -6,7 +6,7 @@
         :icon="$icon"
         title="Detalle de Cosecha"
         description="Información completa de la cosecha y sus contenedores"
-        icon-color="from-purple-600 to-purple-700"
+        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
             <div class="flex gap-2">

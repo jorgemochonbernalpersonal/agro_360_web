@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\AgriculturalActivity;
 use App\Models\Plot;
+use App\Models\PlotPlanting;
 use App\Models\User;
 use App\Models\Campaign;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,6 +23,7 @@ class AgriculturalActivityFactory extends Factory
     {
         return [
             'plot_id' => Plot::factory(),
+            'plot_planting_id' => null, // Por defecto null, se puede asignar con forPlot() o forPlanting()
             'viticulturist_id' => User::factory(),
             'campaign_id' => Campaign::factory(),
             'activity_type' => fake()->randomElement(['phytosanitary', 'fertilization', 'irrigation', 'cultural', 'observation']),
@@ -49,9 +51,32 @@ class AgriculturalActivityFactory extends Factory
      */
     public function forPlot(Plot $plot): static
     {
+        // Si la parcela tiene plantaciones activas, asignar una automáticamente
+        $plotPlantingId = null;
+        $activePlanting = PlotPlanting::where('plot_id', $plot->id)
+            ->where('status', 'active')
+            ->first();
+        
+        if ($activePlanting) {
+            $plotPlantingId = $activePlanting->id;
+        }
+        
         return $this->state(fn (array $attributes) => [
             'plot_id' => $plot->id,
+            'plot_planting_id' => $plotPlantingId,
             'viticulturist_id' => $plot->viticulturist_id,
+        ]);
+    }
+    
+    /**
+     * Indicate that the activity belongs to a specific planting.
+     */
+    public function forPlanting(PlotPlanting $planting): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'plot_id' => $planting->plot_id,
+            'plot_planting_id' => $planting->id,
+            'viticulturist_id' => $planting->plot->viticulturist_id,
         ]);
     }
 

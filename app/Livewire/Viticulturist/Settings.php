@@ -5,7 +5,7 @@ namespace App\Livewire\Viticulturist;
 use App\Models\Tax;
 use App\Models\UserTax;
 use App\Models\InvoicingSetting;
-use App\Models\OfficialReport;
+use App\Models\DigitalSignature;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Concerns\WithToastNotifications;
@@ -35,14 +35,15 @@ class Settings extends Component
     public $deliveryNotePreview;
 
     // === SIGNATURE TAB ===
-    public $signatureStats = [];
-    public $recentSignatures = [];
+    public $signaturePassword = '';
+    public $signaturePasswordConfirmation = '';
+    public $hasDigitalSignature = false;
 
     public function mount()
     {
         $this->loadTaxes();
         $this->loadInvoicing();
-        $this->loadSignatureData();
+        $this->loadDigitalSignature();
     }
 
     public function switchTab($tab)
@@ -187,26 +188,36 @@ class Settings extends Component
     // SIGNATURE TAB METHODS
     // ==========================================
 
-    public function loadSignatureData()
+    public function loadDigitalSignature()
     {
         $user = Auth::user();
-        
-        // Estadísticas
-        $reports = OfficialReport::forUser($user->id)->get();
-        
-        $this->signatureStats = [
-            'total_signed' => $reports->count(),
-            'total_valid' => $reports->where('is_valid', true)->count(),
-            'last_signed' => $reports->sortByDesc('signed_at')->first(),
-            'total_verifications' => $reports->sum('verification_count'),
-            'most_verified' => $reports->sortByDesc('verification_count')->first(),
-        ];
+        $signature = DigitalSignature::forUser($user->id);
+        $this->hasDigitalSignature = $signature !== null;
+    }
 
-        // Actividad reciente (últimos 10)
-        $this->recentSignatures = OfficialReport::forUser($user->id)
-            ->orderBy('signed_at', 'desc')
-            ->limit(10)
-            ->get();
+    public function saveDigitalSignature()
+    {
+        $this->validate([
+            'signaturePassword' => 'required|string|min:8|confirmed',
+        ], [
+            'signaturePassword.required' => 'La contraseña de firma es obligatoria.',
+            'signaturePassword.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'signaturePassword.confirmed' => 'Las contraseñas no coinciden.',
+        ]);
+
+        try {
+            $user = Auth::user();
+            
+            DigitalSignature::createOrUpdateForUser($user->id, $this->signaturePassword);
+            
+            $this->signaturePassword = '';
+            $this->signaturePasswordConfirmation = '';
+            $this->hasDigitalSignature = true;
+            $this->toastSuccess('Contraseña de firma digital ' . ($this->hasDigitalSignature ? 'actualizada' : 'creada') . ' correctamente');
+            
+        } catch (\Exception $e) {
+            $this->toastError('Error al guardar la contraseña de firma: ' . $e->getMessage());
+        }
     }
 
     public function render()

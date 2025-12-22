@@ -31,7 +31,7 @@
                         </svg>
                     @endif
 
-                    @if($crumb['route'] && !$crumb['active'])
+                    @if($crumb['route'] && !$crumb['active'] && !($crumb['alwaysHighlight'] ?? false))
                         <!-- Breadcrumb clickeable -->
                         <a 
                             href="{{ route($crumb['route']) }}" 
@@ -44,13 +44,43 @@
                             <span class="font-medium">{{ $crumb['label'] }}</span>
                         </a>
                     @else
-                        <!-- Breadcrumb activo (no clickeable) -->
-                        <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] whitespace-nowrap">
-                            <span>{!! $crumb['icon'] !!}</span>
-                            <span class="font-bold">{{ $crumb['label'] }}</span>
-                        </div>
+                        <!-- Breadcrumb activo (no clickeable) o siempre destacado -->
+                        @if($crumb['route'] && !$crumb['active'] && ($crumb['alwaysHighlight'] ?? false))
+                            <!-- Breadcrumb destacado pero clickeable (para Parcelas cuando estás en create/edit) -->
+                            <a 
+                                href="{{ route($crumb['route']) }}" 
+                                wire:navigate
+                                class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green)] hover:text-white transition-all duration-200 whitespace-nowrap"
+                            >
+                                <span>{!! $crumb['icon'] !!}</span>
+                                <span class="font-bold">{{ $crumb['label'] }}</span>
+                            </a>
+                        @else
+                            <!-- Breadcrumb activo (no clickeable) -->
+                            <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] whitespace-nowrap">
+                                <span>{!! $crumb['icon'] !!}</span>
+                                <span class="font-bold">{{ $crumb['label'] }}</span>
+                            </div>
+                        @endif
                     @endif
                 @endforeach
+
+                {{-- Indicador de Tab para Configuración --}}
+                @if(request()->routeIs('viticulturist.settings*'))
+                    @php
+                        $currentTab = request()->get('tab', 'taxes');
+                        $tabs = [
+                            'taxes' => ['label' => 'Impuestos', 'icon' => '💰'],
+                            'invoicing' => ['label' => 'Numeración', 'icon' => '🔢'],
+                            'signature' => ['label' => 'Firma Digital', 'icon' => '🔐'],
+                        ];
+                    @endphp
+                    <span class="text-gray-400 mx-2">|</span>
+                    <span class="px-2 py-1 rounded-lg bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] text-xs font-semibold flex items-center gap-1">
+                        <span>{{ $tabs[$currentTab]['icon'] ?? '💰' }}</span>
+                        <span>{{ $tabs[$currentTab]['label'] ?? 'Impuestos' }}</span>
+                    </span>
+                @endif
             </nav>
         </div>
 
@@ -130,6 +160,15 @@
                         </svg>
                         Editar Perfil
                     </a>
+
+                    @if($user->role === 'viticulturist')
+                        <a href="{{ route('viticulturist.settings') }}" wire:navigate class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[var(--color-agro-green-bg)] hover:text-[var(--color-agro-green-dark)] transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Configuración
+                        </a>
+                    @endif
 
                     <a href="{{ route('subscription.manage') }}" wire:navigate class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[var(--color-agro-green-bg)] hover:text-[var(--color-agro-green-dark)] transition-colors duration-200">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

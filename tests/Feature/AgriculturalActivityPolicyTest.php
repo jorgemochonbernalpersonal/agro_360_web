@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Plot;
+use App\Models\PlotPlanting;
+use App\Models\GrapeVariety;
 use App\Models\Campaign;
 use App\Models\AgriculturalActivity;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,6 +29,19 @@ class AgriculturalActivityPolicyTest extends TestCase
         $this->plot = Plot::factory()->create(['viticulturist_id' => $this->viticulturist->id]);
         $this->otherPlot = Plot::factory()->create(['viticulturist_id' => $this->otherViticulturist->id]);
         
+        // Crear plantaciones activas para las parcelas
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+        $this->planting = PlotPlanting::create([
+            'plot_id' => $this->plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $this->plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+        
         // Crear campaña
         $this->campaign = Campaign::factory()->create([
             'viticulturist_id' => $this->viticulturist->id,
@@ -37,6 +52,7 @@ class AgriculturalActivityPolicyTest extends TestCase
         $this->activity = AgriculturalActivity::factory()->create([
             'viticulturist_id' => $this->viticulturist->id,
             'plot_id' => $this->plot->id,
+            'plot_planting_id' => $this->planting->id,
             'campaign_id' => $this->campaign->id,
         ]);
     }

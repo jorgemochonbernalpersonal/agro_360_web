@@ -99,6 +99,19 @@
                 </div>
             @endif
 
+            {{-- Aviso sobre firma digital --}}
+            <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                <p class="text-sm text-blue-800 flex items-start gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>
+                        <strong>Firma Digital:</strong> Se te pedirá tu contraseña de firma digital al confirmar la generación del informe. 
+                        Si no la tienes configurada, créala en <a href="{{ route('viticulturist.settings', ['tab' => 'signature']) }}" class="text-blue-600 hover:text-blue-800 underline font-semibold">Configuración → Firma Digital</a>.
+                    </span>
+                </p>
+            </div>
+
             {{-- Errores de generación --}}
             @error('generation')
                 <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
@@ -127,9 +140,37 @@
             </div>
         </div>
 
+        {{-- Panel de Estadísticas Compacto --}}
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Resumen de Informes
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                    <p class="text-2xl font-bold text-blue-900">{{ $totalCount }}</p>
+                    <p class="text-xs text-blue-700 mt-1">Total Informes</p>
+                </div>
+                <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                    <p class="text-2xl font-bold text-green-900">{{ $validCount }}</p>
+                    <p class="text-xs text-green-700 mt-1">Válidos</p>
+                </div>
+                <div class="text-center p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg border border-red-200">
+                    <p class="text-2xl font-bold text-red-900">{{ $invalidCount }}</p>
+                    <p class="text-xs text-red-700 mt-1">Invalidados</p>
+                </div>
+                <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                    <p class="text-lg font-bold text-purple-900">{{ $lastReportDate ?? 'N/A' }}</p>
+                    <p class="text-xs text-purple-700 mt-1">Último Generado</p>
+                </div>
+            </div>
+        </div>
+
         {{-- Historial de Informes --}}
         <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                 <h2 class="text-2xl font-bold text-gray-800">Informes Generados</h2>
                 
                 {{-- Filtros y Búsqueda --}}
@@ -147,21 +188,11 @@
                         </svg>
                     </div>
 
-                    {{-- Filtro Estado --}}
-                    <select 
-                        wire:model.live="statusFilter"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
-                    >
-                        <option value="all">Todos</option>
-                        <option value="valid">Válidos</option>
-                        <option value="invalid">Invalidados</option>
-                    </select>
-
                     {{-- Resetear filtros --}}
                     @if($search || $statusFilter !== 'all')
                         <button 
                             wire:click="resetFilters"
-                            class="text-sm text-gray-600 hover:text-gray-900"
+                            class="text-sm text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
                             title="Limpiar filtros"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,108 +203,161 @@
                 </div>
             </div>
 
+            {{-- Tabs de Estado --}}
+            <div class="mb-6 border-b border-gray-200">
+                <div class="flex space-x-2">
+                    <button 
+                        wire:click="$set('statusFilter', 'all')"
+                        class="px-6 py-3 font-semibold border-b-2 transition-colors
+                               {{ $statusFilter === 'all' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}"
+                    >
+                        Todos ({{ $totalCount }})
+                    </button>
+                    <button 
+                        wire:click="$set('statusFilter', 'valid')"
+                        class="px-6 py-3 font-semibold border-b-2 transition-colors
+                               {{ $statusFilter === 'valid' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}"
+                    >
+                        ✓ Válidos ({{ $validCount }})
+                    </button>
+                    <button 
+                        wire:click="$set('statusFilter', 'invalid')"
+                        class="px-6 py-3 font-semibold border-b-2 transition-colors
+                               {{ $statusFilter === 'invalid' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}"
+                    >
+                        ✗ Invalidados ({{ $invalidCount }})
+                    </button>
+                </div>
+            </div>
+
             @if($reports->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Generado</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tamaño</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($reports as $report)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="text-2xl mr-2">{{ $report->report_icon }}</span>
-                                        <span class="text-sm font-medium text-gray-900">{{ $report->report_type_name }}</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{-- Vista de Tarjetas --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($reports as $report)
+                        <div class="bg-white rounded-xl shadow-lg border-2 {{ $report->isValid() ? 'border-green-200 hover:border-green-400' : 'border-red-200 hover:border-red-400' }} hover:shadow-xl transition-all duration-300 overflow-hidden">
+                            {{-- Header con icono y estado --}}
+                            <div class="p-6 bg-gradient-to-br {{ $report->isValid() ? 'from-green-50 to-green-100' : 'from-red-50 to-red-100' }}">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-5xl">{{ $report->report_icon }}</span>
+                                    @if($report->isValid())
+                                        <span class="px-3 py-1 bg-green-600 text-white rounded-full text-xs font-bold shadow-md">
+                                            ✓ Válido
+                                        </span>
+                                    @else
+                                        <span class="px-3 py-1 bg-red-600 text-white rounded-full text-xs font-bold shadow-md">
+                                            ✗ Invalidado
+                                        </span>
+                                    @endif
+                                </div>
+                                <h3 class="text-lg font-bold text-gray-900">{{ $report->report_type_name }}</h3>
+                            </div>
+
+                            {{-- Información --}}
+                            <div class="p-6 space-y-3">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        Periodo
+                                    </span>
+                                    <span class="font-semibold text-gray-900">
                                         {{ $report->period_start->format('d/m/Y') }} - {{ $report->period_end->format('d/m/Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                        {{ $report->created_at->format('d/m/Y H:i') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                        {{ $report->formatted_pdf_size }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($report->isValid())
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                ✓ Válido
-                                            </span>
-                                        @else
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                ✗ Invalidado
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Generado
+                                    </span>
+                                    <span class="font-medium text-gray-700">{{ $report->created_at->format('d/m/Y H:i') }}</span>
+                                </div>
+                                @if($report->signed_at)
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600 flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                            </svg>
+                                            Firmado
+                                        </span>
+                                        <span class="font-medium text-green-600">{{ $report->signed_at->format('d/m/Y H:i') }}</span>
+                                    </div>
+                                @endif
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                                        </svg>
+                                        Tamaño
+                                    </span>
+                                    <span class="font-medium text-gray-700">{{ $report->formatted_pdf_size }}</span>
+                                </div>
+                            </div>
+
+                            {{-- Acciones principales --}}
+                            <div class="p-6 pt-0 space-y-2">
+                                <button 
+                                    wire:click="downloadReport({{ $report->id }})"
+                                    class="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    Descargar PDF
+                                </button>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button 
+                                        wire:click="openPreviewModal({{ $report->id }})"
+                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        Ver
+                                    </button>
+                                    <a 
+                                        href="{{ route('reports.verify', ['code' => $report->verification_code]) }}" 
+                                        target="_blank"
+                                        class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Verificar
+                                    </a>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button 
+                                        wire:click="openShareModal({{ $report->id }})"
+                                        class="flex-1 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        Compartir
+                                    </button>
+                                    @if($report->isValid())
                                         <button 
-                                            wire:click="openPreviewModal({{ $report->id }})"
-                                            class="text-purple-600 hover:text-purple-900 mr-3"
-                                            title="Vista previa"
+                                            wire:click="openInvalidateModal({{ $report->id }})"
+                                            class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm font-semibold transition-colors"
+                                            title="Invalidar informe"
                                         >
-                                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
                                             </svg>
-                                            Vista Previa
                                         </button>
-                                        <button 
-                                            wire:click="downloadReport({{ $report->id }})"
-                                            class="text-green-600 hover:text-green-900 mr-3"
-                                        >
-                                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                            </svg>
-                                            Descargar
-                                        </button>
-                                        <a 
-                                            href="{{ route('reports.verify', ['code' => $report->verification_code]) }}" 
-                                            target="_blank"
-                                            class="text-blue-600 hover:text-blue-900 mr-3"
-                                        >
-                                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Verificar
-                                        </a>
-                                        <button 
-                                            wire:click="openShareModal({{ $report->id }})"
-                                            class="text-indigo-600 hover:text-indigo-900 mr-3"
-                                            title="Compartir por email"
-                                        >
-                                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                            </svg>
-                                            Compartir
-                                        </button>
-                                        @if($report->isValid())
-                                            <button 
-                                                wire:click="openInvalidateModal({{ $report->id }})"
-                                                class="text-red-600 hover:text-red-900"
-                                                title="Invalidar informe"
-                                            >
-                                                <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                                </svg>
-                                                Invalidar
-                                            </button>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
                 {{-- Paginación --}}
-                <div class="mt-4">
+                <div class="mt-6">
                     {{ $reports->links() }}
                 </div>
             @else
@@ -361,6 +445,50 @@
                         </div>
                     </div>
 
+                    {{-- Campo de Contraseña en el Modal --}}
+                    <div class="mb-6" x-data="{ showPassword: false }">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            Contraseña de Firma Digital
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                wire:model="password"
+                                x-bind:type="showPassword ? 'text' : 'password'"
+                                wire:keydown.enter="confirmAndGenerateReport"
+                                class="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                                placeholder="Introduce tu contraseña de firma digital"
+                                autofocus
+                            >
+                            <button
+                                type="button"
+                                x-on:click="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                tabindex="-1"
+                            >
+                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="mt-2 text-xs text-gray-500">
+                            Esta es tu contraseña específica para firmar documentos (diferente a tu contraseña de usuario).
+                        </p>
+                        @error('password') 
+                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> 
+                        @enderror
+                        @error('generation') 
+                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> 
+                        @enderror
+                    </div>
+
                     <div class="flex justify-end space-x-3">
                         <button 
                             wire:click="closeSummaryModal"
@@ -369,71 +497,24 @@
                             Cancelar
                         </button>
                         <button 
-                            wire:click="confirmAndOpenPasswordModal"
-                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-                        >
-                            Continuar → Firmar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Modal de Contraseña --}}
-    @if($showPasswordModal)
-        <div class="fixed z-50 inset-0 overflow-y-auto" x-data>
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closePasswordModal"></div>
-                
-                <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">🔐 Firma Electrónica</h3>
-                    <p class="text-gray-600 mb-6">
-                        Introduce tu contraseña para firmar electrónicamente este informe. 
-                        La firma garantiza la autenticidad e integridad del documento.
-                    </p>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
-                        <input 
-                            type="password" 
-                            wire:model="password"
-                            wire:keydown.enter="generateReport"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            placeholder="Introduce tu contraseña"
-                            autofocus
-                        >
-                        @error('password') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                        @error('generation') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button 
-                            wire:click="closePasswordModal"
+                            wire:click="confirmAndGenerateReport"
                             wire:loading.attr="disabled"
-                            wire:target="generateReport"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
-                        >
-                            Cancelar
-                        </button>
-                        <button 
-                            wire:click="generateReport"
-                            wire:loading.attr="disabled"
-                            wire:target="generateReport"
+                            wire:target="confirmAndGenerateReport"
                             class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                            <svg wire:loading wire:target="generateReport" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <svg wire:loading wire:target="confirmAndGenerateReport" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span wire:loading.remove wire:target="generateReport">Firmar y Generar</span>
-                            <span wire:loading wire:target="generateReport">Generando PDF...</span>
+                            <span wire:loading.remove wire:target="confirmAndGenerateReport">Firmar y Generar</span>
+                            <span wire:loading wire:target="confirmAndGenerateReport">Generando...</span>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     @endif
+
 
     {{-- Modal de Éxito --}}
     @if($showSuccessModal && $generatedReport)
@@ -604,14 +685,31 @@
                         @error('invalidateReason') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="mb-6">
+                    <div class="mb-6" x-data="{ showPassword: false }">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Confirma tu contraseña</label>
-                        <input 
-                            type="password" 
-                            wire:model="invalidatePassword"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            placeholder="Introduce tu contraseña"
-                        >
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                wire:model="invalidatePassword"
+                                x-bind:type="showPassword ? 'text' : 'password'"
+                                class="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                placeholder="Introduce tu contraseña"
+                            >
+                            <button
+                                type="button"
+                                x-on:click="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                tabindex="-1"
+                            >
+                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                </svg>
+                            </button>
+                        </div>
                         @error('invalidatePassword') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
                         @error('invalidate') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
                     </div>

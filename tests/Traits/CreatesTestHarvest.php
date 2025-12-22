@@ -32,12 +32,26 @@ trait CreatesTestHarvest
             'area' => 10.5,
             'active' => true,
         ]);
+        
+        // Create planting for the plot
+        $grapeVariety = \App\Models\GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+        $planting = \App\Models\PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
 
         // Create activity
         $activity = AgriculturalActivity::create([
             'viticulturist_id' => $user->id,
             'campaign_id' => $campaign->id,
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'activity_type' => 'harvest',
             'activity_date' => now(),
         ]);
@@ -56,7 +70,7 @@ trait CreatesTestHarvest
         // Create harvest
         $harvest = Harvest::create([
             'activity_id' => $activity->id,
-            'plot_planting_id' => null,
+            'plot_planting_id' => $planting->id,
             'container_id' => $container->id,
             'harvest_start_date' => now(),
             'harvest_end_date' => now()->addDays(1),

@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\CrewMember;
 use App\Models\AgriculturalActivity;
 use App\Models\Plot;
+use App\Models\PlotPlanting;
+use App\Models\GrapeVariety;
 use App\Models\Campaign;
 use Database\Seeders\AutonomousCommunitySeeder;
 use Database\Seeders\ProvinceSeeder;
@@ -98,6 +100,19 @@ class CrewTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+        
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
         $crew = Crew::create([
             'name' => 'Test Crew',
@@ -106,6 +121,7 @@ class CrewTest extends TestCase
 
         AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -115,6 +131,7 @@ class CrewTest extends TestCase
 
         AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'fertilization',
@@ -200,6 +217,19 @@ class CrewTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
+        
         $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
         $crew = Crew::create([
             'name' => 'Test Crew',
@@ -208,6 +238,7 @@ class CrewTest extends TestCase
 
         AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'phytosanitary',
@@ -217,6 +248,7 @@ class CrewTest extends TestCase
 
         AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => $campaign->id,
             'activity_type' => 'fertilization',

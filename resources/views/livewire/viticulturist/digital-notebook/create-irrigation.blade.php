@@ -6,7 +6,7 @@
     title="Registrar Riego"
     description="Registra un nuevo riego en el cuaderno digital"
     :icon="$icon"
-    icon-color="from-cyan-600 to-cyan-700"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
     <form wire:submit="save" class="space-y-8">

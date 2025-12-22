@@ -21,7 +21,6 @@ class Index extends Component
     public $password = '';
     
     // Modales
-    public $showPasswordModal = false;
     public $showSuccessModal = false;
     public $showSummaryModal = false;
     public $showInvalidateModal = false;
@@ -68,7 +67,7 @@ class Index extends Component
         'endDate.required_if' => 'La fecha de fin es obligatoria.',
         'endDate.after_or_equal' => 'La fecha fin debe ser posterior o igual a la fecha inicio.',
         'campaignId.required_if' => 'Selecciona una campaña.',
-        'password.required' => 'La contraseña es obligatoria para firmar el informe.',
+        'password.required' => 'La contraseña de firma digital es obligatoria.',
     ];
 
     public function mount()
@@ -180,12 +179,20 @@ class Index extends Component
     }
 
     /**
-     * Confirmar y abrir modal de contraseña
+     * Confirmar y generar informe (con validación de contraseña)
      */
-    public function confirmAndOpenPasswordModal()
+    public function confirmAndGenerateReport()
     {
+        // Validar contraseña
+        $this->validate([
+            'password' => 'required|string',
+        ], [
+            'password.required' => 'La contraseña de firma digital es obligatoria.',
+        ]);
+
+        // Cerrar modal de resumen y generar
         $this->showSummaryModal = false;
-        $this->showPasswordModal = true;
+        $this->generateReport();
     }
 
     /**
@@ -195,24 +202,31 @@ class Index extends Component
     {
         $this->showSummaryModal = false;
         $this->reportSummary = [];
-    }
-
-    /**
-     * Cerrar modal de contraseña
-     */
-    public function closePasswordModal()
-    {
-        $this->showPasswordModal = false;
         $this->password = '';
         $this->resetValidation('password');
     }
+
 
     /**
      * Generar el informe oficial
      */
     public function generateReport()
     {
-        $this->validate();
+        // Validar solo campos del formulario (la contraseña ya se validó en confirmAndGenerateReport)
+        $this->validate([
+            'reportType' => 'required|in:phytosanitary_treatments,full_digital_notebook',
+            'startDate' => 'required_if:reportType,phytosanitary_treatments|date',
+            'endDate' => 'required_if:reportType,phytosanitary_treatments|date|after_or_equal:startDate',
+            'campaignId' => 'required_if:reportType,full_digital_notebook|exists:campaigns,id',
+            'password' => 'required|string',
+        ], [
+            'reportType.required' => 'Selecciona el tipo de informe.',
+            'startDate.required_if' => 'La fecha de inicio es obligatoria.',
+            'endDate.required_if' => 'La fecha de fin es obligatoria.',
+            'endDate.after_or_equal' => 'La fecha fin debe ser posterior o igual a la fecha inicio.',
+            'campaignId.required_if' => 'Selecciona una campaña.',
+            'password.required' => 'La contraseña de firma digital es obligatoria.',
+        ]);
 
         try {
             $service = new OfficialReportService();
@@ -242,8 +256,8 @@ class Index extends Component
                 \Log::error('Error enviando email de informe generado: ' . $emailError->getMessage());
             }
 
-            // Cerrar modal de password y abrir modal de éxito
-            $this->closePasswordModal();
+            // Limpiar contraseña y abrir modal de éxito
+            $this->password = '';
             $this->showSuccessModal = true;
             
             // Resetear paginación para mostrar el nuevo informe
@@ -251,6 +265,8 @@ class Index extends Component
 
         } catch (\Exception $e) {
             $this->addError('generation', $e->getMessage());
+            // Mantener el modal de resumen abierto si hay error
+            $this->showSummaryModal = true;
         }
     }
 
@@ -476,8 +492,37 @@ class Index extends Component
         
         $reports = $query->recent()->paginate(10);
 
+        // Calcular estadísticas
+        $baseQuery = OfficialReport::forUser(auth()->id());
+        $totalCount = $baseQuery->count();
+        $validCount = (clone $baseQuery)->where('is_valid', true)->count();
+        $invalidCount = (clone $baseQuery)->where('is_valid', false)->count();
+        $lastReport = $baseQuery->recent()->first();
+        
+        // Estadísticas de firmas
+        $allReports = $baseQuery->get();
+        $signatureStats = [
+            'total_signed' => $allReports->count(),
+            'total_valid' => $allReports->where('is_valid', true)->count(),
+            'total_verifications' => $allReports->sum('verification_count'),
+            'last_signed' => $allReports->sortByDesc('signed_at')->first(),
+        ];
+        
+        // Actividad reciente (últimos 10)
+        $recentSignatures = OfficialReport::forUser(auth()->id())
+            ->whereNotNull('signed_at')
+            ->orderBy('signed_at', 'desc')
+            ->limit(10)
+            ->get();
+
         return view('livewire.viticulturist.official-reports.index', [
             'reports' => $reports,
+            'totalCount' => $totalCount,
+            'validCount' => $validCount,
+            'invalidCount' => $invalidCount,
+            'lastReportDate' => $lastReport ? $lastReport->created_at->format('d/m/Y') : null,
+            'signatureStats' => $signatureStats,
+            'recentSignatures' => $recentSignatures,
         ]);
     }
 }

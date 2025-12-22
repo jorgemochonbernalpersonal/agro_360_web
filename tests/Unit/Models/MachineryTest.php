@@ -5,6 +5,8 @@ namespace Tests\Unit\Models;
 use App\Models\AgriculturalActivity;
 use App\Models\Machinery;
 use App\Models\Plot;
+use App\Models\PlotPlanting;
+use App\Models\GrapeVariety;
 use App\Models\User;
 use Database\Seeders\AutonomousCommunitySeeder;
 use Database\Seeders\MunicipalitySeeder;
@@ -87,6 +89,18 @@ class MachineryTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        
+        $grapeVariety = GrapeVariety::firstOrCreate(
+            ['code' => 'TEMP'],
+            ['name' => 'Tempranillo', 'color' => 'red']
+        );
+        $planting = PlotPlanting::create([
+            'plot_id' => $plot->id,
+            'grape_variety_id' => $grapeVariety->id,
+            'area_planted' => $plot->area * 0.8,
+            'planting_year' => now()->year - 5,
+            'status' => 'active',
+        ]);
 
         $machinery = Machinery::create([
             'name' => 'Tractor Test',
@@ -96,6 +110,7 @@ class MachineryTest extends TestCase
 
         AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => null,
             'activity_type' => 'phytosanitary',
@@ -105,6 +120,7 @@ class MachineryTest extends TestCase
 
         AgriculturalActivity::create([
             'plot_id' => $plot->id,
+            'plot_planting_id' => $planting->id,
             'viticulturist_id' => $viticulturist->id,
             'campaign_id' => null,
             'activity_type' => 'fertilization',

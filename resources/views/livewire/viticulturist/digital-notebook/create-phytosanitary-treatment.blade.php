@@ -6,7 +6,7 @@
     title="Registrar Tratamiento Fitosanitario"
     description="Registra un nuevo tratamiento fitosanitario en el cuaderno digital"
     :icon="$icon"
-    icon-color="from-red-600 to-red-700"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
     <form wire:submit="save" class="space-y-8">

@@ -16,6 +16,11 @@ class GenerateSitemap extends Command
         $this->info('Generating sitemap...');
 
         $baseUrl = config('app.url');
+        
+        // Asegurar que la URL use HTTPS en producción
+        if (config('app.env') === 'production') {
+            $baseUrl = str_replace('http://', 'https://', $baseUrl);
+        }
 
         Sitemap::create()
             ->add(Url::create($baseUrl . '/')
@@ -37,5 +42,6 @@ class GenerateSitemap extends Command
             ->writeToFile(public_path('sitemap.xml'));
 
         $this->info('Sitemap generated successfully at public/sitemap.xml');
+        $this->info('Base URL used: ' . $baseUrl);
     }
 }

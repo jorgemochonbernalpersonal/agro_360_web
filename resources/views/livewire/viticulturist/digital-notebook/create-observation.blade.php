@@ -6,7 +6,7 @@
     title="Registrar Observación"
     description="Registra una nueva observación en el cuaderno digital"
     :icon="$icon"
-    icon-color="from-amber-600 to-amber-700"
+    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
     <form wire:submit="save" class="space-y-8">

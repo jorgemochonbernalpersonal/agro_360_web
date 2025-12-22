@@ -361,8 +361,12 @@ class CompleteTestUserSeeder extends Seeder
                 $plot = $plotsCollection->random();
                 $activityDate = "{$year}-" . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . "-" . str_pad(rand(1, 28), 2, '0', STR_PAD_LEFT);
                 
+                // Obtener una plantación activa de la parcela si existe
+                $planting = $plot->plantings()->where('status', 'active')->first();
+                
                 $activity = AgriculturalActivity::create([
                     'plot_id' => $plot->id,
+                    'plot_planting_id' => $planting?->id,
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $campaign->id,
                     'activity_type' => $type,
