@@ -71,3 +71,4 @@ Thumbs.db
 # Los archivos compilados DEBEN subirse a git para que funcionen en producción
 # /public/build  # SIEMPRE COMENTADO - No descomentar nunca
 # /public/hot ya está ignorado arriba
+bootstrap/cache/
