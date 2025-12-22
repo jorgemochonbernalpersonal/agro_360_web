@@ -411,7 +411,7 @@
                                 <div class="relative">
                                     <input 
                                         type="password" 
-                                        wire:model="signaturePasswordConfirmation"
+                                        wire:model="signaturePassword_confirmation"
                                         x-bind:type="showPasswordConfirmation ? 'text' : 'password'"
                                         class="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                         placeholder="Repite la contraseña"

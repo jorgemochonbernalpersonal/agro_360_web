@@ -36,7 +36,7 @@ class Settings extends Component
 
     // === SIGNATURE TAB ===
     public $signaturePassword = '';
-    public $signaturePasswordConfirmation = '';
+    public $signaturePassword_confirmation = '';
     public $hasDigitalSignature = false;
 
     public function mount()
@@ -211,7 +211,7 @@ class Settings extends Component
             DigitalSignature::createOrUpdateForUser($user->id, $this->signaturePassword);
             
             $this->signaturePassword = '';
-            $this->signaturePasswordConfirmation = '';
+            $this->signaturePassword_confirmation = '';
             $this->hasDigitalSignature = true;
             $this->toastSuccess('Contraseña de firma digital ' . ($this->hasDigitalSignature ? 'actualizada' : 'creada') . ' correctamente');
             
