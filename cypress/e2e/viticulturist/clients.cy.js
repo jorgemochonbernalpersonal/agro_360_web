@@ -38,6 +38,14 @@ describe('Viticulturist Clients (Clientes) - CRUD', () => {
     // Fill address using data-cy selector
     cy.get('[data-cy="address-address"][data-cy-address-index="0"]').clear().type('Calle Principal 123')
     
+    // Fill required address fields (autonomous community, province, municipality, postal code)
+    cy.get('[data-cy="address-autonomous-community"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.wait(500) // Wait for provinces to load
+    cy.get('[data-cy="address-province"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.wait(500) // Wait for municipalities to load
+    cy.get('[data-cy="address-municipality"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.get('[data-cy="address-postal-code"][data-cy-address-index="0"]').clear().type('28001')
+    
     // Submit form using data-cy selector
     cy.get('[data-cy="submit-button"]').click()
     
@@ -74,6 +82,14 @@ describe('Viticulturist Clients (Clientes) - CRUD', () => {
     
     // Fill address using data-cy selector
     cy.get('[data-cy="address-address"][data-cy-address-index="0"]').clear().type('Calle Empresa 456')
+    
+    // Fill required address fields (autonomous community, province, municipality, postal code)
+    cy.get('[data-cy="address-autonomous-community"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.wait(500) // Wait for provinces to load
+    cy.get('[data-cy="address-province"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.wait(500) // Wait for municipalities to load
+    cy.get('[data-cy="address-municipality"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.get('[data-cy="address-postal-code"][data-cy-address-index="0"]').clear().type('28001')
     
     // Submit form using data-cy selector
     cy.get('[data-cy="submit-button"]').click()
@@ -217,6 +233,12 @@ describe('Viticulturist Clients (Clientes) - CRUD', () => {
     cy.get('[data-cy="address-address"][data-cy-address-index="0"]').should('be.visible')
     cy.get('[data-cy="address-address"][data-cy-address-index="0"]').clear().type('Primera Dirección 123')
     cy.get('[data-cy="address-postal-code"][data-cy-address-index="0"]').clear().type('28001')
+    // Fill required address fields
+    cy.get('[data-cy="address-autonomous-community"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.wait(500)
+    cy.get('[data-cy="address-province"][data-cy-address-index="0"]').select(1, { force: true })
+    cy.wait(500)
+    cy.get('[data-cy="address-municipality"][data-cy-address-index="0"]').select(1, { force: true })
     
     // Add a second address
     cy.get('[data-cy="add-address-button"]').click()
@@ -226,9 +248,12 @@ describe('Viticulturist Clients (Clientes) - CRUD', () => {
     cy.get('[data-cy="address-item"][data-cy-address-index="1"]').should('be.visible')
     cy.get('[data-cy="address-address"][data-cy-address-index="1"]').clear().type('Segunda Dirección 456')
     cy.get('[data-cy="address-postal-code"][data-cy-address-index="1"]').clear().type('28002')
-    
-    // Mark second address as delivery note address
-    cy.get('[data-cy="address-delivery-note"][data-cy-address-index="1"]').check()
+    // Fill required address fields
+    cy.get('[data-cy="address-autonomous-community"][data-cy-address-index="1"]').select(1, { force: true })
+    cy.wait(500)
+    cy.get('[data-cy="address-province"][data-cy-address-index="1"]').select(1, { force: true })
+    cy.wait(500)
+    cy.get('[data-cy="address-municipality"][data-cy-address-index="1"]').select(1, { force: true })
     
     // Remove second address
     cy.get('[data-cy="remove-address"][data-cy-address-index="1"]').click()
@@ -292,6 +317,13 @@ describe('Viticulturist Clients (Clientes) - CRUD', () => {
       cy.get('[data-cy="first-name"]').clear().type('Test')
       cy.get('[data-cy="last-name"]').clear().type('User')
       cy.get('[data-cy="address-address"][data-cy-address-index="0"]').clear().type('Calle Test 123')
+      // Fill required address fields
+      cy.get('[data-cy="address-autonomous-community"][data-cy-address-index="0"]').select(1, { force: true })
+      cy.wait(500)
+      cy.get('[data-cy="address-province"][data-cy-address-index="0"]').select(1, { force: true })
+      cy.wait(500)
+      cy.get('[data-cy="address-municipality"][data-cy-address-index="0"]').select(1, { force: true })
+      cy.get('[data-cy="address-postal-code"][data-cy-address-index="0"]').clear().type('28001')
       
       // Enter invalid email
       cy.get('[data-cy="email"]').clear().type('invalid-email')
@@ -331,6 +363,13 @@ describe('Viticulturist Clients (Clientes) - CRUD', () => {
       cy.get('[data-cy="first-name"]').clear().type('Test')
       cy.get('[data-cy="last-name"]').clear().type('User')
       cy.get('[data-cy="address-address"][data-cy-address-index="0"]').clear().type('Calle Test 123')
+      // Fill required address fields
+      cy.get('[data-cy="address-autonomous-community"][data-cy-address-index="0"]').select(1, { force: true })
+      cy.wait(500)
+      cy.get('[data-cy="address-province"][data-cy-address-index="0"]').select(1, { force: true })
+      cy.wait(500)
+      cy.get('[data-cy="address-municipality"][data-cy-address-index="0"]').select(1, { force: true })
+      cy.get('[data-cy="address-postal-code"][data-cy-address-index="0"]').clear().type('28001')
       
       // Enter invalid discount (> 100)
       cy.get('body').then(($body) => {

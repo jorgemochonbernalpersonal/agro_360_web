@@ -54,11 +54,14 @@
                             @enderror
                         </div>
                         <div>
-                            <x-label for="company_document">CIF/NIF</x-label>
-                            <x-input wire:model="company_document" id="company_document" data-cy="company-document" />
-                            @error('company_document')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <x-label for="company_document" required>CIF/NIF</x-label>
+                            <x-input 
+                                wire:model="company_document" 
+                                id="company_document" 
+                                data-cy="company-document"
+                                :error="$errors->first('company_document')"
+                                required
+                            />
                         </div>
                     </div>
                 </x-form-section>
@@ -112,10 +115,6 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="flex items-center">
-                        <x-checkbox wire:model="active" id="active" />
-                        <x-label for="active" class="ml-2">Cliente activo</x-label>
-                    </div>
                 </div>
             </x-form-section>
 
@@ -147,11 +146,6 @@
                                     @if($address['is_default'])
                                         <span class="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
                                             Por defecto
-                                        </span>
-                                    @endif
-                                    @if($address['is_delivery_note_address'])
-                                        <span class="px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-700 rounded-full">
-                                            Albarán
                                         </span>
                                     @endif
                                 </div>
@@ -188,11 +182,6 @@
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
-                                    <x-label for="addresses_{{ $index }}_name">Alias (ej: Oficina, Almacén...)</x-label>
-                                    <x-input wire:model="addresses.{{ $index }}.name" id="addresses_{{ $index }}_name" data-cy="address-name" data-cy-address-index="{{ $index }}" placeholder="Nombre identificativo" />
-                                </div>
-                                
-                                <div class="md:col-span-2">
                                     <x-label for="addresses_{{ $index }}_address" required>Dirección completa</x-label>
                                     <x-input 
                                         wire:model="addresses.{{ $index }}.address" 
@@ -208,8 +197,73 @@
                                 </div>
                                 
                                 <div>
-                                    <x-label for="addresses_{{ $index }}_postal_code">Código Postal</x-label>
-                                    <x-input wire:model="addresses.{{ $index }}.postal_code" id="addresses_{{ $index }}_postal_code" data-cy="address-postal-code" data-cy-address-index="{{ $index }}" placeholder="28001" />
+                                    <x-label for="addresses_{{ $index }}_autonomous_community_id" required>Comunidad Autónoma</x-label>
+                                    <x-select 
+                                        wire:model.live="addresses.{{ $index }}.autonomous_community_id" 
+                                        id="addresses_{{ $index }}_autonomous_community_id" 
+                                        data-cy="address-autonomous-community" 
+                                        data-cy-address-index="{{ $index }}"
+                                        :error="$errors->first('addresses.' . $index . '.autonomous_community_id')"
+                                        required
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        @foreach($autonomousCommunities as $ca)
+                                            <option value="{{ $ca->id }}">{{ $ca->name }}</option>
+                                        @endforeach
+                                    </x-select>
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_province_id" required>Provincia</x-label>
+                                    <x-select 
+                                        wire:model.live="addresses.{{ $index }}.province_id" 
+                                        id="addresses_{{ $index }}_province_id" 
+                                        data-cy="address-province" 
+                                        data-cy-address-index="{{ $index }}"
+                                        :error="$errors->first('addresses.' . $index . '.province_id')"
+                                        :disabled="!($addresses[$index]['autonomous_community_id'] ?? null)"
+                                        required
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        @if(isset($provinces[$index]))
+                                            @foreach($provinces[$index] as $province)
+                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </x-select>
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_municipality_id" required>Municipio</x-label>
+                                    <x-select 
+                                        wire:model.live="addresses.{{ $index }}.municipality_id" 
+                                        id="addresses_{{ $index }}_municipality_id" 
+                                        data-cy="address-municipality" 
+                                        data-cy-address-index="{{ $index }}"
+                                        :error="$errors->first('addresses.' . $index . '.municipality_id')"
+                                        :disabled="!($addresses[$index]['province_id'] ?? null)"
+                                        required
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        @if(isset($municipalities[$index]))
+                                            @foreach($municipalities[$index] as $municipality)
+                                                <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </x-select>
+                                </div>
+                                
+                                <div>
+                                    <x-label for="addresses_{{ $index }}_postal_code" required>Código Postal</x-label>
+                                    <x-input 
+                                        wire:model="addresses.{{ $index }}.postal_code" 
+                                        id="addresses_{{ $index }}_postal_code" 
+                                        data-cy="address-postal-code" 
+                                        data-cy-address-index="{{ $index }}" 
+                                        placeholder="28001"
+                                        :error="$errors->first('addresses.' . $index . '.postal_code')"
+                                        required
+                                    />
                                 </div>
                                 
                                 <div>
@@ -217,22 +271,6 @@
                                     <x-input wire:model="addresses.{{ $index }}.description" id="addresses_{{ $index }}_description" data-cy="address-description" data-cy-address-index="{{ $index }}" placeholder="Notas adicionales..." />
                                 </div>
                                 
-                                <div class="md:col-span-2 flex flex-wrap items-center gap-4 pt-2 border-t border-gray-200">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input 
-                                            type="checkbox" 
-                                            wire:model="addresses.{{ $index }}.is_delivery_note_address"
-                                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                            data-cy="address-delivery-note"
-                                            data-cy-address-index="{{ $index }}"
-                                        />
-                                        <span class="text-sm font-medium text-gray-700">Usar para albaranes</span>
-                                    </label>
-                                    
-                                    <p class="text-xs text-gray-500 ml-auto">
-                                        💡 Puedes tener múltiples direcciones para diferentes propósitos
-                                    </p>
-                                </div>
                             </div>
                         </div>
                     @endforeach

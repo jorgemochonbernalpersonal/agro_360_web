@@ -28,7 +28,7 @@
                                 <option value="">Selecciona una dirección</option>
                                 @foreach($availableAddresses as $address)
                                     <option value="{{ $address->id }}">
-                                        {{ $address->name ?? 'Dirección #' . $address->id }}
+                                        Dirección #{{ $address->id }}
                                         @if($address->is_default)
                                             (Por defecto)
                                         @endif

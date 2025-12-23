@@ -31,13 +31,11 @@ class ClientTest extends TestCase
 
         $address1 = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección 1',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
         ]);
         $address2 = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección 2',
             'address' => 'Calle Test 456',
             'postal_code' => '28002',
         ]);
@@ -52,7 +50,6 @@ class ClientTest extends TestCase
 
         $defaultAddress = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Principal',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
             'is_default' => true,
@@ -60,7 +57,6 @@ class ClientTest extends TestCase
 
         $otherAddress = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Secundaria',
             'address' => 'Calle Test 456',
             'postal_code' => '28002',
             'is_default' => false,

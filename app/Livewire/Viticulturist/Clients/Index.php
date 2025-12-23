@@ -3,13 +3,14 @@
 namespace App\Livewire\Viticulturist\Clients;
 
 use App\Models\Client;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public $currentTab = 'list';
     public $search = '';
@@ -49,6 +50,22 @@ class Index extends Component
     public function updatingFilterActive()
     {
         $this->resetPage();
+    }
+
+    public function toggleActive($clientId)
+    {
+        $user = Auth::user();
+        $client = Client::forUser($user->id)->findOrFail($clientId);
+        
+        $client->update([
+            'active' => !$client->active
+        ]);
+
+        if ($client->active) {
+            $this->toastSuccess('Cliente activado exitosamente.');
+        } else {
+            $this->toastSuccess('Cliente desactivado exitosamente.');
+        }
     }
 
     public function render()
