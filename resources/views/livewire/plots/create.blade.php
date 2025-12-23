@@ -6,7 +6,7 @@
 
     <x-form-card title="Nueva Parcela" description="Crea una nueva parcela agrícola" :icon="$plotIcon"
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]" :back-url="route('plots.index')">
-        <form wire:submit.prevent="save" class="space-y-8">
+        <form wire:submit.prevent="save" class="space-y-8" data-cy="plot-create-form">
             @error('general')
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
                     <div class="flex items-start">
@@ -29,14 +29,14 @@
                     <!-- Nombre -->
                     <div>
                         <x-label for="name" required>Nombre de la Parcela</x-label>
-                        <x-input wire:model="name" type="text" id="name" placeholder="Ej: Parcela Norte"
+                        <x-input wire:model="name" type="text" id="name" data-cy="plot-name" placeholder="Ej: Parcela Norte"
                             :error="$errors->first('name')" required />
                     </div>
 
                     <!-- Área -->
                     <div>
                         <x-label for="area">Área (hectáreas)</x-label>
-                        <x-input wire:model="area" type="number" step="0.001" id="area" placeholder="0.000"
+                        <x-input wire:model="area" type="number" step="0.001" id="area" data-cy="plot-area" placeholder="0.000"
                             :error="$errors->first('area')" />
                     </div>
                 </div>
@@ -44,14 +44,14 @@
                 <!-- Descripción -->
                 <div class="mt-6">
                     <x-label for="description">Descripción</x-label>
-                    <x-textarea wire:model="description" id="description" rows="3"
+                    <x-textarea wire:model="description" id="description" data-cy="plot-description" rows="3"
                         placeholder="Descripción de la parcela..." :error="$errors->first('description')" />
                 </div>
 
                 <!-- Activa -->
                 <div class="mt-6">
                     <label for="active" class="flex items-center cursor-pointer">
-                        <input wire:model="active" type="checkbox" id="active"
+                        <input wire:model="active" type="checkbox" id="active" data-cy="plot-active"
                             class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]">
                         <span class="ml-2 text-sm font-semibold text-gray-700">Parcela activa</span>
                     </label>
@@ -71,7 +71,7 @@
                         @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']))
                             <div>
                                 <x-label for="viticulturist_id" required>Viticultor Asignado</x-label>
-                                <x-select wire:model="viticulturist_id" id="viticulturist_id" :error="$errors->first('viticulturist_id')" required>
+                                <x-select wire:model="viticulturist_id" id="viticulturist_id" data-cy="plot-viticulturist-id" :error="$errors->first('viticulturist_id')" required>
                                     <option value="">Seleccionar...</option>
                                     @forelse ($this->viticulturists as $viticulturist)
                                         <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}</option>
@@ -89,7 +89,7 @@
                         @if ($this->canSelectSigpac())
                             <div>
                                 <x-label for="sigpac_use" required>Usos SIGPAC</x-label>
-                                <x-select wire:model="sigpac_use" id="sigpac_use" multiple size="5"
+                                <x-select wire:model="sigpac_use" id="sigpac_use" data-cy="plot-sigpac-use" multiple size="5"
                                     :error="$errors->first('sigpac_use')" required>
                                     @forelse ($sigpacUses as $use)
                                         <option value="{{ $use->id }}">
@@ -117,7 +117,7 @@
                     <!-- Comunidad Autónoma -->
                     <div>
                         <x-label for="autonomous_community_id" required>Comunidad Autónoma</x-label>
-                        <x-select wire:model.live="autonomous_community_id" id="autonomous_community_id"
+                        <x-select wire:model.live="autonomous_community_id" id="autonomous_community_id" data-cy="plot-autonomous-community-id"
                             :error="$errors->first('autonomous_community_id')" required>
                             <option value="">Seleccionar...</option>
                             @foreach ($autonomousCommunities as $community)
@@ -131,7 +131,7 @@
                     <!-- Provincia -->
                     <div>
                         <x-label for="province_id" required>Provincia</x-label>
-                        <x-select wire:model.live="province_id" id="province_id" :error="$errors->first('province_id')" required
+                        <x-select wire:model.live="province_id" id="province_id" data-cy="plot-province-id" :error="$errors->first('province_id')" required
                             :disabled="!$autonomous_community_id">
                             <option value="">Seleccionar...</option>
                             @foreach ($provinces as $province)
@@ -143,7 +143,7 @@
                     <!-- Municipio -->
                     <div>
                         <x-label for="municipality_id" required>Municipio</x-label>
-                        <x-select wire:model.live="municipality_id" id="municipality_id" :error="$errors->first('municipality_id')" required
+                        <x-select wire:model.live="municipality_id" id="municipality_id" data-cy="plot-municipality-id" :error="$errors->first('municipality_id')" required
                             :disabled="!$province_id">
                             <option value="">Seleccionar...</option>
                             @foreach ($municipalities as $municipality)

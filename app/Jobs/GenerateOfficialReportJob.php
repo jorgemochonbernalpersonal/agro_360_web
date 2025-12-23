@@ -128,13 +128,110 @@ class GenerateOfficialReportJob implements ShouldQueue
                     'pdf_path' => $pdfPath,
                     'pdf_size' => strlen($pdfContent),
                     'is_valid' => true,
+                    'processing_status' => 'completed',  // ✅ CRITICAL FIX: Mark as completed
+                    'completed_at' => now(),             // ✅ CRITICAL FIX: Set completion timestamp
                 ]);
             } else {
-                // TODO: Implementar full notebook
-                throw new \Exception('Full notebook report not implemented for queue yet');
+                // Cuaderno digital completo
+                $campaignId = $this->parameters['campaign_id'];
+                $campaign = \App\Models\Campaign::findOrFail($campaignId);
+
+                // Obtener TODAS las actividades de la campaña
+                $activities = \App\Models\AgriculturalActivity::forUser($this->userId)
+                    ->forCampaign($campaignId)
+                    ->with([
+                        'plot',
+                        'plotPlanting.grapeVariety',
+                        'phytosanitaryTreatment.product',
+                        'fertilization',
+                        'irrigation',
+                        'culturalWork',
+                        'observation',
+                        'harvest',
+                        'crew',
+                        'crewMember',
+                        'machinery',
+                    ])
+                    ->orderBy('activity_date', 'asc')
+                    ->get();
+
+                if ($activities->isEmpty()) {
+                    throw new \Exception('No hay actividades registradas en esta campaña.');
+                }
+
+                // Estadísticas
+                $stats = [
+                    'total_activities' => $activities->count(),
+                    'phytosanitary_count' => $activities->where('activity_type', 'phytosanitary')->count(),
+                    'fertilization_count' => $activities->where('activity_type', 'fertilization')->count(),
+                    'irrigation_count' => $activities->where('activity_type', 'irrigation')->count(),
+                    'cultural_count' => $activities->where('activity_type', 'cultural')->count(),
+                    'observation_count' => $activities->where('activity_type', 'observation')->count(),
+                    'harvest_count' => $activities->where('activity_type', 'harvest')->count(),
+                ];
+
+                // Actualizar metadata
+                $report->update(['report_metadata' => array_merge($stats, [
+                    'campaign_id' => $campaignId,
+                    'campaign_name' => $campaign->name,
+                ])]);
+
+                // Generar PDF
+                $user = \App\Models\User::find($this->userId);
+                $service = new OfficialReportService();
+                $pdfPath = $service->generateFullNotebookPDF($report, $user, $campaign, $activities, $stats);
+
+                // Calcular hash del PDF
+                $pdfContent = \Illuminate\Support\Facades\Storage::disk('local')->get($pdfPath);
+                $pdfHash = hash('sha256', $pdfContent);
+
+                // Generar firma
+                $signatureData = [
+                    'type' => 'full_digital_notebook',
+                    'user_id' => $this->userId,
+                    'campaign_id' => $campaignId,
+                    'campaign_name' => $campaign->name,
+                    'period_start' => $campaign->start_date->toDateString(),
+                    'period_end' => $campaign->end_date->toDateString(),
+                    'activity_ids' => $activities->pluck('id')->toArray(),
+                    'stats' => $stats,
+                    'pdf_hash' => $pdfHash,
+                    'timestamp' => now()->toIso8601String(),
+                ];
+
+                $signatureResult = \App\Models\OfficialReport::generateSignatureHash($signatureData);
+
+                // Actualizar report con datos reales
+                $report->update([
+                    'signature_hash' => $signatureResult['hash'],
+                    'signature_metadata' => [
+                        'password_verified' => true,
+                        'signed_by_name' => $user->name,
+                        'signed_by_email' => $user->email,
+                        'signature_algorithm' => 'SHA-256',
+                        'signature_version' => $signatureResult['version'],
+                        'nonce' => $signatureResult['nonce'],
+                        'pdf_hash' => $pdfHash,
+                    ],
+                    'pdf_path' => $pdfPath,
+                    'pdf_size' => strlen($pdfContent),
+                    'is_valid' => true,
+                    'processing_status' => 'completed',
+                    'completed_at' => now(),
+                ]);
             }
 
             Log::info('Report generation completed', ['report_id' => $this->reportId]);
+
+            // Enviar notificación en la app
+            try {
+                $report->user->notify(new \App\Notifications\ReportGeneratedNotification($report));
+            } catch (\Exception $notifError) {
+                Log::warning('Failed to send notification', [
+                    'report_id' => $this->reportId,
+                    'error' => $notifError->getMessage()
+                ]);
+            }
 
             // Enviar email de éxito
             try {
@@ -160,6 +257,16 @@ class GenerateOfficialReportJob implements ShouldQueue
                 'processing_status' => 'failed',
                 'processing_error' => $e->getMessage()
             ]);
+
+            // Enviar notificación en la app
+            try {
+                $report->user->notify(new \App\Notifications\ReportFailedNotification($report, $e->getMessage()));
+            } catch (\Exception $notifError) {
+                Log::warning('Failed to send failure notification', [
+                    'report_id' => $this->reportId,
+                    'error' => $notifError->getMessage()
+                ]);
+            }
 
             // Enviar email de error
             try {

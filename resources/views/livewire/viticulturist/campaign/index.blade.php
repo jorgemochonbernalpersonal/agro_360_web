@@ -34,7 +34,7 @@
     >
         <x-slot:actionButton>
             @can('create', \App\Models\Campaign::class)
-                <a href="{{ route('viticulturist.campaign.create') }}" class="group">
+                <a href="{{ route('viticulturist.campaign.create') }}" class="group" data-cy="create-campaign-button">
                     <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
                         <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -51,8 +51,9 @@
         <x-filter-input 
             wire:model.live.debounce.300ms="search" 
             placeholder="Buscar por nombre o descripción..."
+            data-cy="campaign-search-input"
         />
-        <x-filter-select wire:model.live="yearFilter" icon="calendar">
+        <x-filter-select wire:model.live="yearFilter" icon="calendar" data-cy="campaign-year-filter">
             <option value="">Todos los años</option>
             @foreach($years as $year)
                 <option value="{{ $year }}">{{ $year }}</option>
@@ -128,10 +129,10 @@
                     </x-table-cell>
                     <x-table-actions align="right">
                         @can('view', $campaign)
-                            <x-action-button variant="view" href="{{ route('viticulturist.campaign.show', $campaign) }}" />
+                            <x-action-button variant="view" href="{{ route('viticulturist.campaign.show', $campaign) }}" data-cy="view-campaign-button" />
                         @endcan
                         @can('update', $campaign)
-                            <x-action-button variant="edit" href="{{ route('viticulturist.campaign.edit', $campaign) }}" />
+                            <x-action-button variant="edit" href="{{ route('viticulturist.campaign.edit', $campaign) }}" data-cy="edit-campaign-button" />
                         @endcan
                         @if(!$campaign->active)
                             @can('activate', $campaign)

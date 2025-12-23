@@ -9,7 +9,7 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.phytosanitary-products.index')"
 >
-    <form wire:submit="save" class="space-y-8">
+    <form wire:submit="save" class="space-y-8" data-cy="product-form">
         <x-form-section title="Datos Básicos" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -18,6 +18,7 @@
                             wire:model="name" 
                             type="text" 
                             id="name"
+                            data-cy="product-name-input"
                             :error="$errors->first('name')"
                             required
                         />
@@ -28,6 +29,7 @@
                             wire:model="active_ingredient" 
                             type="text" 
                             id="active_ingredient"
+                            data-cy="product-active-ingredient-input"
                             :error="$errors->first('active_ingredient')"
                         />
                     </div>
@@ -39,6 +41,7 @@
                         <x-select 
                             wire:model="type" 
                             id="type"
+                            data-cy="product-type-select"
                             :error="$errors->first('type')"
                         >
                             <option value="">Seleccionar...</option>
@@ -55,6 +58,7 @@
                         <x-select 
                             wire:model="toxicity_class" 
                             id="toxicity_class"
+                            data-cy="product-toxicity-class-select"
                             :error="$errors->first('toxicity_class')"
                         >
                             <option value="">Seleccionar...</option>
@@ -71,6 +75,7 @@
                             type="number" 
                             min="0"
                             id="withdrawal_period_days"
+                            data-cy="product-withdrawal-period-input"
                             :error="$errors->first('withdrawal_period_days')"
                         />
                         <p class="mt-1 text-xs text-gray-500">⚠️ Días mínimos entre aplicación y cosecha (obligatorio por ley)</p>
@@ -86,6 +91,7 @@
                             wire:model="registration_number" 
                             type="text" 
                             id="registration_number"
+                            data-cy="product-registration-number-input"
                             :error="$errors->first('registration_number')"
                         />
                     </div>
@@ -95,6 +101,7 @@
                             wire:model="manufacturer" 
                             type="text" 
                             id="manufacturer"
+                            data-cy="product-manufacturer-input"
                             :error="$errors->first('manufacturer')"
                         />
                     </div>
@@ -105,6 +112,7 @@
                     <x-textarea 
                         wire:model="description" 
                         id="description"
+                        data-cy="product-description-input"
                         rows="4"
                         :error="$errors->first('description')"
                     />

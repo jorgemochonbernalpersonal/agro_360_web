@@ -275,7 +275,7 @@ class AgriculturalActivityTest extends TestCase
 
         $irrigation = \App\Models\Irrigation::create([
             'activity_id' => $activity->id,
-            'water_amount' => 500.0,
+            'water_volume' => 500.0,
         ]);
 
         $this->assertNotNull($activity->irrigation);

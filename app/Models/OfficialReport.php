@@ -214,7 +214,8 @@ class OfficialReport extends Model
 
     /**
      * Verificar si el informe puede ser invalidado
-     * Por seguridad, solo se pueden invalidar informes recientes (30 días)
+     * Por seguridad, solo se pueden invalidar informes recientes
+     * El número de días se configura en config/reports.php
      * 
      * @return bool
      */
@@ -306,16 +307,8 @@ class OfficialReport extends Model
      */
     public function getReportTypeNameAttribute(): string
     {
-        return match($this->report_type) {
-            'phytosanitary_treatments' => 'Tratamientos Fitosanitarios',
-            'full_digital_notebook' => 'Cuaderno Digital Completo',
-            'pac_report' => 'Informe PAC',
-            'certification_report' => 'Certificado de Actividades',
-            'fertilizations_report' => 'Informe de Fertilizaciones',
-            'irrigations_report' => 'Informe de Riegos',
-            'harvests_report' => 'Informe de Cosechas',
-            default => 'Informe',
-        };
+        $types = config('reports.types', []);
+        return $types[$this->report_type]['name'] ?? 'Informe';
     }
 
     /**
@@ -323,16 +316,34 @@ class OfficialReport extends Model
      */
     public function getReportIconAttribute(): string
     {
-        return match($this->report_type) {
-            'phytosanitary_treatments' => '🧪',
-            'full_digital_notebook' => '📔',
-            'pac_report' => '🏛️',
-            'certification_report' => '✅',
-            'fertilizations_report' => '🌱',
-            'irrigations_report' => '💧',
-            'harvests_report' => '🍇',
-            default => '📄',
-        };
+        $types = config('reports.types', []);
+        return $types[$this->report_type]['icon'] ?? '📄';
+    }
+
+    /**
+     * Obtener descripción del tipo de informe
+     */
+    public function getReportTypeDescriptionAttribute(): string
+    {
+        $types = config('reports.types', []);
+        return $types[$this->report_type]['description'] ?? '';
+    }
+
+    /**
+     * Obtener tipos de informes disponibles
+     * 
+     * @param bool $onlyImplemented Filtrar solo tipos implementados
+     * @return array
+     */
+    public static function getAvailableTypes(bool $onlyImplemented = true): array
+    {
+        $types = config('reports.types', []);
+        
+        if ($onlyImplemented) {
+            return array_filter($types, fn($type) => $type['implemented'] ?? false);
+        }
+        
+        return $types;
     }
 
     /**

@@ -22,9 +22,10 @@ describe('Viticulturist Invoices (Facturas) - Complete Flow', () => {
     
     // Wait for form to load
     cy.contains('Nueva Factura').should('be.visible')
+    cy.get('[data-cy="invoice-create-form"]').should('be.visible')
     
-    // Select client if dropdown exists - use id attribute
-    cy.get('#client_id').then(($select) => {
+    // Select client using data-cy selector
+    cy.get('[data-cy="client-id"]').then(($select) => {
       if ($select.length > 0 && $select.find('option').length > 1) {
         // Select the second option (first is "Selecciona un cliente")
         cy.wrap($select).find('option').eq(1).then(($option) => {
@@ -34,19 +35,19 @@ describe('Viticulturist Invoices (Facturas) - Complete Flow', () => {
       }
     });
     
-    // Fill delivery note code (required field)
-    cy.get('#delivery_note_code').clear().type('ALB-TEST-001');
+    // Fill delivery note code using data-cy selector
+    cy.get('[data-cy="delivery-note-code"]').clear().type('ALB-TEST-001');
     
-    // Fill invoice date using id
-    cy.get('#invoice_date').then(($input) => {
+    // Fill invoice date using data-cy selector
+    cy.get('[data-cy="invoice-date"]').then(($input) => {
       if ($input.length > 0) {
         const today = new Date().toISOString().split('T')[0];
         cy.wrap($input).clear().type(today);
       }
     });
     
-    // Fill due date using id
-    cy.get('#due_date').then(($input) => {
+    // Fill due date using data-cy selector
+    cy.get('[data-cy="due-date"]').then(($input) => {
       if ($input.length > 0) {
         const nextMonth = new Date();
         nextMonth.setMonth(nextMonth.getMonth() + 1);
@@ -55,24 +56,21 @@ describe('Viticulturist Invoices (Facturas) - Complete Flow', () => {
       }
     });
     
-    // Add invoice item using the button
-    cy.get('body').then(($body) => {
-      const addItemButton = $body.find('button[wire\\:click*="addItem"]');
-      if (addItemButton.length > 0) {
-        cy.wrap(addItemButton.first()).click({ force: true });
+    // Add invoice item using data-cy selector
+    cy.get('[data-cy="add-item-button"]').then(($button) => {
+      if ($button.length > 0) {
+        cy.wrap($button).click({ force: true });
         cy.wait(1000);
         
-        // Fill item fields using wire:model with array notation
-        cy.get('input[wire\\:model="items.0.name"]').first().clear().type('Item de Prueba E2E');
-        cy.get('input[wire\\:model.live="items.0.quantity"]').first().clear().type('10');
-        cy.get('input[wire\\:model.live="items.0.unit_price"]').first().clear().type('25.50');
+        // Fill item fields using data-cy selectors
+        cy.get('[data-cy="item-name"][data-cy-item-index="0"]').clear().type('Item de Prueba E2E');
+        cy.get('[data-cy="item-quantity"][data-cy-item-index="0"]').clear().type('10');
+        cy.get('[data-cy="item-unit-price"][data-cy-item-index="0"]').clear().type('25.50');
       }
     });
     
-    // Submit form - look for "Crear Factura" button
-    cy.get('form').first().within(() => {
-      cy.get('button[type="submit"]').contains('Crear Factura').click()
-    })
+    // Submit form using data-cy selector
+    cy.get('[data-cy="submit-button"]').click()
     
     // Wait for Livewire to process
     cy.wait(5000)
@@ -91,12 +89,26 @@ describe('Viticulturist Invoices (Facturas) - Complete Flow', () => {
   })
 
   it('should search invoices', () => {
-    // Find search input using placeholder text
-    cy.get('input[placeholder*="Buscar facturas" i], input[placeholder*="buscar" i]').first().clear().type('Test')
+    // Find search input - try data-cy first, fallback to placeholder
+    cy.get('body').then(($body) => {
+      const searchInput = $body.find('[data-cy="search-input"]');
+      if (searchInput.length > 0) {
+        cy.get('[data-cy="search-input"]').clear().type('Test')
+      } else {
+        cy.get('input[placeholder*="Buscar facturas" i], input[placeholder*="buscar" i]').first().clear().type('Test')
+      }
+    })
     cy.waitForLivewire()
     
     // Verify search is working
-    cy.get('input[placeholder*="Buscar facturas" i], input[placeholder*="buscar" i]').first().should('have.value', 'Test')
+    cy.get('body').then(($body) => {
+      const searchInput = $body.find('[data-cy="search-input"]');
+      if (searchInput.length > 0) {
+        cy.get('[data-cy="search-input"]').should('have.value', 'Test')
+      } else {
+        cy.get('input[placeholder*="Buscar facturas" i], input[placeholder*="buscar" i]').first().should('have.value', 'Test')
+      }
+    })
   })
 
   it('should filter invoices by status', () => {
@@ -162,15 +174,15 @@ describe('Viticulturist Invoices (Facturas) - Complete Flow', () => {
         cy.url().should('include', '/viticulturist/invoices/');
         cy.url().should('include', '/edit');
         
-        // Modify observations if field exists using id
-        cy.get('#observations').then(($textarea) => {
+        // Modify observations using data-cy selector
+        cy.get('[data-cy="observations"]').then(($textarea) => {
           if ($textarea.length > 0) {
             cy.wrap($textarea).clear().type('Observaciones editadas E2E');
           }
         });
         
-        // Submit form - look for "Guardar Cambios" button
-        cy.get('button[type="submit"]').contains(/Guardar|Actualizar/).click()
+        // Submit form using data-cy selector
+        cy.get('[data-cy="submit-button"]').click()
         cy.wait(5000)
         
         // Back on index with updated invoice
@@ -213,6 +225,60 @@ describe('Viticulturist Invoices (Facturas) - Complete Flow', () => {
         cy.log('No invoice links found - skipping test');
       }
     });
+  })
+
+  it('should add and manage invoice items', () => {
+    cy.contains('Nueva Factura').click()
+    cy.waitForLivewire()
+    
+    // Wait for form
+    cy.contains('Nueva Factura').should('be.visible')
+    cy.get('[data-cy="invoice-create-form"]').should('be.visible')
+    
+    // Select client using data-cy
+    cy.get('[data-cy="client-id"]').then(($select) => {
+      if ($select.length > 0 && $select.find('option').length > 1) {
+        cy.wrap($select).find('option').eq(1).then(($option) => {
+          cy.wrap($select).select($option.val(), { force: true });
+        });
+        cy.wait(1000);
+      }
+    });
+    
+    // Fill required fields using data-cy
+    cy.get('[data-cy="delivery-note-code"]').clear().type('ALB-MULTI-ITEMS-001');
+    const today = new Date().toISOString().split('T')[0];
+    cy.get('[data-cy="invoice-date"]').clear().type(today);
+    
+    // Add first item using data-cy
+    cy.get('[data-cy="add-item-button"]').first().click({ force: true });
+    cy.wait(1000);
+    
+    cy.get('[data-cy="item-name"][data-cy-item-index="0"]').clear().type('Item 1 E2E');
+    cy.get('[data-cy="item-quantity"][data-cy-item-index="0"]').clear().type('5');
+    cy.get('[data-cy="item-unit-price"][data-cy-item-index="0"]').clear().type('10.00');
+    
+    // Add second item
+    cy.get('[data-cy="add-item-button"]').first().click({ force: true });
+    cy.wait(1000);
+    
+    cy.get('[data-cy="item-name"][data-cy-item-index="1"]').clear().type('Item 2 E2E');
+    cy.get('[data-cy="item-quantity"][data-cy-item-index="1"]').clear().type('3');
+    cy.get('[data-cy="item-unit-price"][data-cy-item-index="1"]').clear().type('15.50');
+    
+    // Verify both items exist
+    cy.get('[data-cy="invoice-item"][data-cy-item-index="0"]').should('be.visible');
+    cy.get('[data-cy="invoice-item"][data-cy-item-index="1"]').should('be.visible');
+    
+    // Remove second item using data-cy
+    cy.get('[data-cy="remove-item"][data-cy-item-index="1"]').click({ force: true });
+    cy.wait(1000);
+    
+    // Verify second item is removed
+    cy.get('[data-cy="invoice-item"][data-cy-item-index="1"]').should('not.exist');
+    
+    // Verify first item still exists
+    cy.get('[data-cy="item-name"][data-cy-item-index="0"]').should('have.value', 'Item 1 E2E')
   })
 })
 

@@ -18,14 +18,13 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
             // Tipo de informe
+            // Solo incluye tipos actualmente implementados.
+            // Nuevos tipos pueden añadirse cuando se implementen.
             $table->enum('report_type', [
-                'phytosanitary_treatments',      // Tratamientos fitosanitarios
-                'full_digital_notebook',         // Cuaderno digital completo
-                'pac_report',                    // Informe PAC
-                'certification_report',          // Certificado de actividades
-                'fertilizations_report',         // Informe de fertilizaciones
-                'irrigations_report',            // Informe de riegos
-                'harvests_report',               // Informe de cosechas
+                'phytosanitary_treatments',      // Tratamientos fitosanitarios (✅ Implementado)
+                'full_digital_notebook',         // Cuaderno digital completo (✅ Implementado)
+                // Futuros tipos de informes se añadirán aquí cuando se implementen:
+                // 'pac_report', 'fertilizations_report', 'irrigation_report', etc.
             ]);
             
             // Periodo del informe

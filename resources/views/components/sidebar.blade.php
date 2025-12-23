@@ -15,7 +15,7 @@
 >
     <!-- Logo Section -->
     <div class="h-20 flex items-center justify-between px-6 border-b border-[var(--color-agro-green-light)]/30 bg-gradient-to-r from-[var(--color-agro-green-bg)]/50 to-transparent">
-        <a href="{{ route($user->role . '.dashboard') }}" class="flex items-center space-x-3 group overflow-hidden">
+        <a href="{{ route($user->role . '.dashboard') }}" class="flex items-center space-x-3 group overflow-hidden" data-cy="sidebar-logo-link">
             <div class="relative flex-shrink-0">
                 <!-- Logo Image -->
                 <img 
@@ -37,6 +37,7 @@
             onclick="toggleSidebarCollapse()"
             class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-bg)] transition-all duration-200"
             aria-label="Toggle sidebar"
+            data-cy="sidebar-toggle-desktop"
         >
             <svg id="collapse-icon" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
@@ -47,7 +48,7 @@
     <!-- Navigation -->
     <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
         <!-- Main Section -->
-        <div class="mb-6">
+        <div class="mb-6" data-cy="sidebar-main-section">
             <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-3 sidebar-text">Principal</h3>
             @foreach($menu['main'] as $item)
                 <div class="mb-1">
@@ -59,6 +60,7 @@
                                    : 'text-gray-700 hover:bg-[var(--color-agro-green-bg)] hover:text-[var(--color-agro-green-dark)]' 
                                }}"
                         title="{{ $item['label'] }}"
+                        data-cy="sidebar-nav-{{ strtolower(str_replace(' ', '-', $item['label'])) }}"
                     >
                         <span class="flex-shrink-0 w-8 text-center">
                             {!! $item['icon_svg'] ?? $item['icon'] !!}
@@ -70,7 +72,7 @@
                     </a>
                     
                     @if(isset($item['submenu']) && $item['active'])
-                        <div class="ml-12 mt-2 space-y-1 sidebar-submenu">
+                        <div class="ml-12 mt-2 space-y-1 sidebar-submenu" data-cy="sidebar-submenu-{{ strtolower(str_replace(' ', '-', $item['label'])) }}">
                             @foreach($item['submenu'] as $subitem)
                                 @php
                                     // Determinar qué policy usar según la ruta
@@ -100,6 +102,7 @@
                                                    ? 'bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] font-medium border-l-4 border-[var(--color-agro-green-dark)]' 
                                                    : 'text-gray-600 hover:bg-gray-100 hover:text-[var(--color-agro-green-dark)]' 
                                                }}"
+                                        data-cy="sidebar-submenu-item-{{ strtolower(str_replace(' ', '-', $subitem['label'])) }}"
                                     >
                                         <span class="w-1.5 h-1.5 rounded-full bg-current mr-3 opacity-50"></span>
                                         {{ $subitem['label'] }}
@@ -127,6 +130,7 @@
     onclick="toggleSidebar()"
     class="fixed top-4 left-4 z-50 lg:hidden bg-white/95 backdrop-blur-md p-3 rounded-xl shadow-xl border-2 border-[var(--color-agro-green-light)]/30 hover:bg-[var(--color-agro-green-bg)] transition-all transform hover:scale-110"
     aria-label="Toggle sidebar"
+    data-cy="sidebar-toggle-mobile"
 >
     <svg class="w-6 h-6 text-[var(--color-agro-green-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>

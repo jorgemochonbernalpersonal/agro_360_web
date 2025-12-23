@@ -9,7 +9,7 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
-    <form wire:submit="save" class="space-y-8">
+    <form wire:submit="save" class="space-y-8" data-cy="harvest-form">
         
         {{-- Alerta de Plazo de Seguridad --}}
         @if($hasActiveWithdrawal)
@@ -53,11 +53,12 @@
                             
                             <div class="mb-3">
                                 <label class="flex items-center gap-3 cursor-pointer">
-                                    <input 
-                                        type="checkbox" 
-                                        wire:model="withdrawalAcknowledged"
-                                        class="w-5 h-5 text-red-600 focus:ring-red-500 border-red-300 rounded"
-                                    />
+                            <input 
+                                type="checkbox" 
+                                wire:model="withdrawalAcknowledged"
+                                data-cy="withdrawal-acknowledged-checkbox"
+                                class="w-5 h-5 text-red-600 focus:ring-red-500 border-red-300 rounded"
+                            />
                                     <span class="text-sm font-semibold text-gray-900">
                                         Entiendo los riesgos y asumo la responsabilidad de cosechar con plazo de seguridad activo
                                     </span>
@@ -94,6 +95,7 @@
                     <x-select 
                         wire:model.live="plot_id" 
                         id="plot_id"
+                        data-cy="plot-select"
                         :error="$errors->first('plot_id')"
                         required
                     >
@@ -111,6 +113,7 @@
                     <x-select 
                         wire:model.live="plot_planting_id" 
                         id="plot_planting_id"
+                        data-cy="plot-planting-select"
                         :error="$errors->first('plot_planting_id')"
                         :disabled="!$plot_id || count($availablePlantings) === 0"
                         required
@@ -186,6 +189,7 @@
                         wire:model="activity_date" 
                         type="date" 
                         id="activity_date"
+                        data-cy="activity-date-input"
                         :error="$errors->first('activity_date')"
                         required
                     />
@@ -361,6 +365,7 @@
                         step="0.001"
                         min="0"
                         id="total_weight"
+                        data-cy="total-weight-input"
                         placeholder="0.00"
                         :error="$errors->first('total_weight')"
                         required

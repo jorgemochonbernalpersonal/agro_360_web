@@ -33,7 +33,7 @@
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
-            <x-button href="{{ route('viticulturist.campaign.index') }}" variant="secondary">
+            <x-button href="{{ route('viticulturist.campaign.index') }}" variant="secondary" data-cy="back-button">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
@@ -43,8 +43,8 @@
     </x-page-header>
 
     <!-- Formulario -->
-    <div class="glass-card rounded-2xl p-8">
-        <form wire:submit="save" class="space-y-8">
+    <div class="glass-card rounded-2xl p-8" data-cy="campaign-create-form">
+        <form wire:submit="save" class="space-y-8" data-cy="campaign-form">
             <!-- Información Básica -->
             <div class="border-b border-gray-200 pb-6">
                 <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4 flex items-center gap-2">
@@ -62,6 +62,7 @@
                             wire:model="name" 
                             type="text" 
                             id="name"
+                            data-cy="campaign-name-input"
                             placeholder="Ej: Campaña 2025"
                             :error="$errors->first('name')"
                             required
@@ -77,6 +78,7 @@
                             min="2000"
                             max="{{ now()->year + 5 }}"
                             id="year"
+                            data-cy="campaign-year-input"
                             :error="$errors->first('year')"
                             required
                         />
@@ -89,6 +91,7 @@
                     <x-textarea 
                         wire:model="description" 
                         id="description"
+                        data-cy="campaign-description-input"
                         rows="3"
                         placeholder="Descripción de la campaña..."
                         :error="$errors->first('description')"
@@ -113,6 +116,7 @@
                             wire:model="start_date" 
                             type="date" 
                             id="start_date"
+                            data-cy="campaign-start-date-input"
                             :error="$errors->first('start_date')"
                         />
                     </div>
@@ -124,6 +128,7 @@
                             wire:model="end_date" 
                             type="date" 
                             id="end_date"
+                            data-cy="campaign-end-date-input"
                             :error="$errors->first('end_date')"
                         />
                     </div>
@@ -145,6 +150,7 @@
                         wire:model="active" 
                         type="checkbox"
                         id="active"
+                        data-cy="campaign-active-checkbox"
                         class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
                     >
                     <label for="active" class="ml-3 text-sm font-semibold text-gray-700">
@@ -161,10 +167,10 @@
 
             <!-- Botones -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                <x-button href="{{ route('viticulturist.campaign.index') }}" variant="secondary">
+                <x-button href="{{ route('viticulturist.campaign.index') }}" variant="secondary" data-cy="cancel-button">
                     Cancelar
                 </x-button>
-                <x-button type="submit" variant="primary">
+                <x-button type="submit" variant="primary" data-cy="submit-button">
                     Crear Campaña
                 </x-button>
             </div>

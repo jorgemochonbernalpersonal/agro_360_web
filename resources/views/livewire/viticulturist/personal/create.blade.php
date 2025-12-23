@@ -9,7 +9,7 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.personal.index')"
 >
-    <form wire:submit="save" class="space-y-8">
+    <form wire:submit="save" class="space-y-8" data-cy="crew-form">
         <x-form-section title="Información Básica" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -20,6 +20,7 @@
                             wire:model="name" 
                             type="text" 
                             id="name"
+                            data-cy="crew-name-input"
                             placeholder="Ej: Cuadrilla Norte"
                             :error="$errors->first('name')"
                             required
@@ -33,6 +34,7 @@
                             <x-select 
                                 wire:model="winery_id" 
                                 id="winery_id"
+                                data-cy="crew-winery-select"
                                 :error="$errors->first('winery_id')"
                             >
                                 <option value="">Sin bodega (cuadrilla independiente)</option>
@@ -50,6 +52,7 @@
                     <x-textarea 
                         wire:model="description" 
                         id="description"
+                        data-cy="crew-description-input"
                         rows="4"
                         placeholder="Describe el propósito o función de esta cuadrilla..."
                         :error="$errors->first('description')"

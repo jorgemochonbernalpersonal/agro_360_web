@@ -9,7 +9,7 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
-    <form wire:submit="save" class="space-y-8">
+    <form wire:submit="save" class="space-y-8" data-cy="treatment-form">
         <x-form-section title="Información Básica" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -19,6 +19,7 @@
                         <x-select 
                             wire:model.live="plot_id" 
                             id="plot_id"
+                            data-cy="plot-select"
                             :error="$errors->first('plot_id')"
                             required
                         >
@@ -43,6 +44,7 @@
                             <x-select 
                                 wire:model="plot_planting_id" 
                                 id="plot_planting_id"
+                                data-cy="plot-planting-select"
                                 :error="$errors->first('plot_planting_id')"
                                 :required="count($availablePlantings) > 0"
                             >
@@ -74,6 +76,7 @@
                             wire:model="activity_date" 
                             type="date" 
                             id="activity_date"
+                            data-cy="activity-date-input"
                             :error="$errors->first('activity_date')"
                             required
                         />
@@ -90,6 +93,7 @@
                             <x-select 
                                 wire:model="product_id" 
                                 id="product_id"
+                                data-cy="product-select"
                                 :error="$errors->first('product_id')"
                                 required
                             >
@@ -112,6 +116,7 @@
                                 wire:model="target_pest" 
                                 type="text" 
                                 id="target_pest"
+                                data-cy="target-pest-input"
                                 placeholder="Ej: Mildiu, Oídio, etc."
                                 :error="$errors->first('target_pest')"
                             />
@@ -137,6 +142,7 @@
                             type="number" 
                             step="0.001"
                             id="dose_per_hectare"
+                            data-cy="dose-per-hectare-input"
                             placeholder="0.000"
                             :error="$errors->first('dose_per_hectare')"
                         />
@@ -150,6 +156,7 @@
                             type="number" 
                             step="0.001"
                             id="area_treated"
+                            data-cy="area-treated-input"
                             placeholder="0.000"
                             :error="$errors->first('area_treated')"
                         />
@@ -174,11 +181,12 @@
                 <!-- Método de Aplicación -->
                 <div class="mt-6">
                     <x-label for="application_method">Método de Aplicación</x-label>
-                    <x-select 
-                        wire:model="application_method" 
-                        id="application_method"
-                        :error="$errors->first('application_method')"
-                    >
+                        <x-select 
+                            wire:model="application_method" 
+                            id="application_method"
+                            data-cy="application-method-select"
+                            :error="$errors->first('application_method')"
+                        >
                         <option value="">Selecciona un método</option>
                         <option value="pulverización">Pulverización</option>
                         <option value="aplicación foliar">Aplicación Foliar</option>

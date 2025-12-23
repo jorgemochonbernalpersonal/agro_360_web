@@ -45,7 +45,8 @@ class OfficialReportService
 
         // Aumentar límite de memoria temporalmente para PDFs grandes
         $originalMemoryLimit = ini_get('memory_limit');
-        ini_set('memory_limit', '512M'); // Aumentar a 512MB
+        $memoryLimit = config('reports.storage.memory_limit', '512M');
+        ini_set('memory_limit', $memoryLimit);
         
         try {
             $treatments = AgriculturalActivity::ofType('phytosanitary')
@@ -444,7 +445,7 @@ class OfficialReportService
      * @param array $stats
      * @return string Path del PDF generado
      */
-    protected function generateFullNotebookPDF(
+    public function generateFullNotebookPDF(
         OfficialReport $report,
         User $user,
         Campaign $campaign,

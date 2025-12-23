@@ -9,7 +9,7 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.phytosanitary-products.index')"
 >
-    <form wire:submit="save" class="space-y-8">
+    <form wire:submit="save" class="space-y-8" data-cy="product-form">
         <x-form-section title="Datos Básicos" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -18,6 +18,7 @@
                             wire:model="name" 
                             type="text" 
                             id="name"
+                            data-cy="product-name-input"
                             placeholder="Ej: Fungicida X 25 SC"
                             :error="$errors->first('name')"
                             required
@@ -29,6 +30,7 @@
                             wire:model="active_ingredient" 
                             type="text" 
                             id="active_ingredient"
+                            data-cy="product-active-ingredient-input"
                             placeholder="Ej: Azoxistrobina"
                             :error="$errors->first('active_ingredient')"
                         />
@@ -41,6 +43,7 @@
                         <x-select 
                             wire:model="type" 
                             id="type"
+                            data-cy="product-type-select"
                             :error="$errors->first('type')"
                         >
                             <option value="">Seleccionar...</option>
@@ -57,6 +60,7 @@
                         <x-select 
                             wire:model="toxicity_class" 
                             id="toxicity_class"
+                            data-cy="product-toxicity-class-select"
                             :error="$errors->first('toxicity_class')"
                         >
                             <option value="">Seleccionar...</option>
@@ -73,6 +77,7 @@
                             type="number" 
                             min="0"
                             id="withdrawal_period_days"
+                            data-cy="product-withdrawal-period-input"
                             placeholder="Ej: 21"
                             :error="$errors->first('withdrawal_period_days')"
                         />
@@ -89,6 +94,7 @@
                             wire:model="registration_number" 
                             type="text" 
                             id="registration_number"
+                            data-cy="product-registration-number-input"
                             placeholder="Ej: 12345"
                             :error="$errors->first('registration_number')"
                         />
@@ -99,6 +105,7 @@
                             wire:model="manufacturer" 
                             type="text" 
                             id="manufacturer"
+                            data-cy="product-manufacturer-input"
                             placeholder="Nombre del fabricante"
                             :error="$errors->first('manufacturer')"
                         />
@@ -110,6 +117,7 @@
                     <x-textarea 
                         wire:model="description" 
                         id="description"
+                        data-cy="product-description-input"
                         rows="4"
                         placeholder="Detalles, recomendaciones de uso, observaciones..."
                         :error="$errors->first('description')"

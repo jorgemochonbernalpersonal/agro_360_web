@@ -5,98 +5,530 @@ describe('Viticulturist Digital Notebook', () => {
     cy.waitForLivewire()
   })
 
-  it('should display digital notebook', () => {
-    cy.contains('Cuaderno Digital').should('be.visible')
-    cy.contains('Filtros de Búsqueda').should('be.visible')
-  })
-
-  it('should filter activities by plot', () => {
-    cy.get('select').then(($selects) => {
-      const plotSelect = Array.from($selects).find(select => {
-        const options = select.querySelectorAll('option');
-        return Array.from(options).some(opt => opt.textContent.includes('parcelas'));
-      });
-      
-      if (plotSelect && plotSelect.querySelectorAll('option').length > 1) {
-        cy.wrap(plotSelect).select(1, { force: true });
-        cy.waitForLivewire();
-      }
-    });
-  })
-
-  it('should filter activities by type', () => {
-    cy.get('select').then(($selects) => {
-      const typeSelect = Array.from($selects).find(select => {
-        const options = select.querySelectorAll('option');
-        return Array.from(options).some(opt => opt.textContent.includes('Fitosanitarios') || opt.textContent.includes('Fertilizaciones'));
-      });
-      
-      if (typeSelect && typeSelect.querySelectorAll('option').length > 1) {
-        cy.wrap(typeSelect).select('phytosanitary', { force: true });
-        cy.waitForLivewire();
-        cy.wrap(typeSelect).should('have.value', 'phytosanitary');
-      }
-    });
-  })
-
-  it('should filter activities by date range', () => {
-    cy.get('input[type="date"]').then(($inputs) => {
-      const dateFromInput = Array.from($inputs).find(input => {
-        const placeholder = input.getAttribute('placeholder');
-        return placeholder?.includes('desde') || placeholder?.includes('Desde');
-      });
-      
-      if (dateFromInput) {
-        const today = new Date().toISOString().split('T')[0];
-        cy.wrap(dateFromInput).type(today);
-        cy.waitForLivewire();
-      }
-    });
-  })
-
-  it('should search activities', () => {
-    cy.get('input[placeholder*="notas, parcelas"]').clear().type('Test Activity')
-    cy.waitForLivewire()
-    cy.get('input[placeholder*="notas, parcelas"]').should('have.value', 'Test Activity')
-  })
-
-  it('should navigate to create phytosanitary treatment', () => {
-    // Look for link to create treatment
-    cy.get('a[href*="treatment/create"]').contains('Tratamiento').click()
-    cy.waitForLivewire()
-    cy.url().should('include', '/viticulturist/digital-notebook/treatment/create')
-  })
-
-  it('should create phytosanitary treatment', () => {
-    cy.visit('/viticulturist/digital-notebook/treatment/create')
-    cy.waitForLivewire()
-    
-    // Wait for form to load
-    cy.contains('Registrar Tratamiento Fitosanitario').should('be.visible')
-    
-    // Fill form
-    cy.get('select#plot_id').then(($select) => {
-      if ($select.length > 0 && $select.find('option').length > 1) {
-        cy.get('select#plot_id').select(1, { force: true })
-      }
+  describe('Digital Notebook List', () => {
+    it('should display digital notebook', () => {
+      cy.contains('Cuaderno Digital').should('be.visible')
+      cy.contains('Filtros de Búsqueda').should('be.visible')
     })
-    
-    const today = new Date().toISOString().split('T')[0]
-    cy.get('input#activity_date[type="date"]').type(today)
-    
-    cy.get('select#product_id').then(($select) => {
-      if ($select.length > 0 && $select.find('option').length > 1) {
-        cy.get('select#product_id').select(1, { force: true })
-      }
+
+    it('should display quick action buttons', () => {
+      cy.get('[data-cy="quick-actions"]').should('be.visible')
+      cy.get('[data-cy="create-treatment-button"]').should('be.visible')
+      cy.get('[data-cy="create-fertilization-button"]').should('be.visible')
+      cy.get('[data-cy="create-irrigation-button"]').should('be.visible')
+      cy.get('[data-cy="create-cultural-button"]').should('be.visible')
+      cy.get('[data-cy="create-observation-button"]').should('be.visible')
+      cy.get('[data-cy="create-harvest-button"]').should('be.visible')
     })
-    
-    // Submit form
-    cy.get('button').contains('Registrar').click()
-    cy.wait(3000)
-    
-    // Should redirect or show success message
-    cy.url().should('include', '/viticulturist/digital-notebook')
-    cy.get('body').should('contain.text', 'Tratamiento')
+
+    it('should filter activities by plot', () => {
+      cy.get('[data-cy="plot-filter"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-filter"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+    })
+
+    it('should filter activities by type', () => {
+      cy.get('[data-cy="activity-type-filter"]').then(($select) => {
+        if ($select.length > 0) {
+          cy.get('[data-cy="activity-type-filter"]').select('phytosanitary', { force: true })
+          cy.waitForLivewire()
+          cy.get('[data-cy="activity-type-filter"]').should('have.value', 'phytosanitary')
+        }
+      })
+    })
+
+    it('should filter activities by date range', () => {
+      cy.get('input[type="date"]').then(($inputs) => {
+        const dateFromInput = Array.from($inputs).find(input => {
+          const placeholder = input.getAttribute('placeholder')
+          return placeholder?.includes('desde') || placeholder?.includes('Desde')
+        })
+        
+        if (dateFromInput) {
+          const today = new Date().toISOString().split('T')[0]
+          cy.wrap(dateFromInput).type(today)
+          cy.waitForLivewire()
+        }
+      })
+    })
+
+    it('should search activities', () => {
+      cy.get('[data-cy="activity-search-input"]').clear().type('Test Activity')
+      cy.waitForLivewire()
+      cy.get('[data-cy="activity-search-input"]').should('have.value', 'Test Activity')
+    })
+
+    it('should navigate to create treatment from quick actions', () => {
+      cy.get('[data-cy="create-treatment-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/digital-notebook/treatment/create')
+    })
+
+    it('should navigate to create fertilization from quick actions', () => {
+      cy.get('[data-cy="create-fertilization-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/digital-notebook/fertilization/create')
+    })
+
+    it('should navigate to create irrigation from quick actions', () => {
+      cy.get('[data-cy="create-irrigation-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/digital-notebook/irrigation/create')
+    })
+
+    it('should navigate to create cultural work from quick actions', () => {
+      cy.get('[data-cy="create-cultural-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/digital-notebook/cultural/create')
+    })
+
+    it('should navigate to create observation from quick actions', () => {
+      cy.get('[data-cy="create-observation-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/digital-notebook/observation/create')
+    })
+
+    it('should navigate to create harvest from quick actions', () => {
+      cy.get('[data-cy="create-harvest-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/digital-notebook/harvest/create')
+    })
+  })
+
+  describe('Create Phytosanitary Treatment', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/treatment/create')
+      cy.waitForLivewire()
+    })
+
+    it('should display treatment form', () => {
+      cy.get('[data-cy="treatment-form"]').should('be.visible')
+      cy.contains('Registrar Tratamiento Fitosanitario').should('be.visible')
+      cy.get('[data-cy="plot-select"]').should('be.visible')
+      cy.get('[data-cy="activity-date-input"]').should('be.visible')
+      cy.get('[data-cy="product-select"]').should('be.visible')
+    })
+
+    it('should create treatment with required fields', () => {
+      // Select plot
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      // Set date
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      // Select product
+      cy.get('[data-cy="product-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="product-select"]').select(1, { force: true })
+        }
+      })
+      
+      // Submit
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      // Should redirect
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+
+    it('should create treatment with all fields', () => {
+      // Select plot
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+          
+          // Select planting if available
+          cy.get('[data-cy="plot-planting-select"]').then(($plantingSelect) => {
+            if ($plantingSelect.length > 0 && $plantingSelect.find('option').length > 1) {
+              cy.get('[data-cy="plot-planting-select"]').select(1, { force: true })
+            }
+          })
+        }
+      })
+      
+      // Set date
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      // Select product
+      cy.get('[data-cy="product-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="product-select"]').select(1, { force: true })
+        }
+      })
+      
+      // Fill additional fields
+      cy.get('[data-cy="target-pest-input"]').clear().type('Mildiu')
+      cy.get('[data-cy="dose-per-hectare-input"]').clear().type('1.5')
+      cy.get('[data-cy="area-treated-input"]').clear().type('5.0')
+      cy.get('[data-cy="application-method-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="application-method-select"]').select(1, { force: true })
+        }
+      })
+      
+      // Submit
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      // Should redirect
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+
+    it('should validate required fields', () => {
+      // Try to submit without filling required fields
+      cy.get('[data-cy="submit-button"]').click()
+      cy.waitForLivewire()
+      
+      // Should not submit
+      cy.url().should('include', '/viticulturist/digital-notebook/treatment/create')
+    })
+
+    it('should cancel and return to notebook', () => {
+      cy.get('[data-cy="cancel-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/digital-notebook')
+      cy.url().should('not.include', '/treatment/create')
+    })
+  })
+
+  describe('Filter Interactions', () => {
+    it('should filter by plot and type together', () => {
+      cy.get('[data-cy="plot-filter"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-filter"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      cy.get('[data-cy="activity-type-filter"]').then(($select) => {
+        if ($select.length > 0) {
+          cy.get('[data-cy="activity-type-filter"]').select('phytosanitary', { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      // Both filters should be active
+      cy.get('[data-cy="plot-filter"]').should('not.have.value', '')
+      cy.get('[data-cy="activity-type-filter"]').should('have.value', 'phytosanitary')
+    })
+
+    it('should clear filters work', () => {
+      // Set some filters
+      cy.get('[data-cy="activity-search-input"]').clear().type('Test')
+      cy.get('[data-cy="activity-type-filter"]').then(($select) => {
+        if ($select.length > 0) {
+          cy.get('[data-cy="activity-type-filter"]').select('phytosanitary', { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      // Clear filters button should appear
+      cy.contains('Limpiar Filtros').click()
+      cy.waitForLivewire()
+      
+      cy.get('[data-cy="activity-search-input"]').should('have.value', '')
+      cy.get('[data-cy="activity-type-filter"]').should('have.value', '')
+    })
+  })
+
+  describe('Create Fertilization', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/fertilization/create')
+      cy.waitForLivewire()
+    })
+
+    it('should display fertilization form', () => {
+      cy.get('[data-cy="fertilization-form"]').should('be.visible')
+      cy.contains('Registrar Fertilización').should('be.visible')
+      cy.get('[data-cy="plot-select"]').should('be.visible')
+      cy.get('[data-cy="activity-date-input"]').should('be.visible')
+    })
+
+    it('should create fertilization with required fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+
+    it('should create fertilization with all fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="fertilizer-type-input"]').clear().type('Orgánico')
+      cy.get('[data-cy="fertilizer-name-input"]').clear().type('Compost')
+      cy.get('[data-cy="quantity-input"]').clear().type('100')
+      cy.get('[data-cy="npk-ratio-input"]').clear().type('5-5-5')
+      cy.get('[data-cy="area-applied-input"]').clear().type('2.5')
+      
+      cy.get('[data-cy="application-method-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="application-method-select"]').select(1, { force: true })
+        }
+      })
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+  })
+
+  describe('Create Irrigation', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/irrigation/create')
+      cy.waitForLivewire()
+    })
+
+    it('should display irrigation form', () => {
+      cy.get('[data-cy="irrigation-form"]').should('be.visible')
+      cy.contains('Registrar Riego').should('be.visible')
+      cy.get('[data-cy="plot-select"]').should('be.visible')
+      cy.get('[data-cy="activity-date-input"]').should('be.visible')
+    })
+
+    it('should create irrigation with required fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+
+    it('should create irrigation with all fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="water-volume-input"]').clear().type('5000')
+      cy.get('[data-cy="irrigation-method-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="irrigation-method-select"]').select(1, { force: true })
+        }
+      })
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+  })
+
+  describe('Create Cultural Work', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/cultural/create')
+      cy.waitForLivewire()
+    })
+
+    it('should display cultural work form', () => {
+      cy.get('[data-cy="cultural-work-form"]').should('be.visible')
+      cy.contains('Registrar Labor Cultural').should('be.visible')
+      cy.get('[data-cy="plot-select"]').should('be.visible')
+      cy.get('[data-cy="activity-date-input"]').should('be.visible')
+    })
+
+    it('should create cultural work with required fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+
+    it('should create cultural work with all fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="work-type-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="work-type-select"]').select(1, { force: true })
+        }
+      })
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+  })
+
+  describe('Create Observation', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/observation/create')
+      cy.waitForLivewire()
+    })
+
+    it('should display observation form', () => {
+      cy.get('[data-cy="observation-form"]').should('be.visible')
+      cy.contains('Registrar Observación').should('be.visible')
+      cy.get('[data-cy="plot-select"]').should('be.visible')
+      cy.get('[data-cy="activity-date-input"]').should('be.visible')
+      cy.get('[data-cy="description-textarea"]').should('be.visible')
+    })
+
+    it('should create observation with required fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="description-textarea"]').clear().type('Observación de prueba para el test')
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+
+    it('should create observation with all fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="observation-type-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="observation-type-select"]').select(1, { force: true })
+        }
+      })
+      
+      cy.get('[data-cy="description-textarea"]').clear().type('Descripción detallada de la observación realizada en el viñedo')
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+  })
+
+  describe('Create Harvest', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/harvest/create')
+      cy.waitForLivewire()
+    })
+
+    it('should display harvest form', () => {
+      cy.get('[data-cy="harvest-form"]').should('be.visible')
+      cy.contains('Registrar Cosecha').should('be.visible')
+      cy.get('[data-cy="plot-select"]').should('be.visible')
+      cy.get('[data-cy="activity-date-input"]').should('be.visible')
+      cy.get('[data-cy="total-weight-input"]').should('be.visible')
+    })
+
+    it('should create harvest with required fields', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+          
+          cy.get('[data-cy="plot-planting-select"]').then(($plantingSelect) => {
+            if ($plantingSelect.length > 0 && $plantingSelect.find('option').length > 1) {
+              cy.get('[data-cy="plot-planting-select"]').select(1, { force: true })
+              cy.waitForLivewire()
+            }
+          })
+        }
+      })
+      
+      const today = new Date().toISOString().split('T')[0]
+      cy.get('[data-cy="activity-date-input"]').type(today)
+      
+      cy.get('[data-cy="total-weight-input"]').clear().type('1000')
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      cy.url().should('include', '/viticulturist/digital-notebook')
+    })
+
+    it('should handle withdrawal period warning', () => {
+      cy.get('[data-cy="plot-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="plot-select"]').select(1, { force: true })
+          cy.waitForLivewire()
+          
+          cy.get('body').then(($body) => {
+            if ($body.find('[data-cy="withdrawal-acknowledged-checkbox"]').length > 0) {
+              cy.get('[data-cy="withdrawal-acknowledged-checkbox"]').check()
+              cy.waitForLivewire()
+            }
+          })
+        }
+      })
+    })
+  })
+
+  describe('Activity Statistics', () => {
+    it('should display activity statistics', () => {
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-cy="quick-actions"]').length > 0) {
+          // Statistics should be visible if campaign exists
+          cy.contains('Total Actividades').should('be.visible')
+          cy.contains('Tratamientos').should('be.visible')
+          cy.contains('Fertilizaciones').should('be.visible')
+          cy.contains('Riegos').should('be.visible')
+        }
+      })
+    })
   })
 })
-

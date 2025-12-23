@@ -22,23 +22,21 @@ describe('Viticulturist Plots (Parcelas) - CRUD', () => {
     
     // Wait for form to load
     cy.contains('Nueva Parcela').should('be.visible')
+    cy.get('[data-cy="plot-create-form"]').should('be.visible')
     
-    // Fill basic fields using id attributes
-    cy.get('#name').clear().type('Parcela de Prueba E2E')
-    cy.get('#description').clear().type('Descripción de prueba para E2E')
+    // Fill basic fields using data-cy selectors
+    cy.get('[data-cy="plot-name"]').clear().type('Parcela de Prueba E2E')
+    cy.get('[data-cy="plot-description"]').clear().type('Descripción de prueba para E2E')
     
-    // Fill area if field exists
-    cy.get('body').then(($body) => {
-      const areaInput = $body.find('#area');
-      if (areaInput.length > 0) {
-        cy.get('#area').clear().type('10.5')
+    // Fill area if field exists using data-cy
+    cy.get('[data-cy="plot-area"]').then(($input) => {
+      if ($input.length > 0) {
+        cy.get('[data-cy="plot-area"]').clear().type('10.5')
       }
     })
     
-    // Submit form - look for button with text "Crear Parcela"
-    cy.get('form').first().within(() => {
-      cy.get('button[type="submit"]').contains('Crear Parcela').click()
-    })
+    // Submit form using data-cy selector
+    cy.get('[data-cy="submit-button"]').click()
     
     // Wait for Livewire to process
     cy.wait(5000)
@@ -58,28 +56,51 @@ describe('Viticulturist Plots (Parcelas) - CRUD', () => {
   })
 
   it('should search plots', () => {
-    // Find search input using placeholder text
-    cy.get('input[placeholder*="nombre de parcela" i], input[placeholder*="buscar" i]').first().clear().type('Test')
+    // Find search input - try data-cy first, fallback to placeholder
+    cy.get('body').then(($body) => {
+      const searchInput = $body.find('[data-cy="search-input"]');
+      if (searchInput.length > 0) {
+        cy.get('[data-cy="search-input"]').clear().type('Test')
+      } else {
+        cy.get('input[placeholder*="nombre de parcela" i], input[placeholder*="buscar" i]').first().clear().type('Test')
+      }
+    })
     cy.waitForLivewire()
     
     // Verify search is working
-    cy.get('input[placeholder*="nombre de parcela" i], input[placeholder*="buscar" i]').first().should('have.value', 'Test')
+    cy.get('body').then(($body) => {
+      const searchInput = $body.find('[data-cy="search-input"]');
+      if (searchInput.length > 0) {
+        cy.get('[data-cy="search-input"]').should('have.value', 'Test')
+      } else {
+        cy.get('input[placeholder*="nombre de parcela" i], input[placeholder*="buscar" i]').first().should('have.value', 'Test')
+      }
+    })
   })
 
   it('should filter plots by active status', () => {
-    // Find the select with "Activas" or "Todas las parcelas" options
-    cy.get('select').then(($selects) => {
-      const statusSelect = Array.from($selects).find(select => {
-        const options = select.querySelectorAll('option');
-        return Array.from(options).some(opt => 
-          opt.textContent.toLowerCase().includes('activa') || 
-          opt.textContent.toLowerCase().includes('todas las parcelas')
-        );
-      });
-      
-      if (statusSelect && statusSelect.querySelectorAll('option').length > 1) {
-        cy.wrap(statusSelect).select('1', { force: true });
+    // Try data-cy first, fallback to finding select by options
+    cy.get('body').then(($body) => {
+      const filterSelect = $body.find('[data-cy="filter-active"]');
+      if (filterSelect.length > 0) {
+        cy.get('[data-cy="filter-active"]').select('1', { force: true });
         cy.waitForLivewire();
+      } else {
+        // Find the select with "Activas" or "Todas las parcelas" options
+        cy.get('select').then(($selects) => {
+          const statusSelect = Array.from($selects).find(select => {
+            const options = select.querySelectorAll('option');
+            return Array.from(options).some(opt => 
+              opt.textContent.toLowerCase().includes('activa') || 
+              opt.textContent.toLowerCase().includes('todas las parcelas')
+            );
+          });
+          
+          if (statusSelect && statusSelect.querySelectorAll('option').length > 1) {
+            cy.wrap(statusSelect).select('1', { force: true });
+            cy.waitForLivewire();
+          }
+        });
       }
     });
   })
@@ -108,12 +129,13 @@ describe('Viticulturist Plots (Parcelas) - CRUD', () => {
         // We should be on the edit page
         cy.url().should('include', '/plots/');
         cy.url().should('include', '/edit');
+        cy.get('[data-cy="plot-edit-form"]').should('be.visible');
         
-        // Modify basic fields using id
-        cy.get('#name').clear().type('Parcela Editada E2E')
+        // Modify basic fields using data-cy selector
+        cy.get('[data-cy="plot-name"]').clear().type('Parcela Editada E2E')
         
-        // Submit form - look for button with "Actualizar" or "Guardar"
-        cy.get('button[type="submit"]').contains(/Actualizar|Guardar/).click()
+        // Submit form using data-cy selector
+        cy.get('[data-cy="submit-button"]').click()
         cy.wait(5000)
         
         // Back on index with updated plot visible

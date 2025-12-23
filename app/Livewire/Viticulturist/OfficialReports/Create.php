@@ -315,12 +315,23 @@ class Create extends Component
         $this->showSummaryModal = false;
         
         try {
+            // Obtener periodo según tipo de informe
+            if ($this->reportType === 'phytosanitary_treatments') {
+                $periodStart = $this->startDate;
+                $periodEnd = $this->endDate;
+            } else {
+                // Para cuaderno digital completo, usar fechas de la campaña
+                $campaign = \App\Models\Campaign::find($this->campaignId);
+                $periodStart = $campaign->start_date ?? now()->startOfYear();
+                $periodEnd = $campaign->end_date ?? now();
+            }
+            
             // Crear registro de informe con estado pending
             $report = \App\Models\OfficialReport::create([
                 'user_id' => auth()->id(),
                 'report_type' => $this->reportType,
-                'period_start' => $this->reportType === 'phytosanitary_treatments' ? $this->startDate : null,
-                'period_end' => $this->reportType === 'phytosanitary_treatments' ? $this->endDate : null,
+                'period_start' => $periodStart,
+                'period_end' => $periodEnd,
                 'report_metadata' => $this->reportType === 'full_digital_notebook' 
                     ? [
                         'campaign_id' => $this->campaignId,

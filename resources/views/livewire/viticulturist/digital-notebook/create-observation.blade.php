@@ -9,12 +9,12 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
-    <form wire:submit="save" class="space-y-8">
+    <form wire:submit="save" class="space-y-8" data-cy="observation-form">
         <x-form-section title="Información Básica" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-label for="plot_id" required>Parcela</x-label>
-                        <x-select wire:model.live="plot_id" id="plot_id" :error="$errors->first('plot_id')" required>
+                        <x-select wire:model.live="plot_id" id="plot_id" data-cy="plot-select" :error="$errors->first('plot_id')" required>
                             <option value="">Selecciona una parcela</option>
                             @foreach($plots as $plot)
                                 <option value="{{ $plot->id }}">{{ $plot->name }}</option>
@@ -31,7 +31,7 @@
                                     <span class="text-gray-500 text-sm">(Opcional)</span>
                                 @endif
                             </x-label>
-                            <x-select wire:model="plot_planting_id" id="plot_planting_id" :error="$errors->first('plot_planting_id')" :required="count($availablePlantings) > 0">
+                            <x-select wire:model="plot_planting_id" id="plot_planting_id" data-cy="plot-planting-select" :error="$errors->first('plot_planting_id')" :required="count($availablePlantings) > 0">
                                 <option value="">-- Selecciona una plantación --</option>
                                 @foreach($availablePlantings as $planting)
                                     <option value="{{ $planting->id }}">
@@ -46,7 +46,7 @@
                     @endif
                     <div>
                         <x-label for="activity_date" required>Fecha</x-label>
-                        <x-input wire:model="activity_date" type="date" id="activity_date" :error="$errors->first('activity_date')" required />
+                        <x-input wire:model="activity_date" type="date" id="activity_date" data-cy="activity-date-input" :error="$errors->first('activity_date')" required />
                     </div>
                 </div>
         </x-form-section>
@@ -55,7 +55,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-label for="observation_type">Tipo de Observación</x-label>
-                        <x-select wire:model="observation_type" id="observation_type" :error="$errors->first('observation_type')">
+                        <x-select wire:model="observation_type" id="observation_type" data-cy="observation-type-select" :error="$errors->first('observation_type')">
                             <option value="">Selecciona un tipo</option>
                             <option value="plaga">Plaga</option>
                             <option value="enfermedad">Enfermedad</option>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="mt-6">
                     <x-label for="description" required>Descripción</x-label>
-                    <x-textarea wire:model="description" id="description" rows="6" placeholder="Describe detalladamente la observación..." :error="$errors->first('description')" required />
+                    <x-textarea wire:model="description" id="description" data-cy="description-textarea" rows="6" placeholder="Describe detalladamente la observación..." :error="$errors->first('description')" required />
                 </div>
                 <div class="mt-6">
                     <x-label for="action_taken">Acción Tomada</x-label>

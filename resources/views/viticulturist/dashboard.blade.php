@@ -125,9 +125,9 @@
 
         {{-- Alertas --}}
         @if(count($alerts) > 0)
-            <div class="space-y-2">
+            <div class="space-y-2" data-cy="dashboard-alerts">
                 @foreach($alerts as $alert)
-                    <div class="bg-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-50 border-l-4 border-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-400 p-4 rounded-lg">
+                    <div class="bg-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-50 border-l-4 border-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-400 p-4 rounded-lg" data-cy="dashboard-alert-{{ $alert['type'] }}">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
                                 <svg class="w-5 h-5 text-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,9 +147,9 @@
         @endif
 
         {{-- KPI Cards - Primera Fila (Básicos) --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" data-cy="dashboard-kpi-cards">
             {{-- Total Parcelas --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300" data-cy="kpi-total-plots">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 mb-1">Total Parcelas</p>
@@ -164,7 +164,7 @@
             </div>
 
             {{-- Área Total --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300" data-cy="kpi-total-area">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 mb-1">Área Total</p>
@@ -180,7 +180,7 @@
             </div>
 
             {{-- Actividades Este Mes --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300" data-cy="kpi-activities-month">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 mb-1">Actividades</p>
@@ -196,7 +196,7 @@
             </div>
 
             {{-- Total Cosechado --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300" data-cy="kpi-total-harvested">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 mb-1">Cosechado {{ date('Y') }}</p>
@@ -213,9 +213,9 @@
         </div>
 
         {{-- KPI Cards - Segunda Fila (Operativos) --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" data-cy="dashboard-operational-kpis">
             {{-- Tratamientos Activos --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300" data-cy="kpi-active-treatments">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 mb-1">Tratamientos</p>
@@ -231,7 +231,7 @@
             </div>
 
             {{-- Contenedores Disponibles --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300" data-cy="kpi-available-containers">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 mb-1">Contenedores</p>
@@ -247,7 +247,7 @@
             </div>
 
             {{-- Enlace a Estadísticas Financieras --}}
-            <a href="{{ route('viticulturist.invoices.index') }}" wire:navigate class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg border-2 border-indigo-200 p-6 hover:shadow-xl hover:border-indigo-300 transition-all duration-300">
+            <a href="{{ route('viticulturist.invoices.index') }}" wire:navigate class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg border-2 border-indigo-200 p-6 hover:shadow-xl hover:border-indigo-300 transition-all duration-300" data-cy="dashboard-financial-stats-link">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-indigo-600 mb-1">📊 Facturación</p>
@@ -264,9 +264,9 @@
         </div>
 
         {{-- Charts Row --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" data-cy="dashboard-charts">
             {{-- Distribución por Variedad --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6" data-cy="chart-variety-distribution">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-bold text-gray-900">Distribución por Variedad</h3>
                     <svg class="w-5 h-5 text-[var(--color-agro-green-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,18 +300,18 @@
             </div>
 
             {{-- Actividades Recientes --}}
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6" data-cy="recent-activities-section">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-bold text-gray-900">Actividades Recientes</h3>
-                    <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
+                    <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors" data-cy="view-all-activities-link">
                         Ver todas →
                     </a>
                 </div>
                 
                 @if($recentActivities->count() > 0)
-                    <div class="space-y-3">
+                    <div class="space-y-3" data-cy="recent-activities-list">
                         @foreach($recentActivities->take(5) as $activity)
-                            <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors" data-cy="recent-activity-item">
                                 <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -331,18 +331,18 @@
         </div>
 
         {{-- Cosechas Recientes --}}
-        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6" data-cy="recent-harvests-section">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-lg font-bold text-gray-900">Cosechas Recientes</h3>
-                <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors">
+                <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="text-sm font-medium text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] transition-colors" data-cy="view-all-harvests-link">
                     Ver registro →
                 </a>
             </div>
             
             @if($recentHarvests->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-cy="recent-harvests-list">
                     @foreach($recentHarvests as $harvest)
-                        <div class="p-4 rounded-lg border border-gray-200 hover:border-[var(--color-agro-green)] hover:shadow-md transition-all">
+                        <div class="p-4 rounded-lg border border-gray-200 hover:border-[var(--color-agro-green)] hover:shadow-md transition-all" data-cy="recent-harvest-item">
                             <div class="flex items-start gap-3">
                                 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

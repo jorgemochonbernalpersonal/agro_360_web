@@ -33,7 +33,7 @@
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
-            <a href="{{ route('viticulturist.phytosanitary-products.create') }}" class="group">
+            <a href="{{ route('viticulturist.phytosanitary-products.create') }}" class="group" data-cy="create-product-button">
                 <button
                     class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
                     <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none"
@@ -52,9 +52,10 @@
         <x-filter-input 
             wire:model.live.debounce.300ms="search"
             placeholder="Buscar por nombre, materia activa, registro o fabricante..."
+            data-cy="product-search-input"
         />
 
-        <x-filter-select wire:model.live="typeFilter">
+        <x-filter-select wire:model.live="typeFilter" data-cy="product-type-filter">
             <option value="">Todos los tipos</option>
             @foreach($types as $type)
                 <option value="{{ $type }}">{{ ucfirst($type) }}</option>
@@ -122,6 +123,7 @@
                             <x-action-button 
                                 variant="edit" 
                                 href="{{ route('viticulturist.phytosanitary-products.edit', $product) }}"
+                                data-cy="edit-product-button"
                             />
                         </x-table-actions>
                     </x-table-cell>

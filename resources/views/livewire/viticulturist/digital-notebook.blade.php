@@ -76,24 +76,24 @@
             
             <!-- Botones de acción rápida -->
             @can('create', \App\Models\AgriculturalActivity::class)
-                <div class="mt-6 pt-6 border-t border-gray-200">
+                <div class="mt-6 pt-6 border-t border-gray-200" data-cy="quick-actions">
                     <div class="flex flex-wrap gap-3 justify-center">
-                        <a href="{{ route('viticulturist.digital-notebook.treatment.create') }}" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm font-semibold">
+                        <a href="{{ route('viticulturist.digital-notebook.treatment.create') }}" data-cy="create-treatment-button" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm font-semibold">
                             + Tratamiento
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.fertilization.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
+                        <a href="{{ route('viticulturist.digital-notebook.fertilization.create') }}" data-cy="create-fertilization-button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
                             + Fertilización
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.irrigation.create') }}" class="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition text-sm font-semibold">
+                        <a href="{{ route('viticulturist.digital-notebook.irrigation.create') }}" data-cy="create-irrigation-button" class="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition text-sm font-semibold">
                             + Riego
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.cultural.create') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm font-semibold">
+                        <a href="{{ route('viticulturist.digital-notebook.cultural.create') }}" data-cy="create-cultural-button" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm font-semibold">
                             + Labor
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.observation.create') }}" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
+                        <a href="{{ route('viticulturist.digital-notebook.observation.create') }}" data-cy="create-observation-button" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
                             + Observación
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.harvest.create') }}" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition text-sm font-semibold shadow-md">
+                        <a href="{{ route('viticulturist.digital-notebook.harvest.create') }}" data-cy="create-harvest-button" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition text-sm font-semibold shadow-md">
                             🍇 Cosecha
                         </a>
                     </div>
@@ -104,14 +104,14 @@
 
     <!-- Filtros -->
     <x-filter-section title="Filtros de Búsqueda" color="green">
-        <x-filter-select wire:model.live="selectedPlot">
+        <x-filter-select wire:model.live="selectedPlot" data-cy="plot-filter">
             <option value="">Todas las parcelas</option>
             @foreach($plots as $plot)
                 <option value="{{ $plot->id }}">{{ $plot->name }}</option>
             @endforeach
         </x-filter-select>
 
-        <x-filter-select wire:model.live="activityType">
+        <x-filter-select wire:model.live="activityType" data-cy="activity-type-filter">
             <option value="">Todas las actividades</option>
             <option value="phytosanitary">Tratamientos Fitosanitarios</option>
             <option value="fertilization">Fertilizaciones</option>
@@ -147,6 +147,7 @@
         <x-filter-input 
             wire:model.live.debounce.300ms="search" 
             placeholder="Buscar en notas, parcelas, productos..."
+            data-cy="activity-search-input"
         />
 
         <x-slot:actions>

@@ -12,14 +12,14 @@
         <x-slot:actionButton>
             <div class="flex gap-3">
                 @can('create', \App\Models\Crew::class)
-                    <x-button href="{{ route('viticulturist.personal.create') }}" variant="primary">
+                    <x-button href="{{ route('viticulturist.personal.create') }}" variant="primary" data-cy="create-crew-button">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         Nuevo Equipo
                     </x-button>
                 @endcan
-                <x-button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary">
+                <x-button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary" data-cy="create-viticulturist-button">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
@@ -30,16 +30,18 @@
     </x-page-header>
 
     <!-- Tabs -->
-    <div class="glass-card rounded-xl p-2">
+    <div class="glass-card rounded-xl p-2" data-cy="view-tabs">
         <div class="flex gap-2">
             <button 
                 wire:click="switchView('personal')"
+                data-cy="personal-tab"
                 class="flex-1 px-4 py-2 rounded-lg font-semibold transition-colors {{ $viewMode === 'personal' ? 'bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}"
             >
                 👤 Personal
             </button>
             <button 
                 wire:click="switchView('crews')"
+                data-cy="crews-tab"
                 class="flex-1 px-4 py-2 rounded-lg font-semibold transition-colors {{ $viewMode === 'crews' ? 'bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}"
             >
                 👥 Equipos
@@ -113,6 +115,7 @@
         <x-filter-input 
             wire:model.live.debounce.300ms="search" 
             placeholder="{{ $viewMode === 'personal' ? 'Buscar por nombre o email...' : 'Buscar por nombre o descripción...' }}"
+            data-cy="personal-search-input"
         />
         @if(isset($wineries) && $wineries->count() > 1)
             <x-filter-select wire:model.live="wineryFilter">
@@ -123,7 +126,7 @@
             </x-filter-select>
         @endif
         @if($viewMode === 'personal' && isset($crews) && $crews->count() > 0)
-            <x-filter-select wire:model.live="crewFilter">
+            <x-filter-select wire:model.live="crewFilter" data-cy="crew-filter">
                 <option value="">Todas las cuadrillas</option>
                 @foreach($crews as $crew)
                     <option value="{{ $crew->id }}">{{ $crew->name }}</option>
@@ -131,7 +134,7 @@
             </x-filter-select>
         @endif
         @if($viewMode === 'personal')
-            <x-filter-select wire:model.live="statusFilter">
+            <x-filter-select wire:model.live="statusFilter" data-cy="status-filter">
                 <option value="">Todos los estados</option>
                 <option value="in_crew">En equipo</option>
                 <option value="individual">Sin equipo</option>
@@ -417,9 +420,10 @@
                                 variant="view" 
                                 href="{{ route('viticulturist.personal.show', $crew) }}#miembros"
                                 title="Ver / agregar miembros"
+                                data-cy="view-crew-button"
                             />
                             @can('update', $crew)
-                                <x-action-button variant="edit" href="{{ route('viticulturist.personal.edit', $crew) }}" />
+                                <x-action-button variant="edit" href="{{ route('viticulturist.personal.edit', $crew) }}" data-cy="edit-crew-button" />
                             @endcan
                             @can('delete', $crew)
                                 <x-action-button 

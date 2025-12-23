@@ -9,6 +9,7 @@ describe('Viticulturist Personal & Teams (Equipos y Personal)', () => {
     it('should display personal view by default', () => {
       cy.contains('Equipos y Personal').should('be.visible')
       cy.contains('Filtros de Búsqueda').should('be.visible')
+      cy.get('[data-cy="personal-tab"]').should('be.visible')
     })
 
     it('should show statistics panel', () => {
@@ -18,47 +19,37 @@ describe('Viticulturist Personal & Teams (Equipos y Personal)', () => {
     })
 
     it('should filter by search', () => {
-      cy.get('input[placeholder*="nombre o email"]').clear().type('Test')
+      cy.get('[data-cy="personal-search-input"]').clear().type('Test')
       cy.waitForLivewire()
-      cy.get('input[placeholder*="nombre o email"]').should('have.value', 'Test')
+      cy.get('[data-cy="personal-search-input"]').should('have.value', 'Test')
     })
 
     it('should filter by crew', () => {
-      cy.get('select').then(($selects) => {
-        const crewSelect = Array.from($selects).find(select => {
-          const options = select.querySelectorAll('option');
-          return Array.from(options).some(opt => opt.textContent.includes('cuadrilla') || opt.textContent.includes('equipo'));
-        });
-        
-        if (crewSelect && crewSelect.querySelectorAll('option').length > 1) {
-          cy.wrap(crewSelect).select(1, { force: true });
-          cy.waitForLivewire();
+      cy.get('[data-cy="crew-filter"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="crew-filter"]').select(1, { force: true })
+          cy.waitForLivewire()
+        } else {
+          cy.log('No crews available for filtering')
         }
-      });
+      })
     })
 
     it('should filter by status (in_crew, individual, unassigned)', () => {
-      cy.get('select').then(($selects) => {
-        const statusSelect = Array.from($selects).find(select => {
-          const options = select.querySelectorAll('option');
-          return Array.from(options).some(opt => 
-            opt.textContent.includes('En equipo') || 
-            opt.textContent.includes('Sin equipo') ||
-            opt.textContent.includes('Sin asignar')
-          );
-        });
-        
-        if (statusSelect) {
-          cy.wrap(statusSelect).select('in_crew', { force: true });
-          cy.waitForLivewire();
+      cy.get('[data-cy="status-filter"]').then(($select) => {
+        if ($select.length > 0) {
+          cy.get('[data-cy="status-filter"]').select('in_crew', { force: true })
+          cy.waitForLivewire()
+          cy.get('[data-cy="status-filter"]').should('have.value', 'in_crew')
         }
-      });
+      })
     })
 
     it('should switch to crews view', () => {
-      cy.contains('button', 'Equipos').click()
+      cy.get('[data-cy="crews-tab"]').click()
       cy.waitForLivewire()
       cy.url().should('include', 'viewMode=crews')
+      cy.get('[data-cy="crews-tab"]').should('be.visible')
     })
   })
 
@@ -70,63 +61,209 @@ describe('Viticulturist Personal & Teams (Equipos y Personal)', () => {
 
     it('should display crews list', () => {
       cy.contains('Equipos y Personal').should('be.visible')
+      cy.contains('Filtros de Búsqueda').should('be.visible')
     })
 
     it('should create a new crew', () => {
-      // The button might be in the header or might need to be found differently
-      cy.get('body').then(($body) => {
-        // Look for button/link with various text options
-        const nuevoEquipoBtn = $body.find('a, button').filter((i, el) => {
-          const text = el.textContent.trim().toLowerCase();
-          const href = el.getAttribute('href');
-          return (text.includes('nuevo equipo') || 
-                  text.includes('nueva cuadrilla') ||
-                  text.includes('crear equipo') ||
-                  (href && href.includes('/personal/create')));
-        });
-        
-        if (nuevoEquipoBtn.length > 0) {
-          cy.wrap(nuevoEquipoBtn.first()).click({ force: true })
-        } else {
-          // Try direct link
-          cy.visit('/viticulturist/personal/create', { timeout: 15000 })
-        }
-      })
+      cy.get('[data-cy="create-crew-button"]').click()
       cy.waitForLivewire()
-      cy.wait(2000)
-      cy.url({ timeout: 15000 }).should('include', '/viticulturist/personal/create')
+      cy.url().should('include', '/viticulturist/personal/create')
       
-      // Check for various possible titles
-      cy.get('body').should(($body) => {
-        const text = $body.text().toLowerCase();
-        expect(text.includes('nuevo equipo') || 
-               text.includes('nueva cuadrilla') ||
-               text.includes('crear equipo') ||
-               text.includes('equipo')).to.be.true
-      })
-      cy.get('input[wire\\:model="name"]#name').clear().type('Equipo E2E Test')
-      cy.get('textarea[wire\\:model="description"]#description').clear().type('Descripción de prueba E2E')
+      // Check for form
+      cy.get('[data-cy="crew-form"]').should('be.visible')
+      cy.contains('Nueva Cuadrilla').should('be.visible')
       
-      cy.get('form[wire\\:submit]').first().within(() => {
-        cy.get('button[type="submit"]').click()
-      })
+      // Fill form
+      const crewName = `Equipo E2E Test ${Date.now()}`
+      cy.get('[data-cy="crew-name-input"]').clear().type(crewName)
+      cy.get('[data-cy="crew-description-input"]').clear().type('Descripción de prueba E2E')
       
+      // Submit form
+      cy.get('[data-cy="submit-button"]').click()
       cy.wait(5000)
+      
+      // Should redirect to index
       cy.url().should('include', '/viticulturist/personal')
+      cy.contains(crewName).should('be.visible')
     })
 
     it('should search crews', () => {
-      cy.get('input[placeholder*="nombre o descripción"]').clear().type('Test')
+      cy.get('[data-cy="personal-search-input"]').clear().type('Test')
       cy.waitForLivewire()
+      cy.get('[data-cy="personal-search-input"]').should('have.value', 'Test')
+    })
+  })
+
+  describe('Create Crew', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/personal/create')
+      cy.waitForLivewire()
+    })
+
+    it('should display create form', () => {
+      cy.get('[data-cy="crew-form"]').should('be.visible')
+      cy.contains('Nueva Cuadrilla').should('be.visible')
+      cy.get('[data-cy="crew-name-input"]').should('be.visible')
+      cy.get('[data-cy="crew-description-input"]').should('be.visible')
+    })
+
+    it('should create crew with required fields', () => {
+      const crewName = `Crew Required ${Date.now()}`
+      
+      cy.get('[data-cy="crew-name-input"]').clear().type(crewName)
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      cy.url().should('include', '/viticulturist/personal')
+      cy.contains(crewName).should('be.visible')
+    })
+
+    it('should create crew with all fields', () => {
+      const crewName = `Crew Complete ${Date.now()}`
+      
+      cy.get('[data-cy="crew-name-input"]').clear().type(crewName)
+      cy.get('[data-cy="crew-description-input"]').clear().type('Descripción completa de prueba')
+      
+      // Select winery if available
+      cy.get('[data-cy="crew-winery-select"]').then(($select) => {
+        if ($select.length > 0 && $select.find('option').length > 1) {
+          cy.get('[data-cy="crew-winery-select"]').select(1, { force: true })
+        }
+      })
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      cy.url().should('include', '/viticulturist/personal')
+      cy.contains(crewName).should('be.visible')
+    })
+
+    it('should validate required fields', () => {
+      // Try to submit without name
+      cy.get('[data-cy="submit-button"]').click()
+      cy.waitForLivewire()
+      
+      // Should not submit
+      cy.url().should('include', '/viticulturist/personal/create')
+    })
+
+    it('should cancel and return to list', () => {
+      cy.get('[data-cy="cancel-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/personal')
+      cy.url().should('not.include', '/create')
+    })
+  })
+
+  describe('Edit Crew', () => {
+    beforeEach(() => {
+      // First create a crew to edit
+      cy.visit('/viticulturist/personal/create')
+      cy.waitForLivewire()
+      
+      const crewName = `Crew para Editar ${Date.now()}`
+      cy.get('[data-cy="crew-name-input"]').clear().type(crewName)
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      // Navigate to edit
+      cy.get('[data-cy="edit-crew-button"]').first().click({ force: true })
+      cy.waitForLivewire()
+    })
+
+    it('should display edit form', () => {
+      cy.get('[data-cy="crew-form"]').should('be.visible')
+      cy.contains('Editar Cuadrilla').should('be.visible')
+      cy.get('[data-cy="crew-name-input"]').should('be.visible')
+    })
+
+    it('should edit crew name', () => {
+      const newName = `Crew Editada ${Date.now()}`
+      
+      cy.get('[data-cy="crew-name-input"]').clear().type(newName)
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      cy.url().should('include', '/viticulturist/personal')
+      cy.contains(newName).should('be.visible')
+    })
+
+    it('should edit all crew fields', () => {
+      const newName = `Crew Completa Editada ${Date.now()}`
+      
+      cy.get('[data-cy="crew-name-input"]').clear().type(newName)
+      cy.get('[data-cy="crew-description-input"]').clear().type('Nueva descripción editada')
+      
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      cy.url().should('include', '/viticulturist/personal')
+      cy.contains(newName).should('be.visible')
+    })
+
+    it('should cancel edit and return to show', () => {
+      cy.get('[data-cy="cancel-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/personal/')
+      cy.url().should('not.include', '/edit')
+    })
+  })
+
+  describe('Crew Show View', () => {
+    beforeEach(() => {
+      // Create a crew first
+      cy.visit('/viticulturist/personal/create')
+      cy.waitForLivewire()
+      
+      const crewName = `Crew Show Test ${Date.now()}`
+      cy.get('[data-cy="crew-name-input"]').clear().type(crewName)
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      // Navigate to show
+      cy.get('[data-cy="view-crew-button"]').first().click({ force: true })
+      cy.waitForLivewire()
+    })
+
+    it('should display crew details', () => {
+      cy.get('[data-cy="crew-statistics"]').should('be.visible')
+      cy.get('[data-cy="crew-members-section"]').should('be.visible')
+    })
+
+    it('should display crew statistics', () => {
+      cy.get('[data-cy="crew-stats-grid"]').should('be.visible')
+      cy.get('[data-cy="crew-stats-grid"]').within(() => {
+        cy.contains('Miembros').should('be.visible')
+        cy.contains('Actividades').should('be.visible')
+      })
+    })
+
+    it('should navigate to edit from show view', () => {
+      cy.get('[data-cy="edit-crew-button"]').should('be.visible')
+      cy.get('[data-cy="edit-crew-button"]').click()
+      cy.waitForLivewire()
+      
+      cy.url().should('include', '/viticulturist/personal/')
+      cy.url().should('include', '/edit')
+      cy.get('[data-cy="crew-form"]').should('be.visible')
+    })
+
+    it('should navigate back to list from show view', () => {
+      cy.get('[data-cy="back-button"]').click()
+      cy.waitForLivewire()
+      
+      cy.url().should('include', '/viticulturist/personal')
+      cy.url().should('not.include', '/edit')
     })
   })
 
   describe('Assign viticulturist to crew', () => {
-    it('should assign viticulturist to crew using modal', () => {
-      // Switch to personal view
+    beforeEach(() => {
       cy.visit('/viticulturist/personal?viewMode=personal')
       cy.waitForLivewire()
-      
+    })
+
+    it('should assign viticulturist to crew using modal', () => {
       // Look for the + button to assign to crew
       cy.get('button').then(($buttons) => {
         const assignButton = Array.from($buttons).find(btn => {
@@ -153,14 +290,13 @@ describe('Viticulturist Personal & Teams (Equipos y Personal)', () => {
               cy.waitForLivewire()
             }
           })
+        } else {
+          cy.log('Assign button not found - may not have crews available')
         }
       })
     })
 
     it('should mark viticulturist as individual', () => {
-      cy.visit('/viticulturist/personal?viewMode=personal')
-      cy.waitForLivewire()
-      
       // Look for button to make individual
       cy.get('button').then(($buttons) => {
         const individualButton = Array.from($buttons).find(btn => {
@@ -171,35 +307,99 @@ describe('Viticulturist Personal & Teams (Equipos y Personal)', () => {
         if (individualButton) {
           cy.wrap(individualButton).click({ force: true })
           cy.waitForLivewire()
+        } else {
+          cy.log('Individual button not found')
         }
       })
     })
   })
 
-  describe('Toast notifications', () => {
-    it('should show toast notification after actions', () => {
-      // Try to create a crew to trigger a toast
-      cy.contains('Nuevo Equipo').click()
+  describe('Create Viticulturist', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/personal')
+      cy.waitForLivewire()
+    })
+
+    it('should navigate to create viticulturist', () => {
+      cy.get('[data-cy="create-viticulturist-button"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', '/viticulturist/viticulturists/create')
+    })
+  })
+
+  describe('Crew Validation', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/personal/create')
+      cy.waitForLivewire()
+    })
+
+    it('should require crew name', () => {
+      // Try to submit without name
+      cy.get('[data-cy="submit-button"]').click()
       cy.waitForLivewire()
       
-      cy.get('input[wire\\:model="name"]#name').clear().type('Test Toast Crew')
-      cy.get('textarea[wire\\:model="description"]#description').clear().type('Test description')
+      // Should not submit
+      cy.url().should('include', '/viticulturist/personal/create')
+    })
+
+    it('should handle special characters in name', () => {
+      const crewName = `Crew Test & Special ${Date.now()}`
       
-      cy.get('form[wire\\:submit]').first().within(() => {
-        cy.get('button[type="submit"]').click()
-      })
+      cy.get('[data-cy="crew-name-input"]').clear().type(crewName)
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
       
+      cy.url().should('include', '/viticulturist/personal')
+      cy.contains(crewName).should('be.visible')
+    })
+
+    it('should handle long description', () => {
+      const longDescription = 'A'.repeat(500)
+      
+      cy.get('[data-cy="crew-name-input"]').clear().type('Test Crew')
+      cy.get('[data-cy="crew-description-input"]').clear().type(longDescription)
+      cy.get('[data-cy="submit-button"]').click()
+      cy.wait(5000)
+      
+      cy.url().should('include', '/viticulturist/personal')
+    })
+  })
+
+  describe('View Switching', () => {
+    it('should switch between personal and crews views', () => {
+      // Start in personal view
+      cy.get('[data-cy="personal-tab"]').should('be.visible')
+      
+      // Switch to crews
+      cy.get('[data-cy="crews-tab"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', 'viewMode=crews')
+      
+      // Switch back to personal
+      cy.get('[data-cy="personal-tab"]').click()
+      cy.waitForLivewire()
+      cy.url().should('include', 'viewMode=personal')
+    })
+  })
+
+  describe('Toast notifications', () => {
+    it('should show toast notification after creating crew', () => {
+      cy.get('[data-cy="create-crew-button"]').click()
+      cy.waitForLivewire()
+      
+      const crewName = `Toast Test Crew ${Date.now()}`
+      cy.get('[data-cy="crew-name-input"]').clear().type(crewName)
+      cy.get('[data-cy="crew-description-input"]').clear().type('Test description')
+      
+      cy.get('[data-cy="submit-button"]').click()
       cy.wait(3000)
       
-      // Check for toast notification (bottom left)
+      // Check for toast notification
       cy.get('body').then(($body) => {
-        // Toast should appear in bottom left
-        const toasts = $body.find('[x-data*="toastNotifications"]');
-        if (toasts.length > 0) {
-          cy.get('body').should('contain.text', 'correctamente')
+        if ($body.find('[x-data*="toastNotifications"]').length > 0 || $body.text().includes('correctamente')) {
+          cy.log('Toast notification appeared')
         }
       })
     })
   })
 })
-

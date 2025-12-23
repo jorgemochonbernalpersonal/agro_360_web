@@ -38,6 +38,7 @@
                     @can('activate', $campaign)
                         <button 
                             wire:click="activate"
+                            data-cy="activate-campaign-button"
                             class="px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-all font-semibold"
                         >
                             Activar Campaña
@@ -45,11 +46,11 @@
                     @endcan
                 @endif
                 @can('update', $campaign)
-                    <a href="{{ route('viticulturist.campaign.edit', $campaign) }}" class="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all font-semibold">
+                    <a href="{{ route('viticulturist.campaign.edit', $campaign) }}" data-cy="edit-campaign-button" class="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all font-semibold">
                         Editar
                     </a>
                 @endcan
-                <a href="{{ route('viticulturist.campaign.index') }}" class="px-4 py-2 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all font-semibold">
+                <a href="{{ route('viticulturist.campaign.index') }}" data-cy="back-button" class="px-4 py-2 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all font-semibold">
                     Volver
                 </a>
             </div>
@@ -57,9 +58,9 @@
     </x-page-header>
 
     <!-- Estadísticas -->
-    <div class="glass-card rounded-xl p-6">
+    <div class="glass-card rounded-xl p-6" data-cy="campaign-statistics">
         <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4">Estadísticas de la Campaña</h3>
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4" data-cy="campaign-stats-grid">
             <div class="text-center">
                 <div class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ $campaign->activities_count }}</div>
                 <div class="text-sm text-gray-600">Total</div>
@@ -90,7 +91,7 @@
     <!-- Información de la Campaña -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Información General -->
-        <div class="glass-card rounded-xl p-6">
+        <div class="glass-card rounded-xl p-6" data-cy="campaign-info">
             <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4">Información General</h3>
             <div class="space-y-4">
                 <div>
@@ -127,11 +128,12 @@
         </div>
 
         <!-- Acciones Rápidas -->
-        <div class="glass-card rounded-xl p-6">
+        <div class="glass-card rounded-xl p-6" data-cy="campaign-quick-actions">
             <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4">Acciones Rápidas</h3>
             <div class="space-y-3">
                 <a 
                     href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
+                    data-cy="view-activities-button"
                     class="block w-full px-4 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all font-semibold text-center"
                 >
                     Ver Actividades en Cuaderno Digital
@@ -140,12 +142,14 @@
                     <div class="grid grid-cols-2 gap-2">
                         <a 
                             href="{{ route('viticulturist.digital-notebook.treatment.create') }}"
+                            data-cy="create-treatment-button"
                             class="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition text-sm font-semibold text-center"
                         >
                             + Tratamiento
                         </a>
                         <a 
                             href="{{ route('viticulturist.digital-notebook.fertilization.create') }}"
+                            data-cy="create-fertilization-button"
                             class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm font-semibold text-center"
                         >
                             + Fertilización
@@ -158,11 +162,12 @@
 
     <!-- Últimas Actividades -->
     @if($recentActivities->count() > 0)
-        <div class="glass-card rounded-xl p-6">
+        <div class="glass-card rounded-xl p-6" data-cy="recent-activities">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)]">Últimas Actividades</h3>
                 <a 
                     href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
+                    data-cy="view-all-activities-link"
                     class="text-sm font-semibold text-[var(--color-agro-green-dark)] hover:underline"
                 >
                     Ver todas →
@@ -213,7 +218,7 @@
             </div>
         </div>
     @else
-        <div class="glass-card rounded-xl p-8 text-center">
+        <div class="glass-card rounded-xl p-8 text-center" data-cy="no-activities-message">
             <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
@@ -222,6 +227,7 @@
             @can('create', \App\Models\AgriculturalActivity::class)
                 <a 
                     href="{{ route('viticulturist.digital-notebook.treatment.create') }}"
+                    data-cy="register-first-activity-button"
                     class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all shadow-lg hover:shadow-xl font-semibold"
                 >
                     Registrar Primera Actividad

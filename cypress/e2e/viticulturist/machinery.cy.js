@@ -53,25 +53,24 @@ describe('Viticulturist Machinery', () => {
     
     // Wait for form to load
     cy.contains('Nueva Maquinaria').should('be.visible')
+    cy.get('[data-cy="machinery-create-form"]').should('be.visible')
     
-    // Fill form
-    cy.get('input#name').clear().type('Tractor de Prueba E2E')
+    // Fill form using data-cy selectors
+    cy.get('[data-cy="machinery-name"]').clear().type('Tractor de Prueba E2E')
     
     // Type is now a select field (machinery_type_id)
-    cy.get('select#machinery_type_id').then(($select) => {
+    cy.get('[data-cy="machinery-type-id"]').then(($select) => {
       if ($select.length > 0 && $select.find('option').length > 1) {
-        cy.get('select#machinery_type_id').select(1, { force: true })
+        cy.get('[data-cy="machinery-type-id"]').select(1, { force: true })
       }
     })
     
     // Brand and model are also input fields
-    cy.get('input#brand').clear().type('Marca Test')
-    cy.get('input#model').clear().type('Modelo Test')
+    cy.get('[data-cy="machinery-brand"]').clear().type('Marca Test')
+    cy.get('[data-cy="machinery-model"]').clear().type('Modelo Test')
     
-    // Submit form - look for submit button within the form with wire:submit
-    cy.get('form[wire\\:submit]').first().within(() => {
-      cy.get('button[type="submit"]').click()
-    })
+    // Submit form using data-cy selector
+    cy.get('[data-cy="submit-button"]').click()
     
     // Wait for Livewire to process
     cy.wait(5000)
@@ -112,23 +111,21 @@ describe('Viticulturist Machinery', () => {
     if (!hasMachinery) {
       cy.log('No machinery found to edit - creating one first')
       
-      // Create machinery first
+      // Create machinery first using data-cy selectors
       cy.contains('Nueva Maquinaria').click()
       cy.waitForLivewire()
       cy.wait(2000)
       
-      cy.get('input#name').clear().type('Maquinaria para Editar E2E')
-      cy.get('select#machinery_type_id').then(($select) => {
+      cy.get('[data-cy="machinery-name"]').clear().type('Maquinaria para Editar E2E')
+      cy.get('[data-cy="machinery-type-id"]').then(($select) => {
         if ($select.length > 0 && $select.find('option').length > 1) {
-          cy.get('select#machinery_type_id').select(1, { force: true })
+          cy.get('[data-cy="machinery-type-id"]').select(1, { force: true })
         }
       })
-      cy.get('input#brand').clear().type('Marca Test')
-      cy.get('input#model').clear().type('Modelo Test')
+      cy.get('[data-cy="machinery-brand"]').clear().type('Marca Test')
+      cy.get('[data-cy="machinery-model"]').clear().type('Modelo Test')
       
-      cy.get('form[wire\\:submit]').first().within(() => {
-        cy.get('button[type="submit"]').click()
-      })
+      cy.get('[data-cy="submit-button"]').click()
       cy.wait(5000)
       
       // Ensure we're back on index (not on create page)
@@ -177,17 +174,15 @@ describe('Viticulturist Machinery', () => {
       expect($url).to.include('/viticulturist/machinery/')
       expect($url).to.include('/edit')
     })
+    cy.get('[data-cy="machinery-edit-form"]').should('be.visible')
 
-    // Modify basic fields if form exists
-    cy.get('body').then(($body) => {
-      const nameInput = $body.find('input#name');
-      if (nameInput.length > 0) {
-        cy.get('input#name').clear().type('Maquinaria Editada E2E')
+    // Modify basic fields using data-cy selector
+    cy.get('[data-cy="machinery-name"]').then(($input) => {
+      if ($input.length > 0) {
+        cy.get('[data-cy="machinery-name"]').clear().type('Maquinaria Editada E2E')
 
-        // Submit form
-        cy.get('form[wire\\:submit]').first().within(() => {
-          cy.get('button[type="submit"]').click()
-        })
+        // Submit form using data-cy selector
+        cy.get('[data-cy="submit-button"]').click()
         cy.wait(5000)
 
         // Back on index with updated machinery visible

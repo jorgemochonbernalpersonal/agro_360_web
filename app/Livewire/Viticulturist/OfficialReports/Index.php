@@ -32,6 +32,24 @@ class Index extends Component
     // Filtros y búsqueda
     public $search = '';
     public $statusFilter = 'all'; // all, valid, invalid
+    
+    // Auto-polling para informes en proceso
+    public $hasPendingReports = false;
+
+    public function mount()
+    {
+        $this->checkPendingReports();
+    }
+
+    /**
+     * Verificar si hay informes pendientes o en proceso
+     */
+    public function checkPendingReports()
+    {
+        $this->hasPendingReports = OfficialReport::forUser(auth()->id())
+            ->whereIn('processing_status', ['pending', 'processing'])
+            ->exists();
+    }
 
     /**
      * Abrir modal para invalidar informe
@@ -229,13 +247,20 @@ class Index extends Component
         $totalCount = $baseQuery->count();
         $validCount = (clone $baseQuery)->where('is_valid', true)->count();
         $invalidCount = (clone $baseQuery)->where('is_valid', false)->count();
+        $pendingCount = (clone $baseQuery)->where('processing_status', 'pending')->count();
+        $processingCount = (clone $baseQuery)->where('processing_status', 'processing')->count();
         $lastReport = $baseQuery->recent()->first();
+        
+        // Actualizar estado de polling
+        $this->hasPendingReports = ($pendingCount + $processingCount) > 0;
 
         return view('livewire.viticulturist.official-reports.index', [
             'reports' => $reports,
             'totalCount' => $totalCount,
             'validCount' => $validCount,
             'invalidCount' => $invalidCount,
+            'pendingCount' => $pendingCount,
+            'processingCount' => $processingCount,
             'lastReportDate' => $lastReport ? $lastReport->created_at->format('d/m/Y') : null,
         ]);
     }

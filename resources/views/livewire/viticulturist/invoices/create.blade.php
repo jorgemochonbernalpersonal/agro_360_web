@@ -6,12 +6,12 @@
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
         :back-url="route('viticulturist.invoices.index')"
     >
-        <form wire:submit="save" class="space-y-8">
+        <form wire:submit="save" class="space-y-8" data-cy="invoice-create-form">
             <x-form-section title="Cliente" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-label for="client_id" required>Cliente</x-label>
-                        <x-select wire:model.live="client_id" id="client_id" required>
+                        <x-select wire:model.live="client_id" id="client_id" data-cy="client-id" required>
                             <option value="">Selecciona un cliente</option>
                             @foreach($availableClients as $client)
                                 <option value="{{ $client->id }}">{{ $client->full_name }}</option>
@@ -24,7 +24,7 @@
                     @if($client_id)
                         <div>
                             <x-label for="client_address_id">Dirección de facturación</x-label>
-                            <x-select wire:model="client_address_id" id="client_address_id">
+                            <x-select wire:model="client_address_id" id="client_address_id" data-cy="client-address-id">
                                 <option value="">Selecciona una dirección</option>
                                 @foreach($availableAddresses as $address)
                                     <option value="{{ $address->id }}">
@@ -49,6 +49,7 @@
                     <x-input 
                         wire:model.live="delivery_note_code" 
                         id="delivery_note_code" 
+                        data-cy="delivery-note-code"
                         type="text" 
                         required
                         placeholder="Ej: ALB-2025-0001"
@@ -69,14 +70,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-label for="invoice_date" required>Fecha de factura</x-label>
-                        <x-input wire:model="invoice_date" id="invoice_date" type="date" required />
+                        <x-input wire:model="invoice_date" id="invoice_date" data-cy="invoice-date" type="date" required />
                         @error('invoice_date')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <x-label for="due_date">Fecha de vencimiento</x-label>
-                        <x-input wire:model="due_date" id="due_date" type="date" />
+                        <x-input wire:model="due_date" id="due_date" data-cy="due-date" type="date" />
                         @error('due_date')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -96,7 +97,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <x-label for="selectedCampaign">Filtrar por Campaña</x-label>
-                            <x-select wire:model.live="selectedCampaign" id="selectedCampaign">
+                            <x-select wire:model.live="selectedCampaign" id="selectedCampaign" data-cy="selected-campaign">
                                 <option value="">Todas las campañas</option>
                                 @foreach($campaigns as $campaign)
                                     <option value="{{ $campaign->id }}">{{ $campaign->year }}</option>
@@ -109,6 +110,7 @@
                                 wire:model.live="selectedHarvestId" 
                                 wire:change="addHarvestToInvoice"
                                 id="selectedHarvestId"
+                                data-cy="selected-harvest-id"
                                 :required="$fromHarvestRoute"
                             >
                                 <option value="">-- Selecciona una cosecha sin facturar --</option>
@@ -159,7 +161,7 @@
                 @endif
                 <div class="space-y-4">
                 @forelse($items as $index => $item)
-                        <div class="border-2 border-gray-200 rounded-lg p-4 bg-white hover:border-green-300 transition-colors shadow-sm">
+                        <div class="border-2 border-gray-200 rounded-lg p-4 bg-white hover:border-green-300 transition-colors shadow-sm" data-cy="invoice-item" data-cy-item-index="{{ $index }}">
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center gap-2">
                                     <h4 class="text-base font-bold text-gray-900">Item #{{ $index + 1 }}</h4>
@@ -174,6 +176,8 @@
                                         type="button" 
                                         wire:click="removeItem({{ $index }})" 
                                         class="text-red-600 hover:text-red-800 font-medium text-xs flex items-center gap-1"
+                                        data-cy="remove-item"
+                                        data-cy-item-index="{{ $index }}"
                                     >
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -192,6 +196,8 @@
                                         placeholder="Ej: Uva Tempranillo, Servicio de recolección..."
                                         :error="$errors->first('items.' . $index . '.name')"
                                         class="text-sm"
+                                        data-cy="item-name"
+                                        data-cy-item-index="{{ $index }}"
                                     />
                                 </div>
                                 
@@ -203,6 +209,8 @@
                                         rows="2"
                                         placeholder="Descripción detallada..."
                                         class="text-sm"
+                                        data-cy="item-description"
+                                        data-cy-item-index="{{ $index }}"
                                     />
                                 </div>
                                 <div class="md:col-span-4">
@@ -211,10 +219,12 @@
                                         wire:model="items.{{ $index }}.sku" 
                                         placeholder="Código"
                                         class="text-sm"
+                                        data-cy="item-sku"
+                                        data-cy-item-index="{{ $index }}"
                                     />
                                     <div class="mt-2">
                                         <x-label class="text-xs">Tipo</x-label>
-                                        <x-select wire:model="items.{{ $index }}.concept_type" class="text-sm">
+                                        <x-select wire:model="items.{{ $index }}.concept_type" class="text-sm" data-cy="item-concept-type" data-cy-item-index="{{ $index }}">
                                             <option value="harvest">Cosecha</option>
                                             <option value="service">Servicio</option>
                                             <option value="product">Producto</option>
@@ -234,6 +244,8 @@
                                         placeholder="0.000"
                                         :error="$errors->first('items.' . $index . '.quantity')"
                                         class="text-sm"
+                                        data-cy="item-quantity"
+                                        data-cy-item-index="{{ $index }}"
                                     />
                                 </div>
                                 <div class="md:col-span-3">
@@ -246,6 +258,8 @@
                                         placeholder="0.0000"
                                         :error="$errors->first('items.' . $index . '.unit_price')"
                                         class="text-sm"
+                                        data-cy="item-unit-price"
+                                        data-cy-item-index="{{ $index }}"
                                     />
                                 </div>
                                 <div class="md:col-span-3">
@@ -258,11 +272,13 @@
                                         max="100"
                                         placeholder="0.00"
                                         class="text-sm"
+                                        data-cy="item-discount"
+                                        data-cy-item-index="{{ $index }}"
                                     />
                                 </div>
                                 <div class="md:col-span-3">
                                     <x-label class="text-xs">Impuesto</x-label>
-                                    <x-select wire:model.live="items.{{ $index }}.tax_id" class="text-sm">
+                                    <x-select wire:model.live="items.{{ $index }}.tax_id" class="text-sm" data-cy="item-tax-id" data-cy-item-index="{{ $index }}">
                                         <option value="">Sin impuesto</option>
                                         @foreach($availableTaxes as $tax)
                                             <option value="{{ $tax->id }}">{{ $tax->name }} ({{ number_format($tax->rate, 2) }}%)</option>
@@ -331,6 +347,7 @@
                             type="button" 
                             wire:click="addItem" 
                             class="inline-flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition font-semibold shadow-sm"
+                            data-cy="add-item-button"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -348,14 +365,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-label for="observations">Observaciones generales</x-label>
-                        <x-textarea wire:model="observations" id="observations" rows="3" placeholder="Notas internas..." />
+                        <x-textarea wire:model="observations" id="observations" data-cy="observations" rows="3" placeholder="Notas internas..." />
                         @error('observations')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <x-label for="observations_invoice">Observaciones en factura</x-label>
-                        <x-textarea wire:model="observations_invoice" id="observations_invoice" rows="3" placeholder="Texto que aparecerá en la factura..." />
+                        <x-textarea wire:model="observations_invoice" id="observations_invoice" data-cy="observations-invoice" rows="3" placeholder="Texto que aparecerá en la factura..." />
                         @error('observations_invoice')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -364,8 +381,8 @@
             </x-form-section>
 
             <div class="flex justify-end gap-4">
-                <x-button type="button" variant="ghost" href="{{ route('viticulturist.invoices.index') }}">Cancelar</x-button>
-                <x-button type="submit" variant="primary">Crear Factura</x-button>
+                <x-button type="button" variant="ghost" href="{{ route('viticulturist.invoices.index') }}" data-cy="cancel-button">Cancelar</x-button>
+                <x-button type="submit" variant="primary" data-cy="submit-button">Crear Factura</x-button>
             </div>
         </form>
     </x-form-card>

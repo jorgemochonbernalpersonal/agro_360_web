@@ -9,7 +9,7 @@
     icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.machinery.index')"
 >
-    <form wire:submit="save" class="space-y-8" enctype="multipart/form-data">
+    <form wire:submit="save" class="space-y-8" enctype="multipart/form-data" data-cy="machinery-edit-form">
         <x-form-section title="Información Básica" color="green">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -20,6 +20,7 @@
                             wire:model="name" 
                             type="text" 
                             id="name"
+                            data-cy="machinery-name"
                             :error="$errors->first('name')"
                             required
                         />
@@ -31,6 +32,7 @@
                         <x-select 
                             wire:model="machinery_type_id" 
                             id="machinery_type_id"
+                            data-cy="machinery-type-id"
                             :error="$errors->first('machinery_type_id')"
                             required
                         >
@@ -48,6 +50,7 @@
                             wire:model="brand" 
                             type="text" 
                             id="brand"
+                            data-cy="machinery-brand"
                             :error="$errors->first('brand')"
                         />
                     </div>
@@ -59,6 +62,7 @@
                             wire:model="model" 
                             type="text" 
                             id="model"
+                            data-cy="machinery-model"
                             :error="$errors->first('model')"
                         />
                     </div>
@@ -70,6 +74,7 @@
                             wire:model="serial_number" 
                             type="text" 
                             id="serial_number"
+                            data-cy="machinery-serial-number"
                             :error="$errors->first('serial_number')"
                         />
                     </div>
@@ -83,6 +88,7 @@
                             min="1900"
                             max="{{ now()->year + 1 }}"
                             id="year"
+                            data-cy="machinery-year"
                             :error="$errors->first('year')"
                         />
                     </div>
@@ -121,6 +127,7 @@
                             wire:model="is_rented" 
                             type="checkbox"
                             id="is_rented"
+                            data-cy="machinery-is-rented"
                             class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
                     >
                     <label for="is_rented" class="ml-3 text-sm font-semibold text-gray-700">
@@ -226,6 +233,7 @@
                     <x-textarea 
                         wire:model="notes" 
                         id="notes"
+                        data-cy="machinery-notes"
                         rows="4"
                         placeholder="Notas adicionales sobre la maquinaria..."
                         :error="$errors->first('notes')"
@@ -240,6 +248,7 @@
                         wire:model="active" 
                         type="checkbox"
                         id="active"
+                        data-cy="machinery-active"
                         class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
                     >
                     <label for="active" class="ml-3 text-sm font-semibold text-gray-700">

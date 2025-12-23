@@ -7,6 +7,18 @@ use App\Models\AgriculturalActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Report Verification Controller
+ * 
+ * Handles public verification of official reports using verification codes.
+ * 
+ * IMPORTANT FIX (2025-12-23):
+ * The PDF integrity verification was failing because the path was being
+ * constructed incorrectly using storage_path('app/' . $path) which duplicated
+ * the path. This has been fixed to use Storage::disk('local')->get() instead.
+ * 
+ * @see https://github.com/agro365/issues/verification-fix
+ */
 class ReportVerificationController extends Controller
 {
     /**
@@ -70,17 +82,20 @@ class ReportVerificationController extends Controller
         try {
             // MÉTODO 1 (PRIMARIO): Verificar hash del PDF real si existe
             // Esto es más confiable que reconstruir datos que pueden cambiar de orden
-            $pdfPath = storage_path('app/' . $report->pdf_path);
             
-            if (file_exists($pdfPath)) {
+            // Verificar si el PDF existe usando Storage
+            if ($report->pdfExists()) {
                 $metadata = $report->signature_metadata ?? [];
                 $originalPdfHash = $metadata['pdf_hash'] ?? null;
                 
                 if ($originalPdfHash) {
-                    $currentPdfHash = hash_file('sha256', $pdfPath);
+                    // Obtener el hash del PDF actual usando Storage
+                    $pdfContent = \Storage::disk('local')->get($report->pdf_path);
+                    $currentPdfHash = hash('sha256', $pdfContent);
                     
                     Log::info('Verificando PDF real', [
                         'report_id' => $report->id,
+                        'pdf_path' => $report->pdf_path,
                         'original_hash' => substr($originalPdfHash, 0, 16) . '...',
                         'current_hash' => substr($currentPdfHash, 0, 16) . '...',
                         'match' => $originalPdfHash === $currentPdfHash,

@@ -13,11 +13,11 @@
         <x-slot:actionButton>
             <div class="flex items-center gap-3">
                 @can('update', $crew)
-                    <a href="{{ route('viticulturist.personal.edit', $crew) }}" class="px-4 py-2 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all font-semibold shadow-sm">
+                    <a href="{{ route('viticulturist.personal.edit', $crew) }}" data-cy="edit-crew-button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all font-semibold shadow-sm">
                         Editar
                     </a>
                 @endcan
-                <a href="{{ route('viticulturist.personal.index') }}" class="px-4 py-2 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all font-semibold">
+                <a href="{{ route('viticulturist.personal.index') }}" data-cy="back-button" class="px-4 py-2 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all font-semibold">
                     Volver
                 </a>
             </div>
@@ -25,9 +25,9 @@
     </x-page-header>
 
     <!-- Estadísticas -->
-    <div class="glass-card rounded-xl p-6">
+    <div class="glass-card rounded-xl p-6" data-cy="crew-statistics">
         <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4">Estadísticas de la Cuadrilla</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" data-cy="crew-stats-grid">
             <div class="text-center p-4 bg-[var(--color-agro-green-bg)] rounded-lg">
                 <div class="text-3xl font-bold text-[var(--color-agro-green-dark)]">{{ $stats['members_count'] }}</div>
                 <div class="text-sm text-gray-600 mt-1">Miembros</div>
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Gestión de Miembros -->
-        <div id="miembros" class="glass-card rounded-xl p-6">
+        <div id="miembros" class="glass-card rounded-xl p-6" data-cy="crew-members-section">
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)]">Miembros de la Cuadrilla</h3>
