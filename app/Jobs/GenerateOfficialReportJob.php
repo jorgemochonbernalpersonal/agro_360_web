@@ -69,7 +69,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ->with([
                         'phytosanitaryTreatment:id,activity_id,product_id,area_treated',
                         'phytosanitaryTreatment.product:id,name',
-                        'plot:id,name,total_area',
+                        'plot:id,name,area',
                         'plotPlanting:id,plot_id,name',
                         'plotPlanting.grapeVariety:id,name',
                         'crewMember:id,name',
