@@ -90,4 +90,47 @@ class AgriculturalActivityFactory extends Factory
             'viticulturist_id' => $campaign->viticulturist_id,
         ]);
     }
+
+    /**
+     * Create an activity with a phytosanitary treatment.
+     * Used in tests to create activities with associated treatments.
+     */
+    public function withPhytosanitaryTreatment(array $treatmentAttributes = []): static
+    {
+        return $this->afterCreating(function (AgriculturalActivity $activity) use ($treatmentAttributes) {
+            // Asegurar que la actividad es de tipo phytosanitary
+            if ($activity->activity_type !== 'phytosanitary') {
+                $activity->update(['activity_type' => 'phytosanitary']);
+            }
+
+            // Crear producto fitosanitario si no existe
+            $product = \App\Models\PhytosanitaryProduct::firstOrCreate(
+                ['registration_number' => 'TEST-' . fake()->unique()->numberBetween(1000, 9999)],
+                [
+                    'name' => fake()->words(2, true),
+                    'active_ingredient' => fake()->word(),
+                    'manufacturer' => fake()->company(),
+                    'type' => fake()->randomElement(['insecticide', 'fungicide', 'herbicide']),
+                    'withdrawal_period_days' => fake()->numberBetween(7, 30),
+                ]
+            );
+
+            // Crear tratamiento fitosanitario
+            \App\Models\PhytosanitaryTreatment::create(array_merge([
+                'activity_id' => $activity->id,
+                'product_id' => $product->id,
+                'dose_per_hectare' => fake()->randomFloat(2, 0.5, 5.0),
+                'total_dose' => fake()->randomFloat(2, 1.0, 10.0),
+                'area_treated' => fake()->randomFloat(2, 0.5, 5.0),
+                'application_method' => fake()->randomElement(['pulverización', 'aplicación foliar', 'riego']),
+                'target_pest' => fake()->words(2, true),
+                'wind_speed' => fake()->randomFloat(2, 0, 20),
+                'humidity' => fake()->randomFloat(2, 30, 90),
+                'treatment_justification' => fake()->sentence(),
+                'applicator_ropo_number' => fake()->numerify('ROPO-####'),
+                'reentry_period_days' => fake()->numberBetween(1, 7),
+                'spray_volume' => fake()->randomFloat(2, 200, 1000),
+            ], $treatmentAttributes));
+        });
+    }
 }

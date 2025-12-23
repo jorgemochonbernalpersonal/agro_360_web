@@ -15,7 +15,7 @@ class OfficialReportShared extends Mailable
     use Queueable, SerializesModels;
 
     public $report;
-    public $message;
+    public $customMessage; // Renombrado de $message para evitar conflicto con variable reservada de Laravel
     public $senderName;
 
     /**
@@ -24,7 +24,7 @@ class OfficialReportShared extends Mailable
     public function __construct(OfficialReport $report, string $customMessage, string $senderName)
     {
         $this->report = $report;
-        $this->message = $customMessage;
+        $this->customMessage = $customMessage;
         $this->senderName = $senderName;
     }
 

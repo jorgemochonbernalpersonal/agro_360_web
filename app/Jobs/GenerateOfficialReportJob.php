@@ -363,10 +363,15 @@ class GenerateOfficialReportJob implements ShouldQueue
      */
     private function calculateFileHash(string $filePath): string
     {
-        $fullPath = storage_path('app/' . $filePath);
+        // Usar Storage para obtener el path correcto (funciona con fake en tests)
+        $fullPath = \Illuminate\Support\Facades\Storage::disk('local')->path($filePath);
         
         if (!file_exists($fullPath)) {
-            throw new \Exception("Archivo no encontrado: {$filePath}");
+            // Fallback: intentar con storage_path si el método anterior falla
+            $fullPath = storage_path('app/' . $filePath);
+            if (!file_exists($fullPath)) {
+                throw new \Exception("Archivo no encontrado: {$filePath}");
+            }
         }
 
         $hash = hash_init('sha256');

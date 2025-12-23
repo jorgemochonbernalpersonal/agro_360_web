@@ -12,6 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Verificar que la tabla existe antes de intentar modificarla
+        if (!Schema::hasTable('official_reports')) {
+            return; // La tabla se creará en otra migración posterior
+        }
+
         Schema::table('official_reports', function (Blueprint $table) {
             // Añadir processing_status si no existe
             if (!Schema::hasColumn('official_reports', 'processing_status')) {
@@ -34,9 +39,11 @@ return new class extends Migration
         
         // Actualizar registros existentes que no tengan processing_status
         // Esto es necesario porque la columna tiene un default, pero los registros antiguos pueden tener NULL
-        DB::table('official_reports')
-            ->whereNull('processing_status')
-            ->update(['processing_status' => 'completed']);
+        if (Schema::hasTable('official_reports')) {
+            DB::table('official_reports')
+                ->whereNull('processing_status')
+                ->update(['processing_status' => 'completed']);
+        }
     }
 
     /**
