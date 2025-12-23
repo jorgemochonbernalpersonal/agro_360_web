@@ -109,6 +109,40 @@ class InvoicingSetting extends Model
             'last_reset_year' => now()->year
         ]);
     }
+    
+    /**
+     * Generar código de factura e incrementar contador ATÓMICAMENTE
+     * Previene race conditions usando lockForUpdate()
+     */
+    public function generateAndIncrementInvoiceCode(): string
+    {
+        return \DB::transaction(function () {
+            // Lock row para prevenir race conditions
+            $this->lockForUpdate()->fresh();
+            
+            $code = $this->generateInvoiceCode();
+            $this->incrementInvoiceCounter();
+            
+            return $code;
+        });
+    }
+    
+    /**
+     * Generar código de albarán e incrementar contador ATÓMICAMENTE
+     * Previene race conditions usando lockForUpdate()
+     */
+    public function generateAndIncrementDeliveryNoteCode(): string
+    {
+        return \DB::transaction(function () {
+            // Lock row para prevenir race conditions
+            $this->lockForUpdate()->fresh();
+            
+            $code = $this->generateDeliveryNoteCode();
+            $this->incrementDeliveryNoteCounter();
+            
+            return $code;
+        });
+    }
 
     /**
      * Verificar si necesita reseteo por año

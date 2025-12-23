@@ -55,6 +55,13 @@ return new class extends Migration
             $table->timestamp('invalidated_at')->nullable();
             $table->foreignId('invalidated_by')->nullable()->constrained('users');
             
+            // PROCESAMIENTO EN COLA
+            $table->enum('processing_status', ['pending', 'processing', 'completed', 'failed'])
+                ->default('completed')
+                ->comment('Estado del procesamiento en cola');
+            $table->text('processing_error')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            
             $table->timestamps();
             
             // INDEXES para optimizar queries

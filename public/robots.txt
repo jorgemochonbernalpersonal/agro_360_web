@@ -1,6 +1,38 @@
 # Agro365 - Robots.txt
 # Gestión agrícola profesional
 
+# Googlebot - Permitir todo lo público
+User-agent: Googlebot
+Allow: /
+Allow: /faqs
+Allow: /blog
+Allow: /tutoriales
+Allow: /quienes-somos
+Allow: /verify-report/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /build/
+Allow: /images/
+
+# Bingbot - Permitir todo lo público
+User-agent: Bingbot
+Allow: /
+Allow: /faqs
+Allow: /blog
+Allow: /tutoriales
+Allow: /quienes-somos
+Allow: /verify-report/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /build/
+Allow: /images/
+
+# Googlebot-Image - Permitir imágenes
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /build/
+
+# Todos los demás bots
 User-agent: *
 
 # Permitir páginas públicas
@@ -8,6 +40,7 @@ Allow: /
 Allow: /*.css$
 Allow: /*.js$
 Allow: /build/
+Allow: /images/
 
 # Bloquear dashboards y áreas privadas
 Disallow: /admin/
@@ -44,5 +77,15 @@ Disallow: /plots/
 Disallow: /sigpac/
 Disallow: /campaigns/
 
-# Sitemap - Ayuda a Google a indexar el sitio
+# Permitir específicamente páginas públicas importantes
+Allow: /faqs
+Allow: /blog
+Allow: /tutoriales
+Allow: /quienes-somos
+Allow: /verify-report/
+
+# Crawl-delay para ser amigable con los bots
+Crawl-delay: 1
+
+# Sitemap - Ayuda a los motores de búsqueda a indexar el sitio
 Sitemap: https://agro365.es/sitemap.xml

@@ -371,7 +371,21 @@
                             </div>
                         @endif
 
-                        <form wire:submit="saveDigitalSignature" class="space-y-4" x-data="{ showPassword: false, showPasswordConfirmation: false }">
+                        <form wire:submit="saveDigitalSignature" class="space-y-4" x-data="{ 
+                            showPassword: false, 
+                            showPasswordConfirmation: false,
+                            password: '',
+                            passwordStrength: 0,
+                            calculateStrength() {
+                                let strength = 0;
+                                const pwd = this.password;
+                                if (pwd.length >= 8) strength += 25;
+                                if (/[a-z]/.test(pwd)) strength += 25;
+                                if (/[A-Z]/.test(pwd)) strength += 25;
+                                if (/[0-9]/.test(pwd)) strength += 25;
+                                this.passwordStrength = strength;
+                            }
+                        }">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                                     {{ $hasDigitalSignature ? 'Nueva' : 'Crear' }} Contraseña de Firma Digital
@@ -381,8 +395,10 @@
                                         type="password" 
                                         wire:model="signaturePassword"
                                         x-bind:type="showPassword ? 'text' : 'password'"
+                                        x-model="password"
+                                        x-on:input="calculateStrength()"
                                         class="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                        placeholder="Mínimo 8 caracteres"
+                                        placeholder="Mínimo 8 caracteres, 1 mayúscula, 1 minúscula y 1 número"
                                     >
                                     <button
                                         type="button"
@@ -399,6 +415,33 @@
                                         </svg>
                                     </button>
                                 </div>
+                                
+                                {{-- Indicador de fortaleza --}}
+                                <div class="mt-2" x-show="password.length > 0">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div 
+                                                class="h-full transition-all duration-300"
+                                                x-bind:class="{
+                                                    'bg-red-500': passwordStrength < 50,
+                                                    'bg-yellow-500': passwordStrength >= 50 && passwordStrength < 75,
+                                                    'bg-green-500': passwordStrength >= 75
+                                                }"
+                                                x-bind:style="'width: ' + passwordStrength + '%'"
+                                            ></div>
+                                        </div>
+                                        <span 
+                                            class="text-xs font-semibold"
+                                            x-bind:class="{
+                                                'text-red-600': passwordStrength < 50,
+                                                'text-yellow-600': passwordStrength >= 50 && passwordStrength < 75,
+                                                'text-green-600': passwordStrength >= 75
+                                            }"
+                                            x-text="passwordStrength < 50 ? 'Débil' : (passwordStrength < 75 ? 'Media' : 'Fuerte')"
+                                        ></span>
+                                    </div>
+                                </div>
+                                
                                 @error('signaturePassword') 
                                     <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> 
                                 @enderror
@@ -440,7 +483,19 @@
                                 </p>
                             </div>
 
-                            <div class="flex justify-end">
+                            <div class="flex items-center justify-between gap-3">
+                                @if($hasDigitalSignature)
+                                    <button 
+                                        type="button"
+                                        wire:click="openResetPasswordModal"
+                                        class="text-sm text-red-600 hover:text-red-700 font-semibold underline"
+                                    >
+                                        🔑 Olvidé mi contraseña de firma
+                                    </button>
+                                @else
+                                    <div></div>
+                                @endif
+                                
                                 <button 
                                     type="submit"
                                     wire:loading.attr="disabled"
@@ -462,6 +517,63 @@
                             </div>
                         </form>
                     </div>
+                    
+                    {{-- Modal de Reseteo de Contraseña Olvidada --}}
+                    @if($showResetPasswordModal)
+                        <div class="fixed z-50 inset-0 overflow-y-auto">
+                            <div class="flex items-center justify-center min-h-screen px-4">
+                                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeResetPasswordModal"></div>
+                                
+                                <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">🔑 Resetear Contraseña de Firma</h3>
+                                    <p class="text-sm text-gray-600 mb-6">
+                                        Para resetear tu contraseña de firma olvidada, verifica tu identidad ingresando tu contraseña de login.
+                                    </p>
+                                    
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Contraseña de Login (tu contraseña de usuario)
+                                        </label>
+                                        <input 
+                                            type="password" 
+                                            wire:model="loginPasswordForReset"
+                                            wire:keydown.enter="resetForgottenSignaturePassword"
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                            placeholder="Ingresa tu contraseña de login"
+                                            autofocus
+                                        >
+                                        @error('loginPasswordForReset') 
+                                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> 
+                                        @enderror
+                                    </div>
+                                    
+                                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-lg mb-6">
+                                        <p class="text-xs text-yellow-800">
+                                            <strong>⚠️ Advertencia:</strong> Esto eliminará tu contraseña de firma actual. Después podrás crear una nueva.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="flex justify-end space-x-3">
+                                        <button 
+                                            wire:click="closeResetPasswordModal"
+                                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button 
+                                            wire:click="resetForgottenSignaturePassword"
+                                            wire:loading.attr="disabled"
+                                            wire:target="resetForgottenSignaturePassword"
+                                            class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
+                                        >
+                                            <span wire:loading.remove wire:target="resetForgottenSignaturePassword">Resetear Contraseña</span>
+                                            <span wire:loading wire:target="resetForgottenSignaturePassword">Verificando...</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
                     {{-- Información de Seguridad --}}
                     <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500 p-6 rounded-r-xl">

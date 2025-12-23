@@ -10,6 +10,34 @@ use Illuminate\Support\Facades\Log;
 class InvoiceObserver
 {
     /**
+     * Handle the Invoice "created" event.
+     * Reservar stock cuando se crea una factura con items de vendimia
+     */
+    public function created(Invoice $invoice): void
+    {
+        try {
+            // Eager load para evitar N+1 queries
+            $invoice->load('items.harvest.stockMovements');
+            
+            // Solo reservar si es draft
+            if ($invoice->status === 'draft') {
+                $this->reserveStockForDraft($invoice);
+            }
+            
+            // Establecer order_date si no existe
+            if (!$invoice->order_date) {
+                $invoice->updateQuietly(['order_date' => now()]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al crear factura - reserva de stock', [
+                'invoice_id' => $invoice->id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e; // Re-lanzar para que la transacción falle
+        }
+    }
+
+    /**
      * Handle the Invoice "updated" event.
      * Cuando una factura cambia de estado o delivery_status, actualizar el stock y fechas
      */
@@ -345,6 +373,109 @@ class InvoiceObserver
             'invoice_id' => $invoice->id,
             'invoice_number' => $invoice->invoice_number,
             'reason' => $invoice->status === 'cancelled' ? 'cancelled' : 'deleted',
+        ]);
+    }
+
+    /**
+     * Reservar stock para factura draft recién creada
+     */
+    protected function reserveStockForDraft(Invoice $invoice): void
+    {
+        foreach ($invoice->items as $item) {
+            if (!$item->harvest_id) {
+                continue; // Solo procesar items de vendimia
+            }
+
+            $harvest = $item->harvest;
+            
+            // 🔒 LOCK para prevenir race conditions en stock
+            $harvest = \App\Models\Harvest::lockForUpdate()->find($harvest->id);
+            $lastStock = $harvest->stockMovements()
+                ->lockForUpdate()
+                ->latest()
+                ->first();
+
+            // Si no hay stock inicial, crearlo automáticamente
+            if (!$lastStock) {
+                $lastStock = HarvestStock::create([
+                    'harvest_id' => $harvest->id,
+                    'container_id' => $harvest->container_id,
+                    'user_id' => Auth::id() ?? $invoice->user_id,
+                    'movement_type' => 'initial',
+                    'quantity_change' => $harvest->total_weight,
+                    'quantity_after' => $harvest->total_weight,
+                    'available_qty' => $harvest->total_weight,
+                    'reserved_qty' => 0,
+                    'sold_qty' => 0,
+                    'gifted_qty' => 0,
+                    'lost_qty' => 0,
+                    'notes' => 'Stock inicial de cosecha (auto-creado)',
+                ]);
+
+                Log::info('Stock inicial creado automáticamente', [
+                    'harvest_id' => $harvest->id,
+                    'total_weight' => $harvest->total_weight,
+                ]);
+            }
+
+            // Verificar que hay stock disponible
+            if ($lastStock->available_qty < $item->quantity) {
+                throw new \Exception(sprintf(
+                    'Stock insuficiente para la cosecha #%d. Disponible: %.2f kg, Requerido: %.2f kg',
+                    $harvest->id,
+                    $lastStock->available_qty,
+                    $item->quantity
+                ));
+            }
+
+            // Crear movimiento de reserva
+            HarvestStock::create([
+                'harvest_id' => $item->harvest_id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id() ?? $invoice->user_id,
+                'invoice_item_id' => $item->id,
+                'movement_type' => 'reserve',
+                'quantity_change' => 0, // No cambia cantidad total
+                'quantity_after' => $lastStock->quantity_after,
+                'available_qty' => $lastStock->available_qty - $item->quantity,
+                'reserved_qty' => $lastStock->reserved_qty + $item->quantity,
+                'sold_qty' => $lastStock->sold_qty,
+                'gifted_qty' => $lastStock->gifted_qty,
+                'lost_qty' => $lastStock->lost_qty,
+                'notes' => sprintf(
+                    'Stock reservado para factura draft - Albarán: %s',
+                    $invoice->delivery_note_code
+                ),
+                'reference_number' => $invoice->delivery_note_code,
+            ]);
+
+            // Actualizar ContainerState
+            if ($harvest->container_id) {
+                $state = \App\Models\ContainerState::firstOrCreate(
+                    ['container_id' => $harvest->container_id],
+                    [
+                        'content_type' => 'harvest',
+                        'harvest_id' => $harvest->id,
+                        'total_quantity' => $harvest->total_weight, // ✅ FIX: inicializar correctamente
+                        'available_qty' => $harvest->total_weight,
+                        'reserved_qty' => 0,
+                        'sold_qty' => 0,
+                    ]
+                );
+
+                $state->update([
+                    'available_qty' => max(0, $state->available_qty - $item->quantity),
+                    'reserved_qty' => $state->reserved_qty + $item->quantity,
+                    'last_movement_at' => now(),
+                    'last_movement_by' => Auth::id() ?? $invoice->user_id,
+                ]);
+            }
+        }
+
+        Log::info('Stock reservado para factura draft', [
+            'invoice_id' => $invoice->id,
+            'delivery_note_code' => $invoice->delivery_note_code,
+            'items_count' => $invoice->items->count(),
         ]);
     }
 }

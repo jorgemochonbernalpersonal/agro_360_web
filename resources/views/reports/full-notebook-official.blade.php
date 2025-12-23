@@ -180,13 +180,40 @@
             font-size: 8pt;
             color: #666;
         }
+        
+        /* Marca de agua para informes invalidados */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80pt;
+            font-weight: bold;
+            color: rgba(220, 53, 69, 0.12);
+            z-index: 9999;
+            pointer-events: none;
+            white-space: nowrap;
+            font-family: Arial, sans-serif;
+            letter-spacing: 10px;
+        }
     </style>
 </head>
 <body>
+    {{-- Marca de agua si el informe está invalidado --}}
+    @if(!$report->isValid())
+        <div class="watermark">COPIA NO VÁLIDA</div>
+    @endif
     {{-- Encabezado --}}
     <div class="header">
-        <h1>📔 CUADERNO DIGITAL COMPLETO</h1>
-        <div class="subtitle">Informe Oficial - Campaña {{ $campaign->name }} ({{ $campaign->year }})</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            @if(file_exists(public_path('images/logo.png')))
+                <img src="{{ public_path('images/logo.png') }}" style="height: 45px; width: auto;" alt="Agro365 Logo">
+            @endif
+            <div style="flex: 1;">
+                <h1>📔 CUADERNO DIGITAL COMPLETO</h1>
+                <div class="subtitle">Informe Oficial - Campaña {{ $campaign->name }} ({{ $campaign->year }})</div>
+            </div>
+        </div>
     </div>
 
     {{-- Datos de la Explotación --}}

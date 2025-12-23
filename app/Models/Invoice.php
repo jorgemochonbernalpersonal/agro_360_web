@@ -137,6 +137,22 @@ class Invoice extends Model
     }
 
     /**
+     * Logs de auditoría de la factura
+     */
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(InvoiceAuditLog::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Helper para crear log de auditoría
+     */
+    public function logAction(string $action, string $description, array $changes = []): InvoiceAuditLog
+    {
+        return InvoiceAuditLog::log($this, $action, $description, $changes);
+    }
+
+    /**
      * Verificar si está pagada
      */
     public function isPaid(): bool

@@ -25,10 +25,21 @@
     @php
         $appUrl = config('app.url');
         $currentUrl = $appUrl . request()->getRequestUri();
+        $currentPath = request()->path();
         $pageTitle = $title ?? 'Agro365 - Software de Gestión Agrícola para Viñedos';
-        $pageDescription = $description ?? 'Software de gestión agrícola profesional para viticultores y bodegas. Cuaderno de campo digital, control de parcelas SIGPAC, gestión de actividades y cumplimiento normativo.';
+        $pageDescription = $description ?? \App\Helpers\SeoHelper::getMetaDescription('/' . $currentPath);
         $pageImage = $image ?? asset('images/logo.png');
     @endphp
+    
+    <!-- Hreflang for Spain -->
+    <link rel="alternate" hreflang="es" href="{{ $currentUrl }}">
+    <link rel="alternate" hreflang="es-ES" href="{{ $currentUrl }}">
+    <link rel="alternate" hreflang="x-default" href="{{ $currentUrl }}">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="author" content="Agro365">
+    <meta name="publisher" content="Agro365">
+    <meta name="theme-color" content="#10b981">
     
     <!-- SEO Meta Tags -->
     <title>{{ $pageTitle }}</title>
@@ -346,6 +357,8 @@
             }, 100);
         }
     </script>
+    
+    @stack('scripts')
 </body>
 </html>
 

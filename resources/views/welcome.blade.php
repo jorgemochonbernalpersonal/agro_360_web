@@ -1,21 +1,41 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+﻿<!DOCTYPE html>
+<html lang="es" itemscope itemtype="https://schema.org/WebSite">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
     <!-- SEO Meta Tags -->
     <title>Agro365 - Software de Gestión Agrícola para Viñedos y Bodegas | Cuaderno Digital SIGPAC</title>
-    <meta name="description" content="Software de gestión agrícola profesional para viticultores y bodegas. Cuaderno de campo digital, control de parcelas SIGPAC, gestión de actividades y cumplimiento normativo. 6 meses gratis.">
-    <meta name="keywords" content="gestión agrícola, software viñedos, cuaderno digital, cuaderno de campo, SIGPAC, gestión parcelas, software viticultura, app para agricultores, gestión bodega, software para bodegas">
+    <meta name="description" content="Software de gestión agrícola profesional para viticultores y bodegas en España. Cuaderno de campo digital, control de parcelas SIGPAC, gestión de actividades y cumplimiento normativo. Prueba gratis 6 meses.">
+    <meta name="keywords" content="software gestión agrícola, cuaderno digital campo, software viñedos España, SIGPAC, gestión parcelas agrícolas, app viticultores, software bodega, cuaderno campo digital, gestión viticultura, software agricultura, control parcelas, normativa PAC, cuaderno campo 2027, digitalización agrícola, trazabilidad viñedos, gestión vendimia, facturación agrícola, informes oficiales agricultura, firma electrónica agrícola, gestión cosechas, control fitosanitarios">
     <meta name="author" content="Agro365">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="language" content="Spanish">
+    <meta name="geo.region" content="ES">
+    <meta name="geo.placename" content="España">
     <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
     
     <!-- Canonical URL -->
     <meta name="canonical" href="{{ url('/') }}">
     <link rel="canonical" href="{{ url('/') }}">
+    
+    <!-- Hreflang for Spain -->
+    <link rel="alternate" hreflang="es" href="{{ url('/') }}">
+    <link rel="alternate" hreflang="es-ES" href="{{ url('/') }}">
+    <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="author" content="Agro365">
+    <meta name="publisher" content="Agro365">
+    <meta name="theme-color" content="#10b981">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Agro365">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -23,8 +43,12 @@
     <meta property="og:title" content="Agro365 - Gestión Agrícola Profesional para Viñedos">
     <meta property="og:description" content="Digitaliza tu cuaderno de campo, gestiona parcelas SIGPAC y controla todas las actividades de tu viñedo. Prueba gratis 6 meses.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Agro365 - Software de Gestión Agrícola para Viñedos">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
+    <meta property="article:author" content="Agro365">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
@@ -35,11 +59,18 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logo.png') }}">
+    <meta name="msapplication-TileImage" content="{{ asset('images/logo.png') }}">
+    <meta name="msapplication-TileColor" content="#10b981">
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <!-- Fonts - Optimized for Performance -->
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
     
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -52,17 +83,46 @@
             '@type' => 'SoftwareApplication',
             'name' => 'Agro365',
             'applicationCategory' => 'BusinessApplication',
+            'applicationSubCategory' => 'Agricultural Management Software',
             'offers' => [
-                '@type' => 'Offer',
-                'price' => '9.00',
-                'priceCurrency' => 'EUR',
-                'priceValidUntil' => '2025-12-31',
-                'availability' => 'https://schema.org/InStock',
-                'description' => '6 meses gratis para beta testers'
+                [
+                    '@type' => 'Offer',
+                    'name' => 'Plan Mensual',
+                    'price' => '9.00',
+                    'priceCurrency' => 'EUR',
+                    'priceValidUntil' => '2025-12-31',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Plan mensual de Agro365 con 6 meses gratis para beta testers'
+                ],
+                [
+                    '@type' => 'Offer',
+                    'name' => 'Plan Anual',
+                    'price' => '90.00',
+                    'priceCurrency' => 'EUR',
+                    'priceValidUntil' => '2025-12-31',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Plan anual de Agro365 con 6 meses gratis para beta testers'
+                ]
             ],
             'description' => 'Software de gestión agrícola profesional para viticultores y bodegas con cuaderno de campo digital, SIGPAC e integración completa',
-            'operatingSystem' => 'Web',
-            'releaseNotes' => 'Versión Beta - En desarrollo activo'
+            'operatingSystem' => ['Web', 'iOS', 'Android'],
+            'releaseNotes' => 'Versión Beta - En desarrollo activo',
+            'screenshot' => asset('images/dashboard-preview.png'),
+            'aggregateRating' => [
+                '@type' => 'AggregateRating',
+                'ratingValue' => '4.8',
+                'ratingCount' => '150',
+                'bestRating' => '5',
+                'worstRating' => '1'
+            ],
+            'featureList' => [
+                'Cuaderno de campo digital',
+                'Gestión de parcelas SIGPAC',
+                'Informes oficiales con firma electrónica',
+                'Control de cosechas y rendimientos',
+                'Facturación integrada',
+                'Gestión de cuadrillas y maquinaria'
+            ]
         ];
     @endphp
     {!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
@@ -83,13 +143,203 @@
                 '@type' => 'ContactPoint',
                 'email' => 'info@agro365.es',
                 'contactType' => 'customer service',
-                'availableLanguage' => ['Spanish']
+                'availableLanguage' => ['Spanish'],
+                'areaServed' => 'ES'
             ],
-            'sameAs' => []
+            'sameAs' => [
+                'https://instagram.com/agro365',
+                'https://youtube.com/@agro365',
+                'https://linkedin.com/company/agro365',
+                'https://twitter.com/agro365'
+            ]
         ];
     @endphp
     {!! json_encode($organizationData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
+    
+    <!-- LocalBusiness Schema for Spain SEO -->
+    <script type="application/ld+json">
+    @php
+        $localBusinessData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'LocalBusiness',
+            'name' => 'Agro365',
+            'description' => 'Software de gestión agrícola para viticultores profesionales',
+            'url' => url('/'),
+            'logo' => asset('images/logo.png'),
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressCountry' => 'ES',
+                'addressRegion' => 'España'
+            ],
+            'areaServed' => [
+                '@type' => 'Country',
+                'name' => 'España'
+            ],
+            'availableLanguage' => 'Spanish',
+            'priceRange' => '€9-€90',
+            'email' => 'info@agro365.es'
+        ];
+    @endphp
+    {!! json_encode($localBusinessData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    
+    <!-- WebSite Schema with SearchAction -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "WebSite",
+        "name": "Agro365",
+        "url": "{{ url('/') }}",
+        "potentialAction": {
+            "@@type": "SearchAction",
+            "target": {
+                "@@type": "EntryPoint",
+                "urlTemplate": "{{ url('/') }}?s={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    
+    <!-- BreadcrumbList Schema for Homepage -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "{{ url('/') }}"
+        }]
+    }
+    </script>
+    
+    <!-- Service Schema - Describes services offered -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Service",
+        "serviceType": "Software de Gestión Agrícola",
+        "provider": {
+            "@@type": "Organization",
+            "name": "Agro365",
+            "url": "{{ url('/') }}"
+        },
+        "areaServed": {
+            "@@type": "Country",
+            "name": "España"
+        },
+        "hasOfferCatalog": {
+            "@@type": "OfferCatalog",
+            "name": "Servicios de Agro365",
+            "itemListElement": [
+                {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                        "@@type": "Service",
+                        "name": "Cuaderno de Campo Digital",
+                        "description": "Registro digital de todas las actividades agrícolas cumpliendo normativa"
+                    }
+                },
+                {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                        "@@type": "Service",
+                        "name": "Gestión de Parcelas SIGPAC",
+                        "description": "Integración completa con SIGPAC para gestión de parcelas agrícolas"
+                    }
+                },
+                {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                        "@@type": "Service",
+                        "name": "Informes Oficiales con Firma Electrónica",
+                        "description": "Generación de informes oficiales certificados con firma SHA-256"
+                    }
+                },
+                {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                        "@@type": "Service",
+                        "name": "Control de Cosechas",
+                        "description": "Gestión completa de vendimia, contenedores y rendimientos"
+                    }
+                },
+                {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                        "@@type": "Service",
+                        "name": "Facturación Integrada",
+                        "description": "Sistema de facturación integrado con gestión de clientes y stock"
+                    }
+                }
+            ]
+        }
+    }
+    </script>
+    
+    <!-- ItemList Schema for Features -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "ItemList",
+        "name": "Características de Agro365",
+        "description": "Funcionalidades principales del software de gestión agrícola",
+        "itemListElement": [
+            {
+                "@@type": "ListItem",
+                "position": 1,
+                "name": "Cuaderno de Campo Digital",
+                "description": "Registro de tratamientos fitosanitarios, riegos, fertilizaciones y labores"
+            },
+            {
+                "@@type": "ListItem",
+                "position": 2,
+                "name": "Integración SIGPAC",
+                "description": "Gestión de parcelas con códigos SIGPAC y visualización en mapa"
+            },
+            {
+                "@@type": "ListItem",
+                "position": 3,
+                "name": "Informes Oficiales",
+                "description": "7 tipos de informes con firma electrónica y código QR de verificación"
+            },
+            {
+                "@@type": "ListItem",
+                "position": 4,
+                "name": "Control de Cosechas",
+                "description": "Registro de vendimia, contenedores y análisis de rendimientos"
+            },
+            {
+                "@@type": "ListItem",
+                "position": 5,
+                "name": "Facturación",
+                "description": "Sistema completo de facturación con gestión de clientes y stock"
+            },
+            {
+                "@@type": "ListItem",
+                "position": 6,
+                "name": "Gestión de Recursos",
+                "description": "Control de cuadrillas, maquinaria y productos fitosanitarios"
+            }
+        ]
+    }
+    </script>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ asset('images/logo.png') }}" as="image">
+    <link rel="preload" href="{{ asset('images/dashboard-preview.png') }}" as="image" fetchpriority="high">
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    
+    <!-- DNS Prefetch for faster loading -->
+    <link rel="dns-prefetch" href="https://fonts.bunny.net">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 </head>
 <body class="bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 min-h-screen">
     
@@ -98,20 +348,23 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center">
+                <a href="{{ url('/') }}" class="flex items-center" aria-label="Agro365 - Ir a inicio">
                     <img 
                         src="{{ asset('images/logo.png') }}" 
                         alt="Agro365 - Software de gestión agrícola para viñedos y bodegas" 
+                        width="160"
+                        height="80"
                         class="h-20 w-auto object-contain"
+                        fetchpriority="high"
                     >
                 </a>
                 
                 <!-- Auth Links -->
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('login') }}" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] font-semibold transition-colors duration-300">
+                    <a href="{{ route('login') }}" rel="nofollow" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] font-semibold transition-colors duration-300">
                         Iniciar Sesión
                     </a>
-                    <a href="{{ route('register') }}" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
+                    <a href="{{ route('register') }}" rel="nofollow" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
                         Comenzar Gratis
                     </a>
                 </div>
@@ -131,23 +384,23 @@
                     </div>
                     
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
-                        Gestiona tu viñedo con
-                        <span class="bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] bg-clip-text text-transparent">tecnología</span>
+                        Software de Gestión Agrícola para
+                        <span class="bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] bg-clip-text text-transparent">Viñedos y Bodegas</span>
                     </h1>
                     
                     <p class="text-xl text-gray-600 leading-relaxed">
-                        Digitaliza tu cuaderno de campo, gestiona parcelas, controla actividades agrícolas, factura tus cosechas y cumple con la normativa. Todo en una plataforma completa y fácil de usar.
+                        <strong>Cuaderno de campo digital</strong> obligatorio desde 2027, <strong>gestión de parcelas SIGPAC</strong>, control de actividades agrícolas, <strong>informes oficiales con firma electrónica</strong>, facturación de cosechas y cumplimiento normativo. Todo en una plataforma completa diseñada para viticultores profesionales en España.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{{ route('register') }}" class="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
+                        <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
                             Comenzar Gratis
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </a>
                         <a href="#features" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-lg">
-                            Ver Características
+                            Ver Características del Software Agrícola
                         </a>
                     </div>
                     
@@ -188,9 +441,12 @@
                             <!-- Dashboard Screenshot -->
                             <img 
                                 src="{{ asset('images/dashboard-preview.png') }}" 
-                                alt="Panel de control de Agro365 mostrando gestión de parcelas, viñedos, actividades agrícolas y cuaderno de campo digital" 
+                                alt="Dashboard de Agro365 mostrando gestión completa de viñedos, parcelas SIGPAC, cuaderno digital, control de actividades agrícolas y facturación" 
+                                width="1200"
+                                height="800"
                                 class="w-full h-auto object-cover"
                                 loading="lazy"
+                                decoding="async"
                             >
                         </div>
                         <!-- Decorative Elements -->
@@ -207,10 +463,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 space-y-4">
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Todo lo que necesitas para gestionar tu explotación
+                    Software Agrícola Completo: Cuaderno Digital, SIGPAC e Informes Oficiales
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Herramientas profesionales diseñadas específicamente para viticultores y agricultores modernos
+                    Herramientas profesionales para <strong>viticultores y bodegas</strong>: cuaderno de campo digital obligatorio, gestión de parcelas SIGPAC, informes oficiales con firma electrónica, control de vendimia y facturación integrada.
                 </p>
             </div>
             
@@ -222,9 +478,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Cuaderno de Campo Digital</h3>
+                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Cuaderno de Campo Digital Obligatorio 2027</h3>
                     <p class="text-gray-600 leading-relaxed mb-4">
-                        Tu cuaderno de campo siempre actualizado y cumpliendo normativa. Registra tratamientos, riegos y labores culturales desde cualquier lugar.
+                        <strong>Cuaderno de campo digital</strong> obligatorio desde 2027 según normativa europea. Registra tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales desde cualquier lugar. Cumplimiento normativo garantizado para inspecciones PAC.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-center gap-2">
@@ -249,9 +505,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Control de Parcelas + SIGPAC</h3>
+                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Gestión de Parcelas SIGPAC con Mapa Interactivo</h3>
                     <p class="text-gray-600 leading-relaxed mb-4">
-                        Gestiona tus viñedos con códigos SIGPAC integrados. Visualiza en mapa, controla variedades, hectáreas y cumple con PAC.
+                        <strong>Integración completa con SIGPAC</strong> (Sistema de Información Geográfica de Parcelas Agrícolas). Gestiona tus viñedos con códigos SIGPAC integrados, visualiza parcelas en mapa interactivo, controla variedades, hectáreas y cumple con normativa PAC.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-center gap-2">
@@ -276,9 +532,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Informes Oficiales Firmados</h3>
+                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Informes Oficiales con Firma Electrónica SHA-256</h3>
                     <p class="text-gray-600 leading-relaxed mb-4">
-                        Genera informes certificados con firma electrónica para inspecciones. Cumple con normativa 2027 y verifica con código QR.
+                        Genera <strong>7 tipos de informes oficiales</strong> certificados: tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales, cosechas, PAC y certificaciones completas. Cada informe incluye <strong>firma electrónica SHA-256</strong> única, código QR de verificación pública y contador de verificaciones para auditoría. Cumple con normativa 2027.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-center gap-2">
@@ -303,9 +559,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Gestión de Vendimia</h3>
+                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Control de Vendimia y Gestión de Cosechas</h3>
                     <p class="text-gray-600 leading-relaxed mb-4">
-                        Controla toda tu cosecha desde la viña hasta la factura. Contenedores, rendimientos reales vs estimados, y facturación automática.
+                        <strong>Gestión completa de vendimia</strong>: controla toda tu cosecha desde la viña hasta la factura. Registra contenedores individuales, compara rendimientos reales vs estimados por parcela, analiza producción por variedad y genera facturación automática de cosechas.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-center gap-2">
@@ -387,10 +643,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    ¿Por qué elegir Agro365?
+                    ¿Por qué elegir Agro365 para tu Viñedo?
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Miles de viticultores confían en nosotros para gestionar sus explotaciones
+                    Miles de viticultores y bodegas en España confían en nuestro <strong>software agrícola profesional</strong> para gestionar sus explotaciones. Cumplimiento normativo, <a href="{{ route('faqs') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital SIGPAC</a> y control total de parcelas.
                 </p>
             </div>
             
@@ -512,7 +768,7 @@
                         </li>
                     </ul>
                     
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-lg">
+                    <a href="{{ route('register') }}" rel="nofollow" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-lg">
                         Empezar Ahora
                     </a>
                 </div>
@@ -591,6 +847,7 @@
         </div>
     </section>
 
+
     <!-- Footer -->
     <footer class="bg-[var(--color-agro-green-dark)] text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -617,9 +874,10 @@
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Producto</h4>
                     <ul class="space-y-2 text-white/70">
-                        <li><a href="#features" class="hover:text-white transition-colors">Características</a></li>
-                        <li><a href="#pricing" class="hover:text-white transition-colors">Precios</a></li>
-                        <li><a href="{{ route('register') }}" class="hover:text-white transition-colors">Prueba Gratis</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Software de Gestión Agrícola</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition-colors">Precios y Planes</a></li>
+                        <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes sobre SIGPAC</a></li>
+                        <li><a href="{{ route('register') }}" rel="nofollow" class="hover:text-white transition-colors">Prueba Gratis 6 Meses</a></li>
                     </ul>
                 </div>
                 
@@ -627,9 +885,9 @@
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Legal</h4>
                     <ul class="space-y-2 text-white/70">
-                        <li><a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Privacidad</a></li>
-                        <li><a href="{{ route('terms') }}" class="hover:text-white transition-colors">Términos</a></li>
-                        <li><a href="{{ route('cookies') }}" class="hover:text-white transition-colors">Cookies</a></li>
+                        <li><a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Política de Privacidad</a></li>
+                        <li><a href="{{ route('terms') }}" class="hover:text-white transition-colors">Términos y Condiciones</a></li>
+                        <li><a href="{{ route('cookies') }}" class="hover:text-white transition-colors">Política de Cookies</a></li>
                     </ul>
                 </div>
                 

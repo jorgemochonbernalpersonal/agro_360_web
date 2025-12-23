@@ -122,3 +122,16 @@
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-agro-green);
 }
+
+/* Smooth Scroll Behavior + Offset para Sticky Header */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Ajusta según altura del header */
+}
+
+/* Alternativa: Si quieres más control sobre la velocidad */
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}

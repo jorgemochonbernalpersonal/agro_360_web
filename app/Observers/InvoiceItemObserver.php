@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\InvoiceItem;
+use App\Models\Harvest;
 use App\Models\HarvestStock;
 use App\Models\ContainerState;
 use Illuminate\Support\Facades\Auth;
@@ -12,290 +13,245 @@ class InvoiceItemObserver
 {
     /**
      * Handle the InvoiceItem "created" event.
-     * Cuando se crea un item de factura con harvest, reservar stock
+     * Reservar stock cuando se añade un item a factura draft
      */
     public function created(InvoiceItem $item): void
     {
-        // Solo procesar si está vinculado a harvest
-        if (!$item->harvest_id || !$item->invoice) {
+        // Solo procesar items de vendimia en facturas draft
+        if (!$item->harvest_id || $item->invoice->status !== 'draft') {
             return;
         }
 
         try {
-            // Si la factura es draft, reservar stock
-            if ($item->invoice->status === 'draft') {
-                $this->reserveStock($item);
-            }
-            // Si la factura ya está aprobada, marcar como vendido directamente
-            elseif (in_array($item->invoice->status, ['sent', 'paid'])) {
-                $this->markAsSold($item);
-            }
+            $this->reserveStockForItem($item);
         } catch (\Exception $e) {
-            Log::error('Error al procesar item de factura', [
-                'invoice_item_id' => $item->id,
+            Log::error('Error al reservar stock para item', [
+                'item_id' => $item->id,
+                'invoice_id' => $item->invoice_id,
                 'harvest_id' => $item->harvest_id,
                 'error' => $e->getMessage(),
             ]);
-        }
-    }
-
-    /**
-     * Handle the InvoiceItem "updated" event.
-     * Cuando se actualiza la cantidad, ajustar reserva/venta
-     */
-    public function updated(InvoiceItem $item): void
-    {
-        if (!$item->harvest_id || !$item->invoice) {
-            return;
-        }
-
-        $oldQuantity = $item->getOriginal('quantity');
-        $newQuantity = $item->quantity;
-
-        if ($oldQuantity == $newQuantity) {
-            return; // No cambió la cantidad
-        }
-
-        try {
-            $difference = $newQuantity - $oldQuantity;
-            $harvest = $item->harvest;
-            $lastStock = $harvest->stockMovements()->latest()->first();
-
-            if (!$lastStock) {
-                return;
-            }
-
-            $status = $item->invoice->status;
-
-            if ($status === 'draft') {
-                // Ajustar reserva
-                $this->adjustReservation($item, $lastStock, $difference);
-            } elseif (in_array($status, ['approved', 'sent', 'paid'])) {
-                // Ajustar venta
-                $this->adjustSale($item, $lastStock, $difference);
-            }
-        } catch (\Exception $e) {
-            Log::error('Error al actualizar item de factura', [
-                'invoice_item_id' => $item->id,
-                'error' => $e->getMessage(),
-            ]);
+            throw $e;
         }
     }
 
     /**
      * Handle the InvoiceItem "deleting" event.
-     * Liberar stock cuando se elimina un item
+     * Liberar stock cuando se elimina un item de factura draft
      */
     public function deleting(InvoiceItem $item): void
     {
-        if (!$item->harvest_id || !$item->invoice) {
+        // Solo procesar items de vendimia en facturas draft
+        if (!$item->harvest_id || $item->invoice->status !== 'draft') {
             return;
         }
 
         try {
-            $harvest = $item->harvest;
-            $lastStock = $harvest->stockMovements()->latest()->first();
-
-            if (!$lastStock) {
-                return;
-            }
-
-            $status = $item->invoice->status;
-
-            if ($status === 'draft') {
-                // Liberar reserva
-                $this->unreserveStock($item, $lastStock);
-            } elseif (in_array($status, ['approved', 'sent', 'paid'])) {
-                // Devolver venta
-                $this->returnStock($item, $lastStock);
-            }
+            $this->releaseStockForItem($item);
         } catch (\Exception $e) {
-            Log::error('Error al eliminar item de factura', [
-                'invoice_item_id' => $item->id,
+            Log::error('Error al liberar stock de item', [
+                'item_id' => $item->id,
+                'invoice_id' => $item->invoice_id,
+                'harvest_id' => $item->harvest_id,
                 'error' => $e->getMessage(),
             ]);
+            // No re-lanzar, permitir eliminación aunque falle stock
         }
     }
 
     /**
-     * Reservar stock para venta
+     * Handle the InvoiceItem "restored" event.
+     * Reservar stock cuando se restaura un item soft-deleted
      */
-    protected function reserveStock(InvoiceItem $item): void
+    public function restored(InvoiceItem $item): void
     {
-        $harvest = $item->harvest;
-        $lastStock = $harvest->stockMovements()->latest()->first();
+        // Solo procesar items de vendimia en facturas draft
+        if (!$item->harvest_id || $item->invoice->status !== 'draft') {
+            return;
+        }
 
+        try {
+            $this->reserveStockForItem($item);
+        } catch (\Exception $e) {
+            Log::error('Error al reservar stock al restaurar item', [
+                'item_id' => $item->id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Reservar stock para un item
+     */
+    protected function reserveStockForItem(InvoiceItem $item): void
+    {
+        // 🔒 Lock para prevenir race conditions
+        $harvest = Harvest::lockForUpdate()->find($item->harvest_id);
+        $lastStock = $harvest->stockMovements()
+            ->lockForUpdate()
+            ->latest()
+            ->first();
+
+        // Si no hay stock inicial, crearlo automáticamente
+        if (!$lastStock) {
+            $lastStock = HarvestStock::create([
+                'harvest_id' => $harvest->id,
+                'container_id' => $harvest->container_id,
+                'user_id' => Auth::id() ?? $item->invoice->user_id,
+                'movement_type' => 'initial',
+                'quantity_change' => $harvest->total_weight,
+                'quantity_after' => $harvest->total_weight,
+                'available_qty' => $harvest->total_weight,
+                'reserved_qty' => 0,
+                'sold_qty' => 0,
+                'gifted_qty' => 0,
+                'lost_qty' => 0,
+                'notes' => 'Stock inicial de cosecha (auto-creado)',
+            ]);
+
+            Log::info('Stock inicial creado automáticamente', [
+                'harvest_id' => $harvest->id,
+                'total_weight' => $harvest->total_weight,
+            ]);
+        }
+
+        // Verificar que hay stock disponible
+        if ($lastStock->available_qty < $item->quantity) {
+            throw new \Exception(sprintf(
+                'Stock insuficiente para la cosecha #%d. Disponible: %.2f kg, Requerido: %.2f kg',
+                $harvest->id,
+                $lastStock->available_qty,
+                $item->quantity
+            ));
+        }
+
+        // Crear movimiento de reserva
         HarvestStock::create([
             'harvest_id' => $item->harvest_id,
             'container_id' => $harvest->container_id,
-            'user_id' => Auth::id(),
+            'user_id' => Auth::id() ?? $item->invoice->user_id,
             'invoice_item_id' => $item->id,
             'movement_type' => 'reserve',
-            'quantity_change' => 0, // No cambia el total, solo el estado
+            'quantity_change' => 0,
             'quantity_after' => $lastStock->quantity_after,
             'available_qty' => $lastStock->available_qty - $item->quantity,
             'reserved_qty' => $lastStock->reserved_qty + $item->quantity,
             'sold_qty' => $lastStock->sold_qty,
             'gifted_qty' => $lastStock->gifted_qty,
             'lost_qty' => $lastStock->lost_qty,
-            'notes' => sprintf('Reservado para factura #%s', $item->invoice->invoice_number ?? 'DRAFT'),
-            'reference_number' => $item->invoice->invoice_number,
+            'notes' => sprintf(
+                'Stock reservado - Item #%d en Factura #%s',
+                $item->id,
+                $item->invoice->delivery_note_code
+            ),
+            'reference_number' => $item->invoice->delivery_note_code,
         ]);
 
-        // Actualizar contenedor
-        $this->updateContainerState($harvest, 0, -$item->quantity, $item->quantity);
+        // Actualizar ContainerState
+        if ($harvest->container_id) {
+            $state = ContainerState::firstOrCreate(
+                ['container_id' => $harvest->container_id],
+                [
+                    'content_type' => 'harvest',
+                    'harvest_id' => $harvest->id,
+                    'total_quantity' => $harvest->total_weight,
+                    'available_qty' => $harvest->total_weight,
+                    'reserved_qty' => 0,
+                    'sold_qty' => 0,
+                ]
+            );
+
+            $state->update([
+                'available_qty' => max(0, $state->available_qty - $item->quantity),
+                'reserved_qty' => $state->reserved_qty + $item->quantity,
+                'last_movement_at' => now(),
+                'last_movement_by' => Auth::id() ?? $item->invoice->user_id,
+            ]);
+        }
+
+        // Validación de seguridad: Verificar que no hay stock negativo
+        $newStock = HarvestStock::where('harvest_id', $item->harvest_id)
+            ->latest()
+            ->first();
+
+        if ($newStock->available_qty < 0) {
+            Log::critical('Stock negativo detectado', [
+                'harvest_id' => $item->harvest_id,
+                'available_qty' => $newStock->available_qty,
+                'invoice_item_id' => $item->id,
+            ]);
+            throw new \Exception(
+                'Error crítico: Se ha detectado stock negativo. Por favor, contacte con soporte técnico.'
+            );
+        }
+
+        Log::info('Stock reservado para item', [
+            'item_id' => $item->id,
+            'harvest_id' => $item->harvest_id,
+            'quantity' => $item->quantity,
+        ]);
     }
 
     /**
-     * Marcar como vendido
+     * Liberar stock de un item
      */
-    protected function markAsSold(InvoiceItem $item): void
+    protected function releaseStockForItem(InvoiceItem $item): void
     {
-        $harvest = $item->harvest;
-        $lastStock = $harvest->stockMovements()->latest()->first();
+        // 🔒 Lock para prevenir race conditions
+        $harvest = Harvest::lockForUpdate()->find($item->harvest_id);
+        $lastStock = $harvest->stockMovements()
+            ->lockForUpdate()
+            ->latest()
+            ->first();
 
+        if (!$lastStock) {
+            Log::warning('No hay stock para liberar', [
+                'item_id' => $item->id,
+                'harvest_id' => $item->harvest_id,
+            ]);
+            return;
+        }
+
+        // Crear movimiento de liberación
         HarvestStock::create([
             'harvest_id' => $item->harvest_id,
             'container_id' => $harvest->container_id,
-            'user_id' => Auth::id(),
-            'invoice_item_id' => $item->id,
-            'movement_type' => 'sale',
-            'quantity_change' => 0, // Total no cambia, solo estado
-            'quantity_after' => $lastStock->quantity_after,
-            'available_qty' => $lastStock->available_qty - $item->quantity,
-            'reserved_qty' => $lastStock->reserved_qty,
-            'sold_qty' => $lastStock->sold_qty + $item->quantity,
-            'gifted_qty' => $lastStock->gifted_qty,
-            'lost_qty' => $lastStock->lost_qty,
-            'notes' => sprintf('Venta confirmada - Factura #%s', $item->invoice->invoice_number),
-            'reference_number' => $item->invoice->invoice_number,
-        ]);
-
-        // Actualizar contenedor
-        $this->updateContainerState($harvest, 0, -$item->quantity, 0, $item->quantity);
-    }
-
-    /**
-     * Ajustar reserva
-     */
-    protected function adjustReservation(InvoiceItem $item, $lastStock, float $difference): void
-    {
-        HarvestStock::create([
-            'harvest_id' => $item->harvest_id,
-            'container_id' => $item->harvest->container_id,
-            'user_id' => Auth::id(),
-            'invoice_item_id' => $item->id,
-            'movement_type' => 'reserve',
-            'quantity_change' => 0,
-            'quantity_after' => $lastStock->quantity_after,
-            'available_qty' => $lastStock->available_qty - $difference,
-            'reserved_qty' => $lastStock->reserved_qty + $difference,
-            'sold_qty' => $lastStock->sold_qty,
-            'gifted_qty' => $lastStock->gifted_qty,
-            'lost_qty' => $lastStock->lost_qty,
-            'notes' => sprintf('Ajuste de reserva: %+.3f kg', $difference),
-        ]);
-
-        $this->updateContainerState($item->harvest, 0, -$difference, $difference);
-    }
-
-    /**
-     * Ajustar venta
-     */
-    protected function adjustSale(InvoiceItem $item, $lastStock, float $difference): void
-    {
-        HarvestStock::create([
-            'harvest_id' => $item->harvest_id,
-            'container_id' => $item->harvest->container_id,
-            'user_id' => Auth::id(),
-            'invoice_item_id' => $item->id,
-            'movement_type' => 'sale',
-            'quantity_change' => 0,
-            'quantity_after' => $lastStock->quantity_after,
-            'available_qty' => $lastStock->available_qty - $difference,
-            'reserved_qty' => $lastStock->reserved_qty,
-            'sold_qty' => $lastStock->sold_qty + $difference,
-            'gifted_qty' => $lastStock->gifted_qty,
-            'lost_qty' => $lastStock->lost_qty,
-            'notes' => sprintf('Ajuste de venta: %+.3f kg', $difference),
-        ]);
-
-        $this->updateContainerState($item->harvest, 0, -$difference, 0, $difference);
-    }
-
-    /**
-     * Liberar reserva
-     */
-    protected function unreserveStock(InvoiceItem $item, $lastStock): void
-    {
-        HarvestStock::create([
-            'harvest_id' => $item->harvest_id,
-            'container_id' => $item->harvest->container_id,
-            'user_id' => Auth::id(),
+            'user_id' => Auth::id() ?? $item->invoice->user_id,
             'invoice_item_id' => $item->id,
             'movement_type' => 'unreserve',
             'quantity_change' => 0,
             'quantity_after' => $lastStock->quantity_after,
             'available_qty' => $lastStock->available_qty + $item->quantity,
-            'reserved_qty' => $lastStock->reserved_qty - $item->quantity,
+            'reserved_qty' => max(0, $lastStock->reserved_qty - $item->quantity),
             'sold_qty' => $lastStock->sold_qty,
             'gifted_qty' => $lastStock->gifted_qty,
             'lost_qty' => $lastStock->lost_qty,
-            'notes' => 'Reserva liberada - Item eliminado',
+            'notes' => sprintf(
+                'Stock liberado - Item #%d eliminado de Factura #%s',
+                $item->id,
+                $item->invoice->delivery_note_code
+            ),
+            'reference_number' => $item->invoice->delivery_note_code,
         ]);
 
-        $this->updateContainerState($item->harvest, 0, $item->quantity, -$item->quantity);
-    }
+        // Actualizar ContainerState
+        if ($harvest->container_id) {
+            $state = ContainerState::where('container_id', $harvest->container_id)->first();
+            if ($state) {
+                $state->update([
+                    'available_qty' => $state->available_qty + $item->quantity,
+                    'reserved_qty' => max(0, $state->reserved_qty - $item->quantity),
+                    'last_movement_at' => now(),
+                    'last_movement_by' => Auth::id() ?? $item->invoice->user_id,
+                ]);
+            }
+        }
 
-    /**
-     * Devolver venta
-     */
-    protected function returnStock(InvoiceItem $item, $lastStock): void
-    {
-        HarvestStock::create([
+        Log::info('Stock liberado de item', [
+            'item_id' => $item->id,
             'harvest_id' => $item->harvest_id,
-            'container_id' => $item->harvest->container_id,
-            'user_id' => Auth::id(),
-            'invoice_item_id' => $item->id,
-            'movement_type' => 'return',
-            'quantity_change' => 0,
-            'quantity_after' => $lastStock->quantity_after,
-            'available_qty' => $lastStock->available_qty + $item->quantity,
-            'reserved_qty' => $lastStock->reserved_qty,
-            'sold_qty' => $lastStock->sold_qty - $item->quantity,
-            'gifted_qty' => $lastStock->gifted_qty,
-            'lost_qty' => $lastStock->lost_qty,
-            'notes' => 'Devolución - Venta cancelada',
+            'quantity' => $item->quantity,
         ]);
-
-        $this->updateContainerState($item->harvest, 0, $item->quantity, 0, -$item->quantity);
-    }
-
-    /**
-     * Actualizar estado del contenedor
-     */
-    protected function updateContainerState(
-        $harvest,
-        float $totalChange = 0,
-        float $availableChange = 0,
-        float $reservedChange = 0,
-        float $soldChange = 0
-    ): void {
-        if (!$harvest->container_id) {
-            return;
-        }
-
-        $state = ContainerState::where('container_id', $harvest->container_id)->first();
-        
-        if ($state) {
-            $state->update([
-                'total_quantity' => $state->total_quantity + $totalChange,
-                'available_qty' => $state->available_qty + $availableChange,
-                'reserved_qty' => $state->reserved_qty + $reservedChange,
-                'sold_qty' => $state->sold_qty + $soldChange,
-                'last_movement_at' => now(),
-                'last_movement_by' => Auth::id(),
-            ]);
-        }
     }
 }

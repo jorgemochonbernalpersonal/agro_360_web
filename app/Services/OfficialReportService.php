@@ -43,20 +43,39 @@ class OfficialReportService
             throw new \Exception('Contraseña de firma digital incorrecta. No se puede firmar el informe.');
         }
 
-        // 2. Obtener datos de tratamientos fitosanitarios
-        $treatments = AgriculturalActivity::ofType('phytosanitary')
-            ->forUser($userId)
-            ->whereBetween('activity_date', [$startDate, $endDate])
-            ->with([
-                'phytosanitaryTreatment.product',
-                'plot.sigpacCodes',
-                'plotPlanting.grapeVariety',
-                'crew.members',
-                'crewMember',
-                'machinery'
-            ])
-            ->orderBy('activity_date', 'asc')
-            ->get();
+        // Aumentar límite de memoria temporalmente para PDFs grandes
+        $originalMemoryLimit = ini_get('memory_limit');
+        ini_set('memory_limit', '512M'); // Aumentar a 512MB
+        
+        try {
+            $treatments = AgriculturalActivity::ofType('phytosanitary')
+                ->forUser($userId)
+                ->whereBetween('activity_date', [$startDate, $endDate])
+                ->with([
+                    'phytosanitaryTreatment.product:id,name,registration_number,withdrawal_period_days',
+                    'plot:id,name',
+                    // ELIMINADO: plot.sigpacCodes (consume mucha memoria)
+                    'plotPlanting:id,plot_id,name',
+                    'plotPlanting.grapeVariety:id,name',
+                    'crewMember:id,name',
+                    // ELIMINADO: crew, machinery (no esenciales)
+                ])
+                ->select([
+                    'id',
+                    'activity_date',
+                    'plot_id',
+                    'plot_planting_id',
+                    'crew_member_id',
+                    'temperature',
+                    'notes',
+                    'viticulturist_id'
+                ])
+                ->orderBy('activity_date', 'asc')
+                ->get();
+        } finally {
+            // Restaurar límite original
+            ini_set('memory_limit', $originalMemoryLimit);
+        }
 
         if ($treatments->isEmpty()) {
             throw new \Exception('No hay tratamientos fitosanitarios registrados en el periodo seleccionado.');
@@ -80,7 +99,10 @@ class OfficialReportService
         // 4. Generar código de verificación
         $verificationCode = OfficialReport::generateVerificationCode();
 
-        // 5. Crear registro temporal del informe (sin hash aún)
+        // 5. Generar hash temporal único
+        $temporaryHash = OfficialReport::generateTemporaryHash();
+
+        // 6. Crear registro temporal del informe (sin hash aún)
         $report = OfficialReport::create([
             'user_id' => $userId,
             'report_type' => 'phytosanitary_treatments',
@@ -89,19 +111,40 @@ class OfficialReportService
             'verification_code' => $verificationCode,
             'report_metadata' => $stats,
             // Campos temporales que se actualizarán después
-            'signature_hash' => 'temp',
+            'signature_hash' => $temporaryHash,
             'signed_at' => now(),
             'signed_ip' => request()->ip(),
         ]);
 
-        // 6. Generar PDF primero
-        $pdfPath = $this->generatePDF($report, $user, $treatments, $stats);
+        // 7. Generar PDF primero
+        try {
+            $pdfPath = $this->generatePDF($report, $user, $treatments, $stats);
+        } catch (\Exception $pdfError) {
+            Log::error('Error al generar PDF del informe', [
+                'report_id' => $report->id,
+                'user_id' => $userId,
+                'error' => $pdfError->getMessage(),
+            ]);
+            throw new \Exception('Error al generar el PDF del informe: ' . $pdfError->getMessage());
+        }
 
-        // 7. Calcular hash del PDF
-        $pdfContent = Storage::disk('local')->get($pdfPath);
-        $pdfHash = hash('sha256', $pdfContent);
+        // 8. Calcular hash del PDF
+        try {
+            $pdfContent = Storage::disk('local')->get($pdfPath);
+            if (!$pdfContent) {
+                throw new \Exception('No se pudo leer el contenido del PDF generado.');
+            }
+            $pdfHash = hash('sha256', $pdfContent);
+        } catch (\Exception $hashError) {
+            Log::error('Error al calcular hash del PDF', [
+                'report_id' => $report->id,
+                'pdf_path' => $pdfPath,
+                'error' => $hashError->getMessage(),
+            ]);
+            throw new \Exception('Error al procesar el PDF: ' . $hashError->getMessage());
+        }
 
-        // 8. Preparar datos para la firma digital (incluyendo hash del PDF)
+        // 9. Preparar datos para la firma digital (incluyendo hash del PDF)
         $signatureData = [
             'type' => 'phytosanitary_treatments',
             'user_id' => $userId,
@@ -113,11 +156,11 @@ class OfficialReportService
             'timestamp' => now()->toIso8601String(),
         ];
 
-        // 9. Generar hash de firma (incluye nonce y versión automáticamente)
+        // 10. Generar hash de firma (incluye nonce y versión automáticamente)
         $signatureResult = OfficialReport::generateSignatureHash($signatureData);
         $signatureHash = $signatureResult['hash'];
 
-        // 10. Actualizar registro con información completa
+        // 11. Actualizar registro con información completa
         $report->update([
             'signature_hash' => $signatureHash,
             'signature_metadata' => [
@@ -137,15 +180,6 @@ class OfficialReportService
             'pdf_path' => $pdfPath,
             'pdf_size' => Storage::disk('local')->size($pdfPath),
             'pdf_filename' => basename($pdfPath),
-        ]);
-
-        // Log de auditoría
-        Log::info('Informe oficial generado y firmado', [
-            'report_id' => $report->id,
-            'user_id' => $userId,
-            'report_type' => 'phytosanitary_treatments',
-            'verification_code' => $verificationCode,
-            'ip' => request()->ip(),
         ]);
 
         return $report;
@@ -216,7 +250,10 @@ class OfficialReportService
         // 5. Generar código de verificación
         $verificationCode = OfficialReport::generateVerificationCode();
 
-        // 6. Crear registro temporal del informe (sin hash aún)
+        // 6. Generar hash temporal único
+        $temporaryHash = OfficialReport::generateTemporaryHash();
+
+        // 7. Crear registro temporal del informe (sin hash aún)
         $report = OfficialReport::create([
             'user_id' => $userId,
             'report_type' => 'full_digital_notebook',
@@ -228,19 +265,48 @@ class OfficialReportService
                 'campaign_name' => $campaign->name,
             ]),
             // Campos temporales que se actualizarán después
-            'signature_hash' => 'temp',
+            'signature_hash' => $temporaryHash,
             'signed_at' => now(),
             'signed_ip' => request()->ip(),
         ]);
 
-        // 7. Generar PDF primero
-        $pdfPath = $this->generateFullNotebookPDF($report, $user, $campaign, $activities, $stats);
+        // 8. Generar PDF primero
+        Log::info('Iniciando generación de PDF del cuaderno completo', [
+            'report_id' => $report->id,
+            'user_id' => $userId,
+            'campaign_id' => $campaignId,
+            'activities_count' => $activities->count(),
+        ]);
+        
+        try {
+            $pdfPath = $this->generateFullNotebookPDF($report, $user, $campaign, $activities, $stats);
+        } catch (\Exception $pdfError) {
+            Log::error('Error al generar PDF del cuaderno completo', [
+                'report_id' => $report->id,
+                'user_id' => $userId,
+                'campaign_id' => $campaignId,
+                'error' => $pdfError->getMessage(),
+            ]);
+            throw new \Exception('Error al generar el PDF del informe: ' . $pdfError->getMessage());
+        }
 
-        // 8. Calcular hash del PDF
-        $pdfContent = Storage::disk('local')->get($pdfPath);
-        $pdfHash = hash('sha256', $pdfContent);
+        // 9. Calcular hash del PDF
+        try {
+            $pdfContent = Storage::disk('local')->get($pdfPath);
+            if (!$pdfContent) {
+                throw new \Exception('No se pudo leer el contenido del PDF generado.');
+            }
+            $pdfHash = hash('sha256', $pdfContent);
+        } catch (\Exception $hashError) {
+            Log::error('Error al calcular hash del PDF del cuaderno completo', [
+                'report_id' => $report->id,
+                'pdf_path' => $pdfPath,
+                'error' => $hashError->getMessage(),
+            ]);
+            throw new \Exception('Error al procesar el PDF: ' . $hashError->getMessage());
+        }
 
-        // 9. Preparar datos para la firma digital (incluyendo hash del PDF)
+        // 10. Preparar datos para la firma digital (incluyendo hash del PDF)
         $signatureData = [
             'type' => 'full_digital_notebook',
             'user_id' => $userId,
@@ -254,11 +320,11 @@ class OfficialReportService
             'timestamp' => now()->toIso8601String(),
         ];
 
-        // 10. Generar hash de firma (incluye nonce y versión automáticamente)
+        // 11. Generar hash de firma (incluye nonce y versión automáticamente)
         $signatureResult = OfficialReport::generateSignatureHash($signatureData);
         $signatureHash = $signatureResult['hash'];
 
-        // 11. Actualizar registro con información completa
+        // 12. Actualizar registro con información completa
         $report->update([
             'signature_hash' => $signatureHash,
             'signature_metadata' => [
@@ -280,16 +346,6 @@ class OfficialReportService
             'pdf_filename' => basename($pdfPath),
         ]);
 
-        // Log de auditoría
-        Log::info('Informe oficial generado y firmado', [
-            'report_id' => $report->id,
-            'user_id' => $userId,
-            'report_type' => 'full_digital_notebook',
-            'campaign_id' => $campaignId,
-            'verification_code' => $verificationCode,
-            'ip' => request()->ip(),
-        ]);
-
         return $report;
     }
 
@@ -302,17 +358,23 @@ class OfficialReportService
      * @param array $stats
      * @return string Path del PDF generado
      */
-    protected function generatePDF(
+    public function generatePDF(
         OfficialReport $report,
         User $user,
         $treatments,
         array $stats
     ): string {
+        // Cargar profile con provincia
+        $profile = $user->profile;
+        if ($profile) {
+            $profile->load('province');
+        }
+        
         // Preparar datos para la vista
         $data = [
             'report' => $report,
             'user' => $user,
-            'profile' => $user->profile,
+            'profile' => $profile,
             'treatments' => $treatments,
             'stats' => $stats,
             'period_start' => $report->period_start,
@@ -327,8 +389,17 @@ class OfficialReportService
         $data['qr_code_url'] = $this->generateQRCodeSVG($report->verification_url);
 
         // Generar PDF usando DomPDF
-        $pdf = Pdf::loadView('reports.phytosanitary-official', $data);
-        $pdf->setPaper('A4', 'portrait');
+        try {
+            $pdf = Pdf::loadView('reports.phytosanitary-official', $data);
+            $pdf->setPaper('A4', 'portrait');
+        } catch (\Exception $viewError) {
+            Log::error('Error al cargar la vista del PDF', [
+                'report_id' => $report->id,
+                'error' => $viewError->getMessage(),
+                'trace' => $viewError->getTraceAsString(),
+            ]);
+            throw new \Exception('Error al generar la vista del PDF: ' . $viewError->getMessage());
+        }
 
         // Definir ruta y nombre del archivo
         $filename = sprintf(
@@ -340,7 +411,25 @@ class OfficialReportService
 
         // Guardar PDF usando Storage facade
         $path = 'official_reports/' . $filename;
-        Storage::disk('local')->put($path, $pdf->output());
+        try {
+            $pdfOutput = $pdf->output();
+            if (!$pdfOutput) {
+                throw new \Exception('El PDF generado está vacío.');
+            }
+            Storage::disk('local')->put($path, $pdfOutput);
+            
+            // Verificar que el archivo se guardó correctamente
+            if (!Storage::disk('local')->exists($path)) {
+                throw new \Exception('No se pudo guardar el archivo PDF en el almacenamiento.');
+            }
+        } catch (\Exception $storageError) {
+            Log::error('Error al guardar el PDF', [
+                'report_id' => $report->id,
+                'path' => $path,
+                'error' => $storageError->getMessage(),
+            ]);
+            throw new \Exception('Error al guardar el PDF: ' . $storageError->getMessage());
+        }
 
         return $path;
     }
@@ -382,8 +471,17 @@ class OfficialReportService
         $data['qr_code_url'] = $this->generateQRCodeSVG($report->verification_url);
 
         // Generar PDF usando DomPDF
-        $pdf = Pdf::loadView('reports.full-notebook-official', $data);
-        $pdf->setPaper('A4', 'portrait');
+        try {
+            $pdf = Pdf::loadView('reports.full-notebook-official', $data);
+            $pdf->setPaper('A4', 'portrait');
+        } catch (\Exception $viewError) {
+            Log::error('Error al cargar la vista del PDF del cuaderno completo', [
+                'report_id' => $report->id,
+                'error' => $viewError->getMessage(),
+                'trace' => $viewError->getTraceAsString(),
+            ]);
+            throw new \Exception('Error al generar la vista del PDF: ' . $viewError->getMessage());
+        }
 
         // Definir ruta y nombre del archivo
         $filename = sprintf(
@@ -395,30 +493,60 @@ class OfficialReportService
 
         // Guardar PDF usando Storage facade
         $path = 'official_reports/' . $filename;
-        Storage::disk('local')->put($path, $pdf->output());
+        try {
+            $pdfOutput = $pdf->output();
+            if (!$pdfOutput) {
+                throw new \Exception('El PDF generado está vacío.');
+            }
+            Storage::disk('local')->put($path, $pdfOutput);
+            
+            // Verificar que el archivo se guardó correctamente
+            if (!Storage::disk('local')->exists($path)) {
+                throw new \Exception('No se pudo guardar el archivo PDF en el almacenamiento.');
+            }
+            
+        } catch (\Exception $storageError) {
+            Log::error('Error al guardar el PDF del cuaderno completo', [
+                'report_id' => $report->id,
+                'path' => $path,
+                'error' => $storageError->getMessage(),
+            ]);
+            throw new \Exception('Error al guardar el PDF: ' . $storageError->getMessage());
+        }
 
         return $path;
     }
 
     /**
-     * Generar código QR como SVG inline (sin dependencias externas)
-     * Usa servicio público de Google Charts con fallback
+     * Generar código QR como imagen (mejorado para PDFs)
+     * Usa API pública con mejor calidad y fallback
      * 
      * @param string $url
-     * @return string URL del QR code
+     * @return string URL del QR code o data URI
      */
     protected function generateQRCodeSVG(string $url): string
     {
-        // Usar API de Google Charts (funciona sin extensiones PHP)
-        // Si falla, se puede cambiar a otra API o librería local
-        $size = 200;
-        $qrCodeUrl = 'https://chart.googleapis.com/chart?'
-            . 'chs=' . $size . 'x' . $size
-            . '&cht=qr'
-            . '&chl=' . urlencode($url)
-            . '&choe=UTF-8';
-        
-        return $qrCodeUrl;
+        try {
+            // Intentar usar API de QR Server con mejor calidad
+            $size = 300; // Mayor tamaño para mejor calidad en PDF
+            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/'
+                . '?size=' . $size . 'x' . $size
+                . '&data=' . urlencode($url)
+                . '&ecc=H' // Error correction level High para mejor legibilidad
+                . '&margin=2'
+                . '&format=png';
+            
+            return $qrCodeUrl;
+        } catch (\Exception $e) {
+            Log::error('Error generando QR code, usando fallback: ' . $e->getMessage());
+            // Fallback a Google Charts
+            $size = 200;
+            return 'https://chart.googleapis.com/chart?'
+                . 'chs=' . $size . 'x' . $size
+                . '&cht=qr'
+                . '&chl=' . urlencode($url)
+                . '&choe=UTF-8';
+        }
     }
 
     /**
@@ -432,13 +560,6 @@ class OfficialReportService
         if (!$report->pdfExists()) {
             throw new \Exception('El archivo PDF no existe o no se puede encontrar.');
         }
-
-        // Log de descarga
-        Log::info('PDF de informe descargado', [
-            'report_id' => $report->id,
-            'user_id' => auth()->id(),
-            'ip' => request()->ip(),
-        ]);
 
         // Si el path es relativo (usando Storage), obtener la ruta completa
         if (!str_starts_with($report->pdf_path, storage_path())) {

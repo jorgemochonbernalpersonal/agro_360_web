@@ -12,7 +12,6 @@ use App\Models\AgriculturalActivity;
 use App\Models\PlotPlanting;
 use App\Models\GrapeVariety;
 use App\Models\TrainingSystem;
-use App\Models\SigpacUse;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
 use App\Models\Fertilization;
@@ -23,19 +22,12 @@ use App\Models\Harvest;
 use App\Models\Client;
 use App\Models\ClientAddress;
 use App\Models\HarvestContainer;
-use App\Models\Invoice;
-use App\Models\InvoiceItem;
 use App\Models\EstimatedYield;
 use App\Models\Tax;
-use App\Models\SigpacCode;
-use App\Models\PlotGeometry;
-use App\Models\MultipartPlotSigpac;
 use App\Models\UserProfile;
 use App\Models\InvoicingSetting;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketComment;
-use App\Models\HarvestStock;
-use App\Models\InvoiceGroup;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -122,7 +114,6 @@ class CompleteTestUserSeeder extends Seeder
             $autonomousCommunity = \App\Models\AutonomousCommunity::first();
             $province = \App\Models\Province::where('autonomous_community_id', $autonomousCommunity?->id)->first();
             $municipality = \App\Models\Municipality::where('province_id', $province?->id)->first();
-            $sigpacUses = SigpacUse::whereIn('code', ['VI', 'OL', 'FR'])->get();
             
             for ($i = 1; $i <= 20; $i++) {
                 $plot = Plot::firstOrCreate(
@@ -140,19 +131,10 @@ class CompleteTestUserSeeder extends Seeder
                     ]
                 );
                 
-                // Asignar usos SIGPAC a las parcelas
-                if ($sigpacUses->isNotEmpty()) {
-                    $plot->sigpacUses()->sync($sigpacUses->random(rand(1, 2))->pluck('id'));
-                }
-                
                 $plots[] = $plot;
             }
             
             $this->command->info("✅ Parcelas creadas: " . count($plots));
-            
-            // 3.1. Crear códigos SIGPAC para las parcelas
-            $sigpacCodes = $this->createSigpacCodes($plots);
-            $this->command->info("✅ Códigos SIGPAC creados: " . count($sigpacCodes));
             
             // 4. Crear plantaciones en las parcelas
             $grapeVarieties = GrapeVariety::take(3)->get();
@@ -274,22 +256,7 @@ class CompleteTestUserSeeder extends Seeder
             $this->createEstimatedYields($user, $campaign2024, $campaign2025);
             $this->command->info("✅ Rendimientos estimados creados");
             
-            // 13. Crear grupos de facturas
-            $invoiceGroups = $this->createInvoiceGroups($user);
-            $this->command->info("✅ Grupos de facturas creados: " . count($invoiceGroups));
-            
-            // 14. Crear facturas (mínimo 20, algunas con cosechas)
-            $harvests = Harvest::whereHas('activity', function($q) use ($user) {
-                $q->where('viticulturist_id', $user->id);
-            })->get();
-            $this->createInvoices($user, $clients, $harvests, $invoiceGroups);
-            $this->command->info("✅ Facturas creadas");
-            
-            // 15. Crear movimientos de stock para cosechas
-            $this->createHarvestStock($user, $harvests);
-            $this->command->info("✅ Movimientos de stock creados");
-            
-            // 16. Crear tickets de soporte
+            // 13. Crear tickets de soporte
             $this->createSupportTickets($user);
             $this->command->info("✅ Tickets de soporte creados");
             
@@ -313,17 +280,10 @@ class CompleteTestUserSeeder extends Seeder
             $this->command->info("   - Productos fitosanitarios: " . PhytosanitaryProduct::count());
             $this->command->info("   - Contenedores: " . HarvestContainer::whereDoesntHave('harvests')->count() . " disponibles");
             $this->command->info("   - Clientes: " . Client::where('user_id', $user->id)->count());
-            $this->command->info("   - Facturas: " . Invoice::where('user_id', $user->id)->count());
             $this->command->info("   - Rendimientos estimados: " . EstimatedYield::whereHas('plotPlanting.plot', function($q) use ($user) {
                 $q->where('viticulturist_id', $user->id);
             })->count());
-            $this->command->info("   - Códigos SIGPAC: " . SigpacCode::whereHas('plots', function($q) use ($user) {
-                $q->where('viticulturist_id', $user->id);
-            })->count());
             $this->command->info("   - Tickets de soporte: " . SupportTicket::where('user_id', $user->id)->count());
-            $this->command->info("   - Movimientos de stock: " . HarvestStock::whereHas('harvest.activity', function($q) use ($user) {
-                $q->where('viticulturist_id', $user->id);
-            })->count());
             
         } catch (\Exception $e) {
             DB::rollBack();
@@ -579,32 +539,29 @@ class CompleteTestUserSeeder extends Seeder
             
             $clients[] = $client;
             
-            // Crear 1-3 direcciones por cliente
+            // Crear 1-3 direcciones por cliente (similar a Create.php)
             $addressCount = rand(1, 3);
-            for ($j = 1; $j <= $addressCount; $j++) {
+            $addressNames = ['Oficina Principal', 'Almacén', 'Sucursal', 'Casa', 'Oficina Secundaria'];
+            
+            for ($j = 0; $j < $addressCount; $j++) {
                 $province = $provinces->random();
                 $municipality = $municipalities->where('province_id', $province->id)->first() ?? $municipalities->random();
                 
-                ClientAddress::firstOrCreate(
-                    [
-                        'client_id' => $client->id,
-                        'name' => ['Oficina Principal', 'Almacén', 'Sucursal', 'Casa'][$j - 1] ?? "Dirección {$j}",
-                    ],
-                    [
-                        'first_name' => $isCompany ? null : $client->first_name,
-                        'last_name' => $isCompany ? null : $client->last_name,
-                        'email' => $client->email,
-                        'phone' => $client->phone,
-                        'address' => "Calle " . ['Mayor', 'Principal', 'Nueva', 'Vieja'][rand(0, 3)] . " " . rand(1, 100),
-                        'autonomous_community_id' => $province->autonomous_community_id,
-                        'province_id' => $province->id,
-                        'municipality_id' => $municipality->id,
-                        'postal_code' => str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
-                        'is_default' => $j === 1,
-                        'is_delivery_note_address' => rand(0, 1) === 1,
-                        'description' => "Dirección de prueba {$j} para cliente {$i}",
-                    ]
-                );
+                // La primera dirección siempre es default (como en Create.php)
+                $isDefault = $j === 0;
+                
+                // Crear dirección usando el método create() como en Create.php (solo campos que usa la app)
+                $client->addresses()->create([
+                    'name' => $addressNames[$j] ?? "Dirección " . ($j + 1),
+                    'address' => "Calle " . ['Mayor', 'Principal', 'Nueva', 'Vieja', 'Real', 'San José'][rand(0, 5)] . " " . rand(1, 200),
+                    'postal_code' => str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
+                    'municipality_id' => $municipality->id,
+                    'province_id' => $province->id,
+                    'autonomous_community_id' => $province->autonomous_community_id,
+                    'is_default' => $isDefault,
+                    'is_delivery_note_address' => $j === 0 ? true : (rand(0, 1) === 1), // La primera suele ser de entrega
+                    'description' => $j === 0 ? "Dirección principal del cliente" : "Dirección adicional " . ($j + 1) . " para cliente {$i}",
+                ]);
             }
         }
         
@@ -683,84 +640,6 @@ class CompleteTestUserSeeder extends Seeder
                 'last_reset_year' => now()->year,
             ]
         );
-    }
-    
-    /**
-     * Crear códigos SIGPAC para las parcelas
-     */
-    private function createSigpacCodes(array $plots): array
-    {
-        $sigpacCodes = [];
-        $autonomousCommunity = \App\Models\AutonomousCommunity::first();
-        $province = \App\Models\Province::where('autonomous_community_id', $autonomousCommunity?->id)->first();
-        $municipality = \App\Models\Municipality::where('province_id', $province?->id)->first();
-        
-        foreach ($plots as $index => $plot) {
-            // Crear 1-3 códigos SIGPAC por parcela
-            $codesPerPlot = rand(1, 3);
-            
-            for ($j = 0; $j < $codesPerPlot; $j++) {
-                $fields = [
-                    'code_autonomous_community' => str_pad($autonomousCommunity?->code ?? '13', 2, '0', STR_PAD_LEFT),
-                    'code_province' => str_pad($province?->code ?? '28', 2, '0', STR_PAD_LEFT),
-                    'code_municipality' => str_pad($municipality?->code ?? '079', 3, '0', STR_PAD_LEFT),
-                    'code_aggregate' => '0',
-                    'code_zone' => '0',
-                    'code_polygon' => str_pad(rand(1, 99), 2, '0', STR_PAD_LEFT),
-                    'code_plot' => str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT),
-                    'code_enclosure' => str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT),
-                ];
-                
-                $fullCode = SigpacCode::buildCodeFromFields($fields);
-                
-                $sigpacCode = SigpacCode::firstOrCreate(
-                    ['code' => $fullCode],
-                    $fields
-                );
-                
-                $sigpacCodes[] = $sigpacCode;
-                
-                // Crear geometría para el código SIGPAC
-                $geometry = PlotGeometry::create([
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                
-                // Crear coordenadas simples (polígono rectangular de ejemplo)
-                $lat = 40.0 + (rand(0, 100) / 1000); // 40.0 a 40.1
-                $lng = -3.0 - (rand(0, 100) / 1000); // -3.0 a -3.1
-                $offset = 0.01; // ~1km
-                
-                $wkt = sprintf(
-                    "POLYGON((%f %f, %f %f, %f %f, %f %f, %f %f))",
-                    $lng, $lat,
-                    $lng + $offset, $lat,
-                    $lng + $offset, $lat + $offset,
-                    $lng, $lat + $offset,
-                    $lng, $lat
-                );
-                
-                // Actualizar geometría con coordenadas
-                DB::statement(
-                    "UPDATE plot_geometry SET 
-                        coordinates = ST_GeomFromText(?, 4326),
-                        centroid = ST_Centroid(ST_GeomFromText(?, 4326))
-                    WHERE id = ?",
-                    [$wkt, $wkt, $geometry->id]
-                );
-                
-                // Crear relación plot-sigpac-geometry
-                MultipartPlotSigpac::firstOrCreate(
-                    [
-                        'plot_id' => $plot->id,
-                        'sigpac_code_id' => $sigpacCode->id,
-                        'plot_geometry_id' => $geometry->id,
-                    ]
-                );
-            }
-        }
-        
-        return $sigpacCodes;
     }
     
     /**
@@ -848,85 +727,6 @@ class CompleteTestUserSeeder extends Seeder
     }
     
     /**
-     * Crear grupos de facturas
-     */
-    private function createInvoiceGroups(User $user): array
-    {
-        $groups = [];
-        $groupNames = ['Facturación Q1 2024', 'Facturación Q2 2024', 'Facturación Q3 2024', 'Facturación Q4 2024', 'Facturación Q1 2025'];
-        
-        foreach ($groupNames as $name) {
-            $group = InvoiceGroup::firstOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'name' => $name,
-                ],
-                [
-                    'description' => "Grupo de facturas para {$name}",
-                ]
-            );
-            $groups[] = $group;
-        }
-        
-        return $groups;
-    }
-    
-    /**
-     * Crear movimientos de stock para cosechas
-     */
-    private function createHarvestStock(User $user, $harvests): void
-    {
-        foreach ($harvests->take(15) as $harvest) {
-            // Movimiento inicial
-            $initialQuantity = $harvest->total_weight ?? rand(1000, 10000);
-            
-            HarvestStock::firstOrCreate(
-                [
-                    'harvest_id' => $harvest->id,
-                    'movement_type' => 'initial',
-                ],
-                [
-                    'user_id' => $user->id,
-                    'quantity_before' => 0,
-                    'quantity_change' => $initialQuantity,
-                    'quantity_after' => $initialQuantity,
-                    'available_qty' => $initialQuantity * 0.8, // 80% disponible
-                    'reserved_qty' => $initialQuantity * 0.1, // 10% reservado
-                    'sold_qty' => 0,
-                    'gifted_qty' => 0,
-                    'lost_qty' => 0,
-                    'notes' => 'Movimiento inicial de stock',
-                ]
-            );
-            
-            // Algunos movimientos de venta
-            if (rand(0, 1) === 1) {
-                $soldQuantity = rand(100, (int)($initialQuantity * 0.5));
-                $currentStock = HarvestStock::where('harvest_id', $harvest->id)
-                    ->latest()
-                    ->first();
-                
-                if ($currentStock) {
-                    HarvestStock::create([
-                        'harvest_id' => $harvest->id,
-                        'user_id' => $user->id,
-                        'movement_type' => 'sale',
-                        'quantity_before' => $currentStock->quantity_after,
-                        'quantity_change' => -$soldQuantity,
-                        'quantity_after' => $currentStock->quantity_after - $soldQuantity,
-                        'available_qty' => max(0, $currentStock->available_qty - $soldQuantity),
-                        'reserved_qty' => $currentStock->reserved_qty,
-                        'sold_qty' => $currentStock->sold_qty + $soldQuantity,
-                        'gifted_qty' => $currentStock->gifted_qty,
-                        'lost_qty' => $currentStock->lost_qty,
-                        'notes' => 'Venta de cosecha',
-                    ]);
-                }
-            }
-        }
-    }
-    
-    /**
      * Crear tickets de soporte
      */
     private function createSupportTickets(User $user): void
@@ -959,187 +759,5 @@ class CompleteTestUserSeeder extends Seeder
         }
     }
     
-    /**
-     * Crear facturas con items
-     */
-    private function createInvoices(User $user, array $clients, $harvests, array $invoiceGroups = []): void
-    {
-        $taxes = Tax::where('active', true)->get();
-        $defaultTax = $taxes->where('code', 'IVA')->where('rate', 21)->first() ?? $taxes->first();
-        
-        // Obtener algunas cosechas para facturar
-        $harvestsCollection = collect($harvests);
-        $harvestsToInvoice = $harvestsCollection->random(min(15, $harvestsCollection->count()));
-        if (!is_array($harvestsToInvoice) && !($harvestsToInvoice instanceof \Illuminate\Support\Collection)) {
-            $harvestsToInvoice = collect([$harvestsToInvoice]);
-        } elseif (!($harvestsToInvoice instanceof \Illuminate\Support\Collection)) {
-            $harvestsToInvoice = collect($harvestsToInvoice);
-        }
-        
-        // Crear facturas con cosechas (10 facturas)
-        $invoiceCounter = 1;
-        foreach ($harvestsToInvoice->take(10) as $index => $harvest) {
-            $client = collect($clients)->random();
-            $clientAddress = $client->addresses->first();
-            $invoiceDate = \Carbon\Carbon::now()->subDays(rand(1, 180));
-            $year = $invoiceDate->year;
-            
-            // Generar número único de factura
-            $invoiceNumber = 'FAC-' . $year . '-' . str_pad($invoiceCounter, 4, '0', STR_PAD_LEFT);
-            while (Invoice::where('invoice_number', $invoiceNumber)->exists()) {
-                $invoiceCounter++;
-                $invoiceNumber = 'FAC-' . $year . '-' . str_pad($invoiceCounter, 4, '0', STR_PAD_LEFT);
-            }
-            
-            $invoiceGroup = !empty($invoiceGroups) && rand(0, 1) === 1 ? collect($invoiceGroups)->random() : null;
-            
-            $invoice = Invoice::create([
-                'user_id' => $user->id,
-                'client_id' => $client->id,
-                'client_address_id' => $clientAddress?->id,
-                'invoice_number' => $invoiceNumber,
-                'current_invoice_code' => $invoiceCounter,
-                'invoice_date' => $invoiceDate->format('Y-m-d'),
-                'due_date' => $invoiceDate->copy()->addDays(rand(15, 60))->format('Y-m-d'),
-                'subtotal' => 0,
-                'discount_amount' => 0,
-                'tax_base' => 0,
-                'tax_rate' => $defaultTax ? $defaultTax->rate : 0,
-                'tax_amount' => 0,
-                'total_amount' => 0,
-                'status' => ['draft', 'sent', 'paid'][rand(0, 2)],
-                'payment_status' => ['unpaid', 'partial', 'paid'][rand(0, 2)],
-                'payment_type' => ['cash', 'transfer', 'check'][rand(0, 2)],
-                'invoice_group_id' => $invoiceGroup?->id,
-                'observations' => "Factura de prueba generada automáticamente",
-            ]);
-            
-            // Crear item de cosecha
-            $quantity = $harvest->total_weight;
-            $unitPrice = $harvest->price_per_kg ?? rand(50, 200) / 100;
-            $subtotal = $quantity * $unitPrice;
-            $discount = $subtotal * ($client->default_discount / 100);
-            $taxBase = $subtotal - $discount;
-            $taxAmount = $taxBase * (($defaultTax ? $defaultTax->rate : 0) / 100);
-            $total = $taxBase + $taxAmount;
-            
-            InvoiceItem::create([
-                'invoice_id' => $invoice->id,
-                'harvest_id' => $harvest->id,
-                'name' => ($harvest->plotPlanting->grapeVariety->name ?? 'Uva') . ' - ' . ($harvest->activity->plot->name ?? 'Parcela'),
-                'description' => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y'),
-                'sku' => 'HARV-' . $harvest->id,
-                'concept_type' => 'harvest',
-                'quantity' => $quantity,
-                'unit_price' => $unitPrice,
-                'discount_percentage' => $client->default_discount,
-                'discount_amount' => $discount,
-                'tax_id' => $defaultTax?->id,
-                'tax_name' => $defaultTax?->name,
-                'tax_rate' => $defaultTax ? $defaultTax->rate : 0,
-                'tax_base' => $taxBase,
-                'tax_amount' => $taxAmount,
-                'subtotal' => $taxBase,
-                'total' => $total,
-            ]);
-            
-            // Actualizar totales de la factura
-            $invoice->update([
-                'subtotal' => $taxBase,
-                'discount_amount' => $discount,
-                'tax_base' => $taxBase,
-                'tax_amount' => $taxAmount,
-                'total_amount' => $total,
-            ]);
-            $invoiceCounter++;
-        }
-        
-        // Crear facturas sin cosechas (10 facturas más)
-        for ($i = 0; $i < 10; $i++) {
-            $client = collect($clients)->random();
-            $clientAddress = $client->addresses->first();
-            $invoiceDate = \Carbon\Carbon::now()->subDays(rand(1, 180));
-            $year = $invoiceDate->year;
-            
-            // Generar número único de factura
-            $invoiceNumber = 'FAC-' . $year . '-' . str_pad($invoiceCounter, 4, '0', STR_PAD_LEFT);
-            while (Invoice::where('invoice_number', $invoiceNumber)->exists()) {
-                $invoiceCounter++;
-                $invoiceNumber = 'FAC-' . $year . '-' . str_pad($invoiceCounter, 4, '0', STR_PAD_LEFT);
-            }
-            
-            $invoiceGroup = !empty($invoiceGroups) && rand(0, 1) === 1 ? collect($invoiceGroups)->random() : null;
-            
-            $invoice = Invoice::create([
-                'user_id' => $user->id,
-                'client_id' => $client->id,
-                'client_address_id' => $clientAddress?->id,
-                'invoice_number' => $invoiceNumber,
-                'current_invoice_code' => $invoiceCounter,
-                'invoice_date' => $invoiceDate->format('Y-m-d'),
-                'due_date' => $invoiceDate->copy()->addDays(rand(15, 60))->format('Y-m-d'),
-                'subtotal' => 0,
-                'discount_amount' => 0,
-                'tax_base' => 0,
-                'tax_rate' => $defaultTax ? $defaultTax->rate : 0,
-                'tax_amount' => 0,
-                'total_amount' => 0,
-                'status' => ['draft', 'sent', 'paid'][rand(0, 2)],
-                'payment_status' => ['unpaid', 'partial', 'paid'][rand(0, 2)],
-                'payment_type' => ['cash', 'transfer'][rand(0, 1)],
-                'invoice_group_id' => $invoiceGroup?->id,
-                'observations' => "Factura de prueba generada automáticamente",
-            ]);
-            
-            // Crear 1-3 items por factura
-            $itemCount = rand(1, 3);
-            $invoiceSubtotal = 0;
-            $invoiceDiscount = 0;
-            $invoiceTax = 0;
-            
-            for ($j = 0; $j < $itemCount; $j++) {
-                $itemNames = ['Servicio de Consultoría', 'Producto Vitivinícola', 'Servicio de Mantenimiento', 'Producto Agrícola'];
-                $quantity = rand(1, 100) / 10;
-                $unitPrice = rand(100, 1000) / 10;
-                $subtotal = $quantity * $unitPrice;
-                $discount = $subtotal * ($client->default_discount / 100);
-                $taxBase = $subtotal - $discount;
-                $taxAmount = $taxBase * (($defaultTax ? $defaultTax->rate : 0) / 100);
-                $total = $taxBase + $taxAmount;
-                
-                InvoiceItem::create([
-                    'invoice_id' => $invoice->id,
-                    'name' => $itemNames[array_rand($itemNames)],
-                    'description' => "Item de prueba " . ($j + 1),
-                    'sku' => 'ITEM-' . $invoiceCounter . '-' . ($j + 1),
-                    'concept_type' => ['service', 'product', 'other'][rand(0, 2)],
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
-                    'discount_percentage' => $client->default_discount,
-                    'discount_amount' => $discount,
-                    'tax_id' => $defaultTax?->id,
-                    'tax_name' => $defaultTax?->name,
-                    'tax_rate' => $defaultTax ? $defaultTax->rate : 0,
-                    'tax_base' => $taxBase,
-                    'tax_amount' => $taxAmount,
-                    'subtotal' => $taxBase,
-                    'total' => $total,
-                ]);
-                
-                $invoiceSubtotal += $taxBase;
-                $invoiceDiscount += $discount;
-                $invoiceTax += $taxAmount;
-            }
-            
-            // Actualizar totales de la factura
-            $invoice->update([
-                'subtotal' => $invoiceSubtotal,
-                'discount_amount' => $invoiceDiscount,
-                'tax_base' => $invoiceSubtotal,
-                'tax_amount' => $invoiceTax,
-                'total_amount' => $invoiceSubtotal + $invoiceTax,
-            ]);
-        }
-    }
 }
 

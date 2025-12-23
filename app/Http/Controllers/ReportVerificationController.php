@@ -19,7 +19,7 @@ class ReportVerificationController extends Controller
     {
         // Buscar el informe por código de verificación
         $report = OfficialReport::where('verification_code', $code)
-            ->with(['user.profile.municipality.province'])
+            ->with(['user.profile.province'])
             ->first();
 
         if (!$report) {
@@ -49,15 +49,6 @@ class ReportVerificationController extends Controller
             $message .= ' El contenido del documento ha sido modificado después de la firma.';
         }
 
-        // Log de verificación
-        Log::info('Informe verificado públicamente', [
-            'report_id' => $report->id,
-            'verification_code' => $code,
-            'is_valid' => $isValid,
-            'integrity_valid' => $integrityValid,
-            'ip' => request()->ip(),
-        ]);
-
         return view('reports.verification-result', [
             'found' => true,
             'report' => $report,
@@ -77,6 +68,45 @@ class ReportVerificationController extends Controller
     protected function verifyIntegrity(OfficialReport $report): bool
     {
         try {
+            // MÉTODO 1 (PRIMARIO): Verificar hash del PDF real si existe
+            // Esto es más confiable que reconstruir datos que pueden cambiar de orden
+            $pdfPath = storage_path('app/' . $report->pdf_path);
+            
+            if (file_exists($pdfPath)) {
+                $metadata = $report->signature_metadata ?? [];
+                $originalPdfHash = $metadata['pdf_hash'] ?? null;
+                
+                if ($originalPdfHash) {
+                    $currentPdfHash = hash_file('sha256', $pdfPath);
+                    
+                    Log::info('Verificando PDF real', [
+                        'report_id' => $report->id,
+                        'original_hash' => substr($originalPdfHash, 0, 16) . '...',
+                        'current_hash' => substr($currentPdfHash, 0, 16) . '...',
+                        'match' => $originalPdfHash === $currentPdfHash,
+                    ]);
+                    
+                    // Si el PDF coincide, el informe es íntegro
+                    if ($originalPdfHash === $currentPdfHash) {
+                        return true;
+                    }
+                    
+                    // Si no coincide, el PDF fue modificado
+                    Log::warning('PDF hash mismatch - archivo modificado', [
+                        'report_id' => $report->id,
+                        'expected' => $originalPdfHash,
+                        'actual' => $currentPdfHash,
+                    ]);
+                    return false;
+                }
+            }
+            
+            // MÉTODO 2 (FALLBACK): Reconstruir signatureData y verificar
+            // Solo si PDF no existe o no tiene hash guardado
+            Log::info('PDF no disponible, verificando via signatureData', [
+                'report_id' => $report->id,
+            ]);
+            
             // Reconstruir los datos de firma según el tipo de informe
             if ($report->report_type === 'phytosanitary_treatments') {
                 $treatments = AgriculturalActivity::ofType('phytosanitary')
@@ -99,21 +129,16 @@ class ReportVerificationController extends Controller
                     'plots_affected' => $treatments->pluck('plot.name')->unique()->count(),
                 ];
 
-                // Obtener hash del PDF actual
-                $currentPdfHash = null;
-                if ($report->pdf_path && $report->pdfExists()) {
-                    try {
-                        $pdfPath = str_starts_with($report->pdf_path, storage_path()) 
-                            ? $report->pdf_path 
-                            : \Storage::disk('local')->path($report->pdf_path);
-                        $pdfContent = file_get_contents($pdfPath);
-                        $currentPdfHash = hash('sha256', $pdfContent);
-                    } catch (\Exception $e) {
-                        \Log::warning('No se pudo calcular hash del PDF durante verificación', [
-                            'report_id' => $report->id,
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
+                // Obtener hash del PDF original (almacenado en metadata)
+                $metadata = $report->signature_metadata ?? [];
+                $originalPdfHash = $metadata['pdf_hash'] ?? null;
+                
+                // Si no hay hash guardado, el informe no puede verificarse
+                if (!$originalPdfHash) {
+                    \Log::warning('PDF hash no encontrado en signature_metadata', [
+                        'report_id' => $report->id,
+                    ]);
+                    return false;
                 }
 
                 $signatureData = [
@@ -123,12 +148,11 @@ class ReportVerificationController extends Controller
                     'period_end' => $report->period_end->toDateString(),
                     'treatment_ids' => $treatments->pluck('id')->toArray(),
                     'stats' => $stats,
-                    'pdf_hash' => $currentPdfHash, // Hash del PDF actual
+                    'pdf_hash' => $originalPdfHash, // Hash del PDF original usado en la firma
                     'timestamp' => $report->signed_at->toIso8601String(),
                 ];
 
-                // Recuperar nonce y versión del metadata si existen
-                $metadata = $report->signature_metadata ?? [];
+                // Recuperar nonce y versión del metadata (ya cargado arriba)
                 if (isset($metadata['nonce'])) {
                     $signatureData['nonce'] = $metadata['nonce'];
                 }
@@ -157,21 +181,16 @@ class ReportVerificationController extends Controller
                     'harvest_count' => $activities->where('activity_type', 'harvest')->count(),
                 ];
 
-                // Obtener hash del PDF actual
-                $currentPdfHash = null;
-                if ($report->pdf_path && $report->pdfExists()) {
-                    try {
-                        $pdfPath = str_starts_with($report->pdf_path, storage_path()) 
-                            ? $report->pdf_path 
-                            : \Storage::disk('local')->path($report->pdf_path);
-                        $pdfContent = file_get_contents($pdfPath);
-                        $currentPdfHash = hash('sha256', $pdfContent);
-                    } catch (\Exception $e) {
-                        \Log::warning('No se pudo calcular hash del PDF durante verificación', [
-                            'report_id' => $report->id,
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
+                // Obtener hash del PDF original (almacenado en metadata)
+                $metadata = $report->signature_metadata ?? [];
+                $originalPdfHash = $metadata['pdf_hash'] ?? null;
+                
+                // Si no hay hash guardado, el informe no puede verificarse
+                if (!$originalPdfHash) {
+                    \Log::warning('PDF hash no encontrado en signature_metadata', [
+                        'report_id' => $report->id,
+                    ]);
+                    return false;
                 }
 
                 $signatureData = [
@@ -183,12 +202,11 @@ class ReportVerificationController extends Controller
                     'period_end' => $report->period_end->toDateString(),
                     'activity_ids' => $activities->pluck('id')->toArray(),
                     'stats' => $stats,
-                    'pdf_hash' => $currentPdfHash, // Hash del PDF actual
+                    'pdf_hash' => $originalPdfHash, // Hash del PDF original usado en la firma
                     'timestamp' => $report->signed_at->toIso8601String(),
                 ];
 
-                // Recuperar nonce y versión del metadata si existen
-                $metadata = $report->signature_metadata ?? [];
+                // Recuperar nonce y versión del metadata (ya cargado arriba)
                 if (isset($metadata['nonce'])) {
                     $signatureData['nonce'] = $metadata['nonce'];
                 }

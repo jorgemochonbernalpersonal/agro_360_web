@@ -177,6 +177,37 @@ Route::middleware(['role:viticulturist', 'check.beta'])
 
         // Informes Oficiales
         Route::get('/official-reports', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('official-reports.index');
+        Route::get('/official-reports/crear', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('official-reports.create');
+        Route::get('/official-reports/{report}/download', function (\App\Models\OfficialReport $report) {
+            // Verificar permisos
+            if ($report->user_id !== auth()->id()) {
+                abort(403, 'No tienes permiso para descargar este informe.');
+            }
+
+            $service = new \App\Services\OfficialReportService();
+            return $service->downloadReport($report);
+        })->name('official-reports.download');
+        Route::get('/official-reports/{report}/preview', function (\App\Models\OfficialReport $report) {
+            // Verificar permisos
+            if ($report->user_id !== auth()->id()) {
+                abort(403, 'No tienes permiso para ver este informe.');
+            }
+
+            if (!$report->pdfExists()) {
+                abort(404, 'El archivo PDF no existe.');
+            }
+
+            // Obtener ruta completa del PDF
+            $pdfPath = str_starts_with($report->pdf_path, storage_path()) 
+                ? $report->pdf_path 
+                : \Storage::disk('local')->path($report->pdf_path);
+
+            // Devolver PDF para visualización (no descarga)
+            return response()->file($pdfPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . ($report->pdf_filename ?? 'informe.pdf') . '"',
+            ]);
+        })->name('official-reports.preview');
 
         // Support / Soporte
         Route::get('/support', \App\Livewire\Viticulturist\Support\Index::class)->name('support.index');

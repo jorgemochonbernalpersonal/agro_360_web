@@ -26,6 +26,11 @@ class Create extends Component
         
         // Inicializar con al menos un código
         $this->addSigpacCode();
+        
+        // Si hay parcela seleccionada, auto-rellenar
+        if ($this->plot_id) {
+            $this->updatedPlotId($this->plot_id);
+        }
     }
 
     protected function rules(): array
@@ -101,7 +106,7 @@ class Create extends Component
 
     public function addSigpacCode()
     {
-        $this->sigpacCodes[] = [
+        $newCode = [
             'code_autonomous_community' => '',
             'code_province' => '',
             'code_municipality' => '',
@@ -111,12 +116,64 @@ class Create extends Component
             'code_plot' => '',
             'code_enclosure' => '',
         ];
+        
+        // Si hay parcela seleccionada, auto-rellenar
+        if ($this->plot_id) {
+            $plot = Plot::with(['autonomousCommunity', 'province', 'municipality'])
+                ->find($this->plot_id);
+            
+            if ($plot && $plot->autonomousCommunity && $plot->province && $plot->municipality) {
+                $newCode['code_autonomous_community'] = str_pad(
+                    $plot->autonomousCommunity->code ?? '', 2, '0', STR_PAD_LEFT
+                );
+                $newCode['code_province'] = str_pad(
+                    $plot->province->code ?? '', 2, '0', STR_PAD_LEFT
+                );
+                // Para municipio: el código es de 5 dígitos (28079), pero SIGPAC necesita solo los últimos 3 (079)
+                $municipalityFullCode = $plot->municipality->code ?? '';
+                $newCode['code_municipality'] = str_pad(
+                    substr($municipalityFullCode, -3), 3, '0', STR_PAD_LEFT
+                );
+            }
+        }
+        
+        $this->sigpacCodes[] = $newCode;
     }
 
     public function removeSigpacCode($index)
     {
         unset($this->sigpacCodes[$index]);
         $this->sigpacCodes = array_values($this->sigpacCodes);
+    }
+
+    /**
+     * Auto-rellenar códigos cuando se selecciona una parcela
+     */
+    public function updatedPlotId($value)
+    {
+        if ($value) {
+            // Cargar la parcela con sus relaciones
+            $plot = Plot::with(['autonomousCommunity', 'province', 'municipality'])
+                ->find($value);
+            
+            if ($plot && $plot->autonomousCommunity && $plot->province && $plot->municipality) {
+                // Acceder directamente al campo 'code' de cada modelo
+                $caCode = str_pad($plot->autonomousCommunity->code ?? '', 2, '0', STR_PAD_LEFT);
+                $provinceCode = str_pad($plot->province->code ?? '', 2, '0', STR_PAD_LEFT);
+                
+                // Para municipio: el código es de 5 dígitos (28079), pero SIGPAC necesita solo los últimos 3 (079)
+                $municipalityFullCode = $plot->municipality->code ?? '';
+                $municipalityCode = str_pad(substr($municipalityFullCode, -3), 3, '0', STR_PAD_LEFT);
+                
+                // Auto-rellenar TODOS los códigos SIGPAC del formulario
+                foreach ($this->sigpacCodes as $index => &$code) {
+                    $code['code_autonomous_community'] = $caCode;
+                    $code['code_province'] = $provinceCode;
+                    $code['code_municipality'] = $municipalityCode;
+                }
+                unset($code); // Importante: liberar la referencia
+            }
+        }
     }
 
     /**
@@ -276,13 +333,13 @@ class Create extends Component
                 ? 'Código SIGPAC creado correctamente.'
                 : "{$count} códigos SIGPAC creados correctamente.";
             
-            $this->toastSuccess($message);
+            session()->flash('message', $message);
             
             return $this->redirect(route('sigpac.codes'));
             
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->toastError('Error: ' . $e->getMessage());
+            session()->flash('error', 'Error: ' . $e->getMessage());
         }
     }
 

@@ -152,12 +152,26 @@ class Edit extends Component
             return;
         }
 
-        // Verificar que la cosecha no esté ya en los items
+        // Verificar que la cosecha no esté ya en los items locales
         foreach ($this->items as $item) {
             if (isset($item['harvest_id']) && $item['harvest_id'] == $harvest->id) {
-                $this->toastError('Esta cosecha ya está en la factura.');
+                $this->toastError('Esta cosecha ya está en la factura actual.');
                 return;
             }
+        }
+        
+        // VALIDACIÓN CRÍTICA: Verificar que la cosecha no esté ya facturada en OTRA factura
+        $alreadyInvoiced = \App\Models\InvoiceItem::where('harvest_id', $harvest->id)
+            ->whereHas('invoice', function($q) {
+                $q->where('status', '!=', 'cancelled') // Excluir facturas canceladas
+                  ->where('id', '!=', $this->invoice->id) // Excluir la factura actual
+                  ->where('user_id', auth()->id()); // Solo verificar facturas del mismo usuario
+            })
+            ->exists();
+        
+        if ($alreadyInvoiced) {
+            $this->toastError('Esta cosecha ya está facturada en otra factura válida. No puedes facturar la misma cosecha dos veces.');
+            return;
         }
 
         // Obtener el impuesto por defecto del usuario si existe
@@ -199,7 +213,23 @@ class Edit extends Component
     {
         if ($value) {
             $client = Client::with('addresses')->find($value);
-            $this->availableAddresses = $client ? $client->addresses : collect();
+            
+            if ($client) {
+                // Cargar automáticamente la primera dirección del cliente
+                $primaryAddress = $client->addresses->first();
+                
+                if ($primaryAddress) {
+                    $this->client_address_id = $primaryAddress->id;
+                } else {
+                    // Si no tiene dirección, mostrar error
+                    $this->client_address_id = '';
+                    $this->addError('client_id', 'Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.');
+                }
+                
+                $this->availableAddresses = $client->addresses;
+            } else {
+                $this->availableAddresses = collect();
+            }
         } else {
             $this->availableAddresses = collect();
         }
@@ -251,12 +281,28 @@ class Edit extends Component
     {
         return [
             'client_id' => 'required|exists:clients,id',
-            'client_address_id' => 'nullable|exists:client_addresses,id',
+            'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
             'invoice_date' => 'required|date',
             'due_date' => 'nullable|date|after_or_equal:invoice_date',
-            'delivery_status' => 'required|in:pending,in_transit,delivered,cancelled',
-            'payment_status' => 'required|in:unpaid,paid,overdue,refunded',
-            'items' => 'required|array|min:1',
+            'delivery_status' => [
+                'required',
+                'in:pending,in_transit,delivered,cancelled',
+                new \App\Rules\InvoiceStateCoherence(
+                    $this->invoice->status,
+                    $this->payment_status,
+                    request()->input('delivery_status')
+                ),
+            ],
+            'payment_status' => [
+                'required',
+                'in:unpaid,paid,overdue,refunded',
+                new \App\Rules\InvoiceStateCoherence(
+                    $this->invoice->status,
+                    request()->input('payment_status'),
+                    $this->delivery_status
+                ),
+            ],
+            'items' => 'required|array|min:1', // Mínimo 1 item
             'items.*.name' => 'required|string|max:255',
             'items.*.description' => 'nullable|string',
             'items.*.sku' => 'nullable|string|max:255',
@@ -281,27 +327,17 @@ class Edit extends Component
                 $user = Auth::user();
                 $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
                 
-                // Manejar códigos de albarán y factura
+                // Generar código de albarán atómicamente si no existe o no fue modificado
                 $deliveryNoteCode = $this->delivery_note_code_modified 
                     ? $this->delivery_note_code 
-                    : ($this->invoice->delivery_note_code ?? $settings->generateDeliveryNoteCode());
+                    : ($this->invoice->delivery_note_code ?? $settings->generateAndIncrementDeliveryNoteCode());
                 
-                // Solo incrementar contador de albarán si el usuario NO modificó el código y no existía antes
-                if (!$this->delivery_note_code_modified && !$this->invoice->delivery_note_code) {
-                    $settings->incrementDeliveryNoteCounter();
-                }
-                
-                // Si la factura está aprobada o se va a aprobar y no tiene número, generarlo
+                // Si la factura está aprobada o se va a aprobar y no tiene número, generarlo atómicamente
                 $invoiceNumber = null;
                 if ($this->invoice->status !== 'draft' || $this->invoice_number) {
                     $invoiceNumber = $this->invoice_number_modified 
                         ? $this->invoice_number 
-                        : ($this->invoice->invoice_number ?? $settings->generateInvoiceCode());
-                    
-                    // Solo incrementar contador de factura si el usuario NO modificó el código y no existía antes
-                    if (!$this->invoice_number_modified && !$this->invoice->invoice_number) {
-                        $settings->incrementInvoiceCounter();
-                    }
+                        : ($this->invoice->invoice_number ?? $settings->generateAndIncrementInvoiceCode());
                 }
                 
                 // Calcular totales
@@ -384,6 +420,19 @@ class Edit extends Component
                         'concept_type' => $itemData['concept_type'] ?? 'other',
                     ]);
                 }
+                
+                // Registrar en audit log
+                $this->invoice->logAction(
+                    'updated',
+                    'Factura actualizada',
+                    [
+                        'client_id' => ['old' => $this->invoice->getOriginal('client_id'), 'new' => $this->client_id],
+                        'total_amount' => ['old' => $this->invoice->getOriginal('total_amount'), 'new' => $totalAmount],
+                        'delivery_status' => ['old' => $this->invoice->getOriginal('delivery_status'), 'new' => $this->delivery_status],
+                        'payment_status' => ['old' => $this->invoice->getOriginal('payment_status'), 'new' => $this->payment_status],
+                        'items_count' => count($this->items),
+                    ]
+                );
             });
 
             $this->toastSuccess('Factura actualizada exitosamente.');

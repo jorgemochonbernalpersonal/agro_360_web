@@ -38,6 +38,10 @@ class Settings extends Component
     public $signaturePassword = '';
     public $signaturePassword_confirmation = '';
     public $hasDigitalSignature = false;
+    
+    // Para resetear contraseña de firma olvidada
+    public $showResetPasswordModal = false;
+    public $loginPasswordForReset = '';
 
     public function mount()
     {
@@ -197,27 +201,160 @@ class Settings extends Component
 
     public function saveDigitalSignature()
     {
+        // Validación inicial
         $this->validate([
-            'signaturePassword' => 'required|string|min:8|confirmed',
+            'signaturePassword' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                // Validación de complejidad básica (puede mejorar con Package)
+                'regex:/[a-z]/',      // al menos una minúscula
+                'regex:/[A-Z]/',      // al menos una mayúscula
+                'regex:/[0-9]/',      // al menos un número
+            ],
         ], [
             'signaturePassword.required' => 'La contraseña de firma es obligatoria.',
             'signaturePassword.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'signaturePassword.confirmed' => 'Las contraseñas no coinciden.',
+            'signaturePassword.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula y un número.',
         ]);
+        
+        // Lista de contraseñas prohibidas (comunes)
+        $forbiddenPasswords = [
+            'Password1', 'Password123', 'Password12345',
+            'Agro3651', 'Agro365!', 'Agro365123',
+            'Qwerty123', 'Abcd1234', 'Admin123',
+            'Welcome1', 'Welcome123', 'Firma123',
+            '12345678Aa', 'Aa123456', 'Password1!',
+        ];
+        
+        // Verificar si la contraseña está en la lista prohibida (case-insensitive)
+        foreach ($forbiddenPasswords as $forbidden) {
+            if (strcasecmp($this->signaturePassword, $forbidden) === 0) {
+                $this->addError('signaturePassword', 'Esta contraseña es demasiado común y predecible. Por seguridad, elige una contraseña más única para firmar documentos oficiales.');
+                return;
+            }
+        }
 
         try {
             $user = Auth::user();
+            $wasUpdate = $this->hasDigitalSignature;
             
             DigitalSignature::createOrUpdateForUser($user->id, $this->signaturePassword);
             
             $this->signaturePassword = '';
             $this->signaturePassword_confirmation = '';
             $this->hasDigitalSignature = true;
-            $this->toastSuccess('Contraseña de firma digital ' . ($this->hasDigitalSignature ? 'actualizada' : 'creada') . ' correctamente');
+            
+            // Emitir evento para que otros componentes se enteren
+            $this->dispatch('signature-updated');
+            
+            $this->toastSuccess('Contraseña de firma digital ' . ($wasUpdate ? 'actualizada' : 'creada') . ' correctamente');
             
         } catch (\Exception $e) {
             $this->toastError('Error al guardar la contraseña de firma: ' . $e->getMessage());
         }
+    }
+    
+    public function openResetPasswordModal()
+    {
+        $this->showResetPasswordModal = true;
+    }
+    
+    public function closeResetPasswordModal()
+    {
+        $this->showResetPasswordModal = false;
+        $this->loginPasswordForReset = '';
+        $this->resetValidation('loginPasswordForReset');
+    }
+    
+    public function resetForgottenSignaturePassword()
+    {
+        $this->validate([
+            'loginPasswordForReset' => 'required|string',
+        ], [
+            'loginPasswordForReset.required' => 'Debes ingresar tu contraseña de login.',
+        ]);
+        
+        // Verificar contraseña de login
+        $user = Auth::user();
+        if (!\Hash::check($this->loginPasswordForReset, $user->password)) {
+            $this->addError('loginPasswordForReset', 'Contraseña de login incorrecta.');
+            return;
+        }
+        
+        // Resetear contraseña de firma (eliminarla)
+        try {
+            $signature = DigitalSignature::forUser($user->id);
+            if ($signature) {
+                $signature->delete();
+                
+                // Preparar datos del reseteo para el log y el email
+                $resetData = [
+                    'reset_at' => now()->format('d/m/Y H:i:s'),
+                    'ip_address' => request()->ip(),
+                    'browser' => $this->getBrowserName(request()->userAgent()),
+                    'device' => $this->getDeviceName(request()->userAgent()),
+                ];
+                
+                // Log del reseteo para auditoría
+                \Log::warning('Signature password reset', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'ip' => $resetData['ip_address'],
+                    'browser' => $resetData['browser'],
+                    'device' => $resetData['device'],
+                ]);
+                
+                // Enviar email de notificación
+                try {
+                    \Mail::to($user->email)->send(
+                        new \App\Mail\SignaturePasswordReset($user, $resetData)
+                    );
+                } catch (\Exception $emailError) {
+                    // Log error pero no fallar operación
+                    \Log::error('Error sending signature reset email: ' . $emailError->getMessage());
+                }
+            }
+            
+            $this->hasDigitalSignature = false;
+            $this->closeResetPasswordModal();
+            
+            // Emitir evento
+            $this->dispatch('signature-updated');
+            
+            $this->toastSuccess('Contraseña de firma eliminada. Te hemos enviado un email de confirmación. Ahora puedes crear una nueva.');
+            
+        } catch (\Exception $e) {
+            $this->toastError('Error al resetear: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Obtener nombre del navegador del user agent
+     */
+    protected function getBrowserName($userAgent)
+    {
+        if (str_contains($userAgent, 'Chrome')) return 'Chrome';
+        if (str_contains($userAgent, 'Firefox')) return 'Firefox';
+        if (str_contains($userAgent, 'Safari')) return 'Safari';
+        if (str_contains($userAgent, 'Edge')) return 'Edge';
+        if (str_contains($userAgent, 'Opera')) return 'Opera';
+        return 'Desconocido';
+    }
+    
+    /**
+     * Obtener nombre del dispositivo del user agent
+     */
+    protected function getDeviceName($userAgent)
+    {
+        if (str_contains($userAgent, 'Mobile')) return 'Móvil';
+        if (str_contains($userAgent, 'Tablet')) return 'Tablet';
+        if (str_contains($userAgent, 'Windows')) return 'Windows PC';
+        if (str_contains($userAgent, 'Macintosh')) return 'Mac';
+        if (str_contains($userAgent, 'Linux')) return 'Linux PC';
+        return 'Escritorio';
     }
 
     public function render()

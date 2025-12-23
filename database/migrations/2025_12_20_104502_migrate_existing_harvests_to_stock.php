@@ -111,7 +111,13 @@ return new class extends Migration
      */
     protected function migrateInvoices(): void
     {
-        $invoiceItems = InvoiceItem::whereNotNull('harvest_id')
+        // Usar DB::table() directamente para evitar problemas con SoftDeletes si la columna no existe aún
+        $invoiceItemIds = DB::table('invoice_items')
+            ->whereNotNull('harvest_id')
+            ->pluck('id');
+        
+        $invoiceItems = InvoiceItem::withoutGlobalScopes()
+            ->whereIn('id', $invoiceItemIds)
             ->with(['harvest.stockMovements', 'invoice'])
             ->get();
 

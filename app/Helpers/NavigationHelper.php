@@ -47,6 +47,18 @@ class NavigationHelper
                     'label' => 'Informes Oficiales',
                     'route' => 'viticulturist.official-reports.index',
                     'active' => request()->routeIs('viticulturist.official-reports.*'),
+                    'submenu' => [
+                        [
+                            'label' => 'Ver Informes',
+                            'route' => 'viticulturist.official-reports.index',
+                            'active' => request()->routeIs('viticulturist.official-reports.index'),
+                        ],
+                        [
+                            'label' => 'Generar Nuevo Informe',
+                            'route' => 'viticulturist.official-reports.create',
+                            'active' => request()->routeIs('viticulturist.official-reports.create'),
+                        ],
+                    ],
                 ]] : []),
                 // Campaña solo para viticultor
                 ...($user->role === 'viticulturist' ? [[

@@ -202,8 +202,7 @@
                     Si tienes preguntas sobre esta política o sobre el tratamiento de tus datos:
                 </p>
                 <div class="space-y-2 text-gray-700">
-                    <p><strong>Email:</strong> <a href="mailto:privacidad@agro365.com" class="text-green-600 hover:text-green-700">privacidad@agro365.com</a></p>
-                    <p><strong>Soporte:</strong> <a href="mailto:soporte@agro365.com" class="text-green-600 hover:text-green-700">soporte@agro365.com</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:info@agro365.es" class="text-green-600 hover:text-green-700">info@agro365.es</a></p>
                 </div>
             </section>
 

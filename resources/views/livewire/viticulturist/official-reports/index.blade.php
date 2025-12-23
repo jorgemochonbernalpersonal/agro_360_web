@@ -1,152 +1,34 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     {{-- Header --}}
+    @php
+        $reportIcon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
+    @endphp
     <x-page-header 
+        :icon="$reportIcon"
         title="Informes Oficiales" 
-        subtitle="Genera informes firmados electrónicamente para administración y certificaciones"
-    />
+        description="Gestiona tus informes firmados electrónicamente para administración y certificaciones"
+        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+    >
+        <x-slot:actionButton>
+            <a href="{{ route('viticulturist.official-reports.create') }}" wire:navigate class="group">
+                <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
+                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Generar Nuevo Informe
+                </button>
+            </a>
+        </x-slot:actionButton>
+    </x-page-header>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {{-- Generador de Informes --}}
-        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-200">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <svg class="w-8 h-8 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                Generar Nuevo Informe
-            </h2>
-
-            {{-- Selector de Tipo de Informe --}}
-            <div class="mb-6">
-                <label class="block text-sm font-semibold text-gray-700 mb-3">Tipo de Informe</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {{-- Tratamientos Fitosanitarios --}}
-                    <div 
-                        wire:click="$set('reportType', 'phytosanitary_treatments')"
-                        class="cursor-pointer border-2 rounded-xl p-4 transition-all duration-200 hover:shadow-lg
-                               {{ $reportType === 'phytosanitary_treatments' ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-green-300' }}"
-                    >
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                                    <span class="text-2xl">🧪</span>
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-bold text-gray-900">Tratamientos Fitosanitarios</h3>
-                                <p class="text-sm text-gray-600">Informe obligatorio para inspecciones</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Cuaderno Digital Completo --}}
-                    <div 
-                        wire:click="$set('reportType', 'full_digital_notebook')"
-                        class="cursor-pointer border-2 rounded-xl p-4 transition-all duration-200 hover:shadow-lg
-                               {{ $reportType === 'full_digital_notebook' ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-green-300' }}"
-                    >
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <span class="text-2xl">📔</span>
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-bold text-gray-900">Cuaderno Digital Completo</h3>
-                                <p class="text-sm text-gray-600">Todas las actividades de una campaña</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Formulario según tipo --}}
-            @if($reportType === 'phytosanitary_treatments')
-                {{-- Rango de Fechas --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha Inicio</label>
-                        <input 
-                            type="date" 
-                            wire:model="startDate"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        >
-                        @error('startDate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha Fin</label>
-                        <input 
-                            type="date" 
-                            wire:model="endDate"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        >
-                        @error('endDate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-            @else
-                {{-- Selector de Campaña --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Campaña</label>
-                    <select 
-                        wire:model="campaignId"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    >
-                        <option value="">Selecciona una campaña</option>
-                        @foreach($campaigns as $campaign)
-                            <option value="{{ $campaign->id }}">{{ $campaign->name }} ({{ $campaign->year }})</option>
-                        @endforeach
-                    </select>
-                    @error('campaignId') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                </div>
-            @endif
-
-            {{-- Aviso sobre firma digital --}}
-            <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                <p class="text-sm text-blue-800 flex items-start gap-2">
-                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span>
-                        <strong>Firma Digital:</strong> Se te pedirá tu contraseña de firma digital al confirmar la generación del informe. 
-                        Si no la tienes configurada, créala en <a href="{{ route('viticulturist.settings', ['tab' => 'signature']) }}" class="text-blue-600 hover:text-blue-800 underline font-semibold">Configuración → Firma Digital</a>.
-                    </span>
-                </p>
-            </div>
-
-            {{-- Errores de generación --}}
-            @error('generation')
-                <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
-                    <p class="text-red-700 font-medium">{{ $message }}</p>
-                </div>
-            @enderror
-
-            {{-- Botón Generar --}}
-            <div class="relative">
-                <button 
-                    wire:click="calculateSummary"
-                    wire:loading.attr="disabled"
-                    wire:target="calculateSummary"
-                    class="w-full md:w-auto flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                    <svg wire:loading.remove wire:target="calculateSummary" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <svg wire:loading wire:target="calculateSummary" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span wire:loading.remove wire:target="calculateSummary">Generar y Firmar Informe</span>
-                    <span wire:loading wire:target="calculateSummary">Calculando...</span>
-                </button>
-            </div>
-        </div>
-
         {{-- Panel de Estadísticas Compacto --}}
         <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-200">
-            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                 </svg>
-                Resumen de Informes
+                Resumen
             </h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
@@ -162,49 +44,31 @@
                     <p class="text-xs text-red-700 mt-1">Invalidados</p>
                 </div>
                 <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-                    <p class="text-lg font-bold text-purple-900">{{ $lastReportDate ?? 'N/A' }}</p>
+                    <p class="text-lg font-bold text-purple-900">{{ $lastReportDate ?? '—' }}</p>
                     <p class="text-xs text-purple-700 mt-1">Último Generado</p>
                 </div>
             </div>
         </div>
 
-        {{-- Historial de Informes --}}
-        <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-                <h2 class="text-2xl font-bold text-gray-800">Informes Generados</h2>
-                
-                {{-- Filtros y Búsqueda --}}
-                <div class="flex items-center gap-3">
-                    {{-- Búsqueda --}}
-                    <div class="relative">
-                        <input 
-                            type="text"
-                            wire:model.live="search"
-                            placeholder="Buscar por código..."
-                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
-                        >
-                        <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </div>
 
-                    {{-- Resetear filtros --}}
-                    @if($search || $statusFilter !== 'all')
-                        <button 
-                            wire:click="resetFilters"
-                            class="text-sm text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
-                            title="Limpiar filtros"
-                        >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    @endif
-                </div>
-            </div>
+        {{-- Filtros --}}
+        <x-filter-section title="Filtros de Búsqueda" color="green">
+            <x-filter-input 
+                wire:model.live="search" 
+                placeholder="Buscar por código de verificación..."
+            />
+            <x-slot:actions>
+                @if($search || $statusFilter !== 'all')
+                    <x-button wire:click="resetFilters" variant="ghost" size="sm">
+                        Limpiar Filtros
+                    </x-button>
+                @endif
+            </x-slot:actions>
+        </x-filter-section>
 
-            {{-- Tabs de Estado --}}
-            <div class="mb-6 border-b border-gray-200">
+        {{-- Tabs de Estado --}}
+        <div class="bg-white rounded-t-2xl shadow-xl border-x border-t border-gray-200 px-6 pt-4">
+            <div class="border-b border-gray-200">
                 <div class="flex space-x-2">
                     <button 
                         wire:click="$set('statusFilter', 'all')"
@@ -229,561 +93,175 @@
                     </button>
                 </div>
             </div>
-
-            @if($reports->count() > 0)
-                {{-- Vista de Tarjetas --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($reports as $report)
-                        <div class="bg-white rounded-xl shadow-lg border-2 {{ $report->isValid() ? 'border-green-200 hover:border-green-400' : 'border-red-200 hover:border-red-400' }} hover:shadow-xl transition-all duration-300 overflow-hidden">
-                            {{-- Header con icono y estado --}}
-                            <div class="p-6 bg-gradient-to-br {{ $report->isValid() ? 'from-green-50 to-green-100' : 'from-red-50 to-red-100' }}">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="text-5xl">{{ $report->report_icon }}</span>
-                                    @if($report->isValid())
-                                        <span class="px-3 py-1 bg-green-600 text-white rounded-full text-xs font-bold shadow-md">
-                                            ✓ Válido
-                                        </span>
-                                    @else
-                                        <span class="px-3 py-1 bg-red-600 text-white rounded-full text-xs font-bold shadow-md">
-                                            ✗ Invalidado
-                                        </span>
-                                    @endif
-                                </div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ $report->report_type_name }}</h3>
-                            </div>
-
-                            {{-- Información --}}
-                            <div class="p-6 space-y-3">
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600 flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        Periodo
-                                    </span>
-                                    <span class="font-semibold text-gray-900">
-                                        {{ $report->period_start->format('d/m/Y') }} - {{ $report->period_end->format('d/m/Y') }}
-                                    </span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600 flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Generado
-                                    </span>
-                                    <span class="font-medium text-gray-700">{{ $report->created_at->format('d/m/Y H:i') }}</span>
-                                </div>
-                                @if($report->signed_at)
-                                    <div class="flex items-center justify-between text-sm">
-                                        <span class="text-gray-600 flex items-center gap-2">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                            </svg>
-                                            Firmado
-                                        </span>
-                                        <span class="font-medium text-green-600">{{ $report->signed_at->format('d/m/Y H:i') }}</span>
-                                    </div>
-                                @endif
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-600 flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
-                                        </svg>
-                                        Tamaño
-                                    </span>
-                                    <span class="font-medium text-gray-700">{{ $report->formatted_pdf_size }}</span>
-                                </div>
-                            </div>
-
-                            {{-- Acciones principales --}}
-                            <div class="p-6 pt-0 space-y-2">
-                                <button 
-                                    wire:click="downloadReport({{ $report->id }})"
-                                    class="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                                >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                    Descargar PDF
-                                </button>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button 
-                                        wire:click="openPreviewModal({{ $report->id }})"
-                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                        Ver
-                                    </button>
-                                    <a 
-                                        href="{{ route('reports.verify', ['code' => $report->verification_code]) }}" 
-                                        target="_blank"
-                                        class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Verificar
-                                    </a>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button 
-                                        wire:click="openShareModal({{ $report->id }})"
-                                        class="flex-1 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
-                                        Compartir
-                                    </button>
-                                    @if($report->isValid())
-                                        <button 
-                                            wire:click="openInvalidateModal({{ $report->id }})"
-                                            class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm font-semibold transition-colors"
-                                            title="Invalidar informe"
-                                        >
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                            </svg>
-                                        </button>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Paginación --}}
-                <div class="mt-6">
-                    {{ $reports->links() }}
-                </div>
-            @else
-                <div class="text-center py-12">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No hay informes generados</h3>
-                    <p class="mt-1 text-sm text-gray-500">Genera tu primer informe oficial arriba.</p>
-                </div>
-            @endif
         </div>
+
+        {{-- Tabla de Informes --}}
+        @php
+            $headers = [
+                ['label' => 'Estado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
+                ['label' => 'Tipo', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>'],
+                ['label' => 'Periodo', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
+                ['label' => 'Generado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
+                ['label' => 'Tamaño', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>'],
+                'Acciones',
+            ];
+        @endphp
+
+        <x-data-table 
+            :headers="$headers" 
+            empty-message="No hay informes generados"
+            empty-description="Comienza generando tu primer informe oficial"
+            class="rounded-t-none border-t-0"
+        >
+            @if($reports->count() > 0)
+                @foreach($reports as $report)
+                    <x-table-row>
+                        {{-- Estado --}}
+                        <x-table-cell>
+                            <div class="flex flex-col gap-1">
+                                <x-status-badge :active="$report->isValid()" 
+                                    active-text="Válido" 
+                                    inactive-text="Invalidado" 
+                                />
+                                
+                                @if($report->processing_status === 'pending')
+                                    <span class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Pendiente
+                                    </span>
+                                @elseif($report->processing_status === 'processing')
+                                    <span class="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Procesando...
+                                    </span>
+                                @elseif($report->processing_status === 'failed')
+                                    <span class="px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full inline-flex items-center gap-1">
+                                        ❌ Error
+                                    </span>
+                                @endif
+                            </div>
+                        </x-table-cell>
+
+                        {{-- Tipo --}}
+                        <x-table-cell>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                    <span class="text-xl">{{ $report->report_icon }}</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-gray-900">{{ $report->report_type_name }}</p>
+                                    <p class="text-xs text-gray-500">{{ substr($report->verification_code, 0, 12) }}...</p>
+                                </div>
+                            </div>
+                        </x-table-cell>
+
+                        {{-- Periodo --}}
+                        <x-table-cell>
+                            <p class="text-sm text-gray-900">{{ $report->period_start->format('d/m/Y') }}</p>
+                            <p class="text-xs text-gray-500">{{ $report->period_end->format('d/m/Y') }}</p>
+                        </x-table-cell>
+
+                        {{-- Generado --}}
+                        <x-table-cell>
+                            <p class="text-sm text-gray-900">{{ $report->created_at->format('d/m/Y') }}</p>
+                            <p class="text-xs text-gray-500">{{ $report->created_at->format('H:i') }}</p>
+                        </x-table-cell>
+
+                        {{-- Tamaño --}}
+                        <x-table-cell>
+                            <span class="text-sm text-gray-600">{{ $report->formatted_pdf_size }}</span>
+                        </x-table-cell>
+
+                        {{-- Acciones --}}
+                        <x-table-actions align="right">
+                            {{-- Ver Preview --}}
+                            <button 
+                                wire:click="openPreviewModal({{ $report->id }})"
+                                class="p-2 rounded-lg transition-all duration-200 group/btn text-gray-600 hover:bg-gray-100"
+                                title="Vista previa"
+                            >
+                                <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+
+                            {{-- Descargar --}}
+                            <a 
+                                href="{{ route('viticulturist.official-reports.download', $report) }}"
+                                class="p-2 rounded-lg transition-all duration-200 group/btn text-green-600 hover:bg-green-50"
+                                title="Descargar PDF"
+                            >
+                                <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                            </a>
+
+                            {{-- Verificar --}}
+                            <a 
+                                href="{{ route('reports.verify', ['code' => $report->verification_code]) }}" 
+                                target="_blank"
+                                class="p-2 rounded-lg transition-all duration-200 group/btn text-blue-600 hover:bg-blue-50"
+                                title="Verificar autenticidad"
+                            >
+                                <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </a>
+
+                            {{-- Compartir --}}
+                            <button 
+                                wire:click="openShareModal({{ $report->id }})"
+                                class="p-2 rounded-lg transition-all duration-200 group/btn text-indigo-600 hover:bg-indigo-50"
+                                title="Compartir por email"
+                            >
+                                <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </button>
+
+                            {{-- Invalidar --}}
+                            @if($report->isValid())
+                                <button 
+                                    wire:click="openInvalidateModal({{ $report->id }})"
+                                    class="p-2 rounded-lg transition-all duration-200 group/btn text-red-600 hover:bg-red-50"
+                                    title="Invalidar informe"
+                                >
+                                    <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                    </svg>
+                                </button>
+                            @endif
+                        </x-table-actions>
+                    </x-table-row>
+                @endforeach
+
+                <x-slot name="pagination">
+                    {{ $reports->links() }}
+                </x-slot>
+            @else
+                <x-slot name="emptyAction">
+                    <a href="{{ route('viticulturist.official-reports.create') }}" wire:navigate>
+                        <x-button variant="primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Generar Primer Informe
+                        </x-button>
+                    </a>
+                </x-slot>
+            @endif
+        </x-data-table>
     </div>
 
-    {{-- Modal de Resumen --}}
-    @if($showSummaryModal)
-        <div class="fixed z-50 inset-0 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeSummaryModal"></div>
-                
-                <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">📊 Resumen del Informe</h3>
-                    <p class="text-gray-600 mb-6">
-                        Revisa los datos antes de firmar electrónicamente. Este proceso puede tardar varios segundos.
-                    </p>
-
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border-2 border-blue-200">
-                        @if($reportSummary['type'] ?? '' === 'phytosanitary_treatments')
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Periodo</p>
-                                    <p class="text-lg font-bold text-gray-900">{{ $reportSummary['period'] ?? '-' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Total Tratamientos</p>
-                                    <p class="text-lg font-bold text-blue-900">{{ $reportSummary['total_treatments'] ?? 0 }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Parcelas Afectadas</p>
-                                    <p class="text-lg font-bold text-gray-900">{{ $reportSummary['plots_count'] ?? 0 }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Productos Usados</p>
-                                    <p class="text-lg font-bold text-gray-900">{{ $reportSummary['products_count'] ?? 0 }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Área Total Tratada</p>
-                                    <p class="text-lg font-bold text-green-900">{{ $reportSummary['total_area'] ?? 0 }} ha</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Tamaño Estimado</p>
-                                    <p class="text-lg font-bold text-gray-900">{{ $reportSummary['estimated_size'] ?? '-' }}</p>
-                                </div>
-                            </div>
-                        @else
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="col-span-2">
-                                    <p class="text-sm text-gray-600 mb-1">Campaña</p>
-                                    <p class="text-lg font-bold text-gray-900">{{ $reportSummary['campaign'] ?? '-' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Total Actividades</p>
-                                    <p class="text-lg font-bold text-blue-900">{{ $reportSummary['total_activities'] ?? 0 }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 mb-1">Tamaño Estimado</p>
-                                    <p class="text-lg font-bold text-gray-900">{{ $reportSummary['estimated_size'] ?? '-' }}</p>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-6">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            <div>
-                                <p class="text-sm font-semibold text-yellow-900">Tiempo Estimado de Generación</p>
-                                <p class="text-sm text-yellow-800 mt-1">
-                                    Este informe puede tardar <strong>{{ $reportSummary['estimated_time'] ?? '10-15' }} segundos</strong> en generarse. 
-                                    Por favor, no cierres la ventana durante el proceso.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Campo de Contraseña en el Modal --}}
-                    <div class="mb-6" x-data="{ showPassword: false }">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                            Contraseña de Firma Digital
-                        </label>
-                        <div class="relative">
-                            <input 
-                                type="password" 
-                                wire:model="password"
-                                x-bind:type="showPassword ? 'text' : 'password'"
-                                wire:keydown.enter="confirmAndGenerateReport"
-                                class="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
-                                placeholder="Introduce tu contraseña de firma digital"
-                                autofocus
-                            >
-                            <button
-                                type="button"
-                                x-on:click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                                tabindex="-1"
-                            >
-                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <p class="mt-2 text-xs text-gray-500">
-                            Esta es tu contraseña específica para firmar documentos (diferente a tu contraseña de usuario).
-                        </p>
-                        @error('password') 
-                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> 
-                        @enderror
-                        @error('generation') 
-                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> 
-                        @enderror
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button 
-                            wire:click="closeSummaryModal"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                        >
-                            Cancelar
-                        </button>
-                        <button 
-                            wire:click="confirmAndGenerateReport"
-                            wire:loading.attr="disabled"
-                            wire:target="confirmAndGenerateReport"
-                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                        >
-                            <svg wire:loading wire:target="confirmAndGenerateReport" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span wire:loading.remove wire:target="confirmAndGenerateReport">Firmar y Generar</span>
-                            <span wire:loading wire:target="confirmAndGenerateReport">Generando...</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-
-    {{-- Modal de Éxito --}}
-    @if($showSuccessModal && $generatedReport)
-        <div class="fixed z-50 inset-0 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeSuccessModal"></div>
-                
-                <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-                    <div class="text-center">
-                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
-                            <svg class="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">✅ ¡Informe Generado!</h3>
-                        <p class="text-gray-600 mb-6">
-                            El informe ha sido generado y firmado electrónicamente con éxito.
-                        </p>
-
-                        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-                            <p class="text-sm text-gray-600 mb-2"><strong>Tipo:</strong> {{ $generatedReport->report_type_name }}</p>
-                            <p class="text-sm text-gray-600 mb-2"><strong>Periodo:</strong> {{ $generatedReport->period_start->format('d/m/Y') }} - {{ $generatedReport->period_end->format('d/m/Y') }}</p>
-                            <p class="text-sm text-gray-600"><strong>Tamaño:</strong> {{ $generatedReport->formatted_pdf_size }}</p>
-                        </div>
-
-                        <div class="flex space-x-3">
-                            <button 
-                                wire:click="closeSuccessModal"
-                                class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                            >
-                                Cerrar
-                            </button>
-                            <button 
-                                wire:click="downloadReport({{ $generatedReport->id }})"
-                                class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-                            >
-                                Descargar PDF
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Modal de Compartir --}}
-    @if($showShareModal && $reportToShare)
-        <div class="fixed z-50 inset-0 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeShareModal"></div>
-                
-                <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">📧 Compartir Informe</h3>
-                    <p class="text-gray-600 mb-6">
-                        Envía este informe por email. El destinatario recibirá el PDF adjunto y un enlace para verificar su autenticidad.
-                    </p>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Email del destinatario</label>
-                        <input 
-                            type="email" 
-                            wire:model="shareEmail"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            placeholder="ejemplo@correo.com"
-                        >
-                        @error('shareEmail') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Mensaje personalizado (opcional)</label>
-                        <textarea 
-                            wire:model="shareMessage"
-                            rows="3"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            placeholder="Añade un mensaje personal..."
-                        ></textarea>
-                        <p class="text-xs text-gray-500 mt-1">Máximo 500 caracteres</p>
-                        @error('shareMessage') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                        @error('share') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
-                        <p class="text-sm text-blue-800">
-                            <strong>Incluye:</strong> PDF del informe + enlace de verificación QR
-                        </p>
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button 
-                            wire:click="closeShareModal"
-                            wire:loading.attr="disabled"
-                            wire:target="shareReport"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
-                        >
-                            Cancelar
-                        </button>
-                        <button 
-                            wire:click="shareReport"
-                            wire:loading.attr="disabled"
-                            wire:target="shareReport"
-                            class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                        >
-                            <svg wire:loading wire:target="shareReport" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span wire:loading.remove wire:target="shareReport">Enviar Email</span>
-                            <span wire:loading wire:target="shareReport">Enviando...</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Modal de Invalidar --}}
-    @if($showInvalidateModal && $reportToInvalidate)
-        <div class="fixed z-50 inset-0 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeInvalidateModal"></div>
-                
-                <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">⚠️ Invalidar Informe</h3>
-                    <p class="text-gray-600 mb-6">
-                        Esta acción marcará el informe como <strong>INVALIDADO</strong>. El documento seguirá siendo visible pero NO será legalmente válido.
-                    </p>
-
-                    @if($reportToInvalidate && $reportToInvalidate->canBeInvalidated())
-                        @php
-                            $daysRemaining = $reportToInvalidate->getDaysRemainingToInvalidate();
-                            $maxDays = config('reports.max_days_to_invalidate', 30);
-                        @endphp
-                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-6">
-                            <p class="text-sm text-yellow-800">
-                                <strong>⏰ Límite de tiempo:</strong> Este informe puede ser invalidado durante los primeros {{ $maxDays }} días desde su firma.
-                                @if($daysRemaining !== null)
-                                    <br>Quedan <strong>{{ $daysRemaining }} días</strong> para poder invalidarlo.
-                                @endif
-                            </p>
-                        </div>
-                    @elseif($reportToInvalidate && !$reportToInvalidate->canBeInvalidated())
-                        @php
-                            $daysSinceSigned = $reportToInvalidate->signed_at->diffInDays(now());
-                            $maxDays = config('reports.max_days_to_invalidate', 30);
-                        @endphp
-                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mb-6">
-                            <p class="text-sm text-red-800">
-                                <strong>❌ No se puede invalidar:</strong> Han pasado {{ $daysSinceSigned }} días desde la firma. 
-                                Solo se pueden invalidar informes con menos de {{ $maxDays }} días.
-                            </p>
-                        </div>
-                    @endif
-
-                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mb-6">
-                        <p class="text-sm text-red-800">
-                            <strong>⚠️ Esta acción NO se puede deshacer.</strong> El informe quedará permanentemente invalidado.
-                        </p>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Motivo de invalidación</label>
-                        <textarea 
-                            wire:model="invalidateReason"
-                            rows="3"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            placeholder="Explica por qué invalidas este informe (mínimo 10 caracteres)..."
-                        ></textarea>
-                        @error('invalidateReason') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="mb-6" x-data="{ showPassword: false }">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Confirma tu contraseña</label>
-                        <div class="relative">
-                            <input 
-                                type="password" 
-                                wire:model="invalidatePassword"
-                                x-bind:type="showPassword ? 'text' : 'password'"
-                                class="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                                placeholder="Introduce tu contraseña"
-                            >
-                            <button
-                                type="button"
-                                x-on:click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                                tabindex="-1"
-                            >
-                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                                </svg>
-                            </button>
-                        </div>
-                        @error('invalidatePassword') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                        @error('invalidate') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button 
-                            wire:click="closeInvalidateModal"
-                            wire:loading.attr="disabled"
-                            wire:target="invalidateReport"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
-                        >
-                            Cancelar
-                        </button>
-                        <button 
-                            wire:click="invalidateReport"
-                            wire:loading.attr="disabled"
-                            wire:target="invalidateReport"
-                            class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                        >
-                            <svg wire:loading wire:target="invalidateReport" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span wire:loading.remove wire:target="invalidateReport">Invalidar Informe</span>
-                            <span wire:loading wire:target="invalidateReport">Invalidando...</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Modal de Vista Previa PDF --}}
-    @if($showPreviewModal && $reportToPreview)
-        <div class="fixed z-50 inset-0 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closePreviewModal"></div>
-                
-                <div class="relative bg-white rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-2xl font-bold text-gray-900">👁️ Vista Previa - {{ $reportToPreview->report_type_name }}</h3>
-                        <button 
-                            wire:click="closePreviewModal"
-                            class="text-gray-500 hover:text-gray-700"
-                        >
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div class="bg-gray-50 rounded-lg p-3 mb-4 flex items-center justify-between">
-                        <div class="text-sm">
-                            <span class="font-semibold">Periodo:</span> {{ $reportToPreview->period_start->format('d/m/Y') }} - {{ $reportToPreview->period_end->format('d/m/Y') }}
-                            <span class="mx-2">|</span>
-                            <span class="font-semibold">Código:</span> <code class="bg-white px-2 py-1 rounded">{{ $reportToPreview->verification_code }}</code>
-                        </div>
-                        <button 
-                            wire:click="downloadReport({{ $reportToPreview->id }})"
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
-                        >
-                            ⬇️ Descargar PDF
-                        </button>
-                    </div>
-
-                    <div class="h-[calc(90vh-180px)] rounded-lg overflow-hidden border-2 border-gray-200">
-                        <iframe 
-                            src="{{ \Storage::url($reportToPreview->pdf_path) }}" 
-                            class="w-full h-full"
-                            frameborder="0"
-                        ></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
+    {{-- Include modals --}}
+    @include('livewire.viticulturist.official-reports.partials._share-modal')
+    @include('livewire.viticulturist.official-reports.partials._invalidate-modal')
+    @include('livewire.viticulturist.official-reports.partials._preview-modal')
 </div>

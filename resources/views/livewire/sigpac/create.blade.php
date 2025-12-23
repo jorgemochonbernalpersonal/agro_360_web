@@ -17,7 +17,7 @@
                 <div>
                     <x-label for="plot_id" required>Parcela</x-label>
                     <x-select 
-                        wire:model="plot_id" 
+                        wire:model.live="plot_id" 
                         id="plot_id" 
                         :error="$errors->first('plot_id')"
                         required

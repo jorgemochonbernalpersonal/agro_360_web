@@ -47,6 +47,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Forzar HTTPS solo en producción (no en local)
+        if (app()->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        } elseif (app()->environment('local')) {
+            // Asegurar HTTP en local
+            \Illuminate\Support\Facades\URL::forceScheme('http');
+        }
+
         // Personalizar email de verificación de Laravel para Agro365
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
             // Solo forzar HTTPS en producción
@@ -132,6 +140,7 @@ class AppServiceProvider extends ServiceProvider
         // Registrar observers para stock tracking
         \App\Models\Harvest::observe(\App\Observers\HarvestObserver::class);
         \App\Models\Invoice::observe(\App\Observers\InvoiceObserver::class);
+        \App\Models\InvoiceItem::observe(\App\Observers\InvoiceItemObserver::class);
         \App\Models\InvoiceItem::observe(\App\Observers\InvoiceItemObserver::class);
     }
 }

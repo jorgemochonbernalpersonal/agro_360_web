@@ -26,6 +26,9 @@ class OfficialReport extends Model
         'invalidation_reason',
         'invalidated_at',
         'invalidated_by',
+        'processing_status',
+        'processing_error',
+        'completed_at',
     ];
 
     protected $casts = [
@@ -34,6 +37,7 @@ class OfficialReport extends Model
         'signed_at' => 'datetime',
         'last_verified_at' => 'datetime',
         'invalidated_at' => 'datetime',
+        'completed_at' => 'datetime',
         'is_valid' => 'boolean',
         'signature_metadata' => 'array',
         'report_metadata' => 'array',
@@ -81,6 +85,22 @@ class OfficialReport extends Model
     }
 
     /**
+     * Generar hash temporal único para uso durante la creación del informe
+     * Este hash será reemplazado por el hash real después de generar el PDF
+     */
+    public static function generateTemporaryHash(): string
+    {
+        do {
+            // Generar un hash SHA-256 temporal único
+            // Usamos timestamp + random bytes para garantizar unicidad
+            $tempData = now()->timestamp . Str::random(32) . uniqid('', true);
+            $tempHash = hash('sha256', $tempData);
+        } while (self::where('signature_hash', $tempHash)->exists());
+        
+        return $tempHash;
+    }
+
+    /**
      * Generar hash de firma basado en contenido del informe
      * 
      * @param array $data Datos del informe a firmar
@@ -88,9 +108,6 @@ class OfficialReport extends Model
      */
     public static function generateSignatureHash(array $data): array
     {
-        // Ordenar array para garantizar consistencia
-        ksort($data);
-        
         // Añadir nonce único para prevenir replay attacks
         if (!isset($data['nonce'])) {
             $data['nonce'] = bin2hex(random_bytes(16));
@@ -101,8 +118,9 @@ class OfficialReport extends Model
             $data['signature_version'] = config('reports.signature_version', '1.0');
         }
         
-        // Ordenar nuevamente después de añadir campos
-        ksort($data);
+        // Ordenar arrays recursivamente para garantizar hash consistente
+        // Esto previene falsos positivos de "modificado" por orden de arrays
+        $data = self::sortArraysRecursively($data);
         
         // Crear string único del contenido
         $content = json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -118,6 +136,36 @@ class OfficialReport extends Model
             'nonce' => $data['nonce'],
             'version' => $data['signature_version'],
         ];
+    }
+
+    /**
+     * Ordenar arrays recursivamente para hash consistente
+     * 
+     * @param mixed $data
+     * @return mixed
+     */
+    protected static function sortArraysRecursively($data)
+    {
+        if (!is_array($data)) {
+            return $data;
+        }
+        
+        // Ordenar por claves
+        ksort($data);
+        
+        // Procesar cada valor
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                // Si es array numérico (lista), ordenar valores
+                if (array_keys($value) === range(0, count($value) - 1)) {
+                    sort($value);
+                }
+                // Recursión para arrays anidados
+                $data[$key] = self::sortArraysRecursively($value);
+            }
+        }
+        
+        return $data;
     }
 
     /**

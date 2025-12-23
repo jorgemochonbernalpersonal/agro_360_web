@@ -92,30 +92,28 @@
                                     <div class="mt-2 flex items-center gap-6">
                                         {{-- Preview con imagen temporal o actual --}}
                                         <div class="flex-shrink-0 relative">
+                                            {{-- Imagen de preview (siempre presente para JavaScript) --}}
+                                            <img 
+                                                id="profile-preview-img" 
+                                                src="{{ $profile_image_preview ? $profile_image_preview : ($current_profile_image ? Storage::disk('public')->url($current_profile_image) : '') }}" 
+                                                alt="Preview" 
+                                                class="w-20 h-20 rounded-full object-cover border-4 {{ $profile_image_preview ? 'border-[var(--color-agro-green)]' : 'border-gray-200' }} shadow-lg {{ !$profile_image_preview && !$current_profile_image ? 'hidden' : '' }}"
+                                                onerror="this.style.display='none'; document.getElementById('profile-preview-placeholder').style.display='flex';"
+                                            >
+                                            {{-- Placeholder con inicial (oculto por defecto si hay imagen) --}}
+                                            <div 
+                                                id="profile-preview-placeholder"
+                                                class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md {{ $profile_image_preview || $current_profile_image ? 'hidden' : '' }}"
+                                            >
+                                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                            </div>
+                                            
+                                            {{-- Badge de nueva imagen --}}
                                             @if($profile_image_preview)
-                                                {{-- Preview de la imagen NUEVA (temporal) --}}
-                                                <img id="profile-preview-img" src="{{ $profile_image_preview }}" alt="Preview" class="w-20 h-20 rounded-full object-cover border-4 border-[var(--color-agro-green)] shadow-lg">
                                                 <div class="absolute -top-1 -right-1 w-6 h-6 bg-[var(--color-agro-green)] rounded-full flex items-center justify-center z-10">
                                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                     </svg>
-                                                </div>
-                                            @elseif($current_profile_image)
-                                                {{-- Imagen actual guardada --}}
-                                                <img 
-                                                    src="{{ Storage::disk('public')->url($current_profile_image) }}" 
-                                                    alt="Profile" 
-                                                    class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-md"
-                                                    wire:key="profile-image-{{ $current_profile_image }}"
-                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                                >
-                                                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md" style="display: none;">
-                                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                                                </div>
-                                            @else
-                                                {{-- Placeholder con inicial --}}
-                                                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md">
-                                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                                 </div>
                                             @endif
                                             
@@ -139,12 +137,16 @@
                                                     if (file) {
                                                         const reader = new FileReader();
                                                         reader.onload = function(e) {
-                                                            const previewImg = document.querySelector('#profile-preview-img');
+                                                            const previewImg = document.getElementById('profile-preview-img');
+                                                            const placeholder = document.getElementById('profile-preview-placeholder');
                                                             if (previewImg) {
                                                                 previewImg.src = e.target.result;
-                                                                previewImg.style.display = 'block';
-                                                                const placeholder = previewImg.nextElementSibling;
-                                                                if (placeholder) placeholder.style.display = 'none';
+                                                                previewImg.classList.remove('hidden');
+                                                                previewImg.classList.add('border-[var(--color-agro-green)]');
+                                                                previewImg.classList.remove('border-gray-200');
+                                                            }
+                                                            if (placeholder) {
+                                                                placeholder.classList.add('hidden');
                                                             }
                                                         };
                                                         reader.readAsDataURL(file);

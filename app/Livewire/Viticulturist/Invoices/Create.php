@@ -20,6 +20,7 @@ class Create extends Component
     public $client_address_id = '';
     public $invoice_date = '';
     public $due_date = '';
+    public $delivery_note_date = ''; // Fecha del albarán (editable)
     public $items = [];
     public $observations = '';
     public $observations_invoice = '';
@@ -40,6 +41,7 @@ class Create extends Component
     public function mount()
     {
         $this->invoice_date = now()->format('Y-m-d');
+        $this->delivery_note_date = now()->format('Y-m-d'); // Default a hoy
         
         // Detectar si viene desde la ruta de facturar cosecha o tiene harvest_id en query
         $harvestId = request()->query('harvest_id');
@@ -113,12 +115,25 @@ class Create extends Component
             return;
         }
 
-        // Verificar que la cosecha no esté ya en los items
+        // Verificar que la cosecha no esté ya en los items locales
         foreach ($this->items as $item) {
             if (isset($item['harvest_id']) && $item['harvest_id'] == $harvest->id) {
-                $this->toastError('Esta cosecha ya está en la factura.');
+                $this->toastError('Esta cosecha ya está en la factura actual.');
                 return;
             }
+        }
+        
+        // VALIDACIÓN CRÍTICA: Verificar que la cosecha no esté ya facturada en DB
+        $alreadyInvoiced = \App\Models\InvoiceItem::where('harvest_id', $harvest->id)
+            ->whereHas('invoice', function($q) {
+                $q->where('status', '!=', 'cancelled') // Excluir facturas canceladas
+                  ->where('user_id', auth()->id()); // Solo verificar facturas del mismo usuario
+            })
+            ->exists();
+        
+        if ($alreadyInvoiced) {
+            $this->toastError('Esta cosecha ya está facturada en otra factura válida. No puedes facturar la misma cosecha dos veces.');
+            return;
         }
 
         // Obtener el impuesto por defecto del usuario si existe
@@ -160,8 +175,24 @@ class Create extends Component
     {
         if ($value) {
             $client = Client::with('addresses')->find($value);
-            $this->availableAddresses = $client ? $client->addresses : collect();
-            $this->client_address_id = '';
+            
+            if ($client) {
+                // Cargar automáticamente la primera dirección del cliente
+                $primaryAddress = $client->addresses->first();
+                
+                if ($primaryAddress) {
+                    $this->client_address_id = $primaryAddress->id;
+                } else {
+                    // Si no tiene dirección, mostrar error
+                    $this->client_address_id = '';
+                    $this->addError('client_id', 'Este cliente no tiene ninguna dirección configurada. Por favor, añade una dirección al cliente primero.');
+                }
+                
+                $this->availableAddresses = $client->addresses;
+            } else {
+                $this->availableAddresses = collect();
+                $this->client_address_id = '';
+            }
         } else {
             $this->availableAddresses = collect();
             $this->client_address_id = '';
@@ -217,10 +248,11 @@ class Create extends Component
     {
         $rules = [
             'client_id' => 'required|exists:clients,id',
-            'client_address_id' => 'nullable|exists:client_addresses,id',
+            'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
             'invoice_date' => 'required|date',
             'due_date' => 'nullable|date|after_or_equal:invoice_date',
-            'items' => 'required|array|min:1',
+            'delivery_note_date' => 'required|date|before_or_equal:today',
+            'items' => 'required|array|min:1', // Mínimo 1 item
             'items.*.name' => 'required|string|max:255',
             'items.*.description' => 'nullable|string',
             'items.*.sku' => 'nullable|string|max:255',
@@ -245,8 +277,9 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'items.required' => 'Debes seleccionar al menos una cosecha para facturar.',
-            'items.min' => 'Debes seleccionar al menos una cosecha para facturar.',
+            'client_address_id.required' => 'Debes seleccionar un cliente con dirección. Este cliente no tiene direcciones configuradas.',
+            'items.required' => 'Debes añadir al menos un item a la factura.',
+            'items.min' => 'Debes añadir al menos un item a la factura.',
         ];
     }
 
@@ -277,15 +310,10 @@ class Create extends Component
                 // Obtener settings de invoicing
                 $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
                 
-                // Usar el código de albarán del usuario si lo modificó, sino usar el generado
+                // Generar código de albarán atómicamente (previene race conditions)
                 $deliveryNoteCode = $this->delivery_note_code_modified 
                     ? $this->delivery_note_code 
-                    : $settings->generateDeliveryNoteCode();
-                
-                // Solo incrementar contador de albarán si el usuario NO modificó el código
-                if (!$this->delivery_note_code_modified) {
-                    $settings->incrementDeliveryNoteCounter();
-                }
+                    : $settings->generateAndIncrementDeliveryNoteCode();
                 
                 // NO generamos invoice_number aquí, solo cuando se aprueba la factura (en el observer)
 
@@ -315,10 +343,11 @@ class Create extends Component
                     'user_id' => $user->id,
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
+                    'order_date' => $this->invoice_date, // Fecha de pedido
                     // invoice_number se asignará cuando se apruebe la factura (en InvoiceObserver)
                     'delivery_note_code' => $deliveryNoteCode,
                     'invoice_date' => $this->invoice_date,
-                    'delivery_note_date' => now(), // Generar albarán al crear
+                    'delivery_note_date' => $this->delivery_note_date ?: now(), // Usar fecha del formulario
                     'due_date' => $this->due_date ?: null,
                     'subtotal' => $subtotal,
                     'discount_amount' => $discountAmount,
@@ -363,6 +392,18 @@ class Create extends Component
                         'concept_type' => $itemData['concept_type'] ?? 'other',
                     ]);
                 }
+                
+                // Registrar en audit log
+                $invoice->logAction(
+                    'created',
+                    'Factura creada',
+                    [
+                        'client_id' => $this->client_id,
+                        'total_amount' => $totalAmount,
+                        'items_count' => count($this->items),
+                        'delivery_note_code' => $deliveryNoteCode,
+                    ]
+                );
             });
 
             $this->toastSuccess('Factura creada exitosamente.');

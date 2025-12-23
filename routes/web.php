@@ -20,6 +20,11 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// FAQ Page
+Route::get('/faqs', function () {
+    return view('faqs');
+})->name('faqs');
+
 // Health Check Endpoint para UptimeRobot y monitoreo
 Route::get('/health', function () {
     try {
@@ -79,6 +84,7 @@ Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
     })->name('logs');
     
     require __DIR__ . '/plots.php';
+    require __DIR__ . '/map.php';
     require __DIR__ . '/sigpac.php';
     // require __DIR__ . '/config.php'; // Eliminado - no es útil
     require __DIR__ . '/profile.php';

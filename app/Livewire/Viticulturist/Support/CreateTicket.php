@@ -56,11 +56,18 @@ class CreateTicket extends Component
 
         if ($this->image) {
             try {
+                // Intentar usar temporaryUrl() para la previsualización
                 $this->image_preview = $this->image->temporaryUrl();
             } catch (\Exception $e) {
-                $this->addError('image', 'Error al cargar la imagen. Por favor, intenta de nuevo.');
-                $this->image = null;
-                $this->image_preview = null;
+                // Si falla temporaryUrl (común en producción), intentar crear una URL local
+                try {
+                    $path = $this->image->store('temp', 'public');
+                    $this->image_preview = Storage::disk('public')->url($path);
+                } catch (\Exception $e2) {
+                    // Si también falla, no mostrar error - el preview de JavaScript funcionará
+                    // El usuario podrá ver el preview usando FileReader en el cliente
+                    $this->image_preview = null;
+                }
             }
         } else {
             $this->image_preview = null;
