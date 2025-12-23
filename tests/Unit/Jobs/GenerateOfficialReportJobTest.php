@@ -10,6 +10,7 @@ use App\Models\Campaign;
 use App\Models\AgriculturalActivity;
 use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
@@ -415,5 +416,259 @@ class GenerateOfficialReportJobTest extends TestCase
         $report->refresh();
         $this->assertEquals('completed', $report->processing_status);
         $this->assertEquals(5, $report->report_metadata['total_treatments']);
+    }
+
+    /**
+     * Test que el job genera cuaderno completo con filtros de fecha (para generación por lotes)
+     */
+    public function test_job_generates_full_notebook_with_date_filters(): void
+    {
+        $user = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $user->id])->create(['area' => 10.0]);
+        $campaign = Campaign::factory()->create([
+            'viticulturist_id' => $user->id,
+            'start_date' => now()->startOfYear(),
+            'end_date' => now()->endOfYear(),
+        ]);
+
+        $product = PhytosanitaryProduct::create([
+            'name' => 'Producto Test',
+            'active_ingredient' => 'Ingrediente Activo',
+            'registration_number' => 'REG-12345',
+            'manufacturer' => 'Fabricante Test',
+            'type' => 'insecticide',
+        ]);
+
+        // Crear actividades en diferentes períodos
+        // Actividades en el primer trimestre
+        AgriculturalActivity::factory()
+            ->withPhytosanitaryTreatment(['area_treated' => 2.0])
+            ->create([
+                'plot_id' => $plot->id,
+                'viticulturist_id' => $user->id,
+                'campaign_id' => $campaign->id,
+                'activity_type' => 'phytosanitary',
+                'activity_date' => now()->startOfYear()->addMonths(1), // Febrero
+            ]);
+
+        AgriculturalActivity::factory()->create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $user->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'fertilization',
+            'activity_date' => now()->startOfYear()->addMonths(2), // Marzo
+        ]);
+
+        // Actividades en el segundo trimestre (fuera del filtro)
+        AgriculturalActivity::factory()->create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $user->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'irrigation',
+            'activity_date' => now()->startOfYear()->addMonths(5), // Junio
+        ]);
+
+        $report = OfficialReport::create([
+            'user_id' => $user->id,
+            'report_type' => 'full_digital_notebook',
+            'period_start' => now()->startOfYear(),
+            'period_end' => now()->startOfYear()->endOfQuarter(), // Solo Q1
+            'verification_code' => OfficialReport::generateVerificationCode(),
+            'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
+            'processing_status' => 'pending',
+            'report_metadata' => [
+                'campaign_id' => $campaign->id,
+                'campaign_name' => $campaign->name,
+                'batch_index' => 1,
+                'total_batches' => 4,
+                'period_label' => 'Q1 ' . now()->year,
+            ],
+        ]);
+
+        // Generar con filtros de fecha (solo Q1)
+        $q1Start = now()->startOfYear()->format('Y-m-d');
+        $q1End = now()->startOfYear()->endOfQuarter()->format('Y-m-d');
+
+        $job = new GenerateOfficialReportJob(
+            $report->id,
+            $user->id,
+            'full_digital_notebook',
+            [
+                'campaign_id' => $campaign->id,
+                'start_date' => $q1Start, // Filtro de fecha
+                'end_date' => $q1End,     // Filtro de fecha
+            ],
+            'password123'
+        );
+
+        $job->handle();
+
+        $report->refresh();
+        $this->assertEquals('completed', $report->processing_status);
+        $this->assertNotNull($report->pdf_path);
+        
+        // Verificar que solo se incluyeron actividades del Q1 (2 actividades, no 3)
+        $this->assertEquals(2, $report->report_metadata['total_activities']);
+    }
+
+    /**
+     * Test que el job funciona correctamente con chunking y filtros de fecha
+     * Nota: Este test verifica que el chunking funciona con filtros de fecha
+     * pero con un número menor de actividades para evitar problemas de memoria en tests
+     */
+    public function test_job_handles_chunking_with_date_filters(): void
+    {
+        // Aumentar memoria para este test
+        ini_set('memory_limit', '1G');
+        
+        $user = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $user->id])->create(['area' => 15.0]);
+        $campaign = Campaign::factory()->create([
+            'viticulturist_id' => $user->id,
+            'start_date' => now()->startOfYear(),
+            'end_date' => now()->endOfYear(),
+        ]);
+
+        // Crear 1500 actividades en el primer trimestre (para forzar chunking)
+        // Pero solo verificamos que el job puede cargar las actividades correctamente
+        // sin generar el PDF completo para evitar problemas de memoria
+        for ($i = 0; $i < 1500; $i++) {
+            AgriculturalActivity::factory()->create([
+                'plot_id' => $plot->id,
+                'viticulturist_id' => $user->id,
+                'campaign_id' => $campaign->id,
+                'activity_type' => 'observation',
+                'activity_date' => now()->startOfYear()->addDays(rand(0, 90)), // Solo Q1
+            ]);
+        }
+
+        // Verificar que el método loadActivitiesInChunks funciona con filtros
+        $job = new GenerateOfficialReportJob(
+            999, // ID ficticio, no vamos a ejecutar handle()
+            $user->id,
+            'full_digital_notebook',
+            [
+                'campaign_id' => $campaign->id,
+                'start_date' => now()->startOfYear()->format('Y-m-d'),
+                'end_date' => now()->startOfYear()->endOfQuarter()->format('Y-m-d'),
+            ],
+            'password123'
+        );
+
+        // Usar reflexión para probar el método privado loadActivitiesInChunks
+        $reflection = new \ReflectionClass($job);
+        $method = $reflection->getMethod('loadActivitiesInChunks');
+        $method->setAccessible(true);
+        
+        $activities = $method->invoke($job, $user->id, $campaign->id, [
+            'start_date' => now()->startOfYear()->format('Y-m-d'),
+            'end_date' => now()->startOfYear()->endOfQuarter()->format('Y-m-d'),
+        ]);
+
+        // Verificar que se cargaron las actividades correctamente
+        $this->assertGreaterThan(0, $activities->count());
+        $this->assertLessThanOrEqual(1500, $activities->count());
+        
+        // Verificar que todas las actividades están en el rango de fechas
+        foreach ($activities as $activity) {
+            $activityDate = Carbon::parse($activity->activity_date);
+            $this->assertTrue(
+                $activityDate->gte(now()->startOfYear()) && 
+                $activityDate->lte(now()->startOfYear()->endOfQuarter()),
+                "La actividad {$activity->id} está fuera del rango de fechas"
+            );
+        }
+    }
+
+    /**
+     * Test que el job filtra correctamente actividades por fecha en cuaderno completo
+     */
+    public function test_job_filters_activities_by_date_range(): void
+    {
+        $user = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $user->id])->create(['area' => 8.0]);
+        $campaign = Campaign::factory()->create([
+            'viticulturist_id' => $user->id,
+            'start_date' => now()->startOfYear(),
+            'end_date' => now()->endOfYear(),
+        ]);
+
+        $product = PhytosanitaryProduct::create([
+            'name' => 'Producto Test',
+            'active_ingredient' => 'Ingrediente Activo',
+            'registration_number' => 'REG-12345',
+            'manufacturer' => 'Fabricante Test',
+            'type' => 'insecticide',
+        ]);
+
+        // Crear actividades en enero (dentro del filtro)
+        AgriculturalActivity::factory()
+            ->withPhytosanitaryTreatment(['area_treated' => 1.5])
+            ->create([
+                'plot_id' => $plot->id,
+                'viticulturist_id' => $user->id,
+                'campaign_id' => $campaign->id,
+                'activity_type' => 'phytosanitary',
+                'activity_date' => now()->startOfYear()->addDays(10),
+            ]);
+
+        // Crear actividades en febrero (dentro del filtro)
+        AgriculturalActivity::factory()->create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $user->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'fertilization',
+            'activity_date' => now()->startOfYear()->addMonths(1)->addDays(5),
+        ]);
+
+        // Crear actividades en junio (fuera del filtro)
+        AgriculturalActivity::factory()->create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $user->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'irrigation',
+            'activity_date' => now()->startOfYear()->addMonths(5)->addDays(10),
+        ]);
+
+        $report = OfficialReport::create([
+            'user_id' => $user->id,
+            'report_type' => 'full_digital_notebook',
+            'period_start' => now()->startOfYear(),
+            'period_end' => now()->startOfYear()->endOfMonth()->addMonth(), // Enero y Febrero
+            'verification_code' => OfficialReport::generateVerificationCode(),
+            'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
+            'processing_status' => 'pending',
+            'report_metadata' => [
+                'campaign_id' => $campaign->id,
+                'campaign_name' => $campaign->name,
+            ],
+        ]);
+
+        $filterStart = now()->startOfYear()->format('Y-m-d');
+        $filterEnd = now()->startOfYear()->endOfMonth()->addMonth()->format('Y-m-d');
+
+        $job = new GenerateOfficialReportJob(
+            $report->id,
+            $user->id,
+            'full_digital_notebook',
+            [
+                'campaign_id' => $campaign->id,
+                'start_date' => $filterStart,
+                'end_date' => $filterEnd,
+            ],
+            'password123'
+        );
+
+        $job->handle();
+
+        $report->refresh();
+        $this->assertEquals('completed', $report->processing_status);
+        
+        // Debe tener solo 2 actividades (enero y febrero), no 3
+        $this->assertEquals(2, $report->report_metadata['total_activities']);
     }
 }

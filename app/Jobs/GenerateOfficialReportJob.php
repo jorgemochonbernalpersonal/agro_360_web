@@ -155,10 +155,20 @@ class GenerateOfficialReportJob implements ShouldQueue
                 $campaignId = $this->parameters['campaign_id'];
                 $campaign = \App\Models\Campaign::findOrFail($campaignId);
 
+                // Construir query base
+                $activitiesQuery = \App\Models\AgriculturalActivity::forUser($this->userId)
+                    ->forCampaign($campaignId);
+                
+                // Si hay filtros de fecha (para generación por lotes), aplicarlos
+                if (isset($this->parameters['start_date']) && isset($this->parameters['end_date'])) {
+                    $activitiesQuery->whereBetween('activity_date', [
+                        Carbon::parse($this->parameters['start_date']),
+                        Carbon::parse($this->parameters['end_date'])
+                    ]);
+                }
+
                 // OPTIMIZACIÓN: Contar primero para decidir si usar chunking
-                $totalActivities = \App\Models\AgriculturalActivity::forUser($this->userId)
-                    ->forCampaign($campaignId)
-                    ->count();
+                $totalActivities = $activitiesQuery->count();
 
                 Log::info('Loading activities for full notebook', [
                     'campaign_id' => $campaignId,
@@ -168,16 +178,25 @@ class GenerateOfficialReportJob implements ShouldQueue
 
                 // Para grandes volúmenes (>1000), usar chunking
                 if ($totalActivities > 1000) {
-                    $activities = $this->loadActivitiesInChunks($this->userId, $campaignId);
+                    $activities = $this->loadActivitiesInChunks($this->userId, $campaignId, $this->parameters);
                     Log::info('Activities loaded in chunks', [
                         'count' => $activities->count(),
                         'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
                     ]);
                 } else {
                     // Para volúmenes normales, cargar optimizado
-                    $activities = \App\Models\AgriculturalActivity::forUser($this->userId)
-                        ->forCampaign($campaignId)
-                        ->with([
+                    $activitiesQuery = \App\Models\AgriculturalActivity::forUser($this->userId)
+                        ->forCampaign($campaignId);
+                    
+                    // Aplicar filtros de fecha si existen
+                    if (isset($this->parameters['start_date']) && isset($this->parameters['end_date'])) {
+                        $activitiesQuery->whereBetween('activity_date', [
+                            Carbon::parse($this->parameters['start_date']),
+                            Carbon::parse($this->parameters['end_date'])
+                        ]);
+                    }
+                    
+                    $activities = $activitiesQuery->with([
                             'plot:id,name',
                             'plotPlanting:id,plot_id,name',
                             'plotPlanting.grapeVariety:id,name',
@@ -397,13 +416,22 @@ class GenerateOfficialReportJob implements ShouldQueue
      * Cargar actividades en chunks para grandes volúmenes
      * Evita problemas de memoria con campañas muy grandes
      */
-    private function loadActivitiesInChunks(int $userId, int $campaignId): \Illuminate\Support\Collection
+    private function loadActivitiesInChunks(int $userId, int $campaignId, array $parameters = []): \Illuminate\Support\Collection
     {
         $allActivities = collect();
         
-        \App\Models\AgriculturalActivity::forUser($userId)
-            ->forCampaign($campaignId)
-            ->with([
+        $query = \App\Models\AgriculturalActivity::forUser($userId)
+            ->forCampaign($campaignId);
+        
+        // Aplicar filtros de fecha si existen
+        if (isset($parameters['start_date']) && isset($parameters['end_date'])) {
+            $query->whereBetween('activity_date', [
+                Carbon::parse($parameters['start_date']),
+                Carbon::parse($parameters['end_date'])
+            ]);
+        }
+        
+        $query->with([
                 'plot:id,name',
                 'plotPlanting:id,plot_id,name',
                 'plotPlanting.grapeVariety:id,name',
