@@ -6,7 +6,7 @@ use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\Harvest;
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\Machinery;
@@ -111,7 +111,8 @@ class CreateHarvest extends Component
      */
     protected function loadAvailableContainers()
     {
-        $this->availableContainers = HarvestContainer::whereNull('harvest_id')
+        $this->availableContainers = Container::available()
+            ->whereDoesntHave('harvests')
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -122,10 +123,10 @@ class CreateHarvest extends Component
     public function updatedContainerId($value)
     {
         if ($value) {
-            $container = HarvestContainer::find($value);
-            if ($container && $container->isAvailable()) {
-                // Actualizar el peso con el peso del contenedor
-                $this->total_weight = $container->weight;
+            $container = Container::find($value);
+            if ($container && $container->hasAvailableCapacity(0)) {
+                // Actualizar el peso con la capacidad disponible del contenedor
+                $this->total_weight = $container->getAvailableCapacity();
                 $this->calculateYield();
                 $this->calculateTotalValue();
                 $this->updateControlPanelData();
@@ -348,10 +349,11 @@ class CreateHarvest extends Component
             'aroma_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'health_status' => 'nullable|in:sano,daño_leve,daño_moderado,daño_grave',
             
-            'destination_type' => 'nullable|in:winery,direct_sale,cooperative,self_consumption,other',
+            'destination_type' => 'required|in:winery,direct_sale,cooperative,self_consumption,other',
             'destination' => 'nullable|string|max:255',
-            'transport_document_number' => 'nullable|string|max:50',
-            'destination_rega_code' => 'nullable|string|max:20',
+            // Campos PAC Trazabilidad (obligatorios excepto autoconsumo)
+            'transport_document_number' => 'required_unless:destination_type,self_consumption|nullable|string|max:50',
+            'destination_rega_code' => 'required_unless:destination_type,self_consumption|nullable|string|max:20',
             'vehicle_plate' => 'nullable|string|max:20',
             'buyer_name' => 'nullable|string|max:255',
             
@@ -400,15 +402,19 @@ class CreateHarvest extends Component
         // Validar que la parcela pertenece al viticultor
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
         
-        // Validar que el contenedor existe y está disponible
-        $container = HarvestContainer::find($this->container_id);
+        // Validar que el contenedor existe y tiene capacidad disponible
+        $container = Container::find($this->container_id);
         if (!$container) {
             $this->addError('container_id', 'El contenedor seleccionado no existe.');
             return;
         }
         
-        if (!$container->isAvailable()) {
-            $this->addError('container_id', 'El contenedor seleccionado ya está asignado a otra cosecha.');
+        if (!$container->hasAvailableCapacity($this->total_weight)) {
+            $this->addError('container_id', sprintf(
+                'El contenedor no tiene capacidad suficiente. Disponible: %.2f kg, Requerido: %.2f kg',
+                $container->getAvailableCapacity(),
+                $this->total_weight
+            ));
             return;
         }
 

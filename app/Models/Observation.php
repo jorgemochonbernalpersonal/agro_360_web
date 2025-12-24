@@ -9,6 +9,7 @@ class Observation extends Model
 {
     protected $fillable = [
         'activity_id',
+        'pest_id',
         'observation_type',
         'description',
         'photos',
@@ -26,5 +27,13 @@ class Observation extends Model
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
+    }
+
+    /**
+     * Plaga asociada (si la observación es sobre una plaga)
+     */
+    public function pest(): BelongsTo
+    {
+        return $this->belongsTo(Pest::class, 'pest_id');
     }
 }

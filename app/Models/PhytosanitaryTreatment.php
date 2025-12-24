@@ -11,6 +11,7 @@ class PhytosanitaryTreatment extends Model
     protected $fillable = [
         'activity_id',
         'product_id',
+        'pest_id',
         'dose_per_hectare',
         'total_dose',
         'area_treated',
@@ -49,6 +50,14 @@ class PhytosanitaryTreatment extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(PhytosanitaryProduct::class, 'product_id');
+    }
+
+    /**
+     * Plaga objetivo del tratamiento
+     */
+    public function pest(): BelongsTo
+    {
+        return $this->belongsTo(Pest::class, 'pest_id');
     }
 
     /**

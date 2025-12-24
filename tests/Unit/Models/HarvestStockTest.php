@@ -4,7 +4,7 @@ namespace Tests\Unit\Models;
 
 use App\Models\HarvestStock;
 use App\Models\Harvest;
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Models\User;
 use App\Models\InvoiceItem;
 use App\Models\AgriculturalActivity;
@@ -94,8 +94,8 @@ class HarvestStockTest extends TestCase
             'plot_planting_id' => $planting->id,
         ]);
 
-        $container = HarvestContainer::factory()->create([
-            'harvest_id' => $harvest->id,
+        $container = Container::factory()->create([
+            'user_id' => $user->id,
         ]);
 
         $stock = HarvestStock::create([

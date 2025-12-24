@@ -36,8 +36,8 @@
         <div class="glass-card rounded-xl p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Peso Total</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['total_weight'], 2) }} kg</p>
+                    <p class="text-sm font-medium text-gray-600">Capacidad Total</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['total_capacity'], 2) }} kg</p>
                 </div>
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,8 +49,8 @@
         <div class="glass-card rounded-xl p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Entregados</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['delivered']) }}</p>
+                    <p class="text-sm font-medium text-gray-600">Capacidad Usada</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['total_used'], 2) }} kg</p>
                 </div>
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,26 +87,15 @@
         @endif
         <x-filter-select wire:model.live="filterStatus">
             <option value="">Todos los estados</option>
-            <option value="filled">Llenado</option>
-            <option value="in_transit">En tránsito</option>
-            <option value="delivered">Entregado</option>
-            <option value="stored">Almacenado</option>
-            <option value="empty">Vacío</option>
+            <option value="active">Activos</option>
+            <option value="archived">Archivados</option>
         </x-filter-select>
         <x-filter-select wire:model.live="filterAvailability">
             <option value="">Todos</option>
             <option value="available">Disponibles</option>
             <option value="assigned">Asignados</option>
         </x-filter-select>
-        <x-filter-select wire:model.live="filterType">
-            <option value="">Todos los tipos</option>
-            <option value="caja">Caja</option>
-            <option value="pallet">Pallet</option>
-            <option value="contenedor">Contenedor</option>
-            <option value="saco">Saco</option>
-            <option value="cuba">Cuba</option>
-            <option value="other">Otro</option>
-        </x-filter-select>
+        {{-- Filtro por tipo deshabilitado temporalmente hasta que se implemente la tabla de tipos --}}
         <x-slot:actions>
             @if($search || $selectedCampaign || $selectedHarvest || $filterStatus || $filterType)
                 <x-button wire:click="$set('search', ''); $set('selectedCampaign', ''); $set('selectedHarvest', ''); $set('filterStatus', ''); $set('filterType', '')" variant="ghost" size="sm">
@@ -147,9 +136,9 @@
                             </div>
                             <div>
                                 <div class="text-sm font-bold text-gray-900">
-                                    {{ ucfirst($container->container_type) }}
-                                    @if($container->container_number)
-                                        #{{ $container->container_number }}
+                                    {{ $container->name }}
+                                    @if($container->serial_number)
+                                        #{{ $container->serial_number }}
                                     @endif
                                 </div>
                                 <div class="text-xs text-gray-500 mt-1">
@@ -159,16 +148,19 @@
                         </div>
                     </x-table-cell>
                     <x-table-cell>
-                        @if($container->harvest)
+                        @php
+                            $currentHarvest = $container->harvests->first();
+                        @endphp
+                        @if($currentHarvest)
                             <div>
                                 <div class="text-sm font-medium text-gray-900">
-                                    {{ $container->harvest->activity->plot->name ?? 'Sin parcela' }}
+                                    {{ $currentHarvest->activity->plot->name ?? 'Sin parcela' }}
                                 </div>
                                 <div class="text-xs text-gray-500 mt-1">
-                                    {{ $container->harvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}
+                                    {{ $currentHarvest->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}
                                 </div>
                                 <div class="text-xs text-gray-400 mt-1">
-                                    {{ $container->harvest->harvest_start_date->format('d/m/Y') }}
+                                    {{ $currentHarvest->harvest_start_date->format('d/m/Y') }}
                                 </div>
                             </div>
                         @else
@@ -182,40 +174,35 @@
                     <x-table-cell>
                         <div>
                             <div class="text-sm font-bold text-gray-900">
-                                {{ number_format($container->weight, 2) }} kg
+                                {{ number_format($container->used_capacity, 2) }} / {{ number_format($container->capacity, 2) }} kg
                             </div>
-                            @if($container->weight_per_unit)
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ number_format($container->weight_per_unit, 2) }} kg/unidad
-                                </div>
-                            @endif
+                            <div class="text-xs text-gray-500 mt-1">
+                                {{ number_format($container->getOccupancyPercentage(), 1) }}% ocupado
+                            </div>
                         </div>
                     </x-table-cell>
                     <x-table-cell>
-                        @if($container->location)
-                            <span class="text-sm text-gray-700">{{ $container->location }}</span>
+                        @if($container->currentState && $container->currentState->location)
+                            <span class="text-sm text-gray-700">{{ $container->currentState->location }}</span>
                         @else
                             <span class="text-sm text-gray-400">-</span>
                         @endif
                     </x-table-cell>
                     <x-table-cell>
                         @php
-                            $statusColors = [
-                                'filled' => 'bg-blue-100 text-blue-800',
-                                'in_transit' => 'bg-yellow-100 text-yellow-800',
-                                'delivered' => 'bg-green-100 text-green-800',
-                                'stored' => 'bg-purple-100 text-purple-800',
-                                'empty' => 'bg-gray-100 text-gray-800',
-                            ];
-                            $statusLabels = [
-                                'filled' => 'Llenado',
-                                'in_transit' => 'En tránsito',
-                                'delivered' => 'Entregado',
-                                'stored' => 'Almacenado',
-                                'empty' => 'Vacío',
-                            ];
-                            $color = $statusColors[$container->status] ?? 'bg-gray-100 text-gray-800';
-                            $label = $statusLabels[$container->status] ?? ucfirst($container->status);
+                            if ($container->archived) {
+                                $color = 'bg-gray-100 text-gray-800';
+                                $label = 'Archivado';
+                            } elseif ($container->isEmpty()) {
+                                $color = 'bg-green-100 text-green-800';
+                                $label = 'Vacío';
+                            } elseif ($container->isFull()) {
+                                $color = 'bg-blue-100 text-blue-800';
+                                $label = 'Lleno';
+                            } else {
+                                $color = 'bg-yellow-100 text-yellow-800';
+                                $label = 'Parcial';
+                            }
                         @endphp
                         <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $color }}">
                             {{ $label }}
@@ -223,11 +210,11 @@
                     </x-table-cell>
                     <x-table-cell>
                         <div class="text-xs text-gray-600">
-                            @if($container->filled_date)
-                                <div>Llenado: {{ $container->filled_date->format('d/m/Y') }}</div>
+                            @if($container->purchase_date)
+                                <div>Compra: {{ $container->purchase_date->format('d/m/Y') }}</div>
                             @endif
-                            @if($container->delivery_date)
-                                <div class="mt-1">Entrega: {{ $container->delivery_date->format('d/m/Y') }}</div>
+                            @if($container->next_maintenance_date)
+                                <div class="mt-1">Mantenimiento: {{ $container->next_maintenance_date->format('d/m/Y') }}</div>
                             @endif
                         </div>
                     </x-table-cell>

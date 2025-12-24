@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook\Containers;
 
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -12,20 +12,18 @@ class Create extends Component
 {
     use WithToastNotifications;
 
-    public $container_type = 'caja';
-    public $container_number = '';
+    public $name = '';
+    public $description = '';
+    public $serial_number = '';
     public $quantity = 1;
-    public $weight = '';
-    public $weight_per_unit = '';
-    public $location = '';
-    public $status = 'filled';
-    public $filled_date = '';
-    public $delivery_date = '';
-    public $notes = '';
+    public $capacity = '';
+    public $purchase_date = '';
+    public $next_maintenance_date = '';
+    public $archived = false;
 
     public function mount()
     {
-        $this->filled_date = now()->format('Y-m-d');
+        $this->purchase_date = now()->format('Y-m-d');
     }
 
     public function loadData()
@@ -54,38 +52,18 @@ class Create extends Component
         $this->loadHarvests();
     }
 
-    public function updatedWeight()
-    {
-        $this->calculateWeightPerUnit();
-    }
-
-    public function updatedQuantity()
-    {
-        $this->calculateWeightPerUnit();
-    }
-
-    protected function calculateWeightPerUnit()
-    {
-        if ($this->weight && $this->quantity && $this->quantity > 0) {
-            $this->weight_per_unit = round($this->weight / $this->quantity, 3);
-        } else {
-            $this->weight_per_unit = '';
-        }
-    }
 
     protected function rules(): array
     {
         return [
-            'container_type' => 'required|in:caja,pallet,contenedor,saco,cuba,other',
-            'container_number' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'serial_number' => 'nullable|string|max:255',
             'quantity' => 'required|integer|min:1',
-            'weight' => 'required|numeric|min:0.001',
-            'weight_per_unit' => 'nullable|numeric|min:0',
-            'location' => 'nullable|string|max:255',
-            'status' => 'required|in:filled,in_transit,delivered,stored,empty',
-            'filled_date' => 'nullable|date',
-            'delivery_date' => 'nullable|date|after_or_equal:filled_date',
-            'notes' => 'nullable|string',
+            'capacity' => 'required|numeric|min:0.001',
+            'purchase_date' => 'nullable|date',
+            'next_maintenance_date' => 'nullable|date|after_or_equal:purchase_date',
+            'archived' => 'boolean',
         ];
     }
 
@@ -95,18 +73,20 @@ class Create extends Component
 
         try {
             DB::transaction(function () {
-                HarvestContainer::create([
-                    'harvest_id' => null, // Contenedor independiente
-                    'container_type' => $this->container_type,
-                    'container_number' => $this->container_number ?: null,
+                Container::create([
+                    'user_id' => Auth::id(),
+                    'name' => $this->name,
+                    'description' => $this->description ?: null,
+                    'serial_number' => $this->serial_number ?: null,
                     'quantity' => $this->quantity,
-                    'weight' => $this->weight,
-                    'weight_per_unit' => $this->weight_per_unit ?: null,
-                    'location' => $this->location ?: null,
-                    'status' => $this->status,
-                    'filled_date' => $this->filled_date ?: null,
-                    'delivery_date' => $this->delivery_date ?: null,
-                    'notes' => $this->notes ?: null,
+                    'capacity' => $this->capacity,
+                    'used_capacity' => 0, // Inicialmente vacío
+                    'purchase_date' => $this->purchase_date ?: null,
+                    'next_maintenance_date' => $this->next_maintenance_date ?: null,
+                    'archived' => $this->archived,
+                    'unit_of_measurement_id' => 1, // kg por defecto
+                    'type_id' => 1, // Tipo por defecto
+                    'material_id' => 1, // Material por defecto
                 ]);
             });
 

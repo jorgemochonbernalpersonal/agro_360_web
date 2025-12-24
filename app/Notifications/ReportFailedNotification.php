@@ -32,8 +32,8 @@ class ReportFailedNotification extends Notification implements ShouldQueue
         return [
             'report_id' => $this->report->id,
             'report_type' => $this->report->report_type,
-            'report_type_name' => $this->report->report_type_name,
-            'report_icon' => $this->report->report_icon,
+            'report_type_name' => $this->report->report_type_name ?? 'Informe Oficial',
+            'report_icon' => $this->report->report_icon ?? '📄',
             'error_message' => $this->errorMessage,
             'message' => '❌ Error al generar el informe',
             'action_url' => route('viticulturist.official-reports.create'),

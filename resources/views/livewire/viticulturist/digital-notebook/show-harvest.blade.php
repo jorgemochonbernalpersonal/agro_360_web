@@ -201,28 +201,25 @@
                                 <div class="flex-1">
                                     <div class="flex items-center gap-3 mb-2">
                                         <h3 class="font-semibold text-gray-900">
-                                            {{ ucfirst($container->container_type) }}
-                                            @if($container->container_number)
-                                                #{{ $container->container_number }}
+                                            {{ $container->name }}
+                                            @if($container->serial_number)
+                                                #{{ $container->serial_number }}
                                             @endif
                                         </h3>
                                         @php
-                                            $statusColors = [
-                                                'filled' => 'bg-blue-100 text-blue-800',
-                                                'in_transit' => 'bg-yellow-100 text-yellow-800',
-                                                'delivered' => 'bg-green-100 text-green-800',
-                                                'stored' => 'bg-purple-100 text-purple-800',
-                                                'empty' => 'bg-gray-100 text-gray-800',
-                                            ];
-                                            $statusLabels = [
-                                                'filled' => 'Llenado',
-                                                'in_transit' => 'En tránsito',
-                                                'delivered' => 'Entregado',
-                                                'stored' => 'Almacenado',
-                                                'empty' => 'Vacío',
-                                            ];
-                                            $color = $statusColors[$container->status] ?? 'bg-gray-100 text-gray-800';
-                                            $label = $statusLabels[$container->status] ?? ucfirst($container->status);
+                                            if ($container->archived) {
+                                                $color = 'bg-gray-100 text-gray-800';
+                                                $label = 'Archivado';
+                                            } elseif ($container->isEmpty()) {
+                                                $color = 'bg-green-100 text-green-800';
+                                                $label = 'Vacío';
+                                            } elseif ($container->isFull()) {
+                                                $color = 'bg-blue-100 text-blue-800';
+                                                $label = 'Lleno';
+                                            } else {
+                                                $color = 'bg-yellow-100 text-yellow-800';
+                                                $label = 'Parcial';
+                                            }
                                         @endphp
                                         <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $color }}">
                                             {{ $label }}
@@ -234,25 +231,31 @@
                                             <span class="ml-2 font-semibold text-gray-900">{{ $container->quantity }}</span>
                                         </div>
                                         <div>
-                                            <span class="text-gray-500">Peso:</span>
-                                            <span class="ml-2 font-semibold text-gray-900">{{ number_format($container->weight, 2) }} kg</span>
+                                            <span class="text-gray-500">Capacidad:</span>
+                                            <span class="ml-2 font-semibold text-gray-900">
+                                                {{ number_format($container->used_capacity, 2) }} / {{ number_format($container->capacity, 2) }} kg
+                                            </span>
                                         </div>
-                                        @if($container->location)
+                                        <div>
+                                            <span class="text-gray-500">Ocupación:</span>
+                                            <span class="ml-2 font-semibold text-gray-900">{{ number_format($container->getOccupancyPercentage(), 1) }}%</span>
+                                        </div>
+                                        @if($container->currentState && $container->currentState->location)
                                             <div>
                                                 <span class="text-gray-500">Ubicación:</span>
-                                                <span class="ml-2 font-semibold text-gray-900">{{ $container->location }}</span>
+                                                <span class="ml-2 font-semibold text-gray-900">{{ $container->currentState->location }}</span>
                                             </div>
                                         @endif
-                                        @if($container->filled_date)
+                                        @if($container->purchase_date)
                                             <div>
-                                                <span class="text-gray-500">Fecha llenado:</span>
-                                                <span class="ml-2 font-semibold text-gray-900">{{ $container->filled_date->format('d/m/Y') }}</span>
+                                                <span class="text-gray-500">Compra:</span>
+                                                <span class="ml-2 font-semibold text-gray-900">{{ $container->purchase_date->format('d/m/Y') }}</span>
                                             </div>
                                         @endif
                                     </div>
-                                    @if($container->notes)
+                                    @if($container->description)
                                         <div class="mt-3 pt-3 border-t border-gray-200">
-                                            <p class="text-sm text-gray-600">{{ $container->notes }}</p>
+                                            <p class="text-sm text-gray-600">{{ $container->description }}</p>
                                         </div>
                                     @endif
                                 </div>
@@ -278,28 +281,25 @@
                                     <div class="flex-1">
                                         <div class="flex items-center gap-3 mb-2">
                                             <h3 class="font-semibold text-gray-900">
-                                                {{ ucfirst($container->container_type) }}
-                                                @if($container->container_number)
-                                                    #{{ $container->container_number }}
+                                                {{ $container->name }}
+                                                @if($container->serial_number)
+                                                    #{{ $container->serial_number }}
                                                 @endif
                                             </h3>
                                             @php
-                                                $statusColors = [
-                                                    'filled' => 'bg-blue-100 text-blue-800',
-                                                    'in_transit' => 'bg-yellow-100 text-yellow-800',
-                                                    'delivered' => 'bg-green-100 text-green-800',
-                                                    'stored' => 'bg-purple-100 text-purple-800',
-                                                    'empty' => 'bg-gray-100 text-gray-800',
-                                                ];
-                                                $statusLabels = [
-                                                    'filled' => 'Llenado',
-                                                    'in_transit' => 'En tránsito',
-                                                    'delivered' => 'Entregado',
-                                                    'stored' => 'Almacenado',
-                                                    'empty' => 'Vacío',
-                                                ];
-                                                $color = $statusColors[$container->status] ?? 'bg-gray-100 text-gray-800';
-                                                $label = $statusLabels[$container->status] ?? ucfirst($container->status);
+                                                if ($container->archived) {
+                                                    $color = 'bg-gray-100 text-gray-800';
+                                                    $label = 'Archivado';
+                                                } elseif ($container->isEmpty()) {
+                                                    $color = 'bg-green-100 text-green-800';
+                                                    $label = 'Vacío';
+                                                } elseif ($container->isFull()) {
+                                                    $color = 'bg-blue-100 text-blue-800';
+                                                    $label = 'Lleno';
+                                                } else {
+                                                    $color = 'bg-yellow-100 text-yellow-800';
+                                                    $label = 'Parcial';
+                                                }
                                             @endphp
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $color }}">
                                                 {{ $label }}
@@ -311,19 +311,25 @@
                                                 <span class="ml-2 font-semibold text-gray-900">{{ $container->quantity }}</span>
                                             </div>
                                             <div>
-                                                <span class="text-gray-500">Peso:</span>
-                                                <span class="ml-2 font-semibold text-gray-900">{{ number_format($container->weight, 2) }} kg</span>
+                                                <span class="text-gray-500">Capacidad:</span>
+                                                <span class="ml-2 font-semibold text-gray-900">
+                                                    {{ number_format($container->used_capacity, 2) }} / {{ number_format($container->capacity, 2) }} kg
+                                                </span>
                                             </div>
-                                            @if($container->location)
+                                            <div>
+                                                <span class="text-gray-500">Ocupación:</span>
+                                                <span class="ml-2 font-semibold text-gray-900">{{ number_format($container->getOccupancyPercentage(), 1) }}%</span>
+                                            </div>
+                                            @if($container->currentState && $container->currentState->location)
                                                 <div>
                                                     <span class="text-gray-500">Ubicación:</span>
-                                                    <span class="ml-2 text-gray-900">{{ $container->location }}</span>
+                                                    <span class="ml-2 text-gray-900">{{ $container->currentState->location }}</span>
                                                 </div>
                                             @endif
-                                            @if($container->filled_date)
+                                            @if($container->purchase_date)
                                                 <div>
-                                                    <span class="text-gray-500">Llenado:</span>
-                                                    <span class="ml-2 text-gray-900">{{ $container->filled_date->format('d/m/Y') }}</span>
+                                                    <span class="text-gray-500">Compra:</span>
+                                                    <span class="ml-2 text-gray-900">{{ $container->purchase_date->format('d/m/Y') }}</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -346,7 +352,7 @@
                                     <span class="ml-2 font-bold text-gray-900">{{ $this->getContainersCount() }}</span>
                                 </div>
                                 <div>
-                                    <span class="text-gray-600">Peso Total Contenedores:</span>
+                                    <span class="text-gray-600">Capacidad Usada en Contenedores:</span>
                                     <span class="ml-2 font-bold text-gray-900">{{ number_format($this->getContainersTotalWeight(), 2) }} kg</span>
                                 </div>
                                 <div>

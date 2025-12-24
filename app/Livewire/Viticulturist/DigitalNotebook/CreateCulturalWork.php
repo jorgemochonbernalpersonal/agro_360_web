@@ -26,6 +26,7 @@ class CreateCulturalWork extends Component
     public $hours_worked = '';
     public $workers_count = '';
     public $description = '';
+    public $phenological_stage = ''; // Estadio fenológico
     public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
     public $crew_member_id = '';
@@ -93,10 +94,11 @@ class CreateCulturalWork extends Component
             ],
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
-            'work_type' => 'nullable|string|max:100',
+            'work_type' => 'required|string|max:100',
             'hours_worked' => 'nullable|numeric|min:0',
             'workers_count' => 'nullable|integer|min:1',
-            'description' => 'nullable|string',
+            'description' => 'required|string|min:10',
+            'phenological_stage' => 'required|string|max:50',
             'crew_id' => 'nullable|exists:crews,id',
             'crew_member_id' => 'nullable|exists:crew_members,id',
             'machinery_id' => 'nullable|exists:machinery,id',
@@ -160,6 +162,7 @@ class CreateCulturalWork extends Component
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'cultural',
+                    'phenological_stage' => $this->phenological_stage,
                     'activity_date' => $this->activity_date,
                     'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
                     'crew_member_id' => $crewMemberId,

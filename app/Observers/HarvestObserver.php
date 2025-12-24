@@ -4,7 +4,9 @@ namespace App\Observers;
 
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\ContainerState;
+use App\Models\Container;
+use App\Models\ContainerCurrentState;
+use App\Models\ContainerHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +14,7 @@ class HarvestObserver
 {
     /**
      * Handle the Harvest "created" event.
-     * Registra el stock inicial cuando se crea una cosecha
+     * Registra el stock inicial cuando se crea una cosecha y sincroniza used_capacity del contenedor
      */
     public function created(Harvest $harvest): void
     {
@@ -33,20 +35,57 @@ class HarvestObserver
                 'notes' => 'Registro inicial de cosecha',
             ]);
 
-            // Actualizar o crear estado del contenedor
+            // Si tiene contenedor, actualizar used_capacity y crear estado/historial
             if ($harvest->container_id) {
-                $this->updateContainerState($harvest);
+                $container = Container::find($harvest->container_id);
+                
+                if ($container) {
+                    // Verificar capacidad disponible
+                    if (!$container->hasAvailableCapacity($harvest->total_weight)) {
+                        throw new \Exception(
+                            "El contenedor '{$container->name}' no tiene capacidad suficiente. " .
+                            "Disponible: {$container->getAvailableCapacity()} kg, " .
+                            "Requerido: {$harvest->total_weight} kg"
+                        );
+                    }
+
+                    // Incrementar used_capacity
+                    $container->incrementUsedCapacity($harvest->total_weight);
+
+                    // Crear/actualizar estado actual
+                    ContainerCurrentState::updateOrCreate(
+                        ['container_id' => $container->id],
+                        [
+                            'harvest_id' => $harvest->id,
+                            'current_quantity' => $harvest->total_weight,
+                            'has_subproducts' => false,
+                        ]
+                    );
+
+                    // Registrar en historial
+                    ContainerHistory::create([
+                        'container_id' => $container->id,
+                        'harvest_id' => $harvest->id,
+                        'field_activity_id' => $harvest->activity_id,
+                        'operation_type' => 'fill',
+                        'created_by' => Auth::id(),
+                        'quantity' => $harvest->total_weight,
+                        'start_date' => now(),
+                    ]);
+                }
             }
 
-            Log::info('Stock inicial registrado para harvest', [
+            Log::info('Stock inicial registrado para harvest y contenedor actualizado', [
                 'harvest_id' => $harvest->id,
                 'quantity' => $harvest->total_weight,
+                'container_id' => $harvest->container_id,
             ]);
         } catch (\Exception $e) {
             Log::error('Error al crear stock inicial de harvest', [
                 'harvest_id' => $harvest->id,
                 'error' => $e->getMessage(),
             ]);
+            throw $e;
         }
     }
 
@@ -84,23 +123,42 @@ class HarvestObserver
 
     /**
      * Handle the Harvest "deleted" event.
-     * Al eliminar harvest, limpiar estado del contenedor
+     * Al eliminar harvest, liberar capacidad del contenedor
      */
     public function deleting(Harvest $harvest): void
     {
         try {
-            // Marcar contenedor como vacío si solo tenía esta cosecha
             if ($harvest->container_id) {
-                $containerState = ContainerState::where('container_id', $harvest->container_id)
-                    ->where('harvest_id', $harvest->id)
-                    ->first();
+                $container = Container::find($harvest->container_id);
+                
+                if ($container) {
+                    // Decrementar used_capacity
+                    $container->decrementUsedCapacity($harvest->total_weight);
 
-                if ($containerState) {
-                    $containerState->markAsEmpty();
+                    // Eliminar estado actual si quedó vacío
+                    $state = ContainerCurrentState::where('container_id', $container->id)->first();
+                    if ($state && $state->harvest_id === $harvest->id) {
+                        if ($container->isEmpty()) {
+                            $state->delete();
+                        } else {
+                            // Actualizar cantidad
+                            $state->updateQuantity(0);
+                        }
+                    }
+
+                    // Registrar en historial
+                    ContainerHistory::create([
+                        'container_id' => $container->id,
+                        'harvest_id' => $harvest->id,
+                        'operation_type' => 'empty',
+                        'created_by' => Auth::id(),
+                        'quantity' => -$harvest->total_weight,
+                        'start_date' => now(),
+                    ]);
                 }
             }
 
-            Log::info('Harvest eliminado, contenedor limpiado', [
+            Log::info('Harvest eliminado, capacidad del contenedor liberada', [
                 'harvest_id' => $harvest->id,
                 'container_id' => $harvest->container_id,
             ]);
@@ -152,15 +210,38 @@ class HarvestObserver
             ),
         ]);
 
-        // Actualizar contenedor
+        // Actualizar contenedor y used_capacity
         if ($harvest->container_id) {
-            $containerState = ContainerState::where('container_id', $harvest->container_id)->first();
-            if ($containerState) {
-                $containerState->update([
-                    'total_quantity' => $containerState->total_quantity + $difference,
-                    'available_qty' => $containerState->available_qty + $difference,
-                    'last_movement_at' => now(),
-                    'last_movement_by' => Auth::id(),
+            $container = Container::find($harvest->container_id);
+            if ($container) {
+                if ($difference > 0) {
+                    // Verificar capacidad antes de incrementar
+                    if (!$container->hasAvailableCapacity($difference)) {
+                        throw new \Exception(
+                            "No hay capacidad suficiente en el contenedor. " .
+                            "Disponible: {$container->getAvailableCapacity()} kg, " .
+                            "Requerido: {$difference} kg"
+                        );
+                    }
+                    $container->incrementUsedCapacity($difference);
+                } else {
+                    $container->decrementUsedCapacity(abs($difference));
+                }
+
+                // Actualizar estado actual
+                $state = ContainerCurrentState::where('container_id', $container->id)->first();
+                if ($state) {
+                    $state->updateQuantity($newTotal);
+                }
+
+                // Registrar en historial
+                ContainerHistory::create([
+                    'container_id' => $container->id,
+                    'harvest_id' => $harvest->id,
+                    'operation_type' => 'adjustment',
+                    'created_by' => Auth::id(),
+                    'quantity' => $difference,
+                    'start_date' => now(),
                 ]);
             }
         }
@@ -173,48 +254,72 @@ class HarvestObserver
     {
         // Remover del contenedor antiguo
         if ($oldContainerId) {
-            $oldState = ContainerState::where('container_id', $oldContainerId)->first();
-            if ($oldState) {
-                $newTotal = $oldState->total_quantity - $harvest->total_weight;
-                
-                if ($newTotal <= 0) {
-                    $oldState->markAsEmpty();
-                } else {
-                    $oldState->update([
-                        'total_quantity' => $newTotal,
-                        'available_qty' => max(0, $oldState->available_qty - $harvest->total_weight),
-                        'last_movement_at' => now(),
-                        'last_movement_by' => Auth::id(),
-                    ]);
+            $oldContainer = Container::find($oldContainerId);
+            if ($oldContainer) {
+                // Decrementar used_capacity
+                $oldContainer->decrementUsedCapacity($harvest->total_weight);
+
+                // Actualizar o eliminar estado actual
+                $oldState = ContainerCurrentState::where('container_id', $oldContainer->id)->first();
+                if ($oldState) {
+                    if ($oldState->harvest_id === $harvest->id) {
+                        if ($oldContainer->isEmpty()) {
+                            $oldState->delete();
+                        } else {
+                            $oldState->updateQuantity(0);
+                        }
+                    }
                 }
+
+                // Registrar en historial
+                ContainerHistory::create([
+                    'container_id' => $oldContainer->id,
+                    'harvest_id' => $harvest->id,
+                    'operation_type' => 'transfer',
+                    'created_by' => Auth::id(),
+                    'quantity' => -$harvest->total_weight,
+                    'start_date' => now(),
+                ]);
             }
         }
 
         // Agregar al nuevo contenedor
         if ($newContainerId) {
-            $this->updateContainerState($harvest);
+            $newContainer = Container::find($newContainerId);
+            if ($newContainer) {
+                // Verificar capacidad disponible
+                if (!$newContainer->hasAvailableCapacity($harvest->total_weight)) {
+                    throw new \Exception(
+                        "El contenedor '{$newContainer->name}' no tiene capacidad suficiente. " .
+                        "Disponible: {$newContainer->getAvailableCapacity()} kg, " .
+                        "Requerido: {$harvest->total_weight} kg"
+                    );
+                }
+
+                // Incrementar used_capacity
+                $newContainer->incrementUsedCapacity($harvest->total_weight);
+
+                // Crear/actualizar estado actual
+                ContainerCurrentState::updateOrCreate(
+                    ['container_id' => $newContainer->id],
+                    [
+                        'harvest_id' => $harvest->id,
+                        'current_quantity' => $harvest->total_weight,
+                        'has_subproducts' => false,
+                    ]
+                );
+
+                // Registrar en historial
+                ContainerHistory::create([
+                    'container_id' => $newContainer->id,
+                    'harvest_id' => $harvest->id,
+                    'field_activity_id' => $harvest->activity_id,
+                    'operation_type' => 'transfer',
+                    'created_by' => Auth::id(),
+                    'quantity' => $harvest->total_weight,
+                    'start_date' => now(),
+                ]);
+            }
         }
-    }
-
-    /**
-     * Actualizar o crear estado del contenedor
-     */
-    protected function updateContainerState(Harvest $harvest): void
-    {
-        $stock = $harvest->getCurrentStock();
-
-        ContainerState::updateOrCreate(
-            ['container_id' => $harvest->container_id],
-            [
-                'content_type' => 'harvest',
-                'harvest_id' => $harvest->id,
-                'total_quantity' => $stock['total'],
-                'available_qty' => $stock['available'],
-                'reserved_qty' => $stock['reserved'],
-                'sold_qty' => $stock['sold'],
-                'last_movement_at' => now(),
-                'last_movement_by' => Auth::id(),
-            ]
-        );
     }
 }

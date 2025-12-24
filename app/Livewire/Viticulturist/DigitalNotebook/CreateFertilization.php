@@ -29,6 +29,7 @@ class CreateFertilization extends Component
     public $npk_ratio = '';
     public $application_method = '';
     public $area_applied = '';
+    public $phenological_stage = ''; // Estadio fenológico
     public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
     public $crew_member_id = '';
@@ -104,24 +105,26 @@ class CreateFertilization extends Component
             ],
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
-            'fertilizer_type' => 'nullable|string|max:100',
+            'fertilizer_type' => 'required|string|max:100',
             'fertilizer_name' => 'nullable|string|max:255',
-            'quantity' => 'nullable|numeric|min:0',
+            'quantity' => 'required|numeric|min:0.01',
             'npk_ratio' => 'nullable|string|max:50',
             'application_method' => 'nullable|string|max:50',
-            'area_applied' => 'nullable|numeric|min:0',
+            'area_applied' => 'required|numeric|min:0.01',
+            'phenological_stage' => 'required|string|max:50',
             'crew_id' => 'nullable|exists:crews,id',
             'crew_member_id' => 'nullable|exists:crew_members,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',
-            // PAC Nutrición
-            'nitrogen_uf' => 'nullable|numeric|min:0',
-            'phosphorus_uf' => 'nullable|numeric|min:0',
-            'potassium_uf' => 'nullable|numeric|min:0',
+            // PAC Nutrición (BCAM 6 - RD 1078/2014)
+            'nitrogen_uf' => 'required_without_all:phosphorus_uf,potassium_uf|nullable|numeric|min:0|max:1000',
+            'phosphorus_uf' => 'required_without_all:nitrogen_uf,potassium_uf|nullable|numeric|min:0|max:1000',
+            'potassium_uf' => 'required_without_all:nitrogen_uf,phosphorus_uf|nullable|numeric|min:0|max:1000',
+            // Campos obligatorios si es fertilizante orgánico
             'manure_type' => 'nullable|string|max:100',
-            'burial_date' => 'nullable|date',
+            'burial_date' => 'nullable|date|before_or_equal:today',
             'emission_reduction_method' => 'nullable|string|max:100',
         ];
     }
@@ -129,6 +132,22 @@ class CreateFertilization extends Component
     public function save()
     {
         $this->validate();
+        
+        // Validación condicional para fertilizantes orgánicos (BCAM 6)
+        if ($this->fertilizer_type && 
+            (str_contains(strtolower($this->fertilizer_type), 'orgánico') || 
+             str_contains(strtolower($this->fertilizer_type), 'organico') ||
+             str_contains(strtolower($this->fertilizer_type), 'estiércol') ||
+             str_contains(strtolower($this->fertilizer_type), 'estiercol'))) {
+            
+            $this->validate([
+                'manure_type' => 'required|string|max:100',
+                'burial_date' => 'required|date|before_or_equal:today',
+            ], [
+                'manure_type.required' => 'El tipo de estiércol es obligatorio para fertilizantes orgánicos (BCAM 6).',
+                'burial_date.required' => 'La fecha de enterrado es obligatoria para fertilizantes orgánicos (BCAM 6).',
+            ]);
+        }
 
         $user = Auth::user();
 
@@ -180,6 +199,7 @@ class CreateFertilization extends Component
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'fertilization',
+                    'phenological_stage' => $this->phenological_stage,
                     'activity_date' => $this->activity_date,
                     'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
                     'crew_member_id' => $crewMemberId,

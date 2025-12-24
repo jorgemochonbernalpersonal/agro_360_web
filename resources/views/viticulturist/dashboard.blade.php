@@ -3,7 +3,7 @@
     use App\Models\AgriculturalActivity;
     use App\Models\PlotPlanting;
     use App\Models\Harvest;
-    use App\Models\HarvestContainer;
+    use App\Models\Container;
     use App\Models\Campaign;
     
     $user = auth()->user();
@@ -42,7 +42,10 @@
     ->count();
     
     // Contenedores disponibles
-    $availableContainers = HarvestContainer::whereDoesntHave('harvests')->count();
+    $availableContainers = Container::where('user_id', $user->id)
+        ->whereDoesntHave('harvests')
+        ->where('archived', false)
+        ->count();
     
     // Tratamientos activos (actividades de tipo treatment en últimos 30 días)
     $activeTreatments = AgriculturalActivity::where('viticulturist_id', $user->id)

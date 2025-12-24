@@ -5,7 +5,8 @@ namespace App\Observers;
 use App\Models\InvoiceItem;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\ContainerState;
+use App\Models\Container;
+use App\Models\ContainerCurrentState;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -148,26 +149,21 @@ class InvoiceItemObserver
             'reference_number' => $item->invoice->delivery_note_code,
         ]);
 
-        // Actualizar ContainerState
+        // Actualizar ContainerCurrentState (la reserva no cambia used_capacity, solo cuando se vende)
         if ($harvest->container_id) {
-            $state = ContainerState::firstOrCreate(
-                ['container_id' => $harvest->container_id],
-                [
-                    'content_type' => 'harvest',
-                    'harvest_id' => $harvest->id,
-                    'total_quantity' => $harvest->total_weight,
-                    'available_qty' => $harvest->total_weight,
-                    'reserved_qty' => 0,
-                    'sold_qty' => 0,
-                ]
-            );
-
-            $state->update([
-                'available_qty' => max(0, $state->available_qty - $item->quantity),
-                'reserved_qty' => $state->reserved_qty + $item->quantity,
-                'last_movement_at' => now(),
-                'last_movement_by' => Auth::id() ?? $item->invoice->user_id,
-            ]);
+            $container = Container::find($harvest->container_id);
+            if ($container) {
+                // La reserva no afecta used_capacity, solo cuando se confirma la venta
+                // Pero actualizamos el estado para tracking
+                $state = ContainerCurrentState::firstOrCreate(
+                    ['container_id' => $container->id],
+                    [
+                        'harvest_id' => $harvest->id,
+                        'current_quantity' => $harvest->total_weight,
+                        'has_subproducts' => false,
+                    ]
+                );
+            }
         }
 
         // Validación de seguridad: Verificar que no hay stock negativo
@@ -235,16 +231,12 @@ class InvoiceItemObserver
             'reference_number' => $item->invoice->delivery_note_code,
         ]);
 
-        // Actualizar ContainerState
+        // Actualizar ContainerCurrentState (la liberación no cambia used_capacity)
         if ($harvest->container_id) {
-            $state = ContainerState::where('container_id', $harvest->container_id)->first();
-            if ($state) {
-                $state->update([
-                    'available_qty' => $state->available_qty + $item->quantity,
-                    'reserved_qty' => max(0, $state->reserved_qty - $item->quantity),
-                    'last_movement_at' => now(),
-                    'last_movement_by' => Auth::id() ?? $item->invoice->user_id,
-                ]);
+            $container = Container::find($harvest->container_id);
+            if ($container) {
+                // La liberación de reserva no afecta used_capacity
+                // Solo se decrementa cuando se confirma la venta
             }
         }
 

@@ -4,9 +4,9 @@ namespace Tests\Traits;
 
 use App\Models\User;
 use App\Models\Harvest;
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Models\HarvestStock;
-use App\Models\ContainerState;
+use App\Models\ContainerCurrentState;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 
@@ -57,14 +57,17 @@ trait CreatesTestHarvest
         ]);
 
         // Create container
-        $container = HarvestContainer::create([
-            'harvest_id' => null,
-            'container_type' => 'cuba',
-            'container_number' => '1',
+        $container = Container::create([
+            'user_id' => $user->id,
+            'name' => 'Cuba Test',
+            'serial_number' => '1',
             'quantity' => 10,
-            'weight' => $weight,
-            'status' => 'filled',
-            'filled_date' => now(),
+            'capacity' => $weight * 1.2, // Capacidad 20% mayor que el peso
+            'used_capacity' => 0, // Inicialmente vacío
+            'purchase_date' => now(),
+            'unit_of_measurement_id' => 1, // kg
+            'type_id' => 1,
+            'material_id' => 1,
         ]);
 
         // Create harvest
@@ -78,8 +81,7 @@ trait CreatesTestHarvest
             'unit' => 'kg',
         ]);
 
-        // Update container's harvest_id
-        $container->update(['harvest_id' => $harvest->id]);
+        // El HarvestObserver actualizará automáticamente used_capacity y ContainerCurrentState
 
         // Create initial stock
         HarvestStock::create([
@@ -97,21 +99,9 @@ trait CreatesTestHarvest
             'notes' => 'Initial test stock',
         ]);
 
-        // Create container state
-        ContainerState::updateOrCreate(
-            ['container_id' => $container->id],
-            [
-                'total_quantity' => $weight,
-                'available_qty' => $weight,
-                'reserved_qty' => 0,
-                'sold_qty' => 0,
-                'gifted_qty' => 0,
-                'lost_qty' => 0,
-                'unit' => 'kg',
-                'last_movement_at' => now(),
-                'last_movement_by' => $user->id,
-            ]
-        );
+        // El ContainerCurrentState se crea automáticamente por el HarvestObserver
+        // Refrescar para obtener los datos actualizados
+        $container->refresh();
 
         return $harvest->fresh();
     }

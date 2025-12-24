@@ -115,7 +115,7 @@ class PacComplianceValidator
                 // 4. Validar superficie (solo para tratamientos fitosanitarios)
                 if ($activity->activity_type === 'phytosanitary' && $activity->phytosanitaryTreatment) {
                     $areaTreated = $activity->phytosanitaryTreatment->area_treated;
-                    $plotArea = $plot->total_area;
+                    $plotArea = $plot->area;
 
                     if ($areaTreated && $plotArea && $areaTreated > $plotArea) {
                         $warnings[] = sprintf(
@@ -133,7 +133,7 @@ class PacComplianceValidator
             }
 
             // 6. Validar superficie total de la parcela
-            if (!$plot->total_area || $plot->total_area <= 0) {
+            if (!$plot->area || $plot->area <= 0) {
                 $warnings[] = 'Parcela sin superficie total definida';
             }
         }
@@ -220,7 +220,7 @@ class PacComplianceValidator
         
         // 1. Justificación del tratamiento (obligatorio)
         if (!$treatment->treatment_justification || trim($treatment->treatment_justification) === '') {
-            $warnings[] = 'Falta justificación del tratamiento (plaga/enfermedad detectada) - Campo PAC obligatorio';
+            $errors[] = 'Falta justificación del tratamiento (plaga/enfermedad detectada) - Campo PAC obligatorio';
         }
 
         // 2. Número ROPO del aplicador (recomendado)
@@ -230,12 +230,12 @@ class PacComplianceValidator
 
         // 3. Plazo de reentrada (obligatorio)
         if (!$treatment->reentry_period_days) {
-            $warnings[] = 'Falta plazo de reentrada (días sin acceso a parcela) - Campo PAC obligatorio';
+            $errors[] = 'Falta plazo de reentrada (días sin acceso a parcela) - Campo PAC obligatorio';
         }
 
         // 4. Volumen de caldo (obligatorio)
         if (!$treatment->spray_volume || $treatment->spray_volume <= 0) {
-            $warnings[] = 'Falta volumen de caldo aplicado - Campo PAC obligatorio';
+            $errors[] = 'Falta volumen de caldo aplicado - Campo PAC obligatorio';
         }
 
         return [
@@ -264,17 +264,17 @@ class PacComplianceValidator
 
         // 1. Origen del agua (obligatorio)
         if (!$irrigation->water_source) {
-            $warnings[] = 'Falta origen del agua (pozo, río, etc.) - Campo PAC obligatorio';
+            $errors[] = 'Falta origen del agua (pozo, río, etc.) - Campo PAC obligatorio';
         }
 
         // 2. Número de concesión (obligatorio)
         if (!$irrigation->water_concession) {
-            $warnings[] = 'Falta número de concesión de agua - Campo PAC obligatorio';
+            $errors[] = 'Falta número de concesión de agua - Campo PAC obligatorio';
         }
 
         // 3. Caudal (obligatorio)
         if (!$irrigation->flow_rate || $irrigation->flow_rate <= 0) {
-            $warnings[] = 'Falta caudal de riego (L/h) - Campo PAC obligatorio';
+            $errors[] = 'Falta caudal de riego (L/h) - Campo PAC obligatorio';
         }
         
         // 4. Volumen total (recomendado/obligatorio según CCAA)
@@ -317,13 +317,13 @@ class PacComplianceValidator
 
         if ($isOrganic) {
             if (!$fert->manure_type) {
-                $warnings[] = 'Fertilizante orgánico: Falta especificar el tipo de estiércol - Obligatorio PAC';
+                $errors[] = 'Fertilizante orgánico: Falta especificar el tipo de estiércol - Obligatorio PAC';
             }
             if (!$fert->burial_date) {
-                $warnings[] = 'Fertilizante orgánico: Falta fecha de enterrado - Importante para reducción de emisiones';
+                $errors[] = 'Fertilizante orgánico: Falta fecha de enterrado - Importante para reducción de emisiones';
             }
             if (!$fert->emission_reduction_method) {
-                $warnings[] = 'Fertilizante orgánico: Falta método de reducción de emisiones';
+                $errors[] = 'Fertilizante orgánico: Falta método de reducción de emisiones';
             }
         }
 
@@ -473,6 +473,42 @@ class PacComplianceValidator
             return 100.0;
         }
 
-        return ($stats['with_valid_sigpac'] / $stats['total_activities']) * 100;
+        // Calcular actividades conformes (sin errores críticos)
+        $activitiesWithErrors = count($validation['errors']);
+        $compliantActivities = $stats['total_activities'] - $activitiesWithErrors;
+
+        return ($compliantActivities / $stats['total_activities']) * 100;
+    }
+    
+    /**
+     * Obtener estadísticas detalladas de cumplimiento por tipo de actividad
+     * 
+     * @param Collection $activities
+     * @return array
+     */
+    public function getComplianceStats(Collection $activities): array
+    {
+        $statsByType = [];
+        $activityTypes = ['phytosanitary', 'irrigation', 'fertilization', 'harvest', 'cultural', 'observation'];
+        
+        foreach ($activityTypes as $type) {
+            $typeActivities = $activities->where('activity_type', $type);
+            
+            if ($typeActivities->isEmpty()) {
+                continue;
+            }
+            
+            $validation = $this->validateActivities($typeActivities);
+            
+            $statsByType[$type] = [
+                'total' => $typeActivities->count(),
+                'compliant' => $typeActivities->count() - count($validation['errors']),
+                'errors' => count($validation['errors']),
+                'warnings' => count($validation['warnings']),
+                'percentage' => $this->getCompliancePercentage($validation),
+            ];
+        }
+        
+        return $statsByType;
     }
 }

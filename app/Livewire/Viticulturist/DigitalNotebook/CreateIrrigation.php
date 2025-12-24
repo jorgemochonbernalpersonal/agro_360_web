@@ -101,16 +101,16 @@ class CreateIrrigation extends Component
             ],
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
-            'water_volume' => 'nullable|numeric|min:0',
+            'water_volume' => 'required|numeric|min:0.01|max:1000000',
             'irrigation_method' => 'nullable|string|max:50',
             'duration_minutes' => 'nullable|integer|min:0',
             'soil_moisture_before' => 'nullable|numeric|min:0|max:100',
             'soil_moisture_after' => 'nullable|numeric|min:0|max:100',
-            'phenological_stage' => 'nullable|string|max:50',
-            // Campos PAC
-            'water_source' => 'nullable|string|max:100',
-            'water_concession' => 'nullable|string|max:100',
-            'flow_rate' => 'nullable|numeric|min:0',
+            'phenological_stage' => 'required|string|max:50',
+            // Campos PAC obligatorios (BCAM 5 - RD 1078/2014)
+            'water_source' => 'required|string|max:100',
+            'water_concession' => 'required|string|max:100',
+            'flow_rate' => 'required|numeric|min:0|max:100000',
             // Resto
             'crew_id' => 'nullable|exists:crews,id',
             'crew_member_id' => 'nullable|exists:crew_members,id',

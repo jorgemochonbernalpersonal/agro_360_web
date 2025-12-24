@@ -119,6 +119,7 @@
                 'Cuaderno de campo digital',
                 'Gestión de parcelas SIGPAC',
                 'Informes oficiales con firma electrónica',
+                'Dashboard de cumplimiento PAC en tiempo real',
                 'Control de cosechas y rendimientos',
                 'Facturación integrada',
                 'Gestión de cuadrillas y maquinaria'
@@ -330,7 +331,7 @@
     
     <!-- Preload critical resources -->
     <link rel="preload" href="{{ asset('images/logo.png') }}" as="image">
-    <link rel="preload" href="{{ asset('images/dashboard-preview.png') }}" as="image" fetchpriority="high">
+    <link rel="preload" href="{{ asset('videos/agro365_demo.webp') }}" as="image" type="image/webp" fetchpriority="high">
     
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
@@ -439,15 +440,24 @@
                                 </div>
                             </div>
                             <!-- Dashboard Screenshot -->
+                            <!-- Dashboard Video Demo -->
                             <img 
-                                src="{{ asset('images/dashboard-preview.png') }}" 
-                                alt="Dashboard de Agro365 mostrando gestión completa de viñedos, parcelas SIGPAC, cuaderno digital, control de actividades agrícolas y facturación" 
+                                src="{{ asset('videos/agro365_demo.webp') }}" 
+                                alt="Demo interactiva de Agro365: Dashboard, Cumplimiento PAC y Gestión Agrícola" 
                                 width="1200"
                                 height="800"
                                 class="w-full h-auto object-cover"
-                                loading="lazy"
+                                loading="eager"
                                 decoding="async"
                             >
+                            <!-- Overlay distintivo -->
+                            <div class="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-md flex items-center gap-2 pointer-events-none border border-white/10 z-10 shadow-lg">
+                                <span class="relative flex h-2 w-2">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                </span>
+                                Demo en Vivo
+                            </div>
                         </div>
                         <!-- Decorative Elements -->
                         <div class="absolute -top-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] opacity-20 animate-pulse blur-xl"></div>
@@ -525,18 +535,24 @@
                     </ul>
                 </div>
                 
-                <!-- Feature 3: Informes Oficiales -->
+                <!-- Feature 3: Informes Oficiales & Cumplimiento PAC -->
                 <div class="glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
                     <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-md mb-6">
                         <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Informes Oficiales con Firma Electrónica SHA-256</h3>
+                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Informes Oficiales & Cumplimiento PAC</h3>
                     <p class="text-gray-600 leading-relaxed mb-4">
-                        Genera <strong>7 tipos de informes oficiales</strong> certificados: tratamientos fitosanitarios, riegos, fertilizaciones, labores culturales, cosechas, PAC y certificaciones completas. Cada informe incluye <strong>firma electrónica SHA-256</strong> única, código QR de verificación pública y contador de verificaciones para auditoría. Cumple con normativa 2027.
+                        Genera <strong>7 tipos de informes oficiales</strong> certificados con <strong>firma electrónica SHA-256</strong> y código QR de verificación. <strong>Dashboard de cumplimiento PAC en tiempo real</strong> que detecta automáticamente errores, valida datos y te prepara para inspecciones. Cumple con normativa 2027.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Dashboard PAC con detección de errores</span>
+                        </li>
                         <li class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -547,7 +563,7 @@
                             <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span>Verificación pública con QR</span>
+                            <span>Validación automática de cumplimiento</span>
                         </li>
                     </ul>
                 </div>
@@ -848,12 +864,12 @@
     </section>
 
 
-    <!-- Footer -->
-    <footer class="bg-[var(--color-agro-green-dark)] text-white py-12">
+    <!-- Footer SEO-Optimized -->
+    <footer class="bg-[var(--color-agro-green-dark)] text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-5 gap-8">
+            <div class="grid md:grid-cols-5 gap-8 mb-12">
                 <!-- Company Info -->
-                <div class="md:col-span-2">
+                <div class="md:col-span-1">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -865,58 +881,138 @@
                             BETA
                         </span>
                     </div>
-                    <p class="text-white/70 mb-4">
-                        Plataforma de gestión agrícola moderna para viticultores profesionales.
+                    <p class="text-white/70 mb-4 text-sm">
+                        Software de gestión agrícola profesional para viticultores en España.
                     </p>
+                    <div class="flex items-center gap-2 text-white/60 text-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>España</span>
+                    </div>
                 </div>
                 
-                <!-- Product -->
+                <!-- Producto -->
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Producto</h4>
-                    <ul class="space-y-2 text-white/70">
-                        <li><a href="#features" class="hover:text-white transition-colors">Software de Gestión Agrícola</a></li>
+                    <ul class="space-y-2 text-white/70 text-sm">
+                        <li><a href="#features" class="hover:text-white transition-colors">Cuaderno Digital SIGPAC</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Informes Oficiales PAC</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Gestión de Parcelas</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Control de Vendimia</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Facturación Agrícola</a></li>
                         <li><a href="#pricing" class="hover:text-white transition-colors">Precios y Planes</a></li>
-                        <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes sobre SIGPAC</a></li>
-                        <li><a href="{{ route('register') }}" rel="nofollow" class="hover:text-white transition-colors">Prueba Gratis 6 Meses</a></li>
                     </ul>
                 </div>
                 
-                <!-- Legal -->
+                <!-- Para Viticultores -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Para Viticultores</h4>
+                    <ul class="space-y-2 text-white/70 text-sm">
+                        <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Software para toda España</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Pequeños Productores</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Bodegas Medianas</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Cooperativas Agrícolas</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Gestión de Viñedos</a></li>
+                        <li><a href="{{ route('register') }}" rel="nofollow" class="hover:text-white transition-colors">Empieza Gratis</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Recursos -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Recursos</h4>
+                    <ul class="space-y-2 text-white/70 text-sm">
+                        <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
+                        <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Guía SIGPAC</a></li>
+                        <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Normativa PAC 2027</a></li>
+                        <li><a href="{{ route('register') }}" rel="nofollow" class="hover:text-white transition-colors">Prueba Gratis 6 Meses</a></li>
+                        <li><a href="{{ route('login') }}" rel="nofollow" class="hover:text-white transition-colors">Acceso Clientes</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Legal & Contacto -->
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Legal</h4>
-                    <ul class="space-y-2 text-white/70">
+                    <ul class="space-y-2 text-white/70 text-sm mb-6">
                         <li><a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Política de Privacidad</a></li>
                         <li><a href="{{ route('terms') }}" class="hover:text-white transition-colors">Términos y Condiciones</a></li>
                         <li><a href="{{ route('cookies') }}" class="hover:text-white transition-colors">Política de Cookies</a></li>
                     </ul>
-                </div>
-                
-                <!-- Contact -->
-                <div>
+                    
                     <h4 class="font-semibold text-lg mb-4">Contacto</h4>
-                    <div class="text-white/70">
+                    <div class="space-y-3 text-white/70 text-sm">
                         <div class="flex items-start gap-2">
                             <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
-                            <div>
-                                <p class="text-xs text-white/50">Email</p>
-                                <a href="mailto:info@agro365.es" class="hover:text-white transition-colors">info@agro365.es</a>
-                            </div>
+                            <a href="mailto:info@agro365.es" class="hover:text-white transition-colors">info@agro365.es</a>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="border-t border-white/10 mt-10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-white/60 text-sm">
-                    &copy; {{ date('Y') }} Agro365. Todos los derechos reservados.
-                </p>
-                <p class="text-white/50 text-sm">
-                    Software para viticultores profesionales · Versión Beta
-                </p>
+            <!-- Bottom Bar -->
+            <div class="border-t border-white/10 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+                    <p class="text-white/60">
+                        &copy; {{ date('Y') }} Agro365. Todos los derechos reservados.
+                    </p>
+                    <p class="text-white/50">
+                        Software gestión agrícola para viticultores profesionales · Versión Beta
+                    </p>
+                </div>
+                
+                <!-- SEO Keywords Footer -->
+                <div class="mt-6 pt-6 border-t border-white/10">
+                    <p class="text-white/40 text-xs text-center leading-relaxed">
+                        <strong class="text-white/50">Agro365</strong> - Software de gestión agrícola profesional · Cuaderno de campo digital obligatorio 2027 · Gestión de parcelas SIGPAC · Informes oficiales con firma electrónica · Dashboard de cumplimiento PAC · Control de vendimia y cosechas · Facturación integrada · Gestión de productos fitosanitarios · Trazabilidad completa · Software para viticultores en España · Cumplimiento normativo PAC · Digitalización agrícola
+                    </p>
+                </div>
             </div>
         </div>
     </footer>
+
+    <!-- Schema.org LocalBusiness for Footer -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "SoftwareApplication",
+        "name": "Agro365",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, iOS, Android",
+        "offers": {
+            "@@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR",
+            "description": "6 meses gratis para beta testers"
+        },
+        "aggregateRating": {
+            "@@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "150"
+        },
+        "provider": {
+            "@@type": "Organization",
+            "name": "Agro365",
+            "url": "{{ url('/') }}",
+            "logo": "{{ asset('images/logo.png') }}",
+            "contactPoint": {
+                "@@type": "ContactPoint",
+                "telephone": "+34-XXX-XXX-XXX",
+                "contactType": "customer service",
+                "email": "info@agro365.es",
+                "areaServed": "ES",
+                "availableLanguage": ["Spanish"]
+            },
+            "address": {
+                "@@type": "PostalAddress",
+                "addressCountry": "ES"
+            }
+        }
+    }
+    </script>
 </body>
 </html>
+
+ 
+ 

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook\Containers;
 
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Models\Harvest;
 use App\Models\Campaign;
 use Livewire\Component;
@@ -71,62 +71,69 @@ class Index extends Component
 
         // Construir query de contenedores
         // Mostrar todos los contenedores del usuario (con o sin cosecha)
-        $query = HarvestContainer::query()
-            ->with(['harvest.activity.plot', 'harvest.plotPlanting.grapeVariety', 'harvest.activity.campaign'])
+        $query = Container::query()
+            ->where('user_id', $user->id)
             ->where(function($q) use ($user) {
                 // Contenedores sin cosecha (disponibles)
-                $q->whereNull('harvest_id')
+                $q->whereDoesntHave('harvests')
                   // O contenedores con cosecha del usuario
-                  ->orWhereHas('harvest.activity', function($subQ) use ($user) {
+                  ->orWhereHas('harvests.activity', function($subQ) use ($user) {
                       $subQ->where('viticulturist_id', $user->id);
                   });
             });
 
         // Filtro por disponibilidad
         if ($this->filterAvailability === 'available') {
-            $query->whereNull('harvest_id');
+            $query->whereDoesntHave('harvests');
         } elseif ($this->filterAvailability === 'assigned') {
-            $query->whereNotNull('harvest_id')
-                  ->whereHas('harvest.activity', function($q) use ($user) {
-                      $q->where('viticulturist_id', $user->id);
-                  });
+            $query->whereHas('harvests.activity', function($q) use ($user) {
+                $q->where('viticulturist_id', $user->id);
+            });
         }
 
         // Filtro por campaña (solo para contenedores asignados)
         if ($this->selectedCampaign) {
-            $query->whereHas('harvest.activity', function($q) {
+            $query->whereHas('harvests.activity', function($q) {
                 $q->where('campaign_id', $this->selectedCampaign);
             });
         }
 
         // Filtro por cosecha
         if ($this->selectedHarvest) {
-            $query->where('harvest_id', $this->selectedHarvest);
+            $query->whereHas('harvests', function($q) {
+                $q->where('id', $this->selectedHarvest);
+            });
         }
 
-        // Filtro por estado
+        // Filtro por estado (usando archived en lugar de status)
         if ($this->filterStatus) {
-            $query->where('status', $this->filterStatus);
+            if ($this->filterStatus === 'archived') {
+                $query->where('archived', true);
+            } elseif ($this->filterStatus === 'active') {
+                $query->where('archived', false);
+            }
         }
 
-        // Filtro por tipo
+        // Filtro por tipo (usando type_id)
         if ($this->filterType) {
-            $query->where('container_type', $this->filterType);
+            $query->where('type_id', $this->filterType);
         }
 
         // Búsqueda
         if ($this->search) {
             $query->where(function($q) {
-                $q->where('container_number', 'like', '%' . $this->search . '%')
-                  ->orWhere('location', 'like', '%' . $this->search . '%')
-                  ->orWhere('notes', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('harvest.activity.plot', function($subQ) {
+                $q->where('name', 'like', '%' . $this->search . '%')
+                  ->orWhere('serial_number', 'like', '%' . $this->search . '%')
+                  ->orWhere('description', 'like', '%' . $this->search . '%')
+                  ->orWhereHas('harvests.activity.plot', function($subQ) {
                       $subQ->where('name', 'like', '%' . $this->search . '%');
                   });
             });
         }
 
-        $containers = $query->orderBy('created_at', 'desc')
+        $containers = $query
+            ->with(['harvests.activity.plot', 'harvests.plotPlanting.grapeVariety', 'harvests.activity.campaign', 'currentState'])
+            ->orderBy('created_at', 'desc')
             ->paginate(15);
 
         // Obtener cosechas para el filtro
@@ -142,22 +149,24 @@ class Index extends Component
         }
 
         // Estadísticas
-        $baseQuery = HarvestContainer::where(function($q) use ($user) {
-            $q->whereNull('harvest_id')
-              ->orWhereHas('harvest.activity', function($subQ) use ($user) {
-                  $subQ->where('viticulturist_id', $user->id);
-                  if ($this->selectedCampaign) {
-                      $subQ->where('campaign_id', $this->selectedCampaign);
-                  }
-              });
-        });
+        $baseQuery = Container::where('user_id', $user->id)
+            ->where(function($q) use ($user) {
+                $q->whereDoesntHave('harvests')
+                  ->orWhereHas('harvests.activity', function($subQ) use ($user) {
+                      $subQ->where('viticulturist_id', $user->id);
+                      if ($this->selectedCampaign) {
+                          $subQ->where('campaign_id', $this->selectedCampaign);
+                      }
+                  });
+            });
 
         $stats = [
             'total' => (clone $baseQuery)->count(),
-            'total_weight' => (clone $baseQuery)->sum('weight'),
-            'available' => (clone $baseQuery)->whereNull('harvest_id')->count(),
-            'assigned' => (clone $baseQuery)->whereNotNull('harvest_id')->count(),
-            'delivered' => (clone $baseQuery)->where('status', 'delivered')->count(),
+            'total_capacity' => (clone $baseQuery)->sum('capacity'),
+            'total_used' => (clone $baseQuery)->sum('used_capacity'),
+            'available' => (clone $baseQuery)->whereDoesntHave('harvests')->count(),
+            'assigned' => (clone $baseQuery)->whereHas('harvests')->count(),
+            'archived' => (clone $baseQuery)->where('archived', true)->count(),
         ];
 
         return view('livewire.viticulturist.digital-notebook.containers.index', [

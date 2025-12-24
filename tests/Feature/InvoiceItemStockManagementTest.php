@@ -9,8 +9,8 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\HarvestContainer;
-use App\Models\ContainerState;
+use App\Models\Container;
+use App\Models\ContainerCurrentState;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class InvoiceItemStockManagementTest extends TestCase

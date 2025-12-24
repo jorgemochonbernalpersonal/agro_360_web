@@ -218,6 +218,40 @@ class Create extends Component
                 $plots = $treatments->pluck('activity.plot')->unique('id');
                 $products = $treatments->pluck('product')->unique('id');
                 $totalArea = $treatments->sum('area_treated');
+                
+                // VALIDACIÓN PAC: Verificar cumplimiento antes de generar
+                $validator = new \App\Services\Validators\PacComplianceValidator();
+                $activities = \App\Models\AgriculturalActivity::ofType('phytosanitary')
+                    ->forUser($user->id)
+                    ->whereBetween('activity_date', [$this->startDate, $this->endDate])
+                    ->with(['plot.sigpacCodes', 'plot.sigpacUses', 'phytosanitaryTreatment.product'])
+                    ->get();
+                
+                $validation = $validator->validateActivities($activities);
+                
+                // Si hay errores críticos PAC, no permitir generar
+                if (!$validation['is_compliant']) {
+                    $errorCount = count($validation['errors']);
+                    $this->addError('generation', 
+                        "⚠️ El informe contiene {$errorCount} error(es) PAC que deben corregirse antes de generar (RD 1311/2012)."
+                    );
+                    
+                    // Mostrar los primeros 3 errores específicos
+                    $errorMessages = [];
+                    foreach (array_slice($validation['errors'], 0, 3) as $error) {
+                        $errorMessages[] = "Actividad #{$error['activity_id']} ({$error['activity_date']}): " . implode(', ', $error['errors']);
+                    }
+                    
+                    if ($errorCount > 3) {
+                        $errorMessages[] = "... y " . ($errorCount - 3) . " error(es) más.";
+                    }
+                    
+                    foreach ($errorMessages as $idx => $msg) {
+                        $this->addError('pac_error_' . $idx, $msg);
+                    }
+                    
+                    return;
+                }
 
                 // Estimar tamaño (aproximado)
                 $estimatedSizeKb = 150 + ($totalTreatments * 5);  // Base 150KB + 5KB por tratamiento
@@ -231,6 +265,8 @@ class Create extends Component
                     'total_area' => round($totalArea, 2),
                     'estimated_size' => $estimatedSizeKb > 1024 ? round($estimatedSizeKb / 1024, 1) . ' MB' : $estimatedSizeKb . ' KB',
                     'estimated_time' => $totalTreatments < 20 ? '5-10' : ($totalTreatments < 50 ? '10-15' : '15-30'),
+                    'pac_warnings' => $validation['has_warnings'] ? count($validation['warnings']) : 0,
+                    'pac_compliance' => round($validator->getCompliancePercentage($validation), 1),
                 ];
             } else {
                 // Cuaderno completo

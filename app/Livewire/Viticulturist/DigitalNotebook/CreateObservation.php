@@ -26,6 +26,7 @@ class CreateObservation extends Component
     public $description = '';
     public $severity = '';
     public $action_taken = '';
+    public $phenological_stage = ''; // Estadio fenológico
     public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
     public $crew_member_id = '';
@@ -93,10 +94,11 @@ class CreateObservation extends Component
             ],
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
-            'observation_type' => 'nullable|string|max:50',
+            'observation_type' => 'required|string|max:50',
             'description' => 'required|string',
             'severity' => 'nullable|string|in:leve,moderada,grave',
             'action_taken' => 'nullable|string',
+            'phenological_stage' => 'required|string|max:50',
             'crew_id' => 'nullable|exists:crews,id',
             'crew_member_id' => 'nullable|exists:crew_members,id',
             'machinery_id' => 'nullable|exists:machinery,id',
@@ -160,6 +162,7 @@ class CreateObservation extends Component
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'observation',
+                    'phenological_stage' => $this->phenological_stage,
                     'activity_date' => $this->activity_date,
                     'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
                     'crew_member_id' => $crewMemberId,

@@ -84,7 +84,7 @@ class Harvest extends Model
      */
     public function container(): BelongsTo
     {
-        return $this->belongsTo(HarvestContainer::class, 'container_id');
+        return $this->belongsTo(Container::class, 'container_id');
     }
 
     /**
@@ -151,11 +151,11 @@ class Harvest extends Model
     }
 
     /**
-     * Obtener el peso del contenedor asignado
+     * Obtener la capacidad usada del contenedor asignado
      */
     public function getContainerWeight(): ?float
     {
-        return $this->container ? $this->container->weight : null;
+        return $this->container ? $this->container->used_capacity : null;
     }
 
     /**

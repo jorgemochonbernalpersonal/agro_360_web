@@ -4,6 +4,9 @@ namespace App\Observers;
 
 use App\Models\Invoice;
 use App\Models\HarvestStock;
+use App\Models\Container;
+use App\Models\ContainerCurrentState;
+use App\Models\ContainerHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -216,15 +219,28 @@ class InvoiceObserver
                     'reference_number' => $invoice->invoice_number,
                 ]);
 
-                // Actualizar contenedor
+                // Actualizar contenedor: decrementar used_capacity porque se vendió
                 if ($harvest->container_id) {
-                    $state = \App\Models\ContainerState::where('container_id', $harvest->container_id)->first();
-                    if ($state) {
-                        $state->update([
-                            'reserved_qty' => $state->reserved_qty - $item->quantity,
-                            'sold_qty' => $state->sold_qty + $item->quantity,
-                            'last_movement_at' => now(),
-                            'last_movement_by' => Auth::id(),
+                    $container = Container::find($harvest->container_id);
+                    if ($container) {
+                        // Decrementar used_capacity porque se vendió
+                        $container->decrementUsedCapacity($item->quantity);
+
+                        // Actualizar estado actual
+                        $state = ContainerCurrentState::where('container_id', $container->id)->first();
+                        if ($state) {
+                            $newQuantity = max(0, $state->current_quantity - $item->quantity);
+                            $state->updateQuantity($newQuantity);
+                        }
+
+                        // Registrar en historial
+                        ContainerHistory::create([
+                            'container_id' => $container->id,
+                            'harvest_id' => $harvest->id,
+                            'operation_type' => 'sale',
+                            'created_by' => Auth::id(),
+                            'quantity' => -$item->quantity, // Negativo porque es salida
+                            'start_date' => now(),
                         ]);
                     }
                 }
@@ -274,15 +290,28 @@ class InvoiceObserver
                 'reference_number' => $invoice->invoice_number,
             ]);
 
-            // Actualizar contenedor
+            // Actualizar contenedor: incrementar used_capacity porque se revierte la venta
             if ($harvest->container_id) {
-                $state = \App\Models\ContainerState::where('container_id', $harvest->container_id)->first();
-                if ($state) {
-                    $state->update([
-                        'reserved_qty' => $state->reserved_qty + $item->quantity,
-                        'sold_qty' => $state->sold_qty - $item->quantity,
-                        'last_movement_at' => now(),
-                        'last_movement_by' => Auth::id(),
+                $container = Container::find($harvest->container_id);
+                if ($container) {
+                    // Incrementar used_capacity porque se revierte la venta
+                    $container->incrementUsedCapacity($item->quantity);
+
+                    // Actualizar estado actual
+                    $state = ContainerCurrentState::where('container_id', $container->id)->first();
+                    if ($state) {
+                        $newQuantity = $state->current_quantity + $item->quantity;
+                        $state->updateQuantity($newQuantity);
+                    }
+
+                    // Registrar en historial
+                    ContainerHistory::create([
+                        'container_id' => $container->id,
+                        'harvest_id' => $harvest->id,
+                        'operation_type' => 'adjustment',
+                        'created_by' => Auth::id(),
+                        'quantity' => $item->quantity, // Positivo porque se revierte
+                        'start_date' => now(),
                     ]);
                 }
             }

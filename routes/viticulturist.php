@@ -40,6 +40,15 @@ Route::middleware(['role:viticulturist', 'check.beta'])
 
         // Estadísticas Financieras
         Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
+        
+        // Dashboard de Cumplimiento PAC
+        Route::get('/pac-compliance', \App\Livewire\Viticulturist\PacComplianceDashboard::class)->name('pac-compliance');
+        
+        // Gestión de Plagas y Enfermedades
+        Route::prefix('pest-management')->name('pest-management.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PestManagement\Index::class)->name('index');
+            Route::get('/{pest}', \App\Livewire\Viticulturist\PestManagement\Show::class)->name('show');
+        });
 
         // Campañas
         Route::prefix('campaign')->name('campaign.')->group(function () {

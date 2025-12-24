@@ -3,7 +3,7 @@
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
 use App\Models\Harvest;
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Models\EstimatedYield;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -64,9 +64,21 @@ class ShowHarvest extends Component
         }
     }
 
-    public function getContainerWeight()
+    public function getContainerUsedCapacity()
     {
-        return $this->harvest->container ? $this->harvest->container->weight : 0;
+        return $this->harvest->container ? $this->harvest->container->used_capacity : 0;
+    }
+
+    public function getContainersCount()
+    {
+        // Si hay un contenedor asignado, retornar 1
+        return $this->harvest->container ? 1 : 0;
+    }
+
+    public function getContainersTotalWeight()
+    {
+        // Retornar la capacidad usada del contenedor (no la capacidad total)
+        return $this->harvest->container ? $this->harvest->container->used_capacity : 0;
     }
 
     public function render()

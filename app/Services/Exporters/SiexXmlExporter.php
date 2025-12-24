@@ -100,8 +100,8 @@ class SiexXmlExporter
                 $this->addElement($xml, $sigpacNode, 'Poligono', $sigpacCode->code_polygon ?? '');
                 $this->addElement($xml, $sigpacNode, 'Parcela', $sigpacCode->code_plot ?? '');
                 $this->addElement($xml, $sigpacNode, 'Recinto', $sigpacCode->code_enclosure ?? '');
-                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string)($plot?->total_area ?? ''));
-                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse?->name ?? '');
+                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string)($plot?->area ?? ''));
+                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse?->description ?? '');
                 $ubicacion->appendChild($sigpacNode);
             }
             
@@ -239,8 +239,8 @@ class SiexXmlExporter
                 $this->addElement($xml, $sigpacNode, 'Poligono', $sigpacCode->code_polygon ?? '');
                 $this->addElement($xml, $sigpacNode, 'Parcela', $sigpacCode->code_plot ?? '');
                 $this->addElement($xml, $sigpacNode, 'Recinto', $sigpacCode->code_enclosure ?? '');
-                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string)($plot?->total_area ?? ''));
-                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse?->name ?? '');
+                $this->addElement($xml, $sigpacNode, 'SuperficieTotal', (string)($plot?->area ?? ''));
+                $this->addElement($xml, $sigpacNode, 'UsoSIGPAC', $sigpacUse?->description ?? '');
                 $ubicacion->appendChild($sigpacNode);
             }
             

@@ -5,7 +5,7 @@ namespace Tests\Unit\Models;
 use App\Models\Harvest;
 use App\Models\AgriculturalActivity;
 use App\Models\PlotPlanting;
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Models\HarvestStock;
 use App\Models\InvoiceItem;
 use App\Models\User;
@@ -74,7 +74,7 @@ class HarvestTest extends TestCase
     public function test_harvest_belongs_to_container(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $container = HarvestContainer::factory()->create(['user_id' => $viticulturist->id]);
+        $container = Container::factory()->create(['user_id' => $viticulturist->id]);
 
         $harvest = Harvest::factory()->create([
             'container_id' => $container->id,
@@ -251,18 +251,22 @@ class HarvestTest extends TestCase
         $this->assertFalse($harvest->isCancelled());
     }
 
-    public function test_get_container_weight_returns_weight_when_has_container(): void
+    public function test_get_container_weight_returns_used_capacity_when_has_container(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $container = HarvestContainer::factory()->create([
+        $container = Container::factory()->create([
             'user_id' => $viticulturist->id,
-            'weight' => 25.5,
+            'capacity' => 1000.0,
+            'used_capacity' => 25.5,
         ]);
 
         $harvest = Harvest::factory()->create([
             'container_id' => $container->id,
+            'total_weight' => 25.5,
         ]);
 
+        // El HarvestObserver actualiza used_capacity automáticamente
+        $container->refresh();
         $this->assertEquals(25.5, $harvest->getContainerWeight());
     }
 
@@ -278,7 +282,7 @@ class HarvestTest extends TestCase
     public function test_has_container_returns_true_when_has_container(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
-        $container = HarvestContainer::factory()->create(['user_id' => $viticulturist->id]);
+        $container = Container::factory()->create(['user_id' => $viticulturist->id]);
 
         $harvest = Harvest::factory()->create([
             'container_id' => $container->id,

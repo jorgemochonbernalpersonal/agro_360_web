@@ -147,11 +147,11 @@
                     <option value="">Selecciona un contenedor</option>
                     @foreach($availableContainers as $container)
                         <option value="{{ $container->id }}">
-                            {{ ucfirst($container->container_type) }}
-                            @if($container->container_number)
-                                #{{ $container->container_number }}
+                            {{ $container->name }}
+                            @if($container->serial_number)
+                                #{{ $container->serial_number }}
                             @endif
-                            - {{ number_format($container->weight, 2) }} kg
+                            - {{ number_format($container->getAvailableCapacity(), 2) }} / {{ number_format($container->capacity, 2) }} kg disponible
                         </option>
                     @endforeach
                 </x-select>
@@ -174,7 +174,10 @@
                     @if($selectedContainer)
                         <div class="mt-2 p-3 bg-blue-50 rounded-lg">
                             <p class="text-sm text-blue-900">
-                                <strong>Peso del contenedor:</strong> {{ number_format($selectedContainer->weight, 2) }} kg
+                                <strong>Capacidad disponible:</strong> {{ number_format($selectedContainer->getAvailableCapacity(), 2) }} / {{ number_format($selectedContainer->capacity, 2) }} kg
+                            </p>
+                            <p class="text-xs text-blue-700 mt-1">
+                                Ocupación: {{ number_format($selectedContainer->getOccupancyPercentage(), 1) }}%
                             </p>
                         </div>
                     @endif

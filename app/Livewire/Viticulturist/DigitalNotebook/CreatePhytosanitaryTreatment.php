@@ -106,11 +106,11 @@ class CreatePhytosanitaryTreatment extends Component
             ],
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
-            'phenological_stage' => 'nullable|string|max:50',
+            'phenological_stage' => 'required|string|max:50',
             'product_id' => 'required|exists:phytosanitary_products,id',
-            'dose_per_hectare' => 'nullable|numeric|min:0',
+            'dose_per_hectare' => 'required|numeric|min:0.01|max:100',
             'total_dose' => 'nullable|numeric|min:0',
-            'area_treated' => 'nullable|numeric|min:0',
+            'area_treated' => 'required|numeric|min:0.01',
             'application_method' => 'nullable|string|max:50',
             'target_pest' => 'nullable|string|max:255',
             'crew_id' => 'nullable|exists:crews,id',
@@ -121,11 +121,11 @@ class CreatePhytosanitaryTreatment extends Component
             'wind_speed' => 'nullable|numeric|min:0',
             'humidity' => 'nullable|numeric|min:0|max:100',
             'notes' => 'nullable|string',
-            // Campos PAC obligatorios
-            'treatment_justification' => 'required|string|min:10',
-            'applicator_ropo_number' => 'nullable|string|max:50',
-            'reentry_period_days' => 'required|integer|min:0',
-            'spray_volume' => 'required|numeric|min:0.01',
+            // Campos PAC obligatorios (RD 1311/2012)
+            'treatment_justification' => 'required|string|min:10|max:500',
+            'applicator_ropo_number' => 'required|string|max:50',
+            'reentry_period_days' => 'required|integer|min:0|max:365',
+            'spray_volume' => 'required|numeric|min:0.01|max:10000',
         ];
     }
 

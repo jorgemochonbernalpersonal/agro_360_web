@@ -28,33 +28,40 @@
         {{-- Información del Contenedor --}}
         <x-form-section title="Información del Contenedor" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Tipo de contenedor --}}
+                {{-- Nombre del contenedor --}}
                 <div>
-                    <x-label for="container_type" required>Tipo de Contenedor</x-label>
-                    <x-select 
-                        wire:model="container_type" 
-                        id="container_type"
-                        :error="$errors->first('container_type')"
+                    <x-label for="name" required>Nombre del Contenedor</x-label>
+                    <x-input 
+                        wire:model="name" 
+                        type="text" 
+                        id="name"
+                        placeholder="Ej: Contenedor Principal, Cuba 1, Depósito A"
+                        :error="$errors->first('name')"
                         required
-                    >
-                        <option value="caja">Caja</option>
-                        <option value="pallet">Pallet</option>
-                        <option value="contenedor">Contenedor</option>
-                        <option value="saco">Saco</option>
-                        <option value="cuba">Cuba</option>
-                        <option value="other">Otro</option>
-                    </x-select>
+                    />
                 </div>
 
-                {{-- Número de contenedor --}}
+                {{-- Número de serie --}}
                 <div>
-                    <x-label for="container_number">Número/Identificador</x-label>
+                    <x-label for="serial_number">Número de Serie/Identificador</x-label>
                     <x-input 
-                        wire:model="container_number" 
+                        wire:model="serial_number" 
                         type="text" 
-                        id="container_number"
-                        placeholder="Ej: C-001, PALLET-123"
-                        :error="$errors->first('container_number')"
+                        id="serial_number"
+                        placeholder="Ej: CONT-001, SER-12345"
+                        :error="$errors->first('serial_number')"
+                    />
+                </div>
+
+                {{-- Descripción --}}
+                <div class="md:col-span-2">
+                    <x-label for="description">Descripción</x-label>
+                    <x-textarea 
+                        wire:model="description" 
+                        id="description"
+                        rows="3"
+                        placeholder="Descripción adicional del contenedor..."
+                        :error="$errors->first('description')"
                     />
                 </div>
 
@@ -62,7 +69,7 @@
                 <div>
                     <x-label for="quantity" required>Cantidad</x-label>
                     <x-input 
-                        wire:model.live="quantity" 
+                        wire:model="quantity" 
                         type="number" 
                         min="1"
                         step="1"
@@ -73,64 +80,32 @@
                     />
                 </div>
 
-                {{-- Peso total --}}
+                {{-- Capacidad total --}}
                 <div>
-                    <x-label for="weight" required>Peso Total (kg)</x-label>
+                    <x-label for="capacity" required>Capacidad Total (kg)</x-label>
                     <x-input 
-                        wire:model.live="weight" 
+                        wire:model="capacity" 
                         type="number" 
-                        step="0.001"
+                        step="0.01"
                         min="0.01"
-                        id="weight"
+                        id="capacity"
                         placeholder="0.00"
-                        :error="$errors->first('weight')"
+                        :error="$errors->first('capacity')"
                         required
                     />
+                    <p class="mt-1 text-xs text-gray-500">Capacidad máxima que puede almacenar el contenedor</p>
                 </div>
 
-                {{-- Peso por unidad (calculado) --}}
-                @if($weight_per_unit)
-                    <div>
-                        <x-label for="weight_per_unit">Peso por Unidad (kg)</x-label>
-                        <x-input 
-                            wire:model="weight_per_unit" 
-                            type="number" 
-                            step="0.001"
-                            id="weight_per_unit"
-                            readonly
-                            class="bg-gray-100"
+                {{-- Archivado --}}
+                <div class="md:col-span-2">
+                    <label class="flex items-center gap-2">
+                        <input 
+                            type="checkbox" 
+                            wire:model="archived"
+                            class="rounded border-gray-300 text-[var(--color-agro-green)] focus:ring-[var(--color-agro-green)]"
                         />
-                        <p class="mt-1 text-xs text-gray-500">Calculado automáticamente</p>
-                    </div>
-                @endif
-
-                {{-- Ubicación --}}
-                <div>
-                    <x-label for="location">Ubicación</x-label>
-                    <x-input 
-                        wire:model="location" 
-                        type="text" 
-                        id="location"
-                        placeholder="Ej: Almacén 1, Campo, Bodega"
-                        :error="$errors->first('location')"
-                    />
-                </div>
-
-                {{-- Estado --}}
-                <div>
-                    <x-label for="status" required>Estado</x-label>
-                    <x-select 
-                        wire:model="status" 
-                        id="status"
-                        :error="$errors->first('status')"
-                        required
-                    >
-                        <option value="filled">Llenado</option>
-                        <option value="in_transit">En tránsito</option>
-                        <option value="delivered">Entregado</option>
-                        <option value="stored">Almacenado</option>
-                        <option value="empty">Vacío</option>
-                    </x-select>
+                        <span class="text-sm text-gray-700">Contenedor archivado (no aparecerá en listados activos)</span>
+                    </label>
                 </div>
             </div>
         </x-form-section>
@@ -138,41 +113,27 @@
         {{-- Fechas --}}
         <x-form-section title="Fechas" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Fecha de llenado --}}
+                {{-- Fecha de compra --}}
                 <div>
-                    <x-label for="filled_date">Fecha de Llenado</x-label>
+                    <x-label for="purchase_date">Fecha de Compra/Adquisición</x-label>
                     <x-input 
-                        wire:model="filled_date" 
+                        wire:model="purchase_date" 
                         type="date" 
-                        id="filled_date"
-                        :error="$errors->first('filled_date')"
+                        id="purchase_date"
+                        :error="$errors->first('purchase_date')"
                     />
                 </div>
 
-                {{-- Fecha de entrega --}}
+                {{-- Próximo mantenimiento --}}
                 <div>
-                    <x-label for="delivery_date">Fecha de Entrega</x-label>
+                    <x-label for="next_maintenance_date">Próximo Mantenimiento</x-label>
                     <x-input 
-                        wire:model="delivery_date" 
+                        wire:model="next_maintenance_date" 
                         type="date" 
-                        id="delivery_date"
-                        :error="$errors->first('delivery_date')"
+                        id="next_maintenance_date"
+                        :error="$errors->first('next_maintenance_date')"
                     />
                 </div>
-            </div>
-        </x-form-section>
-
-        {{-- Notas --}}
-        <x-form-section title="Notas Adicionales" color="green">
-            <div>
-                <x-label for="notes">Notas</x-label>
-                <x-textarea 
-                    wire:model="notes" 
-                    id="notes"
-                    rows="4"
-                    placeholder="Observaciones adicionales sobre el contenedor..."
-                    :error="$errors->first('notes')"
-                />
             </div>
         </x-form-section>
 

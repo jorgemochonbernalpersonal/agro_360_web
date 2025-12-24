@@ -6,7 +6,7 @@ use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\Harvest;
-use App\Models\HarvestContainer;
+use App\Models\Container;
 use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\Machinery;
@@ -163,7 +163,7 @@ class EditHarvest extends Component
      */
     protected function loadAvailableContainers()
     {
-        $query = HarvestContainer::whereNull('harvest_id');
+        $query = Container::available()->whereDoesntHave('harvests');
         
         // Incluir el contenedor actual si existe
         if ($this->original_container_id) {
@@ -179,10 +179,10 @@ class EditHarvest extends Component
     public function updatedContainerId($value)
     {
         if ($value && $value != $this->original_container_id) {
-            $container = HarvestContainer::find($value);
-            if ($container && $container->isAvailable()) {
-                // Actualizar el peso con el peso del nuevo contenedor
-                $this->total_weight = $container->weight;
+            $container = Container::find($value);
+            if ($container && $container->hasAvailableCapacity($this->total_weight ?? 0)) {
+                // No actualizamos el peso automáticamente, el usuario lo define
+                // Solo validamos que el contenedor tenga capacidad disponible
                 $this->calculateYieldPerHectare();
                 $this->calculateTotalValue();
                 $this->updateControlPanelData();
@@ -467,7 +467,7 @@ class EditHarvest extends Component
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
         
         // Validar que el contenedor existe y está disponible (o es el actual)
-        $container = HarvestContainer::find($this->container_id);
+        $container = Container::find($this->container_id);
         if (!$container) {
             $this->addError('container_id', 'El contenedor seleccionado no existe.');
             return;
@@ -514,7 +514,7 @@ class EditHarvest extends Component
                 if ($this->container_id != $this->original_container_id) {
                     // Desvincular el contenedor anterior
                     if ($this->original_container_id) {
-                        HarvestContainer::where('id', $this->original_container_id)
+                        Container::where('id', $this->original_container_id)
                             ->update(['harvest_id' => null]);
                     }
                     

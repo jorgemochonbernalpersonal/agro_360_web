@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Mail\ReportGeneratedMail;
 use App\Mail\ReportGenerationFailedMail;
 use App\Models\OfficialReport;
+use App\Models\User;
 use App\Services\Validators\PacComplianceValidator;
 use App\Services\OfficialReportService;
 use Carbon\Carbon;
@@ -42,6 +43,23 @@ class GenerateOfficialReportJob implements ShouldQueue
 
         if (!$report) {
             Log::error('Report not found for job', ['id' => $this->reportId]);
+            
+            // Notificar al usuario del fallo
+            $user = User::find($this->userId);
+            if ($user) {
+                // Crear un reporte temporal solo para la notificación
+                $tempReport = new OfficialReport([
+                    'id' => $this->reportId,
+                    'report_type' => $this->reportType,
+                    'user_id' => $this->userId,
+                ]);
+                
+                $user->notify(new \App\Notifications\ReportFailedNotification(
+                    $tempReport,
+                    'El informe no fue encontrado en la base de datos. Puede haber sido eliminado antes de procesarse.'
+                ));
+            }
+            
             return;
         }
 
@@ -69,16 +87,15 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ])
                     ->with([
                         'phytosanitaryTreatment.product',
-                        'plot:id,name,total_area',
+                        'plot:id,name,area',
                         'plot.sigpacCodes' => function ($query) {
                             $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality',
                                 'code_polygon', 'code_plot', 'code_enclosure',
                                 'code_autonomous_community', 'code_aggregate', 'code_zone');
                         },
-                        'plot.sigpacUses:id,name,description',
+                        'plot.sigpacUses:id,code,description',
                         'phytosanitaryTreatment:id,activity_id,product_id,area_treated',
                         'phytosanitaryTreatment.product:id,name',
-                        'plot:id,name,area',
                         'plotPlanting:id,plot_id,name',
                         'plotPlanting.grapeVariety:id,name',
                         'crewMember:id,name',
@@ -173,30 +190,6 @@ class GenerateOfficialReportJob implements ShouldQueue
                 $campaignId = $this->parameters['campaign_id'];
                 $campaign = \App\Models\Campaign::findOrFail($campaignId);
 
-                // Obtener TODAS las actividades de la campaña
-                $activities = \App\Models\AgriculturalActivity::forUser($this->userId)
-                    ->forCampaign($campaignId)
-                    ->with([
-                        'plot:id,name,total_area',
-                        'plot.sigpacCodes' => function ($query) {
-                            $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality',
-                                'code_polygon', 'code_plot', 'code_enclosure',
-                                'code_autonomous_community', 'code_aggregate', 'code_zone');
-                        },
-                        'plot.sigpacUses:id,name,description',
-                        'plotPlanting.grapeVariety',
-                        'phytosanitaryTreatment.product',
-                        'fertilization',
-                        'irrigation',
-                        'culturalWork',
-                        'observation',
-                        'harvest',
-                        'crew',
-                        'crewMember',
-                        'machinery',
-                    ])
-                    ->orderBy('activity_date', 'asc')
-                    ->get();
                 // Construir query base
                 $activitiesQuery = \App\Models\AgriculturalActivity::forUser($this->userId)
                     ->forCampaign($campaignId);
@@ -227,17 +220,7 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ]);
                 } else {
                     // Para volúmenes normales, cargar optimizado
-                    $activitiesQuery = \App\Models\AgriculturalActivity::forUser($this->userId)
-                        ->forCampaign($campaignId);
-
-                    // Aplicar filtros de fecha si existen
-                    if (isset($this->parameters['start_date']) && isset($this->parameters['end_date'])) {
-                        $activitiesQuery->whereBetween('activity_date', [
-                            Carbon::parse($this->parameters['start_date']),
-                            Carbon::parse($this->parameters['end_date'])
-                        ]);
-                    }
-
+                    // Reutilizar la query base ya construida (con filtros aplicados)
                     $activities = $activitiesQuery
                         ->with([
                             'plot:id,name',
