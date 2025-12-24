@@ -7,9 +7,12 @@ Route::get('/', function () {
     if (auth()->check()) {
         $user = auth()->user();
         
-        // PRIMERO verificar si necesita cambiar contraseña
-        if ($user->password_must_reset) {
-            return redirect()->route('password.force-reset');
+        // Si el admin está impersonando, no forzar cambio de contraseña
+        if (!session()->has('impersonating') || session()->get('impersonating') !== true) {
+            // PRIMERO verificar si necesita cambiar contraseña
+            if ($user->password_must_reset) {
+                return redirect()->route('password.force-reset');
+            }
         }
         
         // LUEGO redirigir a dashboard

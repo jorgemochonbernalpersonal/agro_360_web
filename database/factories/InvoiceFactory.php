@@ -18,7 +18,6 @@ class InvoiceFactory extends Factory
             'client_id' => Client::factory(),
             'invoice_number' => 'FAC-' . $this->faker->unique()->numberBetween(1000, 9999),
             'invoice_date' => now(),
-            'due_date' => now()->addDays(30),
             'subtotal' => 0,
             'discount_amount' => 0,
             'tax_base' => 0,

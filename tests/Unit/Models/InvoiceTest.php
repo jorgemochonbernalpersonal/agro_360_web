@@ -90,14 +90,13 @@ class InvoiceTest extends TestCase
         $this->assertFalse($invoice->isPaid());
     }
 
-    public function test_is_overdue_returns_true_when_due_date_passed_and_not_paid(): void
+    public function test_is_overdue_returns_true_when_payment_status_is_overdue(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
 
         $invoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'due_date' => Carbon::now()->subDays(5),
-            'payment_status' => 'pending',
+            'payment_status' => 'overdue',
         ]);
 
         $this->assertTrue($invoice->isOverdue());
@@ -109,21 +108,19 @@ class InvoiceTest extends TestCase
 
         $invoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'due_date' => Carbon::now()->subDays(5),
             'payment_status' => 'paid',
         ]);
 
         $this->assertFalse($invoice->isOverdue());
     }
 
-    public function test_is_overdue_returns_false_when_due_date_not_passed(): void
+    public function test_is_overdue_returns_false_when_payment_status_is_unpaid(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
 
         $invoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'due_date' => Carbon::now()->addDays(5),
-            'payment_status' => 'pending',
+            'payment_status' => 'unpaid',
         ]);
 
         $this->assertFalse($invoice->isOverdue());
@@ -216,19 +213,16 @@ class InvoiceTest extends TestCase
 
         $overdueInvoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'due_date' => Carbon::now()->subDays(5),
-            'payment_status' => 'pending',
+            'payment_status' => 'overdue',
         ]);
 
         $notOverdueInvoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'due_date' => Carbon::now()->addDays(5),
             'payment_status' => 'pending',
         ]);
 
         $paidInvoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'due_date' => Carbon::now()->subDays(5),
             'payment_status' => 'paid',
         ]);
 
@@ -314,11 +308,9 @@ class InvoiceTest extends TestCase
         $invoice = Invoice::factory()->create([
             'user_id' => $user->id,
             'invoice_date' => now(),
-            'due_date' => now()->addDays(30),
         ]);
 
         $this->assertInstanceOf(Carbon::class, $invoice->invoice_date);
-        $this->assertInstanceOf(Carbon::class, $invoice->due_date);
     }
 
     public function test_invoice_datetime_fields_are_cast_to_datetime(): void

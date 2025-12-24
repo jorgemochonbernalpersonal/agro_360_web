@@ -19,7 +19,6 @@ class Create extends Component
     public $client_id = '';
     public $client_address_id = '';
     public $invoice_date = '';
-    public $due_date = '';
     public $delivery_note_date = ''; // Fecha del albarán (editable)
     public $items = [];
     public $observations = '';
@@ -174,7 +173,11 @@ class Create extends Component
     public function updatedClientId($value)
     {
         if ($value) {
-            $client = Client::with('addresses')->find($value);
+            $client = Client::with([
+                'addresses.municipality',
+                'addresses.province',
+                'addresses.autonomousCommunity'
+            ])->find($value);
             
             if ($client) {
                 // Cargar automáticamente la primera dirección del cliente
@@ -250,7 +253,6 @@ class Create extends Component
             'client_id' => 'required|exists:clients,id',
             'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
             'invoice_date' => 'required|date',
-            'due_date' => 'nullable|date|after_or_equal:invoice_date',
             'delivery_note_date' => 'required|date|before_or_equal:today',
             'items' => 'required|array|min:1', // Mínimo 1 item
             'items.*.name' => 'required|string|max:255',
@@ -348,7 +350,6 @@ class Create extends Component
                     'delivery_note_code' => $deliveryNoteCode,
                     'invoice_date' => $this->invoice_date,
                     'delivery_note_date' => $this->delivery_note_date ?: now(), // Usar fecha del formulario
-                    'due_date' => $this->due_date ?: null,
                     'subtotal' => $subtotal,
                     'discount_amount' => $discountAmount,
                     'tax_base' => $subtotal,

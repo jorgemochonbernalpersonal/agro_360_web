@@ -15,6 +15,11 @@ class EnsurePasswordIsChanged
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Si el admin está impersonando, no forzar cambio de contraseña
+        if (session()->has('impersonating') && session()->get('impersonating') === true) {
+            return $next($request);
+        }
+
         if (auth()->check() && auth()->user()->password_must_reset) {
             // Si ya está en la ruta de cambio de password, permitir acceso
             if (!$request->routeIs('password.force-reset')) {
