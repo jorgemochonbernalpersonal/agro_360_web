@@ -541,7 +541,6 @@ class CompleteTestUserSeeder extends Seeder
             
             // Crear 1-3 direcciones por cliente (similar a Create.php)
             $addressCount = rand(1, 3);
-            $addressNames = ['Oficina Principal', 'Almacén', 'Sucursal', 'Casa', 'Oficina Secundaria'];
             
             for ($j = 0; $j < $addressCount; $j++) {
                 $province = $provinces->random();
@@ -552,14 +551,12 @@ class CompleteTestUserSeeder extends Seeder
                 
                 // Crear dirección usando el método create() como en Create.php (solo campos que usa la app)
                 $client->addresses()->create([
-                    'name' => $addressNames[$j] ?? "Dirección " . ($j + 1),
                     'address' => "Calle " . ['Mayor', 'Principal', 'Nueva', 'Vieja', 'Real', 'San José'][rand(0, 5)] . " " . rand(1, 200),
                     'postal_code' => str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
                     'municipality_id' => $municipality->id,
                     'province_id' => $province->id,
                     'autonomous_community_id' => $province->autonomous_community_id,
                     'is_default' => $isDefault,
-                    'is_delivery_note_address' => $j === 0 ? true : (rand(0, 1) === 1), // La primera suele ser de entrega
                     'description' => $j === 0 ? "Dirección principal del cliente" : "Dirección adicional " . ($j + 1) . " para cliente {$i}",
                 ]);
             }

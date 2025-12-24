@@ -117,8 +117,11 @@ class InvoicingSetting extends Model
     public function generateAndIncrementInvoiceCode(): string
     {
         return \DB::transaction(function () {
-            // Lock row para prevenir race conditions
-            $this->lockForUpdate()->fresh();
+            // Lock row para prevenir race conditions y recargar el modelo
+            $locked = static::where('id', $this->id)->lockForUpdate()->first();
+            if ($locked) {
+                $this->setRawAttributes($locked->getAttributes());
+            }
             
             $code = $this->generateInvoiceCode();
             $this->incrementInvoiceCounter();
@@ -134,8 +137,11 @@ class InvoicingSetting extends Model
     public function generateAndIncrementDeliveryNoteCode(): string
     {
         return \DB::transaction(function () {
-            // Lock row para prevenir race conditions
-            $this->lockForUpdate()->fresh();
+            // Lock row para prevenir race conditions y recargar el modelo
+            $locked = static::where('id', $this->id)->lockForUpdate()->first();
+            if ($locked) {
+                $this->setRawAttributes($locked->getAttributes());
+            }
             
             $code = $this->generateDeliveryNoteCode();
             $this->incrementDeliveryNoteCounter();

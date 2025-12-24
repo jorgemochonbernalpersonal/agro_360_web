@@ -56,20 +56,55 @@
                     @endif
                 </div>
 
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-6">
-                    <div class="flex items-start gap-3">
-                        <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-semibold text-yellow-900">Tiempo Estimado de Generación</p>
-                            <p class="text-sm text-yellow-800 mt-1">
-                                Este informe puede tardar <strong>{{ $reportSummary['estimated_time'] ?? '10-15' }} segundos</strong> en generarse. 
-                                Por favor, no cierres la ventana durante el proceso.
-                            </p>
+                {{-- Opción de generación por lotes --}}
+                @if($showBatchOption && isset($batchPeriods) && count($batchPeriods) > 0)
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+                        <div class="flex items-start gap-3 mb-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-lg font-bold text-blue-900 mb-2">
+                                    📦 Generación por Lotes Recomendada
+                                </h4>
+                                <p class="text-sm text-blue-800 mb-3">
+                                    Tu campaña tiene <strong>{{ $reportSummary['total_activities'] ?? 0 }} actividades</strong>. 
+                                    Para mejor rendimiento, se generarán <strong>{{ $totalBatches }} informes</strong> automáticamente:
+                                </p>
+                                <div class="bg-white rounded-lg p-4 mb-4 border border-blue-200">
+                                    <ul class="space-y-2">
+                                        @foreach($batchPeriods as $period)
+                                            <li class="flex items-center justify-between text-sm">
+                                                <span class="font-semibold text-gray-700">{{ $period['label'] }}</span>
+                                                <span class="text-blue-600 font-medium">{{ $period['count'] }} actividades</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <p class="text-xs text-blue-700 mb-4">
+                                    💡 Cada informe se generará por separado y recibirás una notificación cuando cada uno esté listo.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-6">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-semibold text-yellow-900">Tiempo Estimado de Generación</p>
+                                <p class="text-sm text-yellow-800 mt-1">
+                                    Este informe puede tardar <strong>{{ $reportSummary['estimated_time'] ?? '10-15' }} segundos</strong> en generarse. 
+                                    Por favor, no cierres la ventana durante el proceso.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Advertencia si no tiene contraseña configurada --}}
                 @if(!$hasDigitalSignature)
@@ -187,23 +222,56 @@
                     >
                         Cancelar
                     </button>
-                    <button 
-                        wire:click="confirmAndGenerateReport"
-                        wire:loading.attr="disabled"
-                        wire:target="confirmAndGenerateReport"
-                        @if(!$hasDigitalSignature) 
-                            disabled
-                            type="button"
-                        @endif
-                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                        <svg wire:loading wire:target="confirmAndGenerateReport" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span wire:loading.remove wire:target="confirmAndGenerateReport">Firmar y Generar</span>
-                        <span wire:loading wire:target="confirmAndGenerateReport">Generando...</span>
-                    </button>
+                    
+                    @if($showBatchOption && isset($batchPeriods) && count($batchPeriods) > 0)
+                        {{-- Botón para generar por lotes --}}
+                        <button 
+                            wire:click="generateBatchReports"
+                            wire:loading.attr="disabled"
+                            wire:target="generateBatchReports"
+                            @if(!$hasDigitalSignature) 
+                                disabled
+                                type="button"
+                            @endif
+                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                            <svg wire:loading wire:target="generateBatchReports" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span wire:loading.remove wire:target="generateBatchReports">📦 Generar {{ $totalBatches }} Informes</span>
+                            <span wire:loading wire:target="generateBatchReports">Generando...</span>
+                        </button>
+                        
+                        {{-- Opción alternativa: generar uno solo --}}
+                        <button 
+                            wire:click="forceGenerateSingle"
+                            wire:loading.attr="disabled"
+                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                            title="Generar un solo informe (puede tardar más tiempo)"
+                        >
+                            Un solo informe
+                        </button>
+                    @else
+                        {{-- Botón normal para generar un solo informe --}}
+                        <button 
+                            wire:click="confirmAndGenerateReport"
+                            wire:loading.attr="disabled"
+                            wire:target="confirmAndGenerateReport"
+                            @if(!$hasDigitalSignature) 
+                                disabled
+                                type="button"
+                            @endif
+                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                            <svg wire:loading wire:target="confirmAndGenerateReport" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span wire:loading.remove wire:target="confirmAndGenerateReport">Firmar y Generar</span>
+                            <span wire:loading wire:target="confirmAndGenerateReport">Generando...</span>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>

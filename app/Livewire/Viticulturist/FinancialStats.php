@@ -40,19 +40,15 @@ class FinancialStats extends Component
             ->where('status', '!=', 'cancelled')
             ->sum('total_amount') ?? 0;
 
-        // Facturas vencidas
+        // Facturas vencidas (solo las marcadas como overdue)
         $overdueAmount = Invoice::forUser($user->id)
-            ->where('payment_status', 'unpaid')
+            ->where('payment_status', 'overdue')
             ->where('status', '!=', 'cancelled')
-            ->whereNotNull('due_date')
-            ->where('due_date', '<', now())
             ->sum('total_amount') ?? 0;
 
         $overdueCount = Invoice::forUser($user->id)
-            ->where('payment_status', 'unpaid')
+            ->where('payment_status', 'overdue')
             ->where('status', '!=', 'cancelled')
-            ->whereNotNull('due_date')
-            ->where('due_date', '<', now())
             ->count();
 
         // Tasa de cobro (pagado / total facturado)
@@ -137,14 +133,12 @@ class FinancialStats extends Component
             })
             ->sortByDesc('total');
 
-        // Facturas próximas a vencer (próximos 15 días)
+        // Facturas pendientes de pago (sin fecha de vencimiento, se muestran las más antiguas)
         $upcomingInvoices = Invoice::forUser($user->id)
             ->where('payment_status', 'unpaid')
             ->where('status', '!=', 'cancelled')
-            ->whereNotNull('due_date')
-            ->whereBetween('due_date', [now(), now()->addDays(15)])
             ->with('client')
-            ->orderBy('due_date', 'asc')
+            ->orderBy('invoice_date', 'asc')
             ->take(10)
             ->get();
 

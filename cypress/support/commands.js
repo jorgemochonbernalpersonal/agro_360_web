@@ -280,10 +280,19 @@ Cypress.Commands.add('fillClientForm', (clientData) => {
   addresses.forEach((address, index) => {
     if (address.address) cy.fillDataCy('address-address', address.address, { index })
     if (address.postalCode) cy.fillDataCy('address-postal-code', address.postalCode, { index })
-    if (address.name) cy.fillDataCy('address-name', address.name, { index })
     if (address.description) cy.fillDataCy('address-description', address.description, { index })
-    if (address.isDeliveryNote) {
-      cy.get(`[data-cy="address-delivery-note"][data-cy-address-index="${index}"]`).check()
+    
+    // Required address fields (autonomous community, province, municipality)
+    if (address.autonomousCommunityId) {
+      cy.selectDataCy('address-autonomous-community', address.autonomousCommunityId, { index })
+      cy.wait(500) // Wait for provinces to load
+    }
+    if (address.provinceId) {
+      cy.selectDataCy('address-province', address.provinceId, { index })
+      cy.wait(500) // Wait for municipalities to load
+    }
+    if (address.municipalityId) {
+      cy.selectDataCy('address-municipality', address.municipalityId, { index })
     }
   })
 })

@@ -92,10 +92,35 @@
         
         <!-- Top Bar -->
         <x-top-bar />
+
+        <!-- Banner de Impersonación -->
+        @if(session('impersonating'))
+            <div class="fixed top-16 left-0 right-0 z-50 bg-red-600 text-white shadow-lg">
+                <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <span class="font-semibold">
+                            ⚠️ Estás viendo como: <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->email }})
+                        </span>
+                    </div>
+                    <form method="POST" action="{{ route('admin.users.stop-impersonate') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="bg-white text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-50 transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            Volver a Admin
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endif
     @endauth
     
     <!-- Main Content -->
-    <main class="min-h-screen transition-all duration-300 @auth pt-16 lg:pl-72 @endauth" id="main-content">
+    <main class="min-h-screen transition-all duration-300 @auth @if(session('impersonating')) pt-24 @else pt-16 @endif lg:pl-72 @endauth" id="main-content">
         <div class="@auth p-4 lg:p-8 @else p-0 @endauth">
             {{ $slot }}
         </div>

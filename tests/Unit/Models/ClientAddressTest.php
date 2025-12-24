@@ -37,7 +37,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Principal',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
         ]);
@@ -55,7 +54,6 @@ class ClientAddressTest extends TestCase
         $address = ClientAddress::create([
             'client_id' => $client->id,
             'autonomous_community_id' => $autonomousCommunity->id,
-            'name' => 'Dirección Test',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
         ]);
@@ -72,7 +70,6 @@ class ClientAddressTest extends TestCase
         $address = ClientAddress::create([
             'client_id' => $client->id,
             'province_id' => $province->id,
-            'name' => 'Dirección Test',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
         ]);
@@ -89,7 +86,6 @@ class ClientAddressTest extends TestCase
         $address = ClientAddress::create([
             'client_id' => $client->id,
             'municipality_id' => $municipality->id,
-            'name' => 'Dirección Test',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
         ]);
@@ -104,7 +100,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Principal',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
         ]);
@@ -130,7 +125,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Test',
             'address' => 'Calle Test 123',
             'municipality_id' => $municipality->id,
             'province_id' => $province->id,
@@ -152,7 +146,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Test',
             'address' => 'Calle Test 123',
             'postal_code' => null,
             'municipality_id' => null,
@@ -172,7 +165,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Test',
             'address' => 'Calle Test 123',
             'municipality_id' => null,
             'province_id' => null,
@@ -189,7 +181,6 @@ class ClientAddressTest extends TestCase
 
         $defaultAddress1 = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Principal',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
             'is_default' => true,
@@ -197,7 +188,6 @@ class ClientAddressTest extends TestCase
 
         $defaultAddress2 = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Otra Dirección Principal',
             'address' => 'Calle Test 456',
             'postal_code' => '28002',
             'is_default' => true,
@@ -205,7 +195,6 @@ class ClientAddressTest extends TestCase
 
         $nonDefaultAddress = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Secundaria',
             'address' => 'Calle Test 789',
             'postal_code' => '28003',
             'is_default' => false,
@@ -222,35 +211,6 @@ class ClientAddressTest extends TestCase
         $this->assertFalse($defaults->contains('id', $nonDefaultAddress->id));
     }
 
-    public function test_scope_for_delivery_note_returns_only_delivery_addresses(): void
-    {
-        $user = User::factory()->create(['role' => 'viticulturist']);
-        $client = Client::factory()->create(['user_id' => $user->id]);
-
-        $deliveryAddress = ClientAddress::create([
-            'client_id' => $client->id,
-            'name' => 'Dirección de Entrega',
-            'address' => 'Calle Entrega 123',
-            'postal_code' => '28001',
-            'is_delivery_note_address' => true,
-        ]);
-
-        $nonDeliveryAddress = ClientAddress::create([
-            'client_id' => $client->id,
-            'name' => 'Dirección Normal',
-            'address' => 'Calle Normal 456',
-            'postal_code' => '28002',
-            'is_delivery_note_address' => false,
-        ]);
-
-        $deliveryAddresses = ClientAddress::forDeliveryNote()->get();
-
-        $this->assertCount(1, $deliveryAddresses);
-        $this->assertTrue($deliveryAddresses->first()->is_delivery_note_address);
-        $this->assertEquals($deliveryAddress->id, $deliveryAddresses->first()->id);
-        $this->assertFalse($deliveryAddresses->contains('id', $nonDeliveryAddress->id));
-    }
-
     public function test_is_default_is_cast_to_boolean(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
@@ -258,7 +218,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Test',
             'address' => 'Calle Test 123',
             'postal_code' => '28001',
             'is_default' => true,
@@ -268,23 +227,6 @@ class ClientAddressTest extends TestCase
         $this->assertTrue($address->is_default);
     }
 
-    public function test_is_delivery_note_address_is_cast_to_boolean(): void
-    {
-        $user = User::factory()->create(['role' => 'viticulturist']);
-        $client = Client::factory()->create(['user_id' => $user->id]);
-
-        $address = ClientAddress::create([
-            'client_id' => $client->id,
-            'name' => 'Dirección Test',
-            'address' => 'Calle Test 123',
-            'postal_code' => '28001',
-            'is_delivery_note_address' => true,
-        ]);
-
-        $this->assertIsBool($address->is_delivery_note_address);
-        $this->assertTrue($address->is_delivery_note_address);
-    }
-
     public function test_address_can_have_optional_fields(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
@@ -292,7 +234,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección Mínima',
             'address' => 'Calle Test 123',
             'first_name' => null,
             'last_name' => null,
@@ -314,7 +255,6 @@ class ClientAddressTest extends TestCase
 
         $address = ClientAddress::create([
             'client_id' => $client->id,
-            'name' => 'Dirección con Contacto',
             'address' => 'Calle Test 123',
             'first_name' => 'Juan',
             'last_name' => 'Pérez',

@@ -15,10 +15,10 @@
             <strong>{{ $senderName }}</strong> te ha compartido un informe oficial:
         </p>
 
-        @if($message)
+        @if($customMessage)
             <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #3b82f6;">
                 <p style="margin: 0; font-size: 14px; color: #1e40af; font-style: italic;">
-                    "{{ $message }}"
+                    "{{ $customMessage }}"
                 </p>
             </div>
         @endif

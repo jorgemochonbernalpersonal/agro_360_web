@@ -52,7 +52,14 @@ class Edit extends Component
 
     public function mount($client)
     {
-        $this->client_id = $client;
+        // Si es un modelo, usarlo directamente; si es un ID, buscarlo
+        if ($client instanceof Client) {
+            $this->client = $client;
+            $this->client_id = $client->id;
+        } else {
+            $this->client_id = $client;
+        }
+        
         // Cargar comunidades autónomas
         $this->autonomousCommunities = AutonomousCommunity::orderBy('name')->get();
         $this->loadClient();
@@ -61,7 +68,20 @@ class Edit extends Component
     public function loadClient()
     {
         $user = Auth::user();
-        $this->client = Client::with('addresses')->forUser($user->id)->findOrFail($this->client_id);
+        
+        // Si ya tenemos el cliente cargado, solo cargar relaciones
+        if (!isset($this->client) || $this->client->id != $this->client_id) {
+            $this->client = Client::with('addresses')->forUser($user->id)->findOrFail($this->client_id);
+        } else {
+            // Asegurar que el cliente pertenece al usuario actual
+            if ($this->client->user_id !== $user->id) {
+                abort(403, 'No tienes permiso para editar este cliente.');
+            }
+            // Cargar relaciones si no están cargadas
+            if (!$this->client->relationLoaded('addresses')) {
+                $this->client->load('addresses');
+            }
+        }
 
         $this->client_type = $this->client->client_type;
         $this->first_name = $this->client->first_name ?? '';
@@ -83,14 +103,12 @@ class Edit extends Component
         $this->addresses = $this->client->addresses->map(function ($address) {
             return [
                 'id' => $address->id,
-                'name' => $address->name ?? '',
                 'address' => $address->address ?? '',
                 'postal_code' => $address->postal_code ?? '',
                 'municipality_id' => $address->municipality_id,
                 'province_id' => $address->province_id,
                 'autonomous_community_id' => $address->autonomous_community_id,
                 'is_default' => $address->is_default,
-                'is_delivery_note_address' => $address->is_delivery_note_address,
                 'description' => $address->description ?? '',
             ];
         })->toArray();
@@ -109,14 +127,12 @@ class Edit extends Component
         if (empty($this->addresses)) {
             $this->addresses = [[
                 'id' => null,
-                'name' => '',
                 'address' => '',
                 'postal_code' => '',
                 'municipality_id' => null,
                 'province_id' => null,
                 'autonomous_community_id' => null,
                 'is_default' => true,
-                'is_delivery_note_address' => false,
                 'description' => '',
             ]];
         }
@@ -126,15 +142,13 @@ class Edit extends Component
     {
         $this->addresses[] = [
             'id' => null,
-            'name' => '',
             'address' => '',
             'postal_code' => '',
             'municipality_id' => null,
             'province_id' => null,
-            'autonomous_community_id' => null,
-            'is_default' => false,
-            'is_delivery_note_address' => false,
-            'description' => '',
+                'autonomous_community_id' => null,
+                'is_default' => false,
+                'description' => '',
         ];
     }
 
@@ -175,21 +189,27 @@ class Edit extends Component
         // Si cambia la comunidad autónoma de alguna dirección
         if (str_contains($key, '.autonomous_community_id')) {
             $index = (int) explode('.', $key)[0];
-            $this->loadProvinces($index);
-            // Limpiar provincia y municipio
+            // Limpiar provincia y municipio primero
             $this->addresses[$index]['province_id'] = null;
             $this->addresses[$index]['municipality_id'] = null;
             $this->provinces[$index] = [];
             $this->municipalities[$index] = [];
+            // Luego cargar provincias si hay comunidad autónoma seleccionada
+            if ($this->addresses[$index]['autonomous_community_id'] ?? null) {
+                $this->loadProvinces($index);
+            }
         }
         
         // Si cambia la provincia
         if (str_contains($key, '.province_id')) {
             $index = (int) explode('.', $key)[0];
-            $this->loadMunicipalities($index);
-            // Limpiar municipio
+            // Limpiar municipio primero
             $this->addresses[$index]['municipality_id'] = null;
             $this->municipalities[$index] = [];
+            // Luego cargar municipios si hay provincia seleccionada
+            if ($this->addresses[$index]['province_id'] ?? null) {
+                $this->loadMunicipalities($index);
+            }
         }
     }
     
@@ -226,7 +246,7 @@ class Edit extends Component
             'email' => 'nullable|email|max:50',
             'phone' => 'nullable|string|max:50',
             'company_name' => 'required_if:client_type,company|nullable|string|max:100',
-            'company_document' => 'nullable|string|max:50',
+            'company_document' => 'required_if:client_type,company|nullable|string|max:50',
             'particular_document' => 'nullable|string|max:15',
             'default_discount' => 'nullable|numeric|min:0|max:100',
             'payment_method' => 'nullable|in:cash,transfer,check,other',
@@ -238,14 +258,12 @@ class Edit extends Component
             
             // Validación de direcciones
             'addresses' => 'required|array|min:1',
-            'addresses.*.name' => 'nullable|string|max:100',
             'addresses.*.address' => 'required|string|max:255',
-            'addresses.*.postal_code' => 'nullable|string|max:10',
-            'addresses.*.municipality_id' => 'nullable|exists:municipalities,id',
-            'addresses.*.province_id' => 'nullable|exists:provinces,id',
-            'addresses.*.autonomous_community_id' => 'nullable|exists:autonomous_communities,id',
+            'addresses.*.postal_code' => 'required|string|max:10',
+            'addresses.*.municipality_id' => 'required|exists:municipalities,id',
+            'addresses.*.province_id' => 'required|exists:provinces,id',
+            'addresses.*.autonomous_community_id' => 'required|exists:autonomous_communities,id',
             'addresses.*.is_default' => 'boolean',
-            'addresses.*.is_delivery_note_address' => 'boolean',
             'addresses.*.description' => 'nullable|string|max:500',
         ];
     }
@@ -283,14 +301,12 @@ class Edit extends Component
                 foreach ($this->addresses as $addressData) {
                     if (!empty($addressData['address'])) {
                         $data = [
-                            'name' => $addressData['name'] ?: null,
                             'address' => $addressData['address'],
                             'postal_code' => $addressData['postal_code'] ?: null,
                             'municipality_id' => $addressData['municipality_id'] ?: null,
                             'province_id' => $addressData['province_id'] ?: null,
                             'autonomous_community_id' => $addressData['autonomous_community_id'] ?: null,
                             'is_default' => $addressData['is_default'] ?? false,
-                            'is_delivery_note_address' => $addressData['is_delivery_note_address'] ?? false,
                             'description' => $addressData['description'] ?: null,
                         ];
                         
@@ -306,7 +322,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Cliente actualizado exitosamente.');
-            return redirect()->route('viticulturist.clients.show', $this->client->id);
+            return redirect()->route('viticulturist.clients.index');
         } catch (\Exception $e) {
             $this->toastError('Error al actualizar el cliente: ' . $e->getMessage());
         }

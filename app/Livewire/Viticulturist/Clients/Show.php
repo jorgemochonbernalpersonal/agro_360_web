@@ -13,16 +13,36 @@ class Show extends Component
 
     public function mount($client)
     {
-        $this->client_id = $client;
+        // Si es un modelo, usarlo directamente; si es un ID, buscarlo
+        if ($client instanceof Client) {
+            $this->client = $client;
+            $this->client_id = $client->id;
+        } else {
+            $this->client_id = $client;
+        }
+        
         $this->loadClient();
     }
 
     public function loadClient()
     {
         $user = Auth::user();
-        $this->client = Client::forUser($user->id)
-            ->with(['addresses', 'invoices'])
-            ->findOrFail($this->client_id);
+        
+        // Si ya tenemos el cliente cargado, solo cargar relaciones
+        if (!isset($this->client) || $this->client->id != $this->client_id) {
+            $this->client = Client::forUser($user->id)
+                ->with(['addresses', 'invoices'])
+                ->findOrFail($this->client_id);
+        } else {
+            // Asegurar que el cliente pertenece al usuario actual
+            if ($this->client->user_id !== $user->id) {
+                abort(403, 'No tienes permiso para ver este cliente.');
+            }
+            // Cargar relaciones si no están cargadas
+            if (!$this->client->relationLoaded('addresses')) {
+                $this->client->load(['addresses', 'invoices']);
+            }
+        }
     }
 
     public function render()

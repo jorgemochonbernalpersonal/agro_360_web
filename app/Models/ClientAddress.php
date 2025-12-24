@@ -10,7 +10,6 @@ class ClientAddress extends Model
 {
     protected $fillable = [
         'client_id',
-        'name',
         'first_name',
         'last_name',
         'email',
@@ -22,13 +21,11 @@ class ClientAddress extends Model
         'municipality_id',
         'postal_code',
         'is_default',
-        'is_delivery_note_address',
         'description',
     ];
 
     protected $casts = [
         'is_default' => 'boolean',
-        'is_delivery_note_address' => 'boolean',
     ];
 
     /**
@@ -103,13 +100,5 @@ class ClientAddress extends Model
     public function scopeDefault($query)
     {
         return $query->where('is_default', true);
-    }
-
-    /**
-     * Scope para direcciones de albarán
-     */
-    public function scopeForDeliveryNote($query)
-    {
-        return $query->where('is_delivery_note_address', true);
     }
 }

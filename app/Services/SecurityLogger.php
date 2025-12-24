@@ -132,4 +132,35 @@ class SecurityLogger
             'timestamp' => now()->toDateTimeString(),
         ], $data));
     }
+
+    /**
+     * Loguear impersonación de usuario (admin impersonando a otro usuario)
+     */
+    public static function logImpersonation(int $adminId, int $targetUserId): void
+    {
+        Log::channel(self::CHANNEL)->warning('Impersonación de usuario iniciada', [
+            'event' => 'user_impersonation_started',
+            'admin_id' => $adminId,
+            'target_user_id' => $targetUserId,
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'url' => request()->fullUrl(),
+            'timestamp' => now()->toDateTimeString(),
+        ]);
+    }
+
+    /**
+     * Loguear fin de impersonación
+     */
+    public static function logImpersonationEnded(int $adminId, int $targetUserId): void
+    {
+        Log::channel(self::CHANNEL)->info('Impersonación de usuario finalizada', [
+            'event' => 'user_impersonation_ended',
+            'admin_id' => $adminId,
+            'target_user_id' => $targetUserId,
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'timestamp' => now()->toDateTimeString(),
+        ]);
+    }
 }

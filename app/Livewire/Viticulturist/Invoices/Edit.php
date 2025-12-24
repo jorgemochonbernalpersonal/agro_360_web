@@ -21,18 +21,37 @@ class Edit extends Component
     public $client_id = '';
     public $client_address_id = '';
     public $invoice_date = '';
-    public $due_date = '';
     public $delivery_status = '';
     public $payment_status = '';
     public $items = [];
     public $observations = '';
     public $observations_invoice = '';
-    public $delivery_note_code = ''; // Código de albarán (editable)
+    public $delivery_note_code = ''; // Código de albarán (no editable una vez creado)
     public $invoice_number = ''; // Código de factura (editable)
-    public $delivery_note_code_auto = ''; // Código generado automáticamente
     public $invoice_number_auto = ''; // Código de factura generado automáticamente
-    public $delivery_note_code_modified = false; // Flag para saber si el usuario lo modificó
     public $invoice_number_modified = false; // Flag para saber si el usuario lo modificó
+
+    // Propiedades para el modal de facturación
+    public $showInvoiceModal = false;
+    public $invoice_date_modal = ''; // Fecha para el modal
+    public $invoice_number_modal = ''; // Código para el modal
+
+    /**
+     * Determina si la factura ya está facturada (no se puede modificar el código)
+     */
+    public function getIsInvoicedProperty(): bool
+    {
+        return $this->invoice->status === 'sent' || $this->invoice->status === 'paid';
+    }
+
+    /**
+     * Determina si la factura está bloqueada (entregada o cancelada)
+     * Cuando está bloqueada, solo se puede cambiar el estado de pago
+     */
+    public function getIsLockedProperty(): bool
+    {
+        return $this->invoice->delivery_status === 'delivered' || $this->invoice->delivery_status === 'cancelled';
+    }
 
     public $availableClients = [];
     public $availableAddresses = [];
@@ -49,7 +68,12 @@ class Edit extends Component
         } else {
             $user = Auth::user();
             $this->invoice = Invoice::forUser($user->id)
-                ->with(['items', 'client.addresses'])
+                ->with([
+                    'items', 
+                    'client.addresses.municipality',
+                    'client.addresses.province',
+                    'client.addresses.autonomousCommunity'
+                ])
                 ->findOrFail($invoice);
         }
         
@@ -63,27 +87,23 @@ class Edit extends Component
 
         $this->client_id = $this->invoice->client_id;
         $this->client_address_id = $this->invoice->client_address_id ?? '';
-        $this->invoice_date = $this->invoice->invoice_date->format('Y-m-d');
-        $this->due_date = $this->invoice->due_date ? $this->invoice->due_date->format('Y-m-d') : '';
+        $this->invoice_date = $this->invoice->invoice_date ? $this->invoice->invoice_date->format('Y-m-d') : '';
         $this->delivery_status = $this->invoice->delivery_status;
         $this->payment_status = $this->invoice->payment_status;
         $this->observations = $this->invoice->observations ?? '';
         $this->observations_invoice = $this->invoice->observations_invoice ?? '';
         
-        // Cargar códigos existentes o generar automáticamente
-        $this->delivery_note_code = $this->invoice->delivery_note_code ?? $settings->generateDeliveryNoteCode();
-        $this->delivery_note_code_auto = $this->delivery_note_code;
+        // Cargar código de albarán existente (no se puede modificar)
+        $this->delivery_note_code = $this->invoice->delivery_note_code ?? '';
         
-        // Si la factura está aprobada o tiene número, cargarlo; sino generar uno
+        // Cargar código de factura existente (solo si ya está facturada)
         if ($this->invoice->invoice_number) {
             $this->invoice_number = $this->invoice->invoice_number;
             $this->invoice_number_auto = $this->invoice_number;
         } else {
-            // Solo generar si está aprobada o se va a aprobar
-            if ($this->invoice->status !== 'draft') {
-                $this->invoice_number_auto = $settings->generateInvoiceCode();
-                $this->invoice_number = $this->invoice_number_auto;
-            }
+            // No generar automáticamente, se generará en el modal cuando se facture
+            $this->invoice_number = '';
+            $this->invoice_number_auto = '';
         }
 
         $this->items = $this->invoice->items->map(function($item) {
@@ -212,7 +232,11 @@ class Edit extends Component
     public function updatedClientId($value)
     {
         if ($value) {
-            $client = Client::with('addresses')->find($value);
+            $client = Client::with([
+                'addresses.municipality',
+                'addresses.province',
+                'addresses.autonomousCommunity'
+            ])->find($value);
             
             if ($client) {
                 // Cargar automáticamente la primera dirección del cliente
@@ -235,15 +259,6 @@ class Edit extends Component
         }
     }
 
-    public function updatedDeliveryNoteCode($value)
-    {
-        // Marcar como modificado si el usuario cambió el código
-        if ($value !== $this->delivery_note_code_auto) {
-            $this->delivery_note_code_modified = true;
-        } else {
-            $this->delivery_note_code_modified = false;
-        }
-    }
 
     public function updatedInvoiceNumber($value)
     {
@@ -252,6 +267,73 @@ class Edit extends Component
             $this->invoice_number_modified = true;
         } else {
             $this->invoice_number_modified = false;
+        }
+    }
+
+    public function openInvoiceModal()
+    {
+        if ($this->invoice->status !== 'draft') {
+            $this->toastError('Solo se pueden facturar facturas en estado borrador.');
+            return;
+        }
+        
+        $this->invoice_date_modal = $this->invoice_date ?: now()->format('Y-m-d');
+        
+        // Generar código si no existe
+        if (!$this->invoice->invoice_number) {
+            $settings = \App\Models\InvoicingSetting::getOrCreateForUser(Auth::user()->id);
+            $this->invoice_number_modal = $settings->generateInvoiceCode();
+        } else {
+            $this->invoice_number_modal = $this->invoice->invoice_number;
+        }
+        
+        $this->showInvoiceModal = true;
+    }
+
+    public function closeInvoiceModal()
+    {
+        $this->showInvoiceModal = false;
+        $this->invoice_date_modal = '';
+        $this->invoice_number_modal = '';
+    }
+
+    public function markAsSent()
+    {
+        $this->validate([
+            'invoice_date_modal' => 'required|date',
+            'invoice_number_modal' => 'required|string|max:255',
+        ], [
+            'invoice_date_modal.required' => 'Debes seleccionar una fecha de factura.',
+            'invoice_number_modal.required' => 'El código de factura es obligatorio.',
+        ]);
+
+        try {
+            DB::transaction(function () {
+                // Actualizar la factura con la fecha y código del modal
+                $this->invoice->update([
+                    'status' => 'sent',
+                    'invoice_date' => $this->invoice_date_modal,
+                    'invoice_number' => $this->invoice_number_modal,
+                ]);
+                
+                // Si se generó un nuevo código, incrementar el contador
+                if (!$this->invoice->getOriginal('invoice_number')) {
+                    $settings = \App\Models\InvoicingSetting::getOrCreateForUser(Auth::user()->id);
+                    $settings->incrementInvoiceCounter();
+                }
+            });
+            
+            $this->toastSuccess('Factura marcada como enviada/facturada exitosamente.');
+            $this->closeInvoiceModal();
+            
+            // Refrescar datos
+            $this->invoice->refresh();
+            $this->loadInvoiceData();
+            
+            // Redirigir a la lista
+            return redirect()->route('viticulturist.invoices.index');
+        } catch (\Exception $e) {
+            $this->toastError('Error al facturar: ' . $e->getMessage());
         }
     }
 
@@ -279,11 +361,26 @@ class Edit extends Component
 
     protected function rules(): array
     {
+        // Si está bloqueada (entregada o cancelada), solo validar payment_status
+        if ($this->isLocked) {
+            return [
+                'payment_status' => [
+                    'required',
+                    'in:unpaid,paid,overdue,refunded',
+                    new \App\Rules\InvoiceStateCoherence(
+                        $this->invoice->status,
+                        request()->input('payment_status'),
+                        $this->delivery_status
+                    ),
+                ],
+            ];
+        }
+
+        // Validación normal para facturas no bloqueadas
         return [
             'client_id' => 'required|exists:clients,id',
             'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
-            'invoice_date' => 'required|date',
-            'due_date' => 'nullable|date|after_or_equal:invoice_date',
+            'invoice_date' => 'nullable|date', // Solo requerido cuando se factura, no en borrador
             'delivery_status' => [
                 'required',
                 'in:pending,in_transit,delivered,cancelled',
@@ -324,20 +421,42 @@ class Edit extends Component
 
         try {
             DB::transaction(function () {
+                // Si está bloqueada (entregada o cancelada), solo actualizar payment_status
+                if ($this->isLocked) {
+                    $this->invoice->update([
+                        'payment_status' => $this->payment_status,
+                    ]);
+
+                    // Actualizar fecha de pago si cambia el estado
+                    if ($this->payment_status === 'paid' && !$this->invoice->payment_date) {
+                        $this->invoice->update(['payment_date' => now()]);
+                    } elseif ($this->payment_status !== 'paid' && $this->invoice->payment_date) {
+                        $this->invoice->update(['payment_date' => null]);
+                    }
+
+                    $this->toastSuccess('Estado de pago actualizado exitosamente.');
+                    return redirect()->route('viticulturist.invoices.index');
+                }
+
+                // Si no está bloqueada, actualizar normalmente
                 $user = Auth::user();
                 $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
                 
-                // Generar código de albarán atómicamente si no existe o no fue modificado
-                $deliveryNoteCode = $this->delivery_note_code_modified 
-                    ? $this->delivery_note_code 
-                    : ($this->invoice->delivery_note_code ?? $settings->generateAndIncrementDeliveryNoteCode());
+                // El código de albarán no se puede modificar, usar el existente
+                $deliveryNoteCode = $this->invoice->delivery_note_code;
                 
-                // Si la factura está aprobada o se va a aprobar y no tiene número, generarlo atómicamente
-                $invoiceNumber = null;
-                if ($this->invoice->status !== 'draft' || $this->invoice_number) {
-                    $invoiceNumber = $this->invoice_number_modified 
-                        ? $this->invoice_number 
-                        : ($this->invoice->invoice_number ?? $settings->generateAndIncrementInvoiceCode());
+                // Si la factura ya está facturada, no permitir modificar el código
+                $invoiceNumber = $this->invoice->invoice_number;
+                if ($this->isInvoiced) {
+                    // Si ya está facturada, mantener el código original (no se puede modificar)
+                    $invoiceNumber = $this->invoice->invoice_number;
+                } else {
+                    // Si no está facturada, permitir modificar o generar
+                    if ($this->invoice_number) {
+                        $invoiceNumber = $this->invoice_number_modified 
+                            ? $this->invoice_number 
+                            : ($this->invoice->invoice_number ?? $settings->generateAndIncrementInvoiceCode());
+                    }
                 }
                 
                 // Calcular totales
@@ -365,8 +484,9 @@ class Edit extends Component
                 $updateData = [
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
-                    'invoice_date' => $this->invoice_date,
-                    'due_date' => $this->due_date ?: null,
+                    // Solo actualizar invoice_date si la factura ya está facturada (ya tiene fecha)
+                    // Si está en draft, la fecha se establecerá cuando se facture en el modal
+                    'invoice_date' => $this->invoice->invoice_date ? ($this->invoice_date ?: $this->invoice->invoice_date->format('Y-m-d')) : ($this->invoice_date ?: null),
                     'delivery_status' => $this->delivery_status,
                     'payment_status' => $this->payment_status,
                     'delivery_note_code' => $deliveryNoteCode,
@@ -436,7 +556,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Factura actualizada exitosamente.');
-            return redirect()->route('viticulturist.invoices.show', $this->invoice->id);
+            return redirect()->route('viticulturist.invoices.index');
         } catch (\Exception $e) {
             $this->toastError('Error al actualizar la factura: ' . $e->getMessage());
         }

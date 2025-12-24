@@ -2,27 +2,27 @@
 
 namespace App\Jobs;
 
-use App\Models\OfficialReport;
-use App\Services\OfficialReportService;
-use App\Services\Validators\PacComplianceValidator;
 use App\Mail\ReportGeneratedMail;
 use App\Mail\ReportGenerationFailedMail;
+use App\Models\OfficialReport;
+use App\Services\Validators\PacComplianceValidator;
+use App\Services\OfficialReportService;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class GenerateOfficialReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
-    public $timeout = 300; // 5 minutos
-    public $backoff = [60, 120, 300]; // Reintentos: 1min, 2min, 5min
+    public $timeout = 600;  // 10 minutos (aumentado para informes grandes)
+    public $backoff = [60, 120, 300];  // Reintentos: 1min, 2min, 5min
 
     public function __construct(
         public int $reportId,
@@ -34,8 +34,12 @@ class GenerateOfficialReportJob implements ShouldQueue
 
     public function handle()
     {
+        // Optimización: Aumentar límites de memoria y tiempo para trabajos largos
+        ini_set('memory_limit', '512M');
+        set_time_limit(600);  // 10 minutos
+
         $report = OfficialReport::find($this->reportId);
-        
+
         if (!$report) {
             Log::error('Report not found for job', ['id' => $this->reportId]);
             return;
@@ -44,17 +48,19 @@ class GenerateOfficialReportJob implements ShouldQueue
         try {
             // Marcar como procesando
             $report->update(['processing_status' => 'processing']);
-            
+
             Log::info('Starting report generation', [
                 'report_id' => $this->reportId,
-                'type' => $this->reportType
+                'type' => $this->reportType,
+                'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+                'peak_memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
             ]);
 
             $service = new OfficialReportService();
-            
+
             // Generar datos según tipo
             if ($this->reportType === 'phytosanitary_treatments') {
-                // Obtener tratamientos
+                // OPTIMIZACIÓN: Cargar solo campos necesarios y optimizar relaciones
                 $treatments = \App\Models\AgriculturalActivity::ofType('phytosanitary')
                     ->forUser($this->userId)
                     ->whereBetween('activity_date', [
@@ -65,11 +71,14 @@ class GenerateOfficialReportJob implements ShouldQueue
                         'phytosanitaryTreatment.product',
                         'plot:id,name,total_area',
                         'plot.sigpacCodes' => function ($query) {
-                            $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality', 
-                                         'code_polygon', 'code_plot', 'code_enclosure', 
-                                         'code_autonomous_community', 'code_aggregate', 'code_zone');
+                            $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality',
+                                'code_polygon', 'code_plot', 'code_enclosure',
+                                'code_autonomous_community', 'code_aggregate', 'code_zone');
                         },
                         'plot.sigpacUses:id,name,description',
+                        'phytosanitaryTreatment:id,activity_id,product_id,area_treated',
+                        'phytosanitaryTreatment.product:id,name',
+                        'plot:id,name,area',
                         'plotPlanting:id,plot_id,name',
                         'plotPlanting.grapeVariety:id,name',
                         'crewMember:id,name',
@@ -87,12 +96,26 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ->orderBy('activity_date', 'asc')
                     ->get();
 
-                // Calcular estadísticas
+                Log::info('Treatments loaded', [
+                    'count' => $treatments->count(),
+                    'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+                ]);
+
+                // OPTIMIZACIÓN: Calcular estadísticas de forma más eficiente
                 $stats = [
                     'total_treatments' => $treatments->count(),
-                    'total_area_treated' => $treatments->sum(fn($t) => $t->phytosanitaryTreatment->area_treated ?? 0),
-                    'products_used' => $treatments->pluck('phytosanitaryTreatment.product.name')->unique()->filter()->values()->toArray(),
-                    'plots_affected' => $treatments->pluck('plot.name')->unique()->count(),
+                    'total_area_treated' => $treatments->sum(fn($t) => $t->phytosanitaryTreatment?->area_treated ?? 0),
+                    'products_used' => $treatments
+                        ->pluck('phytosanitaryTreatment.product.name')
+                        ->filter()
+                        ->unique()
+                        ->values()
+                        ->toArray(),
+                    'plots_affected' => $treatments
+                        ->pluck('plot.name')
+                        ->filter()
+                        ->unique()
+                        ->count(),
                 ];
 
                 // Validar cumplimiento PAC
@@ -109,9 +132,9 @@ class GenerateOfficialReportJob implements ShouldQueue
                 $user = \App\Models\User::find($this->userId);
                 $pdfPath = $service->generatePDF($report, $user, $treatments, $stats);
 
-                // Calcular hash del PDF
-                $pdfContent = \Illuminate\Support\Facades\Storage::disk('local')->get($pdfPath);
-                $pdfHash = hash('sha256', $pdfContent);
+                // OPTIMIZACIÓN: Calcular hash sin cargar todo en memoria
+                $pdfHash = $this->calculateFileHash($pdfPath);
+                $pdfSize = \Illuminate\Support\Facades\Storage::disk('local')->size($pdfPath);
 
                 // Generar firma
                 $signatureData = [
@@ -140,10 +163,10 @@ class GenerateOfficialReportJob implements ShouldQueue
                         'pdf_hash' => $pdfHash,
                     ],
                     'pdf_path' => $pdfPath,
-                    'pdf_size' => strlen($pdfContent),
+                    'pdf_size' => $pdfSize,
                     'is_valid' => true,
-                    'processing_status' => 'completed',  // ✅ CRITICAL FIX: Mark as completed
-                    'completed_at' => now(),             // ✅ CRITICAL FIX: Set completion timestamp
+                    'processing_status' => 'completed',
+                    'completed_at' => now(),
                 ]);
             } else {
                 // Cuaderno digital completo
@@ -156,9 +179,9 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ->with([
                         'plot:id,name,total_area',
                         'plot.sigpacCodes' => function ($query) {
-                            $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality', 
-                                         'code_polygon', 'code_plot', 'code_enclosure', 
-                                         'code_autonomous_community', 'code_aggregate', 'code_zone');
+                            $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality',
+                                'code_polygon', 'code_plot', 'code_enclosure',
+                                'code_autonomous_community', 'code_aggregate', 'code_zone');
                         },
                         'plot.sigpacUses:id,name,description',
                         'plotPlanting.grapeVariety',
@@ -174,6 +197,71 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ])
                     ->orderBy('activity_date', 'asc')
                     ->get();
+                // Construir query base
+                $activitiesQuery = \App\Models\AgriculturalActivity::forUser($this->userId)
+                    ->forCampaign($campaignId);
+
+                // Si hay filtros de fecha (para generación por lotes), aplicarlos
+                if (isset($this->parameters['start_date']) && isset($this->parameters['end_date'])) {
+                    $activitiesQuery->whereBetween('activity_date', [
+                        Carbon::parse($this->parameters['start_date']),
+                        Carbon::parse($this->parameters['end_date'])
+                    ]);
+                }
+
+                // OPTIMIZACIÓN: Contar primero para decidir si usar chunking
+                $totalActivities = $activitiesQuery->count();
+
+                Log::info('Loading activities for full notebook', [
+                    'campaign_id' => $campaignId,
+                    'total_activities' => $totalActivities,
+                    'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+                ]);
+
+                // Para grandes volúmenes (>1000), usar chunking
+                if ($totalActivities > 1000) {
+                    $activities = $this->loadActivitiesInChunks($this->userId, $campaignId, $this->parameters);
+                    Log::info('Activities loaded in chunks', [
+                        'count' => $activities->count(),
+                        'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+                    ]);
+                } else {
+                    // Para volúmenes normales, cargar optimizado
+                    $activitiesQuery = \App\Models\AgriculturalActivity::forUser($this->userId)
+                        ->forCampaign($campaignId);
+
+                    // Aplicar filtros de fecha si existen
+                    if (isset($this->parameters['start_date']) && isset($this->parameters['end_date'])) {
+                        $activitiesQuery->whereBetween('activity_date', [
+                            Carbon::parse($this->parameters['start_date']),
+                            Carbon::parse($this->parameters['end_date'])
+                        ]);
+                    }
+
+                    $activities = $activitiesQuery
+                        ->with([
+                            'plot:id,name',
+                            'plotPlanting:id,plot_id,name',
+                            'plotPlanting.grapeVariety:id,name',
+                            'phytosanitaryTreatment:id,activity_id,product_id',
+                            'phytosanitaryTreatment.product:id,name',
+                            'fertilization:id,activity_id',
+                            'irrigation:id,activity_id',
+                            'culturalWork:id,activity_id',
+                            'observation:id,activity_id',
+                            'harvest:id,activity_id',
+                            'crew:id,name',
+                            'crewMember:id,name',
+                            'machinery:id,name',
+                        ])
+                        ->orderBy('activity_date', 'asc')
+                        ->get();
+
+                    Log::info('Activities loaded normally', [
+                        'count' => $activities->count(),
+                        'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+                    ]);
+                }
 
                 if ($activities->isEmpty()) {
                     throw new \Exception('No hay actividades registradas en esta campaña.');
@@ -207,9 +295,9 @@ class GenerateOfficialReportJob implements ShouldQueue
                 $service = new OfficialReportService();
                 $pdfPath = $service->generateFullNotebookPDF($report, $user, $campaign, $activities, $stats);
 
-                // Calcular hash del PDF
-                $pdfContent = \Illuminate\Support\Facades\Storage::disk('local')->get($pdfPath);
-                $pdfHash = hash('sha256', $pdfContent);
+                // OPTIMIZACIÓN: Calcular hash sin cargar todo en memoria
+                $pdfHash = $this->calculateFileHash($pdfPath);
+                $pdfSize = \Illuminate\Support\Facades\Storage::disk('local')->size($pdfPath);
 
                 // Generar firma
                 $signatureData = [
@@ -240,14 +328,18 @@ class GenerateOfficialReportJob implements ShouldQueue
                         'pdf_hash' => $pdfHash,
                     ],
                     'pdf_path' => $pdfPath,
-                    'pdf_size' => strlen($pdfContent),
+                    'pdf_size' => $pdfSize,
                     'is_valid' => true,
                     'processing_status' => 'completed',
                     'completed_at' => now(),
                 ]);
             }
 
-            Log::info('Report generation completed', ['report_id' => $this->reportId]);
+            Log::info('Report generation completed', [
+                'report_id' => $this->reportId,
+                'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+                'peak_memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
+            ]);
 
             // Enviar notificación en la app
             try {
@@ -269,7 +361,6 @@ class GenerateOfficialReportJob implements ShouldQueue
                     'error' => $mailError->getMessage()
                 ]);
             }
-
         } catch (\Exception $e) {
             Log::error('Report generation failed', [
                 'report_id' => $this->reportId,
@@ -316,7 +407,7 @@ class GenerateOfficialReportJob implements ShouldQueue
     public function failed(\Throwable $exception)
     {
         $report = OfficialReport::find($this->reportId);
-        
+
         if ($report) {
             $report->update([
                 'processing_status' => 'failed',
@@ -327,7 +418,94 @@ class GenerateOfficialReportJob implements ShouldQueue
         Log::critical('Report job permanently failed', [
             'report_id' => $this->reportId,
             'attempts' => $this->tries,
-            'error' => $exception->getMessage()
+            'error' => $exception->getMessage(),
+            'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+            'peak_memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
         ]);
+    }
+
+    /**
+     * Calcular hash de archivo sin cargar todo en memoria
+     * Optimización para archivos grandes (PDFs)
+     */
+    private function calculateFileHash(string $filePath): string
+    {
+        // Usar Storage para obtener el path correcto (funciona con fake en tests)
+        $fullPath = \Illuminate\Support\Facades\Storage::disk('local')->path($filePath);
+
+        if (!file_exists($fullPath)) {
+            // Fallback: intentar con storage_path si el método anterior falla
+            $fullPath = storage_path('app/' . $filePath);
+            if (!file_exists($fullPath)) {
+                throw new \Exception("Archivo no encontrado: {$filePath}");
+            }
+        }
+
+        $hash = hash_init('sha256');
+        $stream = fopen($fullPath, 'rb');
+
+        if (!$stream) {
+            throw new \Exception('No se pudo abrir el archivo para calcular hash');
+        }
+
+        // Leer en chunks de 8KB para no cargar todo en memoria
+        while (!feof($stream)) {
+            $chunk = fread($stream, 8192);
+            if ($chunk !== false) {
+                hash_update($hash, $chunk);
+            }
+        }
+
+        fclose($stream);
+        return hash_final($hash);
+    }
+
+    /**
+     * Cargar actividades en chunks para grandes volúmenes
+     * Evita problemas de memoria con campañas muy grandes
+     */
+    private function loadActivitiesInChunks(int $userId, int $campaignId, array $parameters = []): \Illuminate\Support\Collection
+    {
+        $allActivities = collect();
+
+        $query = \App\Models\AgriculturalActivity::forUser($userId)
+            ->forCampaign($campaignId);
+
+        // Aplicar filtros de fecha si existen
+        if (isset($parameters['start_date']) && isset($parameters['end_date'])) {
+            $query->whereBetween('activity_date', [
+                Carbon::parse($parameters['start_date']),
+                Carbon::parse($parameters['end_date'])
+            ]);
+        }
+
+        $query
+            ->with([
+                'plot:id,name',
+                'plotPlanting:id,plot_id,name',
+                'plotPlanting.grapeVariety:id,name',
+                'phytosanitaryTreatment:id,activity_id,product_id',
+                'phytosanitaryTreatment.product:id,name',
+                'fertilization:id,activity_id',
+                'irrigation:id,activity_id',
+                'culturalWork:id,activity_id',
+                'observation:id,activity_id',
+                'harvest:id,activity_id',
+                'crew:id,name',
+                'crewMember:id,name',
+                'machinery:id,name',
+            ])
+            ->orderBy('activity_date', 'asc')
+            ->chunk(500, function ($chunk) use (&$allActivities) {
+                $allActivities = $allActivities->merge($chunk);
+
+                // Log de progreso cada 500 registros
+                Log::debug('Loading activities chunk', [
+                    'loaded' => $allActivities->count(),
+                    'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+                ]);
+            });
+
+        return $allActivities;
     }
 }

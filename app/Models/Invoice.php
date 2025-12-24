@@ -21,7 +21,6 @@ class Invoice extends Model
         'current_delivery_note_code',
         'invoice_code_generated_at',
         'invoice_date',
-        'due_date',
         'delivery_note_date',
         'payment_date',
         'order_date',
@@ -73,7 +72,6 @@ class Invoice extends Model
 
     protected $casts = [
         'invoice_date' => 'date',
-        'due_date' => 'date',
         'delivery_note_date' => 'datetime',
         'payment_date' => 'datetime',
         'order_date' => 'datetime',
@@ -165,8 +163,7 @@ class Invoice extends Model
      */
     public function isOverdue(): bool
     {
-        return $this->payment_status === 'overdue' || 
-               ($this->due_date && $this->due_date->isPast() && $this->payment_status !== 'paid');
+        return $this->payment_status === 'overdue';
     }
 
     /**
@@ -206,10 +203,6 @@ class Invoice extends Model
      */
     public function scopeOverdue($query)
     {
-        return $query->where('payment_status', 'overdue')
-            ->orWhere(function($q) {
-                $q->where('due_date', '<', now())
-                  ->where('payment_status', '!=', 'paid');
-            });
+        return $query->where('payment_status', 'overdue');
     }
 }

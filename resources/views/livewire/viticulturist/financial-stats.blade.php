@@ -253,21 +253,17 @@
 
     {{-- Fila de Detalle --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {{-- Facturas Próximas a Vencer --}}
+        {{-- Facturas Pendientes de Pago --}}
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-6">
-                <h3 class="text-lg font-bold text-gray-900">Próximas a Vencer</h3>
-                <span class="text-xs text-gray-500">Próximos 15 días</span>
+                <h3 class="text-lg font-bold text-gray-900">Pendientes de Pago</h3>
+                <span class="text-xs text-gray-500">Más antiguas primero</span>
             </div>
             
             @if($upcomingInvoices->count() > 0)
                 <div class="space-y-3">
                     @foreach($upcomingInvoices as $invoice)
-                        @php
-                            $daysUntilDue = now()->diffInDays($invoice->due_date, false);
-                            $isUrgent = $daysUntilDue <= 3;
-                        @endphp
-                        <div class="flex items-start gap-3 p-3 rounded-lg {{ $isUrgent ? 'bg-red-50 border border-red-200' : 'hover:bg-gray-50' }} transition-colors">
+                        <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -277,15 +273,15 @@
                                 <p class="text-sm font-medium text-gray-900">{{ $invoice->invoice_number }}</p>
                                 <p class="text-xs text-gray-500">{{ $invoice->client->full_name ?? 'Sin cliente' }}</p>
                                 <p class="text-sm font-bold text-gray-900 mt-1">{{ number_format($invoice->total_amount, 2) }} €</p>
-                                <p class="text-xs {{ $isUrgent ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                                    Vence: {{ $invoice->due_date->format('d/m/Y') }} ({{ abs($daysUntilDue) }} día{{ abs($daysUntilDue) != 1 ? 's' : '' }})
+                                <p class="text-xs text-gray-500">
+                                    Fecha: {{ $invoice->invoice_date->format('d/m/Y') }}
                                 </p>
                             </div>
                         </div>
                     @endforeach
                 </div>
             @else
-                <p class="text-gray-500 text-center py-8">No hay facturas próximas a vencer</p>
+                <p class="text-gray-500 text-center py-8">No hay facturas pendientes de pago</p>
             @endif
         </div>
 

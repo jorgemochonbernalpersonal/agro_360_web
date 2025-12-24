@@ -1,11 +1,24 @@
-<div>
-    <x-form-card
+<div class="space-y-6 animate-fade-in">
+    @php
+        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
+    @endphp
+    <x-page-header
+        :icon="$icon"
         title="Nueva Factura"
         description="Crea una nueva factura"
-        icon="🧾"
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-        :back-url="route('viticulturist.invoices.index')"
     >
+        <x-slot:actionButton>
+            <x-button href="{{ route('viticulturist.invoices.index') }}" variant="secondary">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver
+            </x-button>
+        </x-slot:actionButton>
+    </x-page-header>
+
+    <div class="glass-card rounded-2xl p-8">
         <form wire:submit="save" class="space-y-8" data-cy="invoice-create-form">
             <x-form-section title="Cliente" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -28,7 +41,7 @@
                                 <option value="">Selecciona una dirección</option>
                                 @foreach($availableAddresses as $address)
                                     <option value="{{ $address->id }}">
-                                        {{ $address->name ?? 'Dirección #' . $address->id }}
+                                        {{ $address->full_address }}
                                         @if($address->is_default)
                                             (Por defecto)
                                         @endif
@@ -47,41 +60,31 @@
                 <div class="max-w-md">
                     <x-label for="delivery_note_code" required>Código de Albarán</x-label>
                     <x-input 
-                        wire:model.live="delivery_note_code" 
+                        wire:model="delivery_note_code" 
                         id="delivery_note_code" 
                         data-cy="delivery-note-code"
                         type="text" 
                         required
+                        disabled
                         placeholder="Ej: ALB-2025-0001"
+                        class="bg-gray-100 cursor-not-allowed"
                     />
                     @error('delivery_note_code')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                     <p class="mt-2 text-xs text-gray-500">
-                        💡 El código se genera automáticamente de forma secuencial. Puedes modificarlo si lo necesitas.
-                        @if($delivery_note_code_modified)
-                            <span class="text-orange-600 font-semibold">⚠️ Has modificado el código automático.</span>
-                        @endif
+                        💡 El código de albarán se genera automáticamente al crear la factura de forma secuencial. No se puede modificar.
                     </p>
                 </div>
             </x-form-section>
 
-            <x-form-section title="Fechas" color="green">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <x-label for="invoice_date" required>Fecha de factura</x-label>
-                        <x-input wire:model="invoice_date" id="invoice_date" data-cy="invoice-date" type="date" required />
-                        @error('invoice_date')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <x-label for="due_date">Fecha de vencimiento</x-label>
-                        <x-input wire:model="due_date" id="due_date" data-cy="due-date" type="date" />
-                        @error('due_date')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+            <x-form-section title="Fecha de Factura" color="green">
+                <div class="max-w-md">
+                    <x-label for="invoice_date" required>Fecha de factura</x-label>
+                    <x-input wire:model="invoice_date" id="invoice_date" data-cy="invoice-date" type="date" required />
+                    @error('invoice_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </x-form-section>
 
@@ -385,5 +388,5 @@
                 <x-button type="submit" variant="primary" data-cy="submit-button">Crear Factura</x-button>
             </div>
         </form>
-    </x-form-card>
+    </div>
 </div>

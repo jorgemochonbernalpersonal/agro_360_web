@@ -3,11 +3,14 @@
 namespace App\Livewire\Viticulturist\Invoices;
 
 use App\Models\Invoice;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
 class Show extends Component
 {
+    use WithToastNotifications;
+
     public Invoice $invoice;
 
     public function mount($invoice)
