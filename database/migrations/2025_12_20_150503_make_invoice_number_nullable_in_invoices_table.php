@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('invoices', function (Blueprint $table) {
-            // Quitar el índice único primero
-            $table->dropUnique(['invoice_number']);
-        });
+        try {
+            Schema::table('invoices', function (Blueprint $table) {
+                // Intentar quitar el índice único
+                $table->dropUnique(['invoice_number']);
+            });
+        } catch (\Exception $e) {
+            // El índice no existe, continuar
+        }
         
         Schema::table('invoices', function (Blueprint $table) {
             // Hacer la columna nullable

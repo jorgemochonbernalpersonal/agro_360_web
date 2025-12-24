@@ -35,7 +35,16 @@
                         <div class="flex items-start gap-4">
                             {{-- Mostrar imagen de perfil o inicial --}}
                             @if($profile && $profile->profile_image)
-                                <img src="{{ Storage::disk('public')->url($profile->profile_image) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover border-4 border-gray-200 shadow-lg flex-shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img 
+                                    src="{{ Storage::disk('public')->url($profile->profile_image) }}" 
+                                    alt="{{ $user->name }}" 
+                                    width="64"
+                                    height="64"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="w-16 h-16 rounded-full object-cover border-4 border-gray-200 shadow-lg flex-shrink-0" 
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                >
                                 <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center flex-shrink-0 shadow-lg" style="display: none;">
                                     <span class="text-white text-2xl font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                                 </div>

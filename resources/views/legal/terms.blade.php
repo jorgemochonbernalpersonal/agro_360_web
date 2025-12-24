@@ -15,8 +15,9 @@
     <link rel="canonical" href="https://agro365.es{{ request()->getRequestUri() }}">
     
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600&display=swap" rel="stylesheet" />
     
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -28,7 +29,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <a href="{{ url('/') }}" class="flex items-center">
-                    <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-20 w-auto object-contain">
+                    <img 
+                        src="{{ asset('images/logo.png') }}" 
+                        alt="Agro365" 
+                        width="200"
+                        height="80"
+                        loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                        class="h-20 w-auto object-contain"
+                    >
                 </a>
                 <div class="flex items-center gap-4">
                     <a href="{{ route('login') }}" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] font-semibold transition-colors">

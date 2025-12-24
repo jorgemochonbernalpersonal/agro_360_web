@@ -211,6 +211,34 @@ class Index extends Component
     }
 
     /**
+     * Descargar informe en formato especificado
+     */
+    public function downloadInFormat($reportId, $format)
+    {
+        try {
+            $report = OfficialReport::findOrFail($reportId);
+            
+            // Verificar permisos
+            if ($report->user_id !== auth()->id()) {
+                $this->toastError('No tienes permiso para descargar este informe.');
+                return;
+            }
+            
+            // Validar que el informe esté completo
+            if ($report->processing_status !== 'completed') {
+                $this->toastWarning('Este informe aún está siendo procesado. Espera a que se complete.');
+                return;
+            }
+            
+            $service = new \App\Services\OfficialReportService();
+            return $service->downloadReportInFormat($report, $format);
+            
+        } catch (\Exception $e) {
+            $this->toastError('Error al descargar: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Resetear filtros
      */
     public function resetFilters()

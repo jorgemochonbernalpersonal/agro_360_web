@@ -14,12 +14,17 @@ class Irrigation extends Model
         'duration_minutes',
         'soil_moisture_before',
         'soil_moisture_after',
+        // Campos PAC
+        'water_source',
+        'water_concession',
+        'flow_rate',
     ];
 
     protected $casts = [
         'water_volume' => 'decimal:3',
         'soil_moisture_before' => 'decimal:2',
         'soil_moisture_after' => 'decimal:2',
+        'flow_rate' => 'decimal:2',
     ];
 
     /**

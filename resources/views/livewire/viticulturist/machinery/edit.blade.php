@@ -200,7 +200,13 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                             Imagen Actual
                         </label>
-                        <img src="{{ \Storage::url($current_image) }}" alt="{{ $machinery->name }}" class="max-w-xs rounded-lg border-2 border-gray-200">
+                        <img 
+                            src="{{ \Storage::url($current_image) }}" 
+                            alt="{{ $machinery->name }}" 
+                            loading="lazy"
+                            decoding="async"
+                            class="max-w-xs rounded-lg border-2 border-gray-200"
+                        >
                     </div>
                 @endif
 

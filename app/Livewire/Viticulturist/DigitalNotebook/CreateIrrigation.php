@@ -23,11 +23,17 @@ class CreateIrrigation extends Component
     public $plot_planting_id = '';
     public $availablePlantings = [];
     public $activity_date = '';
+    public $phenological_stage = '';  // Estadio fenológico
     public $water_volume = '';
     public $irrigation_method = '';
     public $duration_minutes = '';
     public $soil_moisture_before = '';
     public $soil_moisture_after = '';
+    // Campos PAC
+    public $water_source = '';
+    public $water_concession = '';
+    public $flow_rate = '';
+    // Resto
     public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
     public $crew_member_id = '';
@@ -100,6 +106,12 @@ class CreateIrrigation extends Component
             'duration_minutes' => 'nullable|integer|min:0',
             'soil_moisture_before' => 'nullable|numeric|min:0|max:100',
             'soil_moisture_after' => 'nullable|numeric|min:0|max:100',
+            'phenological_stage' => 'nullable|string|max:50',
+            // Campos PAC
+            'water_source' => 'nullable|string|max:100',
+            'water_concession' => 'nullable|string|max:100',
+            'flow_rate' => 'nullable|numeric|min:0',
+            // Resto
             'crew_id' => 'nullable|exists:crews,id',
             'crew_member_id' => 'nullable|exists:crew_members,id',
             'machinery_id' => 'nullable|exists:machinery,id',
@@ -163,6 +175,7 @@ class CreateIrrigation extends Component
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'irrigation',
+                    'phenological_stage' => $this->phenological_stage,
                     'activity_date' => $this->activity_date,
                     'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
                     'crew_member_id' => $crewMemberId,
@@ -180,6 +193,10 @@ class CreateIrrigation extends Component
                     'duration_minutes' => $this->duration_minutes ?: null,
                     'soil_moisture_before' => $this->soil_moisture_before ?: null,
                     'soil_moisture_after' => $this->soil_moisture_after ?: null,
+                    // Campos PAC
+                    'water_source' => $this->water_source ?: null,
+                    'water_concession' => $this->water_concession ?: null,
+                    'flow_rate' => $this->flow_rate ?: null,
                 ]);
             });
 

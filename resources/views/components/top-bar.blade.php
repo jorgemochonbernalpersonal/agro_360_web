@@ -140,7 +140,16 @@
                     
                     <!-- Avatar con foto real -->
                     @if($profile && $profile->profile_image)
-                        <img src="{{ Storage::disk('public')->url($profile->profile_image) }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-agro-green)] shadow-md" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img 
+                            src="{{ Storage::disk('public')->url($profile->profile_image) }}" 
+                            alt="{{ $user->name }}" 
+                            width="40"
+                            height="40"
+                            loading="eager"
+                            decoding="async"
+                            class="w-10 h-10 rounded-full object-cover border-2 border-[var(--color-agro-green)] shadow-md" 
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        >
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center shadow-md" style="display: none;">
                             <span class="text-white text-sm font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                         </div>

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\OfficialReport;
 use App\Services\OfficialReportService;
+use App\Services\Validators\PacComplianceValidator;
 use App\Mail\ReportGeneratedMail;
 use App\Mail\ReportGenerationFailedMail;
 use Illuminate\Bus\Queueable;
@@ -62,7 +63,13 @@ class GenerateOfficialReportJob implements ShouldQueue
                     ])
                     ->with([
                         'phytosanitaryTreatment.product',
-                        'plot:id,name',
+                        'plot:id,name,total_area',
+                        'plot.sigpacCodes' => function ($query) {
+                            $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality', 
+                                         'code_polygon', 'code_plot', 'code_enclosure', 
+                                         'code_autonomous_community', 'code_aggregate', 'code_zone');
+                        },
+                        'plot.sigpacUses:id,name,description',
                         'plotPlanting:id,plot_id,name',
                         'plotPlanting.grapeVariety:id,name',
                         'crewMember:id,name',
@@ -88,8 +95,15 @@ class GenerateOfficialReportJob implements ShouldQueue
                     'plots_affected' => $treatments->pluck('plot.name')->unique()->count(),
                 ];
 
-                // Actualizar metadata
-                $report->update(['report_metadata' => $stats]);
+                // Validar cumplimiento PAC
+                $pacValidator = new PacComplianceValidator();
+                $pacCompliance = $pacValidator->validateActivities($treatments);
+
+                // Actualizar metadata con estadísticas y validación PAC
+                $report->update(['report_metadata' => array_merge($stats, [
+                    'pac_compliance' => $pacCompliance,
+                    'compliance_percentage' => $pacValidator->getCompliancePercentage($pacCompliance),
+                ])]);
 
                 // Generar PDF
                 $user = \App\Models\User::find($this->userId);
@@ -140,7 +154,13 @@ class GenerateOfficialReportJob implements ShouldQueue
                 $activities = \App\Models\AgriculturalActivity::forUser($this->userId)
                     ->forCampaign($campaignId)
                     ->with([
-                        'plot',
+                        'plot:id,name,total_area',
+                        'plot.sigpacCodes' => function ($query) {
+                            $query->select('sigpac_code.id', 'code', 'code_province', 'code_municipality', 
+                                         'code_polygon', 'code_plot', 'code_enclosure', 
+                                         'code_autonomous_community', 'code_aggregate', 'code_zone');
+                        },
+                        'plot.sigpacUses:id,name,description',
                         'plotPlanting.grapeVariety',
                         'phytosanitaryTreatment.product',
                         'fertilization',
@@ -170,10 +190,16 @@ class GenerateOfficialReportJob implements ShouldQueue
                     'harvest_count' => $activities->where('activity_type', 'harvest')->count(),
                 ];
 
-                // Actualizar metadata
+                // Validar cumplimiento PAC
+                $pacValidator = new PacComplianceValidator();
+                $pacCompliance = $pacValidator->validateActivities($activities);
+
+                // Actualizar metadata con estadísticas, campaña y validación PAC
                 $report->update(['report_metadata' => array_merge($stats, [
                     'campaign_id' => $campaignId,
                     'campaign_name' => $campaign->name,
+                    'pac_compliance' => $pacCompliance,
+                    'compliance_percentage' => $pacValidator->getCompliancePercentage($pacCompliance),
                 ])]);
 
                 // Generar PDF

@@ -126,6 +126,46 @@
                                     inactive-text="Invalidado" 
                                 />
                                 
+                                {{-- PAC Compliance Badge --}}
+                                @if(isset($report->report_metadata['pac_compliance']))
+                                    @php
+                                        $pacCompliance = $report->report_metadata['pac_compliance'];
+                                        $compliancePercentage = $report->report_metadata['compliance_percentage'] ?? 0;
+                                    @endphp
+                                    
+                                    @if($pacCompliance['is_compliant'])
+                                        <span 
+                                            class="px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full flex items-center gap-1 cursor-help"
+                                            title="Cumplimiento PAC: {{ number_format($compliancePercentage, 1) }}% - {{ $pacCompliance['stats']['with_valid_sigpac'] }}/{{ $pacCompliance['stats']['total_activities'] }} actividades con SIGPAC válido"
+                                        >
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            PAC OK
+                                        </span>
+                                    @elseif($pacCompliance['has_warnings'] && empty($pacCompliance['errors']))
+                                        <span 
+                                            class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full flex items-center gap-1 cursor-help"
+                                            title="Cumplimiento PAC: {{ number_format($compliancePercentage, 1) }}% - {{ count($pacCompliance['warnings']) }} advertencias encontradas"
+                                        >
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                            </svg>
+                                            ⚠ Revisar
+                                        </span>
+                                    @else
+                                        <span 
+                                            class="px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full flex items-center gap-1 cursor-help"
+                                            title="Cumplimiento PAC: {{ number_format($compliancePercentage, 1) }}% - {{ count($pacCompliance['errors']) }} errores críticos"
+                                        >
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                            </svg>
+                                            ✗ No Cumple
+                                        </span>
+                                    @endif
+                                @endif
+                                
                                 @if($report->processing_status === 'pending')
                                     <span class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full inline-flex items-center gap-1">
                                         <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -194,16 +234,106 @@
                                 </svg>
                             </button>
 
-                            {{-- Descargar --}}
-                            <a 
-                                href="{{ route('viticulturist.official-reports.download', $report) }}"
-                                class="p-2 rounded-lg transition-all duration-200 group/btn text-green-600 hover:bg-green-50"
-                                title="Descargar PDF"
-                            >
-                                <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                            </a>
+                            {{-- Descargar (Dropdown para formatos múltiples) --}}
+                            @if($report->processing_status === 'completed')
+                                <div x-data="{ open: false }" @click.away="open = false" class="relative">
+                                    <button
+                                        @click="open = !open"
+                                        class="p-2 rounded-lg transition-all duration-200 group/btn text-green-600 hover:bg-green-50"
+                                        title="Descargar informe"
+                                    >
+                                        <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0  24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- Dropdown Menu -->
+                                    <div
+                                        x-show="open"
+                                        x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                        class="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50"
+                                        style="display: none;"
+                                    >
+                                        <div class="py-1">
+                                            <!-- PDF -->
+                                            <a
+                                                href="{{ route('viticulturist.official-reports.download', $report) }}"
+                                                class="group flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors"
+                                            >
+                                                <div class="flex items-center gap-2">
+                                                    <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                                        <path fill="white" d="M14 2v6h6"/>
+                                                    </svg>
+                                                    <span class="font-medium">PDF</span>
+                                                </div>
+                                                <span class="text-xs text-green-600">✓</span>
+                                            </a>
+
+                                            <!-- CSV -->
+                                            @if($report->csv_path)
+                                                <button
+                                                    wire:click="downloadInFormat({{ $report->id }}, 'csv')"
+                                                    @click="open = false"
+                                                    class="group w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors"
+                                                >
+                                                    <div class="flex items-center gap-2">
+                                                        <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                                            <path fill="white" d="M14 2v6h6"/>
+                                                        </svg>
+                                                        <span class="font-medium">CSV</span>
+                                                    </div>
+                                                    <span class="text-xs text-green-600">✓</span>
+                                                </button>
+                                            @else
+                                                <div class="flex items-center justify-between px-4 py-2 text-sm text-gray-400 cursor-not-allowed">
+                                                    <div class="flex items-center gap-2">
+                                                        <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                                        </svg>
+                                                        <span>CSV</span>
+                                                    </div>
+                                                    <span class="text-xs">N/A</span>
+                                                </div>
+                                            @endif
+
+                                            <!-- XML -->
+                                            @if($report->xml_path)
+                                                <button
+                                                    wire:click="downloadInFormat({{ $report->id }}, 'xml')"
+                                                    @click="open = false"
+                                                    class="group w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors"
+                                                >
+                                                    <div class="flex items-center gap-2">
+                                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                                            <path fill="white" d="M14 2v6h6"/>
+                                                        </svg>
+                                                        <span class="font-medium">XML</span>
+                                                    </div>
+                                                    <span class="text-xs text-green-600">✓</span>
+                                                </button>
+                                            @else
+                                                <div class="flex items-center justify-between px-4 py-2 text-sm text-gray-400 cursor-not-allowed">
+                                                    <div class="flex items-center gap-2">
+                                                        <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                                        </svg>
+                                                        <span>XML</span>
+                                                    </div>
+                                                    <span class="text-xs">N/A</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
 
                             {{-- Verificar --}}
                             <a 

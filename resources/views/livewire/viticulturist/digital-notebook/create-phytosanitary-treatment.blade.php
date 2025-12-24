@@ -81,6 +81,29 @@
                             required
                         />
                     </div>
+
+                    {{-- Estadio Fenológico --}}
+                    <div>
+                        <x-label for="phenological_stage">Estadio Fenológico</x-label>
+                        <x-select 
+                            wire:model="phenological_stage" 
+                            id="phenological_stage" 
+                            data-cy="phenological-stage-select"
+                            :error="$errors->first('phenological_stage')"
+                        >
+                            <option value="">Selecciona un estadio</option>
+                            <option value="Brotación">Brotación</option>
+                            <option value="Desarrollo vegetativo">Desarrollo vegetativo</option>
+                            <option value="Floración">Floración</option>
+                            <option value="Cuajado">Cuajado</option>
+                            <option value="Envero">Envero</option>
+                            <option value="Maduración">Maduración</option>
+                            <option value="Vendimia">Vendimia</option>
+                            <option value="Caída de hoja">Caída de hoja</option>
+                            <option value="Reposo invernal">Reposo invernal</option>
+                        </x-select>
+                        <p class="text-xs text-gray-500 mt-1">Recomendado para trazabilidad PAC</p>
+                    </div>
                 </div>
         </x-form-section>
 
@@ -234,6 +257,107 @@
                         </div>
                     </div>
                 @endif
+        </x-form-section>
+
+        {{-- Sección PAC Obligatoria --}}
+        <x-form-section title="Cumplimiento PAC (Obligatorio)" color="amber">
+            <div class="space-y-6">
+                {{-- Justificación del Tratamiento --}}
+                <div>
+                    <x-label for="treatment_justification" required>
+                        Justificación del Tratamiento
+                        <span class="text-xs text-gray-500">(Plaga o enfermedad detectada)</span>
+                    </x-label>
+                    <x-textarea 
+                        wire:model="treatment_justification" 
+                        id="treatment_justification"
+                        rows="3"
+                        placeholder="Ej: Detección de mildiu en las hojas de la parte superior. Presencia de manchas amarillentas..."
+                        :error="$errors->first('treatment_justification')"
+                        required
+                    />
+                    <p class="mt-1 text-xs text-gray-500">
+                        ⚠️ <strong>Campo PAC obligatorio:</strong> Describe la plaga o enfermedad que motiva el tratamiento.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {{-- Número ROPO del Aplicador --}}
+                    <div>
+                        <x-label for="applicator_ropo_number">
+                            Número ROPO del Aplicador
+                            <span class="text-xs text-gray-500">(Recomendado)</span>
+                        </x-label>
+                        <x-input 
+                            wire:model="applicator_ropo_number" 
+                            type="text" 
+                            id="applicator_ropo_number"
+                            placeholder="Ej: ES12345678"
+                            maxlength="50"
+                            :error="$errors->first('applicator_ropo_number')"
+                        />
+                        <p class="mt-1 text-xs text-gray-500">
+                            Registro Oficial de Productores y Operadores
+                        </p>
+                    </div>
+
+                    {{-- Plazo de Reentrada --}}
+                    <div>
+                        <x-label for="reentry_period_days" required>
+                            Plazo de Reentrada (días)
+                        </x-label>
+                        <x-input 
+                            wire:model="reentry_period_days" 
+                            type="number" 
+                            id="reentry_period_days"
+                            placeholder="Ej: 3"
+                            min="0"
+                            step="1"
+                            :error="$errors->first('reentry_period_days')"
+                            required
+                        />
+                        <p class="mt-1 text-xs text-gray-500">
+                            Días sin acceso a la parcela tras la aplicación
+                        </p>
+                    </div>
+
+                    {{-- Volumen de Caldo --}}
+                    <div>
+                        <x-label for="spray_volume" required>
+                            Volumen de Caldo (L)
+                        </x-label>
+                        <x-input 
+                            wire:model="spray_volume" 
+                            type="number" 
+                            id="spray_volume"
+                            placeholder="Ej: 500.00"
+                            min="0.01"
+                            step="0.01"
+                            :error="$errors->first('spray_volume')"
+                            required
+                        />
+                        <p class="mt-1 text-xs text-gray-500">
+                            Litros totales de caldo aplicados
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Info box PAC --}}
+                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-semibold text-amber-900">Información PAC</h4>
+                            <p class="text-sm text-amber-800 mt-1">
+                                Estos campos son obligatorios según la normativa de la Política Agraria Común (PAC) y el RD 1311/2012 
+                                sobre uso sostenible de productos fitosanitarios.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </x-form-section>
 
         <x-form-section title="Condiciones Meteorológicas" color="green">

@@ -558,6 +558,28 @@
                 </div>
             </div>
 
+            {{-- Datos de Trazabilidad (Transporte) --}}
+            <div class="mt-6 border-t pt-6">
+                <h4 class="text-sm font-medium text-gray-900 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 012-2v0a2 2 0 012 2m0 0a2 2 0 012 2v0a2 2 0 012-2"/></svg>
+                    Trazabilidad y Transporte (SIEX)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <x-label for="transport_document_number">Nº Documento Transporte</x-label>
+                        <x-input wire:model="transport_document_number" type="text" id="transport_document_number" placeholder="Ej: GUIA-2023-001" :error="$errors->first('transport_document_number')" />
+                    </div>
+                    <div>
+                        <x-label for="destination_rega_code">REGA Destino</x-label>
+                        <x-input wire:model="destination_rega_code" type="text" id="destination_rega_code" placeholder="Ej: ES000000000000" :error="$errors->first('destination_rega_code')" />
+                    </div>
+                    <div>
+                        <x-label for="vehicle_plate">Matrícula Vehículo</x-label>
+                        <x-input wire:model="vehicle_plate" type="text" id="vehicle_plate" placeholder="Ej: 1234 ABC" :error="$errors->first('vehicle_plate')" />
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div>
                     <x-label for="price_per_kg">Precio por Kilogramo (€/kg)</x-label>

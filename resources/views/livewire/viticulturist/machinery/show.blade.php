@@ -200,7 +200,13 @@
             @if($machinery->image)
                 <div class="glass-card rounded-xl p-6">
                     <h3 class="text-lg font-bold text-[var(--color-agro-brown-dark)] mb-4">Imagen</h3>
-                    <img src="{{ \Storage::url($machinery->image) }}" alt="{{ $machinery->name }}" class="w-full rounded-lg border-2 border-gray-200">
+                    <img 
+                        src="{{ \Storage::url($machinery->image) }}" 
+                        alt="{{ $machinery->name }}" 
+                        loading="lazy"
+                        decoding="async"
+                        class="w-full rounded-lg border-2 border-gray-200"
+                    >
                 </div>
             @endif
 

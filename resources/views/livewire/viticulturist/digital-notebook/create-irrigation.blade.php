@@ -48,6 +48,22 @@
                         <x-label for="activity_date" required>Fecha</x-label>
                         <x-input wire:model="activity_date" type="date" id="activity_date" data-cy="activity-date-input" :error="$errors->first('activity_date')" required />
                     </div>
+                    <div>
+                        <x-label for="phenological_stage">Estadio Fenológico</x-label>
+                        <x-select wire:model="phenological_stage" id="phenological_stage" data-cy="phenological-stage-select" :error="$errors->first('phenological_stage')">
+                            <option value="">Selecciona un estadio</option>
+                            <option value="Brotación">Brotación</option>
+                            <option value="Desarrollo vegetativo">Desarrollo vegetativo</option>
+                            <option value="Floración">Floración</option>
+                            <option value="Cuajado">Cuajado</option>
+                            <option value="Envero">Envero</option>
+                            <option value="Maduración">Maduración</option>
+                            <option value="Vendimia">Vendimia</option>
+                            <option value="Caída de hoja">Caída de hoja</option>
+                            <option value="Reposo invernal">Reposo invernal</option>
+                        </x-select>
+                        <p class="text-xs text-gray-500 mt-1">Recomendado para trazabilidad PAC</p>
+                    </div>
                 </div>
         </x-form-section>
 
@@ -83,6 +99,76 @@
                         <x-input wire:model="soil_moisture_after" type="number" step="0.1" min="0" max="100" id="soil_moisture_after" placeholder="0.0" :error="$errors->first('soil_moisture_after')" />
                     </div>
                 </div>
+        </x-form-section>
+
+        {{-- Sección PAC Obligatoria --}}
+        <x-form-section title="Cumplimiento PAC (Obligatorio)" color="amber">
+            <div class="space-y-6">
+                {{-- Info box PAC --}}
+                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-semibold text-amber-900">Información PAC</h4>
+                            <p class="text-sm text-amber-800 mt-1">
+                                Es obligatorio identificar el origen del agua y la concesión para cumplir con la condicionalidad reforzada de la PAC.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {{-- Origen del Agua --}}
+                    <div>
+                        <x-label for="water_source">Origen del Agua</x-label>
+                        <x-select 
+                            wire:model="water_source" 
+                            id="water_source"
+                            data-cy="water-source-select"
+                            :error="$errors->first('water_source')"
+                        >
+                            <option value="">Selecciona el origen</option>
+                            <option value="Pozo legalizado">Pozo legalizado</option>
+                            <option value="Comunidad de regantes">Comunidad de regantes</option>
+                            <option value="Embalse propio">Embalse propio</option>
+                            <option value="Cauce público (río/arroyo)">Cauce público (río/arroyo)</option>
+                            <option value="Aguas regeneradas">Aguas regeneradas</option>
+                            <option value="Otro">Otro</option>
+                        </x-select>
+                    </div>
+
+                    {{-- Nº Concesión --}}
+                    <div>
+                        <x-label for="water_concession">Nº Concesión / Autorización</x-label>
+                        <x-input 
+                            wire:model="water_concession" 
+                            type="text" 
+                            id="water_concession"
+                            placeholder="Ej: 2023/CONF/1234"
+                            :error="$errors->first('water_concession')"
+                        />
+                        <p class="mt-1 text-xs text-gray-500">
+                            Número de expediente de la Confederación Hidrográfica
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Caudal --}}
+                <div class="md:w-1/2">
+                    <x-label for="flow_rate">Caudal de Riego (L/h)</x-label>
+                    <x-input 
+                        wire:model="flow_rate" 
+                        type="number" 
+                        step="0.01" 
+                        id="flow_rate"
+                        placeholder="Ej: 2000.00"
+                        min="0"
+                        :error="$errors->first('flow_rate')"
+                    />
+                </div>
+            </div>
         </x-form-section>
 
         <x-form-section title="Información Adicional" color="green" class="pb-6">

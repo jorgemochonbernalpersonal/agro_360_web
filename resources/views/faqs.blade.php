@@ -41,6 +41,7 @@
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
     
     <!-- Styles -->
@@ -53,7 +54,16 @@
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-3">
                     <a href="{{ url('/') }}" class="flex items-center gap-3">
-                        <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
+                        <img 
+                            src="{{ asset('images/logo.png') }}" 
+                            alt="Agro365" 
+                            width="120"
+                            height="40"
+                            loading="eager"
+                            fetchpriority="high"
+                            decoding="async"
+                            class="h-10 w-auto"
+                        >
                         <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
                     </a>
                     <span class="px-2 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700 border border-blue-300">BETA</span>

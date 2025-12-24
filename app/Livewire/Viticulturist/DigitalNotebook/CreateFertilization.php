@@ -37,6 +37,14 @@ class CreateFertilization extends Component
     public $temperature = '';
     public $notes = '';
     public $campaign_id = '';
+    
+    // PAC Nutrición
+    public $nitrogen_uf = '';
+    public $phosphorus_uf = '';
+    public $potassium_uf = '';
+    public $manure_type = '';
+    public $burial_date = '';
+    public $emission_reduction_method = '';
 
     public function mount()
     {
@@ -108,6 +116,13 @@ class CreateFertilization extends Component
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            // PAC Nutrición
+            'nitrogen_uf' => 'nullable|numeric|min:0',
+            'phosphorus_uf' => 'nullable|numeric|min:0',
+            'potassium_uf' => 'nullable|numeric|min:0',
+            'manure_type' => 'nullable|string|max:100',
+            'burial_date' => 'nullable|date',
+            'emission_reduction_method' => 'nullable|string|max:100',
         ];
     }
 
@@ -183,6 +198,13 @@ class CreateFertilization extends Component
                     'npk_ratio' => $this->npk_ratio,
                     'application_method' => $this->application_method,
                     'area_applied' => $this->area_applied ?: null,
+                    // PAC
+                    'nitrogen_uf' => $this->nitrogen_uf ?: null,
+                    'phosphorus_uf' => $this->phosphorus_uf ?: null,
+                    'potassium_uf' => $this->potassium_uf ?: null,
+                    'manure_type' => $this->manure_type,
+                    'burial_date' => $this->burial_date ?: null,
+                    'emission_reduction_method' => $this->emission_reduction_method,
                 ]);
             });
 

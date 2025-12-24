@@ -15,11 +15,22 @@ class Fertilization extends Model
         'npk_ratio',
         'application_method',
         'area_applied',
+        // Campos PAC (Nutrición)
+        'nitrogen_uf',
+        'phosphorus_uf',
+        'potassium_uf',
+        'manure_type',
+        'burial_date',
+        'emission_reduction_method',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:3',
         'area_applied' => 'decimal:3',
+        'nitrogen_uf' => 'decimal:3',
+        'phosphorus_uf' => 'decimal:3',
+        'potassium_uf' => 'decimal:3',
+        'burial_date' => 'date',
     ];
 
     /**

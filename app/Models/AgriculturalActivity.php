@@ -18,6 +18,7 @@ class AgriculturalActivity extends Model
         'viticulturist_id',
         'campaign_id',
         'activity_type',
+        'phenological_stage',  // Estadio fenológico
         'activity_date',
         'crew_id',
         'crew_member_id',

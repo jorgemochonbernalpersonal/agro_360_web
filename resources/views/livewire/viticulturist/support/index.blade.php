@@ -186,6 +186,8 @@
                                         <img 
                                             src="{{ $selectedTicket->image_url }}" 
                                             alt="Imagen del ticket" 
+                                            loading="lazy"
+                                            decoding="async"
                                             class="max-w-full h-auto max-h-96 rounded-lg border border-gray-300 hover:opacity-90 transition cursor-pointer"
                                         >
                                     </a>

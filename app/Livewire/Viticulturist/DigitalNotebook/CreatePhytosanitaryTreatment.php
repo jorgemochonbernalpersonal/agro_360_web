@@ -24,6 +24,7 @@ class CreatePhytosanitaryTreatment extends Component
     public $plot_planting_id = '';
     public $availablePlantings = [];
     public $activity_date = '';
+    public $phenological_stage = '';
     public $product_id = '';
     public $dose_per_hectare = '';
     public $total_dose = '';
@@ -40,6 +41,12 @@ class CreatePhytosanitaryTreatment extends Component
     public $humidity = '';
     public $notes = '';
     public $campaign_id = '';
+    
+    // Campos PAC obligatorios
+    public $treatment_justification = '';
+    public $applicator_ropo_number = '';
+    public $reentry_period_days = '';
+    public $spray_volume = '';
 
     public function mount()
     {
@@ -99,6 +106,7 @@ class CreatePhytosanitaryTreatment extends Component
             ],
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
+            'phenological_stage' => 'nullable|string|max:50',
             'product_id' => 'required|exists:phytosanitary_products,id',
             'dose_per_hectare' => 'nullable|numeric|min:0',
             'total_dose' => 'nullable|numeric|min:0',
@@ -113,6 +121,11 @@ class CreatePhytosanitaryTreatment extends Component
             'wind_speed' => 'nullable|numeric|min:0',
             'humidity' => 'nullable|numeric|min:0|max:100',
             'notes' => 'nullable|string',
+            // Campos PAC obligatorios
+            'treatment_justification' => 'required|string|min:10',
+            'applicator_ropo_number' => 'nullable|string|max:50',
+            'reentry_period_days' => 'required|integer|min:0',
+            'spray_volume' => 'required|numeric|min:0.01',
         ];
     }
 
@@ -194,6 +207,7 @@ class CreatePhytosanitaryTreatment extends Component
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $this->campaign_id,
                     'activity_type' => 'phytosanitary',
+                    'phenological_stage' => $this->phenological_stage,
                     'activity_date' => $this->activity_date,
                     'crew_id' => $this->workType === 'crew' ? $this->crew_id : null,
                     'crew_member_id' => $crewMemberId,
@@ -214,6 +228,11 @@ class CreatePhytosanitaryTreatment extends Component
                     'target_pest' => $this->target_pest,
                     'wind_speed' => $this->wind_speed ?: null,
                     'humidity' => $this->humidity ?: null,
+                    // Campos PAC obligatorios
+                    'treatment_justification' => $this->treatment_justification,
+                    'applicator_ropo_number' => $this->applicator_ropo_number ?: null,
+                    'reentry_period_days' => $this->reentry_period_days,
+                    'spray_volume' => $this->spray_volume,
                 ]);
             });
 

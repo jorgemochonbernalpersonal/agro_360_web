@@ -13,6 +13,11 @@
                     <img 
                         src="{{ asset('images/logo.png') }}" 
                         alt="Agro365 Logo" 
+                        width="180"
+                        height="96"
+                        loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
                         class="w-full h-auto max-h-24 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-200"
                     >
                 </div>

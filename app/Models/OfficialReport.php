@@ -22,6 +22,8 @@ class OfficialReport extends Model
         'pdf_path',
         'pdf_size',
         'pdf_filename',
+        'csv_path',
+        'xml_path',
         'is_valid',
         'invalidation_reason',
         'invalidated_at',

@@ -18,6 +18,11 @@ class PhytosanitaryTreatment extends Model
         'target_pest',
         'wind_speed',
         'humidity',
+        // Campos PAC obligatorios
+        'treatment_justification',
+        'applicator_ropo_number',
+        'reentry_period_days',
+        'spray_volume',
     ];
 
     protected $casts = [
@@ -26,6 +31,8 @@ class PhytosanitaryTreatment extends Model
         'area_treated' => 'decimal:3',
         'wind_speed' => 'decimal:2',
         'humidity' => 'decimal:2',
+        'spray_volume' => 'decimal:2',
+        'reentry_period_days' => 'integer',
     ];
 
     /**

@@ -71,9 +71,10 @@
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <!-- Fonts - Optimized -->
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600&display=swap" rel="stylesheet" />
     
     <!-- Styles / Scripts -->
     @livewireStyles
@@ -336,15 +337,28 @@
         });
     </script>
     
-    <!-- Script para ajustar el main con el sidebar colapsable -->
+    <!-- Script para ajustar el main con el sidebar colapsable - Optimizado -->
     <script>
-        if (typeof window.mainContentObserver === 'undefined') {
-            window.mainContentObserver = setInterval(() => {
+        (function() {
+            if (typeof window.mainContentObserver !== 'undefined') return;
+            
+            let lastState = null;
+            let rafId = null;
+            
+            function updateLayout() {
                 const sidebar = document.getElementById('sidebar');
                 const mainContent = document.getElementById('main-content');
                 
-                if (sidebar && mainContent && window.innerWidth >= 1024) {
-                    const isCollapsed = sidebar.getAttribute('data-collapsed') === 'true';
+                if (!sidebar || !mainContent || window.innerWidth < 1024) {
+                    rafId = requestAnimationFrame(updateLayout);
+                    return;
+                }
+                
+                const isCollapsed = sidebar.getAttribute('data-collapsed') === 'true';
+                
+                // Solo actualizar si el estado cambió
+                if (lastState !== isCollapsed) {
+                    lastState = isCollapsed;
                     
                     if (isCollapsed) {
                         mainContent.classList.remove('lg:pl-72');
@@ -354,8 +368,21 @@
                         mainContent.classList.add('lg:pl-72');
                     }
                 }
-            }, 100);
-        }
+                
+                rafId = requestAnimationFrame(updateLayout);
+            }
+            
+            // Iniciar solo cuando el DOM esté listo
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    rafId = requestAnimationFrame(updateLayout);
+                });
+            } else {
+                rafId = requestAnimationFrame(updateLayout);
+            }
+            
+            window.mainContentObserver = { cancel: () => cancelAnimationFrame(rafId) };
+        })();
     </script>
     
     @stack('scripts')

@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\DigitalSignature;
+use App\Services\Exporters\SiexCsvExporter;
+use App\Services\Exporters\SiexXmlExporter;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -183,6 +185,17 @@ class OfficialReportService
             'pdf_filename' => basename($pdfPath),
         ]);
 
+        // 12. Generar exportaciones CSV y XML
+        try {
+            $this->generateExports($report, $user, $treatments, $stats, 'phytosanitary');
+        } catch (\Exception $exportError) {
+            // Log error pero no fallar - las exportaciones son opcionales
+            Log::warning('Error al generar exportaciones CSV/XML', [
+                'report_id' => $report->id,
+                'error' => $exportError->getMessage(),
+            ]);
+        }
+
         return $report;
     }
 
@@ -346,6 +359,17 @@ class OfficialReportService
             'pdf_size' => Storage::disk('local')->size($pdfPath),
             'pdf_filename' => basename($pdfPath),
         ]);
+
+        // 13. Generar exportaciones CSV y XML
+        try {
+            $this->generateExports($report, $user, $activities, $stats, 'full_notebook');
+        } catch (\Exception $exportError) {
+            // Log error pero no fallar - las exportaciones son opcionales
+            Log::warning('Error al generar exportaciones CSV/XML del cuaderno completo', [
+                'report_id' => $report->id,
+                'error' => $exportError->getMessage(),
+            ]);
+        }
 
         return $report;
     }
@@ -636,5 +660,125 @@ class OfficialReportService
             'os' => $os,
             'user_agent' => $userAgent,
         ];
+    }
+
+    /**
+     * Generar exportaciones CSV y XML para un informe
+     * 
+     * @param OfficialReport $report
+     * @param User $user
+     * @param \Illuminate\Support\Collection $data
+     * @param array $stats
+     * @param string $type 'phytosanitary' o 'full_notebook'
+     * @return void
+     */
+    protected function generateExports(
+        OfficialReport $report,
+        User $user,
+        $data,
+        array $stats,
+        string $type
+    ): void {
+        $csvExporter = new SiexCsvExporter();
+        $xmlExporter = new SiexXmlExporter();
+
+        try {
+            // Generar CSV
+            if ($type === 'phytosanitary') {
+                $csvPath = $csvExporter->exportPhytosanitaryTreatments($report, $user, $data, $stats);
+            } else {
+                $csvPath = $csvExporter->exportFullNotebook($report, $user, $data, $stats);
+            }
+
+            // Generar XML
+            if ($type === 'phytosanitary') {
+                $xmlPath = $xmlExporter->exportPhytosanitaryTreatments($report, $user, $data, $stats);
+            } else {
+                $xmlPath = $xmlExporter->exportFullNotebook($report, $user, $data, $stats);
+            }
+
+            // Actualizar rutas en el reporte
+            $report->update([
+                'csv_path' => $csvPath,
+                'xml_path' => $xmlPath,
+            ]);
+
+            Log::info('Exportaciones CSV/XML generadas exitosamente', [
+                'report_id' => $report->id,
+                'csv_path' => $csvPath,
+                'xml_path' => $xmlPath,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al generar exportaciones', [
+                'report_id' => $report->id,
+                'type' => $type,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Descargar informe en formato especificado
+     * 
+     * @param OfficialReport $report
+     * @param string $format 'pdf', 'csv', o 'xml'
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws \Exception
+     */
+    public function downloadReportInFormat(OfficialReport $report, string $format)
+    {
+        // Validar formato
+        if (!in_array($format, ['pdf', 'csv', 'xml'])) {
+            throw new \Exception('Formato no válido. Usa "pdf", "csv" o "xml".');
+        }
+
+        // Obtener el path según el formato
+        $path = null;
+        $filename = null;
+        
+        switch ($format) {
+            case 'pdf':
+                if (!$report->pdfExists()) {
+                    throw new \Exception('El archivo PDF no existe.');
+                }
+                $path = $report->pdf_path;
+                $filename = $report->pdf_filename ?? 'informe_oficial.pdf';
+                break;
+                
+            case 'csv':
+                if (!$report->csv_path || !Storage::disk('local')->exists($report->csv_path)) {
+                    throw new \Exception('El archivo CSV no está disponible para este informe.');
+                }
+                $path = $report->csv_path;
+                $filename = basename($path);
+                break;
+                
+            case 'xml':
+                if (!$report->xml_path || !Storage::disk('local')->exists($report->xml_path)) {
+                    throw new \Exception('El archivo XML no está disponible para este informe.');
+                }
+                $path = $report->xml_path;
+                $filename = basename($path);
+                break;
+        }
+
+        // Obtener ruta completa
+        if (!str_starts_with($path, storage_path())) {
+            $fullPath = Storage::disk('local')->path($path);
+        } else {
+            $fullPath = $path;
+        }
+
+        // Log de descarga para auditoría
+        Log::info('Descarga de informe en formato ' . strtoupper($format), [
+            'report_id' => $report->id,
+            'format' => $format,
+            'user_id' => auth()->id(),
+            'ip' => request()->ip(),
+        ]);
+
+        return response()->download($fullPath, $filename);
     }
 }

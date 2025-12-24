@@ -47,6 +47,9 @@ class CreateHarvest extends Component
     // Destino
     public $destination_type = '';
     public $destination = '';
+    public $transport_document_number = '';
+    public $destination_rega_code = '';
+    public $vehicle_plate = '';
     public $buyer_name = '';
     
     // Económico (opcional)
@@ -347,6 +350,9 @@ class CreateHarvest extends Component
             
             'destination_type' => 'nullable|in:winery,direct_sale,cooperative,self_consumption,other',
             'destination' => 'nullable|string|max:255',
+            'transport_document_number' => 'nullable|string|max:50',
+            'destination_rega_code' => 'nullable|string|max:20',
+            'vehicle_plate' => 'nullable|string|max:20',
             'buyer_name' => 'nullable|string|max:255',
             
             'price_per_kg' => 'nullable|numeric|min:0',
@@ -467,6 +473,9 @@ class CreateHarvest extends Component
                     'health_status' => $this->health_status ?: null,
                     'destination_type' => $this->destination_type ?: null,
                     'destination' => $this->destination,
+                    'transport_document_number' => $this->transport_document_number,
+                    'destination_rega_code' => $this->destination_rega_code,
+                    'vehicle_plate' => $this->vehicle_plate,
                     'buyer_name' => $this->buyer_name,
                     'price_per_kg' => $this->price_per_kg ?: null,
                     'total_value' => $this->total_value ?: null,

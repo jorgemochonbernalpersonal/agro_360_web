@@ -9,14 +9,16 @@ function refreshCsrfToken() {
         credentials: 'same-origin'
     })
     .then(response => {
-        if (response.ok) {
-            console.log('✅ CSRF token refreshed');
-        } else {
+        // Silencioso en producción - los console.log serán eliminados por terser
+        if (!response.ok && import.meta.env.DEV) {
             console.warn('⚠️ Failed to refresh CSRF token');
         }
     })
     .catch(error => {
-        console.error('❌ Error refreshing CSRF token:', error);
+        // Solo log en desarrollo
+        if (import.meta.env.DEV) {
+            console.error('❌ Error refreshing CSRF token:', error);
+        }
     });
 }
 
