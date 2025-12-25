@@ -372,44 +372,32 @@
                         @endif
                         
                         @if($activity->harvest)
-                            {{-- Para cosechas, mostrar botón de ver detalle --}}
-                            <a 
-                                href="{{ route('viticulturist.digital-notebook.harvest.show', $activity->harvest->id) }}"
-                                class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition"
-                                title="Ver detalle de cosecha"
-                            >
-                                Ver
-                            </a>
+                            {{-- Para cosechas, mostrar botones de ver y editar con iconos --}}
+                            <x-action-button variant="view" href="{{ route('viticulturist.digital-notebook.harvest.show', $activity->harvest->id) }}" />
                             @can('update', $activity)
                                 @if(!$activity->is_locked)
-                                    <a 
-                                        href="{{ route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id) }}"
-                                        class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
-                                        title="Editar cosecha"
-                                    >
-                                        Editar
-                                    </a>
-                                @else
-                                    <span class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed" title="Actividad bloqueada">
-                                        🔒 Bloqueada
-                                    </span>
+                                    <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id) }}" />
+
                                 @endif
                             @endcan
                         @else
-                            @if($activity->activity_type === 'phytosanitary')
-                                @can('update', $activity)
-                                    @if(!$activity->is_locked)
+                            {{-- Edit buttons for all activity types (same pattern as harvest) --}}
+                            @can('update', $activity)
+                                @if(!$activity->is_locked)
+                                    @if($activity->activity_type === 'phytosanitary')
                                         <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook.treatment.edit', $activity->id) }}" />
-                                    @else
-                                        <span class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed inline-flex items-center gap-1" title="Actividad bloqueada">
-                                            🔒 Bloqueada
-                                        </span>
+                                    @elseif($activity->activity_type === 'fertilization')
+                                        <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook.fertilization.edit', $activity->id) }}" />
+                                    @elseif($activity->activity_type === 'irrigation')
+                                        <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook.irrigation.edit', $activity->id) }}" />
+                                    @elseif($activity->activity_type === 'cultural')
+                                        <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook.cultural.edit', $activity->id) }}" />
+                                    @elseif($activity->activity_type === 'observation')
+                                        <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook.observation.edit', $activity->id) }}" />
                                     @endif
-                                @endcan
-                            @else
-                                {{-- Other activity types don't have edit pages yet --}}
-                                {{-- Will be implemented: fertilization, irrigation, cultural, observation --}}
-                            @endif
+
+                                @endif
+                            @endcan
                             @can('delete', $activity)
                                 @if(!$activity->is_locked)
                                     <x-action-button 

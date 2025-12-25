@@ -95,9 +95,9 @@
                                             {{-- Imagen de preview (siempre presente para JavaScript) --}}
                                             <img 
                                                 id="profile-preview-img" 
-                                                src="{{ ($profile_image_preview && $profile_image_preview !== 'pending') ? $profile_image_preview : ($current_profile_image ? Storage::disk('public')->url($current_profile_image) : '') }}" 
+                                                src="{{ $current_profile_image ? Storage::disk('public')->url($current_profile_image) : '' }}" 
                                                 alt="Preview" 
-                                                class="w-20 h-20 rounded-full object-cover border-4 {{ ($profile_image_preview && $profile_image_preview !== 'pending') ? 'border-[var(--color-agro-green)]' : 'border-gray-200' }} shadow-lg {{ !$profile_image_preview && !$current_profile_image ? 'hidden' : '' }}"
+                                                class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-lg {{ !$current_profile_image ? 'hidden' : '' }}"
                                                 onerror="this.style.display='none'; if(document.getElementById('profile-preview-placeholder')) document.getElementById('profile-preview-placeholder').style.display='flex';"
                                                 wire:ignore
                                             >
@@ -110,14 +110,7 @@
                                             </div>
                                             
                                             {{-- Badge de nueva imagen --}}
-                                            @if($profile_image_preview && $profile_image_preview !== 'pending')
-                                                <div class="absolute -top-1 -right-1 w-6 h-6 bg-[var(--color-agro-green)] rounded-full flex items-center justify-center z-10">
-                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                                    </svg>
-                                                </div>
-                                            @endif
-                                            @if($profile_image_preview === 'pending')
+                                            @if($profile_image_preview)
                                                 <div class="absolute -top-1 -right-1 w-6 h-6 bg-[var(--color-agro-green)] rounded-full flex items-center justify-center z-10">
                                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -161,8 +154,21 @@
                                                         };
                                                         reader.onerror = function() {
                                                             console.error('Error al leer el archivo');
+                                                            if (placeholder) {
+                                                                placeholder.style.display = 'flex';
+                                                            }
                                                         };
                                                         reader.readAsDataURL(file);
+                                                    } else {
+                                                        // Si no hay archivo, restaurar imagen original
+                                                        const previewImg = document.getElementById('profile-preview-img');
+                                                        const placeholder = document.getElementById('profile-preview-placeholder');
+                                                        if (previewImg && previewImg.dataset.originalSrc) {
+                                                            previewImg.src = previewImg.dataset.originalSrc;
+                                                        } else if (placeholder) {
+                                                            previewImg.style.display = 'none';
+                                                            placeholder.style.display = 'flex';
+                                                        }
                                                     }
                                                 "
                                                 class="block w-full text-sm text-gray-500
@@ -187,6 +193,14 @@
                                             
                                             @script
                                             <script>
+                                                // Guardar la URL original de la imagen al cargar
+                                                document.addEventListener('DOMContentLoaded', () => {
+                                                    const previewImg = document.getElementById('profile-preview-img');
+                                                    if (previewImg && previewImg.src) {
+                                                        previewImg.dataset.originalSrc = previewImg.src;
+                                                    }
+                                                });
+                                                
                                                 // Asegurar que el preview se mantenga después de actualizaciones de Livewire
                                                 document.addEventListener('livewire:init', () => {
                                                     Livewire.hook('morph.updated', ({ el, component }) => {
@@ -196,15 +210,19 @@
                                                             const previewImg = document.getElementById('profile-preview-img');
                                                             const placeholder = document.getElementById('profile-preview-placeholder');
                                                             
-                                                            if (previewImg && !previewImg.src) {
+                                                            // Solo restaurar si el preview se perdió (no tiene src o es diferente)
+                                                            if (previewImg) {
                                                                 const reader = new FileReader();
                                                                 reader.onload = function(e) {
-                                                                    previewImg.src = e.target.result;
-                                                                    previewImg.style.display = 'block';
-                                                                    previewImg.classList.remove('border-gray-200');
-                                                                    previewImg.classList.add('border-[var(--color-agro-green)]');
-                                                                    if (placeholder) {
-                                                                        placeholder.style.display = 'none';
+                                                                    // Solo actualizar si no hay un preview activo ya
+                                                                    if (!previewImg.src || previewImg.src === previewImg.dataset.originalSrc) {
+                                                                        previewImg.src = e.target.result;
+                                                                        previewImg.style.display = 'block';
+                                                                        previewImg.classList.remove('border-gray-200');
+                                                                        previewImg.classList.add('border-[var(--color-agro-green)]');
+                                                                        if (placeholder) {
+                                                                            placeholder.style.display = 'none';
+                                                                        }
                                                                     }
                                                                 };
                                                                 reader.readAsDataURL(fileInput.files[0]);

@@ -72,18 +72,11 @@ class Edit extends Component
             'profile_image' => ['nullable', 'image', 'max:2048'], // Max 2MB
         ]);
         
-        // Generar preview si la imagen es válida
+        // Solo marcar que hay una imagen seleccionada
+        // El preview se maneja completamente con JavaScript (FileReader)
+        // para evitar duplicación y problemas de sincronización
         if ($this->profile_image) {
-            try {
-                // Intentar usar temporaryUrl() para la previsualización
-                // Esto funciona mejor con Livewire 3
-                $this->profile_image_preview = $this->profile_image->temporaryUrl();
-            } catch (\Exception $e) {
-                // Si falla temporaryUrl (puede pasar en algunos entornos), 
-                // el JavaScript con FileReader ya habrá mostrado el preview
-                // Solo marcamos que hay una imagen seleccionada
-                $this->profile_image_preview = 'pending';
-            }
+            $this->profile_image_preview = 'pending';
         } else {
             $this->profile_image_preview = null;
         }

@@ -47,6 +47,11 @@ class SeoHelper
         $descriptions = [
             '/' => 'Software de gestión agrícola profesional para viticultores y bodegas. Cuaderno de campo digital, SIGPAC, control de parcelas. 6 meses gratis.',
             '/faqs' => 'Respuestas a preguntas frecuentes sobre Agro365: informes oficiales, SIGPAC, cuaderno digital, precios y más. Todo lo que necesitas saber.',
+            '/que-es-sigpac' => 'Guía completa sobre SIGPAC: qué es, cómo funciona y cómo gestionar parcelas agrícolas con códigos SIGPAC. Integración completa con Agro365.',
+            '/cuaderno-campo-digital-2027' => 'Cuaderno de campo digital obligatorio desde 2027. Normativa, requisitos legales y cómo cumplir con Agro365. Guía completa para viticultores.',
+            '/normativa-pac-2027' => 'Normativa PAC 2027: cambios, requisitos y cumplimiento. Cómo Agro365 te ayuda a cumplir con todas las normativas PAC automáticamente.',
+            '/digitalizar-viñedo' => 'Guía completa para digitalizar tu viñedo: pasos, beneficios y herramientas. Software de gestión agrícola para viticultores profesionales.',
+            '/comparativa-software-agricola' => 'Comparativa de software agrícola para viñedos. Compara Agro365 con otras soluciones. Cuaderno digital, SIGPAC, informes oficiales y más.',
             '/quienes-somos' => 'Conoce más sobre Agro365, la plataforma de gestión agrícola profesional para viticultores y bodegas en España.',
             '/blog' => 'Artículos, noticias y guías sobre gestión agrícola, viticultura, SIGPAC y digitalización del campo.',
             '/tutoriales' => 'Tutoriales paso a paso para usar Agro365: cuaderno digital, SIGPAC, informes oficiales y más.',

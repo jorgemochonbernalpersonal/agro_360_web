@@ -243,8 +243,8 @@ class Index extends Component
         $fullContainers = $allContainers->filter(fn($c) => $c->isFull())->count();
         
         // Contenedores disponibles vs asignados
-        $availableContainers = $allContainers->whereDoesntHave('harvests')->where('archived', false)->count();
-        $assignedContainers = $allContainers->whereHas('harvests')->where('archived', false)->count();
+        $availableContainers = $allContainers->filter(fn($c) => $c->harvests->isEmpty() && !$c->archived)->count();
+        $assignedContainers = $allContainers->filter(fn($c) => $c->harvests->isNotEmpty() && !$c->archived)->count();
         
         // Distribución por campaña
         $campaignStats = $allContainers

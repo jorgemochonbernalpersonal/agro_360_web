@@ -64,9 +64,13 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/treatment/create', CreatePhytosanitaryTreatment::class)->name('treatment.create');
             Route::get('/treatment/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditPhytosanitaryTreatment::class)->name('treatment.edit');
             Route::get('/fertilization/create', CreateFertilization::class)->name('fertilization.create');
+            Route::get('/fertilization/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditFertilization::class)->name('fertilization.edit');
             Route::get('/irrigation/create', CreateIrrigation::class)->name('irrigation.create');
+            Route::get('/irrigation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditIrrigation::class)->name('irrigation.edit');
             Route::get('/cultural/create', CreateCulturalWork::class)->name('cultural.create');
+            Route::get('/cultural/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditCulturalWork::class)->name('cultural.edit');
             Route::get('/observation/create', CreateObservation::class)->name('observation.create');
+            Route::get('/observation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditObservation::class)->name('observation.edit');
             Route::get('/harvest/create', CreateHarvest::class)->name('harvest.create');
             Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
             Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');

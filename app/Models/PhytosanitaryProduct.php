@@ -18,10 +18,12 @@ class PhytosanitaryProduct extends Model
         'toxicity_class',
         'withdrawal_period_days',
         'description',
+        'active',
     ];
 
     protected $casts = [
         'registration_expiry_date' => 'date',
+        'active' => 'boolean',
     ];
 
     /**

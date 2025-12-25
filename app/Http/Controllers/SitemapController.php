@@ -34,7 +34,39 @@ class SitemapController extends Controller
                 'loc' => url('/faqs'),
                 'lastmod' => now()->toIso8601String(),
                 'changefreq' => 'monthly',
+                'priority' => '0.9',
+            ],
+            
+            // Páginas de contenido SEO
+            [
+                'loc' => url('/que-es-sigpac'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
                 'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/cuaderno-campo-digital-2027'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/normativa-pac-2027'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/digitalizar-viñedo'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/comparativa-software-agricola'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
             ],
             
             // Páginas legales

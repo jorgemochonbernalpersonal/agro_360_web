@@ -28,6 +28,27 @@ Route::get('/faqs', function () {
     return view('faqs');
 })->name('faqs');
 
+// Páginas públicas de contenido SEO
+Route::get('/que-es-sigpac', function () {
+    return view('content.que-es-sigpac');
+})->name('content.sigpac');
+
+Route::get('/cuaderno-campo-digital-2027', function () {
+    return view('content.cuaderno-campo-digital-2027');
+})->name('content.cuaderno-digital');
+
+Route::get('/normativa-pac-2027', function () {
+    return view('content.normativa-pac-2027');
+})->name('content.normativa-pac');
+
+Route::get('/digitalizar-viñedo', function () {
+    return view('content.digitalizar-viñedo');
+})->name('content.digitalizar-viñedo');
+
+Route::get('/comparativa-software-agricola', function () {
+    return view('content.comparativa-software-agricola');
+})->name('content.comparativa');
+
 // Health Check Endpoint para UptimeRobot y monitoreo
 Route::get('/health', function () {
     try {
