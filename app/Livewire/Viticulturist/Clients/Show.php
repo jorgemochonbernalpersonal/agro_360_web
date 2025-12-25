@@ -31,7 +31,12 @@ class Show extends Component
         // Si ya tenemos el cliente cargado, solo cargar relaciones
         if (!isset($this->client) || $this->client->id != $this->client_id) {
             $this->client = Client::forUser($user->id)
-                ->with(['addresses', 'invoices'])
+                ->with([
+                    'addresses.municipality', 
+                    'addresses.province', 
+                    'addresses.autonomousCommunity', 
+                    'invoices'
+                ])
                 ->findOrFail($this->client_id);
         } else {
             // Asegurar que el cliente pertenece al usuario actual
@@ -40,7 +45,12 @@ class Show extends Component
             }
             // Cargar relaciones si no están cargadas
             if (!$this->client->relationLoaded('addresses')) {
-                $this->client->load(['addresses', 'invoices']);
+                $this->client->load([
+                    'addresses.municipality', 
+                    'addresses.province', 
+                    'addresses.autonomousCommunity', 
+                    'invoices'
+                ]);
             }
         }
     }

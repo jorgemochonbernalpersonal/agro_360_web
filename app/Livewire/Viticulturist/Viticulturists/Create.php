@@ -49,6 +49,19 @@ class Create extends Component
         ];
     }
 
+    protected function messages(): array
+    {
+        return [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'email.required' => 'El campo email es obligatorio.',
+            'email.email' => 'El email debe ser una dirección de correo válida.',
+            'email.max' => 'El email no puede tener más de 255 caracteres.',
+            'email.unique' => 'Este email ya está registrado. Por favor, usa otro email.',
+            'winery_id.exists' => 'La bodega seleccionada no es válida.',
+        ];
+    }
+
     public function save()
     {
         $this->validate();

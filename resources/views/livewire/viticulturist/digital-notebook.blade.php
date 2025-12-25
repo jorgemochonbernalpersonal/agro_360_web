@@ -241,8 +241,8 @@
                                 @if($activity->phytosanitaryTreatment->area_treated)
                                     <span class="text-gray-600"> - {{ number_format($activity->phytosanitaryTreatment->area_treated, 3) }} ha</span>
                                 @endif
-                                @if($activity->phytosanitaryTreatment->target_pest)
-                                    <div class="text-xs text-gray-500 mt-1">Objetivo: {{ $activity->phytosanitaryTreatment->target_pest }}</div>
+                                @if($activity->phytosanitaryTreatment->pest)
+                                    <div class="text-xs text-gray-500 mt-1">Objetivo: {{ $activity->phytosanitaryTreatment->pest->name }}</div>
                                 @endif
                                 
                                 {{-- Safety Interval Badge --}}
@@ -354,6 +354,23 @@
                         @endif
                     </x-table-cell>
                     <x-table-actions align="right">
+                        {{-- Botón de Historial de Auditoría --}}
+                        <button 
+                            wire:click="openAuditHistory({{ $activity->id }})"
+                            class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition inline-flex items-center gap-1"
+                            title="Ver historial de cambios"
+                        >
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Historial
+                        </button>
+                        
+                        {{-- Badge de actividad bloqueada --}}
+                        @if($activity->is_locked)
+                            <x-activity-locked-badge :activity="$activity" />
+                        @endif
+                        
                         @if($activity->harvest)
                             {{-- Para cosechas, mostrar botón de ver detalle --}}
                             <a 
@@ -364,27 +381,43 @@
                                 Ver
                             </a>
                             @can('update', $activity)
-                                <a 
-                                    href="{{ route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id) }}"
-                                    class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
-                                    title="Editar cosecha"
-                                >
-                                    Editar
-                                </a>
+                                @if(!$activity->is_locked)
+                                    <a 
+                                        href="{{ route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id) }}"
+                                        class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                                        title="Editar cosecha"
+                                    >
+                                        Editar
+                                    </a>
+                                @else
+                                    <span class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed" title="Actividad bloqueada">
+                                        🔒 Bloqueada
+                                    </span>
+                                @endif
                             @endcan
                         @else
-                            @can('view', $activity)
-                                <x-action-button variant="view" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id]) }}" />
-                            @endcan
-                            @can('update', $activity)
-                                <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook', ['activity' => $activity->id, 'edit' => true]) }}" />
-                            @endcan
+                            @if($activity->activity_type === 'phytosanitary')
+                                @can('update', $activity)
+                                    @if(!$activity->is_locked)
+                                        <x-action-button variant="edit" href="{{ route('viticulturist.digital-notebook.treatment.edit', $activity->id) }}" />
+                                    @else
+                                        <span class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed inline-flex items-center gap-1" title="Actividad bloqueada">
+                                            🔒 Bloqueada
+                                        </span>
+                                    @endif
+                                @endcan
+                            @else
+                                {{-- Other activity types don't have edit pages yet --}}
+                                {{-- Will be implemented: fertilization, irrigation, cultural, observation --}}
+                            @endif
                             @can('delete', $activity)
-                                <x-action-button 
-                                    variant="delete" 
-                                    wireClick="deleteActivity({{ $activity->id }})"
-                                    wireConfirm="¿Estás seguro de eliminar esta actividad?"
-                                />
+                                @if(!$activity->is_locked)
+                                    <x-action-button 
+                                        variant="delete" 
+                                        wireClick="deleteActivity({{ $activity->id }})"
+                                        wireConfirm="¿Estás seguro de eliminar esta actividad?"
+                                    />
+                                @endif
                             @endcan
                         @endif
                     </x-table-actions>
@@ -395,5 +428,44 @@
             </x-slot>
         @endif
     </x-data-table>
+
+    {{-- Modal de Historial de Auditoría --}}
+    @if($showAuditHistory && $selectedActivityId)
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                {{-- Header --}}
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        📋 Historial de Auditoría
+                    </h3>
+                    <button 
+                        wire:click="closeAuditHistory"
+                        class="text-gray-400 hover:text-gray-600"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Content --}}
+                <div class="px-6 py-4 overflow-y-auto flex-1">
+                    @livewire('viticulturist.digital-notebook.activity-audit-history', ['activity' => \App\Models\AgriculturalActivity::find($selectedActivityId)], 'audit-'.$selectedActivityId)
+                </div>
+
+                {{-- Footer --}}
+                <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-end">
+                    <button 
+                        wire:click="closeAuditHistory"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                    >
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+
 </div>
 

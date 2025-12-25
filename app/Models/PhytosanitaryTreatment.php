@@ -16,7 +16,6 @@ class PhytosanitaryTreatment extends Model
         'total_dose',
         'area_treated',
         'application_method',
-        'target_pest',
         'wind_speed',
         'humidity',
         // Campos PAC obligatorios

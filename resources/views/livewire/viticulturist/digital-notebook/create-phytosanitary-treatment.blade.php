@@ -134,15 +134,24 @@
 
                         <!-- Plaga/Enfermedad Objetivo -->
                         <div>
-                            <x-label for="target_pest">Plaga/Enfermedad Objetivo</x-label>
-                            <x-input 
-                                wire:model="target_pest" 
-                                type="text" 
-                                id="target_pest"
-                                data-cy="target-pest-input"
-                                placeholder="Ej: Mildiu, Oídio, etc."
-                                :error="$errors->first('target_pest')"
-                            />
+                            <x-label for="pest_id">Plaga/Enfermedad Objetivo</x-label>
+                            <x-select 
+                                wire:model="pest_id" 
+                                id="pest_id"
+                                data-cy="pest-select"
+                                :error="$errors->first('pest_id')"
+                            >
+                                <option value="">Selecciona una plaga/enfermedad</option>
+                                @foreach($pests as $pest)
+                                    <option value="{{ $pest->id }}">
+                                        {{ $pest->name }}
+                                        @if($pest->scientific_name)
+                                            ({{ $pest->scientific_name }})
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </x-select>
+                            <p class="text-xs text-gray-500 mt-1">Selecciona la plaga o enfermedad que estás tratando</p>
                         </div>
                     </div>
 

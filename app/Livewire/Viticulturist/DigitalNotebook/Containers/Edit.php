@@ -23,7 +23,6 @@ class Edit extends Component
     public $capacity = '';
     public $purchase_date = '';
     public $next_maintenance_date = '';
-    public $archived = false;
 
     public function mount($container)
     {
@@ -48,7 +47,6 @@ class Edit extends Component
         $this->capacity = $this->container->capacity;
         $this->purchase_date = $this->container->purchase_date ? $this->container->purchase_date->format('Y-m-d') : '';
         $this->next_maintenance_date = $this->container->next_maintenance_date ? $this->container->next_maintenance_date->format('Y-m-d') : '';
-        $this->archived = $this->container->archived ?? false;
     }
 
 
@@ -62,7 +60,6 @@ class Edit extends Component
             'capacity' => 'required|numeric|min:0.001',
             'purchase_date' => 'nullable|date',
             'next_maintenance_date' => 'nullable|date|after_or_equal:purchase_date',
-            'archived' => 'boolean',
         ];
     }
 
@@ -85,7 +82,7 @@ class Edit extends Component
                     'capacity' => $this->capacity,
                     'purchase_date' => $this->purchase_date ?: null,
                     'next_maintenance_date' => $this->next_maintenance_date ?: null,
-                    'archived' => $this->archived,
+                    // No actualizar archived desde aquí, se hace con toggleActive
                 ]);
             });
 

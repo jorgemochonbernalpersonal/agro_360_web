@@ -257,8 +257,8 @@
                                         @if($activity->phytosanitaryTreatment->area_treated)
                                             <p><strong>Área tratada:</strong> {{ number_format($activity->phytosanitaryTreatment->area_treated, 3) }} ha</p>
                                         @endif
-                                        @if($activity->phytosanitaryTreatment->target_pest)
-                                            <p><strong>Objetivo:</strong> {{ $activity->phytosanitaryTreatment->target_pest }}</p>
+                                        @if($activity->phytosanitaryTreatment->pest)
+                                            <p><strong>Objetivo:</strong> {{ $activity->phytosanitaryTreatment->pest->name }}</p>
                                         @endif
                                     </div>
                                 @elseif($activity->fertilization)

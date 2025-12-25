@@ -26,11 +26,16 @@ class AgriculturalActivity extends Model
         'weather_conditions',
         'temperature',
         'notes',
+        'is_locked',
+        'locked_at',
+        'locked_by',
     ];
 
     protected $casts = [
         'activity_date' => 'date',
         'temperature' => 'decimal:2',
+        'is_locked' => 'boolean',
+        'locked_at' => 'datetime',
     ];
 
     /**
@@ -135,6 +140,66 @@ class AgriculturalActivity extends Model
     public function machinery(): BelongsTo
     {
         return $this->belongsTo(Machinery::class, 'machinery_id');
+    }
+
+    /**
+     * Logs de auditoría de la actividad
+     */
+    public function auditLogs()
+    {
+        return $this->hasMany(AgriculturalActivityAuditLog::class, 'activity_id')->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Usuario que bloqueó la actividad
+     */
+    public function lockedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'locked_by');
+    }
+
+    /**
+     * Verificar si la actividad está bloqueada
+     */
+    public function isLocked(): bool
+    {
+        return $this->is_locked;
+    }
+
+    /**
+     * Bloquear actividad (impedir modificaciones)
+     */
+    public function lock(?int $userId = null): void
+    {
+        if ($this->is_locked) {
+            return;
+        }
+
+        $this->update([
+            'is_locked' => true,
+            'locked_at' => now(),
+            'locked_by' => $userId ?? auth()->id(),
+        ]);
+
+        AgriculturalActivityAuditLog::log($this, 'locked');
+    }
+
+    /**
+     * Desbloquear actividad
+     */
+    public function unlock(): void
+    {
+        if (!$this->is_locked) {
+            return;
+        }
+
+        $this->update([
+            'is_locked' => false,
+            'locked_at' => null,
+            'locked_by' => null,
+        ]);
+
+        AgriculturalActivityAuditLog::log($this, 'unlocked');
     }
 
     /**

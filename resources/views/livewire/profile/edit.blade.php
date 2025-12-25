@@ -95,21 +95,29 @@
                                             {{-- Imagen de preview (siempre presente para JavaScript) --}}
                                             <img 
                                                 id="profile-preview-img" 
-                                                src="{{ $profile_image_preview ? $profile_image_preview : ($current_profile_image ? Storage::disk('public')->url($current_profile_image) : '') }}" 
+                                                src="{{ ($profile_image_preview && $profile_image_preview !== 'pending') ? $profile_image_preview : ($current_profile_image ? Storage::disk('public')->url($current_profile_image) : '') }}" 
                                                 alt="Preview" 
-                                                class="w-20 h-20 rounded-full object-cover border-4 {{ $profile_image_preview ? 'border-[var(--color-agro-green)]' : 'border-gray-200' }} shadow-lg {{ !$profile_image_preview && !$current_profile_image ? 'hidden' : '' }}"
-                                                onerror="this.style.display='none'; document.getElementById('profile-preview-placeholder').style.display='flex';"
+                                                class="w-20 h-20 rounded-full object-cover border-4 {{ ($profile_image_preview && $profile_image_preview !== 'pending') ? 'border-[var(--color-agro-green)]' : 'border-gray-200' }} shadow-lg {{ !$profile_image_preview && !$current_profile_image ? 'hidden' : '' }}"
+                                                onerror="this.style.display='none'; if(document.getElementById('profile-preview-placeholder')) document.getElementById('profile-preview-placeholder').style.display='flex';"
+                                                wire:ignore
                                             >
                                             {{-- Placeholder con inicial (oculto por defecto si hay imagen) --}}
                                             <div 
                                                 id="profile-preview-placeholder"
-                                                class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md {{ $profile_image_preview || $current_profile_image ? 'hidden' : '' }}"
+                                                class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md hidden"
                                             >
                                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                             </div>
                                             
                                             {{-- Badge de nueva imagen --}}
-                                            @if($profile_image_preview)
+                                            @if($profile_image_preview && $profile_image_preview !== 'pending')
+                                                <div class="absolute -top-1 -right-1 w-6 h-6 bg-[var(--color-agro-green)] rounded-full flex items-center justify-center z-10">
+                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                            @if($profile_image_preview === 'pending')
                                                 <div class="absolute -top-1 -right-1 w-6 h-6 bg-[var(--color-agro-green)] rounded-full flex items-center justify-center z-10">
                                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -118,7 +126,7 @@
                                             @endif
                                             
                                             {{-- Indicador de carga --}}
-                                            <div wire:loading wire:target="profile_image" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-full">
+                                            <div wire:loading wire:target="profile_image" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-full z-20">
                                                 <svg class="animate-spin h-6 w-6 text-[var(--color-agro-green)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -135,19 +143,24 @@
                                                 x-on:change="
                                                     const file = $event.target.files[0];
                                                     if (file) {
+                                                        const previewImg = document.getElementById('profile-preview-img');
+                                                        const placeholder = document.getElementById('profile-preview-placeholder');
+                                                        
+                                                        // Mostrar preview inmediatamente con FileReader
                                                         const reader = new FileReader();
                                                         reader.onload = function(e) {
-                                                            const previewImg = document.getElementById('profile-preview-img');
-                                                            const placeholder = document.getElementById('profile-preview-placeholder');
                                                             if (previewImg) {
                                                                 previewImg.src = e.target.result;
-                                                                previewImg.classList.remove('hidden');
-                                                                previewImg.classList.add('border-[var(--color-agro-green)]');
+                                                                previewImg.style.display = 'block';
                                                                 previewImg.classList.remove('border-gray-200');
+                                                                previewImg.classList.add('border-[var(--color-agro-green)]');
                                                             }
                                                             if (placeholder) {
-                                                                placeholder.classList.add('hidden');
+                                                                placeholder.style.display = 'none';
                                                             }
+                                                        };
+                                                        reader.onerror = function() {
+                                                            console.error('Error al leer el archivo');
                                                         };
                                                         reader.readAsDataURL(file);
                                                     }
@@ -171,6 +184,36 @@
                                                     Nueva imagen seleccionada. Click "Guardar Cambios" para confirmar.
                                                 </p>
                                             @endif
+                                            
+                                            @script
+                                            <script>
+                                                // Asegurar que el preview se mantenga después de actualizaciones de Livewire
+                                                document.addEventListener('livewire:init', () => {
+                                                    Livewire.hook('morph.updated', ({ el, component }) => {
+                                                        // Si hay un archivo seleccionado pero el preview se perdió, restaurarlo
+                                                        const fileInput = document.getElementById('profile_image');
+                                                        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                                                            const previewImg = document.getElementById('profile-preview-img');
+                                                            const placeholder = document.getElementById('profile-preview-placeholder');
+                                                            
+                                                            if (previewImg && !previewImg.src) {
+                                                                const reader = new FileReader();
+                                                                reader.onload = function(e) {
+                                                                    previewImg.src = e.target.result;
+                                                                    previewImg.style.display = 'block';
+                                                                    previewImg.classList.remove('border-gray-200');
+                                                                    previewImg.classList.add('border-[var(--color-agro-green)]');
+                                                                    if (placeholder) {
+                                                                        placeholder.style.display = 'none';
+                                                                    }
+                                                                };
+                                                                reader.readAsDataURL(fileInput.files[0]);
+                                                            }
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+                                            @endscript
                                             
                                             @error('profile_image') 
                                                 <p class="mt-1 text-sm text-red-600 font-medium flex items-center gap-1">
@@ -440,10 +483,11 @@
     <script>
         // Escuchar cuando se actualiza el perfil para refrescar el header
         $wire.on('profile-updated', () => {
-            // Recargar la página después de un breve delay para que se guarde la imagen
+            // Esperar a que el toast se muestre antes de recargar
+            // El toast tarda aproximadamente 300ms en aparecer
             setTimeout(() => {
                 window.location.reload();
-            }, 500);
+            }, 1000);
         });
     </script>
     @endscript

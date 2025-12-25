@@ -12,17 +12,15 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public $currentTab = 'list';
+    public $currentTab = 'active'; // 'active', 'inactive', 'statistics'
     public $search = '';
     public $filterType = '';
-    public $filterActive = '';
     public $yearFilter;
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'list'],
+        'currentTab' => ['as' => 'tab', 'except' => 'active'],
         'search' => ['except' => ''],
         'filterType' => ['except' => ''],
-        'filterActive' => ['except' => ''],
         'yearFilter' => ['as' => 'year'],
     ];
 
@@ -47,24 +45,30 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingFilterActive()
-    {
-        $this->resetPage();
-    }
-
     public function toggleActive($clientId)
     {
         $user = Auth::user();
         $client = Client::forUser($user->id)->findOrFail($clientId);
         
+        $wasActive = $client->active;
+        $newActiveState = !$wasActive;
+        
         $client->update([
-            'active' => !$client->active
+            'active' => $newActiveState
         ]);
 
-        if ($client->active) {
+        if ($newActiveState) {
             $this->toastSuccess('Cliente activado exitosamente.');
+            // Si estamos en el tab de inactivos, cambiar al tab de activos para ver el cambio
+            if ($this->currentTab === 'inactive') {
+                $this->currentTab = 'active';
+            }
         } else {
             $this->toastSuccess('Cliente desactivado exitosamente.');
+            // Si estamos en el tab de activos, cambiar al tab de inactivos para ver el cambio
+            if ($this->currentTab === 'active') {
+                $this->currentTab = 'inactive';
+            }
         }
     }
 
@@ -74,15 +78,19 @@ class Index extends Component
 
         // Lista de clientes
         $query = Client::forUser($user->id)
-            ->with(['addresses', 'invoices']);
+            ->with(['addresses.municipality', 'addresses.province', 'addresses.autonomousCommunity', 'invoices']);
 
         if ($this->filterType) {
             $query->where('client_type', $this->filterType);
         }
 
-        if ($this->filterActive !== '') {
-            $query->where('active', $this->filterActive === '1');
+        // Filtro por tab (activo/inactivo)
+        if ($this->currentTab === 'active') {
+            $query->where('active', true); // Activos
+        } elseif ($this->currentTab === 'inactive') {
+            $query->where('active', false); // Inactivos
         }
+        // Si es 'statistics', no filtrar por activo/inactivo
 
         if ($this->search) {
             $query->where(function($q) {
@@ -102,6 +110,7 @@ class Index extends Component
         $stats = [
             'total' => Client::forUser($user->id)->count(),
             'active' => Client::forUser($user->id)->active()->count(),
+            'inactive' => Client::forUser($user->id)->where('active', false)->count(),
             'individual' => Client::forUser($user->id)->where('client_type', 'individual')->count(),
             'company' => Client::forUser($user->id)->where('client_type', 'company')->count(),
         ];

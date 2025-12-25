@@ -25,7 +25,13 @@ class PlotPlanting extends Model
         'training_system_id',
         'irrigated',
         'status',
+        'active',
         'notes',
+        'planting_authorization',
+        'authorization_date',
+        'right_type',
+        'uprooting_date',
+        'designation_of_origin',
     ];
 
     protected $casts = [
@@ -34,7 +40,10 @@ class PlotPlanting extends Model
         'row_spacing' => 'decimal:3',
         'vine_spacing' => 'decimal:3',
         'planting_date' => 'date',
+        'authorization_date' => 'date',
+        'uprooting_date' => 'date',
         'irrigated' => 'boolean',
+        'active' => 'boolean',
         'planting_year' => 'integer',
         'vine_count' => 'integer',
         'density' => 'integer',
@@ -46,6 +55,22 @@ class PlotPlanting extends Model
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
+    }
+
+    /**
+     * Logs de auditoría de la plantación
+     */
+    public function auditLogs()
+    {
+        return $this->hasMany(PlotPlantingAuditLog::class);
+    }
+
+    /**
+     * Certificaciones de la plantación
+     */
+    public function certifications()
+    {
+        return $this->hasMany(PlantingCertification::class);
     }
 
     /**
@@ -262,5 +287,78 @@ class PlotPlanting extends Model
             'is_over_yield' => $variance > 0, // Sobrerendimiento
             'is_under_yield' => $variance < 0, // Subrendimiento
         ];
+    }
+
+    /**
+     * ========================================
+     * EDAD Y CICLO DE VIDA
+     * ========================================
+     */
+
+    /**
+     * Obtener la edad de la plantación en años
+     */
+    public function getAgeAttribute(): int
+    {
+        if (!$this->planting_year) {
+            return 0;
+        }
+        return now()->year - $this->planting_year;
+    }
+
+    /**
+     * Obtener la etapa del ciclo de vida
+     */
+    public function getLifeCycleStageAttribute(): string
+    {
+        $age = $this->age;
+        
+        if ($age < 3) return 'joven';
+        if ($age < 8) return 'desarrollo';
+        if ($age < 25) return 'productiva';
+        if ($age < 40) return 'madura';
+        return 'vieja';
+    }
+
+    /**
+     * Verificar si necesita replantación
+     */
+    public function needsReplanting(): bool
+    {
+        return $this->age > 35 || $this->status === 'declining';
+    }
+
+    /**
+     * Obtener productividad esperada según edad
+     */
+    public function getExpectedProductivityAttribute(): string
+    {
+        $stage = $this->life_cycle_stage;
+        
+        return match($stage) {
+            'joven' => 'Baja (20-40% del máximo)',
+            'desarrollo' => 'Media (60-80%)',
+            'productiva' => 'Alta (100%)',
+            'madura' => 'Media-Alta (80-90%)',
+            'vieja' => 'Baja-Media (40-60%)',
+            default => 'Desconocida',
+        };
+    }
+
+    /**
+     * Scope: Filtrar por etapa de ciclo de vida
+     */
+    public function scopeByLifeCycleStage($query, string $stage)
+    {
+        $currentYear = now()->year;
+        
+        return match($stage) {
+            'joven' => $query->where('planting_year', '>', $currentYear - 3),
+            'desarrollo' => $query->whereBetween('planting_year', [$currentYear - 8, $currentYear - 3]),
+            'productiva' => $query->whereBetween('planting_year', [$currentYear - 25, $currentYear - 8]),
+            'madura' => $query->whereBetween('planting_year', [$currentYear - 40, $currentYear - 25]),
+            'vieja' => $query->where('planting_year', '<=', $currentYear - 40),
+            default => $query,
+        };
     }
 }

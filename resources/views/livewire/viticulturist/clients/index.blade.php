@@ -25,16 +25,37 @@
         <div class="border-b border-gray-200">
             <nav class="flex -mb-px">
                 <button 
-                    wire:click="switchTab('list')"
+                    wire:click="switchTab('active')"
                     class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'list' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                        {{ $currentTab === 'active' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <span>Lista de Clientes</span>
+                    <span>Activos</span>
+                    @if($stats['active'] > 0)
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'active' ? 'bg-[var(--color-agro-green-dark)] text-white' : 'bg-gray-200 text-gray-700' }}">
+                            {{ $stats['active'] }}
+                        </span>
+                    @endif
                 </button>
                 
+                <button 
+                    wire:click="switchTab('inactive')"
+                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
+                        {{ $currentTab === 'inactive' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Inactivos</span>
+                    @if($stats['inactive'] > 0)
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'inactive' ? 'bg-[var(--color-agro-green-dark)] text-white' : 'bg-gray-200 text-gray-700' }}">
+                            {{ $stats['inactive'] }}
+                        </span>
+                    @endif
+                </button>
+
                 <button 
                     wire:click="switchTab('statistics')"
                     class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
@@ -50,8 +71,8 @@
 
         {{-- Tab Content --}}
         <div class="p-6">
-            {{-- LIST TAB --}}
-            @if($currentTab === 'list')
+            {{-- ACTIVE/INACTIVE TABS --}}
+            @if($currentTab === 'active' || $currentTab === 'inactive')
                 <div class="space-y-6">
                     {{-- Estadísticas rápidas --}}
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -81,11 +102,6 @@
                                 <option value="">Todos los tipos</option>
                                 <option value="individual">Particular</option>
                                 <option value="company">Empresa</option>
-                            </x-select>
-                            <x-select wire:model.live="filterActive">
-                                <option value="">Todos</option>
-                                <option value="1">Activos</option>
-                                <option value="0">Inactivos</option>
                             </x-select>
                         </div>
                     </div>
@@ -151,13 +167,31 @@
                                     </x-table-cell>
                                     <x-table-cell>
                                         @if($client->addresses && $client->addresses->count() > 0)
-                                            <div class="flex items-center gap-2">
-                                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                                </svg>
-                                                <span class="text-sm text-gray-700">
-                                                    {{ $client->addresses->count() }} {{ $client->addresses->count() === 1 ? 'dirección' : 'direcciones' }}
-                                                </span>
+                                            @php
+                                                // Obtener la dirección por defecto o la primera disponible
+                                                $defaultAddress = $client->addresses->where('is_default', true)->first() 
+                                                    ?? $client->addresses->first();
+                                            @endphp
+                                            <div class="space-y-1">
+                                                <div class="text-sm text-gray-700 font-medium">
+                                                    {{ $defaultAddress->address }}
+                                                </div>
+                                                <div class="text-xs text-gray-500">
+                                                    @if($defaultAddress->municipality)
+                                                        {{ $defaultAddress->municipality->name }}
+                                                        @if($defaultAddress->province)
+                                                            , {{ $defaultAddress->province->name }}
+                                                        @endif
+                                                    @endif
+                                                    @if($defaultAddress->postal_code)
+                                                        - {{ $defaultAddress->postal_code }}
+                                                    @endif
+                                                </div>
+                                                @if($client->addresses->count() > 1)
+                                                    <div class="text-xs text-gray-400 mt-1">
+                                                        +{{ $client->addresses->count() - 1 }} {{ $client->addresses->count() - 1 === 1 ? 'dirección más' : 'direcciones más' }}
+                                                    </div>
+                                                @endif
                                             </div>
                                         @else
                                             <div class="flex items-center gap-2">

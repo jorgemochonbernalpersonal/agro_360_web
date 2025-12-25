@@ -55,6 +55,10 @@ Route::get('/health', function () {
 Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
 Route::get('/terminos', fn() => view('legal.terms'))->name('terms');
 Route::get('/cookies', fn() => view('legal.privacy'))->name('cookies'); // Misma vista que privacidad
+Route::get('/aviso-legal', fn() => view('legal.aviso-legal'))->name('aviso-legal');
+
+// Sitemap dinámico
+Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
 // Verificación pública de informes oficiales
 Route::get('/verify-report/{code}', [App\Http\Controllers\ReportVerificationController::class, 'verify'])

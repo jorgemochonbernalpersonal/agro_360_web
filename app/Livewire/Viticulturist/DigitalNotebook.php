@@ -22,6 +22,8 @@ class DigitalNotebook extends Component
     public $dateFrom = null;
     public $dateTo = null;
     public $productFilter = null;
+    public $showAuditHistory = false;
+    public $selectedActivityId = null;
 
     protected $queryString = [
         'selectedCampaign' => ['except' => ''],
@@ -211,6 +213,12 @@ class DigitalNotebook extends Component
             return;
         }
 
+        // Verificar si está bloqueada
+        if ($activity->isLocked()) {
+            session()->flash('error', '🔒 No se puede eliminar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
+            return;
+        }
+
         try {
             $activity->delete();
             session()->flash('message', 'Actividad eliminada correctamente.');
@@ -224,6 +232,32 @@ class DigitalNotebook extends Component
 
             session()->flash('error', 'Error al eliminar la actividad. Por favor, intenta de nuevo.');
         }
+    }
+    
+    public function getActivityAuditData($activityId)
+    {
+        $activity = AgriculturalActivity::with(['plot', 'auditLogs.user'])
+            ->forUser(Auth::id())
+            ->findOrFail($activityId);
+        
+        // Verificar autorización
+        if (!Auth::user()->can('view', $activity)) {
+            return null;
+        }
+        
+        return $activity;
+    }
+
+    public function openAuditHistory($activityId)
+    {
+        $this->selectedActivityId = $activityId;
+        $this->showAuditHistory = true;
+    }
+
+    public function closeAuditHistory()
+    {
+        $this->showAuditHistory = false;
+        $this->selectedActivityId = null;
     }
 }
 

@@ -333,6 +333,39 @@
             </div>
         </div>
 
+        {{-- Dashboards PAC --}}
+        <div class="space-y-6">
+            {{-- Dashboard de Parcelas PAC --}}
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">📊 Cumplimiento PAC - Parcelas</h3>
+                    </div>
+                </div>
+                @livewire('viticulturist.plots-dashboard')
+            </div>
+
+            {{-- Dashboard de Plantaciones PAC --}}
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">🌱 Cumplimiento PAC - Plantaciones</h3>
+                    </div>
+                </div>
+                @livewire('viticulturist.plantings-dashboard')
+            </div>
+        </div>
+
         {{-- Cosechas Recientes --}}
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6" data-cy="recent-harvests-section">
             <div class="flex items-center justify-between mb-6">

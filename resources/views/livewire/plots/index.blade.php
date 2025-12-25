@@ -35,24 +35,72 @@
         </x-slot:actionButton>
     </x-page-header>
 
-    <x-filter-section title="Filtros de Búsqueda" color="green">
-        <x-filter-input 
-            wire:model.live="search" 
-            placeholder="Buscar por nombre de parcela..."
-        />
-        <x-filter-select wire:model.live="activeFilter">
-            <option value="">Todas las parcelas</option>
-            <option value="1">Activas</option>
-            <option value="0">Inactivas</option>
-        </x-filter-select>
-        <x-slot:actions>
-            @if($search || $activeFilter !== '')
-                <x-button wire:click="clearFilters" variant="ghost" size="sm">
-                    Limpiar Filtros
-                </x-button>
-            @endif
-        </x-slot:actions>
-    </x-filter-section>
+    <!-- Tabs Navigation -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div class="border-b border-gray-200">
+            <nav class="flex -mb-px">
+                <button 
+                    wire:click="switchTab('active')"
+                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
+                        {{ $currentTab === 'active' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Activas</span>
+                    @if($stats['active'] > 0)
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'active' ? 'bg-[var(--color-agro-green-dark)] text-white' : 'bg-gray-200 text-gray-700' }}">
+                            {{ $stats['active'] }}
+                        </span>
+                    @endif
+                </button>
+                
+                <button 
+                    wire:click="switchTab('inactive')"
+                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
+                        {{ $currentTab === 'inactive' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Inactivas</span>
+                    @if($stats['inactive'] > 0)
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'inactive' ? 'bg-[var(--color-agro-green-dark)] text-white' : 'bg-gray-200 text-gray-700' }}">
+                            {{ $stats['inactive'] }}
+                        </span>
+                    @endif
+                </button>
+
+                <button 
+                    wire:click="switchTab('statistics')"
+                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
+                        {{ $currentTab === 'statistics' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <span>Estadísticas</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="p-6">
+            {{-- ACTIVE/INACTIVE TABS --}}
+            @if($currentTab === 'active' || $currentTab === 'inactive')
+                <!-- Filtros -->
+                <x-filter-section title="Filtros de Búsqueda" color="green">
+                    <x-filter-input 
+                        wire:model.live="search" 
+                        placeholder="Buscar por nombre de parcela..."
+                    />
+                    <x-slot:actions>
+                        @if($search)
+                            <x-button wire:click="$set('search', '')" variant="ghost" size="sm">
+                                Limpiar Filtros
+                            </x-button>
+                        @endif
+                    </x-slot:actions>
+                </x-filter-section>
 
     @php
         $headers = [
@@ -160,6 +208,17 @@
                         
                         {{-- Botones estándar siempre visibles --}}
                         <x-action-button variant="view" href="{{ route('plots.show', $plot) }}" />
+                        
+                        {{-- Botón de Historial de Auditoría --}}
+                        <button
+                            @click="$dispatch('open-plot-audit-modal', { plotId: {{ $plot->id }} })"
+                            class="p-2 rounded-lg transition-all duration-200 group/btn text-gray-600 hover:bg-gray-100"
+                            title="Ver historial de cambios">
+                            <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </button>
+                        
                         @can('update', $plot)
 
                             {{-- Crear plantación sobre esta parcela --}}
@@ -173,12 +232,32 @@
 
                             <x-action-button variant="edit" href="{{ route('plots.edit', $plot) }}" />
                         @endcan
-                        @can('delete', $plot)
-                            <x-action-button 
-                                variant="delete" 
-                                wire:click="delete({{ $plot->id }})"
-                                wire:confirm="¿Estás seguro de eliminar esta parcela?"
-                            />
+                        @can('update', $plot)
+                            <button 
+                                wire:click="toggleActive({{ $plot->id }})"
+                                wire:loading.attr="disabled"
+                                wire:target="toggleActive({{ $plot->id }})"
+                                class="p-2 rounded-lg transition-all duration-200 group/btn {{ $plot->active ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50' }} disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="{{ $plot->active ? 'Desactivar parcela' : 'Activar parcela' }}"
+                            >
+                                <span wire:loading.remove wire:target="toggleActive({{ $plot->id }})">
+                                    @if($plot->active)
+                                        <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    @endif
+                                </span>
+                                <span wire:loading wire:target="toggleActive({{ $plot->id }})" class="inline-block">
+                                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </span>
+                            </button>
                         @endcan
                     </x-table-actions>
                 </x-table-row>
@@ -199,4 +278,248 @@
             </x-slot>
         @endif
     </x-data-table>
+            @endif
+
+            {{-- STATISTICS TAB --}}
+            @if($currentTab === 'statistics')
+                <div class="space-y-6">
+                    {{-- Filtro de Año --}}
+                    <div class="flex justify-end">
+                        <select wire:model.live="yearFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green)] focus:border-transparent">
+                            @for($year = now()->year; $year >= now()->year - 5; $year--)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
+
+                    {{-- KPIs --}}
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                            <p class="text-sm font-medium text-green-700">Superficie Total</p>
+                            <p class="text-3xl font-bold text-green-900 mt-1">{{ number_format($advancedStats['totalSurface'] ?? 0, 2) }} ha</p>
+                            <p class="text-xs text-green-600 mt-2">Todas las parcelas</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                            <p class="text-sm font-medium text-blue-700">Superficie Elegible PAC</p>
+                            <p class="text-3xl font-bold text-blue-900 mt-1">{{ number_format($advancedStats['eligibleSurface'] ?? 0, 2) }} ha</p>
+                            <p class="text-xs text-blue-600 mt-2">{{ number_format($advancedStats['eligibilityPercentage'] ?? 0, 1) }}% del total</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+                            <p class="text-sm font-medium text-purple-700">Parcelas Activas</p>
+                            <p class="text-3xl font-bold text-purple-900 mt-1">{{ $stats['active'] }}</p>
+                            <p class="text-xs text-purple-600 mt-2">De {{ $stats['total'] }} totales</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border border-orange-200">
+                            <p class="text-sm font-medium text-orange-700">Superficie Media</p>
+                            <p class="text-3xl font-bold text-orange-900 mt-1">{{ number_format($advancedStats['avgSurfacePerPlot'] ?? 0, 2) }} ha</p>
+                            <p class="text-xs text-orange-600 mt-2">Por parcela</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {{-- Distribución por Régimen de Tenencia --}}
+                        <div class="bg-white rounded-xl p-6 border border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">📊 Distribución por Régimen de Tenencia</h3>
+                            <div class="space-y-4">
+                                @forelse(($advancedStats['tenureStats'] ?? []) as $regime => $data)
+                                    @php
+                                        $total = ($advancedStats['tenureStats'] ?? [])->sum('count');
+                                        $percentage = $total > 0 ? ($data['count'] / $total) * 100 : 0;
+                                        $regimeName = match($regime) {
+                                            'owned' => 'Propiedad',
+                                            'leased' => 'Arrendamiento',
+                                            'shared' => 'Compartida',
+                                            default => ucfirst($regime),
+                                        };
+                                    @endphp
+                                    <div>
+                                        <div class="flex justify-between mb-2">
+                                            <span class="text-sm font-medium text-gray-700">{{ $regimeName }}</span>
+                                            <span class="text-sm font-bold text-gray-900">{{ $data['count'] }} ({{ number_format($percentage, 1) }}%)</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-3">
+                                            <div class="bg-[var(--color-agro-green)] h-3 rounded-full" style="width: {{ $percentage }}%"></div>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">{{ number_format($data['surface'], 2) }} ha</p>
+                                    </div>
+                                @empty
+                                    <p class="text-gray-500 text-center py-4">No hay datos de régimen de tenencia</p>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        {{-- Estado de Parcelas --}}
+                        <div class="bg-white rounded-xl p-6 border border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">🔒 Estado de Parcelas</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Bloqueadas</span>
+                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['lockedPlots'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                        @php
+                                            $lockedPct = $stats['total'] > 0 ? (($advancedStats['lockedPlots'] ?? 0) / $stats['total']) * 100 : 0;
+                                        @endphp
+                                        <div class="bg-red-500 h-3 rounded-full" style="width: {{ $lockedPct }}%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Desbloqueadas</span>
+                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['unlockedPlots'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                        @php
+                                            $unlockedPct = $stats['total'] > 0 ? (($advancedStats['unlockedPlots'] ?? 0) / $stats['total']) * 100 : 0;
+                                        @endphp
+                                        <div class="bg-green-500 h-3 rounded-full" style="width: {{ $unlockedPct }}%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Con SIGPAC</span>
+                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['withSigpac'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                        @php
+                                            $sigpacPct = $stats['total'] > 0 ? (($advancedStats['withSigpac'] ?? 0) / $stats['total']) * 100 : 0;
+                                        @endphp
+                                        <div class="bg-blue-500 h-3 rounded-full" style="width: {{ $sigpacPct }}%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Con Plantaciones</span>
+                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['withPlantings'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                        @php
+                                            $plantingsPct = $stats['total'] > 0 ? (($advancedStats['withPlantings'] ?? 0) / $stats['total']) * 100 : 0;
+                                        @endphp
+                                        <div class="bg-purple-500 h-3 rounded-full" style="width: {{ $plantingsPct }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Top Provincias --}}
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">🗺️ Top 10 Provincias por Superficie</h3>
+                        <div class="space-y-3">
+                            @forelse(($advancedStats['provinceStats'] ?? []) as $index => $province)
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-sm">
+                                            {{ $index + 1 }}
+                                        </span>
+                                        <div>
+                                            <p class="font-semibold text-gray-900">{{ $province['province_name'] }}</p>
+                                            <p class="text-xs text-gray-500">{{ $province['count'] }} parcelas</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-[var(--color-agro-green-dark)]">{{ number_format($province['surface'], 2) }} ha</span>
+                                </div>
+                            @empty
+                                <p class="text-gray-500 text-center py-4">No hay datos de provincias</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    {{-- Nuevas Parcelas --}}
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">📈 Nuevas Parcelas (Últimos 12 meses)</h3>
+                        <div class="h-64 flex items-end justify-between gap-2">
+                            @foreach(($advancedStats['newPlotsByMonth'] ?? []) as $month)
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="w-full bg-[var(--color-agro-green)] rounded-t-lg transition-all hover:bg-[var(--color-agro-green-dark)]" 
+                                        style="height: {{ $month['count'] > 0 ? ($month['count'] / max(collect($advancedStats['newPlotsByMonth'] ?? [])->pluck('count')->max(), 1)) * 100 : 5 }}%"
+                                        title="{{ $month['count'] }} parcelas"></div>
+                                    <span class="text-xs text-gray-600 mt-2">{{ $month['month'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+    
+    {{-- Modal de Historial de Auditoría --}}
+    <div x-data="{ showPlotAuditModal: false, currentPlotId: null }" 
+         @open-plot-audit-modal.window="showPlotAuditModal = true; currentPlotId = $event.detail.plotId"
+         @close-plot-audit-modal.window="showPlotAuditModal = false; currentPlotId = null">
+        
+        {{-- Overlay --}}
+        <div x-show="showPlotAuditModal" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-40"
+             @click="showPlotAuditModal = false"
+             style="display: none;">
+        </div>
+
+        {{-- Modal --}}
+        <div x-show="showPlotAuditModal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="fixed inset-0 z-50 overflow-y-auto"
+             style="display: none;">
+            
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                    {{-- Header --}}
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                📋 Historial de Auditoría
+                            </h3>
+                            <button @click="showPlotAuditModal = false" 
+                                    class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Content --}}
+                    <div class="px-6 py-4 max-h-[70vh] overflow-y-auto">
+                        <div x-show="currentPlotId">
+                            <template x-if="currentPlotId">
+                                <div>
+                                    @foreach($plots as $plot)
+                                        <div x-show="currentPlotId == {{ $plot->id }}" 
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0"
+                                             x-transition:enter-end="opacity-100"
+                                             style="display: none;">
+                                            @livewire('viticulturist.plots.plot-audit-history', ['plot' => $plot], key('plot-audit-' . $plot->id))
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-end">
+                        <button @click="showPlotAuditModal = false"
+                                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

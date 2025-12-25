@@ -3,6 +3,7 @@
 namespace App\Livewire\Profile;
 
 use App\Models\UserProfile;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class Edit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithToastNotifications;
     
     // Información Personal
     public $name;
@@ -74,18 +75,14 @@ class Edit extends Component
         // Generar preview si la imagen es válida
         if ($this->profile_image) {
             try {
-                // Usar temporaryUrl() para la previsualización
+                // Intentar usar temporaryUrl() para la previsualización
+                // Esto funciona mejor con Livewire 3
                 $this->profile_image_preview = $this->profile_image->temporaryUrl();
             } catch (\Exception $e) {
-                // Si falla temporaryUrl, intentar crear una URL local
-                try {
-                    $path = $this->profile_image->store('temp', 'public');
-                    $this->profile_image_preview = Storage::disk('public')->url($path);
-                } catch (\Exception $e2) {
-                    $this->addError('profile_image', 'Error al cargar la imagen. Por favor, intenta de nuevo.');
-                    $this->profile_image = null;
-                    $this->profile_image_preview = null;
-                }
+                // Si falla temporaryUrl (puede pasar en algunos entornos), 
+                // el JavaScript con FileReader ya habrá mostrado el preview
+                // Solo marcamos que hay una imagen seleccionada
+                $this->profile_image_preview = 'pending';
             }
         } else {
             $this->profile_image_preview = null;
@@ -146,6 +143,7 @@ class Edit extends Component
             }
         }
 
+        $this->toastSuccess('Información personal actualizada correctamente.');
         session()->flash('message', 'Información personal actualizada correctamente.');
         $this->dispatch('profile-updated');
     }
@@ -172,6 +170,7 @@ class Edit extends Component
         $this->password = '';
         $this->password_confirmation = '';
 
+        $this->toastSuccess('Contraseña actualizada correctamente.');
         session()->flash('password_message', 'Contraseña actualizada correctamente.');
     }
 
@@ -199,6 +198,7 @@ class Edit extends Component
             ]
         );
 
+        $this->toastSuccess('Información de contacto actualizada correctamente.');
         session()->flash('contact_message', 'Información de contacto actualizada correctamente.');
     }
 

@@ -16,7 +16,15 @@ class Plot extends Model
         'description',
         'viticulturist_id',
         'area',
+        'pac_eligible_area',
+        'non_eligible_area',
+        'eligibility_coefficient',
+        'tenure_regime',
         'active',
+        'is_locked',
+        'locked_at',
+        'locked_by',
+        'lock_reason',
         'autonomous_community_id',
         'province_id',
         'municipality_id',
@@ -24,7 +32,12 @@ class Plot extends Model
 
     protected $casts = [
         'area' => 'decimal:3',
+        'pac_eligible_area' => 'decimal:3',
+        'non_eligible_area' => 'decimal:3',
+        'eligibility_coefficient' => 'decimal:4',
         'active' => 'boolean',
+        'is_locked' => 'boolean',
+        'locked_at' => 'datetime',
     ];
 
     /**
@@ -139,6 +152,56 @@ class Plot extends Model
     public function plantings(): HasMany
     {
         return $this->hasMany(PlotPlanting::class);
+    }
+    
+    /**
+     * Logs de auditoría de la parcela
+     */
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(PlotAuditLog::class);
+    }
+
+    /**
+     * Usuario que bloqueó la parcela
+     */
+    public function lockedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'locked_by');
+    }
+
+    /**
+     * Bloquear la parcela
+     */
+    public function lock(string $reason = 'Declaración PAC'): void
+    {
+        $this->update([
+            'is_locked' => true,
+            'locked_at' => now(),
+            'locked_by' => auth()->id(),
+            'lock_reason' => $reason,
+        ]);
+    }
+
+    /**
+     * Desbloquear la parcela
+     */
+    public function unlock(): void
+    {
+        $this->update([
+            'is_locked' => false,
+            'locked_at' => null,
+            'locked_by' => null,
+            'lock_reason' => null,
+        ]);
+    }
+
+    /**
+     * Verificar si la parcela está bloqueada
+     */
+    public function isLocked(): bool
+    {
+        return $this->is_locked;
     }
 
     /**

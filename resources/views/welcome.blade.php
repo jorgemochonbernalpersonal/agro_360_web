@@ -352,11 +352,14 @@
                 <a href="{{ url('/') }}" class="flex items-center" aria-label="Agro365 - Ir a inicio">
                     <img 
                         src="{{ asset('images/logo.png') }}" 
+                        srcset="{{ asset('images/logo.png') }} 1x, {{ asset('images/logo@2x.png') }} 2x"
                         alt="Agro365 - Software de gestión agrícola para viñedos y bodegas" 
                         width="160"
                         height="80"
                         class="h-20 w-auto object-contain"
                         fetchpriority="high"
+                        loading="eager"
+                        decoding="async"
                     >
                 </a>
                 
@@ -443,12 +446,18 @@
                             <!-- Dashboard Video Demo -->
                             <img 
                                 src="{{ asset('videos/agro365_demo.webp') }}" 
+                                srcset="{{ asset('videos/agro365_demo-582w.webp') }} 582w,
+                                        {{ asset('videos/agro365_demo-800w.webp') }} 800w,
+                                        {{ asset('videos/agro365_demo-1200w.webp') }} 1200w,
+                                        {{ asset('videos/agro365_demo.webp') }} 1272w"
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 800px, 1200px"
                                 alt="Demo interactiva de Agro365: Dashboard, Cumplimiento PAC y Gestión Agrícola" 
                                 width="1200"
                                 height="800"
                                 class="w-full h-auto object-cover"
                                 loading="eager"
                                 decoding="async"
+                                fetchpriority="high"
                             >
                             <!-- Overlay distintivo -->
                             <div class="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-md flex items-center gap-2 pointer-events-none border border-white/10 z-10 shadow-lg">

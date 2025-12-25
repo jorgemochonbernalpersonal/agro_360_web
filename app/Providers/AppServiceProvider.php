@@ -141,6 +141,10 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Harvest::observe(\App\Observers\HarvestObserver::class);
         \App\Models\Invoice::observe(\App\Observers\InvoiceObserver::class);
         \App\Models\InvoiceItem::observe(\App\Observers\InvoiceItemObserver::class);
-        \App\Models\InvoiceItem::observe(\App\Observers\InvoiceItemObserver::class);
+        
+        // Registrar observer para auditoría de actividades        // Observers
+        \App\Models\AgriculturalActivity::observe(\App\Observers\AgriculturalActivityObserver::class);
+        \App\Models\Plot::observe(\App\Observers\PlotObserver::class);
+        \App\Models\PlotPlanting::observe(\App\Observers\PlotPlantingObserver::class);
     }
 }

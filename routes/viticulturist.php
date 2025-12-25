@@ -62,6 +62,7 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         Route::get('/digital-notebook', DigitalNotebook::class)->name('digital-notebook');
         Route::prefix('digital-notebook')->name('digital-notebook.')->group(function () {
             Route::get('/treatment/create', CreatePhytosanitaryTreatment::class)->name('treatment.create');
+            Route::get('/treatment/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditPhytosanitaryTreatment::class)->name('treatment.edit');
             Route::get('/fertilization/create', CreateFertilization::class)->name('fertilization.create');
             Route::get('/irrigation/create', CreateIrrigation::class)->name('irrigation.create');
             Route::get('/cultural/create', CreateCulturalWork::class)->name('cultural.create');

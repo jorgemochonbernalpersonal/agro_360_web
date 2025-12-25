@@ -19,7 +19,6 @@ class Create extends Component
     public $capacity = '';
     public $purchase_date = '';
     public $next_maintenance_date = '';
-    public $archived = false;
 
     public function mount()
     {
@@ -63,7 +62,6 @@ class Create extends Component
             'capacity' => 'required|numeric|min:0.001',
             'purchase_date' => 'nullable|date',
             'next_maintenance_date' => 'nullable|date|after_or_equal:purchase_date',
-            'archived' => 'boolean',
         ];
     }
 
@@ -83,7 +81,7 @@ class Create extends Component
                     'used_capacity' => 0, // Inicialmente vacío
                     'purchase_date' => $this->purchase_date ?: null,
                     'next_maintenance_date' => $this->next_maintenance_date ?: null,
-                    'archived' => $this->archived,
+                    'archived' => false, // Por defecto activo (archived = false)
                     'unit_of_measurement_id' => 1, // kg por defecto
                     'type_id' => 1, // Tipo por defecto
                     'material_id' => 1, // Material por defecto

@@ -155,6 +155,68 @@
             </div>
         </x-form-section>
 
+        {{-- Autorización PAC (Obligatorio para plantaciones post-2016) --}}
+        <x-form-section title="Autorización de Plantación PAC" color="green">
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-6">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <h4 class="text-sm font-semibold text-yellow-900">Obligatorio para plantaciones desde 2016</h4>
+                        <p class="text-xs text-yellow-800 mt-1">
+                            Las plantaciones realizadas a partir del 1 de enero de 2016 requieren autorización administrativa.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Número de Autorización --}}
+                <div>
+                    <x-label for="planting_authorization">Número de Autorización</x-label>
+                    <x-input wire:model="planting_authorization" type="text" id="planting_authorization" 
+                        placeholder="Ej: AUT/2023/12345" :error="$errors->first('planting_authorization')" />
+                </div>
+
+                {{-- Fecha de Autorización --}}
+                <div>
+                    <x-label for="authorization_date">Fecha de Autorización</x-label>
+                    <x-input wire:model="authorization_date" type="date" id="authorization_date" 
+                        :error="$errors->first('authorization_date')" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                {{-- Tipo de Derecho --}}
+                <div>
+                    <x-label for="right_type">Tipo de Derecho</x-label>
+                    <x-select wire:model="right_type" id="right_type" :error="$errors->first('right_type')">
+                        <option value="">Seleccionar...</option>
+                        <option value="nueva">Nueva Plantación</option>
+                        <option value="replantacion">Replantación</option>
+                        <option value="conversion">Conversión</option>
+                    </x-select>
+                </div>
+
+                {{-- Fecha de Arranque (solo para replantaciones) --}}
+                <div>
+                    <x-label for="uprooting_date">Fecha de Arranque (solo replantaciones)</x-label>
+                    <x-input wire:model="uprooting_date" type="date" id="uprooting_date" 
+                        :error="$errors->first('uprooting_date')" />
+                    <p class="mt-1 text-xs text-gray-500">Solo aplicable si es una replantación</p>
+                </div>
+            </div>
+
+            {{-- Denominación de Origen --}}
+            <div class="mt-6">
+                <x-label for="designation_of_origin">Denominación de Origen</x-label>
+                <x-input wire:model="designation_of_origin" type="text" id="designation_of_origin" 
+                    placeholder="Ej: DO Rioja, DOCa Priorat, IGP Castilla" :error="$errors->first('designation_of_origin')" />
+                <p class="mt-1 text-xs text-gray-500">DO, DOCa o IGP si aplica</p>
+            </div>
+        </x-form-section>
+
         <x-form-actions :cancel-url="route('plots.show', $plot)" submit-label="Guardar Plantación" />
     </form>
 </x-form-card>

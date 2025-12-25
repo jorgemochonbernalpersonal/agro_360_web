@@ -195,14 +195,35 @@ class PacComplianceValidator
         if (!$treatment->product_id || !$treatment->product) {
             $errors[] = 'Tratamiento sin producto fitosanitario definido';
         } else {
-            // Validar número de registro del producto
-            if (!$treatment->product->registration_number) {
-                $warnings[] = 'Producto sin número de registro oficial';
+            $product = $treatment->product;
+            
+            // Validar número de registro del producto (OBLIGATORIO)
+            if (!$product->registration_number) {
+                $errors[] = 'Producto sin número de registro oficial - Campo PAC OBLIGATORIO';
+            } else {
+                // Validar formato del número de registro
+                if (!preg_match('/^ES-\d{8}$/', $product->registration_number)) {
+                    $errors[] = 'Número de registro con formato inválido (debe ser ES-00000000)';
+                }
             }
 
-            // Validar plazo de seguridad
-            if (!$treatment->product->withdrawal_period_days) {
-                $warnings[] = 'Producto sin plazo de seguridad definido';
+            // Validar que el registro esté activo y vigente
+            if (!$product->isRegistrationValid()) {
+                if ($product->registration_status === 'revoked') {
+                    $errors[] = 'Producto con registro REVOCADO - No se puede usar';
+                } elseif ($product->registration_status === 'expired') {
+                    $errors[] = 'Producto con registro CADUCADO - No se puede usar';
+                } elseif ($product->registration_expiry_date && $product->registration_expiry_date->lessThan(now())) {
+                    $errors[] = sprintf(
+                        'Registro del producto caducado el %s',
+                        $product->registration_expiry_date->format('d/m/Y')
+                    );
+                }
+            }
+
+            // Validar plazo de seguridad (OBLIGATORIO)
+            if ($product->withdrawal_period_days === null) {
+                $errors[] = 'Producto sin plazo de seguridad definido - Campo PAC OBLIGATORIO';
             }
         }
 
@@ -213,10 +234,10 @@ class PacComplianceValidator
 
         // Validar área tratada
         if (!$treatment->area_treated) {
-            $warnings[] = 'Tratamiento sin área tratada especificada';
+            $errors[] = 'Tratamiento sin área tratada especificada - Campo PAC OBLIGATORIO';
         }
 
-        // NUEVAS VALIDACIONES PAC OBLIGATORIAS
+        // VALIDACIONES PAC OBLIGATORIAS
         
         // 1. Justificación del tratamiento (obligatorio)
         if (!$treatment->treatment_justification || trim($treatment->treatment_justification) === '') {
@@ -334,7 +355,7 @@ class PacComplianceValidator
     }
 
     /**
-     * Validar actividad de cosecha (Trazabilidad)
+     * Validar actividad de cosecha (Trazabilidad y Plazo de Seguridad)
      */
     protected function validateHarvest(AgriculturalActivity $activity): array
     {
@@ -348,7 +369,19 @@ class PacComplianceValidator
 
         $harvest = $activity->harvest;
 
-        // 1. Documento de Transporte (Obligatorio para movimiento de uva)
+        // 1. Validar plazo de seguridad usando WithdrawalPeriodValidator
+        $withdrawalValidator = new \App\Services\Validators\WithdrawalPeriodValidator();
+        $withdrawalValidation = $withdrawalValidator->validateHarvest($harvest);
+        
+        if (!$withdrawalValidation['is_valid']) {
+            $errors = array_merge($errors, $withdrawalValidation['errors']);
+        }
+        
+        if (!empty($withdrawalValidation['warnings'])) {
+            $warnings = array_merge($warnings, $withdrawalValidation['warnings']);
+        }
+
+        // 2. Documento de Transporte (Obligatorio para movimiento de uva)
         if (!$harvest->transport_document_number) {
             // Si el destino NO es autoconsumo, es obligatorio/muy recomendado
             if ($harvest->destination_type !== 'self_consumption') {
@@ -356,7 +389,7 @@ class PacComplianceValidator
             }
         }
 
-        // 2. Código REGA de destino
+        // 3. Código REGA de destino
         if (!$harvest->destination_rega_code) {
              if ($harvest->destination_type !== 'self_consumption') {
                 $warnings[] = 'Falta Código REGA de destino - Esencial para trazabilidad SIEX';

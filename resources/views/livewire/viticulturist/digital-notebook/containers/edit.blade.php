@@ -132,17 +132,6 @@
                     <p class="mt-1 text-xs text-gray-500">Capacidad máxima que puede almacenar el contenedor</p>
                 </div>
 
-                {{-- Archivado --}}
-                <div class="md:col-span-2">
-                    <label class="flex items-center gap-2">
-                        <input 
-                            type="checkbox" 
-                            wire:model="archived"
-                            class="rounded border-gray-300 text-[var(--color-agro-green)] focus:ring-[var(--color-agro-green)]"
-                        />
-                        <span class="text-sm text-gray-700">Contenedor archivado (no aparecerá en listados activos)</span>
-                    </label>
-                </div>
             </div>
         </x-form-section>
 

@@ -321,10 +321,10 @@ class Edit extends Component
                 }
             });
 
-            $this->toastSuccess('Cliente actualizado exitosamente.');
+            session()->flash('message', 'Cliente actualizado exitosamente.');
             return redirect()->route('viticulturist.clients.index');
         } catch (\Exception $e) {
-            $this->toastError('Error al actualizar el cliente: ' . $e->getMessage());
+            session()->flash('error', 'Error al actualizar el cliente: ' . $e->getMessage());
         }
     }
 

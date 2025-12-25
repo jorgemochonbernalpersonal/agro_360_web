@@ -30,7 +30,7 @@ class CreatePhytosanitaryTreatment extends Component
     public $total_dose = '';
     public $area_treated = '';
     public $application_method = '';
-    public $target_pest = '';
+    public $pest_id = '';
     public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
     public $crew_member_id = '';
@@ -112,7 +112,7 @@ class CreatePhytosanitaryTreatment extends Component
             'total_dose' => 'nullable|numeric|min:0',
             'area_treated' => 'required|numeric|min:0.01',
             'application_method' => 'nullable|string|max:50',
-            'target_pest' => 'nullable|string|max:255',
+            'pest_id' => 'nullable|exists:pests,id',
             'crew_id' => 'nullable|exists:crews,id',
             'crew_member_id' => 'nullable|exists:crew_members,id',
             'machinery_id' => 'nullable|exists:machinery,id',
@@ -225,7 +225,7 @@ class CreatePhytosanitaryTreatment extends Component
                     'total_dose' => $this->total_dose ?: null,
                     'area_treated' => $this->area_treated ?: null,
                     'application_method' => $this->application_method,
-                    'target_pest' => $this->target_pest,
+                    'pest_id' => $this->pest_id ?: null,
                     'wind_speed' => $this->wind_speed ?: null,
                     'humidity' => $this->humidity ?: null,
                     // Campos PAC obligatorios
@@ -262,6 +262,8 @@ class CreatePhytosanitaryTreatment extends Component
 
         $products = PhytosanitaryProduct::orderBy('name')->get();
 
+        $pests = \App\Models\Pest::active()->orderBy('name')->get();
+
         $crews = Crew::where('viticulturist_id', $user->id)
             ->orderBy('name')
             ->get();
@@ -293,6 +295,7 @@ class CreatePhytosanitaryTreatment extends Component
         return view('livewire.viticulturist.digital-notebook.create-phytosanitary-treatment', [
             'plots' => $plots,
             'products' => $products,
+            'pests' => $pests,
             'crews' => $crews,
             'machinery' => $machinery,
             'campaign' => $campaign,

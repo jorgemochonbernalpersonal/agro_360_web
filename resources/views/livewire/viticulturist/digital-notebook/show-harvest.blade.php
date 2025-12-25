@@ -200,17 +200,17 @@
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-3 mb-2">
-                                        <h3 class="font-semibold text-gray-900">
-                                            {{ $container->name }}
-                                            @if($container->serial_number)
-                                                #{{ $container->serial_number }}
-                                            @endif
-                                        </h3>
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="font-semibold text-gray-900">
+                                                {{ $container->name }}
+                                                @if($container->serial_number)
+                                                    #{{ $container->serial_number }}
+                                                @endif
+                                            </h3>
+                                            <x-status-badge :active="!$container->archived" />
+                                        </div>
                                         @php
-                                            if ($container->archived) {
-                                                $color = 'bg-gray-100 text-gray-800';
-                                                $label = 'Archivado';
-                                            } elseif ($container->isEmpty()) {
+                                            if ($container->isEmpty()) {
                                                 $color = 'bg-green-100 text-green-800';
                                                 $label = 'Vacío';
                                             } elseif ($container->isFull()) {
@@ -280,17 +280,17 @@
                                 <div class="flex items-start justify-between">
                                     <div class="flex-1">
                                         <div class="flex items-center gap-3 mb-2">
-                                            <h3 class="font-semibold text-gray-900">
-                                                {{ $container->name }}
-                                                @if($container->serial_number)
-                                                    #{{ $container->serial_number }}
-                                                @endif
-                                            </h3>
+                                            <div class="flex items-center gap-2">
+                                                <h3 class="font-semibold text-gray-900">
+                                                    {{ $container->name }}
+                                                    @if($container->serial_number)
+                                                        #{{ $container->serial_number }}
+                                                    @endif
+                                                </h3>
+                                                <x-status-badge :active="!$container->archived" />
+                                            </div>
                                             @php
-                                                if ($container->archived) {
-                                                    $color = 'bg-gray-100 text-gray-800';
-                                                    $label = 'Archivado';
-                                                } elseif ($container->isEmpty()) {
+                                                if ($container->isEmpty()) {
                                                     $color = 'bg-green-100 text-green-800';
                                                     $label = 'Vacío';
                                                 } elseif ($container->isFull()) {

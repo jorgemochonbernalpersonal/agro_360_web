@@ -5,33 +5,36 @@ namespace App\Livewire\Viticulturist\DigitalNotebook\Containers;
 use App\Models\Container;
 use App\Models\Harvest;
 use App\Models\Campaign;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
+    public $currentTab = 'active'; // 'active', 'inactive', 'statistics'
     public $selectedCampaign = '';
     public $selectedHarvest = '';
-    public $filterStatus = '';
     public $filterType = '';
     public $filterAvailability = ''; // 'available', 'assigned', o ''
     public $search = '';
+    public $yearFilter;
 
     protected $queryString = [
+        'currentTab' => ['as' => 'tab', 'except' => 'active'],
         'selectedCampaign' => ['except' => ''],
         'selectedHarvest' => ['except' => ''],
-        'filterStatus' => ['except' => ''],
         'filterType' => ['except' => ''],
         'filterAvailability' => ['except' => ''],
         'search' => ['except' => ''],
+        'yearFilter' => ['as' => 'year'],
     ];
 
     public function mount()
     {
-        // Ya no necesitamos pre-seleccionar campaña por defecto
+        $this->yearFilter = $this->yearFilter ?? now()->year;
     }
 
     public function updatingSearch()
@@ -50,14 +53,42 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingFilterStatus()
+    public function switchTab($tab)
     {
+        $this->currentTab = $tab;
         $this->resetPage();
     }
 
     public function updatingFilterType()
     {
         $this->resetPage();
+    }
+
+    public function toggleActive($containerId)
+    {
+        $user = Auth::user();
+        $container = Container::where('user_id', $user->id)->findOrFail($containerId);
+        
+        $wasArchived = $container->archived;
+        $newArchivedState = !$wasArchived;
+        
+        // Actualizar directamente en la base de datos
+        $container->archived = $newArchivedState;
+        $container->save();
+
+        if ($newArchivedState) {
+            $this->toastSuccess('Contenedor desactivado exitosamente.');
+            // Si estamos en el tab de activos, cambiar al tab de inactivos para ver el cambio
+            if ($this->currentTab === 'active') {
+                $this->currentTab = 'inactive';
+            }
+        } else {
+            $this->toastSuccess('Contenedor activado exitosamente.');
+            // Si estamos en el tab de inactivos, cambiar al tab de activos para ver el cambio
+            if ($this->currentTab === 'inactive') {
+                $this->currentTab = 'active';
+            }
+        }
     }
 
     public function render()
@@ -105,14 +136,13 @@ class Index extends Component
             });
         }
 
-        // Filtro por estado (usando archived en lugar de status)
-        if ($this->filterStatus) {
-            if ($this->filterStatus === 'archived') {
-                $query->where('archived', true);
-            } elseif ($this->filterStatus === 'active') {
-                $query->where('archived', false);
-            }
+        // Filtro por tab (activo/inactivo)
+        if ($this->currentTab === 'active') {
+            $query->where('archived', false); // Activos
+        } elseif ($this->currentTab === 'inactive') {
+            $query->where('archived', true); // Inactivos
         }
+        // Si es 'statistics', no filtrar por activo/inactivo
 
         // Filtro por tipo (usando type_id)
         if ($this->filterType) {
@@ -164,20 +194,124 @@ class Index extends Component
             'total' => (clone $baseQuery)->count(),
             'total_capacity' => (clone $baseQuery)->sum('capacity'),
             'total_used' => (clone $baseQuery)->sum('used_capacity'),
-            'available' => (clone $baseQuery)->whereDoesntHave('harvests')->count(),
-            'assigned' => (clone $baseQuery)->whereHas('harvests')->count(),
-            'archived' => (clone $baseQuery)->where('archived', true)->count(),
+            'active' => (clone $baseQuery)->where('archived', false)->count(),
+            'inactive' => (clone $baseQuery)->where('archived', true)->count(),
+            'available' => (clone $baseQuery)->whereDoesntHave('harvests')->where('archived', false)->count(),
+            'assigned' => (clone $baseQuery)->whereHas('harvests')->where('archived', false)->count(),
         ];
+
+        // Estadísticas avanzadas (solo para tab de estadísticas)
+        $advancedStats = [];
+        if ($this->currentTab === 'statistics') {
+            $advancedStats = $this->getAdvancedStatistics($user);
+        }
 
         return view('livewire.viticulturist.digital-notebook.containers.index', [
             'containers' => $containers,
             'campaigns' => $campaigns,
             'harvests' => $harvests,
             'stats' => $stats,
+            'advancedStats' => $advancedStats,
         ])->layout('layouts.app', [
             'title' => 'Contenedores de Cosecha - Agro365',
             'description' => 'Gestiona tus contenedores de cosecha. Control de peso, ubicación y asignación a vendimias. Trazabilidad completa de la uva.',
         ]);
+    }
+
+    private function getAdvancedStatistics($user)
+    {
+        $year = $this->yearFilter;
+        $allContainers = Container::where('user_id', $user->id)
+            ->where(function($q) use ($user) {
+                $q->whereDoesntHave('harvests')
+                  ->orWhereHas('harvests.activity', function($subQ) use ($user) {
+                      $subQ->where('viticulturist_id', $user->id);
+                  });
+            })
+            ->with(['harvests.activity.campaign'])
+            ->get();
+        
+        // Capacidad total
+        $totalCapacity = $allContainers->sum('capacity');
+        $totalUsed = $allContainers->sum('used_capacity');
+        $totalAvailable = $totalCapacity - $totalUsed;
+        $occupancyPercentage = $totalCapacity > 0 ? ($totalUsed / $totalCapacity) * 100 : 0;
+        
+        // Distribución por estado (vacío, parcial, lleno)
+        $emptyContainers = $allContainers->filter(fn($c) => $c->isEmpty())->count();
+        $partialContainers = $allContainers->filter(fn($c) => !$c->isEmpty() && !$c->isFull())->count();
+        $fullContainers = $allContainers->filter(fn($c) => $c->isFull())->count();
+        
+        // Contenedores disponibles vs asignados
+        $availableContainers = $allContainers->whereDoesntHave('harvests')->where('archived', false)->count();
+        $assignedContainers = $allContainers->whereHas('harvests')->where('archived', false)->count();
+        
+        // Distribución por campaña
+        $campaignStats = $allContainers
+            ->flatMap(fn($c) => $c->harvests->map(fn($h) => $h->activity->campaign_id ?? null))
+            ->filter()
+            ->groupBy(fn($id) => $id)
+            ->map(function($group, $campaignId) use ($user) {
+                $campaign = Campaign::find($campaignId);
+                return [
+                    'campaign_id' => $campaignId,
+                    'campaign_year' => $campaign->year ?? 'N/A',
+                    'count' => $group->count(),
+                ];
+            })
+            ->sortByDesc('count')
+            ->take(10);
+        
+        // Nuevos contenedores por mes (últimos 12 meses)
+        $newContainersByMonth = collect(range(11, 0))->map(function($monthsAgo) use ($user) {
+            $date = now()->subMonths($monthsAgo);
+            return [
+                'month' => $date->format('M'),
+                'count' => Container::where('user_id', $user->id)
+                    ->whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->count(),
+            ];
+        });
+        
+        // Capacidad media por contenedor
+        $avgCapacityPerContainer = $allContainers->count() > 0 ? $allContainers->avg('capacity') : 0;
+        
+        // Top 10 contenedores por capacidad
+        $topContainers = $allContainers
+            ->sortByDesc('capacity')
+            ->take(10)
+            ->map(function($container) {
+                return [
+                    'id' => $container->id,
+                    'name' => $container->name,
+                    'capacity' => $container->capacity,
+                    'used' => $container->used_capacity,
+                    'percentage' => $container->getOccupancyPercentage(),
+                ];
+            });
+        
+        // Contenedores activos vs inactivos
+        $activeContainers = $allContainers->where('archived', false)->count();
+        $inactiveContainers = $allContainers->where('archived', true)->count();
+        
+        return [
+            'totalCapacity' => $totalCapacity,
+            'totalUsed' => $totalUsed,
+            'totalAvailable' => $totalAvailable,
+            'occupancyPercentage' => $occupancyPercentage,
+            'emptyContainers' => $emptyContainers,
+            'partialContainers' => $partialContainers,
+            'fullContainers' => $fullContainers,
+            'availableContainers' => $availableContainers,
+            'assignedContainers' => $assignedContainers,
+            'campaignStats' => $campaignStats,
+            'newContainersByMonth' => $newContainersByMonth,
+            'avgCapacityPerContainer' => $avgCapacityPerContainer,
+            'topContainers' => $topContainers,
+            'activeContainers' => $activeContainers,
+            'inactiveContainers' => $inactiveContainers,
+        ];
     }
 }
 

@@ -1,91 +1,36 @@
 # Agro365 - Robots.txt
-# Gestión agrícola profesional
-
-# Googlebot - Permitir todo lo público
-User-agent: Googlebot
-Allow: /
-Allow: /faqs
-Allow: /blog
-Allow: /tutoriales
-Allow: /quienes-somos
-Allow: /verify-report/
-Allow: /*.css$
-Allow: /*.js$
-Allow: /build/
-Allow: /images/
-
-# Bingbot - Permitir todo lo público
-User-agent: Bingbot
-Allow: /
-Allow: /faqs
-Allow: /blog
-Allow: /tutoriales
-Allow: /quienes-somos
-Allow: /verify-report/
-Allow: /*.css$
-Allow: /*.js$
-Allow: /build/
-Allow: /images/
-
-# Googlebot-Image - Permitir imágenes
-User-agent: Googlebot-Image
-Allow: /images/
-Allow: /build/
-
-# Todos los demás bots
 User-agent: *
-
-# Permitir páginas públicas
 Allow: /
-Allow: /*.css$
-Allow: /*.js$
-Allow: /build/
-Allow: /images/
 
-# Bloquear dashboards y áreas privadas
+# Sitemap
+Sitemap: https://agro365.es/sitemap.xml
+
+# Bloquear áreas privadas
 Disallow: /admin/
 Disallow: /viticulturist/
-Disallow: /winery/
 Disallow: /supervisor/
-Disallow: /logs
-Disallow: /log-viewer/
+Disallow: /winery/
+Disallow: /profile/
+Disallow: /plots/
+Disallow: /sigpac/
+Disallow: /campaigns/
 
-# Bloquear API y endpoints internos
+# Bloquear API y sistema
 Disallow: /api/
 Disallow: /livewire/
+Disallow: /storage/
+Disallow: /logs
 Disallow: /_debugbar/
 
-# Bloquear directorios del sistema
-Disallow: /storage/
-Disallow: /vendor/
-Disallow: /config/
-Disallow: /database/
-
-# Bloquear rutas de autenticación
+# Bloquear autenticación
 Disallow: /login
 Disallow: /register
 Disallow: /password/
 Disallow: /email/
 
-# Bloquear perfiles y configuración
-Disallow: /profile/
-Disallow: /config/
-Disallow: /settings/
+# Bloquear archivos sensibles
+Disallow: /.env
+Disallow: /.git
 
-# Bloquear gestión de parcelas (privado)
-Disallow: /plots/
-Disallow: /sigpac/
-Disallow: /campaigns/
-
-# Permitir específicamente páginas públicas importantes
-Allow: /faqs
-Allow: /blog
-Allow: /tutoriales
-Allow: /quienes-somos
-Allow: /verify-report/
-
-# Crawl-delay para ser amigable con los bots
+# Crawl-delay
 Crawl-delay: 1
-
-# Sitemap - Ayuda a los motores de búsqueda a indexar el sitio
-Sitemap: https://agro365.es/sitemap.xml

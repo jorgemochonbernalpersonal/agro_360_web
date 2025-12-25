@@ -30,6 +30,13 @@ class Edit extends Component
     public $status = 'active';
     public $notes = '';
 
+    // Campos PAC
+    public $planting_authorization = '';
+    public $authorization_date = '';
+    public $right_type = '';
+    public $uprooting_date = '';
+    public $designation_of_origin = '';
+
     public function mount(PlotPlanting $planting): void
     {
         $this->planting = $planting->load('plot');
@@ -54,6 +61,13 @@ class Edit extends Component
         $this->irrigated = $this->planting->irrigated;
         $this->status = $this->planting->status;
         $this->notes = $this->planting->notes;
+
+        // Campos PAC
+        $this->planting_authorization = $this->planting->planting_authorization;
+        $this->authorization_date = optional($this->planting->authorization_date)->format('Y-m-d');
+        $this->right_type = $this->planting->right_type;
+        $this->uprooting_date = optional($this->planting->uprooting_date)->format('Y-m-d');
+        $this->designation_of_origin = $this->planting->designation_of_origin;
     }
 
     protected function rules(): array
@@ -74,6 +88,12 @@ class Edit extends Component
             'irrigated' => 'boolean',
             'status' => 'required|in:active,removed,experimental,replanting',
             'notes' => 'nullable|string',
+            // Campos PAC
+            'planting_authorization' => 'nullable|string|max:255',
+            'authorization_date' => 'nullable|date',
+            'right_type' => 'nullable|in:nueva,replantacion,conversion,transferencia',
+            'uprooting_date' => 'nullable|date',
+            'designation_of_origin' => 'nullable|string|max:255',
         ];
     }
 
@@ -97,6 +117,12 @@ class Edit extends Component
             'irrigated' => (bool) $this->irrigated,
             'status' => $this->status,
             'notes' => $this->notes ?: null,
+            // Campos PAC
+            'planting_authorization' => $this->planting_authorization ?: null,
+            'authorization_date' => $this->authorization_date ?: null,
+            'right_type' => $this->right_type ?: null,
+            'uprooting_date' => $this->uprooting_date ?: null,
+            'designation_of_origin' => $this->designation_of_origin ?: null,
         ]);
 
         $this->toastSuccess('Plantación actualizada correctamente.');
