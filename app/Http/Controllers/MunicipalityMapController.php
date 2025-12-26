@@ -14,9 +14,12 @@ class MunicipalityMapController extends Controller
     /**
      * Mostrar todos los mapas de un municipio
      */
-    public function show(Municipality $municipality)
+    public function show($municipalityId)
     {
         $user = Auth::user();
+        
+        // Buscar el municipio
+        $municipality = Municipality::findOrFail($municipalityId);
 
         // Obtener IDs de parcelas que el usuario puede ver
         $plotIds = Plot::forUser($user)->pluck('id');

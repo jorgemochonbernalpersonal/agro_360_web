@@ -12,14 +12,14 @@ use App\Models\Machinery;
 use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithWineryFilter;
+use App\Livewire\Concerns\WithUserFilters;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreateCulturalWork extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithWineryFilter;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
     public $plot_id = '';
     public $plot_planting_id = '';
     public $availablePlantings = [];

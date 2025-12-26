@@ -12,14 +12,14 @@ use App\Models\Machinery;
 use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithWineryFilter;
+use App\Livewire\Concerns\WithUserFilters;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EditObservation extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithWineryFilter;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
     
     public AgriculturalActivity $activity;
     public Observation $observation;

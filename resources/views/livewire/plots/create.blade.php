@@ -62,7 +62,7 @@
                                 <x-select wire:model="viticulturist_id" id="viticulturist_id" data-cy="plot-viticulturist-id" :error="$errors->first('viticulturist_id')" required>
                                     <option value="">Seleccionar...</option>
                                     @forelse ($this->viticulturists as $viticulturist)
-                                        <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}</option>
+                                        <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) (Yo)@endif</option>
                                     @empty
                                         <option value="" disabled>No hay viticultores disponibles</option>
                                     @endforelse

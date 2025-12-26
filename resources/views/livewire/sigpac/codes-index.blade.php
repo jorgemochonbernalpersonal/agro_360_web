@@ -98,16 +98,25 @@
                     </button>
 
                     <!-- Botón Ver Todos los Mapas -->
-                    <a
-                        href="{{ route('sigpac.municipality-map', ['municipality' => $filterMunicipality]) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-semibold shadow-lg hover:shadow-xl"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        Ver Todos los Mapas
-                    </a>
+                    @php
+                        // Obtener primera parcela del municipio para la URL
+                        $firstPlot = \App\Models\Plot::forUser(auth()->user())
+                            ->where('municipality_id', $filterMunicipality)
+                            ->first();
+                    @endphp
+                    
+                    @if($firstPlot)
+                        <a
+                            href="{{ route('map', ['id' => $firstPlot->id, 'municipality' => $filterMunicipality, 'return' => 'sigpac']) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-semibold shadow-lg hover:shadow-xl"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            Ver Todos los Mapas
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -236,19 +245,24 @@
                             
                             // Verificar si ya tiene geometría: existe MultipartPlotSigpac con plot_geometry_id para este código y parcela
                             $hasGeometry = false;
+                            $multipartId = null;
                             if ($hasPlots && $firstPlot && $code->multiplePlotSigpacs) {
-                                $hasGeometry = $code->multiplePlotSigpacs
+                                $multipart = $code->multiplePlotSigpacs
                                     ->where('plot_id', $firstPlot->id)
                                     ->where('sigpac_code_id', $code->id)
                                     ->whereNotNull('plot_geometry_id')
-                                    ->isNotEmpty();
+                                    ->first();
+                                if ($multipart) {
+                                    $hasGeometry = true;
+                                    $multipartId = $multipart->id;
+                                }
                             }
                         @endphp
                         
                         @if($hasPlots && $firstPlot)
-                            @if($hasGeometry)
+                            @if($hasGeometry && $multipartId)
                                 {{-- Si tiene geometría, mostrar "Ver Mapa" --}}
-                                <a href="/map/{{ $firstPlot->id }}?return=sigpac"
+                                <a href="/map/{{ $firstPlot->id }}?recinto={{ $multipartId }}&return=sigpac"
                                    class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-200"
                                    title="Ver Mapa">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

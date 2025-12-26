@@ -212,8 +212,8 @@
                         type="file" 
                         accept="image/*"
                         id="image"
-                        x-on:change="
-                            const file = $event.target.files[0];
+                        onchange="
+                            const file = this.files[0];
                             if (file) {
                                 const reader = new FileReader();
                                 reader.onload = function(e) {
@@ -222,9 +222,19 @@
                                     if (previewImg) {
                                         previewImg.src = e.target.result;
                                         previewImg.classList.remove('hidden');
+                                        previewImg.style.display = 'block';
                                     }
                                     if (previewContainer) {
                                         previewContainer.classList.remove('hidden');
+                                        previewContainer.style.display = 'block';
+                                    }
+                                };
+                                reader.onerror = function() {
+                                    console.error('Error al leer el archivo');
+                                    const previewContainer = document.getElementById('machinery-image-preview-container');
+                                    if (previewContainer) {
+                                        previewContainer.classList.add('hidden');
+                                        previewContainer.style.display = 'none';
                                     }
                                 };
                                 reader.readAsDataURL(file);
@@ -232,6 +242,7 @@
                                 const previewContainer = document.getElementById('machinery-image-preview-container');
                                 if (previewContainer) {
                                     previewContainer.classList.add('hidden');
+                                    previewContainer.style.display = 'none';
                                 }
                             }
                         "
@@ -240,14 +251,15 @@
                     @error('image') 
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
                     @enderror
-                    <div id="machinery-image-preview-container" class="mt-4 hidden">
-                        <p class="text-sm text-gray-600 mb-2">Vista previa:</p>
+                    <div id="machinery-image-preview-container" wire:ignore class="mt-4 hidden">
+                        <p class="text-sm text-gray-600 mb-2 font-semibold">Vista previa:</p>
                         <img 
                             id="machinery-image-preview" 
                             src="" 
                             alt="Vista previa" 
                             class="max-w-xs rounded-lg border-2 border-gray-200 hidden"
-                            onerror="this.style.display='none'; document.getElementById('machinery-image-preview-container').classList.add('hidden');"
+                            style="max-height: 300px; object-fit: contain;"
+                            onerror="this.style.display='none'; document.getElementById('machinery-image-preview-container').style.display='none'; document.getElementById('machinery-image-preview-container').classList.add('hidden');"
                         >
                     </div>
                 </div>
@@ -264,26 +276,6 @@
                         :error="$errors->first('notes')"
                     />
                 </div>
-        </x-form-section>
-
-        <x-form-section title="Opciones" color="green" class="pb-6">
-                
-                <div class="flex items-center">
-                    <input 
-                        wire:model="active" 
-                        type="checkbox"
-                        id="active"
-                        data-cy="machinery-active"
-                        class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
-                        checked
-                    >
-                    <label for="active" class="ml-3 text-sm font-semibold text-gray-700">
-                        Maquinaria activa
-                    </label>
-                </div>
-                @error('active') 
-                    <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                @enderror
         </x-form-section>
 
         <x-form-actions 

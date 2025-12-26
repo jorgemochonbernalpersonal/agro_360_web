@@ -8,7 +8,7 @@ use App\Models\AutonomousCommunity;
 use App\Models\Province;
 use App\Models\Municipality;
 use App\Livewire\Concerns\WithRoleBasedFields;
-use App\Livewire\Concerns\WithWineryFilter;
+use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 
 class Edit extends Component
 {
-    use WithRoleBasedFields, WithWineryFilter, WithToastNotifications;
+    use WithRoleBasedFields, WithUserFilters, WithToastNotifications;
 
     public Plot $plot;
     public $name = '';

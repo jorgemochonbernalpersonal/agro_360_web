@@ -13,14 +13,14 @@ use App\Models\Machinery;
 use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Livewire\Concerns\WithWineryFilter;
+use App\Livewire\Concerns\WithUserFilters;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreateHarvest extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithWineryFilter;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
 
     // Básico
     public $plot_id = '';

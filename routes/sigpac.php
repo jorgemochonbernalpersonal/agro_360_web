@@ -20,7 +20,6 @@ Route::middleware(['auth', 'verified', 'check.beta'])
         Route::get('/uses', UsesIndex::class)->name('uses');
         
         // Vista de todos los mapas de un municipio
-        Route::get('/municipality-map/{municipality}', [App\Http\Controllers\MunicipalityMapController::class, 'show'])
+        Route::get('/municipality-map/{municipalityId}', [App\Http\Controllers\MunicipalityMapController::class, 'show'])
             ->name('municipality-map');
     });
-

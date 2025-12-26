@@ -147,7 +147,7 @@
                                         @if(isset($allViticulturists))
                                             @foreach($allViticulturists as $viticulturist)
                                                 <option value="{{ $viticulturist->id }}">
-                                                    {{ $viticulturist->name }} ({{ $viticulturist->email }})
+                                                    {{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) (Yo)@endif
                                                 </option>
                                             @endforeach
                                         @endif

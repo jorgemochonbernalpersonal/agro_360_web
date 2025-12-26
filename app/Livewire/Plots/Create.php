@@ -3,7 +3,7 @@
 namespace App\Livewire\Plots;
 
 use App\Livewire\Concerns\WithRoleBasedFields;
-use App\Livewire\Concerns\WithWineryFilter;
+use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AutonomousCommunity;
 use App\Models\Municipality;
@@ -18,7 +18,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithRoleBasedFields, WithWineryFilter, WithToastNotifications;
+    use WithRoleBasedFields, WithUserFilters, WithToastNotifications;
 
     public $name = '';
     public $description = '';

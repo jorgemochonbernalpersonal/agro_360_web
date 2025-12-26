@@ -76,28 +76,79 @@
         // Datos de geometrías desde el servidor
         const plotGeometries = @json($plotGeometries);
 
+        // Función para esperar a que app.js esté cargado
+        function waitForAppJS() {
+            return new Promise((resolve) => {
+                // Si ya están disponibles, resolver inmediatamente
+                if (typeof window.parseWKT !== 'undefined' && typeof window.loadLeaflet !== 'undefined') {
+                    resolve();
+                    return;
+                }
+
+                // Esperar hasta que estén disponibles (máximo 10 segundos)
+                let attempts = 0;
+                const maxAttempts = 100;
+                const interval = setInterval(() => {
+                    attempts++;
+                    if (typeof window.parseWKT !== 'undefined' && typeof window.loadLeaflet !== 'undefined') {
+                        clearInterval(interval);
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(interval);
+                        console.error('Timeout esperando app.js');
+                        resolve(); // Resolver de todas formas para no bloquear
+                    }
+                }, 100);
+            });
+        }
+
         // Inicializar mapa con lazy loading de Leaflet
         async function initMap() {
             console.log('🗺️ Inicializando mapa del municipio');
             console.log('Geometrías cargadas:', plotGeometries.length);
-            console.log('Datos completos:', plotGeometries);
+
+            // Esperar a que app.js esté cargado
+            await waitForAppJS();
 
             // Verificar que existen las funciones de parsing WKT
             if (typeof window.parseWKT === 'undefined') {
                 console.error('❌ window.parseWKT no está definido');
-                alert('Error: El parser WKT no está cargado. Recarga la página.');
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded';
+                errorMsg.innerHTML = '<p class="font-bold">Error: El parser WKT no está cargado.</p><p>Por favor, recarga la página.</p>';
+                document.getElementById('map').parentElement.insertBefore(errorMsg, document.getElementById('map'));
                 return;
             }
 
             if (typeof window.isValidWKT === 'undefined') {
                 console.error('❌ window.isValidWKT no está definido');
-                alert('Error: El validador WKT no está cargado. Recarga la página.');
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded';
+                errorMsg.innerHTML = '<p class="font-bold">Error: El validador WKT no está cargado.</p><p>Por favor, recarga la página.</p>';
+                document.getElementById('map').parentElement.insertBefore(errorMsg, document.getElementById('map'));
                 return;
             }
 
             // Cargar Leaflet de forma lazy
-            const L = await window.loadLeaflet();
-            console.log('✅ Leaflet cargado');
+            let L;
+            try {
+                L = await window.loadLeaflet();
+                console.log('✅ Leaflet cargado');
+            } catch (error) {
+                console.error('❌ Error cargando Leaflet:', error);
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded';
+                errorMsg.innerHTML = '<p class="font-bold">Error cargando el mapa.</p><p>Por favor, recarga la página.</p>';
+                document.getElementById('map').parentElement.insertBefore(errorMsg, document.getElementById('map'));
+                return;
+            }
+
+            // Verificar que el contenedor del mapa existe
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer) {
+                console.error('❌ No se encontró el contenedor #map');
+                return;
+            }
 
             const map = L.map('map', {
                 zoomControl: true,
@@ -113,12 +164,11 @@
             const polygonLayers = [];
             let bounds = null;
             let errorsCount = 0;
+            let successCount = 0;
 
             // Procesar cada geometría
             plotGeometries.forEach((geometry, index) => {
-                console.log(`Procesando geometría ${index}:`, geometry);
-                
-                if (!geometry.wkt) {
+                if (!geometry || !geometry.wkt) {
                     console.warn(`❌ Geometría ${index} no tiene WKT`);
                     errorsCount++;
                     return;
@@ -132,18 +182,33 @@
 
                 try {
                     const coordinates = window.parseWKT(geometry.wkt);
-                    console.log(`✅ Coordenadas parseadas para ${geometry.sigpac_formatted}:`, coordinates);
                     
                     if (!coordinates || coordinates.length === 0) {
-                        console.warn(`❌ No se pudieron parsear coordenadas para ${geometry.sigpac_formatted}`);
+                        console.warn(`❌ No se pudieron parsear coordenadas para ${geometry.sigpac_formatted || 'geometría ' + index}`);
+                        errorsCount++;
+                        return;
+                    }
+
+                    // Verificar que las coordenadas son válidas
+                    const validCoords = coordinates.filter(coord => 
+                        Array.isArray(coord) && 
+                        coord.length === 2 && 
+                        !isNaN(coord[0]) && 
+                        !isNaN(coord[1]) &&
+                        coord[0] >= -90 && coord[0] <= 90 &&
+                        coord[1] >= -180 && coord[1] <= 180
+                    );
+
+                    if (validCoords.length < 3) {
+                        console.warn(`❌ Geometría ${index} no tiene suficientes coordenadas válidas (${validCoords.length})`);
                         errorsCount++;
                         return;
                     }
 
                     // Crear polígono
-                    const polygon = L.polygon(coordinates, {
-                        color: geometry.color.line,
-                        fillColor: geometry.color.fill,
+                    const polygon = L.polygon(validCoords, {
+                        color: geometry.color?.line || '#3388ff',
+                        fillColor: geometry.color?.fill || '#3388ff',
                         fillOpacity: 0.3,
                         weight: 2
                     });
@@ -151,21 +216,26 @@
                     // Añadir popup
                     polygon.bindPopup(`
                         <div class="p-2">
-                            <p class="font-bold text-gray-900">${geometry.plot_name}</p>
-                            <p class="text-sm text-gray-600 font-mono">${geometry.sigpac_formatted}</p>
+                            <p class="font-bold text-gray-900">${geometry.plot_name || 'Sin nombre'}</p>
+                            <p class="text-sm text-gray-600 font-mono">${geometry.sigpac_formatted || geometry.sigpac_code || 'Sin código'}</p>
                         </div>
                     `);
 
                     // Añadir al mapa
                     polygon.addTo(map);
                     polygonLayers.push(polygon);
-                    console.log(`✅ Polígono ${index} añadido al mapa`);
+                    successCount++;
 
                     // Actualizar bounds
-                    if (!bounds) {
-                        bounds = polygon.getBounds();
-                    } else {
-                        bounds.extend(polygon.getBounds());
+                    try {
+                        const polygonBounds = polygon.getBounds();
+                        if (!bounds) {
+                            bounds = polygonBounds;
+                        } else {
+                            bounds.extend(polygonBounds);
+                        }
+                    } catch (boundsError) {
+                        console.warn(`⚠️ Error obteniendo bounds del polígono ${index}:`, boundsError);
                     }
                 } catch (error) {
                     console.error(`❌ Error procesando geometría ${index}:`, error);
@@ -175,23 +245,35 @@
 
             // Ajustar vista a todos los polígonos
             if (bounds && polygonLayers.length > 0) {
-                map.fitBounds(bounds, { padding: [50, 50] });
-                console.log(`✅ ${polygonLayers.length} polígonos renderizados correctamente`);
+                try {
+                    map.fitBounds(bounds, { padding: [50, 50] });
+                    console.log(`✅ ${successCount} polígonos renderizados correctamente`);
+                } catch (fitError) {
+                    console.warn('⚠️ Error ajustando bounds, usando vista por defecto:', fitError);
+                    map.setView([40.4168, -3.7038], 6);
+                }
             } else {
                 // Vista por defecto de España si no hay geometrías
                 map.setView([40.4168, -3.7038], 6);
-                console.warn(`⚠️ No se renderizaron polígonos. Errores: ${errorsCount}`);
+                if (errorsCount > 0) {
+                    console.warn(`⚠️ No se renderizaron polígonos. Errores: ${errorsCount}`);
+                }
             }
 
-            console.log(`📊 Resumen: ${polygonLayers.length} éxitos, ${errorsCount} errores`);
+            console.log(`📊 Resumen: ${successCount} éxitos, ${errorsCount} errores de ${plotGeometries.length} geometrías`);
         }
 
-        // Inicializar cuando el DOM esté listo
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initMap);
-        } else {
-            initMap();
+        // Inicializar cuando el DOM esté listo y app.js esté cargado
+        function startInit() {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMap);
+            } else {
+                // Esperar un poco más para asegurar que app.js esté cargado
+                setTimeout(initMap, 100);
+            }
         }
+
+        startInit();
     </script>
     @endpush
 </x-app-layout>

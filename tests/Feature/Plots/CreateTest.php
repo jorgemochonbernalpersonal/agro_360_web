@@ -192,7 +192,7 @@ class CreateTest extends TestCase
         $this->assertDatabaseHas('plots', [
             'name' => 'Mi Parcela',
             'viticulturist_id' => $viticulturist->id,
-            'winery_id' => $winery->id,
+            // winery_id removed: plots no longer have direct winery_id column
         ]);
     }
 

@@ -179,7 +179,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <div class="font-semibold text-gray-900">{{ $v->name }}</div>
+                                    <div class="font-semibold text-gray-900">{{ $v->name }}@if($v->id === auth()->id()) <span class="text-[var(--color-agro-green-dark)]">(Yo)</span>@endif</div>
                                 </div>
                             </div>
                         </x-table-cell>

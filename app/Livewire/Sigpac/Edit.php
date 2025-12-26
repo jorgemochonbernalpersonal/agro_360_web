@@ -96,15 +96,16 @@ class Edit extends Component
                 $caCode = str_pad($plot->autonomousCommunity->code ?? '', 2, '0', STR_PAD_LEFT);
                 $provinceCode = str_pad($plot->province->code ?? '', 2, '0', STR_PAD_LEFT);
                 
-                // Para municipio: el código es de 5 dígitos (28079), pero SIGPAC necesita solo los últimos 3 (079)
-                $municipalityFullCode = $plot->municipality->code ?? '';
-                $municipalityCode = str_pad(substr($municipalityFullCode, -3), 3, '0', STR_PAD_LEFT);
+                // Municipio: NO autocompletar, dejar vacío para entrada manual
+                // $municipalityFullCode = $plot->municipality->code ?? '';
+                // $municipalityCode = str_pad(substr($municipalityFullCode, -3), 3, '0', STR_PAD_LEFT);
                 
-                // Auto-rellenar el código SIGPAC
+                // Auto-rellenar SOLO CA y Provincia en el código SIGPAC
                 if (isset($this->sigpacCodes[0])) {
                     $this->sigpacCodes[0]['code_autonomous_community'] = $caCode;
                     $this->sigpacCodes[0]['code_province'] = $provinceCode;
-                    $this->sigpacCodes[0]['code_municipality'] = $municipalityCode;
+                    // NO autocompletar municipio
+                    // $this->sigpacCodes[0]['code_municipality'] = $municipalityCode;
                 }
             }
         }

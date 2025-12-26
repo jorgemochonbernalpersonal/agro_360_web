@@ -220,8 +220,8 @@
                         type="file" 
                         accept="image/*"
                         id="image"
-                        x-on:change="
-                            const file = $event.target.files[0];
+                        onchange="
+                            const file = this.files[0];
                             if (file) {
                                 const reader = new FileReader();
                                 reader.onload = function(e) {
@@ -230,9 +230,11 @@
                                     if (previewImg) {
                                         previewImg.src = e.target.result;
                                         previewImg.classList.remove('hidden');
+                                        previewImg.style.display = 'block';
                                     }
                                     if (previewContainer) {
                                         previewContainer.classList.remove('hidden');
+                                        previewContainer.style.display = 'block';
                                     }
                                 };
                                 reader.onerror = function() {
@@ -240,6 +242,7 @@
                                     const previewContainer = document.getElementById('machinery-edit-image-preview-container');
                                     if (previewContainer) {
                                         previewContainer.classList.add('hidden');
+                                        previewContainer.style.display = 'none';
                                     }
                                 };
                                 reader.readAsDataURL(file);
@@ -247,6 +250,7 @@
                                 const previewContainer = document.getElementById('machinery-edit-image-preview-container');
                                 if (previewContainer) {
                                     previewContainer.classList.add('hidden');
+                                    previewContainer.style.display = 'none';
                                 }
                             }
                         "
@@ -255,14 +259,15 @@
                     @error('image') 
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
                     @enderror
-                    <div id="machinery-edit-image-preview-container" class="mt-4 hidden">
-                        <p class="text-sm text-gray-600 mb-2">Vista previa de la nueva imagen:</p>
+                    <div id="machinery-edit-image-preview-container" wire:ignore class="mt-4 hidden">
+                        <p class="text-sm text-gray-600 mb-2 font-semibold">Vista previa de la nueva imagen:</p>
                         <img 
                             id="machinery-edit-image-preview" 
                             src="" 
                             alt="Vista previa" 
                             class="max-w-xs rounded-lg border-2 border-gray-200 hidden"
-                            onerror="this.style.display='none'; document.getElementById('machinery-edit-image-preview-container').classList.add('hidden');"
+                            style="max-height: 300px; object-fit: contain;"
+                            onerror="this.style.display='none'; document.getElementById('machinery-edit-image-preview-container').style.display='none'; document.getElementById('machinery-edit-image-preview-container').classList.add('hidden');"
                         >
                     </div>
                 </div>
@@ -281,26 +286,7 @@
                 </div>
         </x-form-section>
 
-        <x-form-section title="Opciones" color="green" class="pb-6">
-                
-                <div class="flex items-center">
-                    <input 
-                        wire:model="active" 
-                        type="checkbox"
-                        id="active"
-                        data-cy="machinery-active"
-                        class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
-                    >
-                    <label for="active" class="ml-3 text-sm font-semibold text-gray-700">
-                        Maquinaria activa
-                    </label>
-                </div>
-                @error('active') 
-                    <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                    @enderror
-        </x-form-section>
-
-        <x-form-actions 
+        <x-form-actions
             :cancel-url="route('viticulturist.machinery.index')"
             submit-label="Actualizar Maquinaria"
         />

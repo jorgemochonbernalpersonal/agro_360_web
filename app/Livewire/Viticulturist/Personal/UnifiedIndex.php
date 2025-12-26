@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\WineryViticulturist;
 use App\Notifications\ViticulturistInvitationNotification;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithUserFilters;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 
 class UnifiedIndex extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithUserFilters;
 
     public $viewMode = 'personal'; // 'personal' o 'crews'
     public $search = '';
@@ -315,13 +316,14 @@ class UnifiedIndex extends Component
 
     private function renderPersonalView($user, $wineries)
     {
-        // IDs de viticultores creados por este viticultor
-        $createdViticulturistIds = WineryViticulturist::editableBy($user)
-            ->pluck('viticulturist_id');
+        // Usar el trait WithUserFilters para obtener todos los viticultores visibles
+        // Esto incluye: el usuario mismo, los que creó, los de sus bodegas, y los del supervisor
+        $allVisibleViticulturists = $this->viticulturists;
+        $visibleIds = $allVisibleViticulturists->pluck('id');
 
         $query = User::query()
             ->where('role', 'viticulturist')
-            ->whereIn('id', $createdViticulturistIds);
+            ->whereIn('id', $visibleIds);
 
         // Búsqueda
         if ($this->search) {
@@ -380,7 +382,7 @@ class UnifiedIndex extends Component
 
         // Calcular estadísticas para todos los viticultores (no solo los paginados)
         $allViticulturists = User::where('role', 'viticulturist')
-            ->whereIn('id', $createdViticulturistIds)
+            ->whereIn('id', $visibleIds)
             ->get();
         
         $allMembers = CrewMember::whereIn('viticulturist_id', $allViticulturists->pluck('id'))

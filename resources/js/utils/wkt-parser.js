@@ -31,15 +31,38 @@ export function parseWKT(wkt) {
 
 /**
  * Parsear POLYGON
- * Formato: POLYGON((lon lat, lon lat, ...))
+ * Formato: POLYGON((lon lat, lon lat, ...)) o POLYGON((lon lat, ...), (lon lat, ...)) con agujeros
  */
 function parsePolygon(wkt) {
     try {
-        // Extraer coordenadas: POLYGON((lon lat, lon lat, ...))
-        const match = wkt.match(/\(\(([^)]+)\)\)/);
-        if (!match) return [];
+        // Remover el prefijo POLYGON
+        const content = wkt.replace(/^POLYGON\s*\(/i, '').trim();
+        if (!content.endsWith(')')) {
+            console.warn('POLYGON mal formado:', wkt.substring(0, 100));
+            return [];
+        }
         
-        return parseCoordinates(match[1]);
+        // Remover el paréntesis final
+        const ringsContent = content.slice(0, -1).trim();
+        
+        // Extraer el anillo exterior (primer conjunto de coordenadas)
+        // Formato: ((lon lat, lon lat, ...))
+        const outerRingMatch = ringsContent.match(/^\(\(([^)]+)\)\)/);
+        if (!outerRingMatch) {
+            // Intentar formato sin doble paréntesis
+            const simpleMatch = ringsContent.match(/^\(([^)]+)\)/);
+            if (!simpleMatch) return [];
+            return parseCoordinates(simpleMatch[1]);
+        }
+        
+        // Parsear el anillo exterior
+        const outerRing = parseCoordinates(outerRingMatch[1]);
+        if (outerRing.length < 3) {
+            console.warn('POLYGON con menos de 3 puntos');
+            return [];
+        }
+        
+        return outerRing;
     } catch (e) {
         console.error('Error parseando POLYGON:', e);
         return [];
@@ -48,20 +71,37 @@ function parsePolygon(wkt) {
 
 /**
  * Parsear MULTIPOLYGON
- * Formato: MULTIPOLYGON(((lon lat, ...)))
+ * Formato: MULTIPOLYGON(((lon lat, ...)), ((lon lat, ...)), ...)
+ * Devuelve el primer polígono (el más grande típicamente)
  */
 function parseMultiPolygon(wkt) {
     try {
-        // Tomar primer polígono: MULTIPOLYGON(((lon lat, ...)))
-        const match = wkt.match(/\(\(\(([^)]+)\)\)\)/);
-        if (!match) {
-            // Intentar formato alternativo
-            const altMatch = wkt.match(/\(\(([^)]+)\)\)/);
-            if (!altMatch) return [];
+        // Remover el prefijo MULTIPOLYGON
+        const content = wkt.replace(/^MULTIPOLYGON\s*\(/i, '').trim();
+        if (!content.endsWith(')')) {
+            console.warn('MULTIPOLYGON mal formado:', wkt.substring(0, 100));
+            return [];
+        }
+        
+        // Remover el paréntesis final
+        const polygonsContent = content.slice(0, -1).trim();
+        
+        // Buscar el primer polígono: ((lon lat, ...))
+        // Usar una expresión regular más simple para encontrar el primer conjunto de coordenadas
+        const firstPolygonMatch = polygonsContent.match(/\(\(\(([^)]+)\)\)\)/);
+        if (firstPolygonMatch) {
+            return parseCoordinates(firstPolygonMatch[1]);
+        }
+        
+        // Intentar formato alternativo: ((lon lat, ...))
+        const altMatch = polygonsContent.match(/\(\(([^)]+)\)\)/);
+        if (altMatch) {
             return parseCoordinates(altMatch[1]);
         }
         
-        return parseCoordinates(match[1]);
+        // Si no se encuentra, intentar parsear como POLYGON simple
+        console.warn('No se pudo parsear MULTIPOLYGON, intentando como POLYGON simple');
+        return [];
     } catch (e) {
         console.error('Error parseando MULTIPOLYGON:', e);
         return [];

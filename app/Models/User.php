@@ -361,13 +361,19 @@ class User extends Authenticatable implements MustVerifyEmail
         
         // Cachear en memoria durante la request
         if (!isset($this->_wineries_cache)) {
-            $this->_wineries_cache = $this->wineryRelationsAsViticulturist()
-                ->with('winery')
-                ->get()
-                ->pluck('winery')
-                ->filter()
-                ->unique('id')
-                ->values();
+            // Usar query directa en lugar de la relación para evitar problemas con scopes
+            $wineryIds = \App\Models\WineryViticulturist::where('viticulturist_id', $this->id)
+                ->whereNotNull('winery_id')
+                ->pluck('winery_id')
+                ->unique();
+            
+            if ($wineryIds->isEmpty()) {
+                $this->_wineries_cache = collect();
+            } else {
+                $this->_wineries_cache = User::whereIn('id', $wineryIds)
+                    ->where('role', self::ROLE_WINERY)
+                    ->get();
+            }
         }
         
         return $this->_wineries_cache;

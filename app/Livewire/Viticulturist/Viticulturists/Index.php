@@ -13,10 +13,11 @@ use App\Models\CrewMember;
 use App\Models\Subscription;
 use App\Models\Payment;
 use App\Models\WineryViticulturist;
+use App\Livewire\Concerns\WithUserFilters;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithUserFilters;
 
     protected $paginationTheme = 'tailwind';
 
@@ -98,13 +99,14 @@ class Index extends Component
     {
         $user = Auth::user();
 
-        // IDs de viticultores creados por este viticultor (misma lógica que editableBy)
-        $createdViticulturistIds = WineryViticulturist::editableBy($user)
-            ->pluck('viticulturist_id');
+        // Usar el trait WithUserFilters para obtener todos los viticultores visibles
+        // Esto incluye: el usuario mismo, los que creó, los de sus bodegas, y los del supervisor
+        $allVisibleViticulturists = $this->viticulturists;
+        $visibleIds = $allVisibleViticulturists->pluck('id');
 
         $query = User::query()
             ->where('role', 'viticulturist')
-            ->whereIn('id', $createdViticulturistIds);
+            ->whereIn('id', $visibleIds);
 
         if ($this->search) {
             $search = '%' . strtolower($this->search) . '%';
