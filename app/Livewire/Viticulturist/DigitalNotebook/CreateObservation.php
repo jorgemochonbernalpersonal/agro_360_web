@@ -11,13 +11,15 @@ use App\Models\Crew;
 use App\Models\Machinery;
 use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
+use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithWineryFilter;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreateObservation extends Component
 {
-    use WithViticulturistValidation;
+    use WithViticulturistValidation, WithToastNotifications, WithWineryFilter;
     public $plot_id = '';
     public $plot_planting_id = '';
     public $availablePlantings = [];
@@ -223,14 +225,8 @@ class CreateObservation extends Component
             ->sortBy(fn ($worker) => $worker->viticulturist->name)
             ->values();
         
-        // También obtener todos los viticultores visibles para selección individual
-        $allViticulturists = \App\Models\WineryViticulturist::editableBy($user)
-            ->with('viticulturist')
-            ->get()
-            ->pluck('viticulturist')
-            ->unique('id')
-            ->sortBy('name')
-            ->values();
+        // SIEMPRE incluir al usuario mismo al principio
+        $allViticulturists = $this->viticulturists;
 
         $campaign = Campaign::find($this->campaign_id);
 

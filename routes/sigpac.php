@@ -18,5 +18,9 @@ Route::middleware(['auth', 'verified', 'check.beta'])
         Route::get('/codes/create', Create::class)->name('codes.create');
         Route::get('/codes/{code}/edit', Edit::class)->name('codes.edit');
         Route::get('/uses', UsesIndex::class)->name('uses');
+        
+        // Vista de todos los mapas de un municipio
+        Route::get('/municipality-map/{municipality}', [App\Http\Controllers\MunicipalityMapController::class, 'show'])
+            ->name('municipality-map');
     });
 

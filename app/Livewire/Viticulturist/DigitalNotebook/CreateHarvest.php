@@ -13,13 +13,14 @@ use App\Models\Machinery;
 use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithWineryFilter;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreateHarvest extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications;
+    use WithViticulturistValidation, WithToastNotifications, WithWineryFilter;
 
     // Básico
     public $plot_id = '';
@@ -530,13 +531,8 @@ class CreateHarvest extends Component
             ->orderBy('name')
             ->get();
 
-        $allViticulturists = \App\Models\WineryViticulturist::editableBy($user)
-            ->with('viticulturist')
-            ->get()
-            ->pluck('viticulturist')
-            ->unique('id')
-            ->sortBy('name')
-            ->values();
+        // SIEMPRE incluir al usuario mismo al principio
+        $allViticulturists = $this->viticulturists;
 
         $campaign = Campaign::find($this->campaign_id);
 

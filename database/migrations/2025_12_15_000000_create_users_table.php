@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -42,9 +43,31 @@ return new class extends Migration {
 
     /**
      * Reverse the migrations.
+     *
+     * ⚠️ ADVERTENCIA: Este método elimina la tabla 'users' y todos los usuarios.
+     * Solo se ejecuta en entornos de desarrollo/test. En producción, este método
+     * está protegido y lanzará una excepción.
      */
     public function down(): void
     {
+        // Protección: No permitir borrar usuarios en producción
+        if (app()->environment('production')) {
+            throw new \RuntimeException(
+                'No se puede ejecutar migrate:rollback en producción. '
+                . 'Este comando eliminaría todos los usuarios. '
+                . 'Si necesitas revertir cambios, crea una nueva migración.'
+            );
+        }
+
+        // Verificar que no hay usuarios antes de borrar (doble protección)
+        $userCount = DB::table('users')->count();
+        if ($userCount > 0) {
+            throw new \RuntimeException(
+                "No se puede eliminar la tabla 'users' porque contiene {$userCount} usuario(s). "
+                . 'Si estás seguro, elimina los usuarios manualmente primero.'
+            );
+        }
+
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('users');

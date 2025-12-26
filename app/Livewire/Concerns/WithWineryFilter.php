@@ -49,17 +49,20 @@ trait WithWineryFilter
      * Obtener viticultores creados por este viticultor (source = 'viticulturist').
      * Esto garantiza que aunque el viticultor esté asociado a una winery, el listado
      * de opciones mostrará solo los viticultores que él creó personalmente.
+     * SIEMPRE incluye al usuario mismo + los viticultores que ha creado.
      */
     protected function getCreatedViticulturists(User $user)
     {
-        return \App\Models\WineryViticulturist::where('parent_viticulturist_id', $user->id)
+        $createdViticulturists = \App\Models\WineryViticulturist::where('parent_viticulturist_id', $user->id)
             ->where('source', \App\Models\WineryViticulturist::SOURCE_VITICULTURIST)
             ->with('viticulturist')
             ->get()
             ->pluck('viticulturist')
             ->filter()
-            ->unique('id')
-            ->values();
+            ->unique('id');
+        
+        // SIEMPRE incluir al usuario mismo al principio de la lista
+        return collect([$user])->merge($createdViticulturists)->unique('id')->values();
     }
 
     /**

@@ -90,17 +90,96 @@
                 <!-- Filtros -->
                 <x-filter-section title="Filtros de Búsqueda" color="green">
                     <x-filter-input 
-                        wire:model.live="search" 
+                        wire:model.live.debounce.300ms="search" 
                         placeholder="Buscar por nombre de parcela..."
                     />
+                    <x-filter-select wire:model.live="filterAutonomousCommunity">
+                        <option value="">Todas las comunidades</option>
+                        @foreach($this->autonomousCommunities as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </x-filter-select>
+                    @if($filterAutonomousCommunity)
+                        <x-filter-select wire:model.live="filterProvince">
+                            <option value="">Todas las provincias</option>
+                            @foreach($this->provinces as $id => $name)
+                                <option value="{{ $id }}">{{ $name }}</option>
+                            @endforeach
+                        </x-filter-select>
+                    @endif
+                    @if($filterProvince)
+                        <x-filter-select wire:model.live="filterMunicipality">
+                            <option value="">Todos los municipios</option>
+                            @foreach($this->municipalities as $id => $name)
+                                <option value="{{ $id }}">{{ $name }}</option>
+                            @endforeach
+                        </x-filter-select>
+                    @endif
                     <x-slot:actions>
-                        @if($search)
-                            <x-button wire:click="$set('search', '')" variant="ghost" size="sm">
+                        @if($search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality)
+                            <x-button wire:click="$set('search', ''); $set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')" variant="ghost" size="sm">
                                 Limpiar Filtros
                             </x-button>
                         @endif
                     </x-slot:actions>
                 </x-filter-section>
+
+                <!-- ✅ Acciones Masivas para Municipio -->
+                @if($filterAutonomousCommunity && $filterProvince && $filterMunicipality && $this->municipalityHasSigpacCodes)
+                    <div class="glass-card rounded-xl p-6 border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Acciones para {{ $this->municipalities[$filterMunicipality] ?? 'Municipio' }}
+                                    </h3>
+                                    <p class="text-sm text-gray-600">
+                                        {{ $this->provinces[$filterProvince] ?? '' }}, {{ $this->autonomousCommunities[$filterAutonomousCommunity] ?? '' }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <!-- Botón Generar Todos los Mapas -->
+                                <button
+                                    wire:click="generateAllMapsForMunicipality"
+                                    wire:loading.attr="disabled"
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <span wire:loading.remove wire:target="generateAllMapsForMunicipality">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                    </span>
+                                    <span wire:loading wire:target="generateAllMapsForMunicipality">
+                                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </span>
+                                    <span wire:loading.remove wire:target="generateAllMapsForMunicipality">Generar Todos los Mapas</span>
+                                    <span wire:loading wire:target="generateAllMapsForMunicipality">Generando...</span>
+                                </button>
+
+                                <!-- Botón Ver Todos los Mapas -->
+                                <a
+                                    href="{{ route('sigpac.municipality-map', ['municipality' => $filterMunicipality]) }}"
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-semibold shadow-lg hover:shadow-xl"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    Ver Todos los Mapas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
     @php
         $headers = [
@@ -115,6 +194,9 @@
         
         $headers[] = ['label' => 'Área', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>'];
         $headers[] = ['label' => 'Estado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'];
+        $headers[] = ['label' => 'Comunidad Autónoma', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'];
+        $headers[] = ['label' => 'Provincia', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'];
+        $headers[] = ['label' => 'Municipio', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'];
         $headers[] = 'Acciones';
     @endphp
 
@@ -162,6 +244,24 @@
                     </x-table-cell>
                     <x-table-cell>
                         <x-status-badge :active="$plot->active" />
+                    </x-table-cell>
+                    <!-- Comunidad Autónoma -->
+                    <x-table-cell>
+                        <span class="text-sm text-gray-700">
+                            {{ $plot->autonomousCommunity ? $plot->autonomousCommunity->name : '-' }}
+                        </span>
+                    </x-table-cell>
+                    <!-- Provincia -->
+                    <x-table-cell>
+                        <span class="text-sm text-gray-700">
+                            {{ $plot->province ? $plot->province->name : '-' }}
+                        </span>
+                    </x-table-cell>
+                    <!-- Municipio -->
+                    <x-table-cell>
+                        <span class="text-sm text-gray-700">
+                            {{ $plot->municipality ? $plot->municipality->name : '-' }}
+                        </span>
                     </x-table-cell>
                     <x-table-actions align="right">
                         @php

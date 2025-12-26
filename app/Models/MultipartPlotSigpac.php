@@ -38,4 +38,24 @@ class MultipartPlotSigpac extends Model
     {
         return $this->belongsTo(PlotGeometry::class, 'plot_geometry_id');
     }
+
+    /**
+     * Boot del modelo - invalidar caché al cambiar relaciones
+     */
+    protected static function booted()
+    {
+        // Invalidar caché al crear/actualizar relación
+        static::saved(function ($relation) {
+            if ($relation->plot_id) {
+                \Illuminate\Support\Facades\Cache::forget("plot_geometries_{$relation->plot_id}");
+            }
+        });
+
+        // Invalidar caché al eliminar relación
+        static::deleted(function ($relation) {
+            if ($relation->plot_id) {
+                \Illuminate\Support\Facades\Cache::forget("plot_geometries_{$relation->plot_id}");
+            }
+        });
+    }
 }

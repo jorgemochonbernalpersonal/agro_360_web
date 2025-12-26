@@ -8,12 +8,21 @@
         title="SIGPAC"
         description="Crear Códigos SIGPAC - Añade códigos SIGPAC a la parcela. Completa cada campo según el formato SIGPAC."
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-    />
+    >
+        <x-slot:actionButton>
+            <x-button href="{{ route('sigpac.codes') }}" variant="secondary" data-cy="back-button">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver
+            </x-button>
+        </x-slot:actionButton>
+    </x-page-header>
 
     <div class="glass-card rounded-xl p-8">
         <form wire:submit.prevent="save" class="space-y-8">
             <!-- Parcela OBLIGATORIA -->
-            <x-form-section title="Parcela" color="blue">
+            <x-form-section title="Parcela" color="green">
                 <div>
                     <x-label for="plot_id" required>Parcela</x-label>
                     <x-select 
@@ -26,9 +35,15 @@
                         <option value="">Seleccionar parcela</option>
                         @foreach ($plots as $plot)
                             <option value="{{ $plot->id }}">
-                                {{ $plot->name }} 
+                                {{ $plot->name }} - {{ $plot->name }}, 
+                                @if($plot->autonomousCommunity)
+                                    Comunidad autónoma - {{ $plot->autonomousCommunity->name }}, 
+                                @endif
+                                @if($plot->province)
+                                    Provincia - {{ $plot->province->name }}, 
+                                @endif
                                 @if($plot->municipality)
-                                    - {{ $plot->municipality->name }}
+                                    Municipio - {{ $plot->municipality->name }}
                                 @endif
                             </option>
                         @endforeach

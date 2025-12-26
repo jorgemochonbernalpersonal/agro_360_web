@@ -261,9 +261,33 @@ class Register extends Component
         // Activar acceso beta (6 meses gratis)
         $user->grantBetaAccess();
         
+        // Si es viticultor, crear registro en WineryViticulturist para que aparezca en listas
+        if ($this->role === 'viticulturist') {
+            try {
+                WineryViticulturist::create([
+                    'winery_id' => null, // Viticultor independiente
+                    'viticulturist_id' => $user->id,
+                    'source' => WineryViticulturist::SOURCE_SELF, // Se registró él mismo
+                    'parent_viticulturist_id' => null,
+                    'assigned_by' => $user->id, // Se asignó a sí mismo
+                ]);
+                
+                \Illuminate\Support\Facades\Log::info('WineryViticulturist created during public registration', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                ]);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to create WineryViticulturist during registration', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        
         Auth::login($user);
         session()->regenerate();
-        session()->flash(' message', 'Registro exitoso. Por favor, verifica tu email antes de continuar.');
+        session()->flash('message', 'Registro exitoso. Por favor, verifica tu email antes de continuar.');
 
         return $this->redirect(route('verification.notice'), navigate: true);
     }

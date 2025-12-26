@@ -76,6 +76,19 @@
     <link rel="dns-prefetch" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600&display=swap" rel="stylesheet" />
     
+    <!-- ✅ Preload de Assets Críticos - Mejora tiempo de carga inicial -->
+    @php
+        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        $appJs = $manifest['resources/js/app.js']['file'] ?? null;
+        $appCss = $manifest['resources/css/app.css']['file'] ?? null;
+    @endphp
+    @if($appJs)
+        <link rel="preload" href="{{ asset('build/' . $appJs) }}" as="script">
+    @endif
+    @if($appCss)
+        <link rel="preload" href="{{ asset('build/' . $appCss) }}" as="style">
+    @endif
+    
     <!-- Styles / Scripts -->
     @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])

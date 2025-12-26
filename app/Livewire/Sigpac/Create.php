@@ -2,19 +2,19 @@
 
 namespace App\Livewire\Sigpac;
 
-use App\Models\SigpacCode;
-use App\Models\Plot;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
+use App\Models\Plot;
+use App\Models\SigpacCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class Create extends Component
 {
     use WithToastNotifications;
 
     public $plot_id = '';
-    public $sigpacCodes = []; // Array para múltiples códigos con campos individuales
+    public $sigpacCodes = [];  // Array para múltiples códigos con campos individuales
 
     public function mount()
     {
@@ -23,10 +23,10 @@ class Create extends Component
         if ($plotId) {
             $this->plot_id = $plotId;
         }
-        
+
         // Inicializar con al menos un código
         $this->addSigpacCode();
-        
+
         // Si hay parcela seleccionada, auto-rellenar
         if ($this->plot_id) {
             $this->updatedPlotId($this->plot_id);
@@ -59,10 +59,10 @@ class Create extends Component
                         $fullCode = SigpacCode::buildCodeFromFields($value);
                         $exists = SigpacCode::where('code', $fullCode)->exists();
                         if ($exists) {
-                            $fail("El código SIGPAC completo ya existe en la base de datos.");
+                            $fail('El código SIGPAC completo ya existe en la base de datos.');
                         }
                     } catch (\Exception $e) {
-                        $fail("Error al validar el código: " . $e->getMessage());
+                        $fail('Error al validar el código: ' . $e->getMessage());
                     }
                 }
             ];
@@ -75,7 +75,7 @@ class Create extends Component
                     $polygon = $code['code_polygon'] ?? '';
                     $plot = $code['code_plot'] ?? '';
                     $enclosure = $code['code_enclosure'] ?? '';
-                    
+
                     // Solo validar si todos los campos están completos
                     if (strlen($polygon) === 2 && strlen($plot) === 5 && strlen($enclosure) === 3) {
                         // Buscar duplicados en otros códigos del formulario
@@ -84,14 +84,14 @@ class Create extends Component
                                 $otherPolygon = $otherCode['code_polygon'] ?? '';
                                 $otherPlot = $otherCode['code_plot'] ?? '';
                                 $otherEnclosure = $otherCode['code_enclosure'] ?? '';
-                                
+
                                 // Si todos los campos están completos y coinciden
-                                if (strlen($otherPolygon) === 2 && 
-                                    strlen($otherPlot) === 5 && 
-                                    strlen($otherEnclosure) === 3 &&
-                                    $polygon === $otherPolygon &&
-                                    $plot === $otherPlot &&
-                                    $enclosure === $otherEnclosure) {
+                                if (strlen($otherPolygon) === 2 &&
+                                        strlen($otherPlot) === 5 &&
+                                        strlen($otherEnclosure) === 3 &&
+                                        $polygon === $otherPolygon &&
+                                        $plot === $otherPlot &&
+                                        $enclosure === $otherEnclosure) {
                                     $fail("No puedes tener dos códigos SIGPAC con el mismo Polígono ({$polygon}), Parcela ({$plot}) y Recinto ({$enclosure}). Al menos uno de estos campos debe ser diferente.");
                                 }
                             }
@@ -116,12 +116,12 @@ class Create extends Component
             'code_plot' => '',
             'code_enclosure' => '',
         ];
-        
+
         // Si hay parcela seleccionada, auto-rellenar
         if ($this->plot_id) {
             $plot = Plot::with(['autonomousCommunity', 'province', 'municipality'])
                 ->find($this->plot_id);
-            
+
             if ($plot && $plot->autonomousCommunity && $plot->province && $plot->municipality) {
                 $newCode['code_autonomous_community'] = str_pad(
                     $plot->autonomousCommunity->code ?? '', 2, '0', STR_PAD_LEFT
@@ -136,7 +136,7 @@ class Create extends Component
                 );
             }
         }
-        
+
         $this->sigpacCodes[] = $newCode;
     }
 
@@ -155,23 +155,23 @@ class Create extends Component
             // Cargar la parcela con sus relaciones
             $plot = Plot::with(['autonomousCommunity', 'province', 'municipality'])
                 ->find($value);
-            
+
             if ($plot && $plot->autonomousCommunity && $plot->province && $plot->municipality) {
                 // Acceder directamente al campo 'code' de cada modelo
                 $caCode = str_pad($plot->autonomousCommunity->code ?? '', 2, '0', STR_PAD_LEFT);
                 $provinceCode = str_pad($plot->province->code ?? '', 2, '0', STR_PAD_LEFT);
-                
+
                 // Para municipio: el código es de 5 dígitos (28079), pero SIGPAC necesita solo los últimos 3 (079)
                 $municipalityFullCode = $plot->municipality->code ?? '';
                 $municipalityCode = str_pad(substr($municipalityFullCode, -3), 3, '0', STR_PAD_LEFT);
-                
+
                 // Auto-rellenar TODOS los códigos SIGPAC del formulario
                 foreach ($this->sigpacCodes as $index => &$code) {
                     $code['code_autonomous_community'] = $caCode;
                     $code['code_province'] = $provinceCode;
                     $code['code_municipality'] = $municipalityCode;
                 }
-                unset($code); // Importante: liberar la referencia
+                unset($code);  // Importante: liberar la referencia
             }
         }
     }
@@ -184,7 +184,7 @@ class Create extends Component
         if (!isset($this->sigpacCodes[$index])) {
             return '';
         }
-        
+
         try {
             return SigpacCode::buildCodeFromFields($this->sigpacCodes[$index]);
         } catch (\Exception $e) {
@@ -202,11 +202,11 @@ class Create extends Component
         }
 
         $code = $this->sigpacCodes[$index];
-        
+
         // Verificar que todos los campos requeridos estén llenos
-        $required = ['code_autonomous_community', 'code_province', 'code_municipality', 
-                    'code_zone', 'code_polygon', 'code_plot', 'code_enclosure'];
-        
+        $required = ['code_autonomous_community', 'code_province', 'code_municipality',
+            'code_zone', 'code_polygon', 'code_plot', 'code_enclosure'];
+
         foreach ($required as $field) {
             if (empty($code[$field] ?? '')) {
                 return false;
@@ -214,13 +214,20 @@ class Create extends Component
         }
 
         // Verificar longitudes
-        if (strlen($code['code_autonomous_community'] ?? '') !== 2) return false;
-        if (strlen($code['code_province'] ?? '') !== 2) return false;
-        if (strlen($code['code_municipality'] ?? '') !== 3) return false;
-        if (strlen($code['code_zone'] ?? '') !== 1) return false;
-        if (strlen($code['code_polygon'] ?? '') !== 2) return false;
-        if (strlen($code['code_plot'] ?? '') !== 5) return false;
-        if (strlen($code['code_enclosure'] ?? '') !== 3) return false;
+        if (strlen($code['code_autonomous_community'] ?? '') !== 2)
+            return false;
+        if (strlen($code['code_province'] ?? '') !== 2)
+            return false;
+        if (strlen($code['code_municipality'] ?? '') !== 3)
+            return false;
+        if (strlen($code['code_zone'] ?? '') !== 1)
+            return false;
+        if (strlen($code['code_polygon'] ?? '') !== 2)
+            return false;
+        if (strlen($code['code_plot'] ?? '') !== 5)
+            return false;
+        if (strlen($code['code_enclosure'] ?? '') !== 3)
+            return false;
 
         return true;
     }
@@ -251,12 +258,12 @@ class Create extends Component
                 $otherPlot = $otherCode['code_plot'] ?? '';
                 $otherEnclosure = $otherCode['code_enclosure'] ?? '';
 
-                if (strlen($otherPolygon) === 2 && 
-                    strlen($otherPlot) === 5 && 
-                    strlen($otherEnclosure) === 3 &&
-                    $polygon === $otherPolygon &&
-                    $plot === $otherPlot &&
-                    $enclosure === $otherEnclosure) {
+                if (strlen($otherPolygon) === 2 &&
+                        strlen($otherPlot) === 5 &&
+                        strlen($otherEnclosure) === 3 &&
+                        $polygon === $otherPolygon &&
+                        $plot === $otherPlot &&
+                        $enclosure === $otherEnclosure) {
                     return true;
                 }
             }
@@ -268,43 +275,43 @@ class Create extends Component
     public function save()
     {
         $this->validate();
-        
+
         try {
             DB::beginTransaction();
-            
+
             $plot = Plot::findOrFail($this->plot_id);
-            
+
             // Verificar permisos
             if (!Auth::user()->can('update', $plot)) {
                 throw new \Exception('No tienes permisos para asociar códigos SIGPAC a esta parcela.');
             }
-            
+
             // Validar duplicados final antes de guardar
             $polygonPlotEnclosure = [];
             foreach ($this->sigpacCodes as $index => $sigpacData) {
                 $polygon = $sigpacData['code_polygon'] ?? '';
                 $plotCode = $sigpacData['code_plot'] ?? '';
                 $enclosure = $sigpacData['code_enclosure'] ?? '';
-                
+
                 $key = "{$polygon}-{$plotCode}-{$enclosure}";
                 if (isset($polygonPlotEnclosure[$key])) {
                     throw new \Exception("No puedes tener dos códigos SIGPAC con el mismo Polígono ({$polygon}), Parcela ({$plotCode}) y Recinto ({$enclosure}).");
                 }
                 $polygonPlotEnclosure[$key] = true;
             }
-            
+
             $createdCodes = [];
-            
+
             foreach ($this->sigpacCodes as $sigpacData) {
                 // Construir el código completo desde los campos individuales
                 $fullCode = SigpacCode::buildCodeFromFields($sigpacData);
-                
+
                 // Verificar que no exista en la base de datos (doble verificación)
                 $exists = SigpacCode::where('code', $fullCode)->exists();
                 if ($exists) {
                     throw new \Exception("El código SIGPAC {$fullCode} ya existe en la base de datos.");
                 }
-                
+
                 // Preparar datos para crear
                 $dataToCreate = [
                     'code' => $fullCode,
@@ -317,26 +324,25 @@ class Create extends Component
                     'code_plot' => $sigpacData['code_plot'],
                     'code_enclosure' => $sigpacData['code_enclosure'],
                 ];
-                
+
                 // Crear el código SIGPAC
                 $sigpacCode = SigpacCode::create($dataToCreate);
-                
+
                 // Asociar con la parcela
                 $plot->sigpacCodes()->attach($sigpacCode->id);
                 $createdCodes[] = $sigpacCode;
             }
-            
+
             DB::commit();
-            
+
             $count = count($createdCodes);
-            $message = $count === 1 
+            $message = $count === 1
                 ? 'Código SIGPAC creado correctamente.'
                 : "{$count} códigos SIGPAC creados correctamente.";
-            
+
             session()->flash('message', $message);
-            
+
             return $this->redirect(route('sigpac.codes'));
-            
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Error: ' . $e->getMessage());
@@ -346,7 +352,9 @@ class Create extends Component
     public function render()
     {
         $user = Auth::user();
-        $plots = Plot::forUser($user)->get();
+        $plots = Plot::forUser($user)
+            ->with(['autonomousCommunity', 'province', 'municipality'])
+            ->get();
 
         return view('livewire.sigpac.create', [
             'plots' => $plots,

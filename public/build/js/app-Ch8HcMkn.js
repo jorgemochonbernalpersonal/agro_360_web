@@ -1,1 +1,0 @@
-import{a as e}from"./vendor-axios-Dos3PyFQ.js";window.axios=e,window.axios.defaults.headers.common["X-Requested-With"]="XMLHttpRequest";setInterval(function(){fetch("/sanctum/csrf-cookie",{credentials:"same-origin"}).then(e=>{e.ok,0}).catch(e=>{})},18e5);

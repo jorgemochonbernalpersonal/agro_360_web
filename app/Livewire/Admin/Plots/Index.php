@@ -55,13 +55,15 @@ class Index extends Component
         // Búsqueda
         if ($this->search) {
             $search = '%' . strtolower($this->search) . '%';
-            $query->where(function($q) use ($search) {
-                $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(description) LIKE ?', [$search])
-                  ->orWhereHas('viticulturist', function($q) use ($search) {
-                      $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                        ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
-                  });
+            $query->where(function ($q) use ($search) {
+                $q
+                    ->whereRaw('LOWER(name) LIKE ?', [$search])
+                    ->orWhereRaw('LOWER(description) LIKE ?', [$search])
+                    ->orWhereHas('viticulturist', function ($q) use ($search) {
+                        $q
+                            ->whereRaw('LOWER(name) LIKE ?', [$search])
+                            ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                    });
             });
         }
 
@@ -72,12 +74,15 @@ class Index extends Component
 
         // Filtro por rol del viticultor
         if ($this->roleFilter !== 'all') {
-            $query->whereHas('viticulturist', function($q) {
+            $query->whereHas('viticulturist', function ($q) {
                 $q->where('role', $this->roleFilter);
             });
         }
 
-        $plots = $query->latest()->paginate(20);
+        $plots = $query
+            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate(20);
 
         // Estadísticas
         $stats = [
@@ -100,4 +105,3 @@ class Index extends Component
         ]);
     }
 }
-

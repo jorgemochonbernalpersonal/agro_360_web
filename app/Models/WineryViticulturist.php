@@ -24,6 +24,7 @@ class WineryViticulturist extends Model
     public const SOURCE_OWN = 'own';
     public const SOURCE_SUPERVISOR = 'supervisor';
     public const SOURCE_VITICULTURIST = 'viticulturist';
+    public const SOURCE_SELF = 'self'; // Viticultor que se registró públicamente
 
     /**
      * Bodega que tiene este viticultor

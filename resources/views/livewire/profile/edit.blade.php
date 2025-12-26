@@ -93,18 +93,32 @@
                                         {{-- Preview con imagen temporal o actual --}}
                                         <div class="flex-shrink-0 relative">
                                             {{-- Imagen de preview (siempre presente para JavaScript) --}}
-                                            <img 
-                                                id="profile-preview-img" 
-                                                src="{{ $current_profile_image ? Storage::disk('public')->url($current_profile_image) : '' }}" 
-                                                alt="Preview" 
-                                                class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-lg {{ !$current_profile_image ? 'hidden' : '' }}"
-                                                onerror="this.style.display='none'; if(document.getElementById('profile-preview-placeholder')) document.getElementById('profile-preview-placeholder').style.display='flex';"
-                                                wire:ignore
-                                            >
-                                            {{-- Placeholder con inicial (oculto por defecto si hay imagen) --}}
+                                            @if($current_profile_image)
+                                                <img 
+                                                    id="profile-preview-img" 
+                                                    src="{{ Storage::disk('public')->url($current_profile_image) }}" 
+                                                    data-original-src="{{ Storage::disk('public')->url($current_profile_image) }}"
+                                                    alt="Preview" 
+                                                    class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-lg"
+                                                    onerror="this.style.display='none'; const placeholder = document.getElementById('profile-preview-placeholder'); if(placeholder) placeholder.style.display='flex';"
+                                                    wire:ignore
+                                                >
+                                            @else
+                                                <img 
+                                                    id="profile-preview-img" 
+                                                    src="" 
+                                                    data-original-src=""
+                                                    alt="Preview" 
+                                                    class="w-20 h-20 rounded-full object-cover border-4 border-gray-200 shadow-lg hidden"
+                                                    onerror="this.style.display='none'; const placeholder = document.getElementById('profile-preview-placeholder'); if(placeholder) placeholder.style.display='flex';"
+                                                    wire:ignore
+                                                >
+                                            @endif
+                                            {{-- Placeholder con inicial (visible solo si no hay imagen) --}}
                                             <div 
                                                 id="profile-preview-placeholder"
-                                                class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md hidden"
+                                                class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center text-white text-2xl font-bold shadow-md {{ $current_profile_image ? 'hidden' : '' }}"
+                                                wire:ignore
                                             >
                                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                             </div>
@@ -144,17 +158,42 @@
                                                         reader.onload = function(e) {
                                                             if (previewImg) {
                                                                 previewImg.src = e.target.result;
+                                                                previewImg.classList.remove('hidden');
                                                                 previewImg.style.display = 'block';
                                                                 previewImg.classList.remove('border-gray-200');
                                                                 previewImg.classList.add('border-[var(--color-agro-green)]');
+                                                                previewImg.onerror = null; // Reset error handler
                                                             }
                                                             if (placeholder) {
+                                                                placeholder.classList.add('hidden');
                                                                 placeholder.style.display = 'none';
                                                             }
                                                         };
                                                         reader.onerror = function() {
                                                             console.error('Error al leer el archivo');
+                                                            if (previewImg) {
+                                                                previewImg.classList.add('hidden');
+                                                                previewImg.style.display = 'none';
+                                                            }
                                                             if (placeholder) {
+                                                                placeholder.classList.remove('hidden');
+                                                                placeholder.style.display = 'flex';
+                                                            }
+                                                        };
+                                                        reader.onabort = function() {
+                                                            console.error('Lectura del archivo cancelada');
+                                                            if (previewImg && previewImg.dataset.originalSrc) {
+                                                                previewImg.src = previewImg.dataset.originalSrc;
+                                                                previewImg.classList.remove('hidden');
+                                                                previewImg.style.display = 'block';
+                                                                if (placeholder) {
+                                                                    placeholder.classList.add('hidden');
+                                                                    placeholder.style.display = 'none';
+                                                                }
+                                                            } else if (placeholder) {
+                                                                previewImg.classList.add('hidden');
+                                                                previewImg.style.display = 'none';
+                                                                placeholder.classList.remove('hidden');
                                                                 placeholder.style.display = 'flex';
                                                             }
                                                         };
@@ -165,8 +204,16 @@
                                                         const placeholder = document.getElementById('profile-preview-placeholder');
                                                         if (previewImg && previewImg.dataset.originalSrc) {
                                                             previewImg.src = previewImg.dataset.originalSrc;
+                                                            previewImg.classList.remove('hidden');
+                                                            previewImg.style.display = 'block';
+                                                            if (placeholder) {
+                                                                placeholder.classList.add('hidden');
+                                                                placeholder.style.display = 'none';
+                                                            }
                                                         } else if (placeholder) {
+                                                            previewImg.classList.add('hidden');
                                                             previewImg.style.display = 'none';
+                                                            placeholder.classList.remove('hidden');
                                                             placeholder.style.display = 'flex';
                                                         }
                                                     }
@@ -199,36 +246,6 @@
                                                     if (previewImg && previewImg.src) {
                                                         previewImg.dataset.originalSrc = previewImg.src;
                                                     }
-                                                });
-                                                
-                                                // Asegurar que el preview se mantenga después de actualizaciones de Livewire
-                                                document.addEventListener('livewire:init', () => {
-                                                    Livewire.hook('morph.updated', ({ el, component }) => {
-                                                        // Si hay un archivo seleccionado pero el preview se perdió, restaurarlo
-                                                        const fileInput = document.getElementById('profile_image');
-                                                        if (fileInput && fileInput.files && fileInput.files.length > 0) {
-                                                            const previewImg = document.getElementById('profile-preview-img');
-                                                            const placeholder = document.getElementById('profile-preview-placeholder');
-                                                            
-                                                            // Solo restaurar si el preview se perdió (no tiene src o es diferente)
-                                                            if (previewImg) {
-                                                                const reader = new FileReader();
-                                                                reader.onload = function(e) {
-                                                                    // Solo actualizar si no hay un preview activo ya
-                                                                    if (!previewImg.src || previewImg.src === previewImg.dataset.originalSrc) {
-                                                                        previewImg.src = e.target.result;
-                                                                        previewImg.style.display = 'block';
-                                                                        previewImg.classList.remove('border-gray-200');
-                                                                        previewImg.classList.add('border-[var(--color-agro-green)]');
-                                                                        if (placeholder) {
-                                                                            placeholder.style.display = 'none';
-                                                                        }
-                                                                    }
-                                                                };
-                                                                reader.readAsDataURL(fileInput.files[0]);
-                                                            }
-                                                        }
-                                                    });
                                                 });
                                             </script>
                                             @endscript
@@ -499,10 +516,38 @@
     
     @script
     <script>
+        // Escuchar cuando se actualiza la imagen de perfil
+        $wire.on('profile-image-updated', (event) => {
+            const previewImg = document.getElementById('profile-preview-img');
+            const placeholder = document.getElementById('profile-preview-placeholder');
+            const fileInput = document.getElementById('profile_image');
+            
+            if (previewImg && event.imageUrl) {
+                // Actualizar la imagen con la nueva URL
+                previewImg.src = event.imageUrl;
+                previewImg.dataset.originalSrc = event.imageUrl;
+                // Asegurar que la imagen esté visible
+                previewImg.classList.remove('hidden');
+                previewImg.style.display = 'block';
+                previewImg.classList.remove('border-[var(--color-agro-green)]');
+                previewImg.classList.add('border-gray-200');
+                
+                // Asegurar que el placeholder esté oculto
+                if (placeholder) {
+                    placeholder.classList.add('hidden');
+                    placeholder.style.display = 'none';
+                }
+            }
+            
+            // Limpiar el input de archivo
+            if (fileInput) {
+                fileInput.value = '';
+            }
+        });
+        
         // Escuchar cuando se actualiza el perfil para refrescar el header
+        // (solo se dispara si NO se actualizó la imagen)
         $wire.on('profile-updated', () => {
-            // Esperar a que el toast se muestre antes de recargar
-            // El toast tarda aproximadamente 300ms en aparecer
             setTimeout(() => {
                 window.location.reload();
             }, 1000);

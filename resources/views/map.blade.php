@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa - {{ $plot->name }} - Agro365</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @vite(['resources/js/app.js', 'resources/css/app.css'])
     <style>
         body { 
             margin: 0; 
@@ -88,7 +87,7 @@
                 </label>
                 <select id="recinto-selector" 
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="all">🗺️ Todos los recintos ({{ $plotGeometries->count() }})</option>
+                    <option value="all">🗺️ Todos los recintos ({{ count($plotGeometries) }})</option>
                     @foreach($plotGeometries as $geometry)
                         <option value="{{ $loop->index }}" data-color="{{ $geometry['color']['line'] }}">
                             {{ $geometry['sigpac_formatted'] }}
@@ -114,7 +113,7 @@
 
             <!-- Info -->
             <div class="text-sm text-gray-600 space-y-1 border-t pt-3">
-                <p><strong>Total recintos:</strong> {{ $plotGeometries->count() }}</p>
+                <p><strong>Total recintos:</strong> {{ count($plotGeometries) }}</p>
                 @if($plot->area)
                     <p><strong>Área total:</strong> {{ number_format($plot->area, 2) }} ha</p>
                 @endif
@@ -134,10 +133,14 @@
         let polygonLayers = [];
         let originalStyles = [];
 
-        // Inicializar mapa
-        function initMap() {
+        // Inicializar mapa con lazy loading de Leaflet
+        async function initMap() {
             console.log('🗺️ Inicializando mapa SIGPAC');
             console.log('Geometrías cargadas:', plotGeometries.length);
+
+            // ✅ Cargar Leaflet de forma lazy
+            const L = await window.loadLeaflet();
+            console.log('✅ Leaflet cargado');
 
             map = L.map('map', {
                 zoomControl: true,
@@ -306,76 +309,8 @@
             });
         }
 
-        // Parser WKT
-        function parseWKT(wkt) {
-            if (!wkt || typeof wkt !== 'string') {
-                return [];
-            }
-
-            const trimmed = wkt.trim();
-
-            // POLYGON simple
-            if (trimmed.startsWith('POLYGON')) {
-                return parsePolygon(trimmed);
-            }
-
-            // MULTIPOLYGON
-            if (trimmed.startsWith('MULTIPOLYGON')) {
-                return parseMultiPolygon(trimmed);
-            }
-
-            console.warn('Formato WKT no reconocido:', trimmed.substring(0, 50));
-            return [];
-        }
-
-        function parsePolygon(wkt) {
-            try {
-                // Extraer coordenadas: POLYGON((lon lat, lon lat, ...))
-                const match = wkt.match(/\(\(([^)]+)\)\)/);
-                if (!match) return [];
-                
-                return parseCoordinates(match[1]);
-            } catch (e) {
-                console.error('Error parseando POLYGON:', e);
-                return [];
-            }
-        }
-
-        function parseMultiPolygon(wkt) {
-            try {
-                // Tomar primer polígono: MULTIPOLYGON(((lon lat, ...)))
-                const match = wkt.match(/\(\(\(([^)]+)\)\)\)/);
-                if (!match) {
-                    // Intentar formato alternativo
-                    const altMatch = wkt.match(/\(\(([^)]+)\)\)/);
-                    if (!altMatch) return [];
-                    return parseCoordinates(altMatch[1]);
-                }
-                
-                return parseCoordinates(match[1]);
-            } catch (e) {
-                console.error('Error parseando MULTIPOLYGON:', e);
-                return [];
-            }
-        }
-
-        function parseCoordinates(coordString) {
-            return coordString
-                .split(',')
-                .map(pair => {
-                    const parts = pair.trim().split(/\s+/);
-                    if (parts.length < 2) return null;
-                    
-                    const lon = parseFloat(parts[0]);
-                    const lat = parseFloat(parts[1]);
-                    
-                    if (isNaN(lat) || isNaN(lon)) return null;
-                    if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null;
-                    
-                    return [lat, lon]; // Leaflet usa [lat, lon]
-                })
-                .filter(coord => coord !== null);
-        }
+        // ✅ Usar parseWKT global desde bundle (definido en app.js)
+        // El parser WKT ahora está disponible globalmente como window.parseWKT
 
         // Iniciar cuando DOM esté listo
         if (document.readyState === 'loading') {

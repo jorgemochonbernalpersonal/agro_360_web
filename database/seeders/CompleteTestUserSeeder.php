@@ -2,53 +2,53 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Campaign;
-use App\Models\Plot;
-use App\Models\Crew;
-use App\Models\CrewMember;
-use App\Models\Machinery;
 use App\Models\AgriculturalActivity;
-use App\Models\PlotPlanting;
-use App\Models\GrapeVariety;
-use App\Models\TrainingSystem;
-use App\Models\PhytosanitaryProduct;
-use App\Models\PhytosanitaryTreatment;
-use App\Models\Fertilization;
-use App\Models\Irrigation;
-use App\Models\CulturalWork;
-use App\Models\Observation;
-use App\Models\Harvest;
+use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ClientAddress;
 use App\Models\Container;
-use App\Models\Pest;
+use App\Models\Crew;
+use App\Models\CrewMember;
+use App\Models\CulturalWork;
 use App\Models\EstimatedYield;
-use App\Models\Tax;
-use App\Models\UserProfile;
-use App\Models\InvoicingSetting;
-use App\Models\SupportTicket;
-use App\Models\SupportTicketComment;
+use App\Models\Fertilization;
+use App\Models\GrapeVariety;
+use App\Models\Harvest;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\SigpacUse;
+use App\Models\InvoicingSetting;
+use App\Models\Irrigation;
+use App\Models\Machinery;
+use App\Models\Observation;
+use App\Models\Pest;
+use App\Models\PhytosanitaryProduct;
+use App\Models\PhytosanitaryTreatment;
+use App\Models\Plot;
+use App\Models\PlotPlanting;
 use App\Models\SigpacCode;
+use App\Models\SigpacUse;
+use App\Models\SupportTicket;
+use App\Models\SupportTicketComment;
+use App\Models\Tax;
+use App\Models\TrainingSystem;
+use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class CompleteTestUserSeeder extends Seeder
 {
     /**
      * Crea un usuario de prueba completo con todos los datos necesarios
      * para tests unitarios (campaña 2024) y E2E con Cypress (campaña 2025)
-     * 
+     *
      * @param int|null $userId ID del usuario específico. Si es null, usa el usuario por defecto
      */
     public function run(int $userId = null): void
     {
         DB::beginTransaction();
-        
+
         try {
             // 1. Obtener el usuario (por ID o por email por defecto)
             if ($userId) {
@@ -67,22 +67,22 @@ class CompleteTestUserSeeder extends Seeder
                     ]
                 );
             }
-            
+
             $this->command->info("✅ Usuario: {$user->email}");
-            
+
             // 1.1. Crear perfil de usuario
             $this->createUserProfile($user);
-            $this->command->info("✅ Perfil de usuario creado");
-            
+            $this->command->info('✅ Perfil de usuario creado');
+
             // 1.2. Crear configuración de facturación
             $this->createInvoicingSettings($user);
-            $this->command->info("✅ Configuración de facturación creada");
-            
+            $this->command->info('✅ Configuración de facturación creada');
+
             // 1.3. Asegurar que los impuestos existen
             $taxSeeder = new TaxSeeder();
             $taxSeeder->setCommand($this->command);
             $taxSeeder->run();
-            
+
             // 2. Crear campañas (2024 para tests unitarios, 2025 para Cypress)
             $campaign2024 = Campaign::firstOrCreate(
                 [
@@ -97,7 +97,7 @@ class CompleteTestUserSeeder extends Seeder
                     'description' => 'Campaña histórica para tests unitarios',
                 ]
             );
-            
+
             $campaign2025 = Campaign::firstOrCreate(
                 [
                     'viticulturist_id' => $user->id,
@@ -107,19 +107,19 @@ class CompleteTestUserSeeder extends Seeder
                     'name' => 'Campaña 2025',
                     'start_date' => '2025-01-01',
                     'end_date' => '2025-12-31',
-                    'active' => true, // Activa para Cypress
+                    'active' => true,  // Activa para Cypress
                     'description' => 'Campaña activa para tests E2E con Cypress',
                 ]
             );
-            
-            $this->command->info("✅ Campañas creadas: 2024 (inactiva) y 2025 (activa)");
-            
+
+            $this->command->info('✅ Campañas creadas: 2024 (inactiva) y 2025 (activa)');
+
             // 3. Crear parcelas (20 parcelas)
             $plots = [];
             $autonomousCommunity = \App\Models\AutonomousCommunity::first();
             $province = \App\Models\Province::where('autonomous_community_id', $autonomousCommunity?->id)->first();
             $municipality = \App\Models\Municipality::where('province_id', $province?->id)->first();
-            
+
             for ($i = 1; $i <= 20; $i++) {
                 $plot = Plot::firstOrCreate(
                     [
@@ -131,24 +131,24 @@ class CompleteTestUserSeeder extends Seeder
                         'autonomous_community_id' => $autonomousCommunity?->id ?? 1,
                         'province_id' => $province?->id ?? 1,
                         'municipality_id' => $municipality?->id ?? 1,
-                        'area' => rand(1, 50) / 10, // 0.1 a 5 hectáreas
+                        'area' => rand(1, 50) / 10,  // 0.1 a 5 hectáreas
                         'active' => true,
                     ]
                 );
-                
+
                 $plots[] = $plot;
             }
-            
-            $this->command->info("✅ Parcelas creadas: " . count($plots));
-            
+
+            $this->command->info('✅ Parcelas creadas: ' . count($plots));
+
             // 3.1. Crear códigos SIGPAC para las parcelas
             $this->createSigpacCodesForPlots($plots, $autonomousCommunity, $province, $municipality);
-            $this->command->info("✅ Códigos SIGPAC creados para las parcelas");
-            
+            $this->command->info('✅ Códigos SIGPAC creados para las parcelas');
+
             // 4. Crear plantaciones en las parcelas
             $grapeVarieties = GrapeVariety::take(3)->get();
             $trainingSystems = TrainingSystem::take(2)->get();
-            
+
             foreach ($plots as $plot) {
                 if ($grapeVarieties->isNotEmpty() && $trainingSystems->isNotEmpty()) {
                     PlotPlanting::firstOrCreate(
@@ -157,13 +157,13 @@ class CompleteTestUserSeeder extends Seeder
                             'grape_variety_id' => $grapeVarieties->random()->id,
                         ],
                         [
-                            'area_planted' => $plot->area * 0.8, // 80% del área
+                            'area_planted' => $plot->area * 0.8,  // 80% del área
                             'planting_year' => 2020,
                             'planting_date' => '2020-03-15',
                             'vine_count' => rand(2000, 5000),
                             'density' => rand(3000, 4000),
-                            'row_spacing' => rand(250, 300) / 100, // 2.5 a 3 metros
-                            'vine_spacing' => rand(100, 150) / 100, // 1 a 1.5 metros
+                            'row_spacing' => rand(250, 300) / 100,  // 2.5 a 3 metros
+                            'vine_spacing' => rand(100, 150) / 100,  // 1 a 1.5 metros
                             'rootstock' => '110R',
                             'training_system_id' => $trainingSystems->random()->id,
                             'irrigated' => rand(0, 1) === 1,
@@ -172,35 +172,39 @@ class CompleteTestUserSeeder extends Seeder
                     );
                 }
             }
-            
-            $this->command->info("✅ Plantaciones creadas");
-            
-            // 5. Crear cuadrillas (20 cuadrillas)
+
+            $this->command->info('✅ Plantaciones creadas');
+
+            // 5. Crear 20 viticultores
+            $viticulturists = $this->createViticulturists($user);
+            $this->command->info('✅ Viticultores creados: ' . count($viticulturists));
+
+            // 6. Crear cuadrillas (20 equipos)
             $crews = [];
             for ($i = 1; $i <= 20; $i++) {
                 $crew = Crew::firstOrCreate(
                     [
                         'viticulturist_id' => $user->id,
-                        'name' => "Cuadrilla Test {$i}",
+                        'name' => "Equipo Test {$i}",
                     ],
                     [
-                        'description' => "Cuadrilla de prueba {$i}",
+                        'description' => "Equipo de prueba {$i}",
                     ]
                 );
                 $crews[] = $crew;
             }
-            
-            $this->command->info("✅ Cuadrillas creadas: " . count($crews));
-            
-            // 5.1. Crear trabajadores individuales (sin cuadrilla)
-            $this->createIndividualWorkers($user);
-            $this->command->info("✅ Trabajadores individuales creados");
-            
-            // 5.2. Asignar trabajadores a cuadrillas
+
+            $this->command->info('✅ Equipos creados: ' . count($crews));
+
+            // 7. Crear 10 viticultores sin equipo (trabajadores individuales)
+            $this->createViticulturistsWithoutCrew($user);
+            $this->command->info('✅ Viticultores sin equipo creados: 10');
+
+            // 8. Asignar trabajadores a cuadrillas
             $this->assignWorkersToCrews($user, $crews);
-            $this->command->info("✅ Trabajadores asignados a cuadrillas");
-            
-            // 6. Crear maquinaria (20 máquinas)
+            $this->command->info('✅ Trabajadores asignados a equipos');
+
+            // 9. Crear maquinaria (20 máquinas)
             $machineryTypes = \App\Models\MachineryType::take(3)->get();
             $machinery = [];
             for ($i = 1; $i <= 20; $i++) {
@@ -221,10 +225,10 @@ class CompleteTestUserSeeder extends Seeder
                 );
                 $machinery[] = $mach;
             }
-            
-            $this->command->info("✅ Maquinaria creada");
-            
-            // 7. Crear productos fitosanitarios PRIMERO (son globales, no tienen viticulturist_id)
+
+            $this->command->info('✅ Maquinaria creada');
+
+            // 10. Crear productos fitosanitarios PRIMERO (son globales, no tienen viticulturist_id)
             // Esto es importante porque las actividades fitosanitarias los necesitan
             for ($i = 1; $i <= 20; $i++) {
                 PhytosanitaryProduct::firstOrCreate(
@@ -241,88 +245,87 @@ class CompleteTestUserSeeder extends Seeder
                     ]
                 );
             }
-            
-            $this->command->info("✅ Productos fitosanitarios creados");
-            
-            // 8. Crear actividades agrícolas para campaña 2024 (tests unitarios)
+
+            $this->command->info('✅ Productos fitosanitarios creados');
+
+            // 11. Crear actividades agrícolas para campaña 2024 (tests unitarios)
             // Ahora que los productos existen, las actividades pueden tener tratamientos
             $this->createActivitiesForCampaign($user, $campaign2024, $plots, $crews, '2024');
-            $this->command->info("✅ Actividades agrícolas 2024 creadas (para tests unitarios)");
-            
-            // 9. Crear actividades agrícolas para campaña 2025 (Cypress)
+            $this->command->info('✅ Actividades agrícolas 2024 creadas (para tests unitarios)');
+
+            // 12. Crear actividades agrícolas para campaña 2025 (Cypress)
             $this->createActivitiesForCampaign($user, $campaign2025, $plots, $crews, '2025');
-            $this->command->info("✅ Actividades agrícolas 2025 creadas (para Cypress)");
-            
-            // 10. Crear contenedores (mínimo 20)
+            $this->command->info('✅ Actividades agrícolas 2025 creadas (para Cypress)');
+
+            // 13. Crear contenedores (mínimo 20)
             $this->createContainers($user);
-            $this->command->info("✅ Contenedores creados");
-            
-            // 11. Crear clientes (mínimo 20)
+            $this->command->info('✅ Contenedores creados');
+
+            // 14. Crear clientes (mínimo 20)
             $clients = $this->createClients($user);
-            $this->command->info("✅ Clientes creados: " . count($clients));
-            
-            // 12. Crear rendimientos estimados (mínimo 20)
+            $this->command->info('✅ Clientes creados: ' . count($clients));
+
+            // 15. Crear rendimientos estimados (mínimo 20)
             $this->createEstimatedYields($user, $campaign2024, $campaign2025);
-            $this->command->info("✅ Rendimientos estimados creados");
-            
-            // 13. Crear tickets de soporte
+            $this->command->info('✅ Rendimientos estimados creados');
+
+            // 16. Crear tickets de soporte
             $this->createSupportTickets($user);
-            $this->command->info("✅ Tickets de soporte creados");
-            
-            // 14. Asociar usos SIGPAC a parcelas (20 asociaciones)
+            $this->command->info('✅ Tickets de soporte creados');
+
+            // 17. Asociar usos SIGPAC a parcelas (20 asociaciones)
             $this->assignSigpacUsesToPlots($user, $plots);
-            $this->command->info("✅ Usos SIGPAC asociados a parcelas");
-            
-            // 15. Crear facturas (20 facturas)
+            $this->command->info('✅ Usos SIGPAC asociados a parcelas');
+
+            // 18. Crear facturas (20 facturas)
             $this->createInvoices($user, $clients);
-            $this->command->info("✅ Facturas creadas");
-            
+            $this->command->info('✅ Facturas creadas');
+
             DB::commit();
-            
+
             $this->command->info("\n🎉 Datos poblados exitosamente!");
             if (!$userId) {
-                $this->command->info("📧 Email: bernalmochonjorge@gmail.com");
-                $this->command->info("🔑 Contraseña: cocoteq22");
+                $this->command->info('📧 Email: bernalmochonjorge@gmail.com');
+                $this->command->info('🔑 Contraseña: cocoteq22');
             } else {
                 $this->command->info("👤 Usuario: {$user->name} ({$user->email})");
             }
             $this->command->info("\n📊 Resumen de datos:");
-            $this->command->info("   - Campañas: 2024 (inactiva) y 2025 (activa)");
-            $this->command->info("   - Parcelas: " . count($plots));
-            $this->command->info("   - Plantaciones: " . PlotPlanting::whereIn('plot_id', collect($plots)->pluck('id'))->count());
-            $this->command->info("   - Cuadrillas: " . count($crews));
-            $this->command->info("   - Maquinaria: " . Machinery::where('viticulturist_id', $user->id)->count());
-            $this->command->info("   - Actividades 2024: " . AgriculturalActivity::where('campaign_id', $campaign2024->id)->count());
-            $this->command->info("   - Actividades 2025: " . AgriculturalActivity::where('campaign_id', $campaign2025->id)->count());
-            $this->command->info("   - Productos fitosanitarios: " . PhytosanitaryProduct::count());
-            $this->command->info("   - Plagas/Enfermedades: " . Pest::count());
-            $this->command->info("   - Tratamientos fitosanitarios: " . PhytosanitaryTreatment::whereHas('activity', function($q) use ($user) {
+            $this->command->info('   - Campañas: 2024 (inactiva) y 2025 (activa)');
+            $this->command->info('   - Parcelas: ' . count($plots));
+            $this->command->info('   - Plantaciones: ' . PlotPlanting::whereIn('plot_id', collect($plots)->pluck('id'))->count());
+            $this->command->info('   - Cuadrillas: ' . count($crews));
+            $this->command->info('   - Maquinaria: ' . Machinery::where('viticulturist_id', $user->id)->count());
+            $this->command->info('   - Actividades 2024: ' . AgriculturalActivity::where('campaign_id', $campaign2024->id)->count());
+            $this->command->info('   - Actividades 2025: ' . AgriculturalActivity::where('campaign_id', $campaign2025->id)->count());
+            $this->command->info('   - Productos fitosanitarios: ' . PhytosanitaryProduct::count());
+            $this->command->info('   - Plagas/Enfermedades: ' . Pest::count());
+            $this->command->info('   - Tratamientos fitosanitarios: ' . PhytosanitaryTreatment::whereHas('activity', function ($q) use ($user) {
                 $q->where('viticulturist_id', $user->id);
             })->count());
-            $this->command->info("   - Observaciones: " . Observation::whereHas('activity', function($q) use ($user) {
+            $this->command->info('   - Observaciones: ' . Observation::whereHas('activity', function ($q) use ($user) {
                 $q->where('viticulturist_id', $user->id);
             })->count());
-            $this->command->info("   - Contenedores: " . Container::where('user_id', $user->id)->whereDoesntHave('harvests')->count() . " disponibles");
-            $this->command->info("   - Clientes: " . Client::where('user_id', $user->id)->count());
-            $this->command->info("   - Rendimientos estimados: " . EstimatedYield::whereHas('plotPlanting.plot', function($q) use ($user) {
+            $this->command->info('   - Contenedores: ' . Container::where('user_id', $user->id)->whereDoesntHave('harvests')->count() . ' disponibles');
+            $this->command->info('   - Clientes: ' . Client::where('user_id', $user->id)->count());
+            $this->command->info('   - Rendimientos estimados: ' . EstimatedYield::whereHas('plotPlanting.plot', function ($q) use ($user) {
                 $q->where('viticulturist_id', $user->id);
             })->count());
-            $this->command->info("   - Tickets de soporte: " . SupportTicket::where('user_id', $user->id)->count());
-            $this->command->info("   - Facturas: " . Invoice::where('user_id', $user->id)->count());
-            $this->command->info("   - Items de factura: " . InvoiceItem::whereHas('invoice', function($q) use ($user) {
+            $this->command->info('   - Tickets de soporte: ' . SupportTicket::where('user_id', $user->id)->count());
+            $this->command->info('   - Facturas: ' . Invoice::where('user_id', $user->id)->count());
+            $this->command->info('   - Items de factura: ' . InvoiceItem::whereHas('invoice', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             })->count());
-            $this->command->info("   - Asociaciones SIGPAC Use: " . DB::table('plot_sigpac_use')
+            $this->command->info('   - Asociaciones SIGPAC Use: ' . DB::table('plot_sigpac_use')
                 ->whereIn('plot_id', collect($plots)->pluck('id'))
                 ->count());
-            
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->command->error("❌ Error al crear usuario de prueba: " . $e->getMessage());
+            $this->command->error('❌ Error al crear usuario de prueba: ' . $e->getMessage());
             throw $e;
         }
     }
-    
+
     /**
      * Crea actividades agrícolas para una campaña
      */
@@ -336,7 +339,7 @@ class CompleteTestUserSeeder extends Seeder
         $machinery = Machinery::where('viticulturist_id', $user->id)->get();
         $plotsCollection = collect($plots);
         $products = PhytosanitaryProduct::take(25)->get();
-        
+
         // Obtener plagas para tratamientos y observaciones
         // Si no hay suficientes plagas, crear algunas adicionales
         $pests = Pest::all();
@@ -344,39 +347,39 @@ class CompleteTestUserSeeder extends Seeder
             $this->createAdditionalPests();
             $pests = Pest::all();
         }
-        
+
         // Estadios fenológicos
         $phenologicalStages = [
             'brotación', 'yema hinchada', 'hojas desplegadas', 'racimos visibles',
             'floración', 'cuajado', 'envero', 'maduración', 'senescencia'
         ];
-        
+
         // Crear diferentes tipos de actividades
         // 20 actividades de cada tipo para el cuaderno digital
         $activityTypes = [
             'phytosanitary' => 20,  // Tratamientos fitosanitarios
             'fertilization' => 20,  // Fertilización
-            'irrigation' => 20,    // Riego
-            'cultural' => 20,      // Trabajos culturales
-            'observation' => 20,    // Observaciones
-            'harvest' => 20,       // Cosechas (vendimia)
+            'irrigation' => 20,  // Riego
+            'cultural' => 20,  // Trabajos culturales
+            'observation' => 20,  // Observaciones
+            'harvest' => 20,  // Cosechas (vendimia)
         ];
-        
+
         foreach ($activityTypes as $type => $count) {
             for ($i = 0; $i < $count; $i++) {
                 $plot = $plotsCollection->random();
-                $activityDate = "{$year}-" . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . "-" . str_pad(rand(1, 28), 2, '0', STR_PAD_LEFT);
-                
+                $activityDate = "{$year}-" . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . '-' . str_pad(rand(1, 28), 2, '0', STR_PAD_LEFT);
+
                 // Obtener una plantación activa de la parcela si existe
                 $planting = $plot->plantings()->where('status', 'active')->first();
-                
+
                 $activity = AgriculturalActivity::create([
                     'plot_id' => $plot->id,
                     'plot_planting_id' => $planting?->id,
                     'viticulturist_id' => $user->id,
                     'campaign_id' => $campaign->id,
                     'activity_type' => $type,
-                    'phenological_stage' => $phenologicalStages[array_rand($phenologicalStages)], // NUEVO
+                    'phenological_stage' => $phenologicalStages[array_rand($phenologicalStages)],  // NUEVO
                     'activity_date' => $activityDate,
                     'crew_id' => rand(0, 1) === 1 && !empty($crews) ? collect($crews)->random()->id : null,
                     'machinery_id' => rand(0, 1) === 1 && $machinery->isNotEmpty() ? $machinery->random()->id : null,
@@ -384,7 +387,7 @@ class CompleteTestUserSeeder extends Seeder
                     'temperature' => rand(10, 30) + (rand(0, 99) / 100),
                     'notes' => "Nota de prueba para actividad {$type} en {$year}",
                 ]);
-                
+
                 // Crear registros específicos según el tipo
                 switch ($type) {
                     case 'phytosanitary':
@@ -392,10 +395,10 @@ class CompleteTestUserSeeder extends Seeder
                             $dosePerHectare = rand(100, 500) / 100;
                             $product = $products->random();
                             $pest = $pests->isNotEmpty() ? $pests->random() : null;
-                            
+
                             // GENERAR ERRORES PAC INTENCIONALMENTE EN ~30% DE LOS CASOS
-                            $shouldHaveErrors = rand(1, 100) <= 30; // 30% de probabilidad
-                            
+                            $shouldHaveErrors = rand(1, 100) <= 30;  // 30% de probabilidad
+
                             PhytosanitaryTreatment::firstOrCreate(
                                 ['activity_id' => $activity->id],
                                 [
@@ -408,11 +411,10 @@ class CompleteTestUserSeeder extends Seeder
                                     'target_pest' => $pest?->name ?? 'Mildiu',
                                     'wind_speed' => rand(50, 200) / 10,
                                     'humidity' => rand(400, 900) / 10,
-                                    
                                     // CAMPOS PAC - Omitir algunos si shouldHaveErrors = true
-                                    'treatment_justification' => $shouldHaveErrors ? null : "Tratamiento preventivo contra " . 
-                                        ($pest ? $pest->name : 'mildiu') . 
-                                        " detectado en la parcela. Condiciones favorables para desarrollo de la plaga.",
+                                    'treatment_justification' => $shouldHaveErrors ? null : 'Tratamiento preventivo contra '
+                                        . ($pest ? $pest->name : 'mildiu')
+                                        . ' detectado en la parcela. Condiciones favorables para desarrollo de la plaga.',
                                     'applicator_ropo_number' => $shouldHaveErrors && rand(0, 1) ? null : 'ROPO-' . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT),
                                     'reentry_period_days' => $shouldHaveErrors && rand(0, 1) ? null : rand(1, 7),
                                     'spray_volume' => $shouldHaveErrors && rand(0, 1) ? null : rand(200, 1000) / 10,
@@ -420,13 +422,13 @@ class CompleteTestUserSeeder extends Seeder
                             );
                         }
                         break;
-                        
+
                     case 'fertilization':
                         $fertilizerType = ['Orgánico', 'Mineral', 'Orgánico-Mineral'][rand(0, 2)];
-                        
+
                         // GENERAR ERRORES PAC INTENCIONALMENTE EN ~30% DE LOS CASOS
                         $shouldHaveErrors = rand(1, 100) <= 30;
-                        
+
                         Fertilization::firstOrCreate(
                             ['activity_id' => $activity->id],
                             [
@@ -435,13 +437,11 @@ class CompleteTestUserSeeder extends Seeder
                                 'quantity' => rand(50, 200) / 10,
                                 'npk_ratio' => '10-10-10',
                                 'application_method' => 'Esparcido',
-                                'area_applied' => $shouldHaveErrors ? null : ($plot->area ?? 1), // Omitir si tiene errores
-                                
+                                'area_applied' => $shouldHaveErrors ? null : ($plot->area ?? 1),  // Omitir si tiene errores
                                 // CAMPOS PAC (Unidades Fertilizantes) - Omitir algunos si shouldHaveErrors
                                 'nitrogen_uf' => $shouldHaveErrors && rand(0, 1) ? null : rand(50, 200) / 10,
                                 'phosphorus_uf' => $shouldHaveErrors && rand(0, 1) ? null : rand(30, 150) / 10,
                                 'potassium_uf' => $shouldHaveErrors && rand(0, 1) ? null : rand(40, 180) / 10,
-                                
                                 // Campos para fertilizantes orgánicos (si aplica)
                                 'manure_type' => $fertilizerType === 'Orgánico' ? ['Estiércol bovino', 'Estiércol ovino', 'Compost'][rand(0, 2)] : null,
                                 'burial_date' => $fertilizerType === 'Orgánico' && rand(0, 1) === 1 ? date('Y-m-d', strtotime($activityDate . ' +' . rand(1, 7) . ' days')) : null,
@@ -449,11 +449,11 @@ class CompleteTestUserSeeder extends Seeder
                             ]
                         );
                         break;
-                        
+
                     case 'irrigation':
                         // GENERAR ERRORES PAC INTENCIONALMENTE EN ~30% DE LOS CASOS
                         $shouldHaveErrors = rand(1, 100) <= 30;
-                        
+
                         Irrigation::firstOrCreate(
                             ['activity_id' => $activity->id],
                             [
@@ -462,7 +462,6 @@ class CompleteTestUserSeeder extends Seeder
                                 'duration_minutes' => rand(120, 480),
                                 'soil_moisture_before' => rand(20, 40) / 10,
                                 'soil_moisture_after' => rand(50, 80) / 10,
-                                
                                 // CAMPOS PAC OBLIGATORIOS - Omitir algunos si shouldHaveErrors
                                 'water_source' => $shouldHaveErrors && rand(0, 1) ? null : ['Pozo', 'Embalse', 'Acequia', 'Río', 'Red municipal'][rand(0, 4)],
                                 'water_concession' => $shouldHaveErrors && rand(0, 1) ? null : 'CON-' . str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
@@ -470,7 +469,7 @@ class CompleteTestUserSeeder extends Seeder
                             ]
                         );
                         break;
-                        
+
                     case 'cultural':
                         CulturalWork::firstOrCreate(
                             ['activity_id' => $activity->id],
@@ -480,7 +479,7 @@ class CompleteTestUserSeeder extends Seeder
                             ]
                         );
                         break;
-                        
+
                     case 'observation':
                         $observationType = ['Fenología', 'Plagas', 'Enfermedades', 'Estado general'][rand(0, 3)];
                         // Asegurar que las observaciones de plagas/enfermedades siempre tengan pest_id
@@ -497,27 +496,27 @@ class CompleteTestUserSeeder extends Seeder
                                 $observationPest = $pests->random();
                             }
                         }
-                        
+
                         Observation::firstOrCreate(
                             ['activity_id' => $activity->id],
                             [
                                 'observation_type' => $observationType,
                                 'pest_id' => $observationPest?->id,
-                                'description' => "Observación de prueba en {$year}" . 
-                                    ($observationPest ? " - {$observationType} detectada: {$observationPest->name}. Síntomas: {$observationPest->symptoms}" : ''),
+                                'description' => "Observación de prueba en {$year}"
+                                    . ($observationPest ? " - {$observationType} detectada: {$observationPest->name}. Síntomas: {$observationPest->symptoms}" : ''),
                                 'severity' => ['Baja', 'Media', 'Alta'][rand(0, 2)],
                             ]
                         );
                         break;
-                        
+
                     case 'harvest':
                         // Las cosechas necesitan una plantación activa
                         $planting = $plot->plantings()->where('status', 'active')->first();
                         if ($planting) {
                             $harvestStartDate = $activityDate;
                             $harvestEndDate = date('Y-m-d', strtotime($harvestStartDate . ' +' . rand(1, 7) . ' days'));
-                            $totalWeight = rand(1000, 10000); // kg
-                            
+                            $totalWeight = rand(1000, 10000);  // kg
+
                             Harvest::firstOrCreate(
                                 ['activity_id' => $activity->id],
                                 [
@@ -526,18 +525,18 @@ class CompleteTestUserSeeder extends Seeder
                                     'harvest_end_date' => $harvestEndDate,
                                     'total_weight' => $totalWeight,
                                     'yield_per_hectare' => $planting->area_planted > 0 ? round($totalWeight / $planting->area_planted, 3) : null,
-                                    'baume_degree' => rand(100, 140) / 10, // 10.0 a 14.0
-                                    'brix_degree' => rand(180, 250) / 10, // 18.0 a 25.0
-                                    'acidity_level' => rand(30, 80) / 10, // 3.0 a 8.0
-                                    'ph_level' => rand(280, 380) / 100, // 2.8 a 3.8
+                                    'baume_degree' => rand(100, 140) / 10,  // 10.0 a 14.0
+                                    'brix_degree' => rand(180, 250) / 10,  // 18.0 a 25.0
+                                    'acidity_level' => rand(30, 80) / 10,  // 3.0 a 8.0
+                                    'ph_level' => rand(280, 380) / 100,  // 2.8 a 3.8
                                     'color_rating' => ['excelente', 'bueno', 'aceptable', 'deficiente'][rand(0, 3)],
                                     'aroma_rating' => ['excelente', 'bueno', 'aceptable', 'deficiente'][rand(0, 3)],
                                     'health_status' => ['sano', 'daño_leve', 'daño_moderado', 'daño_grave'][rand(0, 3)],
                                     'destination_type' => ['winery', 'direct_sale', 'cooperative', 'self_consumption', 'other'][rand(0, 4)],
                                     'destination' => 'Destino de prueba',
                                     'buyer_name' => rand(0, 1) === 1 ? 'Comprador Test' : null,
-                                    'price_per_kg' => rand(50, 200) / 100, // 0.50 a 2.00 €/kg
-                                    'total_value' => null, // Se calcula automáticamente
+                                    'price_per_kg' => rand(50, 200) / 100,  // 0.50 a 2.00 €/kg
+                                    'total_value' => null,  // Se calcula automáticamente
                                     'status' => 'active',
                                     'notes' => "Cosecha de prueba en {$year}",
                                 ]
@@ -548,7 +547,7 @@ class CompleteTestUserSeeder extends Seeder
             }
         }
     }
-    
+
     /**
      * Crear contenedores de cosecha
      * ACTUALIZADO: Usa el nuevo modelo Container con capacity y used_capacity
@@ -556,9 +555,9 @@ class CompleteTestUserSeeder extends Seeder
     private function createContainers(User $user): void
     {
         for ($i = 1; $i <= 25; $i++) {
-            $capacity = rand(500, 5000); // 500 a 5000 kg de capacidad
-            $usedCapacity = rand(0, 1) === 1 ? rand(0, $capacity) : 0; // Algunos con capacidad usada
-            
+            $capacity = rand(500, 5000);  // 500 a 5000 kg de capacidad
+            $usedCapacity = rand(0, 1) === 1 ? rand(0, $capacity) : 0;  // Algunos con capacidad usada
+
             Container::firstOrCreate(
                 [
                     'user_id' => $user->id,
@@ -570,17 +569,17 @@ class CompleteTestUserSeeder extends Seeder
                     'capacity' => $capacity,
                     'used_capacity' => $usedCapacity,
                     'quantity' => rand(1, 10),
-                    'unit_of_measurement_id' => 1, // kg por defecto
-                    'type_id' => 1, // Tipo por defecto
-                    'material_id' => 1, // Material por defecto
+                    'unit_of_measurement_id' => 1,  // kg por defecto
+                    'type_id' => 1,  // Tipo por defecto
+                    'material_id' => 1,  // Material por defecto
                     'purchase_date' => rand(0, 1) === 1 ? now()->subDays(rand(30, 365))->format('Y-m-d') : null,
                     'next_maintenance_date' => rand(0, 1) === 1 ? now()->addDays(rand(30, 180)) : null,
-                    'archived' => rand(0, 10) === 0, // 10% archivados
+                    'archived' => rand(0, 10) === 0,  // 10% archivados
                 ]
             );
         }
     }
-    
+
     /**
      * Crear clientes con direcciones
      */
@@ -589,21 +588,21 @@ class CompleteTestUserSeeder extends Seeder
         $clients = [];
         $provinces = \App\Models\Province::take(5)->get();
         $municipalities = \App\Models\Municipality::take(10)->get();
-        
+
         // Nombres y apellidos para clientes individuales
         $firstNames = ['Juan', 'María', 'Carlos', 'Ana', 'Luis', 'Carmen', 'Pedro', 'Laura', 'José', 'Isabel'];
         $lastNames = ['García', 'Rodríguez', 'González', 'Fernández', 'López', 'Martínez', 'Sánchez', 'Pérez', 'Gómez', 'Martín'];
-        
+
         // Nombres de empresas
         $companyNames = [
             'Bodegas Rioja', 'Bodegas Ribera', 'Cooperativa Vitivinícola', 'Bodegas del Sur',
             'Viñedos Premium', 'Bodegas Familiares', 'Cavas del Norte', 'Bodegas Artesanales',
             'Viñedos Ecológicos', 'Bodegas Tradicionales', 'Cavas Selectas', 'Bodegas Modernas'
         ];
-        
+
         for ($i = 1; $i <= 25; $i++) {
             $isCompany = rand(0, 1) === 1;
-            
+
             if ($isCompany) {
                 $client = Client::firstOrCreate(
                     [
@@ -627,7 +626,7 @@ class CompleteTestUserSeeder extends Seeder
             } else {
                 $firstName = $firstNames[array_rand($firstNames)];
                 $lastName = $lastNames[array_rand($lastNames)];
-                
+
                 $client = Client::firstOrCreate(
                     [
                         'user_id' => $user->id,
@@ -646,67 +645,67 @@ class CompleteTestUserSeeder extends Seeder
                     ]
                 );
             }
-            
+
             $clients[] = $client;
-            
+
             // Crear 1-3 direcciones por cliente (similar a Create.php)
             $addressCount = rand(1, 3);
-            
+
             for ($j = 0; $j < $addressCount; $j++) {
                 $province = $provinces->random();
                 $municipality = $municipalities->where('province_id', $province->id)->first() ?? $municipalities->random();
-                
+
                 // La primera dirección siempre es default (como en Create.php)
                 $isDefault = $j === 0;
-                
+
                 // Crear dirección usando el método create() como en Create.php (solo campos que usa la app)
                 $client->addresses()->create([
-                    'address' => "Calle " . ['Mayor', 'Principal', 'Nueva', 'Vieja', 'Real', 'San José'][rand(0, 5)] . " " . rand(1, 200),
+                    'address' => 'Calle ' . ['Mayor', 'Principal', 'Nueva', 'Vieja', 'Real', 'San José'][rand(0, 5)] . ' ' . rand(1, 200),
                     'postal_code' => str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
                     'municipality_id' => $municipality->id,
                     'province_id' => $province->id,
                     'autonomous_community_id' => $province->autonomous_community_id,
                     'is_default' => $isDefault,
-                    'description' => $j === 0 ? "Dirección principal del cliente" : "Dirección adicional " . ($j + 1) . " para cliente {$i}",
+                    'description' => $j === 0 ? 'Dirección principal del cliente' : 'Dirección adicional ' . ($j + 1) . " para cliente {$i}",
                 ]);
             }
         }
-        
+
         return $clients;
     }
-    
+
     /**
      * Crear rendimientos estimados
      */
     private function createEstimatedYields(User $user, Campaign $campaign2024, Campaign $campaign2025): void
     {
-        $plantings = PlotPlanting::whereHas('plot', function($q) use ($user) {
+        $plantings = PlotPlanting::whereHas('plot', function ($q) use ($user) {
             $q->where('viticulturist_id', $user->id);
         })->where('status', 'active')->get();
-        
+
         foreach ([$campaign2024, $campaign2025] as $campaign) {
             foreach ($plantings->take(15) as $planting) {
-            $estimatedTotalYield = rand(500, 5000);
-            $estimatedPerHectare = $planting->area_planted > 0 ? round($estimatedTotalYield / $planting->area_planted, 3) : rand(3000, 12000) / 10;
-            
-            EstimatedYield::firstOrCreate(
-                [
-                    'plot_planting_id' => $planting->id,
-                    'campaign_id' => $campaign->id,
-                ],
-                [
-                    'estimated_total_yield' => $estimatedTotalYield,
-                    'estimated_yield_per_hectare' => $estimatedPerHectare,
-                    'estimation_date' => $campaign->start_date,
-                    'estimated_by' => $user->id,
-                    'status' => 'confirmed',
-                    'notes' => "Estimación de prueba para campaña {$campaign->year}",
-                ]
-            );
+                $estimatedTotalYield = rand(500, 5000);
+                $estimatedPerHectare = $planting->area_planted > 0 ? round($estimatedTotalYield / $planting->area_planted, 3) : rand(3000, 12000) / 10;
+
+                EstimatedYield::firstOrCreate(
+                    [
+                        'plot_planting_id' => $planting->id,
+                        'campaign_id' => $campaign->id,
+                    ],
+                    [
+                        'estimated_total_yield' => $estimatedTotalYield,
+                        'estimated_yield_per_hectare' => $estimatedPerHectare,
+                        'estimation_date' => $campaign->start_date,
+                        'estimated_by' => $user->id,
+                        'status' => 'confirmed',
+                        'notes' => "Estimación de prueba para campaña {$campaign->year}",
+                    ]
+                );
             }
         }
     }
-    
+
     /**
      * Crear perfil de usuario
      */
@@ -714,7 +713,7 @@ class CompleteTestUserSeeder extends Seeder
     {
         $provinces = \App\Models\Province::take(5)->get();
         $province = $provinces->random();
-        
+
         UserProfile::firstOrCreate(
             ['user_id' => $user->id],
             [
@@ -727,7 +726,7 @@ class CompleteTestUserSeeder extends Seeder
             ]
         );
     }
-    
+
     /**
      * Crear configuración de facturación
      */
@@ -748,31 +747,67 @@ class CompleteTestUserSeeder extends Seeder
             ]
         );
     }
-    
+
     /**
-     * Crear trabajadores individuales (sin cuadrilla)
+     * Crear 20 viticultores
      */
-    private function createIndividualWorkers(User $user): void
+    private function createViticulturists(User $user): array
     {
-        $workerNames = ['Pedro', 'María', 'Luis', 'Ana', 'Carlos', 'Carmen', 'José', 'Laura'];
-        
-        for ($i = 1; $i <= 10; $i++) {
-            $worker = User::firstOrCreate(
-                ['email' => "trabajador{$i}@test.com"],
+        $viticulturists = [];
+        $names = ['Pedro', 'María', 'Luis', 'Ana', 'Carlos', 'Carmen', 'José', 'Laura', 'Juan', 'Isabel',
+            'Miguel', 'Elena', 'Francisco', 'Marta', 'Antonio', 'Sofía', 'Manuel', 'Lucía', 'David', 'Paula'];
+        $lastNames = ['García', 'Rodríguez', 'González', 'Fernández', 'López', 'Martínez', 'Sánchez', 'Pérez', 'Gómez', 'Martín'];
+
+        for ($i = 1; $i <= 20; $i++) {
+            $firstName = $names[($i - 1) % count($names)];
+            $lastName = $lastNames[($i - 1) % count($lastNames)];
+
+            $viticulturist = User::firstOrCreate(
+                ['email' => "viticultor{$i}@test.com"],
                 [
-                    'name' => $workerNames[array_rand($workerNames)] . " Trabajador {$i}",
+                    'name' => "{$firstName} {$lastName}",
                     'password' => Hash::make('password'),
                     'role' => 'viticulturist',
                     'email_verified_at' => now(),
-                    'can_login' => false,
-                    'password_must_reset' => true,
+                    'can_login' => true,
+                    'password_must_reset' => false,
                 ]
             );
-            
+
+            $viticulturists[] = $viticulturist;
+        }
+
+        return $viticulturists;
+    }
+
+    /**
+     * Crear 10 viticultores sin equipo (trabajadores individuales)
+     */
+    private function createViticulturistsWithoutCrew(User $user): void
+    {
+        $names = ['Roberto', 'Patricia', 'Fernando', 'Cristina', 'Javier', 'Beatriz', 'Álvaro', 'Natalia', 'Rubén', 'Silvia'];
+        $lastNames = ['Ruiz', 'Díaz', 'Moreno', 'Álvarez', 'Jiménez', 'Muñoz', 'Romero', 'Alonso', 'Navarro', 'Torres'];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $firstName = $names[($i - 1) % count($names)];
+            $lastName = $lastNames[($i - 1) % count($lastNames)];
+
+            $viticulturist = User::firstOrCreate(
+                ['email' => "viticultor-sin-equipo{$i}@test.com"],
+                [
+                    'name' => "{$firstName} {$lastName}",
+                    'password' => Hash::make('password'),
+                    'role' => 'viticulturist',
+                    'email_verified_at' => now(),
+                    'can_login' => true,
+                    'password_must_reset' => false,
+                ]
+            );
+
             // Crear como trabajador individual (sin crew_id)
             CrewMember::firstOrCreate(
                 [
-                    'viticulturist_id' => $worker->id,
+                    'viticulturist_id' => $viticulturist->id,
                     'assigned_by' => $user->id,
                     'crew_id' => null,
                 ],
@@ -783,7 +818,7 @@ class CompleteTestUserSeeder extends Seeder
             );
         }
     }
-    
+
     /**
      * Asignar trabajadores a cuadrillas
      */
@@ -794,7 +829,7 @@ class CompleteTestUserSeeder extends Seeder
             ->whereDoesntHave('crewMemberships')
             ->take(30)
             ->get();
-        
+
         if ($workers->isEmpty()) {
             // Crear trabajadores adicionales si no hay suficientes
             for ($i = 1; $i <= 30; $i++) {
@@ -812,13 +847,13 @@ class CompleteTestUserSeeder extends Seeder
                 $workers->push($worker);
             }
         }
-        
+
         $workersCollection = collect($workers);
         foreach ($crews as $crew) {
             // Asignar 2-5 trabajadores por cuadrilla
             $workersPerCrew = rand(2, 5);
             $crewWorkers = $workersCollection->random(min($workersPerCrew, $workersCollection->count()));
-            
+
             foreach ($crewWorkers as $worker) {
                 CrewMember::firstOrCreate(
                     [
@@ -834,7 +869,7 @@ class CompleteTestUserSeeder extends Seeder
             }
         }
     }
-    
+
     /**
      * Asociar usos SIGPAC a parcelas (20 asociaciones)
      */
@@ -842,29 +877,29 @@ class CompleteTestUserSeeder extends Seeder
     {
         // Obtener todos los usos SIGPAC disponibles
         $sigpacUses = SigpacUse::all();
-        
+
         if ($sigpacUses->isEmpty()) {
-            $this->command->warn("⚠️  No hay usos SIGPAC disponibles. Ejecuta el SigpacUseSeeder primero.");
+            $this->command->warn('⚠️  No hay usos SIGPAC disponibles. Ejecuta el SigpacUseSeeder primero.');
             return;
         }
-        
+
         $plotsCollection = collect($plots);
         $associationsCount = 0;
         $targetAssociations = 20;
-        $maxAttempts = 200; // Límite de intentos para evitar loops infinitos
+        $maxAttempts = 200;  // Límite de intentos para evitar loops infinitos
         $attempts = 0;
-        
+
         // Asociar usos SIGPAC a parcelas (máximo 20 asociaciones)
         while ($associationsCount < $targetAssociations && $attempts < $maxAttempts) {
             $plot = $plotsCollection->random();
             $sigpacUse = $sigpacUses->random();
-            
+
             // Verificar que no exista ya esta asociación
             $exists = DB::table('plot_sigpac_use')
                 ->where('plot_id', $plot->id)
                 ->where('sigpac_use_id', $sigpacUse->id)
                 ->exists();
-            
+
             if (!$exists) {
                 try {
                     $plot->sigpacUses()->attach($sigpacUse->id);
@@ -874,71 +909,71 @@ class CompleteTestUserSeeder extends Seeder
                     // Puede ser que se haya creado entre la verificación y el attach
                 }
             }
-            
+
             $attempts++;
         }
     }
-    
+
     /**
      * Crear facturas (20 facturas con items)
      */
     private function createInvoices(User $user, array $clients): void
     {
         if (empty($clients)) {
-            $this->command->warn("⚠️  No hay clientes disponibles para crear facturas.");
+            $this->command->warn('⚠️  No hay clientes disponibles para crear facturas.');
             return;
         }
-        
+
         $settings = InvoicingSetting::getOrCreateForUser($user->id);
-        $harvests = Harvest::whereHas('activity', function($q) use ($user) {
+        $harvests = Harvest::whereHas('activity', function ($q) use ($user) {
             $q->where('viticulturist_id', $user->id);
         })->get();
-        
+
         $taxes = Tax::all();
         $statuses = ['draft', 'sent', 'paid', 'cancelled', 'corrective'];
         $paymentStatuses = ['unpaid', 'partial', 'paid', 'overdue'];
         $paymentTypes = ['cash', 'transfer', 'check', 'other'];
-        
+
         for ($i = 1; $i <= 20; $i++) {
             $client = collect($clients)->random();
-            $clientAddress = $client->addresses()->where('is_default', true)->first() 
+            $clientAddress = $client->addresses()->where('is_default', true)->first()
                 ?? $client->addresses()->first();
-            
+
             $invoiceDate = now()->subDays(rand(0, 180));
             $status = $statuses[array_rand($statuses)];
             $paymentStatus = $paymentStatuses[array_rand($paymentStatuses)];
-            
+
             // Generar código de albarán
             $deliveryNoteCode = $settings->generateAndIncrementDeliveryNoteCode();
-            
+
             // Calcular totales
             $subtotal = 0;
             $discountAmount = 0;
             $taxAmount = 0;
-            
+
             // Crear 1-4 items por factura
             $itemsCount = rand(1, 4);
             $items = [];
-            
+
             for ($j = 0; $j < $itemsCount; $j++) {
                 $harvest = $harvests->isNotEmpty() && rand(0, 1) === 1 ? $harvests->random() : null;
                 $tax = $taxes->isNotEmpty() ? $taxes->random() : null;
-                
-                $quantity = rand(10, 1000) / 10; // 1.0 a 100.0
-                $unitPrice = rand(50, 500) / 100; // 0.50 a 5.00 €
-                $discountPercentage = rand(0, 20); // 0% a 20%
-                
+
+                $quantity = rand(10, 1000) / 10;  // 1.0 a 100.0
+                $unitPrice = rand(50, 500) / 100;  // 0.50 a 5.00 €
+                $discountPercentage = rand(0, 20);  // 0% a 20%
+
                 $itemSubtotal = $quantity * $unitPrice;
                 $itemDiscount = $itemSubtotal * ($discountPercentage / 100);
                 $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-                
+
                 $taxRate = $tax ? $tax->rate : 0;
                 $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-                
+
                 $subtotal += $itemSubtotalAfterDiscount;
                 $discountAmount += $itemDiscount;
                 $taxAmount += $itemTax;
-                
+
                 $items[] = [
                     'harvest_id' => $harvest?->id,
                     'name' => $harvest ? "Uva {$harvest->activity->plot->name}" : "Producto Test {$i}-{$j}",
@@ -953,22 +988,41 @@ class CompleteTestUserSeeder extends Seeder
                     'tax_rate' => $taxRate,
                 ];
             }
-            
+
             $totalAmount = $subtotal + $taxAmount;
-            
+
+            // Generar número de factura solo si el status lo requiere y no existe ya
+            $invoiceNumber = null;
+            if (in_array($status, ['sent', 'paid'])) {
+                // Intentar generar un número único
+                $maxAttempts = 10;
+                $attempt = 0;
+                do {
+                    $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
+                    $exists = Invoice::where('invoice_number', $invoiceNumber)->exists();
+                    $attempt++;
+                } while ($exists && $attempt < $maxAttempts);
+
+                // Si después de varios intentos sigue duplicado, usar null
+                if ($exists) {
+                    $invoiceNumber = null;
+                }
+            }
+
             // Crear factura
             $invoice = Invoice::create([
                 'user_id' => $user->id,
                 'client_id' => $client->id,
                 'client_address_id' => $clientAddress?->id,
-                'invoice_number' => in_array($status, ['sent', 'paid']) ? $settings->generateAndIncrementInvoiceCode() : null,
+                'invoice_number' => $invoiceNumber,
                 'delivery_note_code' => $deliveryNoteCode,
                 'invoice_date' => $invoiceDate,
                 'delivery_note_date' => $invoiceDate,
                 'payment_date' => $paymentStatus === 'paid' ? $invoiceDate->copy()->addDays(rand(1, 30)) : null,
                 'order_date' => $invoiceDate,
-                'billing_address' => $clientAddress ? 
-                    "{$clientAddress->address}, {$clientAddress->postal_code} " . ($clientAddress->municipality->name ?? '') : null,
+                'billing_address' => $clientAddress
+                    ? "{$clientAddress->address}, {$clientAddress->postal_code} " . ($clientAddress->municipality->name ?? '')
+                    : null,
                 'billing_first_name' => $client->first_name,
                 'billing_last_name' => $client->last_name,
                 'billing_email' => $client->email,
@@ -991,7 +1045,7 @@ class CompleteTestUserSeeder extends Seeder
                 'delivery_status' => ['pending', 'in_transit', 'delivered'][rand(0, 2)],
                 'observations' => rand(0, 1) === 1 ? "Observaciones de prueba para factura {$i}" : null,
             ]);
-            
+
             // Crear items de la factura
             foreach ($items as $itemData) {
                 InvoiceItem::create([
@@ -1014,7 +1068,7 @@ class CompleteTestUserSeeder extends Seeder
             }
         }
     }
-    
+
     /**
      * Crear plagas adicionales si no hay suficientes
      */
@@ -1126,7 +1180,7 @@ class CompleteTestUserSeeder extends Seeder
             );
         }
     }
-    
+
     /**
      * Crear tickets de soporte
      */
@@ -1135,7 +1189,7 @@ class CompleteTestUserSeeder extends Seeder
         $ticketTypes = ['bug', 'feature', 'improvement', 'question'];
         $priorities = ['low', 'medium', 'high', 'urgent'];
         $statuses = ['open', 'in_progress', 'resolved', 'closed'];
-        
+
         for ($i = 1; $i <= 10; $i++) {
             $status = $statuses[array_rand($statuses)];
             $ticket = SupportTicket::create([
@@ -1148,7 +1202,7 @@ class CompleteTestUserSeeder extends Seeder
                 'resolved_at' => in_array($status, ['resolved', 'closed']) ? now()->subDays(rand(1, 30)) : null,
                 'closed_at' => $status === 'closed' ? now()->subDays(rand(1, 15)) : null,
             ]);
-            
+
             // Agregar comentarios a algunos tickets
             if (rand(0, 1) === 1) {
                 SupportTicketComment::create([
@@ -1159,7 +1213,7 @@ class CompleteTestUserSeeder extends Seeder
             }
         }
     }
-    
+
     /**
      * Crear códigos SIGPAC para las parcelas
      */
@@ -1171,10 +1225,10 @@ class CompleteTestUserSeeder extends Seeder
     ): void {
         foreach ($plots as $index => $plot) {
             // Generar un código SIGPAC único para cada parcela
-            $polygon = str_pad($index + 1, 2, '0', STR_PAD_LEFT); // 01, 02, 03...
-            $parcel = str_pad(($index * 5) + 1, 5, '0', STR_PAD_LEFT); // 00001, 00006, 00011...
-            $enclosure = '001'; // Recinto 1 por defecto
-            
+            $polygon = str_pad($index + 1, 2, '0', STR_PAD_LEFT);  // 01, 02, 03...
+            $parcel = str_pad(($index * 5) + 1, 5, '0', STR_PAD_LEFT);  // 00001, 00006, 00011...
+            $enclosure = '001';  // Recinto 1 por defecto
+
             $codeFields = [
                 'code_autonomous_community' => str_pad($autonomousCommunity?->id ?? 13, 2, '0', STR_PAD_LEFT),
                 'code_province' => str_pad($province?->id ?? 28, 2, '0', STR_PAD_LEFT),
@@ -1185,10 +1239,10 @@ class CompleteTestUserSeeder extends Seeder
                 'code_plot' => $parcel,
                 'code_enclosure' => $enclosure,
             ];
-            
+
             // Construir el código completo de 19 dígitos
             $fullCode = \App\Models\SigpacCode::buildCodeFromFields($codeFields);
-            
+
             $sigpacCode = \App\Models\SigpacCode::firstOrCreate(
                 [
                     'code_autonomous_community' => $codeFields['code_autonomous_community'],
@@ -1201,22 +1255,22 @@ class CompleteTestUserSeeder extends Seeder
                 [
                     'code_aggregate' => '0',
                     'code_zone' => '0',
-                    'code' => $fullCode, // Código completo de 19 dígitos
+                    'code' => $fullCode,  // Código completo de 19 dígitos
                 ]
             );
-            
+
             // Asociar el código SIGPAC a la parcela usando la tabla pivot multipart_plot_sigpac
             // Verificar si ya existe la asociación
             $exists = DB::table('multipart_plot_sigpac')
                 ->where('plot_id', $plot->id)
                 ->where('sigpac_code_id', $sigpacCode->id)
                 ->exists();
-            
+
             if (!$exists) {
                 DB::table('multipart_plot_sigpac')->insert([
                     'plot_id' => $plot->id,
                     'sigpac_code_id' => $sigpacCode->id,
-                    'plot_geometry_id' => null, // No tenemos geometría en el seeder
+                    'plot_geometry_id' => null,  // No tenemos geometría en el seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -1224,4 +1278,3 @@ class CompleteTestUserSeeder extends Seeder
         }
     }
 }
-

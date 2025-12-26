@@ -331,7 +331,7 @@
     
     <!-- Preload critical resources -->
     <link rel="preload" href="{{ asset('images/logo.png') }}" as="image">
-    <link rel="preload" href="{{ asset('videos/agro365_demo.webp') }}" as="image" type="image/webp" fetchpriority="high">
+    <link rel="preload" href="{{ asset('images/dashboard-preview.png') }}" as="image" fetchpriority="high">
     
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
@@ -442,18 +442,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Dashboard Screenshot -->
-                            <!-- Dashboard Video Demo -->
+                            <!-- Dashboard Preview Image -->
                             <img 
-                                src="{{ asset('videos/agro365_demo.webp') }}" 
-                                srcset="{{ asset('videos/agro365_demo-582w.webp') }} 582w,
-                                        {{ asset('videos/agro365_demo-800w.webp') }} 800w,
-                                        {{ asset('videos/agro365_demo-1200w.webp') }} 1200w,
-                                        {{ asset('videos/agro365_demo.webp') }} 1272w"
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 800px, 1200px"
+                                src="{{ asset('images/dashboard-preview.png') }}" 
                                 alt="Demo interactiva de Agro365: Dashboard, Cumplimiento PAC y Gestión Agrícola" 
-                                width="1200"
-                                height="800"
                                 class="w-full h-auto object-cover"
                                 loading="eager"
                                 decoding="async"

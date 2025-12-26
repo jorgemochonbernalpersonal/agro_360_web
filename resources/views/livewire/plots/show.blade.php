@@ -337,8 +337,6 @@
 
 @push('scripts')
 @if($hasGeometry && count($plotGeometries) > 0)
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     
     <script>
         function initMap() {

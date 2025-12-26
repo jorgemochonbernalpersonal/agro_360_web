@@ -212,16 +212,44 @@
                         type="file" 
                         accept="image/*"
                         id="image"
+                        x-on:change="
+                            const file = $event.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const previewImg = document.getElementById('machinery-image-preview');
+                                    const previewContainer = document.getElementById('machinery-image-preview-container');
+                                    if (previewImg) {
+                                        previewImg.src = e.target.result;
+                                        previewImg.classList.remove('hidden');
+                                    }
+                                    if (previewContainer) {
+                                        previewContainer.classList.remove('hidden');
+                                    }
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                const previewContainer = document.getElementById('machinery-image-preview-container');
+                                if (previewContainer) {
+                                    previewContainer.classList.add('hidden');
+                                }
+                            }
+                        "
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
                     >
                     @error('image') 
                         <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
                     @enderror
-                    @if($image)
-                        <div class="mt-4">
-                            <img src="{{ $image->temporaryUrl() }}" alt="Vista previa" class="max-w-xs rounded-lg">
-                        </div>
-                    @endif
+                    <div id="machinery-image-preview-container" class="mt-4 hidden">
+                        <p class="text-sm text-gray-600 mb-2">Vista previa:</p>
+                        <img 
+                            id="machinery-image-preview" 
+                            src="" 
+                            alt="Vista previa" 
+                            class="max-w-xs rounded-lg border-2 border-gray-200 hidden"
+                            onerror="this.style.display='none'; document.getElementById('machinery-image-preview-container').classList.add('hidden');"
+                        >
+                    </div>
                 </div>
 
                 <!-- Notas -->

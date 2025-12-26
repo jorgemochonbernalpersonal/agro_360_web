@@ -92,7 +92,31 @@ class PlotGeometry extends Model
 
                 unset($geometry->_pending_wkt);
             }
+
+            // ✅ Invalidar caché de mapas de parcelas relacionadas
+            static::invalidatePlotGeometryCache($geometry);
         });
+
+        static::deleted(function ($geometry) {
+            // ✅ Invalidar caché al eliminar geometría
+            static::invalidatePlotGeometryCache($geometry);
+        });
+    }
+
+    /**
+     * Invalidar caché de geometrías de parcelas relacionadas
+     */
+    private static function invalidatePlotGeometryCache($geometry)
+    {
+        // Obtener IDs de parcelas que usan esta geometría
+        $plotIds = DB::table('multipart_plot_sigpac')
+            ->where('plot_geometry_id', $geometry->id)
+            ->pluck('plot_id')
+            ->unique();
+
+        foreach ($plotIds as $plotId) {
+            \Illuminate\Support\Facades\Cache::forget("plot_geometries_{$plotId}");
+        }
     }
 
     /**

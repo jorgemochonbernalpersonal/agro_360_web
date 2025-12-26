@@ -43,18 +43,6 @@
                 <x-label for="description">Descripción</x-label>
                 <x-textarea wire:model="description" id="description" data-cy="plot-description" rows="3" :error="$errors->first('description')" />
             </div>
-
-            <!-- Activa -->
-            <div class="mt-6">
-                <label class="flex items-center">
-                    <input wire:model="active" type="checkbox" data-cy="plot-active"
-                        class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]">
-                    <span class="ml-2 text-sm font-semibold text-gray-700">Parcela activa</span>
-                </label>
-                @error('active')
-                    <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p>
-                @enderror
-            </div>
         </x-form-section>
 
         <!-- Asignaciones -->

@@ -13,14 +13,81 @@ class PlotMapController extends Controller
     {
         $this->authorize('view', $plot);
 
-        $plotGeometries = MultipartPlotSigpac::with(['plotGeometry', 'sigpacCode'])
+        // ✅ Iniciar medición de performance
+        $startTime = microtime(true);
+
+        // Usar caché para evitar consultas repetidas (TTL: 24 horas)
+        $cacheKey = "plot_geometries_{$plot->id}";
+        $fromCache = \Illuminate\Support\Facades\Cache::has($cacheKey);
+        
+        $plotGeometries = \Illuminate\Support\Facades\Cache::remember(
+            $cacheKey,
+            now()->addHours(24),
+            function () use ($plot) {
+                return $this->loadPlotGeometries($plot);
+            }
+        );
+
+        // ✅ Calcular tiempo de carga
+        $loadTimeMs = round((microtime(true) - $startTime) * 1000, 2);
+
+        // ✅ Log de performance para monitoreo
+        Log::info('Map performance metrics', [
+            'plot_id' => $plot->id,
+            'plot_name' => $plot->name,
+            'geometries_count' => $plotGeometries->count(),
+            'load_time_ms' => $loadTimeMs,
+            'from_cache' => $fromCache,
+            'cache_key' => $cacheKey,
+            'user_id' => auth()->id(),
+        ]);
+
+        if ($plotGeometries->isEmpty()) {
+            return redirect()
+                ->route('plots.show', $plot)
+                ->with('error', 'Esta parcela no tiene recintos generados. Genera el mapa primero.');
+        }
+
+        return view('plots.map', compact('plot', 'plotGeometries'));
+    }
+
+    /**
+     * Cargar geometrías de la parcela optimizando queries (sin N+1)
+     */
+    private function loadPlotGeometries(Plot $plot)
+    {
+        // Cargar relaciones con eager loading
+        $relations = MultipartPlotSigpac::with(['sigpacCode'])
             ->where('plot_id', $plot->id)
             ->whereNotNull('plot_geometry_id')
-            ->get()
-            ->filter(fn($rel) => $rel->plotGeometry)
-            ->map(function($rel, $index) {
-                $wkt = $rel->plotGeometry->getWktCoordinates();
-                
+            ->get();
+
+        if ($relations->isEmpty()) {
+            return collect([]);
+        }
+
+        // Obtener todos los IDs de geometrías
+        $geometryIds = $relations->pluck('plot_geometry_id')->unique()->filter();
+
+        if ($geometryIds->isEmpty()) {
+            return collect([]);
+        }
+
+        // ✅ OPTIMIZACIÓN: Cargar todos los WKT en una sola query batch
+        $wktData = \Illuminate\Support\Facades\DB::select(
+            'SELECT id, ST_AsText(coordinates) as wkt 
+             FROM plot_geometry 
+             WHERE id IN (' . $geometryIds->implode(',') . ')'
+        );
+
+        // Crear mapa id => wkt para acceso O(1)
+        $wktMap = collect($wktData)->pluck('wkt', 'id');
+
+        // Mapear relaciones a formato de vista
+        return $relations
+            ->map(function ($rel, $index) use ($wktMap) {
+                $wkt = $wktMap[$rel->plot_geometry_id] ?? null;
+
                 if (!$wkt) {
                     Log::warning('No WKT for geometry', [
                         'multipart_plot_sigpac_id' => $rel->id,
@@ -28,7 +95,7 @@ class PlotMapController extends Controller
                     ]);
                     return null;
                 }
-                
+
                 return [
                     'id' => $rel->id,
                     'index' => $index + 1,
@@ -40,19 +107,6 @@ class PlotMapController extends Controller
             })
             ->filter()
             ->values();
-
-        Log::info('Plot map geometries loaded', [
-            'plot_id' => $plot->id,
-            'geometries_count' => $plotGeometries->count(),
-        ]);
-
-        if ($plotGeometries->isEmpty()) {
-            return redirect()
-                ->route('plots.show', $plot)
-                ->with('error', 'Esta parcela no tiene recintos generados. Genera el mapa primero.');
-        }
-
-        return view('plots.map', compact('plot', 'plotGeometries'));
     }
 
     private function getColorForIndex(int $index): array

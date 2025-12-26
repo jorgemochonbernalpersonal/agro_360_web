@@ -2,32 +2,30 @@
 
 namespace App\Livewire\Profile;
 
-use App\Models\UserProfile;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Component;
-use Livewire\WithFileUploads;
+use App\Models\UserProfile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
     use WithFileUploads, WithToastNotifications;
-    
+
     // Información Personal
     public $name;
     public $email;
     public $profile_image;
     public $current_profile_image;
     public $profile_image_preview;
-    
     // Cambio de Contraseña
     public $current_password = '';
     public $password = '';
     public $password_confirmation = '';
-    
     // Información de Contacto
     public $address;
     public $city;
@@ -35,18 +33,17 @@ class Edit extends Component
     public $province_id;
     public $country = 'España';
     public $phone;
-    
     // Control de Tabs
     public $activeTab = 'personal';
 
     public function mount()
     {
         $user = Auth::user();
-        
+
         // Cargar datos del usuario
         $this->name = $user->name;
         $this->email = $user->email;
-        
+
         // Cargar perfil si existe
         $profile = $user->profile;
         if ($profile) {
@@ -59,7 +56,7 @@ class Edit extends Component
             $this->current_profile_image = $profile->profile_image;
         }
     }
-    
+
     public function getProvincesProperty()
     {
         return \App\Models\Province::orderBy('name')->get();
@@ -69,9 +66,9 @@ class Edit extends Component
     {
         // Validar la imagen cuando se selecciona
         $this->validateOnly('profile_image', [
-            'profile_image' => ['nullable', 'image', 'max:2048'], // Max 2MB
+            'profile_image' => ['nullable', 'image', 'max:2048'],  // Max 2MB
         ]);
-        
+
         // Solo marcar que hay una imagen seleccionada
         // El preview se maneja completamente con JavaScript (FileReader)
         // para evitar duplicación y problemas de sincronización
@@ -87,13 +84,15 @@ class Edit extends Component
         $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
-            'profile_image' => ['nullable', 'image', 'max:2048'], // Max 2MB
+            'profile_image' => ['nullable', 'image', 'max:2048'],  // Max 2MB
         ]);
 
         $user = Auth::user();
         $user->name = $this->name;
         $user->email = $this->email;
         $user->save();
+
+        $imageUpdated = false;
 
         // Manejar subida de imagen
         if ($this->profile_image) {
@@ -102,30 +101,35 @@ class Edit extends Component
                 if ($user->profile && $user->profile->profile_image) {
                     Storage::disk('public')->delete($user->profile->profile_image);
                 }
-                
+
                 // Guardar nueva imagen
                 $path = $this->profile_image->store('profile-images', 'public');
-                
+
                 if (!$path) {
                     throw new \Exception('No se pudo guardar la imagen. Verifica los permisos del directorio.');
                 }
-                
+
                 // Actualizar o crear perfil con la imagen
                 $profile = $user->profile()->updateOrCreate(
                     ['user_id' => $user->id],
                     ['profile_image' => $path]
                 );
-                
+
                 // Recargar la relación del perfil para obtener la imagen actualizada
                 $user->refresh();
                 $user->load('profile');
-                
+
                 // Actualizar la imagen actual con la nueva ruta
                 $this->current_profile_image = $path;
-                
+
                 // Reset el input y preview
                 $this->profile_image = null;
                 $this->profile_image_preview = null;
+
+                $imageUpdated = true;
+
+                // Disparar evento para actualizar la imagen en el DOM sin recargar
+                $this->dispatch('profile-image-updated', imageUrl: Storage::disk('public')->url($path));
             } catch (\Exception $e) {
                 \Log::error('Error al guardar imagen de perfil: ' . $e->getMessage(), [
                     'user_id' => $user->id,
@@ -138,7 +142,11 @@ class Edit extends Component
 
         $this->toastSuccess('Información personal actualizada correctamente.');
         session()->flash('message', 'Información personal actualizada correctamente.');
-        $this->dispatch('profile-updated');
+
+        // Solo disparar evento de recarga si no se actualizó la imagen
+        if (!$imageUpdated) {
+            $this->dispatch('profile-updated');
+        }
     }
 
     public function updatePassword()
@@ -178,7 +186,7 @@ class Edit extends Component
         ]);
 
         $user = Auth::user();
-        
+
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -186,7 +194,7 @@ class Edit extends Component
                 'city' => $this->city,
                 'postal_code' => $this->postal_code,
                 'province_id' => $this->province_id,
-                'country' => 'España', // Siempre España
+                'country' => 'España',  // Siempre España
                 'phone' => $this->phone,
             ]
         );

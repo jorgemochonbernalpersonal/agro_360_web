@@ -12,13 +12,14 @@ use App\Models\Machinery;
 use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithWineryFilter;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EditObservation extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications;
+    use WithViticulturistValidation, WithToastNotifications, WithWineryFilter;
     
     public AgriculturalActivity $activity;
     public Observation $observation;
@@ -252,13 +253,8 @@ class EditObservation extends Component
             ->sortBy(fn ($worker) => $worker->viticulturist->name)
             ->values();
         
-        $allViticulturists = \App\Models\WineryViticulturist::editableBy($user)
-            ->with('viticulturist')
-            ->get()
-            ->pluck('viticulturist')
-            ->unique('id')
-            ->sortBy('name')
-            ->values();
+        // SIEMPRE incluir al usuario mismo al principio
+        $allViticulturists = $this->viticulturists;
 
         $campaign = Campaign::find($this->campaign_id);
 
