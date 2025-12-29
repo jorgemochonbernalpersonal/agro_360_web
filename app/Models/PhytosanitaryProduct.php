@@ -69,4 +69,24 @@ class PhytosanitaryProduct extends Model
     {
         return $this->hasMany(PhytosanitaryTreatment::class, 'product_id');
     }
+
+    /**
+     * Stocks de este producto
+     */
+    public function stocks(): HasMany
+    {
+        return $this->hasMany(ProductStock::class, 'product_id');
+    }
+
+    /**
+     * Obtener stock total disponible para un usuario
+     */
+    public function getTotalStockForUser(int $userId): float
+    {
+        return $this->stocks()
+            ->where('user_id', $userId)
+            ->where('active', true)
+            ->get()
+            ->sum(fn($stock) => $stock->getAvailableQuantity());
+    }
 }

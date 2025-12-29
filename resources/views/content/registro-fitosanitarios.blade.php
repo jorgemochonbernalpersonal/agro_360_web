@@ -232,12 +232,12 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Registro de Productos Fitosanitarios Obligatorio - Guía Completa",
         "description": "Registro digital obligatorio de productos fitosanitarios y tratamientos en agricultura.",
-        "author": {"@type": "Organization", "name": "Agro365"},
-        "publisher": {"@type": "Organization", "name": "Agro365", "logo": {"@type": "ImageObject", "url": "{{ asset('images/logo.png') }}"}},
+        "author": {"@@type": "Organization", "name": "Agro365"},
+        "publisher": {"@@type": "Organization", "name": "Agro365", "logo": {"@@type": "ImageObject", "url": "{{ asset('images/logo.png') }}"}},
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}"
     }

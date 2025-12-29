@@ -50,20 +50,24 @@ class HarvestFactory extends Factory
             ]);
 
             // Crear/actualizar estado del contenedor
-            \App\Models\ContainerState::updateOrCreate(
-                ['container_id' => $harvest->container_id],
-                [
-                    'total_quantity' => $harvest->total_weight,
-                    'available_qty' => $harvest->total_weight,
-                    'reserved_qty' => 0,
-                    'sold_qty' => 0,
-                    'gifted_qty' => 0,
-                    'lost_qty' => 0,
-                    'unit' => 'kg',
-                    'last_movement_at' => now(),
-                    'last_movement_by' => $harvest->activity->viticulturist_id,
-                ]
-            );
+            if ($harvest->container_id) {
+                $container = \App\Models\Container::find($harvest->container_id);
+                if ($container) {
+                    \App\Models\ContainerCurrentState::updateOrCreate(
+                        ['container_id' => $container->id],
+                        [
+                            'harvest_id' => $harvest->id,
+                            'current_quantity' => $harvest->total_weight,
+                            'available_qty' => $harvest->total_weight,
+                            'reserved_qty' => 0,
+                            'sold_qty' => 0,
+                            'has_subproducts' => false,
+                            'last_movement_at' => now(),
+                            'last_movement_by' => $harvest->activity->viticulturist_id,
+                        ]
+                    );
+                }
+            }
         });
     }
 }

@@ -125,6 +125,17 @@ class Edit extends Component
         $this->updatedClientId($this->client_id);
     }
 
+    /**
+     * Cancelar edición y resetear todo a los valores originales
+     */
+    public function cancel()
+    {
+        // Recargar datos originales de la factura
+        $this->invoice->refresh();
+        $this->loadInvoiceData();
+        $this->toastSuccess('Cambios cancelados. Se restauraron los valores originales.');
+    }
+
     public function loadData()
     {
         $user = Auth::user();
@@ -357,7 +368,55 @@ class Edit extends Component
     {
         unset($this->items[$index]);
         $this->items = array_values($this->items);
+        // Los cálculos se actualizarán automáticamente con las propiedades computadas
     }
+
+    /**
+     * Calcular totales de la factura
+     */
+    public function getSubtotalProperty(): float
+    {
+        $subtotal = 0;
+        foreach ($this->items as $item) {
+            $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
+            $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
+            $subtotal += $itemSubtotal - $itemDiscount;
+        }
+        return round($subtotal, 2);
+    }
+
+    public function getDiscountAmountProperty(): float
+    {
+        $discountAmount = 0;
+        foreach ($this->items as $item) {
+            $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
+            $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
+            $discountAmount += $itemDiscount;
+        }
+        return round($discountAmount, 2);
+    }
+
+    public function getTaxAmountProperty(): float
+    {
+        $taxAmount = 0;
+        foreach ($this->items as $item) {
+            $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
+            $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
+            $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
+            
+            $tax = ($item['tax_id'] ?? null) ? Tax::find($item['tax_id']) : null;
+            $taxRate = $tax ? $tax->rate : 0;
+            $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
+            $taxAmount += $itemTax;
+        }
+        return round($taxAmount, 2);
+    }
+
+    public function getTotalAmountProperty(): float
+    {
+        return round($this->subtotal + $this->taxAmount, 2);
+    }
+
 
     protected function rules(): array
     {
@@ -459,26 +518,11 @@ class Edit extends Component
                     }
                 }
                 
-                // Calcular totales
-                $subtotal = 0;
-                $discountAmount = 0;
-                $taxAmount = 0;
-
-                foreach ($this->items as $itemData) {
-                    $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
-                    $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
-                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-                    
-                    $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
-                    $taxRate = $tax ? $tax->rate : 0;
-                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-
-                    $subtotal += $itemSubtotalAfterDiscount;
-                    $discountAmount += $itemDiscount;
-                    $taxAmount += $itemTax;
-                }
-
-                $totalAmount = $subtotal + $taxAmount;
+                // Usar propiedades computadas para los totales (ya calculados automáticamente)
+                $subtotal = $this->subtotal;
+                $discountAmount = $this->discountAmount;
+                $taxAmount = $this->taxAmount;
+                $totalAmount = $this->totalAmount;
 
                 // Actualizar factura
                 $updateData = [

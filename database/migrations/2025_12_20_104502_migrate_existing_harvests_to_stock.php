@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\ContainerState;
+use App\Models\ContainerCurrentState;
 use App\Models\InvoiceItem;
 
 return new class extends Migration
@@ -33,7 +33,8 @@ return new class extends Migration
     {
         // Limpiar registros migrados
         DB::table('harvest_stocks')->where('notes', 'LIKE', '%Migración automática%')->delete();
-        DB::table('container_states')->truncate();
+        // Nota: container_states ya fue eliminada, los datos están en container_current_states
+        DB::table('container_current_states')->whereNotNull('harvest_id')->delete();
     }
 
     /**
@@ -68,23 +69,21 @@ return new class extends Migration
 
                 // Crear/actualizar estado del contenedor
                 if ($harvest->container_id) {
-                    $existingState = ContainerState::where('container_id', $harvest->container_id)->first();
+                    $existingState = ContainerCurrentState::where('container_id', $harvest->container_id)->first();
 
                     if ($existingState) {
                         // Si ya existe (por otra cosecha en el mismo contenedor), sumar
                         $existingState->update([
-                            'total_quantity' => $existingState->total_quantity + $harvest->total_weight,
+                            'current_quantity' => $existingState->current_quantity + $harvest->total_weight,
                             'available_qty' => $existingState->available_qty + $harvest->total_weight,
-                            'content_type' => 'mixed', // Múltiples cosechas
                             'last_movement_at' => now(),
                         ]);
                     } else {
                         // Crear nuevo estado
-                        ContainerState::create([
+                        ContainerCurrentState::create([
                             'container_id' => $harvest->container_id,
-                            'content_type' => 'harvest',
                             'harvest_id' => $harvest->id,
-                            'total_quantity' => $harvest->total_weight,
+                            'current_quantity' => $harvest->total_weight,
                             'available_qty' => $harvest->total_weight,
                             'reserved_qty' => 0,
                             'sold_qty' => 0,
@@ -184,7 +183,7 @@ return new class extends Migration
 
         // Actualizar contenedor
         if ($item->harvest->container_id) {
-            $state = ContainerState::where('container_id', $item->harvest->container_id)->first();
+            $state = ContainerCurrentState::where('container_id', $item->harvest->container_id)->first();
             if ($state) {
                 $state->update([
                     'available_qty' => max(0, $state->available_qty - $item->quantity),
@@ -220,7 +219,7 @@ return new class extends Migration
 
         // Actualizar contenedor
         if ($item->harvest->container_id) {
-            $state = ContainerState::where('container_id', $item->harvest->container_id)->first();
+            $state = ContainerCurrentState::where('container_id', $item->harvest->container_id)->first();
             if ($state) {
                 $state->update([
                     'available_qty' => max(0, $state->available_qty - $item->quantity),

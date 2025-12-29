@@ -139,14 +139,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Cuándo empieza una campaña agrícola?", "acceptedAnswer": {"@type": "Answer", "text": "Típicamente con la poda en enero-febrero o cuando tú lo configures según tu explotación."}},
-            {"@type": "Question", "name": "¿Puedo tener varias campañas abiertas?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, aunque normalmente trabajas en una campaña activa, puedes consultar datos de campañas anteriores."}},
-            {"@type": "Question", "name": "¿Qué pasa cuando cierro una campaña?", "acceptedAnswer": {"@type": "Answer", "text": "Se bloquea la edición de datos de esa campaña para preservar la integridad de los informes."}},
-            {"@type": "Question", "name": "¿Las parcelas se copian a la nueva campaña?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, al crear una nueva campaña puedes copiar automáticamente las parcelas y plantaciones."}},
-            {"@type": "Question", "name": "¿Puedo comparar rendimientos entre campañas?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, el sistema permite comparar datos de producción, costes y rendimientos año a año."}}
+            {"@@type": "Question", "name": "¿Cuándo empieza una campaña agrícola?", "acceptedAnswer": {"@@type": "Answer", "text": "Típicamente con la poda en enero-febrero o cuando tú lo configures según tu explotación."}},
+            {"@@type": "Question", "name": "¿Puedo tener varias campañas abiertas?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, aunque normalmente trabajas en una campaña activa, puedes consultar datos de campañas anteriores."}},
+            {"@@type": "Question", "name": "¿Qué pasa cuando cierro una campaña?", "acceptedAnswer": {"@@type": "Answer", "text": "Se bloquea la edición de datos de esa campaña para preservar la integridad de los informes."}},
+            {"@@type": "Question", "name": "¿Las parcelas se copian a la nueva campaña?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, al crear una nueva campaña puedes copiar automáticamente las parcelas y plantaciones."}},
+            {"@@type": "Question", "name": "¿Puedo comparar rendimientos entre campañas?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, el sistema permite comparar datos de producción, costes y rendimientos año a año."}}
         ]
     }
     </script>

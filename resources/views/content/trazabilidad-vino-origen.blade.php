@@ -178,14 +178,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Por qué es obligatoria la trazabilidad?", "acceptedAnswer": {"@type": "Answer", "text": "La normativa de seguridad alimentaria exige poder rastrear el origen de productos en caso de incidencia sanitaria."}},
-            {"@type": "Question", "name": "¿Cómo vinculo un contenedor a una parcela?", "acceptedAnswer": {"@type": "Answer", "text": "Al registrar el contenedor durante la vendimia, seleccionas la parcela de origen y el sistema guarda la relación."}},
-            {"@type": "Question", "name": "¿Puedo mezclar uva de varias parcelas?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, un contenedor puede tener uva de múltiples parcelas y el sistema mantiene la trazabilidad de cada origen."}},
-            {"@type": "Question", "name": "¿Qué información aparece en el informe de trazabilidad?", "acceptedAnswer": {"@type": "Answer", "text": "Código SIGPAC, variedad, tratamientos aplicados, fecha de vendimia, peso, grado y cliente destino."}},
-            {"@type": "Question", "name": "¿Es válido para certificación de DO?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, el sistema de trazabilidad cumple los requisitos de las principales Denominaciones de Origen."}}
+            {"@@type": "Question", "name": "¿Por qué es obligatoria la trazabilidad?", "acceptedAnswer": {"@@type": "Answer", "text": "La normativa de seguridad alimentaria exige poder rastrear el origen de productos en caso de incidencia sanitaria."}},
+            {"@@type": "Question", "name": "¿Cómo vinculo un contenedor a una parcela?", "acceptedAnswer": {"@@type": "Answer", "text": "Al registrar el contenedor durante la vendimia, seleccionas la parcela de origen y el sistema guarda la relación."}},
+            {"@@type": "Question", "name": "¿Puedo mezclar uva de varias parcelas?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, un contenedor puede tener uva de múltiples parcelas y el sistema mantiene la trazabilidad de cada origen."}},
+            {"@@type": "Question", "name": "¿Qué información aparece en el informe de trazabilidad?", "acceptedAnswer": {"@@type": "Answer", "text": "Código SIGPAC, variedad, tratamientos aplicados, fecha de vendimia, peso, grado y cliente destino."}},
+            {"@@type": "Question", "name": "¿Es válido para certificación de DO?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, el sistema de trazabilidad cumple los requisitos de las principales Denominaciones de Origen."}}
         ]
     }
     </script>

@@ -170,14 +170,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Cuándo debo iniciar la poda?", "acceptedAnswer": {"@type": "Answer", "text": "La poda en seco se realiza durante el reposo invernal, generalmente entre enero y febrero."}},
-            {"@type": "Question", "name": "¿Cuándo aplicar tratamientos preventivos?", "acceptedAnswer": {"@type": "Answer", "text": "Los primeros tratamientos preventivos contra mildiu y oídio se aplican tras la brotación en marzo-abril."}},
-            {"@type": "Question", "name": "¿Qué es el envero?", "acceptedAnswer": {"@type": "Answer", "text": "Es el cambio de color de las uvas tintas (de verde a rojo/negro) que marca el inicio de la maduración, en julio-agosto."}},
-            {"@type": "Question", "name": "¿Puedo crear tareas recurrentes?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, el calendario permite programar tareas que se repiten cada año o cada ciertos días."}},
-            {"@type": "Question", "name": "¿Se sincroniza con mi móvil?", "acceptedAnswer": {"@type": "Answer", "text": "La aplicación web es responsive y accesible desde cualquier dispositivo móvil."}}
+            {"@@type": "Question", "name": "¿Cuándo debo iniciar la poda?", "acceptedAnswer": {"@@type": "Answer", "text": "La poda en seco se realiza durante el reposo invernal, generalmente entre enero y febrero."}},
+            {"@@type": "Question", "name": "¿Cuándo aplicar tratamientos preventivos?", "acceptedAnswer": {"@@type": "Answer", "text": "Los primeros tratamientos preventivos contra mildiu y oídio se aplican tras la brotación en marzo-abril."}},
+            {"@@type": "Question", "name": "¿Qué es el envero?", "acceptedAnswer": {"@@type": "Answer", "text": "Es el cambio de color de las uvas tintas (de verde a rojo/negro) que marca el inicio de la maduración, en julio-agosto."}},
+            {"@@type": "Question", "name": "¿Puedo crear tareas recurrentes?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, el calendario permite programar tareas que se repiten cada año o cada ciertos días."}},
+            {"@@type": "Question", "name": "¿Se sincroniza con mi móvil?", "acceptedAnswer": {"@@type": "Answer", "text": "La aplicación web es responsive y accesible desde cualquier dispositivo móvil."}}
         ]
     }
     </script>

@@ -292,26 +292,26 @@
     <!-- Article Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Cómo Digitalizar tu Viñedo - Guía Completa 2027",
         "description": "Guía paso a paso para digitalizar tu viñedo. Beneficios, herramientas y software de gestión agrícola profesional.",
         "author": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365"
         },
         "publisher": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365",
             "logo": {
-                "@type": "ImageObject",
+                "@@type": "ImageObject",
                 "url": "{{ asset('images/logo.png') }}"
             }
         },
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}",
         "mainEntityOfPage": {
-            "@type": "WebPage",
+            "@@type": "WebPage",
             "@id": "{{ url('/digitalizar-viñedo') }}"
         }
     }

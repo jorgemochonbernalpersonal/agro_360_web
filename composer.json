@@ -13,6 +13,7 @@
         "livewire/flux": "^2.9",
         "livewire/livewire": "^3.7",
         "livewire/volt": "^1.10",
+        "maatwebsite/excel": "^3.1",
         "rap2hpoutre/laravel-log-viewer": "*",
         "sentry/sentry-laravel": "^4.20",
         "spatie/laravel-sitemap": "^7.3",

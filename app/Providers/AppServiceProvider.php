@@ -146,5 +146,8 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\AgriculturalActivity::observe(\App\Observers\AgriculturalActivityObserver::class);
         \App\Models\Plot::observe(\App\Observers\PlotObserver::class);
         \App\Models\PlotPlanting::observe(\App\Observers\PlotPlantingObserver::class);
+        
+        // Registrar observer para descontar stock de productos fitosanitarios
+        \App\Models\PhytosanitaryTreatment::observe(\App\Observers\PhytosanitaryTreatmentObserver::class);
     }
 }

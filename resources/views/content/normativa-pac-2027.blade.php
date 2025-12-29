@@ -20,7 +20,11 @@
                     <img src="{{ asset('images/logo.png') }}" alt="Agro365" class="h-10 w-auto">
                     <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
                 </a>
-                <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
+                @guest
+                    <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Comenzar Gratis</a>
+                @else
+                    <a href="{{ route(auth()->user()->role . '.dashboard') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white">Ir al Dashboard</a>
+                @endguest
             </div>
         </nav>
     </header>
@@ -67,9 +71,15 @@
                     <p class="text-gray-700 mb-6">
                         Agro365 te ayuda a cumplir automaticamente con todos los requisitos PAC. 6 meses gratis.
                     </p>
-                    <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
-                        Comenzar Gratis
-                    </a>
+                    @guest
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
+                            Comenzar Gratis
+                        </a>
+                    @else
+                        <a href="{{ route(auth()->user()->role . '.dashboard') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
+                            Ir al Dashboard
+                        </a>
+                    @endguest
                 </div>
             </article>
         </div>

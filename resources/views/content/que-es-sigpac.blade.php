@@ -181,12 +181,21 @@
                         <p class="text-gray-700 mb-6">
                             Comienza a gestionar tus parcelas SIGPAC de forma profesional con Agro365. <strong>6 meses gratis</strong> para beta testers.
                         </p>
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
-                            Comenzar Gratis
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                            </svg>
-                        </a>
+                        @guest
+                            <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
+                                Comenzar Gratis
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                        @else
+                            <a href="{{ route(auth()->user()->role . '.dashboard') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
+                                Ir al Dashboard
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                        @endguest
                     </div>
                 </section>
 
@@ -217,12 +226,21 @@
                 <p class="text-gray-600 mb-8 text-lg">
                     Software profesional de gestión agrícola con integración completa SIGPAC. Prueba gratis 6 meses.
                 </p>
-                <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                    </svg>
-                </a>
+                @guest
+                    <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
+                        Comenzar Gratis - 6 Meses
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                @else
+                    <a href="{{ route(auth()->user()->role . '.dashboard') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
+                        Ir al Dashboard
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                @endguest
             </div>
         </div>
     </div>
@@ -240,31 +258,33 @@
 
     <!-- Article Schema -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": "Qué es SIGPAC y Cómo Funciona - Guía Completa 2027",
-        "description": "Guía completa sobre SIGPAC: qué es, cómo funciona y cómo gestionar parcelas agrícolas con códigos SIGPAC.",
-        "author": {
-            "@type": "Organization",
-            "name": "Agro365"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "Agro365",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "{{ asset('images/logo.png') }}"
-            }
-        },
-        "datePublished": "2024-01-01",
-        "dateModified": "{{ now()->toIso8601String() }}",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "{{ url('/que-es-sigpac') }}"
-        }
-    }
+    @php
+        $articleSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => 'Qué es SIGPAC y Cómo Funciona - Guía Completa 2027',
+            'description' => 'Guía completa sobre SIGPAC: qué es, cómo funciona y cómo gestionar parcelas agrícolas con códigos SIGPAC.',
+            'author' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365'
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('images/logo.png')
+                ]
+            ],
+            'datePublished' => '2024-01-01',
+            'dateModified' => now()->toIso8601String(),
+            'mainEntityOfPage' => [
+                '@type' => 'WebPage',
+                '@id' => url('/que-es-sigpac')
+            ]
+        ];
+    @endphp
+    {!! json_encode($articleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
     </script>
 </body>
 </html>
-

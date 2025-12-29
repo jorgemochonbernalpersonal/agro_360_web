@@ -25,11 +25,13 @@ return new class extends Migration
             $table->index('invoice_id', 'invoice_items_invoice_idx');
         });
 
-        // Índices para container_states (queries de stock)
-        Schema::table('container_states', function (Blueprint $table) {
-            $table->index('harvest_id', 'container_states_harvest_idx');
-            $table->index(['container_id', 'last_movement_at'], 'container_states_container_movement_idx');
-        });
+        // Índices para container_current_states (queries de stock)
+        if (Schema::hasTable('container_current_states')) {
+            Schema::table('container_current_states', function (Blueprint $table) {
+                $table->index('harvest_id', 'container_current_states_harvest_idx');
+                $table->index(['container_id', 'last_movement_at'], 'container_current_states_container_movement_idx');
+            });
+        }
 
         // Índices para invoices (queries frecuentes)
         Schema::table('invoices', function (Blueprint $table) {
@@ -57,10 +59,12 @@ return new class extends Migration
             $table->dropIndex('invoice_items_invoice_idx');
         });
 
-        Schema::table('container_states', function (Blueprint $table) {
-            $table->dropIndex('container_states_harvest_idx');
-            $table->dropIndex('container_states_container_movement_idx');
-        });
+        if (Schema::hasTable('container_current_states')) {
+            Schema::table('container_current_states', function (Blueprint $table) {
+                $table->dropIndex('container_current_states_harvest_idx');
+                $table->dropIndex('container_current_states_container_movement_idx');
+            });
+        }
 
         Schema::table('invoices', function (Blueprint $table) {
             $table->dropIndex('invoices_user_status_created_idx');

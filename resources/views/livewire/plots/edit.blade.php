@@ -21,6 +21,32 @@
                 </div>
             </div>
         @enderror
+        
+        <!-- Configuración de Alertas -->
+        <x-form-section title="Configuración de Alertas (Teledetección)" color="green">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <x-label for="ndvi_alert_threshold">Umbral de Alerta NDVI (Vigor)</x-label>
+                    <div class="mt-1 flex rounded-md shadow-sm">
+                        <x-input wire:model="ndvi_alert_threshold" type="number" step="0.05" min="0" max="1" 
+                            id="ndvi_alert_threshold" class="flex-1 rounded-none rounded-l-md"
+                            placeholder="0.30" :error="$errors->first('ndvi_alert_threshold')" />
+                        <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                            NDVI
+                        </span>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">Recibirás una alerta si el vigor baja de este valor (Por defecto: 0.30)</p>
+                </div>
+
+                <div class="flex items-center mt-6">
+                    <x-checkbox wire:model="alert_email_enabled" id="alert_email_enabled" />
+                    <div class="ml-3 text-sm">
+                        <label for="alert_email_enabled" class="font-medium text-gray-700">Recibir alertas por Email</label>
+                        <p class="text-gray-500">Además de la notificación en la web, te enviaremos un correo.</p>
+                    </div>
+                </div>
+            </div>
+        </x-form-section>
 
         <x-form-section title="Información Básica" color="green">
 

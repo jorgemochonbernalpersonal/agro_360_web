@@ -28,6 +28,8 @@ class Plot extends Model
         'autonomous_community_id',
         'province_id',
         'municipality_id',
+        'ndvi_alert_threshold',
+        'alert_email_enabled',
     ];
 
     protected $casts = [
@@ -38,6 +40,7 @@ class Plot extends Model
         'active' => 'boolean',
         'is_locked' => 'boolean',
         'locked_at' => 'datetime',
+        'alert_email_enabled' => 'boolean',
     ];
 
     /**

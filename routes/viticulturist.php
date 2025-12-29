@@ -166,6 +166,20 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/{product}/edit', PhytosanitaryProductsEdit::class)->name('edit');
         });
 
+        // Gestión de Inventario de Productos Fitosanitarios
+        Route::prefix('inventory')->name('inventory.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Inventory\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Inventory\CreateStock::class)->name('create');
+            Route::get('/{stock}/movements', \App\Livewire\Viticulturist\Inventory\Movements::class)->name('movements');
+        });
+
+        // Gestión de Almacenes
+        Route::prefix('warehouses')->name('warehouses.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Warehouses\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Warehouses\Create::class)->name('create');
+            Route::get('/{warehouse}/edit', \App\Livewire\Viticulturist\Warehouses\Edit::class)->name('edit');
+        });
+
         Route::get('/calendar', Calendar::class)->name('calendar');
 
         // Clientes

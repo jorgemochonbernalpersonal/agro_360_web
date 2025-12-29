@@ -4,15 +4,38 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title>Términos y Condiciones - Agro365</title>
-    <meta name="description" content="Términos y condiciones de uso de Agro365, plataforma de gestión agrícola para viticultores">
+    <!-- SEO Meta Tags -->
+    <title>Términos y Condiciones - Agro365 | Software de Gestión Agrícola</title>
+    <meta name="description" content="Términos y condiciones de uso de Agro365 - Software de gestión agrícola para viticultores. Programa beta, precios, uso del servicio y protección de datos.">
     <meta name="robots" content="index, follow">
+    <meta name="author" content="Agro365">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://agro365.es{{ request()->getRequestUri() }}">
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="es" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="es-ES" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="Términos y Condiciones - Agro365">
+    <meta property="og:description" content="Términos y condiciones de uso de Agro365 - Software de gestión agrícola para viticultores en España.">
+    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:site_name" content="Agro365">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="Términos y Condiciones - Agro365">
+    <meta name="twitter:description" content="Términos y condiciones de uso de Agro365 - Software de gestión agrícola para viticultores.">
+    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -176,6 +199,24 @@
         </div>
     </main>
 
+    <!-- Breadcrumb Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "{{ url('/') }}"
+        },{
+            "@@type": "ListItem",
+            "position": 2,
+            "name": "Términos y Condiciones",
+            "item": "{{ url()->current() }}"
+        }]
+    }
+    </script>
 
     @include('partials.footer-seo')
 </body>

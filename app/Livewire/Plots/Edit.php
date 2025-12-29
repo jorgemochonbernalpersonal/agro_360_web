@@ -30,6 +30,8 @@ class Edit extends Component
     public $province_id = '';
     public $municipality_id = '';
     public $sigpac_use = [];
+    public $ndvi_alert_threshold = 0.30;
+    public $alert_email_enabled = false;
 
     public function mount(Plot $plot)
     {
@@ -53,6 +55,8 @@ class Edit extends Component
         $this->province_id = $plot->province_id;
         $this->municipality_id = $plot->municipality_id;
         $this->sigpac_use = $plot->sigpacUses->pluck('id')->toArray();
+        $this->ndvi_alert_threshold = $plot->ndvi_alert_threshold;
+        $this->alert_email_enabled = $plot->alert_email_enabled;
     }
 
     protected function rules(): array
@@ -62,6 +66,8 @@ class Edit extends Component
             'description' => 'nullable|string',
             'area' => 'nullable|numeric|min:0',
             'active' => 'boolean',
+            'ndvi_alert_threshold' => 'required|numeric|min:0|max:1',
+            'alert_email_enabled' => 'boolean',
         ];
 
         // `winery_id` removed: do not validate here.
@@ -127,6 +133,8 @@ class Edit extends Component
                 'description' => $this->description,
                 'area' => $this->area ?: null,
                 'active' => $this->active,
+                'ndvi_alert_threshold' => $this->ndvi_alert_threshold,
+                'alert_email_enabled' => $this->alert_email_enabled,
             ];
 
             // `winery_id` removed: plots now tracked by `viticulturist_id`.

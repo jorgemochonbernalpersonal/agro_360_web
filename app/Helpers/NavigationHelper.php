@@ -219,6 +219,31 @@ class NavigationHelper
                     'route' => 'viticulturist.digital-notebook.containers.index',
                     'active' => request()->routeIs('viticulturist.digital-notebook.containers.*'),
                 ]] : []),
+                // Inventario solo para viticultor
+                ...($user->role === 'viticulturist' ? [[
+                    'icon' => '📋',
+                    'icon_svg' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>',
+                    'label' => 'Inventario',
+                    'route' => 'viticulturist.inventory.index',
+                    'active' => request()->routeIs('viticulturist.inventory.*') || request()->routeIs('viticulturist.warehouses.*'),
+                    'submenu' => [
+                        [
+                            'label' => 'Ver Inventario',
+                            'route' => 'viticulturist.inventory.index',
+                            'active' => request()->routeIs('viticulturist.inventory.index') || request()->routeIs('viticulturist.inventory.movements'),
+                        ],
+                        [
+                            'label' => 'Registrar Stock',
+                            'route' => 'viticulturist.inventory.create',
+                            'active' => request()->routeIs('viticulturist.inventory.create'),
+                        ],
+                        [
+                            'label' => 'Gestionar Almacenes',
+                            'route' => 'viticulturist.warehouses.index',
+                            'active' => request()->routeIs('viticulturist.warehouses.*'),
+                        ],
+                    ],
+                ]] : []),
                 // Facturación solo para viticultor
                 ...($user->role === 'viticulturist' ? [[
                     'icon' => '🧾',

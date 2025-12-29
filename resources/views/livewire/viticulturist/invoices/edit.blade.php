@@ -399,6 +399,32 @@
                 </div>
             </x-form-section>
 
+            {{-- Resumen de Totales --}}
+            <x-form-section title="Resumen de Totales" color="blue">
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">Subtotal:</p>
+                            <p class="text-lg font-bold text-gray-900">{{ number_format($this->subtotal, 2) }} €</p>
+                        </div>
+                        @if($this->discountAmount > 0)
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Descuento:</p>
+                                <p class="text-lg font-bold text-red-600">-{{ number_format($this->discountAmount, 2) }} €</p>
+                            </div>
+                        @endif
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">Impuestos:</p>
+                            <p class="text-lg font-bold text-gray-900">{{ number_format($this->taxAmount, 2) }} €</p>
+                        </div>
+                        <div class="md:col-span-1">
+                            <p class="text-sm text-gray-500 mb-1">Total:</p>
+                            <p class="text-2xl font-bold text-blue-600">{{ number_format($this->totalAmount, 2) }} €</p>
+                        </div>
+                    </div>
+                </div>
+            </x-form-section>
+
             <div class="flex justify-between items-center gap-4">
                 <div>
                     @if($invoice->status === 'draft' && !$this->isLocked)
@@ -414,7 +440,14 @@
                     @endif
                 </div>
                 <div class="flex gap-4">
-                    <x-button type="button" variant="ghost" href="{{ route('viticulturist.invoices.index') }}">Cancelar</x-button>
+                    <x-button 
+                        type="button" 
+                        variant="ghost" 
+                        wire:click="cancel"
+                        wire:confirm="¿Estás seguro de cancelar? Se restaurarán todos los valores originales."
+                    >
+                        Cancelar
+                    </x-button>
                     <x-button type="submit" variant="primary">Guardar Cambios</x-button>
                 </div>
             </div>

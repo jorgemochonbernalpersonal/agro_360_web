@@ -154,14 +154,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Qué datos debo registrar de cada máquina?", "acceptedAnswer": {"@type": "Answer", "text": "Matrícula, potencia, marca, modelo, fecha de compra, ITV, seguro y ROMA si aplica. También puedes subir fotos y documentos."}},
-            {"@type": "Question", "name": "¿Cómo configuro las alertas de mantenimiento?", "acceptedAnswer": {"@type": "Answer", "text": "Indica las horas de intervalo para cada tipo de mantenimiento (cambio aceite, filtros, etc). El sistema te avisará cuando se cumplan."}},
-            {"@type": "Question", "name": "¿Puedo registrar maquinaria alquilada?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, puedes indicar si la maquinaria es propia, alquilada o de un servicio externo. Esto afecta al cálculo de costes."}},
-            {"@type": "Question", "name": "¿Es necesario para inspecciones PAC?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, las inspecciones pueden requerir documentación de la maquinaria usada en tratamientos fitosanitarios como atomizadores."}},
-            {"@type": "Question", "name": "¿Se calcula el coste por hectárea automáticamente?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, dividiendo el coste horario entre las hectáreas trabajadas según el consumo y horas registradas."}}
+            {"@@type": "Question", "name": "¿Qué datos debo registrar de cada máquina?", "acceptedAnswer": {"@@type": "Answer", "text": "Matrícula, potencia, marca, modelo, fecha de compra, ITV, seguro y ROMA si aplica. También puedes subir fotos y documentos."}},
+            {"@@type": "Question", "name": "¿Cómo configuro las alertas de mantenimiento?", "acceptedAnswer": {"@@type": "Answer", "text": "Indica las horas de intervalo para cada tipo de mantenimiento (cambio aceite, filtros, etc). El sistema te avisará cuando se cumplan."}},
+            {"@@type": "Question", "name": "¿Puedo registrar maquinaria alquilada?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, puedes indicar si la maquinaria es propia, alquilada o de un servicio externo. Esto afecta al cálculo de costes."}},
+            {"@@type": "Question", "name": "¿Es necesario para inspecciones PAC?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, las inspecciones pueden requerir documentación de la maquinaria usada en tratamientos fitosanitarios como atomizadores."}},
+            {"@@type": "Question", "name": "¿Se calcula el coste por hectárea automáticamente?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, dividiendo el coste horario entre las hectáreas trabajadas según el consumo y horas registradas."}}
         ]
     }
     </script>

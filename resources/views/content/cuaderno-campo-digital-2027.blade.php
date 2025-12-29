@@ -289,26 +289,26 @@
     <!-- Article Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Cuaderno de Campo Digital Obligatorio 2027 - Normativa y Requisitos",
         "description": "Guía completa sobre el cuaderno de campo digital obligatorio desde 2027. Normativa, requisitos y cómo cumplir.",
         "author": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365"
         },
         "publisher": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365",
             "logo": {
-                "@type": "ImageObject",
+                "@@type": "ImageObject",
                 "url": "{{ asset('images/logo.png') }}"
             }
         },
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}",
         "mainEntityOfPage": {
-            "@type": "WebPage",
+            "@@type": "WebPage",
             "@id": "{{ url('/cuaderno-campo-digital-2027') }}"
         }
     }

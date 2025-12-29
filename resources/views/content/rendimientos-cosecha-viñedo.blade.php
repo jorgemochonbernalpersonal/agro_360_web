@@ -171,14 +171,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Cómo se calcula el rendimiento por hectárea?", "acceptedAnswer": {"@type": "Answer", "text": "Dividiendo los kilogramos cosechados entre la superficie de la parcela en hectáreas."}},
-            {"@type": "Question", "name": "¿Puedo comparar rendimientos entre campañas?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, el sistema guarda el histórico de rendimientos por parcela permitiendo comparar año a año."}},
-            {"@type": "Question", "name": "¿Qué es el rendimiento estimado?", "acceptedAnswer": {"@type": "Answer", "text": "Es una predicción pre-vendimia basada en conteo de racimos y peso medio estimado por racimo."}},
-            {"@type": "Question", "name": "¿Se tienen en cuenta los límites de DO?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, puedes configurar el límite de rendimiento de tu DO y el sistema te alertará si lo superas."}},
-            {"@type": "Question", "name": "¿Se puede exportar el análisis de rendimientos?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, puedes generar informes PDF con el análisis detallado por parcela y campaña."}}
+            {"@@type": "Question", "name": "¿Cómo se calcula el rendimiento por hectárea?", "acceptedAnswer": {"@@type": "Answer", "text": "Dividiendo los kilogramos cosechados entre la superficie de la parcela en hectáreas."}},
+            {"@@type": "Question", "name": "¿Puedo comparar rendimientos entre campañas?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, el sistema guarda el histórico de rendimientos por parcela permitiendo comparar año a año."}},
+            {"@@type": "Question", "name": "¿Qué es el rendimiento estimado?", "acceptedAnswer": {"@@type": "Answer", "text": "Es una predicción pre-vendimia basada en conteo de racimos y peso medio estimado por racimo."}},
+            {"@@type": "Question", "name": "¿Se tienen en cuenta los límites de DO?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, puedes configurar el límite de rendimiento de tu DO y el sistema te alertará si lo superas."}},
+            {"@@type": "Question", "name": "¿Se puede exportar el análisis de rendimientos?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, puedes generar informes PDF con el análisis detallado por parcela y campaña."}}
         ]
     }
     </script>

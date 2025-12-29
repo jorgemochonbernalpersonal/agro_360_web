@@ -408,6 +408,31 @@ class Dashboard extends Component
         ];
     }
 
+    public function downloadReport()
+    {
+        if (!$this->selectedPlotId) return;
+        
+        try {
+            $service = new \App\Services\RemoteSensing\RemoteSensingReportService();
+            $result = $service->generatePlotReport($this->selectedPlot);
+            
+            if ($result['success']) {
+                $this->dispatch('notify', [
+                    'type' => 'success',
+                    'message' => 'Informe generado correctamente. Descargando...',
+                ]);
+                
+                return $service->downloadReport($result['pdf_path']);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Report generation error', ['error' => $e->getMessage()]);
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al generar el informe: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
     public function render()
     {
         return view('livewire.viticulturist.remote-sensing.dashboard', [

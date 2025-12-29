@@ -190,14 +190,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Son válidos para inspecciones PAC?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, los informes incluyen firma electrónica SHA-256 y código QR de verificación aceptados en inspecciones."}},
-            {"@type": "Question", "name": "¿Cómo verifico un informe?", "acceptedAnswer": {"@type": "Answer", "text": "Escaneando el código QR del documento o introduciendo el hash en nuestra web de verificación."}},
-            {"@type": "Question", "name": "¿Puedo generar informes de campañas anteriores?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, puedes generar informes oficiales de cualquier campaña almacenada en el sistema."}},
-            {"@type": "Question", "name": "¿Qué pasa si modifico datos después de generar un informe?", "acceptedAnswer": {"@type": "Answer", "text": "El informe generado no se modifica. Puedes generar un nuevo informe actualizado que tendrá un hash diferente."}},
-            {"@type": "Question", "name": "¿Cuántos informes puedo generar?", "acceptedAnswer": {"@type": "Answer", "text": "Ilimitados. Puedes generar todos los informes que necesites sin coste adicional."}}
+            {"@@type": "Question", "name": "¿Son válidos para inspecciones PAC?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, los informes incluyen firma electrónica SHA-256 y código QR de verificación aceptados en inspecciones."}},
+            {"@@type": "Question", "name": "¿Cómo verifico un informe?", "acceptedAnswer": {"@@type": "Answer", "text": "Escaneando el código QR del documento o introduciendo el hash en nuestra web de verificación."}},
+            {"@@type": "Question", "name": "¿Puedo generar informes de campañas anteriores?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, puedes generar informes oficiales de cualquier campaña almacenada en el sistema."}},
+            {"@@type": "Question", "name": "¿Qué pasa si modifico datos después de generar un informe?", "acceptedAnswer": {"@@type": "Answer", "text": "El informe generado no se modifica. Puedes generar un nuevo informe actualizado que tendrá un hash diferente."}},
+            {"@@type": "Question", "name": "¿Cuántos informes puedo generar?", "acceptedAnswer": {"@@type": "Answer", "text": "Ilimitados. Puedes generar todos los informes que necesites sin coste adicional."}}
         ]
     }
     </script>

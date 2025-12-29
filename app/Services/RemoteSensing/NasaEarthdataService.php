@@ -283,10 +283,25 @@ class NasaEarthdataService
         $variation = (mt_rand(-10, 10) / 100);
         $ndvi = max(0.1, min(0.9, $seasonalBase + $variation));
 
+        // NDWI typically ranges from -1 to 1
+        // Healthy vegetation with good water: 0.2 to 0.4
+        // Stressed vegetation: -0.2 to 0.1
+        $ndwiBase = match (true) {
+            $month >= 6 && $month <= 8 => 0.25,   // Summer: moderate water
+            $month >= 4 && $month <= 5 => 0.35,   // Spring: high water
+            $month >= 9 && $month <= 10 => 0.15, // Autumn: drying
+            default => 0.05,                      // Winter: low
+        };
+        $ndwi = $ndwiBase + (mt_rand(-15, 15) / 100);
+
         return [
             'ndvi_mean' => round($ndvi, 3),
             'ndvi_min' => round($ndvi - 0.03, 3),
             'ndvi_max' => round($ndvi + 0.03, 3),
+            'ndwi_mean' => round($ndwi, 3),
+            'ndwi_min' => round($ndwi - 0.05, 3),
+            'ndwi_max' => round($ndwi + 0.05, 3),
+            'evi_mean' => round($ndvi * 0.9, 3),
             'cloud_coverage' => mt_rand(0, 30),
             'image_date' => now(),
             'image_source' => 'NASA MODIS (Mock)',
@@ -315,16 +330,42 @@ class NasaEarthdataService
             $variation = (mt_rand(-8, 8) / 100);
             $ndvi = max(0.1, min(0.9, $seasonalBase + $variation));
 
+            // NDWI varies with season
+            $ndwiBase = match (true) {
+                $month >= 6 && $month <= 8 => 0.25,
+                $month >= 4 && $month <= 5 => 0.35,
+                $month >= 9 && $month <= 10 => 0.15,
+                default => 0.05,
+            };
+            $ndwi = $ndwiBase + (mt_rand(-15, 15) / 100);
+
+            // Temperature varies with season (Spain)
+            $tempBase = match (true) {
+                $month >= 6 && $month <= 8 => 32,
+                $month >= 4 && $month <= 5 => 20,
+                $month >= 9 && $month <= 10 => 18,
+                default => 8,
+            };
+            $temp = $tempBase + mt_rand(-5, 5);
+
             $record = new PlotRemoteSensing([
                 'plot_id' => $plot->id,
                 'ndvi_mean' => round($ndvi, 3),
                 'ndvi_min' => round($ndvi - 0.03, 3),
                 'ndvi_max' => round($ndvi + 0.03, 3),
+                'ndwi_mean' => round($ndwi, 3),
+                'ndwi_min' => round($ndwi - 0.05, 3),
+                'ndwi_max' => round($ndwi + 0.05, 3),
                 'cloud_coverage' => mt_rand(0, 30),
                 'image_date' => $date,
                 'image_source' => 'NASA MODIS (Mock)',
                 'health_status' => $this->calculateHealthStatus($ndvi),
                 'trend' => 'stable',
+                'temperature' => $temp,
+                'precipitation' => mt_rand(0, 20),
+                'humidity' => mt_rand(40, 80),
+                'soil_moisture' => mt_rand(15, 45),
+                'et0' => round(mt_rand(30, 70) / 10, 1),
             ]);
 
             $data->push($record);

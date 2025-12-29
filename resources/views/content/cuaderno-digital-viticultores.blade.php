@@ -274,30 +274,33 @@
 
     <!-- Article Schema -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": "Cuaderno Digital para Viticultores - Obligatorio 2027",
-        "description": "Cuaderno de campo digital para viticultores obligatorio desde 2027. SIGPAC, cumplimiento normativo e informes oficiales.",
-        "author": {
-            "@type": "Organization",
-            "name": "Agro365"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "Agro365",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "{{ asset('images/logo.png') }}"
-            }
-        },
-        "datePublished": "2024-01-01",
-        "dateModified": "{{ now()->toIso8601String() }}",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "{{ url('/cuaderno-digital-viticultores') }}"
-        }
-    }
+    @php
+        $articleSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => 'Cuaderno Digital para Viticultores - Obligatorio 2027',
+            'description' => 'Cuaderno de campo digital para viticultores obligatorio desde 2027. SIGPAC, cumplimiento normativo e informes oficiales.',
+            'author' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365'
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('images/logo.png')
+                ]
+            ],
+            'datePublished' => '2024-01-01',
+            'dateModified' => now()->toIso8601String(),
+            'mainEntityOfPage' => [
+                '@type' => 'WebPage',
+                '@id' => url('/cuaderno-digital-viticultores')
+            ]
+        ];
+    @endphp
+    {!! json_encode($articleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
     </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\RemoteSensingController;
+use App\Http\Controllers\RemoteSensingExportController;
 use App\Livewire\Viticulturist\RemoteSensing\Dashboard;
 use App\Livewire\Viticulturist\RemoteSensing\PlotAnalysis;
 use App\Services\RemoteSensing\RemoteSensingReportService;
@@ -52,6 +53,12 @@ Route::middleware(['auth', 'verified', 'check.beta'])->group(function () {
             
             return back()->with('error', 'No se pudo generar el informe');
         })->name('report.global');
+        
+        // Export routes (PDF/Excel)
+        Route::get('/export/{plot}/pdf', [RemoteSensingExportController::class, 'exportPdf'])
+            ->name('export.pdf');
+        Route::get('/export/{plot}/excel', [RemoteSensingExportController::class, 'exportExcel'])
+            ->name('export.excel');
     });
 });
 

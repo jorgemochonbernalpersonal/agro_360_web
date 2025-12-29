@@ -139,14 +139,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Qué es SHA-256?", "acceptedAnswer": {"@type": "Answer", "text": "Es un algoritmo criptográfico que genera un código único de 64 caracteres a partir del contenido del documento."}},
-            {"@type": "Question", "name": "¿Tiene validez legal la firma?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, la firma electrónica SHA-256 proporciona integridad documental aceptada en inspecciones oficiales."}},
-            {"@type": "Question", "name": "¿Cómo verifico un documento firmado?", "acceptedAnswer": {"@type": "Answer", "text": "Escanea el código QR o introduce el hash en nuestra página de verificación para comprobar la autenticidad."}},
-            {"@type": "Question", "name": "¿Se puede falsificar la firma?", "acceptedAnswer": {"@type": "Answer", "text": "No, cualquier modificación del documento cambiaría el hash, lo que invalidaría la firma automáticamente."}},
-            {"@type": "Question", "name": "¿Necesito un certificado digital personal?", "acceptedAnswer": {"@type": "Answer", "text": "No, Agro365 firma los documentos automáticamente con su propio certificado, vinculado a tu cuenta."}}
+            {"@@type": "Question", "name": "¿Qué es SHA-256?", "acceptedAnswer": {"@@type": "Answer", "text": "Es un algoritmo criptográfico que genera un código único de 64 caracteres a partir del contenido del documento."}},
+            {"@@type": "Question", "name": "¿Tiene validez legal la firma?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, la firma electrónica SHA-256 proporciona integridad documental aceptada en inspecciones oficiales."}},
+            {"@@type": "Question", "name": "¿Cómo verifico un documento firmado?", "acceptedAnswer": {"@@type": "Answer", "text": "Escanea el código QR o introduce el hash en nuestra página de verificación para comprobar la autenticidad."}},
+            {"@@type": "Question", "name": "¿Se puede falsificar la firma?", "acceptedAnswer": {"@@type": "Answer", "text": "No, cualquier modificación del documento cambiaría el hash, lo que invalidaría la firma automáticamente."}},
+            {"@@type": "Question", "name": "¿Necesito un certificado digital personal?", "acceptedAnswer": {"@@type": "Answer", "text": "No, Agro365 firma los documentos automáticamente con su propio certificado, vinculado a tu cuenta."}}
         ]
     }
     </script>

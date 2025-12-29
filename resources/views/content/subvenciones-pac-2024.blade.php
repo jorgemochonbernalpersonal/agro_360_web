@@ -224,12 +224,12 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Subvenciones PAC 2024: Guía Completa de Ayudas Agrícolas",
         "description": "Todo sobre las ayudas PAC para agricultores en España. Requisitos, plazos y cómo cumplir.",
-        "author": {"@type": "Organization", "name": "Agro365"},
-        "publisher": {"@type": "Organization", "name": "Agro365"},
+        "author": {"@@type": "Organization", "name": "Agro365"},
+        "publisher": {"@@type": "Organization", "name": "Agro365"},
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}"
     }
@@ -237,12 +237,12 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Qué pasa si no cumplo los requisitos PAC?", "acceptedAnswer": {"@type": "Answer", "text": "Puedes perder parcial o totalmente las ayudas PAC. Las penalizaciones van del 1% al 100% según la gravedad."}},
-            {"@type": "Question", "name": "¿Es obligatorio el cuaderno digital?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, desde 2027 será obligatorio para todos los agricultores."}},
-            {"@type": "Question", "name": "¿Cómo me preparo para una inspección?", "acceptedAnswer": {"@type": "Answer", "text": "Mantén el cuaderno de campo actualizado, SIGPAC correcto y tratamientos registrados."}}
+            {"@@type": "Question", "name": "¿Qué pasa si no cumplo los requisitos PAC?", "acceptedAnswer": {"@@type": "Answer", "text": "Puedes perder parcial o totalmente las ayudas PAC. Las penalizaciones van del 1% al 100% según la gravedad."}},
+            {"@@type": "Question", "name": "¿Es obligatorio el cuaderno digital?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, desde 2027 será obligatorio para todos los agricultores."}},
+            {"@@type": "Question", "name": "¿Cómo me preparo para una inspección?", "acceptedAnswer": {"@@type": "Answer", "text": "Mantén el cuaderno de campo actualizado, SIGPAC correcto y tratamientos registrados."}}
         ]
     }
     </script>

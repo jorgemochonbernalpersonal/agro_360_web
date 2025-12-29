@@ -15,11 +15,21 @@ class ContainerCurrentState extends Model
         'external_grape_id',
         'has_subproducts',
         'current_quantity',
+        'available_qty',
+        'reserved_qty',
+        'sold_qty',
+        'location',
+        'last_movement_at',
+        'last_movement_by',
     ];
 
     protected $casts = [
         'current_quantity' => 'decimal:2',
+        'available_qty' => 'decimal:3',
+        'reserved_qty' => 'decimal:3',
+        'sold_qty' => 'decimal:3',
         'has_subproducts' => 'boolean',
+        'last_movement_at' => 'datetime',
     ];
 
     /**
@@ -36,6 +46,14 @@ class ContainerCurrentState extends Model
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
+    }
+
+    /**
+     * Usuario que realizó el último movimiento
+     */
+    public function lastMovedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_movement_by');
     }
 
     /**

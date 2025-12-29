@@ -29,6 +29,8 @@ class Create extends Component
     public $province_id = '';
     public $municipality_id = '';
     public $sigpac_use = [];
+    public $ndvi_alert_threshold = 0.30;
+    public $alert_email_enabled = false;
 
     public function mount()
     {
@@ -56,6 +58,8 @@ class Create extends Component
             'description' => 'nullable|string',
             'area' => 'nullable|numeric|min:0',
             'active' => 'boolean',
+            'ndvi_alert_threshold' => 'required|numeric|min:0|max:1',
+            'alert_email_enabled' => 'boolean',
         ];
 
         // Validar solo si el campo es visible (winery_id removed)
@@ -104,6 +108,8 @@ class Create extends Component
                 'description' => $this->description,
                 'area' => $this->area ?: null,
                 'active' => $this->active,
+                'ndvi_alert_threshold' => $this->ndvi_alert_threshold,
+                'alert_email_enabled' => $this->alert_email_enabled,
             ];
 
             // No asignar `winery_id` — columna eliminada, la pista de pertenencia es `viticulturist_id`.

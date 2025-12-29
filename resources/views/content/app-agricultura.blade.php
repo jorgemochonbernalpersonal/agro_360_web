@@ -232,8 +232,6 @@
     </div>
 
     <!-- Footer -->
-    @include('partials.footer-seo')
-
     <!-- Breadcrumb Schema -->
     <script type="application/ld+json">
     {!! \App\Helpers\SeoHelper::breadcrumbSchema([
@@ -244,31 +242,31 @@
 
     <!-- Article Schema -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": "App Agricultura - Software de Gestión Agrícola Digital",
-        "description": "App de agricultura digital para gestionar explotaciones. Cuaderno digital, SIGPAC y cumplimiento normativo.",
-        "author": {
-            "@type": "Organization",
-            "name": "Agro365"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "Agro365",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "{{ asset('images/logo.png') }}"
-            }
-        },
-        "datePublished": "2024-01-01",
-        "dateModified": "{{ now()->toIso8601String() }}",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "{{ url('/app-agricultura') }}"
-        }
-    }
+    @php
+        $articleSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => 'App Agricultura - Software de Gestión Agrícola Digital',
+            'description' => 'App de agricultura digital para gestionar explotaciones. Cuaderno digital, SIGPAC y cumplimiento normativo.',
+            'author' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365'
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('images/logo.png')
+                ]
+            ],
+            'datePublished' => '2024-01-01',
+            'dateModified' => now()->toIso8601String(),
+            'mainEntityOfPage' => [
+                '@type' => 'WebPage',
+                '@id' => url('/app-agricultura')
+            ]
+        ];
+    @endphp
+    {!! json_encode($articleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
     </script>
-</body>
-</html>
-

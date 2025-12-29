@@ -25,6 +25,7 @@ use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
+use App\Models\ProductStock;
 use App\Models\SigpacCode;
 use App\Models\SigpacUse;
 use App\Models\SupportTicket;
@@ -33,6 +34,7 @@ use App\Models\Tax;
 use App\Models\TrainingSystem;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -248,6 +250,14 @@ class CompleteTestUserSeeder extends Seeder
 
             $this->command->info('✅ Productos fitosanitarios creados');
 
+            // 10.1. Crear almacenes para el usuario
+            $warehouses = $this->createWarehouses($user);
+            $this->command->info('✅ Almacenes creados: ' . count($warehouses));
+
+            // 10.2. Crear stock de productos fitosanitarios
+            $this->createProductStock($user, $warehouses);
+            $this->command->info('✅ Stock de productos fitosanitarios creado');
+
             // 11. Crear actividades agrícolas para campaña 2024 (tests unitarios)
             // Ahora que los productos existen, las actividades pueden tener tratamientos
             $this->createActivitiesForCampaign($user, $campaign2024, $plots, $crews, '2024');
@@ -299,6 +309,8 @@ class CompleteTestUserSeeder extends Seeder
             $this->command->info('   - Actividades 2024: ' . AgriculturalActivity::where('campaign_id', $campaign2024->id)->count());
             $this->command->info('   - Actividades 2025: ' . AgriculturalActivity::where('campaign_id', $campaign2025->id)->count());
             $this->command->info('   - Productos fitosanitarios: ' . PhytosanitaryProduct::count());
+            $this->command->info('   - Almacenes: ' . Warehouse::where('user_id', $user->id)->count());
+            $this->command->info('   - Stock de productos: ' . ProductStock::where('user_id', $user->id)->count());
             $this->command->info('   - Plagas/Enfermedades: ' . Pest::count());
             $this->command->info('   - Tratamientos fitosanitarios: ' . PhytosanitaryTreatment::whereHas('activity', function ($q) use ($user) {
                 $q->where('viticulturist_id', $user->id);
@@ -577,6 +589,83 @@ class CompleteTestUserSeeder extends Seeder
                     'archived' => rand(0, 10) === 0,  // 10% archivados
                 ]
             );
+        }
+    }
+
+    /**
+     * Crear almacenes para el usuario
+     */
+    private function createWarehouses(User $user): array
+    {
+        $warehouses = [];
+        $warehouseNames = [
+            'Almacén Principal',
+            'Almacén Secundario',
+            'Depósito Norte',
+            'Depósito Sur',
+            'Bodega de Productos',
+        ];
+
+        foreach ($warehouseNames as $index => $name) {
+            $locationNumber = $index + 1;
+            $warehouse = Warehouse::firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'name' => $name,
+                ],
+                [
+                    'location' => "Ubicación {$locationNumber}",
+                    'description' => "Almacén de prueba: {$name}",
+                    'active' => true,
+                ]
+            );
+            $warehouses[] = $warehouse;
+        }
+
+        return $warehouses;
+    }
+
+    /**
+     * Crear stock de productos fitosanitarios
+     */
+    private function createProductStock(User $user, array $warehouses): void
+    {
+        $products = PhytosanitaryProduct::take(20)->get();
+        $units = ['L', 'kg', 'L', 'L', 'kg']; // Mayoría en litros
+
+        foreach ($products as $product) {
+            // Crear 1-3 entradas de stock por producto
+            $stockEntries = rand(1, 3);
+            
+            for ($i = 0; $i < $stockEntries; $i++) {
+                $warehouse = rand(0, 1) === 1 && !empty($warehouses) 
+                    ? collect($warehouses)->random() 
+                    : null;
+
+                $quantity = rand(50, 1000) / 10; // 5.0 a 100.0
+                $unit = $units[array_rand($units)];
+                $expiryDate = now()->addDays(rand(30, 365)); // Entre 1 mes y 1 año
+
+                ProductStock::firstOrCreate(
+                    [
+                        'product_id' => $product->id,
+                        'user_id' => $user->id,
+                        'warehouse_id' => $warehouse?->id,
+                        'batch_number' => "LOTE-{$product->id}-" . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
+                    ],
+                    [
+                        'quantity' => $quantity,
+                        'unit' => $unit,
+                        'expiry_date' => $expiryDate,
+                        'manufacturing_date' => $expiryDate->copy()->subDays(rand(180, 730)), // 6 meses a 2 años antes
+                        'unit_price' => rand(1000, 50000) / 100, // 10.00 a 500.00
+                        'supplier' => 'Proveedor Test ' . rand(1, 5),
+                        'invoice_number' => 'FAC-' . rand(1000, 9999),
+                        'notes' => "Stock de prueba para {$product->name}",
+                        'active' => true,
+                    ]
+                );
+            }
         }
     }
 

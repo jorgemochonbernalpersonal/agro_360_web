@@ -174,14 +174,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Puedo tener varias variedades en la misma parcela?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, cada parcela puede tener múltiples plantaciones con diferentes variedades, sistemas de conducción y años de plantación."}},
-            {"@type": "Question", "name": "¿Qué es el marco de plantación?", "acceptedAnswer": {"@type": "Answer", "text": "Es la distancia entre cepas y entre filas que determina la densidad de plantación (cepas por hectárea)."}},
-            {"@type": "Question", "name": "¿Cómo registro el sistema de conducción?", "acceptedAnswer": {"@type": "Answer", "text": "Selecciona entre espaldera, vaso, parral u otro, indicando además el tipo de poda y la orientación de las filas."}},
-            {"@type": "Question", "name": "¿Puedo indicar la DO de cada plantación?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, cada plantación puede tener asociada su certificación de DO, DOCa, IGP o cultivo ecológico."}},
-            {"@type": "Question", "name": "¿Se vincula con el código SIGPAC?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, cada plantación está vinculada a un recinto SIGPAC para trazabilidad completa y cumplimiento PAC."}}
+            {"@@type": "Question", "name": "¿Puedo tener varias variedades en la misma parcela?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, cada parcela puede tener múltiples plantaciones con diferentes variedades, sistemas de conducción y años de plantación."}},
+            {"@@type": "Question", "name": "¿Qué es el marco de plantación?", "acceptedAnswer": {"@@type": "Answer", "text": "Es la distancia entre cepas y entre filas que determina la densidad de plantación (cepas por hectárea)."}},
+            {"@@type": "Question", "name": "¿Cómo registro el sistema de conducción?", "acceptedAnswer": {"@@type": "Answer", "text": "Selecciona entre espaldera, vaso, parral u otro, indicando además el tipo de poda y la orientación de las filas."}},
+            {"@@type": "Question", "name": "¿Puedo indicar la DO de cada plantación?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, cada plantación puede tener asociada su certificación de DO, DOCa, IGP o cultivo ecológico."}},
+            {"@@type": "Question", "name": "¿Se vincula con el código SIGPAC?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, cada plantación está vinculada a un recinto SIGPAC para trazabilidad completa y cumplimiento PAC."}}
         ]
     }
     </script>

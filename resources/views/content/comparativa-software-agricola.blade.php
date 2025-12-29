@@ -274,26 +274,26 @@
     <!-- Article Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Comparativa Software Agrícola para Viñedos 2027",
         "description": "Compara Agro365 con otras soluciones de software agrícola. Cuaderno digital, SIGPAC, informes oficiales y más.",
         "author": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365"
         },
         "publisher": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365",
             "logo": {
-                "@type": "ImageObject",
+                "@@type": "ImageObject",
                 "url": "{{ asset('images/logo.png') }}"
             }
         },
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}",
         "mainEntityOfPage": {
-            "@type": "WebPage",
+            "@@type": "WebPage",
             "@id": "{{ url('/comparativa-software-agricola') }}"
         }
     }

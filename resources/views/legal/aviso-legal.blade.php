@@ -3,9 +3,41 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Aviso Legal - Agro365</title>
-    <meta name="description" content="Aviso legal de Agro365 - Software de gestión agrícola para viñedos y bodegas">
-    <meta name="robots" content="noindex, follow">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- SEO Meta Tags -->
+    <title>Aviso Legal - Agro365 | Software de Gestión Agrícola</title>
+    <meta name="description" content="Aviso legal de Agro365 - Software de gestión agrícola para viñedos y bodegas. Información legal, condiciones de uso y propiedad intelectual.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Agro365">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="es" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="es-ES" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="Aviso Legal - Agro365">
+    <meta property="og:description" content="Aviso legal de Agro365 - Software de gestión agrícola para viñedos y bodegas en España.">
+    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:site_name" content="Agro365">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="Aviso Legal - Agro365">
+    <meta name="twitter:description" content="Aviso legal de Agro365 - Software de gestión agrícola para viñedos y bodegas.">
+    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    
     @vite(['resources/css/app.css'])
 </head>
 <body class="bg-gray-50">
@@ -114,6 +146,25 @@
                 <a href="{{ route('cookies') }}" class="text-[var(--color-agro-green-dark)] hover:underline">Política de Cookies</a>
             </div>
     </div>
+
+    <!-- Breadcrumb Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "{{ url('/') }}"
+        },{
+            "@@type": "ListItem",
+            "position": 2,
+            "name": "Aviso Legal",
+            "item": "{{ url()->current() }}"
+        }]
+    }
+    </script>
 
     @include('partials.footer-seo')
 </body>

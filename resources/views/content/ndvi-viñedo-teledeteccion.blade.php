@@ -175,14 +175,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Necesito instalar algún sensor?", "acceptedAnswer": {"@type": "Answer", "text": "No, los datos se obtienen de satélites NASA y Sentinel-2. No necesitas hardware adicional."}},
-            {"@type": "Question", "name": "¿Con qué frecuencia se actualizan los datos?", "acceptedAnswer": {"@type": "Answer", "text": "Los satélites pasan cada 5-10 días, pero la frecuencia efectiva depende de la nubosidad."}},
-            {"@type": "Question", "name": "¿Qué resolución tienen las imágenes?", "acceptedAnswer": {"@type": "Answer", "text": "Sentinel-2 ofrece 10m de resolución, suficiente para detectar variabilidad dentro de parcelas."}},
-            {"@type": "Question", "name": "¿Tiene coste adicional la teledetección?", "acceptedAnswer": {"@type": "Answer", "text": "No, está incluida en tu suscripción sin coste adicional."}},
-            {"@type": "Question", "name": "¿Puedo ver el histórico de NDVI?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, guardamos los últimos 90 días de datos con gráficos de evolución temporal."}}
+            {"@@type": "Question", "name": "¿Necesito instalar algún sensor?", "acceptedAnswer": {"@@type": "Answer", "text": "No, los datos se obtienen de satélites NASA y Sentinel-2. No necesitas hardware adicional."}},
+            {"@@type": "Question", "name": "¿Con qué frecuencia se actualizan los datos?", "acceptedAnswer": {"@@type": "Answer", "text": "Los satélites pasan cada 5-10 días, pero la frecuencia efectiva depende de la nubosidad."}},
+            {"@@type": "Question", "name": "¿Qué resolución tienen las imágenes?", "acceptedAnswer": {"@@type": "Answer", "text": "Sentinel-2 ofrece 10m de resolución, suficiente para detectar variabilidad dentro de parcelas."}},
+            {"@@type": "Question", "name": "¿Tiene coste adicional la teledetección?", "acceptedAnswer": {"@@type": "Answer", "text": "No, está incluida en tu suscripción sin coste adicional."}},
+            {"@@type": "Question", "name": "¿Puedo ver el histórico de NDVI?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, guardamos los últimos 90 días de datos con gráficos de evolución temporal."}}
         ]
     }
     </script>

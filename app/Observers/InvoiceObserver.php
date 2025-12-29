@@ -379,21 +379,24 @@ class InvoiceObserver
                 'reference_number' => $invoice->invoice_number,
             ]);
 
-            // Actualizar contenedor
+            // Actualizar contenedor usando ContainerCurrentState
             if ($harvest->container_id) {
-                $state = \App\Models\ContainerState::where('container_id', $harvest->container_id)->first();
-                if ($state) {
-                    $availableChange = $item->quantity;
-                    $reservedChange = $oldStatus === 'draft' ? -$item->quantity : 0;
-                    $soldChange = $oldStatus !== 'draft' ? -$item->quantity : 0;
+                $container = Container::find($harvest->container_id);
+                if ($container) {
+                    $state = ContainerCurrentState::where('container_id', $container->id)->first();
+                    if ($state) {
+                        $availableChange = $item->quantity;
+                        $reservedChange = $oldStatus === 'draft' ? -$item->quantity : 0;
+                        $soldChange = $oldStatus !== 'draft' ? -$item->quantity : 0;
 
-                    $state->update([
-                        'available_qty' => $state->available_qty + $availableChange,
-                        'reserved_qty' => max(0, $state->reserved_qty + $reservedChange),
-                        'sold_qty' => max(0, $state->sold_qty + $soldChange),
-                        'last_movement_at' => now(),
-                        'last_movement_by' => Auth::id(),
-                    ]);
+                        $state->update([
+                            'available_qty' => max(0, ($state->available_qty ?? 0) + $availableChange),
+                            'reserved_qty' => max(0, ($state->reserved_qty ?? 0) + $reservedChange),
+                            'sold_qty' => max(0, ($state->sold_qty ?? 0) + $soldChange),
+                            'last_movement_at' => now(),
+                            'last_movement_by' => Auth::id(),
+                        ]);
+                    }
                 }
             }
         }
@@ -478,26 +481,34 @@ class InvoiceObserver
                 'reference_number' => $invoice->delivery_note_code,
             ]);
 
-            // Actualizar ContainerState
+            // Actualizar ContainerCurrentState (consolidado)
             if ($harvest->container_id) {
-                $state = \App\Models\ContainerState::firstOrCreate(
-                    ['container_id' => $harvest->container_id],
-                    [
-                        'content_type' => 'harvest',
-                        'harvest_id' => $harvest->id,
-                        'total_quantity' => $harvest->total_weight, // ✅ FIX: inicializar correctamente
-                        'available_qty' => $harvest->total_weight,
-                        'reserved_qty' => 0,
-                        'sold_qty' => 0,
-                    ]
-                );
+                $container = Container::find($harvest->container_id);
+                if ($container) {
+                    $state = ContainerCurrentState::firstOrCreate(
+                        ['container_id' => $container->id],
+                        [
+                            'harvest_id' => $harvest->id,
+                            'current_quantity' => $container->used_capacity,
+                            'available_qty' => $container->used_capacity,
+                            'reserved_qty' => 0,
+                            'sold_qty' => 0,
+                            'has_subproducts' => false,
+                        ]
+                    );
 
-                $state->update([
-                    'available_qty' => max(0, $state->available_qty - $item->quantity),
-                    'reserved_qty' => $state->reserved_qty + $item->quantity,
-                    'last_movement_at' => now(),
-                    'last_movement_by' => Auth::id() ?? $invoice->user_id,
-                ]);
+                    // Actualizar stock: restar disponible, sumar reservado
+                    $state->update([
+                        'available_qty' => max(0, ($state->available_qty ?? $container->used_capacity) - $item->quantity),
+                        'reserved_qty' => ($state->reserved_qty ?? 0) + $item->quantity,
+                        'last_movement_at' => now(),
+                        'last_movement_by' => Auth::id() ?? $invoice->user_id,
+                    ]);
+                    
+                    // Actualizar current_quantity y sincronizar con used_capacity
+                    $newQuantity = max(0, $state->current_quantity - $item->quantity);
+                    $state->updateQuantity($newQuantity);
+                }
             }
         }
 

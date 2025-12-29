@@ -52,6 +52,38 @@
 
         {{-- Notifications List --}}
         <div class="overflow-y-auto flex-1">
+            {{-- Dashboard Alerts Section --}}
+            @if(count($dashboardAlerts) > 0)
+                <div class="px-3 py-2 bg-amber-50 border-b border-amber-200">
+                    <span class="text-xs font-semibold text-amber-700">⚡ Alertas del sistema</span>
+                </div>
+                @foreach($dashboardAlerts as $alert)
+                    <div class="px-4 py-3 border-b border-gray-100 bg-{{ $alert['type'] === 'danger' ? 'red' : ($alert['type'] === 'warning' ? 'amber' : 'blue') }}-50/50">
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-{{ $alert['type'] === 'danger' ? 'red' : ($alert['type'] === 'warning' ? 'amber' : 'blue') }}-100 flex items-center justify-center text-xl">
+                                {{ $alert['icon'] }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900">{{ $alert['title'] }}</p>
+                                <p class="text-xs text-gray-600 mt-0.5">{{ $alert['message'] }}</p>
+                                @if(isset($alert['action_url']))
+                                    <a href="{{ $alert['action_url'] }}" wire:navigate @click="open = false"
+                                       class="inline-block mt-2 text-xs font-medium text-[var(--color-agro-green)] hover:text-[var(--color-agro-green-dark)]">
+                                        {{ $alert['action_text'] ?? 'Ver más' }} →
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+
+            {{-- Database Notifications --}}
+            @if(count($notifications) > 0 && count($dashboardAlerts) > 0)
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-200">
+                    <span class="text-xs font-semibold text-gray-500">📬 Notificaciones</span>
+                </div>
+            @endif
             @forelse($notifications as $notification)
                 <div 
                     wire:key="notification-{{ $notification->id }}"

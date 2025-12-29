@@ -292,26 +292,26 @@
     <!-- Article Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Gestión de Vendimia Digital para Viticultores - Guía Completa 2024",
         "description": "Software profesional para gestión de vendimia: control de cosechas, contenedores, rendimientos y facturación automática.",
         "author": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365"
         },
         "publisher": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Agro365",
             "logo": {
-                "@type": "ImageObject",
+                "@@type": "ImageObject",
                 "url": "{{ asset('images/logo.png') }}"
             }
         },
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}",
         "mainEntityOfPage": {
-            "@type": "WebPage",
+            "@@type": "WebPage",
             "@id": "{{ url('/gestion-vendimia') }}"
         }
     }
@@ -320,30 +320,30 @@
     <!-- FAQ Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "¿Puedo registrar contenedores desde el móvil?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Sí, la app de Agro365 está optimizada para uso en campo. Registra contenedores directamente desde tu smartphone."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "¿Se puede facturar directamente a varias bodegas?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Sí, gestiona múltiples clientes (bodegas) y genera facturas separadas por cliente desde los mismos contenedores."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "¿Cómo se compara con el rendimiento estimado?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Introduces el rendimiento estimado por parcela al inicio de campaña. El sistema compara automáticamente con los kilos reales cosechados."
                 }
             }

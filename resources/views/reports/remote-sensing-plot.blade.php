@@ -181,6 +181,60 @@
         </div>
     </div>
 
+    @if(isset($gdd))
+    <!-- Phenology & GDD -->
+    <div class="section">
+        <div class="section-title">🍇 Fenología y Riesgo (GDD)</div>
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-label">Estado Fenológico</div>
+                <div class="info-value">
+                    <span style="font-size: 14px;">{{ $gdd['stage']['icon'] ?? '' }} <strong>{{ $gdd['stage']['name'] ?? 'N/A' }}</strong></span>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">GDD Acumulado</div>
+                <div class="info-value">
+                    <strong>{{ $gdd['gdd_accumulated'] }}</strong> / {{ $gdd['gdd_target'] }} ({{ round(($gdd['gdd_accumulated'] / $gdd['gdd_target']) * 100) }}%)
+                </div>
+            </div>
+            @if(isset($gdd['estimated_harvest_date']))
+            <div class="info-row">
+                <div class="info-label">Vendimia Estimada</div>
+                <div class="info-value">{{ $gdd['estimated_harvest_date'] }} ({{ $gdd['days_to_harvest'] }} días)</div>
+            </div>
+            @endif
+        </div>
+    </div>
+    
+    <!-- Disease Risks -->
+    <div class="section">
+        <div class="section-title">🦠 Riesgo de Enfermedades</div>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Enfermedad</th>
+                    <th>Nivel</th>
+                    <th>Obs.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($gdd['risks'] ?? [] as $risk)
+                <tr>
+                    <td><strong>{{ $risk['name'] }}</strong></td>
+                    <td>
+                        <span style="color: {{ $risk['color'] }}; font-weight: bold;">
+                            {{ strtoupper($risk['level'] === 'high' ? 'Alto' : ($risk['level'] === 'medium' ? 'Medio' : 'Bajo')) }}
+                        </span>
+                    </td>
+                    <td>{{ $risk['message'] }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+
     <!-- Current NDVI -->
     @if($latestData)
     <div class="ndvi-box">
@@ -259,7 +313,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        Informe generado por Agro365 - Sistema de Teledetección Sentinel-2 | {{ $generatedAt->format('d/m/Y H:i:s') }}
+        Informe generado por Agro365 - Datos satelitales NASA MODIS & Clima Open-Meteo | {{ $generatedAt->format('d/m/Y H:i:s') }}
     </div>
 </body>
 </html>

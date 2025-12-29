@@ -30,8 +30,12 @@ class RemoteSensingReportService
         // Calculate statistics
         $stats = $this->calculateStats($historicalData);
         
+        // Get GDD data
+        $phenologyService = new PhenologyService();
+        $gdd = $phenologyService->calculateGdd($plot);
+        
         // Generate PDF
-        $pdfPath = $this->generatePDF($plot, $user, $latestData, $historicalData, $stats);
+        $pdfPath = $this->generatePDF($plot, $user, $latestData, $historicalData, $stats, $gdd);
         
         return [
             'success' => true,
@@ -138,7 +142,7 @@ class RemoteSensingReportService
     /**
      * Generate PDF for a single plot
      */
-    private function generatePDF(Plot $plot, User $user, $latestData, $historicalData, array $stats): string
+    private function generatePDF(Plot $plot, User $user, $latestData, $historicalData, array $stats, array $gdd = []): string
     {
         $filename = sprintf(
             'teledeteccion_%s_%s.pdf',
@@ -161,6 +165,7 @@ class RemoteSensingReportService
             'historicalData' => $historicalData,
             'chartData' => $chartData,
             'stats' => $stats,
+            'gdd' => $gdd,
             'generatedAt' => Carbon::now(),
         ]);
         

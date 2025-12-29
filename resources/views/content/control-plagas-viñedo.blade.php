@@ -288,12 +288,12 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Control de Plagas en Viñedo: Guía Completa 2024",
         "description": "Guía completa de control de plagas en viñedo: mildiu, oídio, polilla del racimo, araña roja.",
-        "author": {"@type": "Organization", "name": "Agro365"},
-        "publisher": {"@type": "Organization", "name": "Agro365"},
+        "author": {"@@type": "Organization", "name": "Agro365"},
+        "publisher": {"@@type": "Organization", "name": "Agro365"},
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}"
     }

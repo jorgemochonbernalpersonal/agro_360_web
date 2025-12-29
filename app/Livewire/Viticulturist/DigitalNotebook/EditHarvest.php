@@ -399,7 +399,7 @@ class EditHarvest extends Component
         $rules = [
             'plot_id' => 'required|exists:plots,id',
             'plot_planting_id' => 'required|exists:plot_plantings,id',
-            'container_id' => 'required|exists:harvest_containers,id',
+            'container_id' => 'required|exists:containers,id',
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
             'harvest_start_date' => 'required|date',

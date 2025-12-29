@@ -70,7 +70,10 @@ class InvoiceItemStockManagementTest extends TestCase
             'sold_qty' => 0,
         ]);
 
-        $containerState = ContainerState::where('container_id', $this->harvest->container_id)->first();
+        $container = Container::find($this->harvest->container_id);
+        $this->assertNotNull($container, 'Container should exist');
+        $containerState = ContainerCurrentState::where('container_id', $container->id)->first();
+        $this->assertNotNull($containerState, 'ContainerCurrentState should exist');
         $this->assertEquals($initialStock->available_qty - $quantity, $containerState->available_qty);
         $this->assertEquals($quantity, $containerState->reserved_qty);
     }
@@ -112,7 +115,10 @@ class InvoiceItemStockManagementTest extends TestCase
             'sold_qty' => $quantity,
         ]);
 
-        $containerState = ContainerState::where('container_id', $this->harvest->container_id)->first();
+        $container = Container::find($this->harvest->container_id);
+        $this->assertNotNull($container, 'Container should exist');
+        $containerState = ContainerCurrentState::where('container_id', $container->id)->first();
+        $this->assertNotNull($containerState, 'ContainerCurrentState should exist');
         $this->assertEquals($quantity, $containerState->sold_qty);
     }
 
@@ -269,7 +275,10 @@ class InvoiceItemStockManagementTest extends TestCase
             'client_id' => $this->client->id,
         ]);
 
-        $initialContainer = ContainerState::where('container_id', $this->harvest->container_id)->first();
+        $container = Container::find($this->harvest->container_id);
+        $this->assertNotNull($container, 'Container should exist');
+        $initialContainer = ContainerCurrentState::where('container_id', $container->id)->first();
+        $this->assertNotNull($initialContainer, 'ContainerCurrentState should exist');
         $quantity = 100;
 
         // Act & Assert - Create (reserve)
@@ -288,7 +297,8 @@ class InvoiceItemStockManagementTest extends TestCase
             'concept_type' => 'harvest',
         ]);
 
-        $containerAfterCreate = ContainerState::where('container_id', $this->harvest->container_id)->first();
+        $containerAfterCreate = ContainerCurrentState::where('container_id', $container->id)->first();
+        $this->assertNotNull($containerAfterCreate, 'ContainerCurrentState should exist after creating item');
         $this->assertEquals($initialContainer->available_qty - $quantity, $containerAfterCreate->available_qty);
         $this->assertEquals($quantity, $containerAfterCreate->reserved_qty);
         $this->assertNotNull($containerAfterCreate->last_movement_at);

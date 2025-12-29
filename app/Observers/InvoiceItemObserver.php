@@ -149,12 +149,10 @@ class InvoiceItemObserver
             'reference_number' => $item->invoice->delivery_note_code,
         ]);
 
-        // Actualizar ContainerCurrentState (la reserva no cambia used_capacity, solo cuando se vende)
+        // Actualizar ContainerCurrentState: restar cantidad reservada para reflejar disponibilidad
         if ($harvest->container_id) {
             $container = Container::find($harvest->container_id);
             if ($container) {
-                // La reserva no afecta used_capacity, solo cuando se confirma la venta
-                // Pero actualizamos el estado para tracking
                 $state = ContainerCurrentState::firstOrCreate(
                     ['container_id' => $container->id],
                     [
@@ -163,6 +161,11 @@ class InvoiceItemObserver
                         'has_subproducts' => false,
                     ]
                 );
+                
+                // Actualizar current_quantity restando la cantidad reservada
+                // Esto refleja la cantidad disponible en el contenedor
+                $newQuantity = max(0, $state->current_quantity - $item->quantity);
+                $state->updateQuantity($newQuantity);
             }
         }
 
@@ -231,12 +234,16 @@ class InvoiceItemObserver
             'reference_number' => $item->invoice->delivery_note_code,
         ]);
 
-        // Actualizar ContainerCurrentState (la liberación no cambia used_capacity)
+        // Actualizar ContainerCurrentState: incrementar cantidad al liberar reserva
         if ($harvest->container_id) {
             $container = Container::find($harvest->container_id);
             if ($container) {
-                // La liberación de reserva no afecta used_capacity
-                // Solo se decrementa cuando se confirma la venta
+                $state = ContainerCurrentState::where('container_id', $container->id)->first();
+                if ($state) {
+                    // Incrementar current_quantity al liberar la reserva
+                    $newQuantity = $state->current_quantity + $item->quantity;
+                    $state->updateQuantity($newQuantity);
+                }
             }
         }
 

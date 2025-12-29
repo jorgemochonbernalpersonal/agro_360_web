@@ -2,12 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Services\DashboardAlertsService;
 use Livewire\Component;
 use Illuminate\Notifications\DatabaseNotification;
 
 class Notifications extends Component
 {
     public $notifications = [];
+    public $dashboardAlerts = [];
     public $unreadCount = 0;
     public $showDropdown = false;
 
@@ -16,6 +18,7 @@ class Notifications extends Component
     public function mount()
     {
         $this->loadNotifications();
+        $this->loadDashboardAlerts();
     }
 
     public function loadNotifications()
@@ -27,6 +30,15 @@ class Notifications extends Component
             ->get();
         
         $this->unreadCount = auth()->user()->unreadNotifications()->count();
+        
+        // Add dashboard alerts count
+        $this->unreadCount += count($this->dashboardAlerts);
+    }
+
+    public function loadDashboardAlerts()
+    {
+        $alertsService = new DashboardAlertsService();
+        $this->dashboardAlerts = $alertsService->getAlerts(auth()->user())->toArray();
     }
 
     public function markAsRead($notificationId)

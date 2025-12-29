@@ -244,30 +244,33 @@
 
     <!-- Article Schema -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": "Software para Viticultores - Gestión Profesional de Viñedos",
-        "description": "Software profesional para viticultores con cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo.",
-        "author": {
-            "@type": "Organization",
-            "name": "Agro365"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "Agro365",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "{{ asset('images/logo.png') }}"
-            }
-        },
-        "datePublished": "2024-01-01",
-        "dateModified": "{{ now()->toIso8601String() }}",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "{{ url('/software-para-viticultores') }}"
-        }
-    }
+    @php
+        $articleSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => 'Software para Viticultores - Gestión Profesional de Viñedos',
+            'description' => 'Software profesional para viticultores con cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo.',
+            'author' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365'
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Agro365',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('images/logo.png')
+                ]
+            ],
+            'datePublished' => '2024-01-01',
+            'dateModified' => now()->toIso8601String(),
+            'mainEntityOfPage' => [
+                '@type' => 'WebPage',
+                '@id' => url('/software-para-viticultores')
+            ]
+        ];
+    @endphp
+    {!! json_encode($articleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
     </script>
 </body>
 </html>

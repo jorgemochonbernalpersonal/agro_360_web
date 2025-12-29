@@ -253,12 +253,12 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Facturación Agrícola para Viticultores - Software Profesional",
         "description": "Software de facturación agrícola para viticultores. Factura cosechas y gestiona clientes.",
-        "author": {"@type": "Organization", "name": "Agro365"},
-        "publisher": {"@type": "Organization", "name": "Agro365"},
+        "author": {"@@type": "Organization", "name": "Agro365"},
+        "publisher": {"@@type": "Organization", "name": "Agro365"},
         "datePublished": "2024-01-01",
         "dateModified": "{{ now()->toIso8601String() }}"
     }

@@ -9,7 +9,8 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\ContainerState;
+use App\Models\Container;
+use App\Models\ContainerCurrentState;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class InvoiceStatusTransitionStockTest extends TestCase
@@ -71,7 +72,10 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals($quantity, $latestStock->sold_qty);
 
         // Assert - Container state updated
-        $containerState = ContainerState::where('container_id', $this->harvest->container_id)->first();
+        $container = Container::find($this->harvest->container_id);
+        $this->assertNotNull($container, 'Container should exist');
+        $containerState = ContainerCurrentState::where('container_id', $container->id)->first();
+        $this->assertNotNull($containerState, 'ContainerCurrentState should exist');
         $this->assertEquals(0, $containerState->reserved_qty);
         $this->assertEquals($quantity, $containerState->sold_qty);
     }

@@ -107,6 +107,34 @@
                 </div>
             @endif
 
+            <!-- Configuración de Alertas -->
+            @if($plot->ndvi_alert_threshold)
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-4">Configuración de Alertas</h2>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-semibold text-gray-500">Umbral NDVI (Vigor)</label>
+                        <p class="text-gray-900 font-bold text-lg">{{ $plot->ndvi_alert_threshold }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold text-gray-500">Alertas por Email</label>
+                        <div class="mt-1">
+                            @if($plot->alert_email_enabled)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    Activado
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    Desactivado
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- SIGPAC -->
             @if($plot->sigpacUses->count() > 0 || $plot->sigpacCodes->count() > 0)
                 <div class="bg-white rounded-lg shadow-lg p-6">

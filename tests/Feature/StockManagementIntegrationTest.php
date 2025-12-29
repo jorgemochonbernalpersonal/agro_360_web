@@ -9,7 +9,8 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Harvest;
 use App\Models\HarvestStock;
-use App\Models\ContainerState;
+use App\Models\Container;
+use App\Models\ContainerCurrentState;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class StockManagementIntegrationTest extends TestCase
@@ -87,7 +88,10 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(0, $finalStock->sold_qty);
 
         // Verify container state
-        $containerState = ContainerState::where('container_id', $this->harvest->container_id)->first();
+        $container = Container::find($this->harvest->container_id);
+        $this->assertNotNull($container, 'Container should exist');
+        $containerState = ContainerCurrentState::where('container_id', $container->id)->first();
+        $this->assertNotNull($containerState, 'ContainerCurrentState should exist');
         $this->assertEquals($initialAvailable, $containerState->available_qty);
         $this->assertEquals(0, $containerState->reserved_qty);
         $this->assertEquals(0, $containerState->sold_qty);

@@ -113,12 +113,12 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Article",
+        "@@context": "https://schema.org",
+        "@@type": "Article",
         "headline": "Novedades PAC 2025: Lo que Necesitas Saber",
         "datePublished": "2024-12-29",
-        "author": {"@type": "Organization", "name": "Agro365"},
-        "publisher": {"@type": "Organization", "name": "Agro365"}
+        "author": {"@@type": "Organization", "name": "Agro365"},
+        "publisher": {"@@type": "Organization", "name": "Agro365"}
     }
     </script>
 </body>

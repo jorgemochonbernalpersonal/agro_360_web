@@ -9,6 +9,17 @@
                 <p class="text-gray-600 mt-1">{{ $plot->name }} - Datos satelitales y meteorológicos</p>
             </div>
             <div class="flex items-center gap-2">
+                {{-- Export Buttons --}}
+                <div class="flex items-center gap-1 mr-2">
+                    <a href="{{ route('remote-sensing.export.pdf', $plot) }}" 
+                       class="bg-red-50 text-red-700 px-3 py-2 rounded-lg hover:bg-red-100 transition flex items-center gap-2 text-sm border border-red-200">
+                        📄 PDF
+                    </a>
+                    <a href="{{ route('remote-sensing.export.excel', $plot) }}" 
+                       class="bg-green-50 text-green-700 px-3 py-2 rounded-lg hover:bg-green-100 transition flex items-center gap-2 text-sm border border-green-200">
+                        📊 Excel
+                    </a>
+                </div>
                 <button wire:click="refreshData" 
                         class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition flex items-center gap-2 shadow-lg">
                     <svg wire:loading.remove wire:target="refreshData" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,31 +74,41 @@
 
         <!-- Tabs Navigation -->
         <div class="mb-6 border-b border-gray-200">
-            <nav class="flex gap-4" aria-label="Tabs">
+            <nav class="flex gap-4 overflow-x-auto" aria-label="Tabs">
                 <button wire:click="setTab('satellite')" 
-                        class="px-4 py-3 text-sm font-medium border-b-2 transition
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
                             {{ $activeTab === 'satellite' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
                     🛰️ Satélite
                 </button>
                 <button wire:click="setTab('weather')" 
-                        class="px-4 py-3 text-sm font-medium border-b-2 transition
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
                             {{ $activeTab === 'weather' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
                     🌦️ Clima
                 </button>
                 <button wire:click="setTab('soil')" 
-                        class="px-4 py-3 text-sm font-medium border-b-2 transition
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
                             {{ $activeTab === 'soil' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
                     🌱 Suelo
                 </button>
                 <button wire:click="setTab('solar')" 
-                        class="px-4 py-3 text-sm font-medium border-b-2 transition
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
                             {{ $activeTab === 'solar' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
                     ☀️ Radiación
                 </button>
+                <button wire:click="setTab('irrigation')" 
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
+                            {{ $activeTab === 'irrigation' ? 'border-cyan-500 text-cyan-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                    💧 Riego
+                </button>
+                <button wire:click="setTab('comparison')" 
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
+                            {{ $activeTab === 'comparison' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                    📊 Comparativa
+                </button>
                 <button wire:click="setTab('history')" 
-                        class="px-4 py-3 text-sm font-medium border-b-2 transition
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
                             {{ $activeTab === 'history' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
-                    📊 Histórico
+                    📅 Histórico
                 </button>
             </nav>
         </div>
@@ -307,8 +328,19 @@
                 </div>
             @endif
 
+            <!-- Irrigation Tab -->
+            @if($activeTab === 'irrigation')
+                @livewire('viticulturist.remote-sensing.plot-irrigation-card', ['plot' => $plot], key('irrigation-' . $plot->id))
+            @endif
+
+            <!-- Year Comparison Tab -->
+            @if($activeTab === 'comparison')
+                @livewire('viticulturist.remote-sensing.plot-year-comparison', ['plot' => $plot], key('comparison-' . $plot->id))
+            @endif
+
             <!-- History Tab -->
             @if($activeTab === 'history')
+                @livewire('viticulturist.remote-sensing.plot-image-history', ['plot' => $plot], key('history-' . $plot->id))
                 <h3 class="text-lg font-semibold mb-4">📈 Evolución NDVI - Últimos 90 días</h3>
                 @if(count($historicalData) > 0)
                     <div class="h-64 flex items-end justify-between gap-1 bg-gray-50 rounded-lg p-4">

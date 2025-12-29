@@ -15,77 +15,47 @@ class GenerateSitemap extends Command
     {
         $this->info('Generating sitemap...');
 
-        $baseUrl = config('app.url');
-        
         // Asegurar que la URL use HTTPS en producción
-        if (config('app.env') === 'production') {
-            $baseUrl = str_replace('http://', 'https://', $baseUrl);
-        }
+        $forceHttps = config('app.env') === 'production';
 
         $sitemap = Sitemap::create();
-        
-        // Homepage with images
-        $homepage = Url::create($baseUrl . '/')
-            ->setLastModificationDate(now())
-            ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
-            ->setPriority(1.0);
-        
-        // Add images to homepage
-        if (file_exists(public_path('images/logo.png'))) {
-            $homepage->addImage(
-                $baseUrl . '/images/logo.png',
-                'Logo de Agro365, software profesional para viñedos y bodegas',
-                '',
-                'Agro365 - Software de Gestión Agrícola'
-            );
+        $service = new \App\Services\SitemapService();
+        $urls = $service->getUrls();
+
+        foreach ($urls as $urlData) {
+            $loc = $urlData['loc'];
+            
+            if ($forceHttps) {
+                $loc = str_replace('http://', 'https://', $loc);
+            }
+
+            $sitemapUrl = Url::create($loc)
+                ->setLastModificationDate(\Carbon\Carbon::parse($urlData['lastmod']))
+                ->setChangeFrequency($urlData['changefreq'])
+                ->setPriority((float) $urlData['priority']);
+
+            if (isset($urlData['images'])) {
+                foreach ($urlData['images'] as $image) {
+                    $imgLoc = $image['loc'];
+                    if ($forceHttps) {
+                        $imgLoc = str_replace('http://', 'https://', $imgLoc);
+                    }
+                    
+                    $sitemapUrl->addImage(
+                        $imgLoc,
+                        $image['caption'],
+                        '', // Geo location not used
+                        $image['title']
+                    );
+                }
+            }
+
+            $sitemap->add($sitemapUrl);
         }
-        
-        if (file_exists(public_path('images/dashboard-preview.png'))) {
-            $homepage->addImage(
-                $baseUrl . '/images/dashboard-preview.png',
-                'Vista del dashboard de gestión agrícola con SIGPAC y cuaderno digital',
-                '',
-                'Dashboard de Agro365'
-            );
-        }
-        
-        $sitemap->add($homepage)
-            ->add(Url::create($baseUrl . '/faqs')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                ->setPriority(0.8))
-            ->add(Url::create($baseUrl . '/quienes-somos')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                ->setPriority(0.7))
-            ->add(Url::create($baseUrl . '/blog')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
-                ->setPriority(0.8))
-            ->add(Url::create($baseUrl . '/tutoriales')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                ->setPriority(0.7))
-            ->add(Url::create($baseUrl . '/privacidad')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                ->setPriority(0.3))
-            ->add(Url::create($baseUrl . '/terminos')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                ->setPriority(0.3))
-            ->add(Url::create($baseUrl . '/cookies')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                ->setPriority(0.3))
-            ->add(Url::create($baseUrl . '/aviso-legal')
-                ->setLastModificationDate(now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                ->setPriority(0.3));
         
         $sitemap->writeToFile(public_path('sitemap.xml'));
 
         $this->info('Sitemap generated successfully at public/sitemap.xml');
-        $this->info('Base URL used: ' . $baseUrl);
+        $this->info('Total URLs: ' . count($urls));
     }
 }

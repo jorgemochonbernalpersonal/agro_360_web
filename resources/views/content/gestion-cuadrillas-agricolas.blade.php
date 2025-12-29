@@ -150,14 +150,14 @@
 
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
-            {"@type": "Question", "name": "¿Puedo crear varias cuadrillas?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, puedes crear todas las cuadrillas que necesites. Cada una con su encargado, miembros y coste por hora diferente."}},
-            {"@type": "Question", "name": "¿Cómo se calculan los costes?", "acceptedAnswer": {"@type": "Answer", "text": "Se multiplican las horas trabajadas por el coste/hora de cada trabajador. El sistema suma automáticamente el coste total por parcela y labor."}},
-            {"@type": "Question", "name": "¿Se puede asignar la misma cuadrilla a varias parcelas?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, una cuadrilla puede trabajar en múltiples parcelas. El sistema rastrea las horas por parcela de forma separada."}},
-            {"@type": "Question", "name": "¿Necesito registrar el carnet ROPO de los trabajadores?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, si realizan tratamientos fitosanitarios. El sistema valida que los aplicadores tengan ROPO válido."}},
-            {"@type": "Question", "name": "¿Puedo ver qué cuadrilla hizo cada actividad?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, cada actividad del cuaderno de campo queda vinculada a la cuadrilla que la realizó para trazabilidad completa."}}
+            {"@@type": "Question", "name": "¿Puedo crear varias cuadrillas?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, puedes crear todas las cuadrillas que necesites. Cada una con su encargado, miembros y coste por hora diferente."}},
+            {"@@type": "Question", "name": "¿Cómo se calculan los costes?", "acceptedAnswer": {"@@type": "Answer", "text": "Se multiplican las horas trabajadas por el coste/hora de cada trabajador. El sistema suma automáticamente el coste total por parcela y labor."}},
+            {"@@type": "Question", "name": "¿Se puede asignar la misma cuadrilla a varias parcelas?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, una cuadrilla puede trabajar en múltiples parcelas. El sistema rastrea las horas por parcela de forma separada."}},
+            {"@@type": "Question", "name": "¿Necesito registrar el carnet ROPO de los trabajadores?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, si realizan tratamientos fitosanitarios. El sistema valida que los aplicadores tengan ROPO válido."}},
+            {"@@type": "Question", "name": "¿Puedo ver qué cuadrilla hizo cada actividad?", "acceptedAnswer": {"@@type": "Answer", "text": "Sí, cada actividad del cuaderno de campo queda vinculada a la cuadrilla que la realizó para trazabilidad completa."}}
         ]
     }
     </script>
