@@ -78,10 +78,20 @@
     <div class="min-h-screen bg-gradient-to-b from-white to-gray-50 py-20">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
-            <nav class="mb-8 text-sm text-gray-600">
-                <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a>
-                <span class="mx-2">/</span>
-                <span class="text-gray-900">Qué es SIGPAC</span>
+            <nav class="mb-8 text-sm text-gray-600" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <ol class="flex items-center space-x-2">
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]" itemprop="item">
+                            <span itemprop="name">Inicio</span>
+                        </a>
+                        <meta itemprop="position" content="1" />
+                    </li>
+                    <span class="mx-2">/</span>
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <span class="text-gray-900" itemprop="name">Qué es SIGPAC</span>
+                        <meta itemprop="position" content="2" />
+                    </li>
+                </ol>
             </nav>
 
             <!-- Header -->
@@ -156,7 +166,7 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Gestionar SIGPAC con Agro365</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> integra SIGPAC completamente, permitiéndote:
+                        <strong>Agro365</strong> integra SIGPAC completamente. Si eres <a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultor profesional</a>, nuestra <a href="{{ route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a> te permite:
                     </p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
                         <li><strong>Importar códigos SIGPAC:</strong> Añade tus códigos SIGPAC directamente desde el sistema oficial</li>

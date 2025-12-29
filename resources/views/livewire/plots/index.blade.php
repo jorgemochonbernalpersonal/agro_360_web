@@ -217,8 +217,15 @@
                             </div>
                             <div>
                                 <div class="text-sm font-bold text-gray-900">{{ $plot->name }}</div>
+                                @if($plot->sigpacCodes->isNotEmpty())
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ $plot->sigpacCodes->count() }} recinto(s) SIGPAC
+                                    </div>
+                                @else
+                                    <div class="text-xs text-gray-400 mt-1 italic">Sin recintos SIGPAC</div>
+                                @endif
                                 @if($plot->description)
-                                    <div class="text-sm text-gray-500 mt-1">{{ \Illuminate\Support\Str::limit($plot->description, 50) }}</div>
+                                    <div class="text-xs text-gray-400 mt-1">{{ \Illuminate\Support\Str::limit($plot->description, 40) }}</div>
                                 @endif
                             </div>
                         </div>
@@ -276,6 +283,48 @@
                             href="{{ route('plots.show', $plot) }}"
                             title="Ver detalles de la parcela"
                         />
+                        
+                        {{-- Botón Ver Mapa / Generar Mapa (muestra TODOS los recintos) --}}
+                        @php
+                            $hasMap = \App\Models\MultipartPlotSigpac::where('plot_id', $plot->id)
+                                ->whereNotNull('plot_geometry_id')
+                                ->exists();
+                        @endphp
+                        
+                        @if($hasMap)
+                            {{-- Ver Mapa con todos los recintos --}}
+                            <a href="{{ route('map', ['id' => $plot->id, 'return' => 'plots']) }}"
+                               class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-200"
+                               title="Ver mapa con todos los recintos">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                </svg>
+                                <span class="ml-1">Ver Mapa</span>
+                            </a>
+                        @elseif($plot->sigpacCodes->isNotEmpty())
+                            {{-- Generar Mapa para todos los códigos SIGPAC --}}
+                            @can('update', $plot)
+                                <button
+                                    wire:click="generateMap(null, {{ $plot->id }})"
+                                    wire:loading.attr="disabled"
+                                    class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200 disabled:opacity-50"
+                                    title="Generar mapa para todos los recintos">
+                                    <span wire:loading.remove wire:target="generateMap(null, {{ $plot->id }})">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                        </svg>
+                                        <span class="ml-1">Generar Mapa</span>
+                                    </span>
+                                    <span wire:loading wire:target="generateMap(null, {{ $plot->id }})" class="flex items-center gap-2">
+                                        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Generando...
+                                    </span>
+                                </button>
+                            @endcan
+                        @endif
                         
                         {{-- Botón Historial de Auditoría --}}
                         <button

@@ -51,7 +51,7 @@ class SitemapController extends Controller
                 'priority' => '0.8',
             ],
             [
-                'loc' => url('/normativa-pac-2027'),
+                'loc' => url('/normativa-pac'),
                 'lastmod' => now()->toIso8601String(),
                 'changefreq' => 'monthly',
                 'priority' => '0.8',
@@ -67,6 +67,200 @@ class SitemapController extends Controller
                 'lastmod' => now()->toIso8601String(),
                 'changefreq' => 'monthly',
                 'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/software-para-viticultores'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/app-agricultura'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/cuaderno-digital-viticultores'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            // Nuevas páginas SEO - Diciembre 2024
+            [
+                'loc' => url('/gestion-vendimia'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/registro-fitosanitarios'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/subvenciones-pac-2024'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/control-plagas-viñedo'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/facturacion-agricola'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            // Páginas SEO - Media prioridad y contenido específico
+            [
+                'loc' => url('/gestion-cuadrillas-agricolas'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/maquinaria-agricola-registro'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/plantaciones-viñedo-variedades'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/rendimientos-cosecha-viñedo'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/informes-oficiales-agricultura'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/ndvi-viñedo-teledeteccion'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/calendario-viticola'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/trazabilidad-vino-origen'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/firma-digital-agricultura'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/gestion-campañas-agricolas'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            
+            // Páginas regionales por DO
+            [
+                'loc' => url('/software-viticultores-rioja'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/software-viticultores-ribera-duero'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/software-viticultores-rueda'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/software-viticultores-penedes'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/software-viticultores-la-mancha'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            
+            // Blog
+            [
+                'loc' => url('/blog'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => url('/blog/novedades-pac-2025'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.6',
+            ],
+            [
+                'loc' => url('/blog/errores-cuaderno-campo'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.6',
+            ],
+            [
+                'loc' => url('/blog/calendario-viticola-2025'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.6',
+            ],
+            
+            // Páginas regionales por DO (segunda tanda)
+            [
+                'loc' => url('/software-viticultores-priorat'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/software-viticultores-rias-baixas'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/software-viticultores-toro'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => url('/software-viticultores-jumilla'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
             ],
             
             // Páginas legales

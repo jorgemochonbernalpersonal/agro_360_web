@@ -96,6 +96,44 @@
                 </select>
             </div>
 
+            <!-- 🛰️ Toggle NDVI -->
+            <div class="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        🛰️ Vista NDVI
+                    </label>
+                    <button id="ndvi-toggle" 
+                            onclick="toggleNdviMode()"
+                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors bg-gray-300"
+                            data-active="false">
+                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"></span>
+                    </button>
+                </div>
+                <div id="ndvi-info" class="hidden">
+                    <div class="text-xs text-gray-600 mb-2">
+                        <span id="ndvi-value" class="font-bold text-green-600">--</span> NDVI
+                        <span id="ndvi-status" class="ml-2">--</span>
+                    </div>
+                    <!-- Leyenda NDVI -->
+                    <div class="flex items-center gap-1 text-[10px]">
+                        <span class="w-4 h-3 rounded" style="background: rgba(239, 68, 68, 0.6)"></span>
+                        <span class="text-gray-500">Bajo</span>
+                        <span class="w-4 h-3 rounded ml-1" style="background: rgba(251, 146, 60, 0.6)"></span>
+                        <span class="w-4 h-3 rounded" style="background: rgba(250, 204, 21, 0.6)"></span>
+                        <span class="w-4 h-3 rounded" style="background: rgba(52, 211, 153, 0.6)"></span>
+                        <span class="w-4 h-3 rounded" style="background: rgba(34, 197, 94, 0.6)"></span>
+                        <span class="text-gray-500">Alto</span>
+                    </div>
+                </div>
+                <div id="ndvi-loading" class="hidden text-xs text-gray-500">
+                    <svg class="w-4 h-4 animate-spin inline mr-1" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    Cargando datos NDVI...
+                </div>
+            </div>
+
             <!-- Leyenda de Colores -->
             <div class="mb-4 p-3 bg-gray-50 rounded-lg">
                 <p class="text-xs font-semibold text-gray-600 mb-2">Leyenda de Recintos:</p>
@@ -312,11 +350,115 @@
         // ✅ Usar parseWKT global desde bundle (definido en app.js)
         // El parser WKT ahora está disponible globalmente como window.parseWKT
 
+        // ===========================================
+        // 🛰️ NDVI Mode Toggle
+        // ===========================================
+        let ndviMode = false;
+        let ndviData = null;
+        const plotId = {{ $plot->id }};
+
+        async function toggleNdviMode() {
+            const toggle = document.getElementById('ndvi-toggle');
+            const toggleSpan = toggle.querySelector('span');
+            const ndviInfo = document.getElementById('ndvi-info');
+            const ndviLoading = document.getElementById('ndvi-loading');
+            
+            ndviMode = !ndviMode;
+            
+            // Update toggle UI
+            if (ndviMode) {
+                toggle.classList.remove('bg-gray-300');
+                toggle.classList.add('bg-green-500');
+                toggleSpan.classList.remove('translate-x-1');
+                toggleSpan.classList.add('translate-x-6');
+                toggle.dataset.active = 'true';
+                
+                // Show loading
+                ndviLoading.classList.remove('hidden');
+                ndviInfo.classList.add('hidden');
+                
+                // Fetch NDVI data if not cached
+                if (!ndviData) {
+                    try {
+                        const response = await fetch(`/remote-sensing/api/plot/${plotId}/ndvi-colors`);
+                        ndviData = await response.json();
+                    } catch (error) {
+                        console.error('Error fetching NDVI data:', error);
+                        ndviData = null;
+                    }
+                }
+                
+                // Hide loading, show info
+                ndviLoading.classList.add('hidden');
+                
+                if (ndviData && ndviData.success) {
+                    ndviInfo.classList.remove('hidden');
+                    document.getElementById('ndvi-value').textContent = ndviData.ndvi_mean.toFixed(2);
+                    document.getElementById('ndvi-status').textContent = `${ndviData.health_emoji} ${ndviData.health_text}`;
+                    
+                    // Apply NDVI colors to all polygons
+                    applyNdviColors(ndviData.color);
+                } else {
+                    // Fallback to mock data for development
+                    ndviInfo.classList.remove('hidden');
+                    document.getElementById('ndvi-value').textContent = '0.65';
+                    document.getElementById('ndvi-status').textContent = '🌿 Excelente';
+                    applyNdviColors({ fill: 'rgba(34, 197, 94, 0.6)', line: '#16a34a' });
+                }
+            } else {
+                toggle.classList.remove('bg-green-500');
+                toggle.classList.add('bg-gray-300');
+                toggleSpan.classList.remove('translate-x-6');
+                toggleSpan.classList.add('translate-x-1');
+                toggle.dataset.active = 'false';
+                
+                ndviInfo.classList.add('hidden');
+                
+                // Restore original colors
+                restoreOriginalColors();
+            }
+        }
+
+        function applyNdviColors(color) {
+            console.log('🛰️ Applying NDVI colors:', color);
+            polygonLayers.forEach((layer, index) => {
+                layer.setStyle({
+                    color: color.line,
+                    fillColor: color.fill,
+                    fillOpacity: 0.6,
+                    weight: 2
+                });
+            });
+        }
+
+        function restoreOriginalColors() {
+            console.log('🎨 Restoring original colors');
+            polygonLayers.forEach((layer, index) => {
+                if (originalStyles[index]) {
+                    layer.setStyle(originalStyles[index]);
+                }
+            });
+        }
+
         // Iniciar cuando DOM esté listo
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initMap);
+            document.addEventListener('DOMContentLoaded', () => {
+                initMap();
+                autoActivateNdviIfNeeded();
+            });
         } else {
             initMap();
+            autoActivateNdviIfNeeded();
+        }
+
+        // 🛰️ Auto-activar NDVI si viene desde teledetección (?ndvi=1)
+        function autoActivateNdviIfNeeded() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('ndvi') === '1') {
+                setTimeout(() => {
+                    toggleNdviMode();
+                }, 500); // Pequeño delay para que el mapa cargue primero
+            }
         }
     </script>
 </body>

@@ -8,7 +8,7 @@
     <!-- SEO Meta Tags -->
     <title>Agro365 - Software de Gestión Agrícola para Viñedos y Bodegas | Cuaderno Digital SIGPAC</title>
     <meta name="description" content="Software de gestión agrícola profesional para viticultores y bodegas en España. Cuaderno de campo digital, control de parcelas SIGPAC, gestión de actividades y cumplimiento normativo. Prueba gratis 6 meses.">
-    <meta name="keywords" content="software gestión agrícola, cuaderno digital campo, software viñedos España, SIGPAC, gestión parcelas agrícolas, app viticultores, software bodega, cuaderno campo digital, gestión viticultura, software agricultura, control parcelas, normativa PAC, cuaderno campo 2027, digitalización agrícola, trazabilidad viñedos, gestión vendimia, facturación agrícola, informes oficiales agricultura, firma electrónica agrícola, gestión cosechas, control fitosanitarios">
+    <meta name="keywords" content="software gestión agrícola, cuaderno digital campo, software viñedos España, SIGPAC, gestión parcelas agrícolas, app viticultores, software bodega, cuaderno campo digital, gestión viticultura, software agricultura, control parcelas, normativa PAC, cuaderno campo 2027, digitalización agrícola, trazabilidad viñedos, gestión vendimia, facturación agrícola, informes oficiales agricultura, firma electrónica agrícola, gestión cosechas, control fitosanitarios, software para viticultores, app agricultura, cuaderno digital viticultores, software agricultura España, gestión agrícola digital, app campo, software viñedos, digitalización campo, agricultura 4.0, viticultura digital, aplicación agrícola, software viticultura, gestión viñedos, app gestión agrícola, software agrícola móvil, cuaderno campo digital viticultores, software viticultores profesional, aplicación campo digital, app SIGPAC, software agrícola viticultura">
     <meta name="author" content="Agro365">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="language" content="Spanish">
@@ -393,7 +393,7 @@
                     </h1>
                     
                     <p class="text-xl text-gray-600 leading-relaxed">
-                        <strong>Cuaderno de campo digital</strong> obligatorio desde 2027, <strong>gestión de parcelas SIGPAC</strong>, control de actividades agrícolas, <strong>informes oficiales con firma electrónica</strong>, facturación de cosechas y cumplimiento normativo. Todo en una plataforma completa diseñada para viticultores profesionales en España.
+                        <strong><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027, <strong><a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">gestión de parcelas SIGPAC</a></strong>, control de actividades agrícolas, <strong>informes oficiales con firma electrónica</strong>, facturación de cosechas y cumplimiento normativo. Todo en una plataforma completa diseñada para <strong><a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a></strong> en España.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
@@ -477,7 +477,7 @@
                     Software Agrícola Completo: Cuaderno Digital, SIGPAC e Informes Oficiales
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Herramientas profesionales para <strong>viticultores y bodegas</strong>: cuaderno de campo digital obligatorio, gestión de parcelas SIGPAC, informes oficiales con firma electrónica, control de vendimia y facturación integrada.
+                    Herramientas profesionales para <strong><a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong>: <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital obligatorio</a>, gestión de parcelas SIGPAC, informes oficiales con firma electrónica, control de vendimia y facturación integrada.
                 </p>
             </div>
             
@@ -491,7 +491,7 @@
                     </div>
                     <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Cuaderno de Campo Digital Obligatorio 2027</h3>
                     <p class="text-gray-600 leading-relaxed mb-4">
-                        <strong>Cuaderno de campo digital</strong> obligatorio desde 2027 según normativa europea. Registra tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales desde cualquier lugar. Cumplimiento normativo garantizado para inspecciones PAC.
+                        <strong><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027 según normativa europea. Registra tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales desde cualquier lugar. Cumplimiento normativo garantizado para inspecciones PAC.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-center gap-2">
@@ -663,7 +663,7 @@
                     ¿Por qué elegir Agro365 para tu Viñedo?
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Miles de viticultores y bodegas en España confían en nuestro <strong>software agrícola profesional</strong> para gestionar sus explotaciones. Cumplimiento normativo, <a href="{{ route('faqs') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital SIGPAC</a> y control total de parcelas.
+                    Miles de <strong><a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong> en España confían en nuestro <strong><a href="{{ route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">software agrícola profesional</a></strong> para gestionar sus explotaciones. Cumplimiento normativo, <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital</a> SIGPAC y control total de parcelas.
                 </p>
             </div>
             
@@ -910,6 +910,7 @@
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Para Viticultores</h4>
                     <ul class="space-y-2 text-white/70 text-sm">
+                        <li><a href="{{ route('content.software-viticultores') }}" class="hover:text-white transition-colors">Software para Viticultores</a></li>
                         <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Software para toda España</a></li>
                         <li><a href="#features" class="hover:text-white transition-colors">Pequeños Productores</a></li>
                         <li><a href="#features" class="hover:text-white transition-colors">Bodegas Medianas</a></li>
@@ -924,8 +925,10 @@
                     <h4 class="font-semibold text-lg mb-4">Recursos</h4>
                     <ul class="space-y-2 text-white/70 text-sm">
                         <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
-                        <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Guía SIGPAC</a></li>
-                        <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Normativa PAC 2027</a></li>
+                        <li><a href="{{ route('content.sigpac') }}" class="hover:text-white transition-colors">Guía SIGPAC</a></li>
+                        <li><a href="{{ route('content.normativa-pac') }}" class="hover:text-white transition-colors">Normativa PAC</a></li>
+                        <li><a href="{{ route('content.app-agricultura') }}" class="hover:text-white transition-colors">App Agricultura</a></li>
+                        <li><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="hover:text-white transition-colors">Cuaderno Digital Viticultores</a></li>
                         <li><a href="{{ route('register') }}" rel="nofollow" class="hover:text-white transition-colors">Prueba Gratis 6 Meses</a></li>
                         <li><a href="{{ route('login') }}" rel="nofollow" class="hover:text-white transition-colors">Acceso Clientes</a></li>
                     </ul>

@@ -37,7 +37,7 @@ Route::get('/cuaderno-campo-digital-2027', function () {
     return view('content.cuaderno-campo-digital-2027');
 })->name('content.cuaderno-digital');
 
-Route::get('/normativa-pac-2027', function () {
+Route::get('/normativa-pac', function () {
     return view('content.normativa-pac-2027');
 })->name('content.normativa-pac');
 
@@ -48,6 +48,137 @@ Route::get('/digitalizar-viñedo', function () {
 Route::get('/comparativa-software-agricola', function () {
     return view('content.comparativa-software-agricola');
 })->name('content.comparativa');
+
+// Nuevas páginas SEO para búsquedas clave
+Route::get('/software-para-viticultores', function () {
+    return view('content.software-para-viticultores');
+})->name('content.software-viticultores');
+
+Route::get('/app-agricultura', function () {
+    return view('content.app-agricultura');
+})->name('content.app-agricultura');
+
+Route::get('/cuaderno-digital-viticultores', function () {
+    return view('content.cuaderno-digital-viticultores');
+})->name('content.cuaderno-digital-viticultores');
+
+// Nuevas páginas SEO - Vendimia, Fitosanitarios, PAC, Plagas, Facturación
+Route::get('/gestion-vendimia', function () {
+    return view('content.gestion-vendimia');
+})->name('content.gestion-vendimia');
+
+Route::get('/registro-fitosanitarios', function () {
+    return view('content.registro-fitosanitarios');
+})->name('content.registro-fitosanitarios');
+
+Route::get('/subvenciones-pac-2024', function () {
+    return view('content.subvenciones-pac-2024');
+})->name('content.subvenciones-pac');
+
+Route::get('/control-plagas-viñedo', function () {
+    return view('content.control-plagas-viñedo');
+})->name('content.control-plagas');
+
+Route::get('/facturacion-agricola', function () {
+    return view('content.facturacion-agricola');
+})->name('content.facturacion-agricola');
+
+// Páginas SEO - Media prioridad
+Route::get('/gestion-cuadrillas-agricolas', function () {
+    return view('content.gestion-cuadrillas-agricolas');
+})->name('content.gestion-cuadrillas');
+
+Route::get('/maquinaria-agricola-registro', function () {
+    return view('content.maquinaria-agricola-registro');
+})->name('content.maquinaria-agricola');
+
+Route::get('/plantaciones-viñedo-variedades', function () {
+    return view('content.plantaciones-viñedo-variedades');
+})->name('content.plantaciones-viñedo');
+
+Route::get('/rendimientos-cosecha-viñedo', function () {
+    return view('content.rendimientos-cosecha-viñedo');
+})->name('content.rendimientos-cosecha');
+
+Route::get('/informes-oficiales-agricultura', function () {
+    return view('content.informes-oficiales-agricultura');
+})->name('content.informes-oficiales');
+
+// Páginas SEO - Contenido específico
+Route::get('/ndvi-viñedo-teledeteccion', function () {
+    return view('content.ndvi-viñedo-teledeteccion');
+})->name('content.ndvi-teledeteccion');
+
+Route::get('/calendario-viticola', function () {
+    return view('content.calendario-viticola');
+})->name('content.calendario-viticola');
+
+Route::get('/trazabilidad-vino-origen', function () {
+    return view('content.trazabilidad-vino-origen');
+})->name('content.trazabilidad-vino');
+
+Route::get('/firma-digital-agricultura', function () {
+    return view('content.firma-digital-agricultura');
+})->name('content.firma-digital');
+
+Route::get('/gestion-campañas-agricolas', function () {
+    return view('content.gestion-campañas-agricolas');
+})->name('content.gestion-campañas');
+
+// Páginas SEO - Regionales por DO
+Route::get('/software-viticultores-rioja', function () {
+    return view('content.software-viticultores-rioja');
+})->name('content.viticultores-rioja');
+
+Route::get('/software-viticultores-ribera-duero', function () {
+    return view('content.software-viticultores-ribera-duero');
+})->name('content.viticultores-ribera');
+
+Route::get('/software-viticultores-rueda', function () {
+    return view('content.software-viticultores-rueda');
+})->name('content.viticultores-rueda');
+
+Route::get('/software-viticultores-penedes', function () {
+    return view('content.software-viticultores-penedes');
+})->name('content.viticultores-penedes');
+
+Route::get('/software-viticultores-la-mancha', function () {
+    return view('content.software-viticultores-la-mancha');
+})->name('content.viticultores-la-mancha');
+
+// Blog
+Route::get('/blog', function () {
+    return view('blog.index');
+})->name('blog.index');
+
+Route::get('/blog/novedades-pac-2025', function () {
+    return view('blog.novedades-pac-2025');
+})->name('blog.pac-2025');
+
+Route::get('/blog/errores-cuaderno-campo', function () {
+    return view('blog.errores-cuaderno-campo');
+})->name('blog.errores-cuaderno');
+
+Route::get('/blog/calendario-viticola-2025', function () {
+    return view('blog.calendario-viticola-2025');
+})->name('blog.calendario-2025');
+
+// Páginas SEO - Más DOs regionales
+Route::get('/software-viticultores-priorat', function () {
+    return view('content.software-viticultores-priorat');
+})->name('content.viticultores-priorat');
+
+Route::get('/software-viticultores-rias-baixas', function () {
+    return view('content.software-viticultores-rias-baixas');
+})->name('content.viticultores-rias-baixas');
+
+Route::get('/software-viticultores-toro', function () {
+    return view('content.software-viticultores-toro');
+})->name('content.viticultores-toro');
+
+Route::get('/software-viticultores-jumilla', function () {
+    return view('content.software-viticultores-jumilla');
+})->name('content.viticultores-jumilla');
 
 // Health Check Endpoint para UptimeRobot y monitoreo
 Route::get('/health', function () {
@@ -124,4 +255,5 @@ Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
     require __DIR__ . '/supervisor.php';
     require __DIR__ . '/winery.php';
     require __DIR__ . '/viticulturist.php';
+    require __DIR__ . '/remote-sensing.php';
 });

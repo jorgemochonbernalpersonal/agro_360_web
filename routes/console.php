@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\UpdateAllPlotsNdviJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -24,3 +25,10 @@ Schedule::command('logs:cleanup')
     ->dailyAt('02:00')
     ->withoutOverlapping()
     ->onOneServer();
+
+// 🛰️ Actualizar NDVI de todas las parcelas cada domingo a las 6 AM
+Schedule::job(new UpdateAllPlotsNdviJob(), 'remote-sensing')
+    ->weeklyOn(0, '06:00')
+    ->withoutOverlapping()
+    ->onOneServer();
+

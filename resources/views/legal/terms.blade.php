@@ -176,18 +176,7 @@
         </div>
     </main>
 
-    <!-- Simple Footer -->
-    <footer class="bg-[var(--color-agro-green-dark)] text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-white/80">
-                <a href="{{ url('/') }}" class="hover:text-white transition-colors">Volver al inicio</a>
-                <span class="mx-4">·</span>
-                <a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Privacidad</a>
-                <span class="mx-4">·</span>
-                <a href="{{ route('cookies') }}" class="hover:text-white transition-colors">Cookies</a>
-            </p>
-            <p class="text-white/60 mt-4 text-sm">&copy; {{ date('Y') }} Agro365. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+
+    @include('partials.footer-seo')
 </body>
 </html>

@@ -51,4 +51,47 @@ return [
         'secret_key' => env('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'), // Clave de prueba
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Copernicus Data Space API
+    |--------------------------------------------------------------------------
+    |
+    | Configuración para acceder a datos de Sentinel-2 via Copernicus.
+    | Regístrate en: https://dataspace.copernicus.eu/ (DEPRECATED)
+    |
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | NASA Earthdata API (100% GRATIS) - EN USO
+    |--------------------------------------------------------------------------
+    |
+    | API gratuita sin límites de uso.
+    | Usa datos MODIS/VIIRS para NDVI.
+    | Regístrate gratis en: https://urs.earthdata.nasa.gov/
+    |
+    */
+
+    'nasa_earthdata' => [
+        'mock' => env('NASA_EARTHDATA_MOCK', true), // true = usa datos simulados
+        'username' => env('NASA_EARTHDATA_USERNAME'),
+        'password' => env('NASA_EARTHDATA_PASSWORD'),
+        'api_url' => env('NASA_EARTHDATA_API_URL', 'https://appeears.earthdatacloud.nasa.gov/api'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Open-Meteo API (100% GRATIS - SIN REGISTRO)
+    |--------------------------------------------------------------------------
+    |
+    | API meteorológica gratuita sin necesidad de registro.
+    | Incluye: temperatura, lluvia, humedad, viento, suelo, radiación solar.
+    | https://open-meteo.com/
+    |
+    */
+
+    'open_meteo' => [
+        'mock' => env('OPEN_METEO_MOCK', true), // true = usa datos simulados
+    ],
+
 ];

@@ -82,7 +82,7 @@
     </button>
     <div x-show="openIndexes.includes(2)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed mb-3">
-            <strong>SIGPAC</strong> (Sistema de Información Geográfica de Parcelas Agrícolas) es el sistema oficial del Ministerio que identifica cada parcela con un código único: <code class="bg-gray-100 px-2 py-1 rounded text-sm">PROVINCIA-MUNICIPIO-AGREGADO-ZONA-PARCELA-RECINTO</code>
+            <strong><a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></strong> (Sistema de Información Geográfica de Parcelas Agrícolas) es el sistema oficial del Ministerio que identifica cada parcela con un código único: <code class="bg-gray-100 px-2 py-1 rounded text-sm">PROVINCIA-MUNICIPIO-AGREGADO-ZONA-PARCELA-RECINTO</code>
         </p>
         <p class="text-gray-700 leading-relaxed mb-3"><strong>Agro365 integra SIGPAC completamente:</strong></p>
         <ul class="space-y-2 text-gray-700 mb-4">
@@ -275,7 +275,7 @@
     </button>
     <div x-show="openIndexes.includes(6)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed">
-            ¡Por supuesto! Agro365 está <strong>100% optimizado para móviles y tablets</strong>. Funciona como una aplicación web responsive, por lo que puedes acceder desde cualquier navegador sin necesidad de instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo, incluso con conexión limitada. Los datos se sincronizan automáticamente cuando recuperas señal. Diseñado específicamente para funcionar en condiciones reales de campo.
+            ¡Por supuesto! Agro365 es una <strong><a href="{{ route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a></strong> <strong>100% optimizada para móviles y tablets</strong>. Funciona como una aplicación web responsive, por lo que puedes acceder desde cualquier navegador sin necesidad de instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo, incluso con conexión limitada. Los datos se sincronizan automáticamente cuando recuperas señal. Diseñado específicamente para funcionar en condiciones reales de campo.
         </p>
     </div>
 </div>
@@ -325,7 +325,7 @@
     </button>
     <div x-show="openIndexes.includes(8)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed mb-3">
-            Sí. El <strong>cuaderno de campo digital</strong> es obligatorio en España según la normativa actual:
+            Sí. El <strong><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a></strong> es obligatorio en España según la normativa actual. Para <a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a>:
         </p>
         <ul class="space-y-2 text-gray-700 mb-4">
             <li class="flex items-start gap-2">

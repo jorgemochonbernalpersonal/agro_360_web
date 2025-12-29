@@ -113,7 +113,8 @@
                 <span class="text-gray-400">•</span>
                 <a href="{{ route('cookies') }}" class="text-[var(--color-agro-green-dark)] hover:underline">Política de Cookies</a>
             </div>
-        </div>
     </div>
+
+    @include('partials.footer-seo')
 </body>
 </html>

@@ -163,6 +163,22 @@ class Plot extends Model
     }
 
     /**
+     * Datos de teledetección de la parcela
+     */
+    public function remoteSensingData(): HasMany
+    {
+        return $this->hasMany(PlotRemoteSensing::class);
+    }
+
+    /**
+     * Último dato de teledetección
+     */
+    public function latestRemoteSensing()
+    {
+        return $this->hasOne(PlotRemoteSensing::class)->latestOfMany('image_date');
+    }
+
+    /**
      * Usuario que bloqueó la parcela
      */
     public function lockedBy(): BelongsTo

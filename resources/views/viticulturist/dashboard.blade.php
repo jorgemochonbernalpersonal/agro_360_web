@@ -266,6 +266,28 @@
             </a>
         </div>
 
+        {{-- Widget de Teledetección y enlace a Estadísticas --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {{-- Widget de Teledetección (2 columnas) --}}
+            <div class="lg:col-span-2">
+                @livewire('viticulturist.remote-sensing.dashboard-widget')
+            </div>
+            
+            {{-- Enlace a Estadísticas Financieras --}}
+            <a href="{{ route('viticulturist.invoices.index') }}" wire:navigate class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg border-2 border-indigo-200 p-6 hover:shadow-xl hover:border-indigo-300 transition-all duration-300 flex items-center justify-between" data-cy="dashboard-financial-stats-link">
+                <div>
+                    <p class="text-sm font-medium text-indigo-600 mb-1">📊 Facturación</p>
+                    <p class="text-lg font-bold text-indigo-900">Ver estadísticas</p>
+                    <p class="text-xs text-indigo-500 mt-1">Análisis comercial completo</p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-indigo-200 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </a>
+        </div>
+
         {{-- Charts Row --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" data-cy="dashboard-charts">
             {{-- Distribución por Variedad --}}

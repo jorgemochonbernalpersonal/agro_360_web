@@ -291,6 +291,12 @@
                 </div>
             @endif
 
+            <!-- 🛰️ Teledetección Sentinel-2 -->
+            <livewire:viticulturist.remote-sensing.plot-ndvi-card :plot="$plot" />
+            
+            <!-- 🌦️ Datos Meteorológicos -->
+            <livewire:viticulturist.remote-sensing.plot-weather-card :plot="$plot" />
+
             <!-- Coordenadas Multiparte -->
             @if($plot->multipartCoordinates->count() > 0)
                 <div class="bg-white rounded-lg shadow-lg p-6">
