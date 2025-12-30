@@ -266,11 +266,23 @@ class WeatherService
                 
                 $hour = now()->hour;
                 
-                return [
+                $soilData = [
                     'soil_moisture' => $data['hourly']['soil_moisture_0_to_1cm'][$hour] ?? null,
                     'soil_temperature' => $data['hourly']['soil_temperature_0cm'][$hour] ?? null,
                     'success' => true,
                 ];
+
+                // Si hay nulos, usar mock
+                if (is_null($soilData['soil_moisture']) || is_null($soilData['soil_temperature'])) {
+                     Log::warning('Open-Meteo: Missing soil data', [
+                        'lat' => $lat,
+                        'lon' => $lon,
+                        'data' => $data,
+                    ]);
+                    return $this->generateMockSoilData();
+                }
+
+                return $soilData;
             } else {
                 Log::error('Open-Meteo soil API failed', [
                     'status' => $response->status(),
@@ -306,12 +318,24 @@ class WeatherService
             if ($response->successful()) {
                 $data = $response->json();
                 
-                return [
+                $solarData = [
                     'solar_radiation' => $data['daily']['shortwave_radiation_sum'][0] ?? null,
                     'et0' => $data['daily']['et0_fao_evapotranspiration'][0] ?? null,
                     'sunshine_hours' => ($data['daily']['sunshine_duration'][0] ?? 0) / 3600,
                     'success' => true,
                 ];
+
+                // Si hay nulos en datos críticos, usar mock
+                if (is_null($solarData['solar_radiation']) || is_null($solarData['et0'])) {
+                     Log::warning('Open-Meteo: Missing solar data', [
+                        'lat' => $lat,
+                        'lon' => $lon,
+                        'data' => $data,
+                    ]);
+                    return $this->generateMockSolarData();
+                }
+
+                return $solarData;
             }
         } catch (\Exception $e) {
             Log::error('Open-Meteo solar error', ['error' => $e->getMessage()]);
@@ -325,7 +349,7 @@ class WeatherService
      */
     private function getPlotCoordinates(Plot $plot): array
     {
-        // Try to get from geometry
+        // 1. Try to get from geometry
         $multipart = $plot->multipartPlotSigpacs()
             ->whereNotNull('plot_geometry_id')
             ->with('plotGeometry')
@@ -341,7 +365,42 @@ class WeatherService
             }
         }
 
-        // Default: Central Spain (Madrid area for Ribera del Duero)
+        // 2. Try Geocoding by Municipality Name
+        // This relies on the Open-Meteo Geocoding API or simple lookup.
+        // For simplicity and robustness, we check if the municipality model has coords, or use a geocoding service.
+        // Assuming we don't have stored coords for municipalities, we'll use Open-Meteo's geocoding API.
+        
+        if ($plot->municipality && $plot->province) {
+            $query = "{$plot->municipality->name}, {$plot->province->name}, Spain";
+            $cacheKey = "geo_loc_" . Str::slug($query);
+
+            $coords = Cache::rememberSerialized($cacheKey, 86400 * 30, function () use ($query) {
+                try {
+                    $response = Http::get('https://geocoding-api.open-meteo.com/v1/search', [
+                        'name' => $query,
+                        'count' => 1,
+                        'language' => 'es',
+                        'format' => 'json'
+                    ]);
+
+                    if ($response->successful() && isset($response['results'][0])) {
+                        return [
+                            'lat' => $response['results'][0]['latitude'],
+                            'lon' => $response['results'][0]['longitude']
+                        ];
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("Geocoding failed for: $query");
+                }
+                return null;
+            });
+
+            if ($coords) {
+                return $coords;
+            }
+        }
+
+        // 3. Fallback Default: Central Spain
         return ['lat' => 41.6167, 'lon' => -3.7033];
     }
 

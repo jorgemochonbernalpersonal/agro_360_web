@@ -182,7 +182,7 @@ class Dashboard extends Component
         ];
     }
 
-    public function loadPlotData()
+    public function loadPlotData(bool $forceRefresh = false)
     {
         if (!$this->selectedPlotId) return;
         
@@ -197,7 +197,7 @@ class Dashboard extends Component
         try {
             // Load satellite data
             $nasaService = new NasaEarthdataService();
-            $this->ndviData = $nasaService->getLatestData($this->selectedPlot);
+            $this->ndviData = $nasaService->getLatestData($this->selectedPlot, $forceRefresh);
             $historical = $nasaService->getHistoricalData($this->selectedPlot, 90);
             $this->historicalData = $historical->map(fn($item) => [
                 'date' => $item->image_date->format('d/m'),
@@ -209,10 +209,10 @@ class Dashboard extends Component
             
             // Load weather data
             $weatherService = new WeatherService();
-            $this->weather = $weatherService->getCurrentWeather($this->selectedPlot);
-            $this->soil = $weatherService->getSoilData($this->selectedPlot);
-            $this->solar = $weatherService->getSolarData($this->selectedPlot);
-            $this->forecast = $weatherService->getForecast($this->selectedPlot, 7)['forecast'] ?? [];
+            $this->weather = $weatherService->getCurrentWeather($this->selectedPlot, $forceRefresh);
+            $this->soil = $weatherService->getSoilData($this->selectedPlot, $forceRefresh);
+            $this->solar = $weatherService->getSolarData($this->selectedPlot, $forceRefresh);
+            $this->forecast = $weatherService->getForecast($this->selectedPlot, 7, $forceRefresh)['forecast'] ?? [];
             
             // Generate recommendations
             $this->generateRecommendations();
@@ -320,7 +320,7 @@ class Dashboard extends Component
 
     public function refreshData()
     {
-        $this->loadPlotData();
+        $this->loadPlotData(true);
         $this->dispatch('notify', [
             'type' => 'success',
             'message' => 'Datos actualizados correctamente',
