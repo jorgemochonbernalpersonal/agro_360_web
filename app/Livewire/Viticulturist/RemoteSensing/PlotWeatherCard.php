@@ -26,7 +26,7 @@ class PlotWeatherCard extends Component
         $this->loadData();
     }
 
-    public function loadData()
+    public function loadData(bool $forceRefresh = false)
     {
         $this->isLoading = true;
         $this->error = '';
@@ -34,9 +34,9 @@ class PlotWeatherCard extends Component
         try {
             $service = new WeatherService();
             
-            $this->weather = $service->getCurrentWeather($this->plot);
-            $this->soil = $service->getSoilData($this->plot);
-            $this->solar = $service->getSolarData($this->plot);
+            $this->weather = $service->getCurrentWeather($this->plot, $forceRefresh);
+            $this->soil = $service->getSoilData($this->plot, $forceRefresh);
+            $this->solar = $service->getSolarData($this->plot, $forceRefresh);
             
         } catch (\Exception $e) {
             $this->error = 'Error al cargar datos meteorológicos';
@@ -62,7 +62,7 @@ class PlotWeatherCard extends Component
 
     public function refreshData()
     {
-        $this->loadData();
+        $this->loadData(true);
         $this->dispatch('notify', [
             'type' => 'success',
             'message' => 'Datos meteorológicos actualizados',

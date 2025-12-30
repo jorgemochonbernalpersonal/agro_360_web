@@ -19,9 +19,17 @@ class PlantingsDashboard extends Component
             'plot:id,name',
             'grapeVariety:id,name',
             'certifications' => function($q) {
-                $q->where('active', true)
-                  ->orWhere('expiry_date', '>=', now())
-                  ->where('expiry_date', '<=', now()->addMonths(3));
+                // ✅ FIX: Usar 'status' en lugar de 'active' (la columna es 'status' con enum)
+                // Cargar todas las certificaciones activas y las que vencen en próximos 3 meses
+                $q->where('status', 'active')
+                  ->where(function($query) {
+                      // Sin fecha de vencimiento o vence en los próximos 3 meses
+                      $query->whereNull('expiry_date')
+                            ->orWhere(function($q2) {
+                                $q2->where('expiry_date', '>=', now())
+                                   ->where('expiry_date', '<=', now()->addMonths(3));
+                            });
+                  });
             }
         ])
         ->select([
@@ -31,7 +39,7 @@ class PlantingsDashboard extends Component
             'name',
             'area_planted',
             'status',
-            'life_cycle_stage',
+            'planting_year', // ✅ FIX: Necesario para accessor 'age' y 'life_cycle_stage'
             'planting_date',
             'planting_authorization',
         ])
@@ -65,15 +73,17 @@ class PlantingsDashboard extends Component
         $now = now();
         $threeMonthsFromNow = now()->addMonths(3);
         
-        $totalCertifications = $plantings->sum(fn($p) => $p->certifications->where('active', true)->count());
+        // ✅ FIX: Usar 'status' en lugar de 'active' (la columna es 'status' con enum)
+        $totalCertifications = $plantings->sum(fn($p) => $p->certifications->where('status', 'active')->count());
         $expiringCertifications = $plantings->flatMap(fn($p) => 
             $p->certifications->filter(fn($c) => 
+                $c->status === 'active' &&
                 $c->expiry_date && 
                 $c->expiry_date >= $now && 
                 $c->expiry_date <= $threeMonthsFromNow
             )
         )->count();
-        $certifiedPlantings = $plantings->filter(fn($p) => $p->certifications->where('active', true)->count() > 0)->count();
+        $certifiedPlantings = $plantings->filter(fn($p) => $p->certifications->where('status', 'active')->count() > 0)->count();
         
         // Tratamientos fitosanitarios (últimos 30 días)
         $plotIds = $plantings->pluck('plot_id')->unique();

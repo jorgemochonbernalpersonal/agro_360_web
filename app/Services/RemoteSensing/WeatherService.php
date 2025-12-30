@@ -27,15 +27,20 @@ class WeatherService
     /**
      * Get current weather data for a plot
      */
-    public function getCurrentWeather(Plot $plot): array
+    public function getCurrentWeather(Plot $plot, bool $forceRefresh = false): array
     {
         if ($this->useMockData) {
             return $this->generateMockWeatherData();
         }
 
         $coords = $this->getPlotCoordinates($plot);
+        $cacheKey = "weather_{$plot->id}";
+
+        if ($forceRefresh) {
+            Cache::forget($cacheKey);
+        }
         
-        return Cache::remember("weather_{$plot->id}", 3600, function () use ($coords) {
+        return Cache::remember($cacheKey, 3600, function () use ($coords) {
             return $this->fetchWeatherData($coords['lat'], $coords['lon']);
         });
     }
@@ -43,15 +48,20 @@ class WeatherService
     /**
      * Get weather forecast for next 7 days
      */
-    public function getForecast(Plot $plot, int $days = 7): array
+    public function getForecast(Plot $plot, int $days = 7, bool $forceRefresh = false): array
     {
         if ($this->useMockData) {
             return $this->generateMockForecast($days);
         }
 
         $coords = $this->getPlotCoordinates($plot);
+        $cacheKey = "forecast_{$plot->id}_{$days}";
+
+        if ($forceRefresh) {
+            Cache::forget($cacheKey);
+        }
         
-        return Cache::remember("forecast_{$plot->id}_{$days}", 3600, function () use ($coords, $days) {
+        return Cache::remember($cacheKey, 3600, function () use ($coords, $days) {
             return $this->fetchForecastData($coords['lat'], $coords['lon'], $days);
         });
     }
@@ -59,15 +69,20 @@ class WeatherService
     /**
      * Get soil data (moisture, temperature)
      */
-    public function getSoilData(Plot $plot): array
+    public function getSoilData(Plot $plot, bool $forceRefresh = false): array
     {
         if ($this->useMockData) {
             return $this->generateMockSoilData();
         }
 
         $coords = $this->getPlotCoordinates($plot);
+        $cacheKey = "soil_{$plot->id}";
+
+        if ($forceRefresh) {
+            Cache::forget($cacheKey);
+        }
         
-        return Cache::remember("soil_{$plot->id}", 3600, function () use ($coords) {
+        return Cache::remember($cacheKey, 3600, function () use ($coords) {
             return $this->fetchSoilData($coords['lat'], $coords['lon']);
         });
     }
@@ -75,15 +90,20 @@ class WeatherService
     /**
      * Get solar radiation data
      */
-    public function getSolarData(Plot $plot): array
+    public function getSolarData(Plot $plot, bool $forceRefresh = false): array
     {
         if ($this->useMockData) {
             return $this->generateMockSolarData();
         }
 
         $coords = $this->getPlotCoordinates($plot);
+        $cacheKey = "solar_{$plot->id}";
+
+        if ($forceRefresh) {
+            Cache::forget($cacheKey);
+        }
         
-        return Cache::remember("solar_{$plot->id}", 3600, function () use ($coords) {
+        return Cache::remember($cacheKey, 3600, function () use ($coords) {
             return $this->fetchSolarData($coords['lat'], $coords['lon']);
         });
     }
@@ -127,11 +147,9 @@ class WeatherService
                     'success' => true,
                 ];
                 
-                // Si los datos críticos son null, usar mock
-                if (is_null($weatherData['temperature']) && 
-                    is_null($weatherData['humidity']) && 
-                    is_null($weatherData['wind_speed'])) {
-                    Log::warning('Open-Meteo: Empty data returned', [
+                // Si la temperatura es null, consideramos que los datos no son válidos
+                if (is_null($weatherData['temperature'])) {
+                    Log::warning('Open-Meteo: Missing temperature data', [
                         'lat' => $lat,
                         'lon' => $lon,
                         'data' => $data,

@@ -305,7 +305,7 @@ class Plot extends Model
                 $subQuery->select('viticulturist_id')
                     ->from('winery_viticulturist')
                     ->where('parent_viticulturist_id', $user->id)
-                    ->where('source', WineryViticulturist::SOURCE_VITICULTURIST);
+                    ->where('source', 'viticulturist'); // ✅ FIX: Usar string literal en lugar de constante
             });
             
             // ✅ OPTIMIZACIÓN: Parcelas de viticultores del supervisor (subconsulta directa)
@@ -314,10 +314,10 @@ class Plot extends Model
                     ->from('winery_viticulturist as wv1')
                     ->join('winery_viticulturist as wv2', function($join) {
                         $join->on('wv2.supervisor_id', '=', 'wv1.supervisor_id')
-                             ->where('wv2.source', '=', WineryViticulturist::SOURCE_SUPERVISOR);
+                             ->where('wv2.source', '=', 'supervisor'); // ✅ FIX: Usar string literal
                     })
                     ->where('wv1.viticulturist_id', $user->id)
-                    ->where('wv1.source', WineryViticulturist::SOURCE_SUPERVISOR)
+                    ->where('wv1.source', 'supervisor') // ✅ FIX: Usar string literal
                     ->whereNotNull('wv1.supervisor_id');
             });
             
@@ -329,8 +329,8 @@ class Plot extends Model
                     ->where('wv1.viticulturist_id', $user->id)
                     ->whereNotNull('wv1.winery_id')
                     ->where(function($wineryQ) {
-                        $wineryQ->where('wv2.source', WineryViticulturist::SOURCE_OWN)
-                                ->orWhere('wv2.source', WineryViticulturist::SOURCE_VITICULTURIST);
+                        $wineryQ->where('wv2.source', 'own') // ✅ FIX: Usar string literal
+                                ->orWhere('wv2.source', 'viticulturist'); // ✅ FIX: Usar string literal
                     });
             });
         });

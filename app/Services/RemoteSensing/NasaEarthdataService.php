@@ -33,15 +33,17 @@ class NasaEarthdataService
     /**
      * Get the latest NDVI data for a plot
      */
-    public function getLatestData(Plot $plot): ?PlotRemoteSensing
+    public function getLatestData(Plot $plot, bool $forceRefresh = false): ?PlotRemoteSensing
     {
-        // Check database first
-        $existing = PlotRemoteSensing::where('plot_id', $plot->id)
-            ->orderBy('image_date', 'desc')
-            ->first();
+        // Check database first if not forced
+        if (!$forceRefresh) {
+            $existing = PlotRemoteSensing::where('plot_id', $plot->id)
+                ->orderBy('image_date', 'desc')
+                ->first();
 
-        if ($existing && $existing->image_date->isToday()) {
-            return $existing;
+            if ($existing && $existing->image_date->isToday()) {
+                return $existing;
+            }
         }
 
         // Get fresh data
