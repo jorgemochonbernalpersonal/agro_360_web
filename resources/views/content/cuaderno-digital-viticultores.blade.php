@@ -261,6 +261,9 @@
         </div>
     </div>
 
+    <!-- ✅ SEO: Enlaces relacionados para mejorar link juice interno -->
+    @include('components.related-links')
+
     <!-- Footer -->
     @include('partials.footer-seo')
 

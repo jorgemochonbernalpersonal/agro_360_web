@@ -76,8 +76,15 @@ class CreateStock extends Component
     public function render()
     {
         return view('livewire.viticulturist.inventory.create-stock', [
-            'products' => PhytosanitaryProduct::where('active', true)->orderBy('name')->get(),
-            'warehouses' => Warehouse::where('user_id', Auth::id())->where('active', true)->get(),
+            // ✅ OPTIMIZACIÓN: Solo campos necesarios para selects
+            'products' => PhytosanitaryProduct::select(['id', 'name'])
+                ->where('active', true)
+                ->orderBy('name')
+                ->get(),
+            'warehouses' => Warehouse::select(['id', 'name', 'user_id'])
+                ->where('user_id', Auth::id())
+                ->where('active', true)
+                ->get(),
         ])->layout('layouts.app', [
             'title' => 'Registrar Stock - Agro365',
         ]);

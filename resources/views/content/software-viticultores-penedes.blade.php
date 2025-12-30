@@ -7,15 +7,15 @@
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Penedès - Gestión de Viñedos | Agro365</title>
     <meta name="description" content="Software especializado para viticultores de DOCa Penedès. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 12.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
-    <meta name="keywords" content="software viticultores rioja, cuaderno campo rioja, gestión viñedo rioja, tempranillo rioja, DOCa rioja, consejo regulador rioja, rendimientos rioja, heladas rioja alavesa">
+    <meta name="keywords" content="software viticultores penedès, cuaderno campo penedès, gestión viñedo penedès, xarel·lo, macabeo, DO penedès, cava">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
-    <link rel="canonical" href="{{ url('/software-viticultores-rioja') }}">
+    <link rel="canonical" href="{{ url('/software-viticultores-penedes') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Penedès - Agro365">
     <meta property="og:description" content="Gestión especializada para viñedos de Penedès. Control de rendimientos, heladas y cumplimiento normativo.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
-    <meta property="og:url" content="{{ url('/software-viticultores-rioja') }}">
+    <meta property="og:url" content="{{ url('/software-viticultores-penedes') }}">
     
     <!-- Favicon & Fonts -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -56,7 +56,7 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🍷</span>
-                    <span class="text-sm font-semibold text-red-800">DOCa Penedès - Denominación de Origen Calificada</span>
+                    <span class="text-sm font-semibold text-red-800">DO Penedès</span>
                 </div>
                 <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
                     Software para Viticultores en Penedès
@@ -77,10 +77,10 @@
                             <h3 class="font-bold text-xl text-red-800 mb-4">📊 Datos de la DO</h3>
                             <ul class="space-y-2 text-gray-700">
                                 <li><strong>Superficie:</strong> 26.000 hectáreas</li>
-                                <li><strong>Bodegas:</strong> 200+ bodegas registradas</li>
+                                <li><strong>Bodegas:</strong> 280+ bodegas registradas</li>
                                 <li><strong>Viticultores:</strong> 2.500+ viticultores</li>
                                 <li><strong>Producción anual:</strong> 200 millones de litros</li>
-                                <li><strong>Zonas:</strong> Penedès Alta, Penedès Alavesa, Penedès Oriental</li>
+                                <li><strong>Zonas:</strong> Penedès Superior, Penedès Central, Penedès Marítimo</li>
                             </ul>
                         </div>
                         
@@ -108,8 +108,7 @@
 
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-800">
-                            <strong>Clima Continental Moderado:</strong> Inviernos fríos con riesgo de heladas, veranos cálidos y secos. Precipitación media de 400-500mm anuales. La Sierra de Cantabria protege Penedès Alavesa de vientos del norte.
-                        </p>
+                            <strong>Mediterráneo:</strong>  Suave y templado. Influencia marítima en la costa. Precipitación 500-600mm anuales.</p>
                     </div>
                 </section>
 
@@ -346,7 +345,7 @@
         "itemListElement": [
             {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
             {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ route('content.software-viticultores') }}"},
-            {"@@type": "ListItem", "position": 3, "name": "Penedès", "item": "{{ url('/software-viticultores-rioja') }}"}
+            {"@@type": "ListItem", "position": 3, "name": "Penedès", "item": "{{ url('/software-viticultores-penedes') }}"}
         ]
     }
     </script>

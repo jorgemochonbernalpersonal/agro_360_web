@@ -10,17 +10,30 @@
         icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
         <x-slot:actionButton>
-            <a href="{{ route('viticulturist.inventory.create') }}" class="group">
-                <button
-                    class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4v16m8-8H4" />
-                    </svg>
-                    Registrar Stock
-                </button>
-            </a>
+            <div class="flex items-center gap-3">
+                <!-- Analytics Button -->
+                <a href="{{ route('viticulturist.inventory.analytics') }}">
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Analíticas
+                    </button>
+                </a>
+                
+                <!-- Register Stock Button -->
+                <a href="{{ route('viticulturist.inventory.create') }}" class="group">
+                    <button
+                        class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
+                        <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4v16m8-8H4" />
+                        </svg>
+                        Registrar Stock
+                    </button>
+                </a>
+            </div>
         </x-slot:actionButton>
     </x-page-header>
 
@@ -199,10 +212,37 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="{{ route('viticulturist.inventory.movements', $stock->id) }}" 
-                                   class="text-[var(--color-agro-green)] hover:text-[var(--color-agro-green-dark)]">
-                                    Ver movimientos
-                                </a>
+                                <div class="flex items-center justify-end gap-2">
+                                    <!-- Editar -->
+                                    <a href="{{ route('viticulturist.inventory.edit', $stock->id) }}" 
+                                       class="text-blue-600 hover:text-blue-900 transition-colors"
+                                       title="Editar stock">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </a>
+
+                                    <!-- Consumir -->
+                                    <a href="{{ route('viticulturist.inventory.consume', $stock->id) }}" 
+                                       class="text-orange-600 hover:text-orange-900 transition-colors"
+                                       title="Registrar consumo">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M20 12H4"/>
+                                        </svg>
+                                    </a>
+
+                                    <!-- Ver movimientos -->
+                                    <a href="{{ route('viticulturist.inventory.movements', $stock->id) }}" 
+                                       class="text-[var(--color-agro-green)] hover:text-[var(--color-agro-green-dark)] transition-colors"
+                                       title="Ver movimientos">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty

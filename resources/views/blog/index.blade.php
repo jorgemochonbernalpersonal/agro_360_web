@@ -3,13 +3,58 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- ✅ SEO: Meta tags optimizados -->
     <title>Blog Agro365 - Noticias y Consejos para Viticultores</title>
-    <meta name="description" content="Blog de agricultura y viticultura: novedades PAC, consejos para viticultores, calendario de labores, normativa agrícola y más.">
-    <meta name="keywords" content="blog viticultura, noticias agricultura, consejos viticultores, PAC 2025, cuaderno campo, normativa agrícola">
+    <meta name="description" content="Blog de agricultura y viticultura: novedades PAC, consejos para viticultores, calendario de labores, normativa agrícola y más. Artículos sobre cuaderno digital, SIGPAC y gestión agrícola.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/blog') }}">
     <meta property="og:title" content="Blog Agro365 - Noticias para Viticultores">
+    <meta property="og:description" content="Blog de agricultura y viticultura: novedades PAC, consejos para viticultores, calendario de labores, normativa agrícola y más.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/blog') }}">
+    
+    <!-- ✅ SEO: Schema.org Blog -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Blog",
+        "name": "Blog Agro365",
+        "description": "Blog de agricultura y viticultura: novedades PAC, consejos para viticultores, calendario de labores, normativa agrícola y más.",
+        "url": "{{ url('/blog') }}",
+        "publisher": {
+            "@@type": "Organization",
+            "name": "Agro365",
+            "logo": {
+                "@@type": "ImageObject",
+                "url": "{{ asset('images/logo.png') }}"
+            }
+        },
+        "blogPost": [
+            {
+                "@@type": "BlogPosting",
+                "headline": "Novedades PAC 2025: Lo que necesitas saber",
+                "url": "{{ url('/blog/novedades-pac-2025') }}",
+                "datePublished": "2024-12-01",
+                "dateModified": "2024-12-01"
+            },
+            {
+                "@@type": "BlogPosting",
+                "headline": "5 Errores Comunes en el Cuaderno de Campo",
+                "url": "{{ url('/blog/errores-cuaderno-campo') }}",
+                "datePublished": "2024-12-15",
+                "dateModified": "2024-12-15"
+            },
+            {
+                "@@type": "BlogPosting",
+                "headline": "Calendario Vitícola 2025: Mes a Mes",
+                "url": "{{ url('/blog/calendario-viticola-2025') }}",
+                "datePublished": "2024-12-20",
+                "dateModified": "2024-12-20"
+            }
+        ]
+    }
+    </script>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />

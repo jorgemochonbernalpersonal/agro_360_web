@@ -86,6 +86,9 @@
     </div>
 
 
+    <!-- ✅ SEO: Enlaces relacionados para mejorar link juice interno -->
+    @include('components.related-links')
+
     @include('partials.footer-seo')
 </body>
 </html>

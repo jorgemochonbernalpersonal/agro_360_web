@@ -288,6 +288,7 @@ class Plot extends Model
     /**
      * Scope para filtrar parcelas visibles para un viticultor
      * Incluye sus propias parcelas y parcelas de viticultores visibles
+     * ✅ OPTIMIZADO: Usa subconsultas directas en lugar de múltiples queries
      */
     public function scopeForViticulturist($query, User $user)
     {
@@ -295,51 +296,43 @@ class Plot extends Model
             return $query->whereRaw('1 = 0');
         }
 
-        // Obtener IDs de viticultores visibles (cacheado)
-        $supervisor = $user->supervisor;
-        $supervisorId = $supervisor?->id;
-        
-        $wineries = $user->wineries;
-        $wineryIds = $wineries->pluck('id');
-
-        // Viticultores creados por este viticultor
-        $createdViticulturistIds = WineryViticulturist::where('parent_viticulturist_id', $user->id)
-            ->where('source', WineryViticulturist::SOURCE_VITICULTURIST)
-            ->pluck('viticulturist_id');
-
-        return $query->where(function($q) use ($user, $supervisorId, $wineryIds, $createdViticulturistIds) {
+        return $query->where(function($q) use ($user) {
             // Sus propias parcelas
             $q->where('viticulturist_id', $user->id);
             
-            // Parcelas de viticultores creados por él
-            if ($createdViticulturistIds->isNotEmpty()) {
-                $q->orWhereIn('viticulturist_id', $createdViticulturistIds);
-            }
+            // ✅ OPTIMIZACIÓN: Parcelas de viticultores creados por él (subconsulta directa)
+            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
+                $subQuery->select('viticulturist_id')
+                    ->from('winery_viticulturist')
+                    ->where('parent_viticulturist_id', $user->id)
+                    ->where('source', WineryViticulturist::SOURCE_VITICULTURIST);
+            });
             
-            // Parcelas de viticultores del supervisor (si tiene)
-            if ($supervisorId) {
-                $supervisorViticulturistIds = WineryViticulturist::where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-                    ->where('supervisor_id', $supervisorId)
-                    ->pluck('viticulturist_id');
-                
-                if ($supervisorViticulturistIds->isNotEmpty()) {
-                    $q->orWhereIn('viticulturist_id', $supervisorViticulturistIds);
-                }
-            }
-            
-            // Parcelas de viticultores de sus wineries (si tiene)
-            if ($wineryIds->isNotEmpty()) {
-                $wineryViticulturistIds = WineryViticulturist::whereIn('winery_id', $wineryIds)
-                    ->where(function($wineryQ) {
-                        $wineryQ->where('source', WineryViticulturist::SOURCE_OWN)
-                                ->orWhere('source', WineryViticulturist::SOURCE_VITICULTURIST);
+            // ✅ OPTIMIZACIÓN: Parcelas de viticultores del supervisor (subconsulta directa)
+            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
+                $subQuery->select('wv2.viticulturist_id')
+                    ->from('winery_viticulturist as wv1')
+                    ->join('winery_viticulturist as wv2', function($join) {
+                        $join->on('wv2.supervisor_id', '=', 'wv1.supervisor_id')
+                             ->where('wv2.source', '=', WineryViticulturist::SOURCE_SUPERVISOR);
                     })
-                    ->pluck('viticulturist_id');
-                
-                if ($wineryViticulturistIds->isNotEmpty()) {
-                    $q->orWhereIn('viticulturist_id', $wineryViticulturistIds);
-                }
-            }
+                    ->where('wv1.viticulturist_id', $user->id)
+                    ->where('wv1.source', WineryViticulturist::SOURCE_SUPERVISOR)
+                    ->whereNotNull('wv1.supervisor_id');
+            });
+            
+            // ✅ OPTIMIZACIÓN: Parcelas de viticultores de sus wineries (subconsulta directa)
+            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
+                $subQuery->select('wv2.viticulturist_id')
+                    ->from('winery_viticulturist as wv1')
+                    ->join('winery_viticulturist as wv2', 'wv2.winery_id', '=', 'wv1.winery_id')
+                    ->where('wv1.viticulturist_id', $user->id)
+                    ->whereNotNull('wv1.winery_id')
+                    ->where(function($wineryQ) {
+                        $wineryQ->where('wv2.source', WineryViticulturist::SOURCE_OWN)
+                                ->orWhere('wv2.source', WineryViticulturist::SOURCE_VITICULTURIST);
+                    });
+            });
         });
     }
 

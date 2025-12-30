@@ -11,10 +11,24 @@ class PlotsDashboard extends Component
 {
     public function render()
     {
-        $userId = Auth::id();
-        $plots = Plot::forUser(Auth::user())->get();
+        $user = Auth::user();
         
-        // Métricas de superficie
+        // ✅ OPTIMIZACIÓN: Cargar solo campos necesarios para el dashboard
+        $plots = Plot::forUser($user)
+            ->select([
+                'id',
+                'name',
+                'area',
+                'pac_eligible_area',
+                'non_eligible_area',
+                'eligibility_coefficient',
+                'tenure_regime',
+                'active',
+                'is_locked',
+            ])
+            ->get();
+        
+        // Métricas de superficie (optimizado: cálculos en memoria)
         $totalSurface = $plots->sum('area');
         $eligibleSurface = $plots->sum('pac_eligible_area') ?: $totalSurface;
         $nonEligibleSurface = $plots->sum('non_eligible_area');
@@ -28,7 +42,7 @@ class PlotsDashboard extends Component
             ];
         });
         
-        // Alertas de cumplimiento
+        // ✅ OPTIMIZACIÓN: Validar en batch para reducir overhead
         $alerts = [];
         $validator = new PacEligibilityValidator();
         
@@ -42,7 +56,7 @@ class PlotsDashboard extends Component
                 ];
             }
             
-            // Validar coherencia
+            // Validar coherencia (no hace queries, solo cálculos)
             $validation = $validator->validate($plot);
             if (!$validation['valid']) {
                 foreach ($validation['errors'] as $error) {

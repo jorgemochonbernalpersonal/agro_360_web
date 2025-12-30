@@ -312,7 +312,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Obtener el supervisor del viticultor (desde WineryViticulturist)
      * Busca en WineryViticulturist con source = 'supervisor'
-     * Cacheado para evitar queries repetidas
+     * ✅ OPTIMIZADO: Usa Laravel Cache en lugar de propiedades privadas
      */
     public function getSupervisorAttribute(): ?User
     {
@@ -320,15 +320,20 @@ class User extends Authenticatable implements MustVerifyEmail
             return null;
         }
         
-        // Cachear en memoria durante la request
+        // ✅ OPTIMIZACIÓN: Cache persistente con TTL de 1 hora
+        // Cache en memoria durante la request como fallback
         if (!isset($this->_supervisor_cache)) {
-            $wineryRelation = WineryViticulturist::where('viticulturist_id', $this->id)
-                ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-                ->whereNotNull('supervisor_id')
-                ->with('supervisor')
-                ->first();
+            $cacheKey = "user_{$this->id}_supervisor";
             
-            $this->_supervisor_cache = $wineryRelation?->supervisor;
+            $this->_supervisor_cache = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
+                $wineryRelation = WineryViticulturist::where('viticulturist_id', $this->id)
+                    ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+                    ->whereNotNull('supervisor_id')
+                    ->with('supervisor')
+                    ->first();
+                
+                return $wineryRelation?->supervisor;
+            });
         }
         
         return $this->_supervisor_cache;
@@ -351,7 +356,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Obtener las wineries del viticultor (usando relación existente)
-     * Cacheado para evitar queries repetidas
+     * ✅ OPTIMIZADO: Usa Laravel Cache en lugar de propiedades privadas
      */
     public function getWineriesAttribute()
     {
@@ -359,21 +364,27 @@ class User extends Authenticatable implements MustVerifyEmail
             return collect();
         }
         
-        // Cachear en memoria durante la request
+        // ✅ OPTIMIZACIÓN: Cache persistente con TTL de 1 hora
+        // Cache en memoria durante la request como fallback
         if (!isset($this->_wineries_cache)) {
-            // Usar query directa en lugar de la relación para evitar problemas con scopes
-            $wineryIds = \App\Models\WineryViticulturist::where('viticulturist_id', $this->id)
-                ->whereNotNull('winery_id')
-                ->pluck('winery_id')
-                ->unique();
+            $cacheKey = "user_{$this->id}_wineries";
             
-            if ($wineryIds->isEmpty()) {
-                $this->_wineries_cache = collect();
-            } else {
-                $this->_wineries_cache = User::whereIn('id', $wineryIds)
+            $this->_wineries_cache = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
+                // Usar query directa en lugar de la relación para evitar problemas con scopes
+                $wineryIds = \App\Models\WineryViticulturist::where('viticulturist_id', $this->id)
+                    ->whereNotNull('winery_id')
+                    ->pluck('winery_id')
+                    ->unique();
+                
+                if ($wineryIds->isEmpty()) {
+                    return collect();
+                }
+                
+                return User::whereIn('id', $wineryIds)
                     ->where('role', self::ROLE_WINERY)
+                    ->select(['id', 'name', 'email', 'role']) // ✅ Solo campos necesarios
                     ->get();
-            }
+            });
         }
         
         return $this->_wineries_cache;
@@ -490,13 +501,19 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Limpiar cache de atributos calculados
      * Útil cuando se actualiza el usuario (verificación de email, cambio de contraseña, etc.)
+     * ✅ OPTIMIZADO: También limpia cache de Laravel
      */
     public function clearAttributeCache(): void
     {
+        // Limpiar cache en memoria
         unset($this->_wineries_cache);
         unset($this->_supervisor_cache);
         unset($this->_was_created_by_another_cache);
         unset($this->_needs_password_change_cache);
+        
+        // ✅ Limpiar cache persistente de Laravel
+        \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_supervisor");
+        \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_wineries");
     }
 
     /**

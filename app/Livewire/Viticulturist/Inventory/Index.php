@@ -66,9 +66,10 @@ class Index extends Component
             $query->whereNotNull('expiry_date')
                   ->where('expiry_date', '<=', now());
         } elseif ($this->statusFilter === 'low_stock') {
-            // Stock bajo: menos de 5 unidades o menos del 10% del consumo promedio
-            // Por ahora, simplemente cantidad < 5
-            $query->where('quantity', '<', 5);
+            // Stock bajo: usar minimum_stock personalizado o 5 por defecto
+            $query->where(function($q) {
+                $q->whereColumn('quantity', '<', DB::raw('COALESCE(minimum_stock, 5)'));
+            });
         }
 
         $stocks = $query->orderBy('expiry_date', 'asc')
@@ -86,7 +87,9 @@ class Index extends Component
                 ->sum(DB::raw('quantity * COALESCE(unit_price, 0)')),
             'low_stock_count' => ProductStock::where('user_id', $user->id)
                 ->where('active', true)
-                ->where('quantity', '<', 5)
+                ->where(function($q) {
+                    $q->whereColumn('quantity', '<', DB::raw('COALESCE(minimum_stock, 5)'));
+                })
                 ->count(),
             'expiring_soon_count' => ProductStock::where('user_id', $user->id)
                 ->where('active', true)
@@ -99,8 +102,15 @@ class Index extends Component
         return view('livewire.viticulturist.inventory.index', [
             'stocks' => $stocks,
             'stats' => $stats,
-            'products' => PhytosanitaryProduct::where('active', true)->orderBy('name')->get(),
-            'warehouses' => Warehouse::where('user_id', $user->id)->where('active', true)->get(),
+            // ✅ OPTIMIZACIÓN: Solo campos necesarios para selects
+            'products' => PhytosanitaryProduct::select(['id', 'name'])
+                ->where('active', true)
+                ->orderBy('name')
+                ->get(),
+            'warehouses' => Warehouse::select(['id', 'name', 'user_id'])
+                ->where('user_id', $user->id)
+                ->where('active', true)
+                ->get(),
         ])->layout('layouts.app', [
             'title' => 'Inventario de Productos Fitosanitarios - Agro365',
         ]);

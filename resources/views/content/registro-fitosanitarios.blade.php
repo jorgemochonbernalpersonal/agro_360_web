@@ -228,6 +228,9 @@
         </div>
     </div>
 
+    <!-- ✅ SEO: Enlaces relacionados para mejorar link juice interno -->
+    @include('components.related-links')
+
     @include('partials.footer-seo')
 
     <script type="application/ld+json">

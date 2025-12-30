@@ -63,7 +63,7 @@
                 </ul>
             </div>
             
-            <!-- Guías y Recursos -->
+            <!-- ✅ SEO: Guías y Recursos - Más enlaces internos estratégicos -->
             <div>
                 <h4 class="font-semibold text-lg mb-4">Recursos</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
@@ -73,6 +73,9 @@
                     <li><a href="{{ url('/registro-fitosanitarios') }}" class="hover:text-white transition-colors">Fitosanitarios</a></li>
                     <li><a href="{{ route('content.app-agricultura') }}" class="hover:text-white transition-colors">App Agricultura</a></li>
                     <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog</a></li>
+                    <li><a href="{{ route('content.comparativa') }}" class="hover:text-white transition-colors">Comparativa Software</a></li>
+                    <li><a href="{{ url('/digitalizar-viñedo') }}" class="hover:text-white transition-colors">Digitalizar Viñedo</a></li>
+                    <li><a href="{{ url('/informes-oficiales-agricultura') }}" class="hover:text-white transition-colors">Informes Oficiales</a></li>
                 </ul>
             </div>
             

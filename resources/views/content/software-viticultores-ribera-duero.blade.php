@@ -7,15 +7,15 @@
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Ribera del Duero - Gestión de Viñedos | Agro365</title>
     <meta name="description" content="Software especializado para viticultores de DOCa Ribera del Duero. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 7.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
-    <meta name="keywords" content="software viticultores rioja, cuaderno campo rioja, gestión viñedo rioja, tempranillo rioja, DOCa rioja, consejo regulador rioja, rendimientos rioja, heladas rioja alavesa">
+    <meta name="keywords" content="software viticultores ribera del duero, cuaderno campo ribera, gestión viñedo ribera, tinta del país, DO ribera del duero, consejo regulador ribera">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
-    <link rel="canonical" href="{{ url('/software-viticultores-rioja') }}">
+    <link rel="canonical" href="{{ url('/software-viticultores-ribera-duero') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Ribera del Duero - Agro365">
     <meta property="og:description" content="Gestión especializada para viñedos de Ribera del Duero. Control de rendimientos, heladas y cumplimiento normativo.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
-    <meta property="og:url" content="{{ url('/software-viticultores-rioja') }}">
+    <meta property="og:url" content="{{ url('/software-viticultores-ribera-duero') }}">
     
     <!-- Favicon & Fonts -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -56,7 +56,7 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🍷</span>
-                    <span class="text-sm font-semibold text-red-800">DOCa Ribera del Duero - Denominación de Origen Calificada</span>
+                    <span class="text-sm font-semibold text-red-800">DO Ribera del Duero</span>
                 </div>
                 <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
                     Software para Viticultores en Ribera del Duero
@@ -70,7 +70,7 @@
             <article class="prose prose-lg max-w-none">
                 <!-- Características de la DOCa Ribera del Duero -->
                 <section class="mb-12">
-                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-6">La DOCa Ribera del Duero: Primera Denominación Calificada de España</h2>
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-6">La DO Ribera del Duero: Excelencia Vinícola en Castilla y León</h2>
                     
                     <div class="grid md:grid-cols-2 gap-6 mb-8">
                         <div class="bg-gradient-to-br from-red-50 to-white p-6 rounded-xl border border-red-200">
@@ -80,7 +80,8 @@
                                 <li><strong>Bodegas:</strong> 300+ bodegas registradas</li>
                                 <li><strong>Viticultores:</strong> 8.000+ viticultores</li>
                                 <li><strong>Producción anual:</strong> 100 millones de litros</li>
-                                <li><strong>Zonas:</strong> Ribera del Duero Alta, Ribera del Duero Alavesa, Ribera del Duero Oriental</li>
+                                <li><strong>Provincias:</strong> Burgos, Valladolid, Segovia y Soria</li>
+                                <li><strong>Longitud:</strong> 115 km a lo largo del río Duero</li>
                             </ul>
                         </div>
                         
@@ -88,18 +89,18 @@
                             <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-4">🍇 Variedades Autorizadas</h3>
                             <div class="space-y-3">
                                 <div>
-                                    <p class="font-semibold text-gray-800">Tintas (90%):</p>
+                                    <p class="font-semibold text-gray-800">Tintas (principales):</p>
                                     <ul class="text-sm text-gray-700 ml-4 mt-1">
-                                        <li>• Tinta del País (Tempranillo) (95%) - Variedad principal</li>
-                                        <li>• Garnacha (12%)</li>
-                                        <li>• Mazuelo, Graciano (3%)</li>
+                                        <li>• Tinta del País (Tempranillo) - Variedad principal (mín. 75%)</li>
+                                        <li>• Cabernet Sauvignon, Merlot, Malbec (máx. 25%)</li>
+                                        <li>• Garnacha Tinta, Albillo Mayor</li>
                                     </ul>
                                 </div>
                                 <div>
-                                    <p class="font-semibold text-gray-800">Blancas (10%):</p>
+                                    <p class="font-semibold text-gray-800">Blancas (minoritarias):</p>
                                     <ul class="text-sm text-gray-700 ml-4 mt-1">
-                                        <li>• Viura (Macabeo) - Principal</li>
-                                        <li>• Malvasía, Garnacha Blanca</li>
+                                        <li>• Albillo Mayor - Variedad autóctona</li>
+                                        <li>• Vinos blancos desde 2019</li>
                                     </ul>
                                 </div>
                             </div>
@@ -108,7 +109,7 @@
 
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-800">
-                            <strong>Clima Continental Moderado:</strong> Inviernos fríos con riesgo de heladas, veranos cálidos y secos. Precipitación media de 400-500mm anuales. La Sierra de Cantabria protege Ribera del Duero Alavesa de vientos del norte.
+                            <strong>Clima Continental Extremo:</strong> Inviernos muy fríos (hasta -18°C) con riesgo de heladas, veranos cálidos y secos (hasta 40°C). Precipitación media de 400-600mm anuales. Gran amplitud térmica día-noche que favorece la maduración y concentración aromática.
                         </p>
                     </div>
                 </section>
@@ -124,7 +125,7 @@
                                 <div class="flex-1">
                                     <h3 class="font-bold text-xl text-gray-900 mb-2">1. Heladas Tardías de Primavera</h3>
                                     <p class="text-gray-700 mb-3">
-                                        Las heladas de abril-mayo son el mayor riesgo en Ribera del Duero Alavesa y Alta. Pueden destruir brotes recién formados y reducir la cosecha hasta un 80%.
+                                        Las heladas de abril-mayo son el mayor riesgo en toda la Ribera del Duero. El clima continental extremo puede provocar heladas hasta -5°C que destruyen brotes recién formados y reducen la cosecha hasta un 80%.
                                     </p>
                                     <div class="bg-green-50 p-4 rounded-lg border border-green-200">
                                         <p class="font-semibold text-green-800 mb-2">✅ Solución con Agro365:</p>
@@ -143,9 +144,9 @@
                             <div class="flex items-start gap-4">
                                 <div class="text-4xl">🌧️</div>
                                 <div class="flex-1">
-                                    <h3 class="font-bold text-xl text-gray-900 mb-2">2. Granizo en Época de Maduración</h3>
+                                    <h3 class="font-bold text-xl text-gray-900 mb-2">2. Granizo y Sequía Estival</h3>
                                     <p class="text-gray-700 mb-3">
-                                        Tormentas de granizo en julio-agosto pueden dañar racimos y hojas. Ribera del Duero Oriental es especialmente vulnerable.
+                                        Tormentas de granizo en julio-agosto pueden dañar racimos. La sequía estival es común, con veranos muy secos que requieren gestión cuidadosa del estrés hídrico de la vid.
                                     </p>
                                     <div class="bg-green-50 p-4 rounded-lg border border-green-200">
                                         <p class="font-semibold text-green-800 mb-2">✅ Solución con Agro365:</p>
@@ -187,7 +188,7 @@
                                 <div class="flex-1">
                                     <h3 class="font-bold text-xl text-gray-900 mb-2">4. Mildiu y Oidio</h3>
                                     <p class="text-gray-700 mb-3">
-                                        Primaveras húmedas favorecen el mildiu. El oidio es persistente en Ribera del Duero Alta. Ambos requieren tratamientos preventivos precisos.
+                                        Primaveras húmedas favorecen el mildiu. El oidio es persistente en toda la región. Ambos requieren tratamientos preventivos precisos y registro obligatorio de fitosanitarios.
                                     </p>
                                     <div class="bg-green-50 p-4 rounded-lg border border-green-200">
                                         <p class="font-semibold text-green-800 mb-2">✅ Solución con Agro365:</p>
@@ -221,7 +222,7 @@
                             <div class="text-3xl mb-3">🗺️</div>
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Gestión SIGPAC Ribera del Duero</h3>
                             <p class="text-gray-700 text-sm">
-                                Importa tus parcelas SIGPAC de La Ribera del Duero, Álava y Navarra. Visualiza en mapa, calcula superficies exactas y mantén actualizado el registro.
+                                Importa tus parcelas SIGPAC de Burgos, Valladolid, Segovia y Soria. Visualiza en mapa, calcula superficies exactas y mantén actualizado el registro para PAC y Consejo Regulador.
                             </p>
                         </div>
 
@@ -346,7 +347,7 @@
         "itemListElement": [
             {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
             {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ route('content.software-viticultores') }}"},
-            {"@@type": "ListItem", "position": 3, "name": "Ribera del Duero", "item": "{{ url('/software-viticultores-rioja') }}"}
+            {"@@type": "ListItem", "position": 3, "name": "Ribera del Duero", "item": "{{ url('/software-viticultores-ribera-duero') }}"}
         ]
     }
     </script>

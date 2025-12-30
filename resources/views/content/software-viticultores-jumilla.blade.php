@@ -7,15 +7,15 @@
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Jumilla - Gestión de Viñedos | Agro365</title>
     <meta name="description" content="Software especializado para viticultores de DOCa Jumilla. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 7.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
-    <meta name="keywords" content="software viticultores rioja, cuaderno campo rioja, gestión viñedo rioja, tempranillo rioja, DOCa rioja, consejo regulador rioja, rendimientos rioja, heladas rioja alavesa">
+    <meta name="keywords" content="software viticultores jumilla, cuaderno campo jumilla, gestión viñedo jumilla, monastrell, DO jumilla, murcia">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
-    <link rel="canonical" href="{{ url('/software-viticultores-rioja') }}">
+    <link rel="canonical" href="{{ url('/software-viticultores-jumilla') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Jumilla - Agro365">
     <meta property="og:description" content="Gestión especializada para viñedos de Jumilla. Control de rendimientos, heladas y cumplimiento normativo.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
-    <meta property="og:url" content="{{ url('/software-viticultores-rioja') }}">
+    <meta property="og:url" content="{{ url('/software-viticultores-jumilla') }}">
     
     <!-- Favicon & Fonts -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -56,7 +56,7 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🍷</span>
-                    <span class="text-sm font-semibold text-red-800">DOCa Jumilla - Denominación de Origen Calificada</span>
+                    <span class="text-sm font-semibold text-red-800">DO Jumilla</span>
                 </div>
                 <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
                     Software para Viticultores en Jumilla
@@ -76,11 +76,11 @@
                         <div class="bg-gradient-to-br from-red-50 to-white p-6 rounded-xl border border-red-200">
                             <h3 class="font-bold text-xl text-red-800 mb-4">📊 Datos de la DO</h3>
                             <ul class="space-y-2 text-gray-700">
-                                <li><strong>Superficie:</strong> 23.000 hectáreas</li>
+                                <li><strong>Superficie:</strong> 30.000 hectáreas</li>
                                 <li><strong>Bodegas:</strong> 45+ bodegas registradas</li>
                                 <li><strong>Viticultores:</strong> 2.500+ viticultores</li>
                                 <li><strong>Producción anual:</strong> 70 millones de litros</li>
-                                <li><strong>Zonas:</strong> Jumilla Alta, Jumilla Alavesa, Jumilla Oriental</li>
+                                <li><strong>Zonas:</strong> Murcia y Albacete. Altiplano de 400-800m</li>
                             </ul>
                         </div>
                         
@@ -108,8 +108,7 @@
 
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-800">
-                            <strong>Clima Continental Moderado:</strong> Inviernos fríos con riesgo de heladas, veranos cálidos y secos. Precipitación media de 400-500mm anuales. La Sierra de Cantabria protege Jumilla Alavesa de vientos del norte.
-                        </p>
+                            <strong>Mediterráneo continental:</strong>  Veranos muy cálidos y secos, inviernos fríos. Precipitación 300mm. Altitud modera temperaturas.</p>
                     </div>
                 </section>
 
@@ -346,7 +345,7 @@
         "itemListElement": [
             {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
             {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ route('content.software-viticultores') }}"},
-            {"@@type": "ListItem", "position": 3, "name": "Jumilla", "item": "{{ url('/software-viticultores-rioja') }}"}
+            {"@@type": "ListItem", "position": 3, "name": "Jumilla", "item": "{{ url('/software-viticultores-jumilla') }}"}
         ]
     }
     </script>

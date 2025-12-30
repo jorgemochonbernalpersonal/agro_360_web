@@ -54,7 +54,11 @@ class Dashboard extends Component
     public function mount()
     {
         $user = auth()->user();
-        $this->plots = Plot::forUser($user)->orderBy('name')->get();
+        // ✅ OPTIMIZACIÓN: Solo campos necesarios
+        $this->plots = Plot::forUser($user)
+            ->select(['id', 'name', 'area'])
+            ->orderBy('name')
+            ->get();
         $this->loadStats();
         
         // Load first plot if none selected
@@ -111,7 +115,34 @@ class Dashboard extends Component
 
     public function loadStats()
     {
-        $service = new NasaEarthdataService();
+        // ✅ OPTIMIZACIÓN: Cargar todos los datos NDVI de una vez en lugar de uno por uno
+        $plotIds = $this->plots->pluck('id');
+        
+        if ($plotIds->isEmpty()) {
+            $this->stats = [
+                'total_plots' => 0,
+                'with_data' => 0,
+                'average_ndvi' => 0,
+                'excellent' => 0,
+                'good' => 0,
+                'moderate' => 0,
+                'poor' => 0,
+                'critical' => 0,
+            ];
+            return;
+        }
+        
+        // ✅ OPTIMIZACIÓN: Obtener últimos datos NDVI para todos los plots en una query
+        // Usar window function o subconsulta segura
+        $latestNdviData = \App\Models\PlotRemoteSensing::whereIn('plot_id', $plotIds)
+            ->whereIn('id', function($subQuery) use ($plotIds) {
+                $subQuery->selectRaw('MAX(id)')
+                    ->from('plot_remote_sensing')
+                    ->whereIn('plot_id', $plotIds)
+                    ->groupBy('plot_id');
+            })
+            ->get()
+            ->keyBy('plot_id');
         
         $excellent = 0;
         $good = 0;
@@ -122,7 +153,7 @@ class Dashboard extends Component
         $ndviCount = 0;
 
         foreach ($this->plots as $plot) {
-            $data = $service->getLatestData($plot);
+            $data = $latestNdviData->get($plot->id);
             if ($data) {
                 $ndviCount++;
                 $totalNdvi += $data->ndvi_mean ?? 0;

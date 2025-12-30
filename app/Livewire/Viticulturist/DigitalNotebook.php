@@ -59,9 +59,10 @@ class DigitalNotebook extends Component
     {
         $user = Auth::user();
         
-        // Obtener parcelas del viticultor usando scopeForUser para consistencia
+        // ✅ OPTIMIZACIÓN: Cargar solo campos necesarios
         $plots = Plot::forUser($user)
             ->where('active', true)
+            ->select(['id', 'name', 'area'])
             ->orderBy('name')
             ->get();
 
@@ -126,7 +127,7 @@ class DigitalNotebook extends Component
             });
         }
 
-        // Obtener estadísticas antes de paginar (sin filtros de tipo para el total)
+        // ✅ OPTIMIZACIÓN: Obtener todas las estadísticas en una sola query
         $baseQuery = AgriculturalActivity::forViticulturist($user->id)
             ->forCampaign($this->selectedCampaign);
         
@@ -140,16 +141,29 @@ class DigitalNotebook extends Component
             $baseQuery->where('activity_date', '<=', $this->dateTo);
         }
 
-        $totalActivities = $baseQuery->count();
-        $phytosanitaryCount = (clone $baseQuery)->ofType('phytosanitary')->count();
-        $fertilizationCount = (clone $baseQuery)->ofType('fertilization')->count();
-        $irrigationCount = (clone $baseQuery)->ofType('irrigation')->count();
+        // ✅ OPTIMIZADO: Una sola query con agregaciones en lugar de 4 queries separadas
+        $stats = $baseQuery
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(CASE WHEN activity_type = ? THEN 1 ELSE 0 END) as phytosanitary,
+                SUM(CASE WHEN activity_type = ? THEN 1 ELSE 0 END) as fertilization,
+                SUM(CASE WHEN activity_type = ? THEN 1 ELSE 0 END) as irrigation
+            ', ['phytosanitary', 'fertilization', 'irrigation'])
+            ->first();
+        
+        $totalActivities = $stats->total ?? 0;
+        $phytosanitaryCount = $stats->phytosanitary ?? 0;
+        $fertilizationCount = $stats->fertilization ?? 0;
+        $irrigationCount = $stats->irrigation ?? 0;
 
         $activities = $query->paginate(10);
 
-        // Productos para filtro (solo si es tipo phytosanitary)
+        // ✅ OPTIMIZACIÓN: Cargar solo campos necesarios para el filtro
         $products = $this->activityType === 'phytosanitary' 
-            ? PhytosanitaryProduct::orderBy('name')->get() 
+            ? PhytosanitaryProduct::select(['id', 'name'])
+                ->where('active', true)
+                ->orderBy('name')
+                ->get() 
             : collect();
 
         // Obtener todas las campañas del viticultor

@@ -17,6 +17,7 @@ class ProductStock extends Model
         'expiry_date',
         'manufacturing_date',
         'quantity',
+        'minimum_stock',
         'unit',
         'unit_price',
         'supplier',

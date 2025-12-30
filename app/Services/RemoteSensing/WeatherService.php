@@ -104,7 +104,19 @@ class WeatherService
 
             if ($response->successful()) {
                 $data = $response->json();
-                return [
+                
+                // Validar estructura de respuesta
+                if (!isset($data['current']) || !isset($data['daily'])) {
+                    Log::warning('Open-Meteo: Invalid response structure', [
+                        'has_current' => isset($data['current']),
+                        'has_daily' => isset($data['daily']),
+                        'lat' => $lat,
+                        'lon' => $lon,
+                    ]);
+                    return $this->generateMockWeatherData();
+                }
+                
+                $weatherData = [
                     'temperature' => $data['current']['temperature_2m'] ?? null,
                     'humidity' => $data['current']['relative_humidity_2m'] ?? null,
                     'precipitation' => $data['current']['precipitation'] ?? null,
@@ -114,9 +126,34 @@ class WeatherService
                     'temperature_min' => $data['daily']['temperature_2m_min'][0] ?? null,
                     'success' => true,
                 ];
+                
+                // Si los datos críticos son null, usar mock
+                if (is_null($weatherData['temperature']) && 
+                    is_null($weatherData['humidity']) && 
+                    is_null($weatherData['wind_speed'])) {
+                    Log::warning('Open-Meteo: Empty data returned', [
+                        'lat' => $lat,
+                        'lon' => $lon,
+                        'data' => $data,
+                    ]);
+                    return $this->generateMockWeatherData();
+                }
+                
+                return $weatherData;
+            } else {
+                Log::error('Open-Meteo API request failed', [
+                    'status' => $response->status(),
+                    'body' => substr($response->body(), 0, 200),
+                    'lat' => $lat,
+                    'lon' => $lon,
+                ]);
             }
         } catch (\Exception $e) {
-            Log::error('Open-Meteo API error', ['error' => $e->getMessage()]);
+            Log::error('Open-Meteo API error', [
+                'error' => $e->getMessage(),
+                'lat' => $lat,
+                'lon' => $lon,
+            ]);
         }
 
         return $this->generateMockWeatherData();
@@ -138,6 +175,18 @@ class WeatherService
 
             if ($response->successful()) {
                 $data = $response->json();
+                
+                // Validar estructura
+                if (!isset($data['daily']) || !isset($data['daily']['time'])) {
+                    Log::warning('Open-Meteo forecast: Invalid response structure', [
+                        'has_daily' => isset($data['daily']),
+                        'has_time' => isset($data['daily']['time']),
+                        'lat' => $lat,
+                        'lon' => $lon,
+                    ]);
+                    return $this->generateMockForecast($days);
+                }
+                
                 $forecast = [];
                 
                 for ($i = 0; $i < $days; $i++) {
@@ -152,9 +201,19 @@ class WeatherService
                 }
                 
                 return ['forecast' => $forecast, 'success' => true];
+            } else {
+                Log::error('Open-Meteo forecast API failed', [
+                    'status' => $response->status(),
+                    'lat' => $lat,
+                    'lon' => $lon,
+                ]);
             }
         } catch (\Exception $e) {
-            Log::error('Open-Meteo forecast error', ['error' => $e->getMessage()]);
+            Log::error('Open-Meteo forecast error', [
+                'error' => $e->getMessage(),
+                'lat' => $lat,
+                'lon' => $lon,
+            ]);
         }
 
         return $this->generateMockForecast($days);
@@ -176,6 +235,17 @@ class WeatherService
 
             if ($response->successful()) {
                 $data = $response->json();
+                
+                // Validar estructura
+                if (!isset($data['hourly'])) {
+                    Log::warning('Open-Meteo soil: Invalid response structure', [
+                        'has_hourly' => isset($data['hourly']),
+                        'lat' => $lat,
+                        'lon' => $lon,
+                    ]);
+                    return $this->generateMockSoilData();
+                }
+                
                 $hour = now()->hour;
                 
                 return [
@@ -183,9 +253,19 @@ class WeatherService
                     'soil_temperature' => $data['hourly']['soil_temperature_0cm'][$hour] ?? null,
                     'success' => true,
                 ];
+            } else {
+                Log::error('Open-Meteo soil API failed', [
+                    'status' => $response->status(),
+                    'lat' => $lat,
+                    'lon' => $lon,
+                ]);
             }
         } catch (\Exception $e) {
-            Log::error('Open-Meteo soil error', ['error' => $e->getMessage()]);
+            Log::error('Open-Meteo soil error', [
+                'error' => $e->getMessage(),
+                'lat' => $lat,
+                'lon' => $lon,
+            ]);
         }
 
         return $this->generateMockSoilData();

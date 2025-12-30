@@ -77,9 +77,10 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             
             // Contenedores
             Route::prefix('containers')->name('containers.')->group(function () {
-                Route::get('/', ContainersIndex::class)->name('index');
-                Route::get('/create', ContainersCreate::class)->name('create');
-                Route::get('/{container}/edit', ContainersEdit::class)->name('edit');
+                Route::get('/', \App\Livewire\Viticulturist\Containers\Index::class)->name('index');
+                Route::get('/create', \App\Livewire\Viticulturist\Containers\Create::class)->name('create');
+                Route::get('/{id}', \App\Livewire\Viticulturist\Containers\Show::class)->name('show');
+                Route::get('/{id}/edit', \App\Livewire\Viticulturist\Containers\Edit::class)->name('edit');
             });
             
             // Rendimientos Estimados
@@ -169,8 +170,17 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         // Gestión de Inventario de Productos Fitosanitarios
         Route::prefix('inventory')->name('inventory.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Inventory\Index::class)->name('index');
+            Route::get('/analytics', \App\Livewire\Viticulturist\Inventory\Analytics::class)->name('analytics');
             Route::get('/create', \App\Livewire\Viticulturist\Inventory\CreateStock::class)->name('create');
+            Route::get('/{stock}/edit', \App\Livewire\Viticulturist\Inventory\EditStock::class)->name('edit');
+            Route::get('/{stock}/consume', \App\Livewire\Viticulturist\Inventory\ConsumeStock::class)->name('consume');
             Route::get('/{stock}/movements', \App\Livewire\Viticulturist\Inventory\Movements::class)->name('movements');
+            
+            // Exportación
+            Route::get('/export', function() {
+                $export = new \App\Exports\InventoryExport(auth()->id());
+                return \Maatwebsite\Excel\Facades\Excel::download($export, 'inventario_' . now()->format('Y-m-d') . '.xlsx');
+            })->name('export');
         });
 
         // Gestión de Almacenes

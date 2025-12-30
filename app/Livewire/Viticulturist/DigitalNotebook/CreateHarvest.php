@@ -108,13 +108,16 @@ class CreateHarvest extends Component
     }
     
     /**
-     * Cargar contenedores disponibles (sin cosecha asignada)
+     * Cargar contenedores disponibles (con capacidad disponible)
      */
     protected function loadAvailableContainers()
     {
-        $this->availableContainers = Container::available()
-            ->whereDoesntHave('harvests')
-            ->orderBy('created_at', 'desc')
+        // Cargar contenedores que tengan capacidad disponible (no necesariamente vacíos)
+        // Un contenedor puede tener múltiples cosechas hasta llenarse al 100%
+        $this->availableContainers = Container::where('user_id', auth()->id())
+            ->where('archived', false)
+            ->whereColumn('used_capacity', '<', 'capacity') // Solo los que tienen espacio
+            ->orderBy('name')
             ->get();
     }
     
@@ -490,8 +493,11 @@ class CreateHarvest extends Component
                     'notes' => $this->notes,
                 ]);
                 
-                // Asignar el contenedor a la cosecha
-                $container->update(['harvest_id' => $harvest->id]);
+                // El HarvestObserver se encarga automáticamente de:
+                // - Incrementar used_capacity del contenedor
+                // - Crear HarvestStock inicial
+                // - Crear ContainerCurrentState
+                // - Registrar en ContainerHistory
             });
 
             $this->toastSuccess('Cosecha registrada correctamente.');

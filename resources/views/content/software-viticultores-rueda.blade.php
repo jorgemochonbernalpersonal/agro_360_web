@@ -7,15 +7,15 @@
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Rueda - Gestión de Viñedos | Agro365</title>
     <meta name="description" content="Software especializado para viticultores de DOCa Rueda. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 10.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
-    <meta name="keywords" content="software viticultores rioja, cuaderno campo rioja, gestión viñedo rioja, tempranillo rioja, DOCa rioja, consejo regulador rioja, rendimientos rioja, heladas rioja alavesa">
+    <meta name="keywords" content="software viticultores rueda, cuaderno campo rueda, gestión viñedo rueda, verdejo, DO rueda, vinos blancos rueda">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
-    <link rel="canonical" href="{{ url('/software-viticultores-rioja') }}">
+    <link rel="canonical" href="{{ url('/software-viticultores-rueda') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Rueda - Agro365">
     <meta property="og:description" content="Gestión especializada para viñedos de Rueda. Control de rendimientos, heladas y cumplimiento normativo.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
-    <meta property="og:url" content="{{ url('/software-viticultores-rioja') }}">
+    <meta property="og:url" content="{{ url('/software-viticultores-rueda') }}">
     
     <!-- Favicon & Fonts -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -56,7 +56,7 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🍷</span>
-                    <span class="text-sm font-semibold text-red-800">DOCa Rueda - Denominación de Origen Calificada</span>
+                    <span class="text-sm font-semibold text-red-800">DO Rueda</span>
                 </div>
                 <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
                     Software para Viticultores en Rueda
@@ -80,7 +80,7 @@
                                 <li><strong>Bodegas:</strong> 80+ bodegas registradas</li>
                                 <li><strong>Viticultores:</strong> 1.500+ viticultores</li>
                                 <li><strong>Producción anual:</strong> 85 millones de litros</li>
-                                <li><strong>Zonas:</strong> Rueda Alta, Rueda Alavesa, Rueda Oriental</li>
+                                <li><strong>Zonas:</strong> Valladolid, Segovia y Ávila. Municipios: Rueda, La Seca, Serrada, Medina del Campo</li>
                             </ul>
                         </div>
                         
@@ -108,8 +108,7 @@
 
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-800">
-                            <strong>Clima Continental Moderado:</strong> Inviernos fríos con riesgo de heladas, veranos cálidos y secos. Precipitación media de 400-500mm anuales. La Sierra de Cantabria protege Rueda Alavesa de vientos del norte.
-                        </p>
+                            <strong>Continental:</strong>  Inviernos fríos con heladas, veranos cálidos y secos. Precipitación 300-500mm anuales. Gran amplitud térmica.</p>
                     </div>
                 </section>
 
@@ -346,7 +345,7 @@
         "itemListElement": [
             {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
             {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ route('content.software-viticultores') }}"},
-            {"@@type": "ListItem", "position": 3, "name": "Rueda", "item": "{{ url('/software-viticultores-rioja') }}"}
+            {"@@type": "ListItem", "position": 3, "name": "Rueda", "item": "{{ url('/software-viticultores-rueda') }}"}
         ]
     }
     </script>

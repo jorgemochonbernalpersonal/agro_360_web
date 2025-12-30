@@ -108,13 +108,14 @@
             'operatingSystem' => ['Web', 'iOS', 'Android'],
             'releaseNotes' => 'Versión Beta - En desarrollo activo',
             'screenshot' => asset('images/dashboard-preview.png'),
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => '4.8',
-                'ratingCount' => '150',
-                'bestRating' => '5',
-                'worstRating' => '1'
-            ],
+            // ✅ SEO: Rating solo si hay reviews reales (comentado por ahora)
+            // 'aggregateRating' => [
+            //     '@type' => 'AggregateRating',
+            //     'ratingValue' => '4.8',
+            //     'ratingCount' => '150',
+            //     'bestRating' => '5',
+            //     'worstRating' => '1'
+            // ],
             'featureList' => [
                 'Cuaderno de campo digital',
                 'Gestión de parcelas SIGPAC',
@@ -324,6 +325,57 @@
                 "position": 6,
                 "name": "Gestión de Recursos",
                 "description": "Control de cuadrillas, maquinaria y productos fitosanitarios"
+            }
+        ]
+    }
+    </script>
+    
+    <!-- ✅ SEO: HowTo Schema - Tutorial paso a paso para configurar Agro365 -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "HowTo",
+        "name": "Cómo configurar Agro365 en 5 minutos",
+        "description": "Guía paso a paso para configurar tu cuenta de Agro365 y empezar a gestionar tu viñedo digitalmente",
+        "image": "{{ asset('images/dashboard-preview.png') }}",
+        "totalTime": "PT5M",
+        "estimatedCost": {
+            "@@type": "MonetaryAmount",
+            "currency": "EUR",
+            "value": "0"
+        },
+        "step": [
+            {
+                "@@type": "HowToStep",
+                "position": 1,
+                "name": "Regístrate gratis",
+                "text": "Crea tu cuenta en Agro365. No se requiere tarjeta de crédito. Obtendrás 6 meses gratis.",
+                "url": "{{ route('register') }}"
+            },
+            {
+                "@@type": "HowToStep",
+                "position": 2,
+                "name": "Verifica tu email",
+                "text": "Confirma tu dirección de correo electrónico para activar tu cuenta."
+            },
+            {
+                "@@type": "HowToStep",
+                "position": 3,
+                "name": "Crea tu primera parcela",
+                "text": "Añade tus parcelas con códigos SIGPAC. Puedes importar desde SIGPAC o crear manualmente.",
+                "url": "{{ route('content.sigpac') }}"
+            },
+            {
+                "@@type": "HowToStep",
+                "position": 4,
+                "name": "Registra tu primera actividad",
+                "text": "Comienza a usar el cuaderno digital registrando tratamientos, riegos o fertilizaciones."
+            },
+            {
+                "@@type": "HowToStep",
+                "position": 5,
+                "name": "Genera tu primer informe",
+                "text": "Crea informes oficiales con firma electrónica para cumplir con normativa PAC."
             }
         ]
     }

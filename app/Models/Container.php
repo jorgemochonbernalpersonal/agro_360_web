@@ -14,7 +14,6 @@ class Container extends Model
 
     protected $fillable = [
         'user_id',
-        'supplier_id',
         'container_room_id',
         'name',
         'description',
@@ -31,8 +30,7 @@ class Container extends Model
         'toast_type',
         'purchase_date',
         'next_maintenance_date',
-        'x_position',
-        'y_position',
+        'supplier_name',
         'archived',
     ];
 
@@ -42,8 +40,6 @@ class Container extends Model
         'quantity' => 'integer',
         'purchase_date' => 'date',
         'next_maintenance_date' => 'datetime',
-        'x_position' => 'integer',
-        'y_position' => 'integer',
         'archived' => 'boolean',
         'photos' => 'array',
     ];
@@ -54,6 +50,14 @@ class Container extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Sala/Bodega donde está ubicado
+     */
+    public function containerRoom(): BelongsTo
+    {
+        return $this->belongsTo(ContainerRoom::class);
     }
 
     /**

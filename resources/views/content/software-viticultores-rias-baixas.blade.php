@@ -7,15 +7,15 @@
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Rías Baixas - Gestión de Viñedos | Agro365</title>
     <meta name="description" content="Software especializado para viticultores de DOCa Rías Baixas. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 10.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
-    <meta name="keywords" content="software viticultores rioja, cuaderno campo rioja, gestión viñedo rioja, tempranillo rioja, DOCa rioja, consejo regulador rioja, rendimientos rioja, heladas rioja alavesa">
+    <meta name="keywords" content="software viticultores rías baixas, cuaderno campo rías baixas, gestión viñedo galicia, albariño, DO rías baixas">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
-    <link rel="canonical" href="{{ url('/software-viticultores-rioja') }}">
+    <link rel="canonical" href="{{ url('/software-viticultores-rias-baixas') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Rías Baixas - Agro365">
     <meta property="og:description" content="Gestión especializada para viñedos de Rías Baixas. Control de rendimientos, heladas y cumplimiento normativo.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
-    <meta property="og:url" content="{{ url('/software-viticultores-rioja') }}">
+    <meta property="og:url" content="{{ url('/software-viticultores-rias-baixas') }}">
     
     <!-- Favicon & Fonts -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -56,7 +56,7 @@
             <div class="mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-300 mb-6">
                     <span class="text-lg">🍷</span>
-                    <span class="text-sm font-semibold text-red-800">DOCa Rías Baixas - Denominación de Origen Calificada</span>
+                    <span class="text-sm font-semibold text-red-800">DO Rías Baixas</span>
                 </div>
                 <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] mb-6">
                     Software para Viticultores en Rías Baixas
@@ -78,9 +78,9 @@
                             <ul class="space-y-2 text-gray-700">
                                 <li><strong>Superficie:</strong> 4.000 hectáreas</li>
                                 <li><strong>Bodegas:</strong> 180+ bodegas registradas</li>
-                                <li><strong>Viticultores:</strong> 5.000+ viticultores</li>
-                                <li><strong>Producción anual:</strong> 25 millones de litros</li>
-                                <li><strong>Zonas:</strong> Rías Baixas Alta, Rías Baixas Alavesa, Rías Baixas Oriental</li>
+                                <li><strong>Viticultores:</strong> 5.500+ viticultores</li>
+                                <li><strong>Producción anual:</strong> 35 millones de litros</li>
+                                <li><strong>Zonas:</strong> Val do Salnés, Condado do Tea, O Rosal, Soutomaior, Ribeira do Ulla</li>
                             </ul>
                         </div>
                         
@@ -108,8 +108,7 @@
 
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-800">
-                            <strong>Clima Continental Moderado:</strong> Inviernos fríos con riesgo de heladas, veranos cálidos y secos. Precipitación media de 400-500mm anuales. La Sierra de Cantabria protege Rías Baixas Alavesa de vientos del norte.
-                        </p>
+                            <strong>Atlántico húmedo:</strong>  Lluvias abundantes (1.200-1.600mm anuales). Temperaturas suaves. Alta humedad relativa. Influencia oceánica directa.</p>
                     </div>
                 </section>
 
@@ -346,7 +345,7 @@
         "itemListElement": [
             {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
             {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ route('content.software-viticultores') }}"},
-            {"@@type": "ListItem", "position": 3, "name": "Rías Baixas", "item": "{{ url('/software-viticultores-rioja') }}"}
+            {"@@type": "ListItem", "position": 3, "name": "Rías Baixas", "item": "{{ url('/software-viticultores-rias-baixas') }}"}
         ]
     }
     </script>

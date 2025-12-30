@@ -200,13 +200,25 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.plots.edit', [
-            'sigpacUses' => SigpacUse::orderBy('code')->get(),
-            'autonomousCommunities' => AutonomousCommunity::orderBy('name')->get(),
+            // ✅ OPTIMIZACIÓN: Solo campos necesarios para select
+            'sigpacUses' => SigpacUse::select(['id', 'code', 'description'])
+                ->orderBy('code')
+                ->get(),
+            // ✅ OPTIMIZACIÓN: Solo campos necesarios para selects
+            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
+                ->orderBy('name')
+                ->get(),
             'provinces' => $this->autonomous_community_id 
-                ? Province::where('autonomous_community_id', $this->autonomous_community_id)->orderBy('name')->get()
+                ? Province::select(['id', 'name', 'autonomous_community_id'])
+                    ->where('autonomous_community_id', $this->autonomous_community_id)
+                    ->orderBy('name')
+                    ->get()
                 : collect(),
             'municipalities' => $this->province_id
-                ? Municipality::where('province_id', $this->province_id)->orderBy('name')->get()
+                ? Municipality::select(['id', 'name', 'province_id'])
+                    ->where('province_id', $this->province_id)
+                    ->orderBy('name')
+                    ->get()
                 : collect(),
         ])->layout('layouts.app');
     }

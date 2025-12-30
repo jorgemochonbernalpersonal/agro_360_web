@@ -11,9 +11,31 @@ class PlantingsDashboard extends Component
 {
     public function render()
     {
+        // ✅ OPTIMIZACIÓN: Eager loading con constraints para certificaciones
         $plantings = PlotPlanting::whereHas('plot', function ($query) {
             $query->forUser(Auth::user());
-        })->with(['plot', 'grapeVariety', 'certifications'])->get();
+        })
+        ->with([
+            'plot:id,name',
+            'grapeVariety:id,name',
+            'certifications' => function($q) {
+                $q->where('active', true)
+                  ->orWhere('expiry_date', '>=', now())
+                  ->where('expiry_date', '<=', now()->addMonths(3));
+            }
+        ])
+        ->select([
+            'id',
+            'plot_id',
+            'grape_variety_id',
+            'name',
+            'area_planted',
+            'status',
+            'life_cycle_stage',
+            'planting_date',
+            'planting_authorization',
+        ])
+        ->get();
         
         // Métricas generales
         $totalPlantings = $plantings->count();
@@ -39,10 +61,19 @@ class PlantingsDashboard extends Component
         
         $needsReplanting = $plantings->filter(fn($p) => $p->needsReplanting())->count();
         
-        // Certificaciones
-        $totalCertifications = $plantings->sum(fn($p) => $p->certifications()->active()->count());
-        $expiringCertifications = $plantings->flatMap(fn($p) => $p->certifications()->expiringSoon()->get())->count();
-        $certifiedPlantings = $plantings->filter(fn($p) => $p->certifications()->active()->count() > 0)->count();
+        // ✅ OPTIMIZACIÓN: Calcular certificaciones desde datos ya cargados (sin queries adicionales)
+        $now = now();
+        $threeMonthsFromNow = now()->addMonths(3);
+        
+        $totalCertifications = $plantings->sum(fn($p) => $p->certifications->where('active', true)->count());
+        $expiringCertifications = $plantings->flatMap(fn($p) => 
+            $p->certifications->filter(fn($c) => 
+                $c->expiry_date && 
+                $c->expiry_date >= $now && 
+                $c->expiry_date <= $threeMonthsFromNow
+            )
+        )->count();
+        $certifiedPlantings = $plantings->filter(fn($p) => $p->certifications->where('active', true)->count() > 0)->count();
         
         // Tratamientos fitosanitarios (últimos 30 días)
         $plotIds = $plantings->pluck('plot_id')->unique();
@@ -104,8 +135,14 @@ class PlantingsDashboard extends Component
                 ];
             }
             
-            // Alertas de certificaciones
-            foreach ($planting->certifications()->expiringSoon()->get() as $cert) {
+            // ✅ OPTIMIZACIÓN: Usar certificaciones ya cargadas (sin query adicional)
+            $expiringCerts = $planting->certifications->filter(fn($c) => 
+                $c->expiry_date && 
+                $c->expiry_date >= now() && 
+                $c->expiry_date <= now()->addMonths(3)
+            );
+            
+            foreach ($expiringCerts as $cert) {
                 $alerts[] = [
                     'type' => 'warning',
                     'planting' => $planting->name ?: $planting->grapeVariety->name ?? 'Sin nombre',

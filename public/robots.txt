@@ -1,11 +1,22 @@
-# Agro365 - Robots.txt
+# ✅ SEO: Robots.txt optimizado para Agro365
+# Permite indexación de contenido público y bloquea áreas privadas
+
+# Todos los bots
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://agro365.es/sitemap.xml
+# ✅ SEO: Permitir explícitamente contenido público importante
+Allow: /blog
+Allow: /faqs
+Allow: /que-es-sigpac
+Allow: /software-para-viticultores
+Allow: /cuaderno-digital-viticultores
+Allow: /normativa-pac
+Allow: /digitalizar-viñedo
+Allow: /comparativa-software-agricola
+Allow: /app-agricultura
 
-# Bloquear áreas privadas
+# Bloquear áreas privadas (requieren autenticación)
 Disallow: /admin/
 Disallow: /viticulturist/
 Disallow: /supervisor/
@@ -22,15 +33,33 @@ Disallow: /storage/
 Disallow: /logs
 Disallow: /_debugbar/
 
-# Bloquear autenticación
+# Bloquear autenticación (no indexar páginas de login/registro)
 Disallow: /login
 Disallow: /register
 Disallow: /password/
 Disallow: /email/
+Disallow: /email/verify
+Disallow: /forgot-password
 
 # Bloquear archivos sensibles
 Disallow: /.env
 Disallow: /.git
+Disallow: /.htaccess
+Disallow: /composer.json
+Disallow: /package.json
 
-# Crawl-delay
+# ✅ SEO: Sitemap principal
+Sitemap: https://agro365.es/sitemap.xml
+
+# ✅ SEO: Crawl-delay para evitar sobrecarga (opcional, puede eliminarse si no es necesario)
+Crawl-delay: 1
+
+# ✅ SEO: Configuración específica para Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# ✅ SEO: Configuración específica para Bingbot
+User-agent: Bingbot
+Allow: /
 Crawl-delay: 1

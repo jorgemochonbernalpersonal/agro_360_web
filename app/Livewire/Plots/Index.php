@@ -287,7 +287,20 @@ class Index extends Component
     private function getAdvancedStatistics($user)
     {
         $year = $this->yearFilter;
-        $allPlots = Plot::forUser($user)->get();
+        // ✅ OPTIMIZACIÓN: Solo campos necesarios y eager loading de province
+        $allPlots = Plot::forUser($user)
+            ->select([
+                'id',
+                'name',
+                'area',
+                'pac_eligible_area',
+                'non_eligible_area',
+                'is_locked',
+                'province_id',
+                'tenure_regime',
+            ])
+            ->with(['province:id,name', 'sigpacCodes:id,plot_id'])
+            ->get();
 
         // Superficie total
         $totalSurface = $allPlots->sum('area');
@@ -522,20 +535,15 @@ class Index extends Component
 
         $user = Auth::user();
 
-        // Obtener todas las parcelas del municipio que tienen códigos SIGPAC pero no geometría
+        // ✅ OPTIMIZACIÓN: Obtener parcelas sin geometría usando subconsulta en lugar de filter
         $plotsWithoutGeometry = Plot::forUser($user)
             ->where('municipality_id', $this->filterMunicipality)
             ->whereHas('sigpacCodes')
-            ->with(['sigpacCodes'])
-            ->get()
-            ->filter(function ($plot) {
-                // Verificar si ya tiene geometría
-                $hasGeometry = MultipartPlotSigpac::where('plot_id', $plot->id)
-                    ->whereNotNull('plot_geometry_id')
-                    ->exists();
-
-                return !$hasGeometry;
-            });
+            ->whereDoesntHave('multiplePlotSigpacs', function($q) {
+                $q->whereNotNull('plot_geometry_id');
+            })
+            ->with(['sigpacCodes']) // ✅ Eager loading para evitar N+1
+            ->get();
 
         if ($plotsWithoutGeometry->isEmpty()) {
             $this->toastInfo('Todas las parcelas de este municipio ya tienen mapas generados.');
