@@ -100,7 +100,7 @@
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🗺️ SIGPAC Correcto</h3>
                             <p class="text-gray-700 text-sm">
-                                Parcelas con códigos <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> correctamente declarados.
+                                Parcelas con códigos <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> correctamente declarados.
                             </p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">

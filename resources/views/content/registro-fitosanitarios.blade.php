@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- SEO Meta Tags -->
-    <title>Registro de Productos Fitosanitarios Obligatorio 2024 | Software para Tratamientos - Agro365</title>
-    <meta name="description" content="Registro digital obligatorio de productos fitosanitarios y tratamientos en agricultura. Cumple con la normativa de registro de fitosanitarios con Agro365.">
+    <title>Registro de Productos Fitosanitarios | Software de Tratamientos</title>
+    <meta name="description" content="Registro digital obligatorio de productos fitosanitarios. Cumple con la normativa oficial y digitaliza tus tratamientos agrícolas con Agro365.">
     <meta name="keywords" content="registro fitosanitarios, productos fitosanitarios, tratamientos fitosanitarios, cuaderno fitosanitarios, registro tratamientos, ROPO, registro oficial fitosanitarios, aplicador fitosanitarios, normativa fitosanitarios, control fitosanitarios, software fitosanitarios, app tratamientos, registro plagas">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
@@ -107,7 +107,7 @@
                             <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📅 Datos del Tratamiento</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
                                 <li>• Fecha y hora de aplicación</li>
-                                <li>• Parcela tratada (código <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)]">SIGPAC</a>)</li>
+                                <li>• Parcela tratada (código <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)]">SIGPAC</a>)</li>
                                 <li>• Superficie tratada (ha)</li>
                                 <li>• Plaga, enfermedad o mala hierba</li>
                             </ul>

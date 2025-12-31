@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Software para Bodegas | Gestión Profesional de Bodegas - Agro365</title>
-    <meta name="description" content="Software profesional para bodegas en España. Gestión de producción, trazabilidad, control de vendimia y cumplimiento normativo. Prueba gratis 6 meses.">
+    <title>Software para Bodegas | Gestión de Producción y Trazabilidad</title>
+    <meta name="description" content="Digitaliza tu bodega con Agro365. Control integral de vendimia, trazabilidad total y gestión de depósitos. La herramienta que tu bodega necesita.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/bodegas') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

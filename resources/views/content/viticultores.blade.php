@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Software para Viticultores | Gestión Profesional de Viñedos - Agro365</title>
-    <meta name="description" content="Software profesional para viticultores en España. Gestión completa de viñedos, cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 6 meses.">
+    <title>Software para Viticultores | Gestión de Viñedos y Cuaderno Digital</title>
+    <meta name="description" content="La solución definitiva para viticultores. Gestiona tus viñedos, cumple con la PAC y digitaliza tu cuaderno de campo con Agro365. Prueba 6 meses gratis.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/viticultores') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

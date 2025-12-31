@@ -79,10 +79,6 @@ Route::get('/cuaderno-digital', function () {
     return view('content.cuaderno-digital');
 })->name('content.cuaderno-digital');
 
-Route::get('/sigpac', function () {
-    return view('content.sigpac');
-})->name('content.sigpac');
-
 Route::get('/trazabilidad-agricola', function () {
     return view('content.trazabilidad-agricola');
 })->name('content.trazabilidad-agricola');

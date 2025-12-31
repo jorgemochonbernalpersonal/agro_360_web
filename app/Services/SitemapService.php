@@ -115,8 +115,8 @@ class SitemapService
             [
                 'loc' => $this->getAbsoluteUrl('que-es-sigpac'),
                 'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
             ],
             [
                 'loc' => $this->getAbsoluteUrl('cuaderno-campo-digital-2027'),
@@ -145,8 +145,8 @@ class SitemapService
             [
                 'loc' => $this->getAbsoluteUrl('software-para-viticultores'),
                 'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
             ],
             [
                 'loc' => $this->getAbsoluteUrl('app-agricultura'),
@@ -157,8 +157,8 @@ class SitemapService
             [
                 'loc' => $this->getAbsoluteUrl('cuaderno-digital-viticultores'),
                 'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
             ],
             // Nuevas páginas SEO - Diciembre 2024
             [
@@ -188,8 +188,8 @@ class SitemapService
             [
                 'loc' => $this->getAbsoluteUrl('facturacion-agricola'),
                 'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
             ],
             // Páginas SEO - Media prioridad y contenido específico
             [
@@ -225,8 +225,8 @@ class SitemapService
             [
                 'loc' => $this->getAbsoluteUrl('ndvi-viñedo-teledeteccion'),
                 'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
             ],
             [
                 'loc' => $this->getAbsoluteUrl('calendario-viticola'),

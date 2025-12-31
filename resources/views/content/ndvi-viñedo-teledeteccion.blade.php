@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>NDVI en Viñedo: Teledetección y Análisis Satelital | Agro365</title>
-    <meta name="description" content="Análisis NDVI de viñedos por satélite: índice de vegetación, salud del cultivo, detección temprana de estrés. Teledetección gratuita con NASA y Sentinel-2.">
+    <title>Teledetección NDVI en Viñedos | Monitorización Satelital</title>
+    <meta name="description" content="Analiza la salud de tu viñedo con imágenes satelitales. Índice NDVI, vigor vegetativo y humedad del suelo. Agricultura de precisión gratis con Agro365.">
     <meta name="keywords" content="NDVI viñedo, teledetección viñedo, índice vegetación vid, análisis satelital viña, Sentinel-2 agricultura, estrés hídrico viñedo, salud viñedo satélite, agricultura de precisión, NASA earthdata viñedo">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/ndvi-viñedo-teledeteccion') }}">
@@ -103,7 +103,7 @@
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
                         <li><strong>Detección temprana de estrés:</strong> Identifica zonas con problemas antes de que sean visibles</li>
                         <li><strong>Gestión del riego:</strong> Optimiza el riego basándote en datos reales de humedad</li>
-                        <li><strong>Comparativa entre parcelas:</strong> Compara el vigor de diferentes parcelas <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
+                        <li><strong>Comparativa entre parcelas:</strong> Compara el vigor de diferentes parcelas <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
                         <li><strong>Histórico de evolución:</strong> Analiza cómo cambia el viñedo a lo largo del año</li>
                         <li><strong>Decisiones de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamiento</a>:</strong> Prioriza zonas que necesitan atención</li>
                     </ul>

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- SEO Meta Tags -->
-    <title>Cuaderno Digital para Viticultores | Obligatorio 2027 - Agro365</title>
-    <meta name="description" content="Cuaderno de campo digital para viticultores obligatorio desde 2027. Gestión de tratamientos, SIGPAC, cumplimiento normativo y informes oficiales. Prueba gratis 6 meses.">
+    <title>Cuaderno Digital de Campo para Viticultores | Obligatorio 2027</title>
+    <meta name="description" content="Gestiona tu cuaderno de campo digital especializado en viticultura. Cumple con la normativa 2027 y digitaliza tus tratamientos en el viñedo.">
     <meta name="keywords" content="cuaderno digital viticultores, cuaderno campo viticultores, cuaderno digital viñedos, cuaderno campo digital viticultura, cuaderno digital obligatorio viticultores, cuaderno campo 2027 viticultores, gestión cuaderno digital viñedos, software cuaderno campo viticultores">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">

@@ -41,7 +41,7 @@
                     Trazabilidad del Vino: Del Viñedo a la Bodega
                 </h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Trazabilidad total</strong> de tu uva: desde el recinto <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> donde se cultiva hasta la factura que entregas a la bodega. Cumple con la normativa de seguridad alimentaria y certificaciones DO.
+                    <strong>Trazabilidad total</strong> de tu uva: desde el recinto <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> donde se cultiva hasta la factura que entregas a la bodega. Cumple con la normativa de seguridad alimentaria y certificaciones DO.
                 </p>
             </div>
 

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- SEO Meta Tags -->
-    <title>Qué es SIGPAC y Cómo Funciona | Guía Completa 2027 - Agro365</title>
-    <meta name="description" content="Guía completa sobre SIGPAC: qué es, cómo funciona y cómo gestionar parcelas agrícolas con códigos SIGPAC. Integración completa con Agro365 para viticultores.">
+    <title>¿Qué es el SIGPAC? | Cómo Consultar Parcelas y Códigos 2027</title>
+    <meta name="description" content="Guía completa sobre el SIGPAC. Aprende a consultar recintos, parcelas y códigos oficiales. Integración con el cuaderno de campo digital Agro365.">
     <meta name="keywords" content="qué es SIGPAC, SIGPAC digital, gestión SIGPAC, códigos SIGPAC, parcelas SIGPAC, SIGPAC viñedos, sistema SIGPAC, SIGPAC España, gestión parcelas agrícolas">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">

@@ -40,7 +40,7 @@
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ route('content.software-viticultura') }}" class="hover:text-white transition-colors">Software Viticultura</a></li>
                     <li><a href="{{ route('content.cuaderno-digital') }}" class="hover:text-white transition-colors">Cuaderno Digital</a></li>
-                    <li><a href="{{ route('content.sigpac') }}" class="hover:text-white transition-colors">Gestión SIGPAC</a></li>
+                    <li><a href="{{ route('content.que-es-sigpac') }}" class="hover:text-white transition-colors">Gestión SIGPAC</a></li>
                     <li><a href="{{ route('content.gestion-vendimia') }}" class="hover:text-white transition-colors">Gestión Vendimia</a></li>
                     <li><a href="{{ route('content.facturacion-agricola') }}" class="hover:text-white transition-colors">Facturación</a></li>
                     <li><a href="{{ route('content.ndvi-teledeteccion') }}" class="hover:text-white transition-colors">NDVI Teledetección</a></li>

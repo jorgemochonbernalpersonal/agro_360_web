@@ -142,7 +142,7 @@
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">🔗</div>
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Trazabilidad Completa</h3>
-                            <p class="text-gray-700">Desde el recinto <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> hasta la factura final. Cada kilo de uva está identificado.</p>
+                            <p class="text-gray-700">Desde el recinto <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> hasta la factura final. Cada kilo de uva está identificado.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">💰</div>
@@ -168,7 +168,7 @@
                         <li><strong>Estados de contenedor:</strong> Vacío, En Campo, En Transporte, Entregado, Facturado</li>
                         <li><strong>Historial completo:</strong> Cada contenedor mantiene su historial de movimientos</li>
                         <li><strong>Control de stock:</strong> Sabe cuántos contenedores tienes disponibles en cada momento</li>
-                        <li><strong>Asociación a parcelas:</strong> Cada contenedor se vincula a su <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">código SIGPAC</a> de origen</li>
+                        <li><strong>Asociación a parcelas:</strong> Cada contenedor se vincula a su <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">código SIGPAC</a> de origen</li>
                         <li><strong>Datos de calidad:</strong> Registra grado baumé, estado sanitario y observaciones</li>
                     </ul>
                 </section>

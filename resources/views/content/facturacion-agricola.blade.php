@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- SEO Meta Tags -->
-    <title>Facturación Agrícola: Software para Viticultores y Bodegas | Agro365</title>
-    <meta name="description" content="Software de facturación agrícola para viticultores. Factura cosechas, gestiona clientes (bodegas), control de pagos y cumplimiento fiscal. Prueba gratis.">
+    <title>Facturación Agrícola | Software para Viticultores y Bodegas</title>
+    <meta name="description" content="Automatiza la facturación de tus cosechas. Gestor de facturas para viticultores, control de entregas a bodega y pagos. Prueba gratuita de 6 meses.">
     <meta name="keywords" content="facturación agrícola, software facturación agricultura, facturación viticultores, facturar cosecha, facturación bodegas, software factura agrícola, control pagos agricultura, gestión clientes bodega, facturación vendimia, factura electrónica agricultura">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">

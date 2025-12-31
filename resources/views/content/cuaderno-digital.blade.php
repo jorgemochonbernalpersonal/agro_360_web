@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- SEO Meta Tags -->
-    <title>Cuaderno Digital | Cuaderno de Campo Digital Obligatorio 2027 - Agro365</title>
-    <meta name="description" content="Cuaderno digital obligatorio desde 2027. Software de cuaderno de campo digital para agricultores y viticultores. Cumplimiento normativo PAC, registro de tratamientos y actividades. Prueba gratis 6 meses.">
+    <title>Cuaderno de Campo Digital Obligatorio 2027 | Software Agro365</title>
+    <meta name="description" content="Cumple con la normativa del cuaderno digital obligatorio 2027. Software de campo para agricultores y viticultores. Registro de tratamientos y PAC. Prueba gratis.">
     <meta name="keywords" content="cuaderno digital, cuaderno campo digital, cuaderno digital obligatorio, cuaderno digital 2027, software cuaderno campo, registro tratamientos agrícolas, cuaderno digital agricultura">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">

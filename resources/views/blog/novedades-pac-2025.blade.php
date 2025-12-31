@@ -56,7 +56,7 @@
                 </p>
                 <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                     <li>Registro digital de tratamientos fitosanitarios</li>
-                    <li>Vinculación de actividades a parcelas <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
+                    <li>Vinculación de actividades a parcelas <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
                     <li>Interoperabilidad con sistemas oficiales</li>
                     <li>Plazo de registro máximo: 1 mes desde la actividad</li>
                 </ul>

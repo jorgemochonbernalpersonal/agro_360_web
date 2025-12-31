@@ -89,7 +89,7 @@
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                         <li><a href="{{ url('/informes-oficiales-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">Informes oficiales</a> de cuaderno de campo</li>
                         <li>Informes de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamientos fitosanitarios</a></li>
-                        <li>Certificados de parcelas <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
+                        <li>Certificados de parcelas <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
                         <li>Informes de <a href="{{ url('/gestion-vendimia') }}" class="text-[var(--color-agro-green)] hover:underline">cosecha</a> y rendimientos</li>
                         <li>Informes de campaña completa</li>
                     </ul>

@@ -82,7 +82,7 @@
     </button>
     <div x-show="openIndexes.includes(2)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed mb-3">
-            <strong><a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></strong> (Sistema de Información Geográfica de Parcelas Agrícolas) es el sistema oficial del Ministerio que identifica cada parcela con un código único: <code class="bg-gray-100 px-2 py-1 rounded text-sm">PROVINCIA-MUNICIPIO-AGREGADO-ZONA-PARCELA-RECINTO</code>
+            <strong><a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></strong> (Sistema de Información Geográfica de Parcelas Agrícolas) es el sistema oficial del Ministerio que identifica cada parcela con un código único: <code class="bg-gray-100 px-2 py-1 rounded text-sm">PROVINCIA-MUNICIPIO-AGREGADO-ZONA-PARCELA-RECINTO</code>
         </p>
         <p class="text-gray-700 leading-relaxed mb-3"><strong>Agro365 integra SIGPAC completamente:</strong></p>
         <ul class="space-y-2 text-gray-700 mb-4">

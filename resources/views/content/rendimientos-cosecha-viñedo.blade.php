@@ -122,7 +122,7 @@
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🗺️ Rendimiento por Parcela</h3>
-                            <p class="text-gray-700">Visualiza rendimientos por parcela <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>.</p>
+                            <p class="text-gray-700">Visualiza rendimientos por parcela <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>.</p>
                         </div>
                     </div>
                 </section>

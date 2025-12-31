@@ -120,7 +120,7 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Integración con SIGPAC</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Cada plantación se vincula a un recinto <a href="{{ route('content.sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>. Los datos de plantación son fundamentales para:
+                        Cada plantación se vincula a un recinto <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>. Los datos de plantación son fundamentales para:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                         <li>Solicitudes de <a href="{{ url('/subvenciones-pac-2024') }}" class="text-[var(--color-agro-green)] hover:underline">ayudas PAC</a></li>

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- SEO Meta Tags -->
-    <title>Software para Viticultores | Gestión Profesional de Viñedos - Agro365</title>
-    <meta name="description" content="Software profesional para viticultores en España. Gestión completa de viñedos, cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 6 meses.">
+    <title>Software para Viticultores | Gestión Profesional de Viñedos</title>
+    <meta name="description" content="Software de viticultura para el control total de tu explotación. Gestión de parcelas, vendimia y costes en una sola plataforma. Gratis durante 6 meses.">
     <meta name="keywords" content="software para viticultores, software viticultura, gestión viñedos, app viticultores, software bodega, gestión vendimia, software viñedos España, digitalización viticultura, software viticultores profesional, gestión cosechas, control viñedos, software agrícola viticultura">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
