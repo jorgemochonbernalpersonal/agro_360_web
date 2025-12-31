@@ -440,8 +440,7 @@
                     </div>
                     
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
-                        Software de Gestión Agrícola para
-                        <span class="bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] bg-clip-text text-transparent">Viñedos y Bodegas</span>
+                        Software Profesional de Viticultura y Bodegas
                     </h1>
                     
                     <p class="text-xl text-gray-600 leading-relaxed">
@@ -703,6 +702,91 @@
                     </ul>
                 </div>
 
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions by Sector Section -->
+    <section id="solutions" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 space-y-4">
+                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
+                    Soluciones Especializadas por Sector
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Software diseñado para las necesidades específicas de cada profesional del sector vitivinícola.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Viticultores -->
+                <a href="{{ route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Viticultores</h3>
+                    <p class="text-gray-600 text-sm mb-4">Gestión de viñedos, variedad de uva, cuaderno digital obligatorio y control de vendimia.</p>
+                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
+                        Saber más
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
+
+                <!-- Bodegas -->
+                <a href="{{ route('content.bodegas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-red-100 text-red-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.051.155A2 2 0 004 17.145V19a2 2 0 002 2h12a2 2 0 002-2v-1.572a2 2 0 00-.572-1.428z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11V3m0 0l-3 3m3-3l3 3"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Bodegas</h3>
+                    <p class="text-gray-600 text-sm mb-4">Trazabilidad desde la cepa, recepción de uva, rendimientos por DO e inventario.</p>
+                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
+                        Saber más
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
+
+                <!-- Cooperativas -->
+                <a href="{{ route('content.cooperativas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 01-4 4H9a4 4 0 01-4-4V5a4 4 0 014-4h4a4 4 0 014 4v2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Cooperativas</h3>
+                    <p class="text-gray-600 text-sm mb-4">Gestión de socios, centralización de cuadernos de campo y control de entregas masivas.</p>
+                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
+                        Saber más
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
+
+                <!-- Ingenieros -->
+                <a href="{{ route('content.ingenieros-agronomos') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Asesores e Ingenieros</h3>
+                    <p class="text-gray-600 text-sm mb-4">Asesoramiento técnico, firma de informes oficiales y validación de tratamientos PAC.</p>
+                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
+                        Saber más
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
             </div>
         </div>
     </section>

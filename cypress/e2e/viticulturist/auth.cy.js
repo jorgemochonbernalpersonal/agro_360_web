@@ -7,7 +7,7 @@ describe('Viticulturist Authentication', () => {
 
   it('should login successfully as viticulturist', () => {
     cy.visit('/login')
-    cy.get('input[wire\\:model="email"]').clear().type('viticulturist@example.com')
+    cy.get('input[wire\\:model="email"]').clear().type('viticulturist@test.com')
     cy.get('input[wire\\:model="password"]').clear().type('password')
     cy.get('button[type="submit"]').click()
     

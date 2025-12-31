@@ -159,6 +159,9 @@ class Index extends Component
             $advancedStats = $this->getAdvancedStatistics(Auth::user());
         }
 
+        // Calcular área máxima para representación visual
+        $maxPlotArea = (clone $baseQuery)->max('area') ?: 1;
+
         return view('livewire.plots.index', [
             'plots' => $plots,
             'stats' => $stats,
@@ -166,6 +169,7 @@ class Index extends Component
             'autonomousCommunities' => $this->autonomousCommunities,
             'provinces' => $this->provinces,
             'municipalities' => $this->municipalities,
+            'maxPlotArea' => $maxPlotArea,
         ])->layout('layouts.app', [
             'title' => 'Gestión de Parcelas - Agro365',
             'description' => 'Administra y visualiza todas tus parcelas agrícolas. Control total de viñedos con integración SIGPAC.',
@@ -299,7 +303,7 @@ class Index extends Component
                 'province_id',
                 'tenure_regime',
             ])
-            ->with(['province:id,name', 'sigpacCodes:id,plot_id'])
+            ->with(['province:id,name', 'sigpacCodes:id'])
             ->get();
 
         // Superficie total

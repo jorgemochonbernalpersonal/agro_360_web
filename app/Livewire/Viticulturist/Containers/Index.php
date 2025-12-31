@@ -52,6 +52,21 @@ class Index extends Component
         $this->viewMode = 'stats';
     }
 
+    public function switchTab($tab)
+    {
+        switch ($tab) {
+            case 'active':
+                $this->showActive();
+                break;
+            case 'inactive':
+                $this->showInactive();
+                break;
+            case 'statistics':
+                $this->showStats();
+                break;
+        }
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();

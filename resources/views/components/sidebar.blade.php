@@ -216,7 +216,7 @@
         const toggle = document.getElementById('sidebar-toggle');
         
         if (window.innerWidth < 1024) {
-            if (!sidebar.contains(event.target) && !toggle.contains(event.target) && !sidebar.classList.contains('-translate-x-full')) {
+            if (sidebar && toggle && !sidebar.contains(event.target) && !toggle.contains(event.target) && !sidebar.classList.contains('-translate-x-full')) {
                 toggleSidebar();
             }
         }
@@ -228,15 +228,17 @@
         const overlay = document.getElementById('sidebar-overlay');
         
         if (window.innerWidth >= 1024) {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.add('hidden');
+            if (sidebar) sidebar.classList.remove('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
             document.body.style.overflow = '';
         } else {
-            sidebar.classList.add('-translate-x-full');
+            if (sidebar) sidebar.classList.add('-translate-x-full');
             // Reset collapsed state on mobile
-            sidebar.classList.remove('lg:w-20');
-            sidebar.classList.add('lg:w-72');
-            sidebar.setAttribute('data-collapsed', 'false');
+            if (sidebar) {
+                sidebar.classList.remove('lg:w-20');
+                sidebar.classList.add('lg:w-72');
+                sidebar.setAttribute('data-collapsed', 'false');
+            }
         }
     });
 
@@ -244,7 +246,7 @@
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             const sidebar = document.getElementById('sidebar');
-            if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
+            if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
                 toggleSidebar();
             }
         }

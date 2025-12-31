@@ -31,11 +31,11 @@ Route::get('/faqs', function () {
 // Páginas públicas de contenido SEO
 Route::get('/que-es-sigpac', function () {
     return view('content.que-es-sigpac');
-})->name('content.sigpac');
+})->name('content.que-es-sigpac');
 
 Route::get('/cuaderno-campo-digital-2027', function () {
     return view('content.cuaderno-campo-digital-2027');
-})->name('content.cuaderno-digital');
+})->name('content.cuaderno-campo-2027');
 
 Route::get('/normativa-pac', function () {
     return view('content.normativa-pac-2027');
@@ -61,6 +61,48 @@ Route::get('/app-agricultura', function () {
 Route::get('/cuaderno-digital-viticultores', function () {
     return view('content.cuaderno-digital-viticultores');
 })->name('content.cuaderno-digital-viticultores');
+
+// Páginas comerciales clave (alta prioridad SEO)
+Route::get('/software-gestion-agricola', function () {
+    return view('content.software-gestion-agricola');
+})->name('content.software-gestion-agricola');
+
+Route::get('/software-viticultura', function () {
+    return view('content.software-viticultura');
+})->name('content.software-viticultura');
+
+Route::get('/software-bodegas', function () {
+    return view('content.software-bodegas');
+})->name('content.software-bodegas');
+
+Route::get('/cuaderno-digital', function () {
+    return view('content.cuaderno-digital');
+})->name('content.cuaderno-digital');
+
+Route::get('/sigpac', function () {
+    return view('content.sigpac');
+})->name('content.sigpac');
+
+Route::get('/trazabilidad-agricola', function () {
+    return view('content.trazabilidad-agricola');
+})->name('content.trazabilidad-agricola');
+
+// Páginas por sector (alta prioridad SEO)
+Route::get('/viticultores', function () {
+    return view('content.viticultores');
+})->name('content.viticultores');
+
+Route::get('/bodegas', function () {
+    return view('content.bodegas');
+})->name('content.bodegas');
+
+Route::get('/cooperativas', function () {
+    return view('content.cooperativas');
+})->name('content.cooperativas');
+
+Route::get('/ingenieros-agronomos', function () {
+    return view('content.ingenieros-agronomos');
+})->name('content.ingenieros-agronomos');
 
 // Nuevas páginas SEO - Vendimia, Fitosanitarios, PAC, Plagas, Facturación
 Route::get('/gestion-vendimia', function () {

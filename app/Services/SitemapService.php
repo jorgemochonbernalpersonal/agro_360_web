@@ -17,6 +17,7 @@ class SitemapService
 
     public function getUrls(): array
     {
+        // ✅ SEO: Prioridades ajustadas para arquitectura "Product & Solutions"
         return [
             // Landing page
             [
@@ -43,6 +44,70 @@ class SitemapService
                 'loc' => $this->getAbsoluteUrl('faqs'),
                 'lastmod' => now()->toIso8601String(),
                 'changefreq' => 'monthly',
+                'priority' => '0.9',
+            ],
+            
+            // Páginas comerciales clave (alta prioridad SEO - según análisis profesional)
+            [
+                'loc' => $this->getAbsoluteUrl('software-gestion-agricola'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('software-viticultura'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('software-bodegas'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('cuaderno-digital'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('sigpac'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('trazabilidad-agricola'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            
+            // Páginas por sector (alta prioridad SEO)
+            [
+                'loc' => $this->getAbsoluteUrl('viticultores'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('bodegas'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('cooperativas'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ],
+            [
+                'loc' => $this->getAbsoluteUrl('ingenieros-agronomos'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'weekly',
                 'priority' => '0.9',
             ],
             

@@ -56,31 +56,19 @@ export default defineConfig({
       // Limpiar BD antes de ejecutar todos los tests
       on('before:run', (details) => {
         console.log('\n🔄 Configurando base de datos de test (agro365_test)...')
+        console.log('ℹ️  Tu .env de desarrollo NO será modificado')
         try {
           const projectRoot = resolve(__dirname)
           const envCypressPath = resolve(projectRoot, '.env.cypress')
-          const envPath = resolve(projectRoot, '.env')
-          const fs = require('fs')
 
-          // IMPORTANTE: Configurar .env del servidor para que use BD de test
-          if (fs.existsSync(envCypressPath)) {
-            // Guardar .env actual si existe
-            if (fs.existsSync(envPath)) {
-              const backupPath = resolve(projectRoot, '.env.backup')
-              fs.copyFileSync(envPath, backupPath)
-              console.log('💾 .env guardado como .env.backup')
-            }
-            
-            // Copiar .env.cypress a .env para que el servidor use BD de test
-            fs.copyFileSync(envCypressPath, envPath)
-            console.log('✅ Servidor configurado para usar BD de test')
-          } else {
+          // ✅ MEJORA: No modificamos .env, solo usamos variables para comandos Artisan
+          if (!existsSync(envCypressPath)) {
             throw new Error('No se encuentra .env.cypress')
           }
 
-          // Cargar variables de entorno desde .env.cypress
-          const env = loadEnvFile(envCypressPath)
-          console.log(`✅ Usando BD de test: ${env.DB_DATABASE}`)
+          // ✅ Cargar variables solo para comandos Artisan (no modifica .env)
+          const testEnv = loadEnvFile(envCypressPath)
+          console.log(`✅ Usando BD de test: ${testEnv.DB_DATABASE}`)
 
           // Ejecutar migrate:fresh en BD de test
           console.log('📦 Ejecutando migraciones en BD de test...')
@@ -88,7 +76,7 @@ export default defineConfig({
             stdio: 'inherit',
             cwd: projectRoot,
             shell: true,
-            env: env
+            env: testEnv  // ✅ Variables solo para este comando
           })
           console.log('✅ Migraciones ejecutadas')
 
@@ -98,7 +86,7 @@ export default defineConfig({
             stdio: 'inherit',
             cwd: projectRoot,
             shell: true,
-            env: env
+            env: testEnv  // ✅ Variables solo para este comando
           })
           
           // Crear usuarios de prueba genéricos para Cypress
@@ -107,7 +95,7 @@ export default defineConfig({
             stdio: 'inherit',
             cwd: projectRoot,
             shell: true,
-            env: env
+            env: testEnv  // ✅ Variables solo para este comando
           })
           
           // Ejecutar seeder completo para tener todos los datos de prueba (opcional, solo si se necesita)
@@ -120,12 +108,14 @@ export default defineConfig({
           // })
           
           console.log('✅ Datos de prueba creados')
-          console.log('✅ Base de datos lista para los tests\n')
+          console.log('✅ Base de datos lista para los tests')
+          console.log('ℹ️  Tu servidor de desarrollo sigue usando agro365\n')
         } catch (error) {
           console.error('❌ Error configurando BD:', error.message)
           console.error('\n💡 Asegúrate de:')
           console.error('   1. Crear la BD: CREATE DATABASE agro365_test;')
           console.error('   2. Verificar que .env.cypress existe')
+          console.error('   3. Tu servidor Laravel debe estar corriendo (php artisan serve)')
           throw error
         }
       })
@@ -136,29 +126,18 @@ export default defineConfig({
         try {
           const projectRoot = resolve(__dirname)
           const envCypressPath = resolve(projectRoot, '.env.cypress')
-          const envPath = resolve(projectRoot, '.env')
-          const backupPath = resolve(projectRoot, '.env.backup')
-          const fs = require('fs')
 
-          // Cargar variables de entorno desde .env.cypress
-          const env = loadEnvFile(envCypressPath)
+          // ✅ Usar variables de entorno sin modificar .env
+          const testEnv = loadEnvFile(envCypressPath)
 
           execSync('php artisan migrate:fresh --force', {
             stdio: 'inherit',
             cwd: projectRoot,
             shell: true,
-            env: env
+            env: testEnv  // ✅ Variables solo para este comando
           })
           console.log('✅ Base de datos de test limpiada')
-
-          // Restaurar .env original si existe backup
-          if (fs.existsSync(backupPath)) {
-            fs.copyFileSync(backupPath, envPath)
-            fs.unlinkSync(backupPath)
-            console.log('✅ .env restaurado a configuración original\n')
-          } else {
-            console.log('⚠️  No se encontró .env.backup para restaurar\n')
-          }
+          console.log('ℹ️  Tu .env de desarrollo no fue modificado\n')
         } catch (error) {
           console.error('❌ Error limpiando BD:', error.message)
           // No lanzar error aquí para no afectar el resultado de los tests

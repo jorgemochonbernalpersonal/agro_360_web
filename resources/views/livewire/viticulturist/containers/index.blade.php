@@ -21,81 +21,50 @@
     </x-page-header>
 
     {{-- Tabs --}}
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-1 inline-flex gap-1 mb-6">
-        <button wire:click="showActive" 
-                class="px-4 py-2 rounded-lg text-sm font-medium transition {{ $filterStatus === '' && $viewMode !== 'stats' ? 'bg-[var(--color-agro-green)] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
-            Activos 
-            <span class="ml-1 {{ $filterStatus === '' && $viewMode !== 'stats' ? 'text-white/80' : 'text-gray-500' }}">({{ $stats['total_containers'] - \App\Models\Container::where('user_id', auth()->id())->where('archived', true)->count() }})</span>
-        </button>
-        <button wire:click="showInactive" 
-                class="px-4 py-2 rounded-lg text-sm font-medium transition {{ $filterStatus === 'archived' && $viewMode !== 'stats' ? 'bg-[var(--color-agro-green)] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
-            Inactivos 
-            <span class="ml-1 {{ $filterStatus === 'archived' && $viewMode !== 'stats' ? 'text-white/80' : 'text-gray-500' }}">({{ \App\Models\Container::where('user_id', auth()->id())->where('archived', true)->count() }})</span>
-        </button>
-        <button wire:click="showStats" 
-                class="px-4 py-2 rounded-lg text-sm font-medium transition {{ $viewMode === 'stats' ? 'bg-[var(--color-agro-green)] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
-            Estadísticas
-        </button>
-    </div>
+    @php
+        $activeCount = $stats['total_containers'] - \App\Models\Container::where('user_id', auth()->id())->where('archived', true)->count();
+        $inactiveCount = \App\Models\Container::where('user_id', auth()->id())->where('archived', true)->count();
+        $currentTabValue = $viewMode === 'stats' ? 'statistics' : ($filterStatus === 'archived' ? 'inactive' : 'active');
+    @endphp
+    
+    <x-resource-view-tabs 
+        :activeCount="$activeCount"
+        :inactiveCount="$inactiveCount"
+        :currentTab="$currentTabValue"
+        onSwitch="switchTab"
+    />
 
     {{-- Estadísticas Globales --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div class="flex items-center">
-                <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $stats['total_containers'] }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div class="flex items-center">
-                <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Capacidad</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ number_format($stats['total_capacity'], 0) }} L</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div class="flex items-center">
-                <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Ocupación</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $stats['occupancy_percentage'] }}%</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div class="flex items-center">
-                <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Disponibles</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $stats['available_containers'] }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    @php
+        $statsData = [
+            [
+                'label' => 'Total',
+                'value' => $stats['total_containers'],
+                'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>',
+                'color' => 'blue'
+            ],
+            [
+                'label' => 'Capacidad',
+                'value' => number_format($stats['total_capacity'], 0) . ' L',
+                'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                'color' => 'green'
+            ],
+            [
+                'label' => 'Ocupación',
+                'value' => $stats['occupancy_percentage'] . '%',
+                'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>',
+                'color' => 'yellow'
+            ],
+            [
+                'label' => 'Disponibles',
+                'value' => $stats['available_containers'],
+                'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>',
+                'color' => 'purple'
+            ]
+        ];
+    @endphp
+    
+    <x-stats-grid :stats="$statsData" />
 
     {{-- Vista de Estadísticas --}}
     @if($viewMode === 'stats')
@@ -214,108 +183,72 @@
     </x-filter-section>
 
     {{-- Grid de Contenedores --}}
-    @if($containers->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @php
+        $containerIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>';
+    @endphp
+    
+    <x-resource-grid 
+        :items="$containers" 
+        emptyMessage="No hay contenedores"
+        emptyDescription="Comienza creando tu primer contenedor para gestionar tu bodega."
+        :emptyIcon="$containerIcon"
+    >
             @foreach($containers as $container)
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-[var(--color-agro-green-light)] transition-all p-6">
-                    
-                    {{-- Header --}}
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900 text-lg">{{ $container->name }}</h3>
-                            @if($container->serial_number)
-                                <p class="text-xs text-gray-500 mt-1">SN: {{ $container->serial_number }}</p>
-                            @endif
-                        </div>
-                        
-                        <span class="text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0
-                            @if($container->isEmpty()) bg-blue-100 text-blue-800
-                            @elseif($container->isFull()) bg-red-100 text-red-800
-                            @else bg-green-100 text-green-800
-                            @endif">
-                            @if($container->isEmpty()) Vacío
-                            @elseif($container->isFull()) Lleno
-                            @else Disponible
-                            @endif
-                        </span>
-                    </div>
+                <x-resource-card 
+                    :title="$container->name"
+                    :subtitle="$container->serial_number ? 'SN: ' . $container->serial_number : null"
+                    :badge="$container->isEmpty() ? 'Vacío' : ($container->isFull() ? 'Lleno' : 'Disponible')"
+                    :badgeColor="$container->isEmpty() ? 'blue' : ($container->isFull() ? 'red' : 'green')"
+                    hoverBorderColor="[var(--color-agro-green-light)]"
+                >
+                    <x-slot:content>
+                        <x-progress-bar 
+                            :percentage="$container->getOccupancyPercentage()"
+                            label="Ocupación"
+                            :currentValue="$container->used_capacity"
+                            :maxValue="$container->capacity"
+                            unit="L"
+                        />
+                    </x-slot:content>
 
-                    {{-- Barra de Ocupación --}}
-                    <div class="mb-4">
-                        <div class="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Ocupación</span>
-                            <span class="font-semibold">{{ $container->getOccupancyPercentage() }}%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="h-2 rounded-full transition-all
-                                @if($container->getOccupancyPercentage() >= 90) bg-red-500
-                                @elseif($container->getOccupancyPercentage() >= 70) bg-orange-500
-                                @elseif($container->getOccupancyPercentage() >= 50) bg-yellow-500
-                                @else bg-green-500
-                                @endif"
-                                style="width: {{ $container->getOccupancyPercentage() }}%">
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-1">
-                            {{ number_format($container->used_capacity, 0) }} / {{ number_format($container->capacity, 0) }} L
-                        </p>
-                    </div>
-
-                    {{-- Footer con Botones de Acción --}}
-                    <div class="pt-3 border-t border-gray-100">
-                        <div class="flex gap-2">
-                            {{-- Ver Detalles --}}
-                            <a href="{{ route('viticulturist.digital-notebook.containers.show', $container->id) }}" 
-                               class="flex-1 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition flex items-center justify-center"
-                               title="Ver Detalles">
-                                <span class="text-lg">👁️</span>
-                            </a>
+                    <x-slot:actions>
+                        <div class="flex gap-2 justify-center">
+                            <x-action-button 
+                                variant="view" 
+                                href="{{ route('viticulturist.digital-notebook.containers.show', $container->id) }}" 
+                            />
                             
-                            {{-- Editar --}}
-                            <a href="{{ route('viticulturist.digital-notebook.containers.edit', $container->id) }}" 
-                               class="flex-1 px-3 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg transition flex items-center justify-center"
-                               title="Editar">
-                                <span class="text-lg">✏️</span>
-                            </a>
+                            <x-action-button 
+                                variant="edit" 
+                                href="{{ route('viticulturist.digital-notebook.containers.edit', $container->id) }}" 
+                            />
                             
-                            {{-- Archivar/Activar --}}
                             @if(!$container->archived)
-                                <button wire:click="archive({{ $container->id }})" 
-                                        class="flex-1 px-3 py-2 bg-lime-500 hover:bg-lime-600 text-white rounded-lg transition flex items-center justify-center"
-                                        title="Archivar">
-                                    <span class="text-lg">📦</span>
-                                </button>
+                                <x-action-button 
+                                    variant="archive" 
+                                    wireClick="archive({{ $container->id }})" 
+                                />
                             @else
-                                <button wire:click="unarchive({{ $container->id }})" 
-                                        class="flex-1 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition flex items-center justify-center"
-                                        title="Activar">
-                                    <span class="text-lg">✅</span>
-                                </button>
+                                <x-action-button 
+                                    variant="activate" 
+                                    wireClick="unarchive({{ $container->id }})" 
+                                />
                             @endif
                         </div>
-                    </div>
-                </div>
+                    </x-slot:actions>
+                </x-resource-card>
             @endforeach
-        </div>
-
-        {{-- Paginación --}}
-        <div class="mt-6">
+        
+        <x-slot:pagination>
             {{ $containers->links() }}
-        </div>
-    @else
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-            </svg>
-            <h3 class="mt-4 text-lg font-medium text-gray-900">No hay contenedores</h3>
-            <p class="mt-2 text-gray-600">Comienza creando tu primer contenedor para gestionar tu bodega.</p>
-            <div class="mt-6">
-                <a href="{{ route('viticulturist.digital-notebook.containers.create') }}" 
-                   class="inline-flex items-center px-4 py-2 bg-[var(--color-agro-green)] hover:bg-[var(--color-agro-green-dark)] text-white font-medium rounded-lg transition">
-                    Crear Contenedor
-                </a>
-            </div>
-        </div>
-    @endif
+        </x-slot:pagination>
+        
+        <x-slot:emptyAction>
+            <a href="{{ route('viticulturist.digital-notebook.containers.create') }}" 
+               class="inline-flex items-center px-4 py-2 bg-[var(--color-agro-green)] hover:bg-[var(--color-agro-green-dark)] text-white font-medium rounded-lg transition">
+                Crear Contenedor
+            </a>
+        </x-slot:emptyAction>
+    </x-resource-grid>
     @endif
 </div>
