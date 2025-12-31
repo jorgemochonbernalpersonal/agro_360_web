@@ -31,19 +31,42 @@ class PlotWeatherCard extends Component
         $this->isLoading = true;
         $this->error = '';
 
+        $service = new WeatherService();
+
+        // 1. Fetch Weather Data
         try {
-            $service = new WeatherService();
-            
             $this->weather = $service->getCurrentWeather($this->plot, $forceRefresh);
-            $this->soil = $service->getSoilData($this->plot, $forceRefresh);
-            $this->solar = $service->getSolarData($this->plot, $forceRefresh);
-            
         } catch (\Exception $e) {
-            $this->error = 'Error al cargar datos meteorológicos';
-            \Log::error('Weather data error', [
+            \Log::error('PlotWeatherCard: Weather data error', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),
             ]);
+            // Fallback for UI handled by view (null checks)
+        }
+
+        // 2. Fetch Soil Data
+        try {
+            $this->soil = $service->getSoilData($this->plot, $forceRefresh);
+        } catch (\Exception $e) {
+            \Log::error('PlotWeatherCard: Soil data error', [
+                'plot_id' => $this->plot->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        // 3. Fetch Solar Data
+        try {
+            $this->solar = $service->getSolarData($this->plot, $forceRefresh);
+        } catch (\Exception $e) {
+            \Log::error('PlotWeatherCard: Solar data error', [
+                'plot_id' => $this->plot->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+        
+        // General error state only if everything critical failed or to show a toast
+        if (empty($this->weather) && empty($this->soil) && empty($this->solar)) {
+            $this->error = 'No se pudieron cargar los datos meteorológicos.';
         }
 
         $this->isLoading = false;

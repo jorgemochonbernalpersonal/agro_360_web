@@ -6,6 +6,7 @@ use App\Models\Plot;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 /**
@@ -336,6 +337,14 @@ class WeatherService
                 }
 
                 return $solarData;
+                return $solarData;
+            } else {
+                Log::error('Open-Meteo solar API failed', [
+                    'status' => $response->status(),
+                    'body' => substr($response->body(), 0, 200),
+                    'lat' => $lat,
+                    'lon' => $lon,
+                ]);
             }
         } catch (\Exception $e) {
             Log::error('Open-Meteo solar error', ['error' => $e->getMessage()]);
