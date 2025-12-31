@@ -15,6 +15,18 @@ class AgriculturalActivityObserver
         AgriculturalActivityAuditLog::log($activity, 'created', [
             'new' => $activity->getAttributes(),
         ]);
+        
+        // Marcar paso de onboarding como completado
+        if ($activity->viticulturist_id) {
+            $progress = \App\Models\OnboardingProgress::getOrCreate(
+                $activity->viticulturist_id,
+                \App\Models\OnboardingProgress::STEP_REGISTER_ACTIVITY
+            );
+            
+            if (!$progress->isCompleted()) {
+                $progress->markAsCompleted();
+            }
+        }
     }
 
     /**

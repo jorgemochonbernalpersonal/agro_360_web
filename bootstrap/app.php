@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Forzar HTTPS en producción (debe ir primero)
+        $middleware->append(\App\Http\Middleware\ForceHttps::class);
+        
         // Middleware global de seguridad - aplica a todas las respuestas
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
         

@@ -62,6 +62,10 @@
 
 <x-app-layout>
     <div class="space-y-6 animate-fade-in">
+        {{-- Onboarding Components --}}
+        @livewire('viticulturist.onboarding-welcome')
+        @livewire('viticulturist.onboarding-checklist')
+
         {{-- Header --}}
         <x-page-header
             :icon="$dashboardIcon"

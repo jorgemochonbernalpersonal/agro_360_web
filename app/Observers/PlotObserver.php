@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Plot;
-use App\Models\PlotAuditLog;
+use App\Models\OnboardingProgress;
 
 class PlotObserver
 {
@@ -12,17 +12,17 @@ class PlotObserver
      */
     public function created(Plot $plot): void
     {
-        PlotAuditLog::log($plot, 'created', [
-            'new' => $plot->only([
-                'name',
-                'surface_area',
-                'location',
-                'cadastral_reference',
-                'province_id',
-                'municipality_id',
-                'autonomous_community_id',
-            ]),
-        ]);
+        // Marcar paso de onboarding como completado
+        if ($plot->viticulturist_id) {
+            $progress = OnboardingProgress::getOrCreate(
+                $plot->viticulturist_id,
+                OnboardingProgress::STEP_CREATE_PLOT
+            );
+            
+            if (!$progress->isCompleted()) {
+                $progress->markAsCompleted();
+            }
+        }
     }
 
     /**
@@ -30,27 +30,7 @@ class PlotObserver
      */
     public function updated(Plot $plot): void
     {
-        $changes = [];
-        $trackedFields = [
-            'name',
-            'surface_area',
-            'location',
-            'cadastral_reference',
-            'province_id',
-            'municipality_id',
-            'autonomous_community_id',
-        ];
-
-        foreach ($trackedFields as $field) {
-            if ($plot->isDirty($field)) {
-                $changes['old'][$field] = $plot->getOriginal($field);
-                $changes['new'][$field] = $plot->$field;
-            }
-        }
-
-        if (!empty($changes)) {
-            PlotAuditLog::log($plot, 'updated', $changes);
-        }
+        //
     }
 
     /**
@@ -58,12 +38,22 @@ class PlotObserver
      */
     public function deleted(Plot $plot): void
     {
-        PlotAuditLog::log($plot, 'deleted', [
-            'old' => $plot->only([
-                'name',
-                'surface_area',
-                'location',
-            ]),
-        ]);
+        //
+    }
+
+    /**
+     * Handle the Plot "restored" event.
+     */
+    public function restored(Plot $plot): void
+    {
+        //
+    }
+
+    /**
+     * Handle the Plot "force deleted" event.
+     */
+    public function forceDeleted(Plot $plot): void
+    {
+        //
     }
 }
