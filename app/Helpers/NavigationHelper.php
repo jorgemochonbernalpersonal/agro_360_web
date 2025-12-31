@@ -42,6 +42,13 @@ class NavigationHelper
                 'active' => request()->routeIs('viticulturist.dashboard'),
             ];
 
+            $menu['main'][] = [
+                'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
+                'label' => 'Calendario',
+                'route' => 'viticulturist.calendar',
+                'active' => request()->routeIs('viticulturist.calendar'),
+            ];
+
             // GRUPO: OPERACIONES
             $menu['operations'] = [
                 [
@@ -51,12 +58,6 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.campaign*'),
                 ],
                 [
-                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
-                    'label' => 'Calendario',
-                    'route' => 'viticulturist.calendar',
-                    'active' => request()->routeIs('viticulturist.calendar'),
-                ],
-                [
                     'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
                     'label' => 'Cuaderno Digital',
                     'route' => 'viticulturist.digital-notebook',
@@ -64,7 +65,6 @@ class NavigationHelper
                     'submenu' => [
                         ['label' => 'Actividades', 'route' => 'viticulturist.digital-notebook', 'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*')],
                         ['label' => 'Rendimientos', 'route' => 'viticulturist.digital-notebook.estimated-yields.index', 'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')],
-                        ['label' => 'Contenedores', 'route' => 'viticulturist.digital-notebook.containers.index', 'active' => request()->routeIs('viticulturist.digital-notebook.containers.*')],
                         ['label' => 'Fitosanitarios', 'route' => 'viticulturist.phytosanitary-products.index', 'active' => request()->routeIs('viticulturist.phytosanitary-products.*')],
                         ['label' => 'Nuevo Tratamiento', 'route' => 'viticulturist.digital-notebook.treatment.create', 'active' => request()->routeIs('viticulturist.digital-notebook.treatment.*')],
                         ['label' => 'Nueva Fertilización', 'route' => 'viticulturist.digital-notebook.fertilization.create', 'active' => request()->routeIs('viticulturist.digital-notebook.fertilization.*')],
@@ -73,6 +73,18 @@ class NavigationHelper
                         ['label' => 'Observación', 'route' => 'viticulturist.digital-notebook.observation.create', 'active' => request()->routeIs('viticulturist.digital-notebook.observation.*')],
                         ['label' => 'Nueva Cosecha', 'route' => 'viticulturist.digital-notebook.harvest.create', 'active' => request()->routeIs('viticulturist.digital-notebook.harvest.create')],
                     ],
+                ],
+                [
+                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
+                    'label' => 'Cumplimiento PAC',
+                    'route' => 'viticulturist.pac-compliance',
+                    'active' => request()->routeIs('viticulturist.pac-compliance'),
+                ],
+                [
+                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
+                    'label' => 'Informes Oficiales',
+                    'route' => 'viticulturist.official-reports.index',
+                    'active' => request()->routeIs('viticulturist.official-reports.*'),
                 ],
             ];
 
@@ -97,12 +109,6 @@ class NavigationHelper
                     'active' => request()->routeIs('remote-sensing.*'),
                 ],
                 [
-                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
-                    'label' => 'Cumplimiento PAC',
-                    'route' => 'viticulturist.pac-compliance',
-                    'active' => request()->routeIs('viticulturist.pac-compliance'),
-                ],
-                [
                     'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>',
                     'label' => 'Gestión de Plagas',
                     'route' => 'viticulturist.pest-management.index',
@@ -123,6 +129,12 @@ class NavigationHelper
                     'label' => 'Maquinaria',
                     'route' => 'viticulturist.machinery.index',
                     'active' => request()->routeIs('viticulturist.machinery*'),
+                ],
+                [
+                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
+                    'label' => 'Contenedores',
+                    'route' => 'viticulturist.digital-notebook.containers.index',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.containers.*'),
                 ],
                 [
                     'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>',
@@ -151,12 +163,6 @@ class NavigationHelper
                     'label' => 'Estadísticas Financieras',
                     'route' => 'viticulturist.financial-stats',
                     'active' => request()->routeIs('viticulturist.financial-stats'),
-                ],
-                [
-                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
-                    'label' => 'Informes Oficiales',
-                    'route' => 'viticulturist.official-reports.index',
-                    'active' => request()->routeIs('viticulturist.official-reports.*'),
                 ],
             ];
 

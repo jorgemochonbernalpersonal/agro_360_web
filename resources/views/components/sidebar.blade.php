@@ -2,6 +2,19 @@
     use App\Helpers\NavigationHelper;
     $menu = NavigationHelper::getMenu();
     $user = auth()->user();
+    
+    // Determinar qué secciones deben estar abiertas por defecto (la que contiene la ruta activa)
+    $activeSections = [];
+    foreach(['operations', 'plots_analysis', 'resources', 'billing', 'clients', 'system'] as $section) {
+        if (isset($menu[$section])) {
+            foreach ($menu[$section] as $item) {
+                if ($item['active'] ?? false) {
+                    $activeSections[] = $section;
+                    break;
+                }
+            }
+        }
+    }
 @endphp
 
 <!-- Sidebar Colapsable Premium -->
@@ -12,12 +25,25 @@
            -translate-x-full lg:translate-x-0
            flex flex-col"
     data-collapsed="false"
+    x-data="{
+        openSections: JSON.parse(localStorage.getItem('sidebarSections') || '{{ json_encode($activeSections) }}'),
+        toggle(section) {
+            if (this.openSections.includes(section)) {
+                this.openSections = this.openSections.filter(s => s !== section);
+            } else {
+                this.openSections.push(section);
+            }
+            localStorage.setItem('sidebarSections', JSON.stringify(this.openSections));
+        },
+        isOpen(section) {
+            return this.openSections.includes(section);
+        }
+    }"
 >
     <!-- Logo Section -->
     <div class="h-20 flex items-center justify-between px-6 border-b border-[var(--color-agro-green-light)]/30 bg-gradient-to-r from-[var(--color-agro-green-bg)]/50 to-transparent">
         <a href="{{ route($user->role . '.dashboard') }}" class="flex items-center space-x-3 group overflow-hidden" data-cy="sidebar-logo-link">
             <div class="relative flex-shrink-0">
-                <!-- Logo Image -->
                 <img 
                     src="{{ asset('images/logo.png') }}" 
                     alt="Agro365 Logo" 
@@ -37,7 +63,6 @@
             </div>
         </a>
         
-        <!-- Toggle Button Desktop -->
         <button 
             onclick="toggleSidebarCollapse()"
             class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-bg)] transition-all duration-200"
@@ -63,61 +88,151 @@
 
         {{-- Sección: Operaciones --}}
         @if(isset($menu['operations']))
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 sidebar-text">Operaciones</h3>
-                @foreach($menu['operations'] as $item)
-                    @include('components.sidebar-item', ['item' => $item])
-                @endforeach
+            <div class="mb-2">
+                <button 
+                    @click="toggle('operations')" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all sidebar-text group"
+                >
+                    <span>Operaciones</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 sidebar-text" 
+                         :class="isOpen('operations') ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div x-show="isOpen('operations')" 
+                     x-collapse
+                     class="mt-1 space-y-1">
+                    @foreach($menu['operations'] as $item)
+                        @include('components.sidebar-item', ['item' => $item])
+                    @endforeach
+                </div>
             </div>
         @endif
 
         {{-- Sección: Parcelas y Análisis --}}
         @if(isset($menu['plots_analysis']))
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 sidebar-text">Parcelas y Análisis</h3>
-                @foreach($menu['plots_analysis'] as $item)
-                    @include('components.sidebar-item', ['item' => $item])
-                @endforeach
+            <div class="mb-2">
+                <button 
+                    @click="toggle('plots_analysis')" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all sidebar-text group"
+                >
+                    <span>Parcelas y Análisis</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 sidebar-text" 
+                         :class="isOpen('plots_analysis') ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div x-show="isOpen('plots_analysis')" 
+                     x-collapse
+                     class="mt-1 space-y-1">
+                    @foreach($menu['plots_analysis'] as $item)
+                        @include('components.sidebar-item', ['item' => $item])
+                    @endforeach
+                </div>
             </div>
         @endif
 
         {{-- Sección: Recursos --}}
         @if(isset($menu['resources']))
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 sidebar-text">Recursos</h3>
-                @foreach($menu['resources'] as $item)
-                    @include('components.sidebar-item', ['item' => $item])
-                @endforeach
+            <div class="mb-2">
+                <button 
+                    @click="toggle('resources')" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all sidebar-text group"
+                >
+                    <span>Recursos</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 sidebar-text" 
+                         :class="isOpen('resources') ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div x-show="isOpen('resources')" 
+                     x-collapse
+                     class="mt-1 space-y-1">
+                    @foreach($menu['resources'] as $item)
+                        @include('components.sidebar-item', ['item' => $item])
+                    @endforeach
+                </div>
             </div>
         @endif
 
         {{-- Sección: Facturación --}}
         @if(isset($menu['billing']))
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 sidebar-text">Facturación</h3>
-                @foreach($menu['billing'] as $item)
-                    @include('components.sidebar-item', ['item' => $item])
-                @endforeach
+            <div class="mb-2">
+                <button 
+                    @click="toggle('billing')" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all sidebar-text group"
+                >
+                    <span>Facturación</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 sidebar-text" 
+                         :class="isOpen('billing') ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div x-show="isOpen('billing')" 
+                     x-collapse
+                     class="mt-1 space-y-1">
+                    @foreach($menu['billing'] as $item)
+                        @include('components.sidebar-item', ['item' => $item])
+                    @endforeach
+                </div>
             </div>
         @endif
 
         {{-- Sección: Clientes --}}
         @if(isset($menu['clients']))
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 sidebar-text">Clientes</h3>
-                @foreach($menu['clients'] as $item)
-                    @include('components.sidebar-item', ['item' => $item])
-                @endforeach
+            <div class="mb-2">
+                <button 
+                    @click="toggle('clients')" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all sidebar-text group"
+                >
+                    <span>Clientes</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 sidebar-text" 
+                         :class="isOpen('clients') ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div x-show="isOpen('clients')" 
+                     x-collapse
+                     class="mt-1 space-y-1">
+                    @foreach($menu['clients'] as $item)
+                        @include('components.sidebar-item', ['item' => $item])
+                    @endforeach
+                </div>
             </div>
         @endif
 
         {{-- Sección: Sistema --}}
         @if(isset($menu['system']))
-            <div class="mb-4">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 sidebar-text">Sistema</h3>
-                @foreach($menu['system'] as $item)
-                    @include('components.sidebar-item', ['item' => $item])
-                @endforeach
+            <div class="mb-2">
+                <button 
+                    @click="toggle('system')" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all sidebar-text group"
+                >
+                    <span>Sistema</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 sidebar-text" 
+                         :class="isOpen('system') ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div x-show="isOpen('system')" 
+                     x-collapse
+                     class="mt-1 space-y-1">
+                    @foreach($menu['system'] as $item)
+                        @include('components.sidebar-item', ['item' => $item])
+                    @endforeach
+                </div>
             </div>
         @endif
     </nav>
@@ -151,13 +266,11 @@
         const isCollapsed = sidebar.getAttribute('data-collapsed') === 'true';
         
         if (isCollapsed) {
-            // Expandir
             sidebar.classList.remove('lg:w-20');
             sidebar.classList.add('lg:w-72');
             sidebar.setAttribute('data-collapsed', 'false');
             collapseIcon.style.transform = 'rotate(0deg)';
             
-            // Mostrar textos después de la animación
             setTimeout(() => {
                 document.querySelectorAll('.sidebar-text, .sidebar-indicator, .sidebar-submenu').forEach(el => {
                     el.style.opacity = '1';
@@ -165,13 +278,11 @@
                 });
             }, 150);
         } else {
-            // Colapsar
             sidebar.classList.remove('lg:w-72');
             sidebar.classList.add('lg:w-20');
             sidebar.setAttribute('data-collapsed', 'true');
             collapseIcon.style.transform = 'rotate(180deg)';
             
-            // Ocultar textos
             document.querySelectorAll('.sidebar-text, .sidebar-indicator, .sidebar-submenu').forEach(el => {
                 el.style.opacity = '0';
                 setTimeout(() => {
@@ -182,7 +293,6 @@
             });
         }
         
-        // Ajustar el main content
         const main = document.querySelector('main');
         if (main) {
             if (isCollapsed) {
@@ -195,7 +305,6 @@
         }
     }
 
-    // Toggle sidebar mobile
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
@@ -203,27 +312,20 @@
         sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
         
-        if (sidebar.classList.contains('-translate-x-full')) {
-            document.body.style.overflow = '';
-        } else {
-            document.body.style.overflow = 'hidden';
-        }
+        document.body.style.overflow = sidebar.classList.contains('-translate-x-full') ? '' : 'hidden';
     }
 
-    // Cerrar sidebar al hacer clic fuera en móvil
     document.addEventListener('click', function(event) {
         const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
         const toggle = document.getElementById('sidebar-toggle');
         
-        if (window.innerWidth < 1024) {
-            if (sidebar && toggle && !sidebar.contains(event.target) && !toggle.contains(event.target) && !sidebar.classList.contains('-translate-x-full')) {
-                toggleSidebar();
-            }
+        if (window.innerWidth < 1024 && sidebar && toggle && 
+            !sidebar.contains(event.target) && !toggle.contains(event.target) && 
+            !sidebar.classList.contains('-translate-x-full')) {
+            toggleSidebar();
         }
     });
 
-    // Ajustar sidebar en resize
     window.addEventListener('resize', function() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
@@ -233,9 +335,8 @@
             if (overlay) overlay.classList.add('hidden');
             document.body.style.overflow = '';
         } else {
-            if (sidebar) sidebar.classList.add('-translate-x-full');
-            // Reset collapsed state on mobile
             if (sidebar) {
+                sidebar.classList.add('-translate-x-full');
                 sidebar.classList.remove('lg:w-20');
                 sidebar.classList.add('lg:w-72');
                 sidebar.setAttribute('data-collapsed', 'false');
@@ -243,7 +344,6 @@
         }
     });
 
-    // Cerrar sidebar con ESC
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             const sidebar = document.getElementById('sidebar');
@@ -253,17 +353,14 @@
         }
     });
 
-    // Añadir transiciones suaves a los elementos del sidebar
     document.addEventListener('DOMContentLoaded', function() {
-        const sidebarTexts = document.querySelectorAll('.sidebar-text, .sidebar-indicator, .sidebar-submenu');
-        sidebarTexts.forEach(el => {
+        document.querySelectorAll('.sidebar-text, .sidebar-indicator, .sidebar-submenu').forEach(el => {
             el.style.transition = 'opacity 150ms ease-in-out';
         });
     });
 </script>
 
 <style>
-    /* Estilos adicionales para el sidebar colapsado */
     #sidebar[data-collapsed="true"] .sidebar-text,
     #sidebar[data-collapsed="true"] .sidebar-indicator,
     #sidebar[data-collapsed="true"] .sidebar-submenu {
