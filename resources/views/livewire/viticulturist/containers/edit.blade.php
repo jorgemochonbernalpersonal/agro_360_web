@@ -91,13 +91,12 @@
                         required
                     >
                         <option value="">Seleccionar...</option>
-                        <option value="1">Barrica</option>
-                        <option value="2">Depósito</option>
-                        <option value="3">Tanque</option>
-                        <option value="4">Tina</option>
-                        <option value="5">Ánfora</option>
+                        @foreach($containerTypes as $type)
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                        @endforeach
                     </x-select>
                 </div>
+
 
                 {{-- Material --}}
                 <div>
@@ -109,15 +108,12 @@
                         required
                     >
                         <option value="">Seleccionar...</option>
-                        <option value="1">Roble Francés</option>
-                        <option value="2">Roble Americano</option>
-                        <option value="3">Roble Húngaro</option>
-                        <option value="4">Acero Inoxidable</option>
-                        <option value="5">Hormigón</option>
-                        <option value="6">Cerámica</option>
-                        <option value="7">Fibra de Vidrio</option>
+                        @foreach($containerMaterials as $material)
+                            <option value="{{ $material->id }}">{{ $material->name }}</option>
+                        @endforeach
                     </x-select>
                 </div>
+
 
                 {{-- Tipo de Roble (solo si material es roble) --}}
                 @if(in_array($material_id, [1, 2, 3]))

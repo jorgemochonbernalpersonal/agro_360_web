@@ -3,6 +3,10 @@
 namespace App\Livewire\Viticulturist\Containers;
 
 use App\Models\Container;
+use App\Models\ContainerType;
+use App\Models\ContainerMaterial;
+use App\Models\ContainerRoom;
+use App\Models\UnitOfMeasurement;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -177,13 +181,16 @@ class Create extends Component
 
     public function render()
     {
-        $containerRooms = \App\Models\ContainerRoom::where('user_id', Auth::id())
+        $containerTypes = ContainerType::orderBy('name')->get();
+        $containerMaterials = ContainerMaterial::orderBy('name')->get();
+        $containerRooms = ContainerRoom::where('user_id', Auth::id())
             ->orderBy('name')
             ->get();
-
-        $unitsOfMeasurement = \App\Models\UnitOfMeasurement::orderBy('name')->get();
+        $unitsOfMeasurement = UnitOfMeasurement::orderBy('name')->get();
 
         return view('livewire.viticulturist.containers.create', [
+            'containerTypes' => $containerTypes,
+            'containerMaterials' => $containerMaterials,
             'containerRooms' => $containerRooms,
             'unitsOfMeasurement' => $unitsOfMeasurement,
         ])->layout('layouts.app');
