@@ -57,6 +57,9 @@
     <meta name="twitter:description" content="Cuaderno digital, SIGPAC, control de parcelas. 6 meses gratis para beta testers.">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}">

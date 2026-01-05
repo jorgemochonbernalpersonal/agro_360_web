@@ -29,6 +29,10 @@ Route::get('/faqs', function () {
 })->name('faqs');
 
 // Páginas públicas de contenido SEO
+Route::permanentRedirect('/servicios', '/software-gestion-agricola');
+Route::permanentRedirect('/noticias', '/blog');
+Route::permanentRedirect('/contacto', '/faqs'); // Redirigir contacto a FAQs por ahora
+
 Route::get('/que-es-sigpac', function () {
     return view('content.que-es-sigpac');
 })->name('content.que-es-sigpac');
