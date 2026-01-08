@@ -407,7 +407,6 @@
                 <a href="{{ url('/') }}" class="flex items-center" aria-label="Agro365 - Ir a inicio">
                     <img 
                         src="{{ asset('images/logo.png') }}" 
-                        srcset="{{ asset('images/logo.png') }} 1x, {{ asset('images/logo@2x.png') }} 2x"
                         alt="Agro365 - Software de gestión agrícola para viñedos y bodegas" 
                         width="160"
                         height="80"
