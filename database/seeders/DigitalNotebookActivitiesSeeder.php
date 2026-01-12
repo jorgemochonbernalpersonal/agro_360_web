@@ -103,19 +103,53 @@ class DigitalNotebookActivitiesSeeder extends Seeder
         if ($products->isEmpty()) {
             $this->command->warn('⚠️ No hay productos fitosanitarios. Creando algunos...');
             $products = collect([
-                PhytosanitaryProduct::create([
+                $p1 = PhytosanitaryProduct::create([
                     'name' => 'Producto Test 1',
                     'active_ingredient' => 'Ingrediente Activo Test',
+                    'registration_number' => 'ES-00000001',
                     'withdrawal_period_days' => 30,
                     'active' => true,
                 ]),
-                PhytosanitaryProduct::create([
+                $p2 = PhytosanitaryProduct::create([
                     'name' => 'Producto Test 2',
                     'active_ingredient' => 'Ingrediente Activo Test 2',
+                    'registration_number' => 'ES-00000002',
                     'withdrawal_period_days' => 21,
                     'active' => true,
                 ]),
             ]);
+
+            // Crear stock para los productos
+            foreach ($products as $product) {
+                \App\Models\ProductStock::create([
+                    'product_id' => $product->id,
+                    'user_id' => $viticulturist->id,
+                    'quantity' => 100, // Stock inicial suficiente
+                    'batch_number' => 'LOTE-' . rand(1000, 9999),
+                    'acquisition_date' => now()->subMonths(6),
+                    'expiration_date' => now()->addYears(2),
+                    'active' => true,
+                ]);
+            }
+        } else {
+             // Asegurar que existan stocks para los productos existentes
+             foreach ($products as $product) {
+                 $stock = \App\Models\ProductStock::where('product_id', $product->id)
+                     ->where('user_id', $viticulturist->id)
+                     ->first();
+                 
+                 if (!$stock) {
+                    \App\Models\ProductStock::create([
+                        'product_id' => $product->id,
+                        'user_id' => $viticulturist->id,
+                        'quantity' => 100,
+                        'batch_number' => 'LOTE-' . rand(1000, 9999),
+                        'acquisition_date' => now()->subMonths(6),
+                        'expiration_date' => now()->addYears(2),
+                        'active' => true,
+                    ]);
+                 }
+             }
         }
 
         // Obtener maquinaria

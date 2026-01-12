@@ -3,8 +3,8 @@ services:
     image: mailhog/mailhog:latest
     container_name: agro365_mailhog
     ports:
-      - "1025:1025"  # SMTP server
-      - "8025:8025"  # Web UI
+      - "1025:1025"
+      - "8025:8025"
     networks:
       - agro365_network
     restart: unless-stopped
@@ -37,7 +37,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
       UPLOAD_LIMIT: 300M
     ports:
-      - "8081:80"  # Web UI
+      - "8081:80" # Web UI
     networks:
       - agro365_network
     restart: unless-stopped
@@ -51,4 +51,3 @@ networks:
 volumes:
   mariadb_data:
     driver: local
-
