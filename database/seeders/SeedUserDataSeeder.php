@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Database\Seeders\AuditHistorySeeder;
+use Database\Seeders\PlotAuditHistorySeeder;
 
 /**
  * Seeder para poblar datos de un usuario específico
@@ -24,8 +26,11 @@ class SeedUserDataSeeder extends Seeder
         $userId = null;
         
         // Intentar obtener de diferentes formas
+        // Intentar obtener de diferentes formas
         if ($this->command->hasOption('user')) {
             $userId = $this->command->option('user');
+        } elseif (env('SEED_USER_ID')) {
+             $userId = env('SEED_USER_ID');
         } elseif (isset($_SERVER['argv'])) {
             // Buscar --user=ID en los argumentos
             foreach ($_SERVER['argv'] as $arg) {
@@ -40,7 +45,8 @@ class SeedUserDataSeeder extends Seeder
             $this->command->error('❌ Debes especificar el ID del usuario con --user=ID');
             $this->command->info('');
             $this->command->info('Ejemplo:');
-            $this->command->info('  php artisan db:seed --class=SeedUserDataSeeder -- --user=9');
+            $this->command->info('  SEED_USER_ID=2 php artisan db:seed --class=SeedUserDataSeeder');
+            $this->command->info('  O en Windows PowerShell: $env:SEED_USER_ID=2; php artisan db:seed --class=SeedUserDataSeeder');
             return;
         }
         
@@ -59,6 +65,18 @@ class SeedUserDataSeeder extends Seeder
         $completeSeeder = new CompleteTestUserSeeder();
         $completeSeeder->setCommand($this->command);
         $completeSeeder->run($userId);
+
+        // Generar historial de auditoría
+        $this->command->info('');
+        $this->command->info('📜 Generando historial de auditoría...');
+        
+        $auditSeeder = new AuditHistorySeeder();
+        $auditSeeder->setCommand($this->command);
+        $auditSeeder->run();
+
+        $plotAuditSeeder = new PlotAuditHistorySeeder();
+        $plotAuditSeeder->setCommand($this->command);
+        $plotAuditSeeder->run();
         
         $this->command->info("");
         $this->command->info("✅ Datos poblados exitosamente para el usuario ID: {$userId}");

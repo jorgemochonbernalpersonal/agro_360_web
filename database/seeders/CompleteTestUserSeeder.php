@@ -240,7 +240,7 @@ class CompleteTestUserSeeder extends Seeder
                     [
                         'active_ingredient' => "Ingrediente {$i}",
                         'manufacturer' => 'Test Manufacturer',
-                        'registration_number' => "REG-{$i}",
+                        'registration_number' => "ES-" . str_pad($i, 8, '0', STR_PAD_LEFT),
                         'withdrawal_period_days' => rand(7, 30),
                         'type' => 'Fungicida',
                         'toxicity_class' => 'III',
