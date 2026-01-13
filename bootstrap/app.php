@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Middleware global de seguridad - aplica a todas las respuestas
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
         
+        // Defensa contra bots
+        $middleware->append(\App\Http\Middleware\BotDefense::class);
+        
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'require.password.change' => \App\Http\Middleware\RequirePasswordChange::class,

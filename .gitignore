@@ -40,10 +40,9 @@ Homestead.yaml
 
 # Environment
 .env
+.env.*
+env.*.example
 .env.backup
-.env.production
-.env.*.local
-.env.example
 
 # IDE
 /.fleet

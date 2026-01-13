@@ -243,7 +243,7 @@ Route::get('/health', function () {
             'timestamp' => now()->toIso8601String(),
         ], 503);
     }
-})->name('health');
+})->middleware('throttle:10,1')->name('health');
 
 // Rutas públicas legales
 Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
