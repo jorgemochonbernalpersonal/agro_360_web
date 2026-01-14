@@ -523,7 +523,7 @@
         <x-form-section title="Destino y Valor Económico" color="green">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <x-label for="destination_type">Tipo de Destino</x-label>
+                    <x-label for="destination_type" required>Tipo de Destino</x-label>
                     <x-select 
                         wire:model="destination_type" 
                         id="destination_type"
@@ -569,11 +569,11 @@
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <x-label for="transport_document_number">Nº Documento Transporte</x-label>
+                        <x-label for="transport_document_number" required>Nº Documento Transporte</x-label>
                         <x-input wire:model="transport_document_number" type="text" id="transport_document_number" placeholder="Ej: GUIA-2023-001" :error="$errors->first('transport_document_number')" />
                     </div>
                     <div>
-                        <x-label for="destination_rega_code">REGA Destino</x-label>
+                        <x-label for="destination_rega_code" required>REGA Destino</x-label>
                         <x-input wire:model="destination_rega_code" type="text" id="destination_rega_code" placeholder="Ej: ES000000000000" :error="$errors->first('destination_rega_code')" />
                     </div>
                     <div>
@@ -635,7 +635,7 @@
                         </label>
                         @if($workType === 'crew')
                             <div class="mt-4">
-                                <x-label for="crew_id" class="text-sm">Selecciona el equipo</x-label>
+                                <x-label for="crew_id" class="text-sm" required>Selecciona el equipo</x-label>
                                 <x-select 
                                     wire:model="crew_id" 
                                     id="crew_id"
@@ -667,7 +667,7 @@
                         </label>
                         @if($workType === 'individual')
                             <div class="mt-4">
-                                <x-label for="crew_member_id" class="text-sm">Selecciona el viticultor</x-label>
+                                <x-label for="crew_member_id" class="text-sm" required>Selecciona el viticultor</x-label>
                                 <x-select 
                                     wire:model="crew_member_id" 
                                     id="crew_member_id"

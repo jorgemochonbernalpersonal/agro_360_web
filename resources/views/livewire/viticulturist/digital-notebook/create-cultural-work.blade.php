@@ -48,14 +48,36 @@
                         <x-label for="activity_date" required>Fecha</x-label>
                         <x-input wire:model="activity_date" type="date" id="activity_date" data-cy="activity-date-input" :error="$errors->first('activity_date')" required />
                     </div>
+                    <div>
+                        <x-label for="phenological_stage" required>Estadio Fenológico</x-label>
+                        <x-select 
+                            wire:model="phenological_stage" 
+                            id="phenological_stage" 
+                            data-cy="phenological-stage-select"
+                            :error="$errors->first('phenological_stage')"
+                            required
+                        >
+                            <option value="">Selecciona un estadio</option>
+                            <option value="Brotación">Brotación</option>
+                            <option value="Desarrollo vegetativo">Desarrollo vegetativo</option>
+                            <option value="Floración">Floración</option>
+                            <option value="Cuajado">Cuajado</option>
+                            <option value="Envero">Envero</option>
+                            <option value="Maduración">Maduración</option>
+                            <option value="Vendimia">Vendimia</option>
+                            <option value="Caída de hoja">Caída de hoja</option>
+                            <option value="Reposo invernal">Reposo invernal</option>
+                        </x-select>
+                        <p class="text-xs text-gray-500 mt-1">Recomendado para trazabilidad PAC</p>
+                    </div>
                 </div>
         </x-form-section>
 
         <x-form-section title="Información de la Labor" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <x-label for="work_type">Tipo de Labor</x-label>
-                        <x-select wire:model="work_type" id="work_type" data-cy="work-type-select" :error="$errors->first('work_type')">
+                        <x-label for="work_type" required>Tipo de Labor</x-label>
+                        <x-select wire:model="work_type" id="work_type" data-cy="work-type-select" :error="$errors->first('work_type')" required>
                             <option value="">Selecciona un tipo</option>
                             <option value="poda">Poda</option>
                             <option value="deshojado">Deshojado</option>
@@ -76,8 +98,8 @@
                     <x-input wire:model="hours_worked" type="number" step="0.5" min="0" id="hours_worked" placeholder="0.0" :error="$errors->first('hours_worked')" />
                 </div>
                 <div class="mt-6">
-                    <x-label for="description">Descripción</x-label>
-                    <x-textarea wire:model="description" id="description" rows="4" placeholder="Descripción detallada de la labor realizada..." :error="$errors->first('description')" />
+                    <x-label for="description" required>Descripción</x-label>
+                    <x-textarea wire:model="description" id="description" rows="4" placeholder="Descripción detallada de la labor realizada..." :error="$errors->first('description')" required />
                 </div>
         </x-form-section>
 
@@ -103,7 +125,7 @@
                             </label>
                             @if($workType === 'crew')
                                 <div class="mt-4">
-                                    <x-label for="crew_id" class="text-sm">Selecciona el equipo</x-label>
+                                    <x-label for="crew_id" class="text-sm" required>Selecciona el equipo</x-label>
                                     <x-select 
                                         wire:model="crew_id" 
                                         id="crew_id"
@@ -136,7 +158,7 @@
                             </label>
                             @if($workType === 'individual')
                                 <div class="mt-4">
-                                    <x-label for="crew_member_id" class="text-sm">Selecciona el viticultor</x-label>
+                                    <x-label for="crew_member_id" class="text-sm" required>Selecciona el viticultor</x-label>
                                     <x-select 
                                         wire:model="crew_member_id" 
                                         id="crew_member_id"

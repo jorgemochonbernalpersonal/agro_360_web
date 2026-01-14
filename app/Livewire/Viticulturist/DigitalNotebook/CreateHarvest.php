@@ -14,10 +14,12 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
-use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.app')]
 class CreateHarvest extends Component
 {
     use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
@@ -364,8 +366,9 @@ class CreateHarvest extends Component
             'price_per_kg' => 'nullable|numeric|min:0',
             'total_value' => 'nullable|numeric|min:0',
             
-            'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'workType' => 'required|in:crew,individual',
+            'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
+            'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
@@ -548,6 +551,6 @@ class CreateHarvest extends Component
             'machinery' => $machinery,
             'campaign' => $campaign,
             'allViticulturists' => $allViticulturists,
-        ])->layout('layouts.app');
+        ]);
     }
 }

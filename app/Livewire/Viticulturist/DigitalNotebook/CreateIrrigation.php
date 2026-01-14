@@ -13,10 +13,12 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+#[Layout('layouts.app')]
 class CreateIrrigation extends Component
 {
     use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
@@ -113,8 +115,9 @@ class CreateIrrigation extends Component
             'water_concession' => 'required|string|max:100',
             'flow_rate' => 'required|numeric|min:0|max:100000',
             // Resto
-            'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'workType' => 'required|in:crew,individual',
+            'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
+            'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
@@ -253,7 +256,7 @@ class CreateIrrigation extends Component
             'campaign' => $campaign,
             'individualWorkers' => $individualWorkers,
             'allViticulturists' => $allViticulturists,
-        ])->layout('layouts.app');
+        ]);
     }
 }
 
