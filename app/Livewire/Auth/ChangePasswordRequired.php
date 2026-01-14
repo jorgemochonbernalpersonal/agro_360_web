@@ -2,13 +2,16 @@
 
 namespace App\Livewire\Auth;
 
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Livewire\Concerns\WithToastNotifications;
 
 class ChangePasswordRequired extends Component
 {
+    use WithToastNotifications;
     public $current_password = '';
     public $password = '';
     public $password_confirmation = '';
@@ -81,7 +84,7 @@ class ChangePasswordRequired extends Component
         unset($user->_needs_password_change_cache);
         unset($user->_was_created_by_another_cache);
 
-        session()->flash('message', 'Contraseña cambiada correctamente. Tu email ha sido verificado.');
+        $this->toastSuccess('Contraseña cambiada correctamente. Tu email ha sido verificado.');
         
         return $this->redirect(route($this->getDashboardRoute()), navigate: true);
     }
@@ -99,9 +102,10 @@ class ChangePasswordRequired extends Component
         };
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
-        return view('livewire.auth.change-password-required')->layout('layouts.app');
+        return view('livewire.auth.change-password-required');
     }
 }
 

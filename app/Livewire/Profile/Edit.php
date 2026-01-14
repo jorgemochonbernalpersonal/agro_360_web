@@ -129,7 +129,7 @@ class Edit extends Component
                 $imageUpdated = true;
 
                 // Disparar evento para actualizar la imagen en el DOM sin recargar
-                $this->dispatch('profile-image-updated', imageUrl: Storage::disk('public')->url($path));
+                $this->dispatch('profile-image-updated', imageUrl: \Illuminate\Support\Facades\Storage::url($path));
             } catch (\Exception $e) {
                 \Log::error('Error al guardar imagen de perfil: ' . $e->getMessage(), [
                     'user_id' => $user->id,
@@ -141,7 +141,6 @@ class Edit extends Component
         }
 
         $this->toastSuccess('Información personal actualizada correctamente.');
-        session()->flash('message', 'Información personal actualizada correctamente.');
 
         // Solo disparar evento de recarga si no se actualizó la imagen
         if (!$imageUpdated) {
@@ -172,7 +171,6 @@ class Edit extends Component
         $this->password_confirmation = '';
 
         $this->toastSuccess('Contraseña actualizada correctamente.');
-        session()->flash('password_message', 'Contraseña actualizada correctamente.');
     }
 
     public function updateContactInfo()
@@ -200,7 +198,6 @@ class Edit extends Component
         );
 
         $this->toastSuccess('Información de contacto actualizada correctamente.');
-        session()->flash('contact_message', 'Información de contacto actualizada correctamente.');
     }
 
     public function setActiveTab($tab)

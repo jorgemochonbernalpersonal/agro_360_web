@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Viticulturist\Viticulturists;
 
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
@@ -14,10 +15,11 @@ use App\Models\Subscription;
 use App\Models\Payment;
 use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithToastNotifications;
 
 class Index extends Component
 {
-    use WithPagination, WithUserFilters;
+    use WithPagination, WithUserFilters, WithToastNotifications;
 
     protected $paginationTheme = 'tailwind';
 
@@ -40,7 +42,7 @@ class Index extends Component
     public function assignToCrew(int $viticulturistId): void
     {
         if (empty($viticulturistId) || empty($this->assignToCrewId)) {
-            session()->flash('error', 'Debes seleccionar una cuadrilla.');
+            $this->toastError('Debes seleccionar una cuadrilla.');
             return;
         }
 
@@ -52,7 +54,7 @@ class Index extends Component
             ->first();
 
         if (! $crew) {
-            session()->flash('error', 'No tienes permiso para gestionar esta cuadrilla.');
+            $this->toastError('No tienes permiso para gestionar esta cuadrilla.');
             return;
         }
 
@@ -60,7 +62,7 @@ class Index extends Component
         $member = CrewMember::where('viticulturist_id', $viticulturistId)->first();
 
         if ($member && $member->crew_id === $crew->id) {
-            session()->flash('error', 'Este viticultor ya forma parte de esta cuadrilla.');
+            $this->toastError('Este viticultor ya forma parte de esta cuadrilla.');
             return;
         }
 
@@ -82,7 +84,7 @@ class Index extends Component
 
             $this->assignToCrewId = '';
 
-            session()->flash('message', 'Viticultor asignado a la cuadrilla correctamente.');
+            $this->toastSuccess('Viticultor asignado a la cuadrilla correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al asignar viticultor a cuadrilla', [
                 'error' => $e->getMessage(),
@@ -91,10 +93,11 @@ class Index extends Component
                 'user_id' => $user->id,
             ]);
 
-            session()->flash('error', 'Error al asignar el viticultor a la cuadrilla. Por favor, intenta de nuevo.');
+            $this->toastError('Error al asignar el viticultor a la cuadrilla. Por favor, intenta de nuevo.');
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
         $user = Auth::user();
@@ -139,7 +142,7 @@ class Index extends Component
             'crews' => $crews,
             'wineries' => $wineries,
             'membersByViticulturist' => $membersByViticulturist,
-        ])->layout('layouts.app');
+        ]);
     }
 
     public function delete($viticulturistId)
@@ -152,7 +155,7 @@ class Index extends Component
             ->first();
 
         if (!$relation) {
-            session()->flash('error', 'No tienes permiso para eliminar este viticultor.');
+            $this->toastError('No tienes permiso para eliminar este viticultor.');
             return;
         }
 
@@ -165,26 +168,26 @@ class Index extends Component
         $hasWineryRelations = WineryViticulturist::where('viticulturist_id', $viticulturistId)->exists();
 
         if ($hasPlots || $hasCampaigns || $hasCrews || $hasSubs || $hasPayments || $hasWineryRelations) {
-            session()->flash('error', 'No se puede eliminar el viticultor porque tiene datos relacionados.');
+            $this->toastError('No se puede eliminar el viticultor porque tiene datos relacionados.');
             return;
         }
 
         $vit = User::find($viticulturistId);
         if (!$vit) {
-            session()->flash('error', 'Viticultor no encontrado.');
+            $this->toastError('Viticultor no encontrado.');
             return;
         }
 
         try {
             $vit->delete();
-            session()->flash('message', 'Viticultor eliminado correctamente.');
+            $this->toastSuccess('Viticultor eliminado correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al eliminar viticultor', [
                 'error' => $e->getMessage(),
                 'viticulturist_id' => $viticulturistId,
                 'user_id' => $user->id,
             ]);
-            session()->flash('error', 'Error al eliminar el viticultor. Por favor, intenta de nuevo.');
+            $this->toastError('Error al eliminar el viticultor. Por favor, intenta de nuevo.');
         }
     }
 }

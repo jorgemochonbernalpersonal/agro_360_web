@@ -5,6 +5,7 @@ namespace App\Livewire\Viticulturist\Personal;
 use App\Models\Crew;
 use App\Models\WineryViticulturist;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -68,7 +69,7 @@ class Edit extends Component
                 ]);
             });
 
-            session()->flash('message', 'Cuadrilla actualizada correctamente.');
+            $this->toastSuccess('Cuadrilla actualizada correctamente.');
             return redirect()->route('viticulturist.personal.show', $this->crew);
         } catch (\Exception $e) {
             Log::error('Error al actualizar cuadrilla', [
@@ -78,11 +79,12 @@ class Edit extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al actualizar la cuadrilla. Por favor, intenta de nuevo.');
+            $this->toastError('Error al actualizar la cuadrilla. Por favor, intenta de nuevo.');
             return;
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
         $user = Auth::user();
@@ -92,7 +94,6 @@ class Edit extends Component
 
         return view('livewire.viticulturist.personal.edit', [
             'wineries' => $wineries,
-        ])->layout('layouts.app');
+        ]);
     }
 }
-

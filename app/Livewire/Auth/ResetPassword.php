@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
@@ -9,10 +10,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 
 class ResetPassword extends Component
 {
+    use WithToastNotifications;
     public $email = '';
     public $password = '';
     public $password_confirmation = '';
@@ -35,7 +38,7 @@ class ResetPassword extends Component
             // Validar que el email existe
             $user = User::where('email', $this->email)->first();
             if (!$user) {
-                session()->flash('error', 'El email proporcionado no existe en nuestro sistema.');
+                $this->toastError('El email proporcionado no existe en nuestro sistema.');
                 return $this->redirect(route('password.request'), navigate: true);
             }
             
@@ -49,7 +52,7 @@ class ResetPassword extends Component
             
             if (!$resetRecord) {
                 $this->tokenValid = false;
-                session()->flash('error', 'No se encontró una solicitud de restablecimiento para este email. Por favor, solicita uno nuevo.');
+                $this->toastError('No se encontró una solicitud de restablecimiento para este email. Por favor, solicita uno nuevo.');
             } else {
                 // Verificar si el token ha expirado
                 $createdAt = \Carbon\Carbon::parse($resetRecord->created_at);
@@ -57,7 +60,7 @@ class ResetPassword extends Component
                 
                 if (now()->greaterThan($expireTime)) {
                     $this->tokenValid = false;
-                    session()->flash('error', 'El enlace de restablecimiento ha expirado. Por favor, solicita uno nuevo.');
+                    $this->toastError('El enlace de restablecimiento ha expirado. Por favor, solicita uno nuevo.');
                 } else {
                     // El token existe y no ha expirado
                     // La validación final del token se hará cuando se envíe el formulario
@@ -119,7 +122,7 @@ class ResetPassword extends Component
         );
 
         if ($status === Password::PASSWORD_RESET) {
-            session()->flash('status', 'Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.');
+            $this->toastSuccess('Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.');
             return $this->redirect(route('login'), navigate: true);
         } else {
             throw ValidationException::withMessages([
@@ -128,8 +131,9 @@ class ResetPassword extends Component
         }
     }
 
+    #[Layout('layouts.guest')]
     public function render()
     {
-        return view('livewire.auth.reset-password')->layout('layouts.app');
+        return view('livewire.auth.reset-password');
     }
 }

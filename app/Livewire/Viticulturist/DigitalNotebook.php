@@ -7,13 +7,15 @@ use App\Models\AgriculturalActivity;
 use App\Models\PhytosanitaryProduct;
 use App\Models\Campaign;
 use App\Models\Crew;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 
 class DigitalNotebook extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public $selectedCampaign = null;
     public $selectedPlot = null;
@@ -48,7 +50,7 @@ class DigitalNotebook extends Component
         
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
-            session()->flash('error', 'No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
             return redirect()->route('viticulturist.campaign.index');
         }
         
@@ -72,7 +74,7 @@ class DigitalNotebook extends Component
             
             if (!$campaign) {
                 // Si no se pudo obtener/crear campaña, mostrar mensaje
-                session()->flash('error', 'No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+                $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
                 // Continuar renderizando pero sin campaña seleccionada
             } else {
                 $this->selectedCampaign = $campaign->id;
@@ -186,9 +188,6 @@ class DigitalNotebook extends Component
                 'fertilization' => $fertilizationCount,
                 'irrigation' => $irrigationCount,
             ],
-        ])->layout('layouts.app', [
-            'title' => 'Cuaderno de Campo Digital - Agro365',
-            'description' => 'Registra y gestiona todas tus actividades agrícolas: tratamientos fitosanitarios, fertilizaciones, riegos y labores culturales. Cumplimiento normativo garantizado.',
         ]);
     }
 
@@ -223,19 +222,19 @@ class DigitalNotebook extends Component
         
         // Validar autorización
         if (!Auth::user()->can('delete', $activity)) {
-            session()->flash('error', 'No tienes permiso para eliminar esta actividad.');
+            $this->toastError('No tienes permiso para eliminar esta actividad.');
             return;
         }
 
         // Verificar si está bloqueada
         if ($activity->isLocked()) {
-            session()->flash('error', '🔒 No se puede eliminar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
+            $this->toastError('🔒 No se puede eliminar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
             return;
         }
 
         try {
             $activity->delete();
-            session()->flash('message', 'Actividad eliminada correctamente.');
+            $this->toastSuccess('Actividad eliminada correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al eliminar actividad', [
                 'error' => $e->getMessage(),
@@ -244,7 +243,7 @@ class DigitalNotebook extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al eliminar la actividad. Por favor, intenta de nuevo.');
+            $this->toastError('Error al eliminar la actividad. Por favor, intenta de nuevo.');
         }
     }
     

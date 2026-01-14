@@ -5,12 +5,15 @@ namespace App\Livewire\Viticulturist;
 use App\Models\Plot;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
+use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class Calendar extends Component
 {
+    use WithToastNotifications;
     public $selectedCampaign = null;
     public $activityType = null;
     public $currentMonth;
@@ -34,7 +37,7 @@ class Calendar extends Component
         $campaign = Campaign::getOrCreateActiveForYear($user->id);
         
         if (!$campaign) {
-            session()->flash('error', 'No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
             return redirect()->route('viticulturist.campaign.index');
         }
         
@@ -189,6 +192,10 @@ class Calendar extends Component
         };
     }
 
+    #[Layout('layouts.app', [
+        'title' => 'Calendario de Actividades - Agro365',
+        'description' => 'Visualiza todas tus actividades agrícolas en un calendario interactivo. Planifica tratamientos, riegos y labores culturales por fecha.',
+    ])]
     public function render()
     {
         $user = Auth::user();
@@ -240,9 +247,6 @@ class Calendar extends Component
             'calendarDays' => $calendarDays,
             'stats' => $stats,
             'monthName' => $monthName,
-        ])->layout('layouts.app', [
-            'title' => 'Calendario de Actividades - Agro365',
-            'description' => 'Visualiza todas tus actividades agrícolas en un calendario interactivo. Planifica tratamientos, riegos y labores culturales por fecha.',
         ]);
     }
 }

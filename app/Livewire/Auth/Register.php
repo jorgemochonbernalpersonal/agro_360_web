@@ -5,6 +5,7 @@ namespace App\Livewire\Auth;
 use App\Models\User;
 use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,6 +13,7 @@ use Illuminate\Validation\Rules\Password;
 
 class Register extends Component
 {
+    use WithToastNotifications;
     public $name = '';
     public $email = '';
     public $password = '';
@@ -104,7 +106,7 @@ class Register extends Component
             
             // Simular éxito para confundir al bot
             sleep(2);
-            session()->flash('success', 'Registro completado. Revisa tu email para verificar tu cuenta.');
+            $this->toastSuccess('Registro completado. Revisa tu email para verificar tu cuenta.');
             return;
         }
         
@@ -133,7 +135,7 @@ class Register extends Component
                     // Enviar email de verificación después del registro
                     $existing->sendEmailVerificationNotification();
                     
-                    session()->flash('message', 'Cuenta activada correctamente. Se ha enviado un email de verificación. Por favor, verifica tu email antes de continuar.');
+                    $this->toastSuccess('Cuenta activada correctamente. Se ha enviado un email de verificación. Por favor, verifica tu email antes de continuar.');
 
                     // Redirigir a la página de verificación de email
                     return $this->redirect(route('verification.notice'), navigate: true);
@@ -236,7 +238,7 @@ class Register extends Component
                 // Enviar email con PDF adjunto
                 $user->notify(new \App\Notifications\TemporaryPasswordNotification($temporaryPassword, $pdfPath));
                 
-                session()->flash('message', 'Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.');
+                $this->toastSuccess('Viticultor creado correctamente. Se ha enviado un email con las credenciales de acceso.');
                 session()->flash('pdf_download', base64_encode($pdf->output()));
                 session()->flash('pdf_filename', 'credenciales_' . str_replace(['@', '.'], '_', $user->email) . '.pdf');
                 
@@ -249,7 +251,7 @@ class Register extends Component
             } else {
                 // Enviar email de verificación tradicional
                 $user->sendEmailVerificationNotification();
-                session()->flash('message', 'Usuario creado correctamente. Se ha enviado un email de verificación.');
+                $this->toastSuccess('Usuario creado correctamente. Se ha enviado un email de verificación.');
             }
 
             return $this->redirect(route($this->getRedirectRoute()), navigate: true);
@@ -287,7 +289,7 @@ class Register extends Component
         
         Auth::login($user);
         session()->regenerate();
-        session()->flash('message', 'Registro exitoso. Por favor, verifica tu email antes de continuar.');
+        $this->toastSuccess('Registro exitoso. Por favor, verifica tu email antes de continuar.');
 
         return $this->redirect(route('verification.notice'), navigate: true);
     }

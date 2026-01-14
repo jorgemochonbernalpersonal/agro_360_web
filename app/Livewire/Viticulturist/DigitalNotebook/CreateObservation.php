@@ -14,6 +14,7 @@ use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -37,6 +38,8 @@ class CreateObservation extends Component
     public $temperature = '';
     public $notes = '';
     public $campaign_id = '';
+    public $pest_id = '';
+    public $selectedPest = null;
 
     public function mount()
     {
@@ -45,6 +48,18 @@ class CreateObservation extends Component
         
         $this->activity_date = now()->format('Y-m-d');
         
+        // Capturar pest_id de la URL si existe
+        $this->pest_id = request()->query('pest_id', '');
+        if ($this->pest_id) {
+            $this->selectedPest = \App\Models\Pest::find($this->pest_id);
+            if ($this->selectedPest) {
+                // Pre-seleccionar tipo según el tipo de plaga
+                $this->observation_type = ($this->selectedPest->type === 'disease' || $this->selectedPest->type === 'enfermedad') 
+                    ? 'enfermedad' 
+                    : 'plaga';
+            }
+        }
+
         // Obtener o crear campaña activa del año actual
         $user = Auth::user();
         $campaign = Campaign::getOrCreateActiveForYear($user->id);
@@ -107,6 +122,7 @@ class CreateObservation extends Component
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            'pest_id' => 'nullable|exists:pests,id',
         ];
     }
 
@@ -177,6 +193,7 @@ class CreateObservation extends Component
                 // Crear la observación
                 Observation::create([
                     'activity_id' => $activity->id,
+                    'pest_id' => $this->pest_id ?: null,
                     'observation_type' => $this->observation_type,
                     'description' => $this->description,
                     'severity' => $this->severity,
@@ -200,6 +217,7 @@ class CreateObservation extends Component
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
         $user = Auth::user();
@@ -237,7 +255,7 @@ class CreateObservation extends Component
             'campaign' => $campaign,
             'individualWorkers' => $individualWorkers,
             'allViticulturists' => $allViticulturists,
-        ])->layout('layouts.app');
+        ]);
     }
 }
 

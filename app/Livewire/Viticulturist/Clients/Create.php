@@ -10,10 +10,12 @@ use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Layout;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithFileUploads, WithToastNotifications;
 
     public $client_type = 'individual';
     public $first_name = '';
@@ -225,16 +227,16 @@ class Create extends Component
                 }
             });
 
-            session()->flash('message', 'Cliente creado exitosamente.');
+            $this->toastSuccess('Cliente creado exitosamente.');
             return redirect()->route('viticulturist.clients.index');
         } catch (\Exception $e) {
-            session()->flash('error', 'Error al crear el cliente: ' . $e->getMessage());
+            $this->toastError('Error al crear el cliente: ' . $e->getMessage());
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
-        return view('livewire.viticulturist.clients.create')
-            ->layout('layouts.app');
+        return view('livewire.viticulturist.clients.create');
     }
 }

@@ -2,14 +2,18 @@
 
 namespace App\Livewire\Auth;
 
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
 
+use App\Livewire\Concerns\WithToastNotifications;
+
 class ForgotPassword extends Component
 {
+    use WithToastNotifications;
     public $email = '';
 
     protected $rules = [
@@ -58,11 +62,11 @@ class ForgotPassword extends Component
                     ]);
                 }
                 
-                session()->flash('status', $message);
+                $this->toastSuccess($message);
                 $this->email = ''; // Limpiar el campo
             } else {
                 // Por seguridad, siempre mostrar el mismo mensaje aunque el email no exista
-                session()->flash('status', 'Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.');
+                $this->toastSuccess('Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.');
                 $this->email = ''; // Limpiar el campo
             }
         } catch (\Exception $e) {
@@ -76,17 +80,18 @@ class ForgotPassword extends Component
             
             // En desarrollo, mostrar el error detallado
             if (app()->environment('local')) {
-                session()->flash('error', 'Error al enviar el correo: ' . $e->getMessage() . '. Revisa los logs y MailHog.');
+                $this->toastError('Error al enviar el correo: ' . $e->getMessage() . '. Revisa los logs y MailHog.');
             } else {
                 // En producción, mensaje genérico por seguridad
-                session()->flash('status', 'Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.');
+                $this->toastSuccess('Si el email existe en nuestro sistema, recibirás un enlace de restablecimiento de contraseña.');
             }
             $this->email = '';
         }
     }
 
+    #[Layout('layouts.guest')]
     public function render()
     {
-        return view('livewire.auth.forgot-password')->layout('layouts.app');
+        return view('livewire.auth.forgot-password');
     }
 }

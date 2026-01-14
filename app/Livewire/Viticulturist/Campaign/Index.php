@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
 use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,10 @@ class Index extends Component
         }
     }
 
+    #[Layout('layouts.app', [
+        'title' => 'Campañas Agrícolas - Agro365',
+        'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
+    ])]
     public function render()
     {
         $user = Auth::user();
@@ -70,9 +75,6 @@ class Index extends Component
         return view('livewire.viticulturist.campaign.index', [
             'campaigns' => $campaigns,
             'years' => $years,
-        ])->layout('layouts.app', [
-            'title' => 'Campañas Agrícolas - Agro365',
-            'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
         ]);
     }
 
@@ -86,8 +88,8 @@ class Index extends Component
         }
 
         try {
-            $campaign->activate();
-            $this->toastSuccess('Campaña activada correctamente.');
+            $campaign->update(['status' => 'active']);
+            $this->toastSuccess("Campaña {$campaign->year} activada correctamente.");
         } catch (\Exception $e) {
             \Log::error('Error al activar campaña', [
                 'error' => $e->getMessage(),
@@ -97,6 +99,14 @@ class Index extends Component
 
             $this->toastError('Error al activar la campaña. Por favor, intenta de nuevo.');
         }
+    }
+
+    public function closeCampaign($id)
+    {
+        $campaign = Campaign::forViticulturist(Auth::id())->findOrFail($id);
+        $campaign->update(['status' => 'closed']);
+
+        $this->toastSuccess("Campaña {$campaign->year} cerrada correctamente.");
     }
 
     public function delete($campaignId)

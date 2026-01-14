@@ -4,6 +4,8 @@ namespace App\Livewire\Viticulturist\Personal;
 
 use App\Models\Crew;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public $search = '';
     public $wineryFilter = '';
@@ -69,18 +71,18 @@ class Index extends Component
         return view('livewire.viticulturist.personal.index', [
             'crews' => $crews,
             'wineries' => $wineries,
-        ])->layout('layouts.app');
+        ]);
     }
 
     public function delete(Crew $crew)
     {
         if (!Auth::user()->can('delete', $crew)) {
-            session()->flash('error', 'No tienes permiso para eliminar esta cuadrilla.');
+            $this->toastError('No tienes permiso para eliminar esta cuadrilla.');
             return;
         }
 
         if ($crew->activities()->exists()) {
-            session()->flash('error', 'No se puede eliminar una cuadrilla con actividades asociadas.');
+            $this->toastError('No se puede eliminar una cuadrilla con actividades asociadas.');
             return;
         }
 
@@ -91,7 +93,7 @@ class Index extends Component
                 $crew->delete();
             });
             
-            session()->flash('message', 'Cuadrilla eliminada correctamente.');
+            $this->toastSuccess('Cuadrilla eliminada correctamente.');
         } catch (\Exception $e) {
             Log::error('Error deleting crew', [
                 'crew_id' => $crew->id,
@@ -99,7 +101,7 @@ class Index extends Component
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            session()->flash('error', 'Hubo un error al eliminar la cuadrilla. Por favor, inténtalo de nuevo.');
+            $this->toastError('Hubo un error al eliminar la cuadrilla. Por favor, inténtalo de nuevo.');
         }
     }
 

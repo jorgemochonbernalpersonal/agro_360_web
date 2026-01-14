@@ -142,59 +142,37 @@
             <div
                 x-show="notification.show"
                 x-cloak
+                @mouseenter="pauseNotification(notification.id)"
+                @mouseleave="resumeNotification(notification.id)"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-x-[-100%]"
                 x-transition:enter-end="opacity-100 transform translate-x-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 transform translate-x-0"
                 x-transition:leave-end="opacity-0 transform translate-x-[-100%]"
-                class="glass-card rounded-xl p-4 shadow-xl border-l-4 flex items-start gap-3"
+                class="glass-card rounded-xl p-4 shadow-xl border-l-4 flex items-start gap-3 relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
                 :class="{
-                    'bg-green-50 border-green-600': notification.type === 'success',
-                    'bg-red-50 border-red-600': notification.type === 'error',
-                    'bg-blue-50 border-blue-600': notification.type === 'info',
-                    'bg-yellow-50 border-yellow-600': notification.type === 'warning'
+                    'bg-green-50/90 border-green-600 text-green-600': notification.type === 'success',
+                    'bg-red-50/90 border-red-600 text-red-600': notification.type === 'error',
+                    'bg-blue-50/90 border-blue-600 text-blue-600': notification.type === 'info',
+                    'bg-yellow-50/90 border-yellow-600 text-yellow-600': notification.type === 'warning'
                 }"
             >
                 <div class="flex-shrink-0">
-                    <svg 
-                        x-show="notification.type === 'success'"
-                        class="w-6 h-6 text-green-600" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                    >
+                    <svg x-show="notification.type === 'success'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <svg 
-                        x-show="notification.type === 'error'"
-                        class="w-6 h-6 text-red-600" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                    >
+                    <svg x-show="notification.type === 'error'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <svg 
-                        x-show="notification.type === 'info'"
-                        class="w-6 h-6 text-blue-600" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                    >
+                    <svg x-show="notification.type === 'info'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <svg 
-                        x-show="notification.type === 'warning'"
-                        class="w-6 h-6 text-yellow-600" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                    >
+                    <svg x-show="notification.type === 'warning'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
+                <div class="flex-1 min-w-0 pr-4">
                     <p 
                         class="text-sm font-semibold"
                         :class="{
@@ -207,13 +185,20 @@
                     ></p>
                 </div>
                 <button
-                    @click="removeNotification(index)"
-                    class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+                    @click="removeNotificationById(notification.id)"
+                    class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
+                
+                <!-- Barra de Progreso -->
+                <div 
+                    class="toast-progress" 
+                    :class="{ 'toast-progress-paused': notification.paused }"
+                    :style="{ animationDuration: '5000ms' }"
+                ></div>
             </div>
         </template>
     </div>
@@ -223,124 +208,165 @@
         return {
             notifications: [],
             listenerSetup: false,
+            audioCtx: null,
             
             init() {
-                // Mostrar mensajes flash de sesión si existen (para compatibilidad con redirects)
-                @if(session('message'))
-                    this.show('success', '{{ session('message') }}');
-                @endif
+                // Cargar sonidos si el navegador lo permite
+                this.audioCtx = null;
                 
-                @if(session('error'))
-                    this.show('error', '{{ session('error') }}');
-                @endif
+                // Mostrar mensajes flash de sesión si existen
+                @if(session('message')) this.show('success', '{{ session('message') }}'); @endif
+                @if(session('error')) this.show('error', '{{ session('error') }}'); @endif
+                @if(session('info')) this.show('info', '{{ session('info') }}'); @endif
+                @if(session('warning')) this.show('warning', '{{ session('warning') }}'); @endif
                 
-                // Intentar configurar el listener inmediatamente
-                this.setupLivewireListener();
-                
-                // También intentar después de que Livewire se cargue completamente
-                document.addEventListener('livewire:init', () => {
-                    this.setupLivewireListener();
+                // Listen for Livewire events
+                Livewire.on('toast', (data) => {
+                    // Ensure data is an array and has at least one element
+                    if (Array.isArray(data) && data.length > 0) {
+                        // Assuming the first element of the array is the toast data object
+                        const toastData = data[0];
+                        this.add(toastData.message, toastData.type || 'success');
+                        this.playSound();
+                    } else if (typeof data === 'string') {
+                        // Handle cases where only a message string is passed
+                        this.add(data, 'success');
+                        this.playSound();
+                    }
                 });
-                
-                // Fallback: intentar después de un delay
-                setTimeout(() => {
-                    this.setupLivewireListener();
-                }, 500);
             },
             
-            setupLivewireListener() {
-                // Solo configurar una vez
-                if (this.listenerSetup) return;
-                
-                // Verificar que Livewire esté disponible
-                if (typeof Livewire === 'undefined') {
-                    return;
-                }
-                
-                try {
-                    // Registrar el listener de eventos
-                    Livewire.on('toast', (data) => {
-                        this.handleToastEvent(data);
-                    });
-                    
-                    this.listenerSetup = true;
-                } catch (e) {
-                    // Error silencioso - el toast no funcionará si Livewire no está disponible
-                }
-            },
+            // The original setupLivewireListener and handleToastEvent are replaced by the direct Livewire.on in init.
+            // Keeping them commented out or removed based on user's intent.
+            // setupLivewireListener() {
+            //     if (this.listenerSetup || typeof Livewire === 'undefined') return;
+            //     try {
+            //         Livewire.on('toast', (data) => this.handleToastEvent(data));
+            //         this.listenerSetup = true;
+            //     } catch (e) {}
+            // },
             
-            handleToastEvent(data) {
-                // En Livewire v3, los datos pueden venir como objeto con propiedades nombradas
-                let type = 'success';
-                let message = '';
-                
-                if (data && typeof data === 'object') {
-                    // Si viene como objeto con propiedades (Livewire v3 named parameters)
-                    if (data.type !== undefined) {
-                        type = data.type;
-                    }
-                    if (data.message !== undefined) {
-                        message = data.message;
-                    }
-                    // Si viene como array [type, message]
-                    if (Array.isArray(data) && data.length >= 2) {
-                        type = data[0] || 'success';
-                        message = data[1] || '';
-                    }
-                } else if (typeof data === 'string') {
-                    message = data;
-                }
-                
-                if (message) {
-                    this.show(type, message);
-                }
-            },
+            // handleToastEvent(data) {
+            //     let type = 'success';
+            //     let message = '';
+            //     if (data && typeof data === 'object') {
+            //         type = data.type || 'success';
+            //         message = data.message || '';
+            //         if (Array.isArray(data) && data.length >= 2) {
+            //             type = data[0];
+            //             message = data[1];
+            //         }
+            //     } else if (typeof data === 'string') {
+            //         message = data;
+            //     }
+            //     if (message) this.show(type, message);
+            // },
             
             show(type, message) {
-                if (!message) {
-                    return;
-                }
-                
-                // Prevenir duplicados: verificar si ya existe una notificación idéntica reciente
+                if (!message) return;
                 const now = Date.now();
-                const recentDuplicate = this.notifications.find(n => 
-                    n.message === message && 
-                    n.type === type && 
-                    n.createdAt && 
-                    (now - n.createdAt) < 1000 // Dentro del último segundo
-                );
-                
-                if (recentDuplicate) {
-                    return; // No mostrar duplicado
-                }
+                if (this.notifications.some(n => n.message === message && n.type === type && (now - n.createdAt) < 1000)) return;
                 
                 const notification = {
                     type: type || 'success',
                     message: message,
                     show: true,
+                    paused: false,
                     id: now + Math.random(),
-                    createdAt: now
+                    createdAt: now,
+                    timeout: null
                 };
                 
                 this.notifications.push(notification);
+                this.startTimer(notification.id);
+            },
+
+            add(message, type = 'success') {
+                const id = Date.now();
+                this.notifications.push({ // Changed from this.toasts to this.notifications
+                    id,
+                    message,
+                    type,
+                    show: false,
+                    progress: 100 // This property is not used in the existing template, but kept as per instruction
+                });
+
+                // Trigger sound for auto-added (Livewire) toasts
+                // Session-based toasts don't trigger sound on mount to avoid annoyance
                 
-                // Auto-remover después de 5 segundos
-                setTimeout(() => {
-                    this.removeNotificationById(notification.id);
+                this.$nextTick(() => {
+                    const index = this.notifications.findIndex(t => t.id === id); // Changed from this.toasts to this.notifications
+                    if (index !== -1) {
+                        this.notifications[index].show = true;
+                        this.startTimer(id);
+                    }
+                });
+            },
+
+            playSound() {
+                try {
+                    if (!this.audioCtx) {
+                        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+
+                    if (this.audioCtx.state === 'suspended') {
+                        this.audioCtx.resume();
+                    }
+
+                    const oscillator = this.audioCtx.createOscillator();
+                    const gainNode = this.audioCtx.createGain();
+
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(880, this.audioCtx.currentTime); // A5
+
+                    gainNode.gain.setValueAtTime(0, this.audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.05, this.audioCtx.currentTime + 0.01);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, this.audioCtx.currentTime + 0.3);
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioCtx.destination);
+
+                    oscillator.start();
+                    oscillator.stop(this.audioCtx.currentTime + 0.3);
+                } catch (e) {
+                    console.warn('Could not play notification sound:', e);
+                }
+            },
+
+            startTimer(id) {
+                const index = this.notifications.findIndex(n => n.id === id);
+                if (index === -1) return;
+                
+                this.notifications[index].timeout = setTimeout(() => {
+                    this.removeNotificationById(id);
                 }, 5000);
             },
-            
-            removeNotification(index) {
-                this.notifications[index].show = false;
-                setTimeout(() => {
-                    this.notifications.splice(index, 1);
-                }, 200);
+
+            pauseNotification(id) {
+                const index = this.notifications.findIndex(n => n.id === id);
+                if (index !== -1) {
+                    this.notifications[index].paused = true;
+                    clearTimeout(this.notifications[index].timeout);
+                }
+            },
+
+            resumeNotification(id) {
+                const index = this.notifications.findIndex(n => n.id === id);
+                if (index !== -1) {
+                    this.notifications[index].paused = false;
+                    // En un sistema real ideal, calcularíamos el tiempo restante.
+                    // Aquí simplificamos reiniciando el temporizador de 5s para una mejor UX si el usuario quiere leerlo.
+                    this.startTimer(id);
+                }
             },
             
             removeNotificationById(id) {
                 const index = this.notifications.findIndex(n => n.id === id);
                 if (index !== -1) {
-                    this.removeNotification(index);
+                    this.notifications[index].show = false;
+                    setTimeout(() => {
+                        this.notifications = this.notifications.filter(n => n.id !== id);
+                    }, 300);
                 }
             }
         }

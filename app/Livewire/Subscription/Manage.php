@@ -4,13 +4,16 @@ namespace App\Livewire\Subscription;
 
 use App\Models\Subscription;
 use App\Models\Payment;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Illuminate\Support\Facades\Log;
+use App\Livewire\Concerns\WithToastNotifications;
 
 class Manage extends Component
 {
+    use WithToastNotifications;
     public $selectedPlan = 'monthly';
     public $activeSubscription;
 
@@ -30,7 +33,7 @@ class Manage extends Component
         
         // Verificar si ya tiene una suscripción activa
         if ($user->hasActiveSubscription()) {
-            session()->flash('error', 'Ya tienes una suscripción activa.');
+            $this->toastError('Ya tienes una suscripción activa.');
             return;
         }
 
@@ -97,14 +100,14 @@ class Manage extends Component
                 }
             }
 
-            session()->flash('error', 'Error al crear la orden de pago. Por favor, inténtalo de nuevo.');
+            $this->toastError('Error al crear la orden de pago. Por favor, inténtalo de nuevo.');
         } catch (\Exception $e) {
             Log::error('Error initiating PayPal payment', [
                 'user_id' => $user->id,
                 'plan' => $this->selectedPlan,
                 'error' => $e->getMessage(),
             ]);
-            session()->flash('error', 'Error al procesar el pago: ' . $e->getMessage());
+            $this->toastError('Error al procesar el pago: ' . $e->getMessage());
         }
     }
 
@@ -114,7 +117,7 @@ class Manage extends Component
         $subscription = $user->activeSubscription;
 
         if (!$subscription) {
-            session()->flash('error', 'No tienes una suscripción activa.');
+            $this->toastError('No tienes una suscripción activa.');
             return;
         }
 
@@ -131,18 +134,19 @@ class Manage extends Component
 
             $subscription->cancel();
             $this->activeSubscription = null;
-            session()->flash('message', 'Suscripción cancelada correctamente.');
+            $this->toastSuccess('Suscripción cancelada correctamente.');
         } catch (\Exception $e) {
             Log::error('Error canceling subscription', [
                 'subscription_id' => $subscription->id,
                 'error' => $e->getMessage(),
             ]);
-            session()->flash('error', 'Error al cancelar la suscripción: ' . $e->getMessage());
+            $this->toastError('Error al cancelar la suscripción: ' . $e->getMessage());
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
-        return view('livewire.subscription.manage')->layout('layouts.app');
+        return view('livewire.subscription.manage');
     }
 }

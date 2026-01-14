@@ -5,6 +5,7 @@ namespace App\Livewire\Viticulturist\Inventory;
 use App\Models\ProductStock;
 use App\Models\PhytosanitaryProduct;
 use App\Models\Warehouse;
+use App\Models\Machinery;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Livewire\WithPagination;

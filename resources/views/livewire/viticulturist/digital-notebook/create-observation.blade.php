@@ -10,6 +10,30 @@
     :back-url="route('viticulturist.digital-notebook')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="observation-form">
+        @if($selectedPest)
+            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+                <div class="flex items-start gap-4">
+                    <div class="p-2 bg-blue-100 rounded-lg">
+                        <span class="text-2xl">{{ $selectedPest->icon }}</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-lg font-bold text-blue-900 leading-tight">Observación para: {{ $selectedPest->name }}</h4>
+                        @if($selectedPest->scientific_name)
+                            <p class="text-sm text-blue-700 italic mt-0.5">{{ $selectedPest->scientific_name }}</p>
+                        @endif
+                        <p class="text-sm text-blue-800 mt-2">
+                            Vinculando automáticamente esta observación a la ficha de la plaga/enfermedad.
+                        </p>
+                    </div>
+                    <button type="button" wire:click="$set('pest_id', '')" class="text-blue-400 hover:text-blue-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <x-form-section title="Información Básica" color="green">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -47,6 +71,30 @@
                     <div>
                         <x-label for="activity_date" required>Fecha</x-label>
                         <x-input wire:model="activity_date" type="date" id="activity_date" data-cy="activity-date-input" :error="$errors->first('activity_date')" required />
+                    </div>
+
+                    {{-- Estadio Fenológico --}}
+                    <div>
+                        <x-label for="phenological_stage" required>Estadio Fenológico</x-label>
+                        <x-select 
+                            wire:model="phenological_stage" 
+                            id="phenological_stage" 
+                            data-cy="phenological-stage-select"
+                            :error="$errors->first('phenological_stage')"
+                            required
+                        >
+                            <option value="">Selecciona un estadio</option>
+                            <option value="Brotación">Brotación</option>
+                            <option value="Desarrollo vegetativo">Desarrollo vegetativo</option>
+                            <option value="Floración">Floración</option>
+                            <option value="Cuajado">Cuajado</option>
+                            <option value="Envero">Envero</option>
+                            <option value="Maduración">Maduración</option>
+                            <option value="Vendimia">Vendimia</option>
+                            <option value="Caída de hoja">Caída de hoja</option>
+                            <option value="Reposo invernal">Reposo invernal</option>
+                        </x-select>
+                        <p class="text-xs text-gray-500 mt-1">Recomendado para trazabilidad PAC</p>
                     </div>
                 </div>
         </x-form-section>

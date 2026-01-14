@@ -5,9 +5,11 @@ namespace App\Livewire\Auth;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Livewire\Concerns\WithToastNotifications;
 
 class ForcePasswordReset extends Component
 {
+    use WithToastNotifications;
     public $current_password = '';
     public $new_password = '';
     public $new_password_confirmation = '';
@@ -54,7 +56,7 @@ class ForcePasswordReset extends Component
         auth()->login($user);
         request()->session()->regenerate();
 
-        session()->flash('message', '¡Contraseña actualizada exitosamente! Bienvenido al sistema.');
+        $this->toastSuccess('¡Contraseña actualizada exitosamente! Bienvenido al sistema.');
 
         // Redirigir al dashboard correspondiente
         return $this->redirect(route($this->getDashboardRoute()), navigate: true);

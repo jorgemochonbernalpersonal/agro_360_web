@@ -4,15 +4,18 @@ namespace App\Livewire\Viticulturist\Viticulturists;
 
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use App\Livewire\Concerns\WithToastNotifications;
 
 class Create extends Component
 {
+    use WithToastNotifications;
     public $name = '';
     public $email = '';
     public $winery_id = '';
@@ -98,7 +101,7 @@ class Create extends Component
                 ]);
             });
 
-            session()->flash('message', 'Viticultor creado correctamente. Puedes enviar la invitación desde la tabla de acciones.');
+            $this->toastSuccess('Viticultor creado correctamente. Puedes enviar la invitación desde la tabla de acciones.');
             return $this->redirect(route('viticulturist.personal.index', ['viewMode' => 'personal']), navigate: true);
         } catch (\Exception $e) {
             Log::error('Error al crear viticultor', [
@@ -106,10 +109,11 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al crear el viticultor. Por favor, intenta de nuevo.');
+            $this->toastError('Error al crear el viticultor. Por favor, intenta de nuevo.');
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
         $user = Auth::user();
@@ -117,6 +121,6 @@ class Create extends Component
 
         return view('livewire.viticulturist.viticulturists.create', [
             'wineries' => $wineries,
-        ])->layout('layouts.app');
+        ]);
     }
 }

@@ -104,6 +104,25 @@
     }
 }
 
+@keyframes progress-linear {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    opacity: 0.3;
+    animation: progress-linear 5000ms linear forwards;
+}
+
+.toast-progress-paused {
+    animation-play-state: paused;
+}
+
 /* Scrollbar personalizado */
 ::-webkit-scrollbar {
     width: 8px;

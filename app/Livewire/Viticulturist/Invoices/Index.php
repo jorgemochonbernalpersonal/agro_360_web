@@ -3,13 +3,15 @@
 namespace App\Livewire\Viticulturist\Invoices;
 
 use App\Models\Invoice;
+use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public $search = '';
     public $filterStatus = '';
@@ -36,6 +38,10 @@ class Index extends Component
         $this->resetPage();
     }
 
+    #[Layout('layouts.app', [
+        'title' => 'Facturas / Pedidos - Agro365',
+        'description' => 'Gestiona tus facturas y pedidos. Facturación integrada desde la vendimia hasta el pago.',
+    ])]
     public function render()
     {
         $user = Auth::user();
@@ -81,9 +87,6 @@ class Index extends Component
         return view('livewire.viticulturist.invoices.index', [
             'invoices' => $invoices,
             'stats' => $stats,
-        ])->layout('layouts.app', [
-            'title' => 'Facturas / Pedidos - Agro365',
-            'description' => 'Gestiona tus facturas y pedidos. Facturación integrada desde la vendimia hasta el pago.',
         ]);
     }
 }

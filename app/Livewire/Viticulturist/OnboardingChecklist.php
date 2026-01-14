@@ -3,10 +3,12 @@
 namespace App\Livewire\Viticulturist;
 
 use App\Models\OnboardingProgress;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 
 class OnboardingChecklist extends Component
 {
+    use WithToastNotifications;
     public bool $show = true;
     public array $steps = [];
     public int $progressPercentage = 0;
@@ -63,7 +65,7 @@ class OnboardingChecklist extends Component
         OnboardingProgress::skipAll(auth()->id());
         $this->show = false;
         
-        session()->flash('message', 'Onboarding saltado. Puedes reactivarlo desde el dashboard.');
+        $this->toastInfo('Onboarding saltado. Puedes reactivarlo desde el dashboard.');
     }
 
     public function resetOnboarding(): void
@@ -71,7 +73,7 @@ class OnboardingChecklist extends Component
         OnboardingProgress::resetOnboarding(auth()->id());
         $this->loadProgress();
         
-        session()->flash('message', 'Onboarding reiniciado. Recarga la página para ver el tour de nuevo.');
+        $this->toastSuccess('Onboarding reiniciado. Recarga la página para ver el tour de nuevo.');
     }
 
     private function getStepTitle(string $step): string

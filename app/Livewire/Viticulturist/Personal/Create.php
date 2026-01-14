@@ -7,10 +7,14 @@ use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use WithToastNotifications;
     public $name = '';
     public $description = '';
     public $winery_id = '';
@@ -73,7 +77,7 @@ class Create extends Component
                 ]);
             });
 
-            session()->flash('message', 'Cuadrilla creada correctamente.');
+            $this->toastSuccess('Cuadrilla creada correctamente.');
             return redirect()->route('viticulturist.personal.index');
         } catch (\Exception $e) {
             Log::error('Error al crear cuadrilla', [
@@ -83,11 +87,12 @@ class Create extends Component
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            session()->flash('error', 'Error al crear la cuadrilla. Por favor, intenta de nuevo.');
+            $this->toastError('Error al crear la cuadrilla. Por favor, intenta de nuevo.');
             return;
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
         $user = Auth::user();
@@ -97,6 +102,6 @@ class Create extends Component
 
         return view('livewire.viticulturist.personal.create', [
             'wineries' => $wineries,
-        ])->layout('layouts.app');
+        ]);
     }
 }

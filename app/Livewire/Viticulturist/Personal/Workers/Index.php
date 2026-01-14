@@ -5,6 +5,8 @@ namespace App\Livewire\Viticulturist\Personal\Workers;
 use App\Models\CrewMember;
 use App\Models\Crew;
 use App\Models\WineryViticulturist;
+use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public $wineryFilter = '';
     public $newWorkerId = '';
@@ -35,6 +37,7 @@ class Index extends Component
         }
     }
 
+    #[Layout('layouts.app')]
     public function render()
     {
         $user = Auth::user();
@@ -108,13 +111,13 @@ class Index extends Component
             'wineries' => $wineries,
             'availableViticulturists' => $availableViticulturists,
             'crews' => $crews,
-        ])->layout('layouts.app');
+        ]);
     }
 
     public function addWorker()
     {
         if (empty($this->newWorkerId)) {
-            session()->flash('error', 'Debes seleccionar un viticultor.');
+            $this->toastError('Debes seleccionar un viticultor.');
             return;
         }
 
@@ -126,13 +129,13 @@ class Index extends Component
             ->exists();
 
         if (! $visibleRelationExists) {
-            session()->flash('error', 'No tienes permiso para gestionar este viticultor.');
+            $this->toastError('No tienes permiso para gestionar este viticultor.');
             return;
         }
 
         // Validar que no sea el mismo usuario
         if ($this->newWorkerId == $user->id) {
-            session()->flash('error', 'No puedes agregarte a ti mismo como trabajador individual.');
+            $this->toastError('No puedes agregarte a ti mismo como trabajador individual.');
             return;
         }
 
@@ -140,7 +143,7 @@ class Index extends Component
         $exists = CrewMember::where('viticulturist_id', $this->newWorkerId)->exists();
 
         if ($exists) {
-            session()->flash('error', 'Este viticultor ya está dado de alta como trabajador (individual o en una cuadrilla).');
+            $this->toastError('Este viticultor ya está dado de alta como trabajador (individual o en una cuadrilla).');
             return;
         }
 
@@ -154,7 +157,7 @@ class Index extends Component
             });
 
             $this->newWorkerId = '';
-            session()->flash('message', 'Trabajador individual agregado correctamente.');
+            $this->toastSuccess('Trabajador individual agregado correctamente.');
         } catch (\Exception $e) {
             Log::error('Error al agregar trabajador individual', [
                 'error' => $e->getMessage(),
@@ -162,19 +165,19 @@ class Index extends Component
                 'user_id' => $user->id,
                 'trace' => $e->getTraceAsString(),
             ]);
-            session()->flash('error', 'Error al agregar el trabajador. Por favor, intenta de nuevo.');
+            $this->toastError('Error al agregar el trabajador. Por favor, intenta de nuevo.');
         }
     }
 
     public function removeWorker(CrewMember $worker)
     {
         if ($worker->crew_id !== null) {
-            session()->flash('error', 'Este trabajador pertenece a una cuadrilla. Remuévelo desde la cuadrilla.');
+            $this->toastError('Este trabajador pertenece a una cuadrilla. Remuévelo desde la cuadrilla.');
             return;
         }
 
         if ($worker->viticulturist_id == Auth::id()) {
-            session()->flash('error', 'No puedes removerte a ti mismo.');
+            $this->toastError('No puedes removerte a ti mismo.');
             return;
         }
 
@@ -183,7 +186,7 @@ class Index extends Component
                 $worker->delete();
             });
 
-            session()->flash('message', 'Trabajador individual removido correctamente.');
+            $this->toastSuccess('Trabajador individual removido correctamente.');
         } catch (\Exception $e) {
             Log::error('Error al remover trabajador individual', [
                 'error' => $e->getMessage(),
@@ -191,28 +194,28 @@ class Index extends Component
                 'user_id' => Auth::id(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            session()->flash('error', 'Error al remover el trabajador. Por favor, intenta de nuevo.');
+            $this->toastError('Error al remover el trabajador. Por favor, intenta de nuevo.');
         }
     }
 
     public function assignToCrew($workerId)
     {
         if (empty($workerId) || empty($this->assignToCrewId)) {
-            session()->flash('error', 'Debes seleccionar un trabajador y una cuadrilla.');
+            $this->toastError('Debes seleccionar un trabajador y una cuadrilla.');
             return;
         }
 
         $worker = CrewMember::find($workerId);
         
         if (!$worker || $worker->crew_id !== null) {
-            session()->flash('error', 'Trabajador no válido o ya está en una cuadrilla.');
+            $this->toastError('Trabajador no válido o ya está en una cuadrilla.');
             return;
         }
 
         $crew = Crew::find($this->assignToCrewId);
         
         if (!$crew || $crew->viticulturist_id !== Auth::id()) {
-            session()->flash('error', 'Cuadrilla no válida.');
+            $this->toastError('Cuadrilla no válida.');
             return;
         }
 
@@ -220,7 +223,7 @@ class Index extends Component
         if (CrewMember::where('crew_id', $crew->id)
             ->where('viticulturist_id', $worker->viticulturist_id)
             ->exists()) {
-            session()->flash('error', 'Este trabajador ya está en esta cuadrilla.');
+            $this->toastError('Este trabajador ya está en esta cuadrilla.'); // Modified this line
             return;
         }
 
@@ -230,7 +233,7 @@ class Index extends Component
             });
 
             $this->assignToCrewId = '';
-            session()->flash('message', 'Trabajador asignado a la cuadrilla correctamente.');
+            $this->toastSuccess('Trabajador asignado a la cuadrilla correctamente.');
             $this->resetPage();
         } catch (\Exception $e) {
             Log::error('Error al asignar trabajador a cuadrilla', [
@@ -240,7 +243,7 @@ class Index extends Component
                 'user_id' => Auth::id(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            session()->flash('error', 'Error al asignar el trabajador. Por favor, intenta de nuevo.');
+            $this->toastError('Error al asignar el trabajador. Por favor, intenta de nuevo.');
         }
     }
 
