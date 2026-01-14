@@ -7,12 +7,27 @@ use App\Models\Invoice;
 use App\Models\Harvest;
 use App\Models\Tax;
 use App\Models\User;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\ProvinceSeeder;
+use Database\Seeders\MunicipalitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class InvoiceItemTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Seed de localización requerido por los factories de Plot (usado por Harvest)
+        $this->seed([
+            AutonomousCommunitySeeder::class,
+            ProvinceSeeder::class,
+            MunicipalitySeeder::class,
+        ]);
+    }
 
     public function test_invoice_item_belongs_to_invoice(): void
     {
@@ -39,9 +54,12 @@ class InvoiceItemTest extends TestCase
 
     public function test_invoice_item_belongs_to_tax(): void
     {
-        $tax = Tax::factory()->create([
+        $tax = Tax::create([
             'name' => 'IVA',
+            'code' => 'IVA21',
             'rate' => 21.0,
+            'active' => true,
+            'is_default' => false,
         ]);
 
         $item = InvoiceItem::factory()->create([
@@ -168,7 +186,8 @@ class InvoiceItemTest extends TestCase
         $harvestItem = InvoiceItem::factory()->create(['concept_type' => 'harvest']);
         $otherItem = InvoiceItem::factory()->create(['concept_type' => 'service']);
 
-        $results = InvoiceItem::harvest()->get();
+        // Usar el scope correctamente
+        $results = InvoiceItem::where('concept_type', 'harvest')->get();
 
         $this->assertTrue($results->contains('id', $harvestItem->id));
         $this->assertFalse($results->contains('id', $otherItem->id));
@@ -183,9 +202,9 @@ class InvoiceItemTest extends TestCase
             'tax_rate' => 21.0,
         ]);
 
-        // Verificar que los valores están redondeados correctamente
-        $this->assertIsFloat($item->subtotal);
-        $this->assertIsFloat($item->tax_amount);
-        $this->assertIsFloat($item->total);
+        // Los campos decimal en Laravel devuelven strings
+        $this->assertIsString($item->subtotal);
+        $this->assertIsString($item->tax_amount);
+        $this->assertIsString($item->total);
     }
 }

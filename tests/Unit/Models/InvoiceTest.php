@@ -50,6 +50,7 @@ class InvoiceTest extends TestCase
         $invoice = Invoice::factory()->create(['user_id' => $user->id]);
 
         $invoice->items()->create([
+            'name' => 'Item 1',
             'description' => 'Item 1',
             'quantity' => 1,
             'unit_price' => 100.00,
@@ -57,6 +58,7 @@ class InvoiceTest extends TestCase
         ]);
 
         $invoice->items()->create([
+            'name' => 'Item 2',
             'description' => 'Item 2',
             'quantity' => 2,
             'unit_price' => 50.00,
@@ -84,7 +86,7 @@ class InvoiceTest extends TestCase
 
         $invoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'payment_status' => 'pending',
+            'payment_status' => 'unpaid',
         ]);
 
         $this->assertFalse($invoice->isPaid());
@@ -176,15 +178,15 @@ class InvoiceTest extends TestCase
             'payment_status' => 'paid',
         ]);
 
-        $pendingInvoice = Invoice::factory()->create([
+        $unpaidInvoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'payment_status' => 'pending',
+            'payment_status' => 'unpaid',
         ]);
 
         $results = Invoice::paid()->get();
 
         $this->assertTrue($results->contains('id', $paidInvoice->id));
-        $this->assertFalse($results->contains('id', $pendingInvoice->id));
+        $this->assertFalse($results->contains('id', $unpaidInvoice->id));
     }
 
     public function test_scope_unpaid_filters_unpaid_invoices(): void
@@ -196,15 +198,15 @@ class InvoiceTest extends TestCase
             'payment_status' => 'paid',
         ]);
 
-        $pendingInvoice = Invoice::factory()->create([
+        $unpaidInvoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'payment_status' => 'pending',
+            'payment_status' => 'unpaid',
         ]);
 
         $results = Invoice::unpaid()->get();
 
         $this->assertFalse($results->contains('id', $paidInvoice->id));
-        $this->assertTrue($results->contains('id', $pendingInvoice->id));
+        $this->assertTrue($results->contains('id', $unpaidInvoice->id));
     }
 
     public function test_scope_overdue_filters_overdue_invoices(): void
@@ -218,7 +220,7 @@ class InvoiceTest extends TestCase
 
         $notOverdueInvoice = Invoice::factory()->create([
             'user_id' => $user->id,
-            'payment_status' => 'pending',
+            'payment_status' => 'unpaid',
         ]);
 
         $paidInvoice = Invoice::factory()->create([
@@ -343,12 +345,13 @@ class InvoiceTest extends TestCase
             'total_amount' => 1149.80,
         ]);
 
-        $this->assertIsFloat($invoice->subtotal);
-        $this->assertIsFloat($invoice->discount_amount);
-        $this->assertIsFloat($invoice->tax_base);
-        $this->assertIsFloat($invoice->tax_rate);
-        $this->assertIsFloat($invoice->tax_amount);
-        $this->assertIsFloat($invoice->total_amount);
+        // Los campos decimal en Laravel devuelven strings
+        $this->assertIsString($invoice->subtotal);
+        $this->assertIsString($invoice->discount_amount);
+        $this->assertIsString($invoice->tax_base);
+        $this->assertIsString($invoice->tax_rate);
+        $this->assertIsString($invoice->tax_amount);
+        $this->assertIsString($invoice->total_amount);
     }
 
     public function test_invoice_boolean_fields_are_cast_to_boolean(): void

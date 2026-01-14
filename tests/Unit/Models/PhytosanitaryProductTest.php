@@ -54,7 +54,7 @@ class PhytosanitaryProductTest extends TestCase
         $product = PhytosanitaryProduct::create([
             'name' => 'Producto Test',
             'active_ingredient' => 'Ingrediente Activo',
-            'registration_number' => 'REG-12345',
+            'registration_number' => 'ES-12345678',
             'manufacturer' => 'Fabricante Test',
             'type' => 'insecticide',
             'toxicity_class' => 'III',
@@ -96,22 +96,30 @@ class PhytosanitaryProductTest extends TestCase
         ]);
 
         $this->assertCount(2, $product->treatments);
-        $this->assertTrue($product->treatments->contains('id', $activity1->id));
-        $this->assertTrue($product->treatments->contains('id', $activity2->id));
+        // Verificar que los tratamientos están relacionados con las actividades correctas
+        $this->assertTrue($product->treatments->contains(function ($treatment) use ($activity1) {
+            return $treatment->activity_id === $activity1->id;
+        }));
+        $this->assertTrue($product->treatments->contains(function ($treatment) use ($activity2) {
+            return $treatment->activity_id === $activity2->id;
+        }));
     }
 
-    public function test_phytosanitary_product_can_have_null_withdrawal_period(): void
+    public function test_phytosanitary_product_requires_withdrawal_period(): void
     {
+        // El campo withdrawal_period_days es requerido según la validación del modelo
+        // y la base de datos no permite null
         $product = PhytosanitaryProduct::create([
-            'name' => 'Producto Sin Plazo',
+            'name' => 'Producto Con Plazo',
             'active_ingredient' => 'Ingrediente Activo',
-            'registration_number' => 'REG-12345',
+            'registration_number' => 'ES-12345678',
             'manufacturer' => 'Fabricante Test',
             'type' => 'insecticide',
-            'withdrawal_period_days' => null,
+            'withdrawal_period_days' => 0, // Puede ser 0 pero no null
         ]);
 
-        $this->assertNull($product->withdrawal_period_days);
+        $this->assertNotNull($product->withdrawal_period_days);
+        $this->assertEquals(0, $product->withdrawal_period_days);
     }
 
     public function test_phytosanitary_product_fillable_fields(): void
@@ -119,7 +127,7 @@ class PhytosanitaryProductTest extends TestCase
         $product = PhytosanitaryProduct::create([
             'name' => 'Producto Completo',
             'active_ingredient' => 'Ingrediente Activo Completo',
-            'registration_number' => 'REG-67890',
+            'registration_number' => 'ES-87654321',
             'manufacturer' => 'Fabricante Completo',
             'type' => 'fungicide',
             'toxicity_class' => 'II',
@@ -129,7 +137,7 @@ class PhytosanitaryProductTest extends TestCase
 
         $this->assertEquals('Producto Completo', $product->name);
         $this->assertEquals('Ingrediente Activo Completo', $product->active_ingredient);
-        $this->assertEquals('REG-67890', $product->registration_number);
+        $this->assertEquals('ES-87654321', $product->registration_number);
         $this->assertEquals('Fabricante Completo', $product->manufacturer);
         $this->assertEquals('fungicide', $product->type);
         $this->assertEquals('II', $product->toxicity_class);

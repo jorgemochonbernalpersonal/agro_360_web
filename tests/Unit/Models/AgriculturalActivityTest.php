@@ -203,8 +203,9 @@ class AgriculturalActivityTest extends TestCase
             'activity_id' => $activity->id,
         ]);
 
-        $this->assertCount(1, $activity->harvests);
-        $this->assertEquals($harvest->id, $activity->harvests->first()->id);
+        // La relación es harvest() (singular, HasOne), no harvests
+        $this->assertNotNull($activity->harvest);
+        $this->assertEquals($harvest->id, $activity->harvest->id);
     }
 
     public function test_activity_has_phytosanitary_treatment_relationship(): void
@@ -223,9 +224,16 @@ class AgriculturalActivityTest extends TestCase
             'activity_date' => now(),
         ]);
 
+        $product = \App\Models\PhytosanitaryProduct::create([
+            'name' => 'Test Product',
+            'registration_number' => 'ES-12345678',
+            'withdrawal_period_days' => 30,
+            'registration_status' => 'active',
+        ]);
+
         $treatment = \App\Models\PhytosanitaryTreatment::create([
             'activity_id' => $activity->id,
-            'product_id' => \App\Models\PhytosanitaryProduct::factory()->create()->id,
+            'product_id' => $product->id,
         ]);
 
         $this->assertNotNull($activity->phytosanitaryTreatment);

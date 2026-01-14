@@ -7,10 +7,25 @@ use App\Models\Harvest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\ProvinceSeeder;
+use Database\Seeders\MunicipalitySeeder;
 
 class ContainerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Seed de localización requerido por los factories de Plot (usado por Harvest)
+        $this->seed([
+            AutonomousCommunitySeeder::class,
+            ProvinceSeeder::class,
+            MunicipalitySeeder::class,
+        ]);
+    }
 
     public function test_container_belongs_to_user(): void
     {
@@ -27,10 +42,27 @@ class ContainerTest extends TestCase
     public function test_container_has_many_harvests(): void
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
-        $container = Container::factory()->create(['user_id' => $user->id]);
+        
+        // Crear contenedor con capacidad suficiente para dos cosechas
+        $container = Container::factory()->create([
+            'user_id' => $user->id,
+            'capacity' => 10000.0, // Capacidad grande para asegurar espacio
+            'used_capacity' => 0.0, // Vacío inicialmente
+        ]);
 
-        $harvest1 = Harvest::factory()->create(['container_id' => $container->id]);
-        $harvest2 = Harvest::factory()->create(['container_id' => $container->id]);
+        // Crear cosechas con peso que quepa en el contenedor
+        $harvest1 = Harvest::factory()->create([
+            'container_id' => $container->id,
+            'total_weight' => 2000.0, // Peso que quepa en el contenedor
+        ]);
+        
+        // Actualizar capacidad usada después de la primera cosecha
+        $container->refresh();
+        
+        $harvest2 = Harvest::factory()->create([
+            'container_id' => $container->id,
+            'total_weight' => 1500.0, // Peso que quepa en el contenedor restante
+        ]);
 
         $this->assertCount(2, $container->harvests);
         $container->harvests->each(function ($harvest) use ($container) {
@@ -409,8 +441,9 @@ class ContainerTest extends TestCase
             'used_capacity' => 250.750,
         ]);
 
-        $this->assertIsFloat($container->capacity);
-        $this->assertIsFloat($container->used_capacity);
+        // Los campos decimal:2 devuelven strings en Laravel
+        $this->assertIsString($container->capacity);
+        $this->assertIsString($container->used_capacity);
     }
 
     public function test_quantity_is_cast_to_integer(): void

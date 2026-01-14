@@ -23,6 +23,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $this->assertEquals($user->id, $report->user->id);
@@ -41,6 +43,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'is_valid' => false,
             'invalidated_at' => now(),
             'invalidated_by' => $invalidator->id,
@@ -80,10 +84,16 @@ class OfficialReportTest extends TestCase
             'user_id' => 1,
         ];
 
+        // Generar hash con nonce específico para que sea consistente
+        $nonce = bin2hex(random_bytes(16));
+        $data['nonce'] = $nonce;
         $result1 = OfficialReport::generateSignatureHash($data);
+        
+        // Usar el mismo nonce para que el hash sea el mismo
+        $data['nonce'] = $nonce;
         $result2 = OfficialReport::generateSignatureHash($data);
 
-        // Debe generar el mismo hash para los mismos datos
+        // Debe generar el mismo hash para los mismos datos con el mismo nonce
         $this->assertEquals($result1['hash'], $result2['hash']);
         $this->assertArrayHasKey('hash', $result1);
         $this->assertArrayHasKey('nonce', $result1);
@@ -99,6 +109,10 @@ class OfficialReportTest extends TestCase
         ];
 
         $signature = OfficialReport::generateSignatureHash($data);
+        
+        // Incluir el nonce en los datos para la verificación
+        $data['nonce'] = $signature['nonce'];
+        $data['signature_version'] = $signature['version'];
 
         $this->assertTrue(OfficialReport::verifySignatureHash($data, $signature['hash']));
     }
@@ -133,6 +147,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $url = $report->verification_url;
@@ -152,6 +168,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'is_valid' => true,
             'invalidated_at' => null,
         ]);
@@ -170,6 +188,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'is_valid' => false,
             'invalidated_at' => now(),
         ]);
@@ -189,6 +209,7 @@ class OfficialReportTest extends TestCase
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
             'signed_at' => now()->subDays(10), // 10 days ago
+            'signed_ip' => '127.0.0.1',
             'is_valid' => true,
         ]);
 
@@ -207,6 +228,7 @@ class OfficialReportTest extends TestCase
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
             'signed_at' => now()->subDays(35), // 35 days ago (more than 30)
+            'signed_ip' => '127.0.0.1',
             'is_valid' => true,
         ]);
 
@@ -224,6 +246,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $this->assertEquals('Tratamientos Fitosanitarios', $report->report_type_name);
@@ -240,6 +264,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $this->assertEquals('🧪', $report->report_icon);
@@ -256,6 +282,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $this->assertInstanceOf(Carbon::class, $report->period_start);
@@ -274,6 +302,7 @@ class OfficialReportTest extends TestCase
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
             'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $this->assertInstanceOf(Carbon::class, $report->signed_at);
@@ -290,6 +319,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'is_valid' => true,
         ]);
 
@@ -308,6 +339,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'signature_metadata' => ['key' => 'value'],
             'report_metadata' => ['data' => 'test'],
         ]);
@@ -329,6 +362,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $report2 = OfficialReport::create([
@@ -338,6 +373,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
 
         $results = OfficialReport::forUser($user1->id)->get();
@@ -357,6 +394,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'is_valid' => true,
             'invalidated_at' => null,
         ]);
@@ -368,6 +407,8 @@ class OfficialReportTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'is_valid' => false,
             'invalidated_at' => now(),
         ]);

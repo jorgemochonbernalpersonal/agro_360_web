@@ -129,9 +129,10 @@ class OfficialReportServiceTest extends TestCase
         $product = PhytosanitaryProduct::create([
             'name' => 'Producto Test',
             'active_ingredient' => 'Ingrediente Activo',
-            'registration_number' => 'REG-12345',
+            'registration_number' => 'ES-12345678',
             'manufacturer' => 'Fabricante Test',
             'type' => 'insecticide',
+            'withdrawal_period_days' => 14,
         ]);
         
         // Crear actividad fuera del periodo
@@ -208,6 +209,8 @@ class OfficialReportServiceTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'pdf_path' => 'official_reports/test.pdf',
             'pdf_filename' => 'test.pdf',
         ]);
@@ -231,6 +234,8 @@ class OfficialReportServiceTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'pdf_path' => 'official_reports/nonexistent.pdf',
         ]);
 
@@ -252,6 +257,8 @@ class OfficialReportServiceTest extends TestCase
             'period_end' => now()->endOfYear(),
             'verification_code' => OfficialReport::generateVerificationCode(),
             'signature_hash' => OfficialReport::generateTemporaryHash(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
             'pdf_path' => 'official_reports/test.pdf',
         ]);
 

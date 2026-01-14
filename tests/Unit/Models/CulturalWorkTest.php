@@ -70,8 +70,9 @@ class CulturalWorkTest extends TestCase
             'hours_worked' => 8.5,
         ]);
 
-        $this->assertIsFloat($culturalWork->hours_worked);
-        $this->assertEquals(8.5, $culturalWork->hours_worked);
+        // Los campos decimal:2 devuelven strings en Laravel
+        $this->assertIsString($culturalWork->hours_worked);
+        $this->assertEquals('8.50', $culturalWork->hours_worked);
     }
 
     public function test_cultural_work_can_store_all_fields(): void

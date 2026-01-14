@@ -70,8 +70,9 @@ class IrrigationTest extends TestCase
             'water_volume' => 1234.567,
         ]);
 
-        $this->assertIsFloat($irrigation->water_volume);
-        $this->assertEquals(1234.567, $irrigation->water_volume);
+        // Los campos decimal en Laravel devuelven strings
+        $this->assertIsString($irrigation->water_volume);
+        $this->assertEquals('1234.567', $irrigation->water_volume);
     }
 
     public function test_soil_moisture_fields_are_cast_to_decimal(): void
@@ -94,10 +95,12 @@ class IrrigationTest extends TestCase
             'soil_moisture_after' => 45.8,
         ]);
 
-        $this->assertIsFloat($irrigation->soil_moisture_before);
-        $this->assertIsFloat($irrigation->soil_moisture_after);
-        $this->assertEquals(25.5, $irrigation->soil_moisture_before);
-        $this->assertEquals(45.8, $irrigation->soil_moisture_after);
+        // Los campos decimal en Laravel devuelven strings
+        // soil_moisture tiene precisión decimal:2 (2 decimales)
+        $this->assertIsString($irrigation->soil_moisture_before);
+        $this->assertIsString($irrigation->soil_moisture_after);
+        $this->assertEquals('25.50', $irrigation->soil_moisture_before);
+        $this->assertEquals('45.80', $irrigation->soil_moisture_after);
     }
 
     public function test_irrigation_can_store_all_fields(): void
@@ -123,11 +126,14 @@ class IrrigationTest extends TestCase
             'soil_moisture_after' => 50.0,
         ]);
 
-        $this->assertEquals(1000.0, $irrigation->water_volume);
+        // Los campos decimal devuelven strings
+        // water_volume tiene precisión decimal:3 (3 decimales)
+        // soil_moisture tiene precisión decimal:2 (2 decimales)
+        $this->assertEquals('1000.000', $irrigation->water_volume);
         $this->assertEquals('drip', $irrigation->irrigation_method);
         $this->assertEquals(120, $irrigation->duration_minutes);
-        $this->assertEquals(20.0, $irrigation->soil_moisture_before);
-        $this->assertEquals(50.0, $irrigation->soil_moisture_after);
+        $this->assertEquals('20.00', $irrigation->soil_moisture_before);
+        $this->assertEquals('50.00', $irrigation->soil_moisture_after);
     }
 
     public function test_irrigation_can_have_nullable_fields(): void

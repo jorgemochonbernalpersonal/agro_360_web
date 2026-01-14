@@ -13,6 +13,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\ProvinceSeeder;
+use Database\Seeders\MunicipalitySeeder;
 
 class SiexCsvExporterTest extends TestCase
 {
@@ -26,6 +30,13 @@ class SiexCsvExporterTest extends TestCase
     {
         parent::setUp();
         
+        // Seed de localización requerido por los factories de Plot
+        $this->seed([
+            AutonomousCommunitySeeder::class,
+            ProvinceSeeder::class,
+            MunicipalitySeeder::class,
+        ]);
+        
         Storage::fake('local');
         $this->exporter = new SiexCsvExporter();
         
@@ -36,15 +47,19 @@ class SiexCsvExporterTest extends TestCase
         ]);
 
         // Crear informe de prueba
-        $this->report = OfficialReport::factory()->create([
+        $this->report = OfficialReport::create([
             'user_id' => $this->user->id,
-            'verification_code' => 'TEST123',
+            'report_type' => 'phytosanitary_treatments',
+            'verification_code' => OfficialReport::generateVerificationCode(),
+            'signature_hash' => OfficialReport::generateTemporaryHash(),
             'period_start' => now()->subMonth(),
             'period_end' => now(),
+            'signed_at' => now(),
+            'signed_ip' => '127.0.0.1',
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_exports_phytosanitary_treatments_with_sigpac_data()
     {
         // Crear código SIGPAC
@@ -61,35 +76,38 @@ class SiexCsvExporterTest extends TestCase
         ]);
 
         // Crear uso SIGPAC
-        $sigpacUse = SigpacUse::factory()->create(['name' => 'Viñedo']);
+        $sigpacUse = SigpacUse::create([
+            'code' => 'VI',
+            'description' => 'Viñedo',
+        ]);
 
         // Crear parcela con SIGPAC
         $plot = Plot::factory()->create([
             'viticulturist_id' => $this->user->id,
             'name' => 'Parcela Test',
-            'total_area' => 2.5,
+            'area' => 2.5,
         ]);
         
         $plot->sigpacCodes()->attach($sigpacCode->id);
         $plot->sigpacUses()->attach($sigpacUse->id);
 
         // Crear actividades de prueba
-        $treatments = collect([
-            AgriculturalActivity::factory()
-                ->withPhytosanitaryTreatment()
-                ->create([
-                    'plot_id' => $plot->id,
-                    'viticulturist_id' => $this->user->id,
-                    'activity_date' => now(),
-                ]),
-        ]);
+        $activity = AgriculturalActivity::factory()
+            ->withPhytosanitaryTreatment()
+            ->create([
+                'plot_id' => $plot->id,
+                'viticulturist_id' => $this->user->id,
+                'activity_date' => now(),
+            ]);
 
-        // Cargar relaciones manualmente
-        $treatments->load([
+        // Cargar relaciones antes de crear la colección
+        $activity->load([
             'plot.sigpacCodes',
             'plot.sigpacUses',
             'phytosanitaryTreatment.product',
         ]);
+
+        $treatments = collect([$activity]);
 
         $stats = ['total_treatments' => 1];
 
@@ -117,7 +135,7 @@ class SiexCsvExporterTest extends TestCase
         $this->assertStringContainsString('2.5', $csvContent);
     }
 
-    /** @test */
+    #[Test]
     public function it_exports_full_notebook_with_sigpac_data()
     {
         // Crear código SIGPAC
@@ -133,21 +151,21 @@ class SiexCsvExporterTest extends TestCase
         // Crear parcela con SIGPAC
         $plot = Plot::factory()->create([
             'viticulturist_id' => $this->user->id,
-            'total_area' => 3.0,
+            'area' => 3.0,
         ]);
         
         $plot->sigpacCodes()->attach($sigpacCode->id);
 
         // Crear actividades
-        $activities = collect([
-            AgriculturalActivity::factory()->create([
-                'plot_id' => $plot->id,
-                'viticulturist_id' => $this->user->id,
-                'activity_type' => 'irrigation',
-            ]),
+        $activity = AgriculturalActivity::factory()->create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $this->user->id,
+            'activity_type' => 'irrigation',
         ]);
 
-        $activities->load(['plot.sigpacCodes', 'plot.sigpacUses']);
+        // Cargar relaciones antes de crear la colección
+        $activity->load(['plot.sigpacCodes', 'plot.sigpacUses']);
+        $activities = collect([$activity]);
 
         $stats = ['total_activities' => 1];
 
@@ -167,14 +185,13 @@ class SiexCsvExporterTest extends TestCase
         $this->assertStringContainsString('13-28-079', $csvContent);
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_spanish_csv_format()
     {
-        $activities = collect([
-            AgriculturalActivity::factory()->create([
-                'viticulturist_id' => $this->user->id,
-            ]),
+        $activity = AgriculturalActivity::factory()->create([
+            'viticulturist_id' => $this->user->id,
         ]);
+        $activities = collect([$activity]);
 
         $stats = ['total_activities' => 1];
 
@@ -194,7 +211,7 @@ class SiexCsvExporterTest extends TestCase
         $this->assertStringStartsWith("\xEF\xBB\xBF", $csvContent);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_missing_sigpac_gracefully()
     {
         // Parcela sin SIGPAC
@@ -202,14 +219,14 @@ class SiexCsvExporterTest extends TestCase
             'viticulturist_id' => $this->user->id,
         ]);
 
-        $activities = collect([
-            AgriculturalActivity::factory()->create([
-                'plot_id' => $plot->id,
-                'viticulturist_id' => $this->user->id,
-            ]),
+        $activity = AgriculturalActivity::factory()->create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $this->user->id,
         ]);
 
-        $activities->load(['plot.sigpacCodes', 'plot.sigpacUses']);
+        // Cargar relaciones antes de crear la colección
+        $activity->load(['plot.sigpacCodes', 'plot.sigpacUses']);
+        $activities = collect([$activity]);
 
         $stats = ['total_activities' => 1];
 

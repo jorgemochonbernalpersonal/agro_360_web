@@ -35,8 +35,17 @@ class InvoiceStateCoherence implements Rule
             return false;
         }
 
-        // Regla 3 y 4 eliminadas: Se permite marcar como entregada o pagada una factura en borrador
-        // Esto permite mayor flexibilidad en el flujo de trabajo
+        // Regla 3: Si está en borrador, no puede estar entregada
+        if ($this->status === 'draft' && $this->deliveryStatus === 'delivered') {
+            $this->failureMessage = 'No puedes marcar como entregada una factura en borrador.';
+            return false;
+        }
+
+        // Regla 4: Si está en borrador, no puede estar pagada
+        if ($this->status === 'draft' && $this->paymentStatus === 'paid') {
+            $this->failureMessage = 'No puedes marcar como pagada una factura en borrador.';
+            return false;
+        }
 
         // Regla 5: Si está cancelada, el pago no puede estar pending
         if ($this->status === 'cancelled' && $this->paymentStatus === 'unpaid') {

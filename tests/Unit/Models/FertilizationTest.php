@@ -72,8 +72,9 @@ class FertilizationTest extends TestCase
             'quantity' => 123.456,
         ]);
 
-        $this->assertIsFloat($fertilization->quantity);
-        $this->assertEquals(123.456, $fertilization->quantity);
+        // Los campos decimal:3 devuelven strings en Laravel
+        $this->assertIsString($fertilization->quantity);
+        $this->assertEquals('123.456', $fertilization->quantity);
     }
 
     public function test_area_applied_is_cast_to_decimal(): void
@@ -95,8 +96,9 @@ class FertilizationTest extends TestCase
             'area_applied' => 2.5,
         ]);
 
-        $this->assertIsFloat($fertilization->area_applied);
-        $this->assertEquals(2.5, $fertilization->area_applied);
+        // Los campos decimal:3 devuelven strings en Laravel
+        $this->assertIsString($fertilization->area_applied);
+        $this->assertEquals('2.500', $fertilization->area_applied);
     }
 
     public function test_fertilization_can_store_all_fields(): void

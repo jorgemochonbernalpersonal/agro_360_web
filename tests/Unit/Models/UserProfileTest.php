@@ -86,13 +86,14 @@ class UserProfileTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'viticulturist']);
 
+        // country es requerido, no puede ser null
         $profile = UserProfile::create([
             'user_id' => $user->id,
             'address' => null,
             'city' => null,
             'postal_code' => null,
             'province_id' => null,
-            'country' => null,
+            'country' => 'España', // Campo requerido
             'phone' => null,
             'profile_image' => null,
         ]);
@@ -101,6 +102,7 @@ class UserProfileTest extends TestCase
         $this->assertNull($profile->address);
         $this->assertNull($profile->city);
         $this->assertNull($profile->province_id);
+        $this->assertEquals('España', $profile->country);
     }
 
     public function test_user_can_have_only_one_profile(): void
