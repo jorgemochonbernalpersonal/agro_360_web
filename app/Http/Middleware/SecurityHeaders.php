@@ -47,22 +47,28 @@ class SecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
-        // CSP - desactivado en desarrollo para permitir Vite HMR
-        if (!$isDevelopment) {
-            $csp = "default-src 'self'; " .
-                   "script-src {$scriptSrc}; " .
-                   "style-src {$styleSrc}; " .
-                   "img-src 'self' data: https: blob:; " .
-                   "font-src {$fontSrc}; " .
-                   "connect-src {$connectSrc}; " .
-                   "frame-src https://www.google.com https://challenges.cloudflare.com; " .
-                   "object-src 'none'; " .
-                   "base-uri 'self'; " .
-                   "form-action 'self'; " .
-                   "upgrade-insecure-requests;";
-            
-            $response->headers->set('Content-Security-Policy', $csp);
+        // CSP - siempre establecer para sobrescribir .htaccess
+        // En desarrollo incluye soporte para Vite HMR
+        $csp = "default-src 'self'; " .
+               "script-src {$scriptSrc} https://cdn.jsdelivr.net https://unpkg.com https://www.googletagmanager.com https://googletagmanager.com; " .
+               "style-src {$styleSrc}; " .
+               "img-src 'self' data: https: blob:; " .
+               "font-src {$fontSrc}; " .
+               "connect-src {$connectSrc} https: https://www.googletagmanager.com https://www.google-analytics.com; " .
+               "frame-src https://www.google.com https://challenges.cloudflare.com; " .
+               "frame-ancestors 'self'; " .
+               "object-src 'none'; " .
+               "base-uri 'self'; " .
+               "form-action 'self';";
+        
+        // Solo agregar upgrade-insecure-requests en producción con HTTPS
+        if (!$isDevelopment && $request->secure()) {
+            $csp .= " upgrade-insecure-requests;";
+        } else {
+            $csp .= ";";
         }
+        
+        $response->headers->set('Content-Security-Policy', $csp);
 
         return $response;
     }
