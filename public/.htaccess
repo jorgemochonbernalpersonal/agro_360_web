@@ -15,7 +15,8 @@
 
 # Proteger directorios sensibles
 RedirectMatch 403 /\.git
-RedirectMatch 403 /vendor
+# Solo bloquear el directorio /vendor/, no archivos con "vendor" en el nombre
+RedirectMatch 403 ^/vendor(/|$)
 RedirectMatch 403 /storage/logs
 RedirectMatch 403 /config
 RedirectMatch 403 /database
@@ -38,6 +39,19 @@ RedirectMatch 403 /database
 </IfModule>
 
 ####################################
+# MIME Types - Asegurar tipos correctos para assets
+####################################
+<IfModule mod_mime.c>
+    # CSS
+    AddType text/css .css
+    # JavaScript
+    AddType application/javascript .js
+    AddType text/javascript .js
+    # JSON
+    AddType application/json .json
+</IfModule>
+
+####################################
 # Laravel Rewrite Rules
 ####################################
 <IfModule mod_rewrite.c>
@@ -46,6 +60,11 @@ RedirectMatch 403 /database
     </IfModule>
 
     RewriteEngine On
+    
+    # Permitir acceso directo a archivos estáticos en /build antes de otras reglas
+    RewriteCond %{REQUEST_URI} ^/build/
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
 
     # Forzar HTTPS en producción (ACTIVADO)
     RewriteCond %{HTTPS} off
