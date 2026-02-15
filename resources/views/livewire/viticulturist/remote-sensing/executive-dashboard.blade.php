@@ -1,4 +1,5 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 relative"
+     @if($generatingData) wire:poll.8s="checkGeneratingData" @endif>
     <style>
         @keyframes fadeInUp {
             from {
@@ -20,6 +21,26 @@
         .delay-500 { animation-delay: 0.5s; opacity: 0; }
         .delay-600 { animation-delay: 0.6s; opacity: 0; }
     </style>
+
+    {{-- Overlay bloqueante mientras se generan datos del satélite --}}
+    @if($generatingData)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 text-center">
+                <svg class="animate-spin h-16 w-16 text-green-600 mx-auto mb-6" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">🛰️ Obteniendo datos del satélite</h3>
+                <p class="text-gray-600 mb-4">Espera un momento. Los datos aparecerán automáticamente en 1-2 minutos.</p>
+                <p class="text-sm text-gray-500">No cierres esta ventana para evitar interrumpir la generación.</p>
+                <p class="text-sm text-gray-400 mt-4">Tiempo transcurrido: {{ $generatingElapsedSeconds < 60 ? $generatingElapsedSeconds . ' seg' : ceil($generatingElapsedSeconds / 60) . ' min' }}</p>
+                <button wire:click="$set('generatingData', false)"
+                        class="mt-6 px-6 py-2 text-sm text-gray-500 hover:text-gray-700 underline">
+                    Continuar en segundo plano
+                </button>
+            </div>
+        </div>
+    @endif
     
     <div class="container mx-auto px-4 py-6">
         {{-- Header --}}

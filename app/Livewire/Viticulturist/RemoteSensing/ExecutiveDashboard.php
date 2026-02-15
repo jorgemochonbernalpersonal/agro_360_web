@@ -17,6 +17,11 @@ class ExecutiveDashboard extends Component
     public ?Plot $selectedPlot = null;
     public array $summary = [];
     public bool $loading = false;
+    public bool $generatingData = false;
+    public int $generatingElapsedSeconds = 0;
+
+    private const GENERATING_POLL_INTERVAL = 8; // segundos
+    private const GENERATING_MAX_WAIT = 150; // 2.5 minutos
 
     public function mount()
     {
@@ -102,20 +107,50 @@ class ExecutiveDashboard extends Component
         }
 
         try {
-            // Dispatch job asíncrono (no bloquea la aplicación)
             GenerateRemoteSensingDataJob::dispatch($this->selectedPlotId, true);
 
-            // Limpiar caché para que cuando refresque vea datos nuevos
             $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
             Cache::forget($cacheKey);
 
-            session()->flash('success', '🛰️ Generación de datos iniciada. Los datos aparecerán en 1-2 minutos. Usa el botón "Verificar Datos" para comprobar.');
+            $this->generatingData = true;
+            $this->generatingElapsedSeconds = 0;
+            session()->flash('success', '🛰️ Generación iniciada. Esperando datos del satélite...');
         } catch (\Exception $e) {
             logger()->error('Generate data dispatch failed', [
                 'plot_id' => $this->selectedPlotId,
                 'error' => $e->getMessage(),
             ]);
             session()->flash('error', 'Error al iniciar generación: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Llamado por wire:poll mientras se esperan los datos del satélite.
+     * Comprueba si ya hay datos y actualiza el estado.
+     */
+    public function checkGeneratingData(): void
+    {
+        if (!$this->generatingData || !$this->selectedPlotId) {
+            return;
+        }
+
+        $this->generatingElapsedSeconds += self::GENERATING_POLL_INTERVAL;
+
+        // Timeout: dejar de esperar
+        if ($this->generatingElapsedSeconds >= self::GENERATING_MAX_WAIT) {
+            $this->generatingData = false;
+            session()->flash('success', 'Si los datos no aparecen, usa "Verificar Datos" en unos minutos.');
+            return;
+        }
+
+        $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
+        Cache::forget($cacheKey);
+        $this->loadSummary();
+
+        $vigorStatus = $this->summary['vigor']['status'] ?? 'no_data';
+        if ($vigorStatus !== 'no_data') {
+            $this->generatingData = false;
+            session()->flash('success', '✅ Datos satelitales recibidos correctamente.');
         }
     }
 
