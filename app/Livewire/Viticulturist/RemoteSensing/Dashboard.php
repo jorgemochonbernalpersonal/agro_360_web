@@ -42,6 +42,16 @@ class Dashboard extends Component
     public ?string $customEndDate = null;
     public int $historyDays = 90;
     
+    // Period comparison
+    public bool $showComparison = false;
+    public string $comparisonPeriod = 'last_year';
+    public array $comparisonData = [];
+    
+    // Alerts and predictions
+    public float $ndviThreshold = 0.3;
+    public array $periodAlerts = [];
+    public array $trendPrediction = [];
+    
     // Weather data
     public array $weather = [];
     public array $soil = [];
@@ -307,6 +317,15 @@ class Dashboard extends Component
             'fullDate' => $item->image_date->format('d/m/Y'),
             'health_status' => $item->health_status,
         ])->values()->toArray();
+        
+        // Detect alerts and calculate predictions
+        $this->detectPeriodAlerts();
+        $this->calculateTrendPrediction();
+        
+        // Load comparison if enabled
+        if ($this->showComparison) {
+            $this->loadComparisonPeriod();
+        }
     }
 
     /**
@@ -357,6 +376,284 @@ class Dashboard extends Component
             'message' => 'Rango personalizado aplicado',
         ]);
     }
+
+    /**
+     * Export historical data to CSV
+     */
+    public function exportCSV()
+    {
+        if (empty($this->historicalData) || !$this->selectedPlot) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'No hay datos para exportar',
+            ]);
+            return;
+        }
+
+        $filename = sprintf(
+            'ndvi_%s_%s.csv',
+            str_replace(' ', '_', $this->selectedPlot->name),
+            now()->format('Y-m-d')
+        );
+
+        $csv = "Fecha,NDVI,Estado,Tendencia\n";
+        foreach ($this->historicalData as $record) {
+            $csv .= sprintf(
+                "%s,%s,%s,%s\n",
+                $record['fullDate'],
+                $record['ndvi'],
+                $record['health_status'] ?? 'N/A',
+                $record['trend'] ?? 'N/A'
+            );
+        }
+
+        return response()->streamDownload(function () use ($csv) {
+            echo $csv;
+        }, $filename, ['Content-Type' => 'text/csv']);
+    }
+
+    /**
+     * Export historical data to PDF
+     */
+    public function exportPDF()
+    {
+        if (empty($this->historicalData) || !$this->selectedPlot) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'No hay datos para exportar',
+            ]);
+            return;
+        }
+
+        try {
+            $service = new \App\Services\RemoteSensing\RemoteSensingReportService();
+            
+            // Calculate statistics
+            $ndviValues = array_column($this->historicalData, 'ndvi');
+            $stats = [
+                'avg' => array_sum($ndviValues) / count($ndviValues),
+                'max' => max($ndviValues),
+                'min' => min($ndviValues),
+                'count' => count($ndviValues),
+                'period' => $this->historyDays,
+            ];
+
+            $result = $service->generatePeriodReport(
+                $this->selectedPlot,
+                $this->historicalData,
+                $stats
+            );
+
+            if ($result['success']) {
+                return response()->download($result['pdf_path'])->deleteFileAfterSend(true);
+            }
+
+            throw new \Exception('Error al generar PDF');
+            
+        } catch (\Exception $e) {
+            Log::error('PDF export error', ['error' => $e->getMessage()]);
+            
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al generar PDF',
+            ]);
+        }
+    }
+
+    /**
+     * Toggle period comparison
+     */
+    public function toggleComparison()
+    {
+        $this->showComparison = !$this->showComparison;
+        
+        if ($this->showComparison) {
+            $this->loadComparisonPeriod();
+        }
+    }
+
+    /**
+     * Load comparison period data
+     */
+    private function loadComparisonPeriod()
+    {
+        if (!$this->selectedPlot) return;
+
+        $startDate = null;
+        $endDate = null;
+
+        switch ($this->comparisonPeriod) {
+            case 'last_year':
+                // Same period, one year ago
+                $startDate = now()->subYear()->subDays($this->historyDays);
+                $endDate = now()->subYear();
+                break;
+            case 'last_season':
+                // Previous season (April-October previous year)
+                $year = now()->year - 1;
+                $startDate = \Carbon\Carbon::create($year, 4, 1);
+                $endDate = \Carbon\Carbon::create($year, 10, 31);
+                break;
+            case 'same_month_last_year':
+                // Same month last year
+                $startDate = now()->subYear()->startOfMonth();
+                $endDate = now()->subYear()->endOfMonth();
+                break;
+        }
+
+        if ($startDate && $endDate) {
+            $comparison = PlotRemoteSensing::where('plot_id', $this->selectedPlot->id)
+                ->whereBetween('image_date', [$startDate, $endDate])
+                ->orderBy('image_date', 'asc')
+                ->get();
+
+            $this->comparisonData = $comparison->map(fn($item) => [
+                'date' => $item->image_date->format('d/m'),
+                'ndvi' => $item->ndvi_mean,
+                'fullDate' => $item->image_date->format('d/m/Y'),
+                'health_status' => $item->health_status,
+            ])->values()->toArray();
+        }
+    }
+
+    /**
+     * Update comparison period
+     */
+    public function updatedComparisonPeriod()
+    {
+        if ($this->showComparison) {
+            $this->loadComparisonPeriod();
+        }
+    }
+
+    /**
+     * Detect alerts in historical data
+     */
+    private function detectPeriodAlerts()
+    {
+        $this->periodAlerts = [];
+
+        if (empty($this->historicalData)) return;
+
+        foreach ($this->historicalData as $index => $record) {
+            // Alert: NDVI below threshold
+            if ($record['ndvi'] < $this->ndviThreshold) {
+                $this->periodAlerts[] = [
+                    'type' => 'low_ndvi',
+                    'severity' => $record['ndvi'] < 0.15 ? 'critical' : 'warning',
+                    'date' => $record['fullDate'],
+                    'ndvi' => $record['ndvi'],
+                    'message' => sprintf(
+                        'NDVI bajo (%s) el %s',
+                        number_format($record['ndvi'], 3),
+                        $record['fullDate']
+                    ),
+                ];
+            }
+
+            // Alert: Rapid decline
+            if ($index > 0) {
+                $prevNdvi = $this->historicalData[$index - 1]['ndvi'];
+                $decline = $prevNdvi - $record['ndvi'];
+                
+                if ($decline > 0.15) {
+                    $this->periodAlerts[] = [
+                        'type' => 'rapid_decline',
+                        'severity' => 'warning',
+                        'date' => $record['fullDate'],
+                        'decline' => $decline,
+                        'message' => sprintf(
+                            'Caída rápida de NDVI (-%s) el %s',
+                            number_format($decline, 3),
+                            $record['fullDate']
+                        ),
+                    ];
+                }
+            }
+        }
+    }
+
+    /**
+     * Calculate trend prediction using linear regression
+     */
+    private function calculateTrendPrediction()
+    {
+        $this->trendPrediction = [];
+
+        if (count($this->historicalData) < 5) return;
+
+        $n = count($this->historicalData);
+        $xValues = range(1, $n);
+        $yValues = array_column($this->historicalData, 'ndvi');
+
+        // Linear regression: y = mx + b
+        $sumX = array_sum($xValues);
+        $sumY = array_sum($yValues);
+        $sumXY = 0;
+        $sumX2 = 0;
+
+        for ($i = 0; $i < $n; $i++) {
+            $sumXY += $xValues[$i] * $yValues[$i];
+            $sumX2 += $xValues[$i] * $xValues[$i];
+        }
+
+        $m = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - $sumX * $sumX);
+        $b = ($sumY - $m * $sumX) / $n;
+
+        // Predict next 7 days
+        $predictions = [];
+        for ($i = 1; $i <= 7; $i++) {
+            $x = $n + $i;
+            $predictedNdvi = $m * $x + $b;
+            $predictions[] = [
+                'day' => $i,
+                'ndvi' => max(0, min(1, $predictedNdvi)), // Clamp between 0 and 1
+            ];
+        }
+
+        $this->trendPrediction = [
+            'slope' => $m,
+            'intercept' => $b,
+            'trend' => $m > 0.001 ? 'improving' : ($m < -0.001 ? 'declining' : 'stable'),
+            'predictions' => $predictions,
+            'confidence' => $this->calculateConfidence($yValues, $m, $b),
+        ];
+    }
+
+    /**
+     * Calculate prediction confidence (R²)
+     */
+    private function calculateConfidence(array $yValues, float $m, float $b): float
+    {
+        $n = count($yValues);
+        $yMean = array_sum($yValues) / $n;
+        
+        $ssTotal = 0;
+        $ssResidual = 0;
+        
+        for ($i = 0; $i < $n; $i++) {
+            $x = $i + 1;
+            $yPredicted = $m * $x + $b;
+            $ssTotal += pow($yValues[$i] - $yMean, 2);
+            $ssResidual += pow($yValues[$i] - $yPredicted, 2);
+        }
+        
+        $r2 = $ssTotal > 0 ? 1 - ($ssResidual / $ssTotal) : 0;
+        
+        return max(0, min(1, $r2));
+    }
+
+    /**
+     * Update threshold and re-detect alerts
+     */
+    public function updatedNdviThreshold()
+    {
+        $this->detectPeriodAlerts();
+    }
+
+    /**
+     * Override loadHistoricalData to include analysis
+     */
 
     private function calculateYearComparison(): void
     {

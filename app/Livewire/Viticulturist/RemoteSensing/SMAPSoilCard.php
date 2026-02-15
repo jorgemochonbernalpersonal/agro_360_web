@@ -13,10 +13,37 @@ class SMAPSoilCard extends Component
     public ?array $comparison = null;
     public bool $loading = false;
     public ?string $error = null;
+    
+    // Historical date selector
+    public ?string $selectedDate = null;
+    public array $availableDates = [];
 
     public function mount(Plot $plot)
     {
         $this->plot = $plot;
+        $this->loadAvailableDates();
+        $this->loadData();
+    }
+
+    public function loadAvailableDates()
+    {
+        $dates = $this->plot->remoteSensingData()
+            ->whereNotNull('soil_moisture_surface_smap')
+            ->orderBy('image_date', 'desc')
+            ->limit(30)
+            ->pluck('image_date')
+            ->map(fn($date) => $date->format('Y-m-d'))
+            ->toArray();
+        
+        $this->availableDates = $dates;
+        
+        if (empty($this->selectedDate) && !empty($dates)) {
+            $this->selectedDate = $dates[0];
+        }
+    }
+
+    public function updatedSelectedDate()
+    {
         $this->loadData();
     }
 
@@ -26,13 +53,17 @@ class SMAPSoilCard extends Component
             $this->loading = true;
             $this->error = null;
 
-            $remoteSensing = $this->plot->remoteSensingData()
-                ->whereNotNull('soil_moisture_surface_smap')
-                ->latest('image_date')
-                ->first();
+            $query = $this->plot->remoteSensingData()
+                ->whereNotNull('soil_moisture_surface_smap');
+            
+            if ($this->selectedDate) {
+                $query->whereDate('image_date', $this->selectedDate);
+            }
+            
+            $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos SMAP disponibles';
+                $this->error = 'No hay datos SMAP disponibles para esta fecha';
                 return;
             }
 
@@ -85,6 +116,7 @@ class SMAPSoilCard extends Component
             'smapData' => $this->smapData,
             'comparison' => $this->comparison,
             'error' => $this->error,
+            'availableDates' => $this->availableDates,
         ]);
     }
 }

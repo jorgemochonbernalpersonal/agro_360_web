@@ -12,10 +12,37 @@ class VigorMapCard extends Component
     public ?array $vigorZones = null;
     public bool $loading = false;
     public ?string $error = null;
+    
+    // Historical date selector
+    public ?string $selectedDate = null;
+    public array $availableDates = [];
 
     public function mount(Plot $plot)
     {
         $this->plot = $plot;
+        $this->loadAvailableDates();
+        $this->loadData();
+    }
+
+    public function loadAvailableDates()
+    {
+        $dates = $this->plot->remoteSensingData()
+            ->whereNotNull('area_statistics')
+            ->orderBy('image_date', 'desc')
+            ->limit(30)
+            ->pluck('image_date')
+            ->map(fn($date) => $date->format('Y-m-d'))
+            ->toArray();
+        
+        $this->availableDates = $dates;
+        
+        if (empty($this->selectedDate) && !empty($dates)) {
+            $this->selectedDate = $dates[0];
+        }
+    }
+
+    public function updatedSelectedDate()
+    {
         $this->loadData();
     }
 
@@ -25,13 +52,17 @@ class VigorMapCard extends Component
             $this->loading = true;
             $this->error = null;
 
-            $remoteSensing = $this->plot->remoteSensingData()
-                ->whereNotNull('area_statistics')
-                ->latest('image_date')
-                ->first();
+            $query = $this->plot->remoteSensingData()
+                ->whereNotNull('area_statistics');
+            
+            if ($this->selectedDate) {
+                $query->whereDate('image_date', $this->selectedDate);
+            }
+            
+            $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos de área disponibles. Los datos de área se generan bajo demanda.';
+                $this->error = 'No hay datos de área disponibles para esta fecha. Los datos de área se generan bajo demanda.';
                 return;
             }
 
@@ -91,6 +122,7 @@ class VigorMapCard extends Component
             'areaStats' => $this->areaStats,
             'vigorZones' => $this->vigorZones,
             'error' => $this->error,
+            'availableDates' => $this->availableDates,
         ]);
     }
 }

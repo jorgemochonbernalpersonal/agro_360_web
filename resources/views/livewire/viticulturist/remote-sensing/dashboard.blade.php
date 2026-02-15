@@ -756,7 +756,7 @@
                     </div>
 
                     {{-- Statistics Summary --}}
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                         @php
                             $ndviValues = array_column($historicalData, 'ndvi');
                             $avgNdvi = count($ndviValues) > 0 ? array_sum($ndviValues) / count($ndviValues) : 0;
@@ -785,6 +785,210 @@
                             <div class="text-2xl font-bold text-purple-900">{{ number_format($stdDev, 3) }}</div>
                         </div>
                     </div>
+
+                    {{-- Action Buttons --}}
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <button wire:click="exportCSV" 
+                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Exportar CSV
+                        </button>
+
+                        <button wire:click="exportPDF" 
+                                class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            Exportar PDF
+                        </button>
+
+                        <button wire:click="toggleComparison" 
+                                class="inline-flex items-center px-4 py-2 {{ $showComparison ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-600 hover:bg-gray-700' }} text-white rounded-lg transition-colors text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            {{ $showComparison ? 'Ocultar' : 'Comparar' }} Períodos
+                        </button>
+                    </div>
+
+                    {{-- Period Comparison --}}
+                    @if($showComparison)
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-purple-900">📊 Comparación de Períodos</h4>
+                                <select wire:model.live="comparisonPeriod" 
+                                        class="text-sm border-purple-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                                    <option value="last_year">Mismo período año anterior</option>
+                                    <option value="last_season">Temporada anterior</option>
+                                    <option value="same_month_last_year">Mismo mes año anterior</option>
+                                </select>
+                            </div>
+
+                            @if(count($comparisonData) > 0)
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {{-- Current Period --}}
+                                    <div class="bg-white rounded-lg p-4">
+                                        <h5 class="text-sm font-semibold text-gray-700 mb-3">Período Actual</h5>
+                                        <div class="space-y-2 text-sm">
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">NDVI Promedio:</span>
+                                                <span class="font-bold text-green-600">{{ number_format($avgNdvi, 3) }}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">Máximo:</span>
+                                                <span class="font-semibold">{{ number_format($maxNdvi, 3) }}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">Registros:</span>
+                                                <span class="font-semibold">{{ count($historicalData) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Comparison Period --}}
+                                    <div class="bg-white rounded-lg p-4">
+                                        <h5 class="text-sm font-semibold text-gray-700 mb-3">Período Comparación</h5>
+                                        @php
+                                            $compNdviValues = array_column($comparisonData, 'ndvi');
+                                            $compAvgNdvi = count($compNdviValues) > 0 ? array_sum($compNdviValues) / count($compNdviValues) : 0;
+                                            $compMaxNdvi = count($compNdviValues) > 0 ? max($compNdviValues) : 0;
+                                        @endphp
+                                        <div class="space-y-2 text-sm">
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">NDVI Promedio:</span>
+                                                <span class="font-bold text-blue-600">{{ number_format($compAvgNdvi, 3) }}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">Máximo:</span>
+                                                <span class="font-semibold">{{ number_format($compMaxNdvi, 3) }}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">Registros:</span>
+                                                <span class="font-semibold">{{ count($comparisonData) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Difference Analysis --}}
+                                @php
+                                    $avgDiff = $avgNdvi - $compAvgNdvi;
+                                    $percentChange = $compAvgNdvi > 0 ? ($avgDiff / $compAvgNdvi) * 100 : 0;
+                                @endphp
+                                <div class="mt-4 bg-white rounded-lg p-4 text-center">
+                                    <div class="text-sm text-gray-600 mb-1">Diferencia Promedio</div>
+                                    <div class="text-3xl font-bold {{ $avgDiff > 0 ? 'text-green-600' : ($avgDiff < 0 ? 'text-red-600' : 'text-gray-600') }}">
+                                        {{ $avgDiff > 0 ? '+' : '' }}{{ number_format($avgDiff, 3) }}
+                                        <span class="text-lg">({{ $percentChange > 0 ? '+' : '' }}{{ number_format($percentChange, 1) }}%)</span>
+                                    </div>
+                                    <div class="text-sm mt-2">
+                                        @if($avgDiff > 0.05)
+                                            <span class="text-green-600">✅ Mejora significativa respecto al período anterior</span>
+                                        @elseif($avgDiff < -0.05)
+                                            <span class="text-red-600">⚠️ Reducción respecto al período anterior</span>
+                                        @else
+                                            <span class="text-gray-600">➡️ Valores similares al período anterior</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @else
+                                <p class="text-center text-purple-700 py-4">No hay datos disponibles para el período de comparación</p>
+                            @endif
+                        </div>
+                    @endif
+
+                    {{-- Alerts Section --}}
+                    @if(count($periodAlerts) > 0)
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                            <h4 class="text-lg font-semibold text-yellow-900 mb-3">
+                                ⚠️ Alertas Detectadas ({{ count($periodAlerts) }})
+                            </h4>
+                            
+                            <div class="mb-3">
+                                <label class="text-sm text-gray-700 font-medium">Umbral NDVI:</label>
+                                <input type="range" 
+                                       wire:model.live="ndviThreshold"
+                                       min="0" 
+                                       max="1" 
+                                       step="0.05"
+                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-600 mt-1">
+                                    <span>0.0</span>
+                                    <span class="font-bold text-yellow-700">{{ number_format($ndviThreshold, 2) }}</span>
+                                    <span>1.0</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 max-h-60 overflow-y-auto">
+                                @foreach($periodAlerts as $alert)
+                                    <div class="flex items-start gap-3 p-3 bg-white rounded-lg {{ $alert['severity'] === 'critical' ? 'border-l-4 border-red-500' : 'border-l-4 border-yellow-500' }}">
+                                        <span class="text-2xl">{{ $alert['severity'] === 'critical' ? '🚨' : '⚠️' }}</span>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-semibold text-gray-900">{{ $alert['message'] }}</div>
+                                            <div class="text-xs text-gray-600 mt-1">Tipo: {{ $alert['type'] }}</div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Trend Prediction --}}
+                    @if(!empty($trendPrediction))
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-blue-900 mb-3">
+                                🔮 Predicción de Tendencia (próximos 7 días)
+                            </h4>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div class="bg-white rounded-lg p-3 text-center">
+                                    <div class="text-xs text-gray-600 mb-1">Tendencia</div>
+                                    <div class="text-2xl font-bold {{ $trendPrediction['trend'] === 'improving' ? 'text-green-600' : ($trendPrediction['trend'] === 'declining' ? 'text-red-600' : 'text-gray-600') }}">
+                                        @if($trendPrediction['trend'] === 'improving')
+                                            ↗️ Mejorando
+                                        @elseif($trendPrediction['trend'] === 'declining')
+                                            ↘️ Declinando
+                                        @else
+                                            → Estable
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-lg p-3 text-center">
+                                    <div class="text-xs text-gray-600 mb-1">Pendiente</div>
+                                    <div class="text-2xl font-bold text-blue-900">
+                                        {{ number_format($trendPrediction['slope'], 4) }}
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-lg p-3 text-center">
+                                    <div class="text-xs text-gray-600 mb-1">Confianza (R²)</div>
+                                    <div class="text-2xl font-bold text-purple-900">
+                                        {{ number_format($trendPrediction['confidence'] * 100, 1) }}%
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-4">
+                                <h5 class="text-sm font-semibold text-gray-700 mb-3">Valores Predichos:</h5>
+                                <div class="grid grid-cols-7 gap-2">
+                                    @foreach($trendPrediction['predictions'] as $pred)
+                                        <div class="text-center p-2 bg-blue-50 rounded">
+                                            <div class="text-xs text-gray-600">+{{ $pred['day'] }}d</div>
+                                            <div class="text-sm font-bold text-blue-900">{{ number_format($pred['ndvi'], 3) }}</div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="mt-3 text-xs text-blue-700 bg-white rounded p-2">
+                                <strong>Nota:</strong> Las predicciones se basan en regresión lineal de los datos históricos.
+                                Confianza alta (>80%) indica patrón consistente. Úsalo solo como guía orientativa.
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
                         <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

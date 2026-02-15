@@ -12,10 +12,37 @@ class SpectralBandsCard extends Component
     public ?array $indices = null;
     public bool $loading = false;
     public ?string $error = null;
+    
+    // Historical date selector
+    public ?string $selectedDate = null;
+    public array $availableDates = [];
 
     public function mount(Plot $plot)
     {
         $this->plot = $plot;
+        $this->loadAvailableDates();
+        $this->loadData();
+    }
+
+    public function loadAvailableDates()
+    {
+        $dates = $this->plot->remoteSensingData()
+            ->whereNotNull('red_band')
+            ->orderBy('image_date', 'desc')
+            ->limit(30)
+            ->pluck('image_date')
+            ->map(fn($date) => $date->format('Y-m-d'))
+            ->toArray();
+        
+        $this->availableDates = $dates;
+        
+        if (empty($this->selectedDate) && !empty($dates)) {
+            $this->selectedDate = $dates[0];
+        }
+    }
+
+    public function updatedSelectedDate()
+    {
         $this->loadData();
     }
 
@@ -25,13 +52,17 @@ class SpectralBandsCard extends Component
             $this->loading = true;
             $this->error = null;
 
-            $remoteSensing = $this->plot->remoteSensingData()
-                ->whereNotNull('red_band')
-                ->latest('image_date')
-                ->first();
+            $query = $this->plot->remoteSensingData()
+                ->whereNotNull('red_band');
+            
+            if ($this->selectedDate) {
+                $query->whereDate('image_date', $this->selectedDate);
+            }
+            
+            $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos de bandas espectrales disponibles';
+                $this->error = 'No hay datos de bandas espectrales disponibles para esta fecha';
                 return;
             }
 
@@ -114,6 +145,7 @@ class SpectralBandsCard extends Component
             'spectralData' => $this->spectralData,
             'indices' => $this->indices,
             'error' => $this->error,
+            'availableDates' => $this->availableDates,
         ]);
     }
 }

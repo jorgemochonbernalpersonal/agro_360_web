@@ -5,11 +5,12 @@
     $frostRisk = $frostRisk ?? null;
     $loading = $loading ?? false;
     $error = $error ?? null;
+    $availableDates = $availableDates ?? [];
 @endphp
 <div class="bg-white rounded-lg shadow-md p-6">
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
-        <div>
+        <div class="flex-1">
             <h3 class="text-xl font-bold text-gray-900">🌡️ Análisis Térmico</h3>
             <p class="text-sm text-gray-500 mt-1">
                 Temperatura de superficie y estrés
@@ -19,11 +20,22 @@
             </p>
         </div>
         
-        <button 
-            wire:click="refresh" 
-            wire:loading.attr="disabled"
-            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
-        >
+        <div class="flex items-center gap-2">
+            @if(count($availableDates) > 0)
+                <select wire:model.live="selectedDate" 
+                        class="text-sm border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+                    <option value="">Último dato</option>
+                    @foreach($availableDates as $date)
+                        <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
+                    @endforeach
+                </select>
+            @endif
+            
+            <button 
+                wire:click="refresh" 
+                wire:loading.attr="disabled"
+                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+            >
             <svg wire:loading.remove wire:target="refresh" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>

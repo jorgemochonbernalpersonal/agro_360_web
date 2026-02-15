@@ -3,104 +3,89 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
-use App\Models\PlotRemoteSensing;
-use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
-/**
- * Service for generating NDVI/Remote Sensing PDF Reports
- */
 class RemoteSensingReportService
 {
     /**
-     * Generate NDVI report for a single plot
+     * Generate PDF report for a plot
      */
-    public function generatePlotReport(Plot $plot, int $days = 90): array
+    public function generatePlotReport(Plot $plot, int $days = 30): array
     {
-        $user = auth()->user();
-        
-        // Get historical data
-        $service = app(NasaEarthdataService::class);
-        $historicalData = $service->getHistoricalData($plot, $days);
+        $service = new NasaEarthdataService(
+            app(\App\Repositories\PlotRemoteSensingRepository::class),
+            app(RemoteSensingCacheService::class),
+            app(RateLimitService::class)
+        );
+
         $latestData = $service->getLatestData($plot);
-        
-        // Calculate statistics
-        $stats = $this->calculateStats($historicalData);
-        
-        // Get GDD data
-        $phenologyService = new PhenologyService();
-        $gdd = $phenologyService->calculateGdd($plot);
-        
-        // Generate PDF
-        $pdfPath = $this->generatePDF($plot, $user, $latestData, $historicalData, $stats, $gdd);
-        
-        return [
-            'success' => true,
-            'pdf_path' => $pdfPath,
-            'plot_name' => $plot->name,
-            'stats' => $stats,
-        ];
-    }
-    
-    /**
-     * Generate NDVI report for all user plots
-     */
-    public function generateGlobalReport(User $user, int $days = 90): array
-    {
-        $plots = Plot::forUser($user)->get();
-        $service = new SentinelHubService();
-        
-        $plotsData = [];
-        $globalStats = [
-            'total_plots' => $plots->count(),
-            'total_ndvi' => 0,
-            'excellent' => 0,
-            'good' => 0,
-            'moderate' => 0,
-            'poor' => 0,
-            'critical' => 0,
-        ];
-        
-        foreach ($plots as $plot) {
-            $latestData = $service->getLatestData($plot);
-            
-            if ($latestData) {
-                $globalStats['total_ndvi'] += $latestData->ndvi_mean;
-                
-                match ($latestData->health_status) {
-                    'excellent' => $globalStats['excellent']++,
-                    'good' => $globalStats['good']++,
-                    'moderate' => $globalStats['moderate']++,
-                    'poor' => $globalStats['poor']++,
-                    'critical' => $globalStats['critical']++,
-                    default => null,
-                };
-                
-                $plotsData[] = [
-                    'plot' => $plot,
-                    'data' => $latestData,
-                    'historical' => $service->getHistoricalData($plot, $days),
-                ];
-            }
+        $historicalData = $service->getHistoricalData($plot, $days);
+
+        if (!$latestData) {
+            return ['success' => false, 'error' => 'No data available'];
         }
-        
-        $globalStats['average_ndvi'] = $plots->count() > 0 
-            ? round($globalStats['total_ndvi'] / $plots->count(), 3) 
-            : 0;
-        
-        // Generate PDF
-        $pdfPath = $this->generateGlobalPDF($user, $plotsData, $globalStats, $days);
-        
+
+        $data = [
+            'plot' => $plot,
+            'latest' => $latestData,
+            'historical' => $historicalData,
+            'stats' => $this->calculateStats($historicalData),
+            'generated_at' => now()->format('d/m/Y H:i'),
+        ];
+
+        $pdf = Pdf::loadView('reports.remote-sensing-plot', $data)
+            ->setPaper('a4', 'portrait');
+
+        $filename = sprintf('remote_sensing_%s_%s.pdf', $plot->id, now()->format('Y-m-d_His'));
+        $path = storage_path('app/reports/' . $filename);
+
+        // Ensure directory exists
+        if (!file_exists(dirname($path))) {
+            mkdir(dirname($path), 0755, true);
+        }
+
+        $pdf->save($path);
+
         return [
             'success' => true,
-            'pdf_path' => $pdfPath,
-            'stats' => $globalStats,
+            'pdf_path' => $path,
+            'filename' => $filename,
         ];
     }
-    
+
+    /**
+     * Generate period report with custom data
+     */
+    public function generatePeriodReport(Plot $plot, array $historicalData, array $stats): array
+    {
+        $data = [
+            'plot' => $plot,
+            'historical' => $historicalData,
+            'stats' => $stats,
+            'generated_at' => now()->format('d/m/Y H:i'),
+        ];
+
+        $pdf = Pdf::loadView('reports.remote-sensing-period', $data)
+            ->setPaper('a4', 'landscape');
+
+        $filename = sprintf('period_analysis_%s_%s.pdf', $plot->id, now()->format('Y-m-d_His'));
+        $path = storage_path('app/reports/' . $filename);
+
+        // Ensure directory exists
+        if (!file_exists(dirname($path))) {
+            mkdir(dirname($path), 0755, true);
+        }
+
+        $pdf->save($path);
+
+        return [
+            'success' => true,
+            'pdf_path' => $path,
+            'filename' => $filename,
+        ];
+    }
+
     /**
      * Calculate statistics from historical data
      */
@@ -112,118 +97,116 @@ class RemoteSensingReportService
                 'min' => 0,
                 'max' => 0,
                 'trend' => 'stable',
-                'data_points' => 0,
             ];
         }
-        
-        $values = $historicalData->pluck('ndvi_mean')->filter();
-        
-        // Calculate trend (compare first half to second half)
-        $halfCount = (int) ceil($values->count() / 2);
-        $firstHalf = $values->take($halfCount)->avg();
-        $secondHalf = $values->skip($halfCount)->avg();
-        
-        $trend = 'stable';
-        if ($secondHalf > $firstHalf + 0.05) {
-            $trend = 'increasing';
-        } elseif ($secondHalf < $firstHalf - 0.05) {
-            $trend = 'decreasing';
+
+        $values = $historicalData->pluck('ndvi_mean')->filter()->values();
+
+        if ($values->isEmpty()) {
+            return [
+                'average' => 0,
+                'min' => 0,
+                'max' => 0,
+                'trend' => 'stable',
+            ];
         }
-        
+
         return [
             'average' => round($values->avg(), 3),
             'min' => round($values->min(), 3),
             'max' => round($values->max(), 3),
-            'trend' => $trend,
-            'data_points' => $values->count(),
+            'stddev' => round($values->count() > 1 ? $this->standardDeviation($values->toArray()) : 0, 3),
+            'trend' => $this->determineTrend($values->toArray()),
         ];
     }
-    
+
     /**
-     * Generate PDF for a single plot
+     * Calculate standard deviation
      */
-    private function generatePDF(Plot $plot, User $user, $latestData, $historicalData, array $stats, array $gdd = []): string
+    private function standardDeviation(array $values): float
     {
-        $filename = sprintf(
-            'teledeteccion_%s_%s.pdf',
-            str_replace(' ', '_', $plot->name),
-            Carbon::now()->format('Y-m-d_His')
-        );
-        
-        $path = 'reports/remote-sensing/' . $user->id . '/' . $filename;
-        
-        // Chart data for the view
-        $chartData = $historicalData->map(fn($item) => [
-            'date' => $item->image_date->format('d/m'),
-            'ndvi' => $item->ndvi_mean,
-        ])->values()->toArray();
-        
-        $pdf = Pdf::loadView('reports.remote-sensing-plot', [
-            'plot' => $plot,
-            'user' => $user,
-            'latestData' => $latestData,
-            'historicalData' => $historicalData,
-            'chartData' => $chartData,
-            'stats' => $stats,
-            'gdd' => $gdd,
-            'generatedAt' => Carbon::now(),
-        ]);
-        
-        $pdf->setPaper('A4', 'portrait');
-        
-        Storage::disk('public')->put($path, $pdf->output());
-        
-        Log::info('Generated NDVI plot report', [
-            'plot_id' => $plot->id,
-            'user_id' => $user->id,
-            'path' => $path,
-        ]);
-        
-        return $path;
+        $count = count($values);
+        if ($count <= 1) return 0;
+
+        $mean = array_sum($values) / $count;
+        $variance = array_sum(array_map(fn($x) => pow($x - $mean, 2), $values)) / $count;
+
+        return sqrt($variance);
     }
-    
+
     /**
-     * Generate global PDF for all plots
+     * Determine trend from values
      */
-    private function generateGlobalPDF(User $user, array $plotsData, array $stats, int $days): string
+    private function determineTrend(array $values): string
     {
-        $filename = sprintf(
-            'teledeteccion_global_%s.pdf',
-            Carbon::now()->format('Y-m-d_His')
-        );
-        
-        $path = 'reports/remote-sensing/' . $user->id . '/' . $filename;
-        
-        $pdf = Pdf::loadView('reports.remote-sensing-global', [
-            'user' => $user,
-            'plotsData' => $plotsData,
-            'stats' => $stats,
-            'days' => $days,
-            'generatedAt' => Carbon::now(),
-        ]);
-        
-        $pdf->setPaper('A4', 'portrait');
-        
-        Storage::disk('public')->put($path, $pdf->output());
-        
-        Log::info('Generated global NDVI report', [
-            'user_id' => $user->id,
-            'plots_count' => count($plotsData),
-            'path' => $path,
-        ]);
-        
-        return $path;
+        $count = count($values);
+        if ($count < 2) return 'stable';
+
+        $first = array_slice($values, 0, (int)($count / 3));
+        $last = array_slice($values, -1 * (int)($count / 3));
+
+        $avgFirst = array_sum($first) / count($first);
+        $avgLast = array_sum($last) / count($last);
+
+        $change = $avgLast - $avgFirst;
+
+        if ($change > 0.05) return 'increasing';
+        if ($change < -0.05) return 'decreasing';
+        return 'stable';
     }
-    
+
     /**
-     * Download a generated report
+     * Generate comparison report for two plots
+     */
+    public function generateComparisonReport(Plot $plot1, Plot $plot2, int $days = 30): array
+    {
+        $service = new NasaEarthdataService(
+            app(\App\Repositories\PlotRemoteSensingRepository::class),
+            app(RemoteSensingCacheService::class),
+            app(RateLimitService::class)
+        );
+
+        $data1 = $service->getHistoricalData($plot1, $days);
+        $data2 = $service->getHistoricalData($plot2, $days);
+
+        $data = [
+            'plot1' => $plot1,
+            'plot2' => $plot2,
+            'data1' => $data1,
+            'data2' => $data2,
+            'stats1' => $this->calculateStats($data1),
+            'stats2' => $this->calculateStats($data2),
+            'generated_at' => now()->format('d/m/Y H:i'),
+        ];
+
+        $pdf = Pdf::loadView('reports.remote-sensing-comparison', $data)
+            ->setPaper('a4', 'landscape');
+
+        $filename = sprintf('comparison_%s_vs_%s_%s.pdf', $plot1->id, $plot2->id, now()->format('Y-m-d_His'));
+        $path = storage_path('app/reports/' . $filename);
+
+        if (!file_exists(dirname($path))) {
+            mkdir(dirname($path), 0755, true);
+        }
+
+        $pdf->save($path);
+
+        return [
+            'success' => true,
+            'pdf_path' => $path,
+            'filename' => $filename,
+        ];
+    }
+
+    /**
+     * Download report
      */
     public function downloadReport(string $path)
     {
-        if (!Storage::disk('public')->exists($path)) {
-            throw new \Exception('El informe no existe');
+        if (!file_exists($path)) {
+            throw new \Exception('Report file not found');
         }
-        
-        return Storage::disk('public')->download($path);
+
+        return response()->download($path)->deleteFileAfterSend(true);
     }
 }

@@ -14,10 +14,37 @@ class OfficialLAICard extends Component
     public ?array $yieldEstimate = null;
     public bool $loading = false;
     public ?string $error = null;
+    
+    // Historical date selector
+    public ?string $selectedDate = null;
+    public array $availableDates = [];
 
     public function mount(Plot $plot)
     {
         $this->plot = $plot;
+        $this->loadAvailableDates();
+        $this->loadData();
+    }
+
+    public function loadAvailableDates()
+    {
+        $dates = $this->plot->remoteSensingData()
+            ->whereNotNull('lai')
+            ->orderBy('image_date', 'desc')
+            ->limit(30)
+            ->pluck('image_date')
+            ->map(fn($date) => $date->format('Y-m-d'))
+            ->toArray();
+        
+        $this->availableDates = $dates;
+        
+        if (empty($this->selectedDate) && !empty($dates)) {
+            $this->selectedDate = $dates[0]; // Most recent
+        }
+    }
+
+    public function updatedSelectedDate()
+    {
         $this->loadData();
     }
 
@@ -27,13 +54,18 @@ class OfficialLAICard extends Component
             $this->loading = true;
             $this->error = null;
 
-            $remoteSensing = $this->plot->remoteSensingData()
-                ->whereNotNull('lai')
-                ->latest('image_date')
-                ->first();
+            $query = $this->plot->remoteSensingData()
+                ->whereNotNull('lai');
+            
+            // Filter by selected date or get latest
+            if ($this->selectedDate) {
+                $query->whereDate('image_date', $this->selectedDate);
+            }
+            
+            $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos de LAI disponibles';
+                $this->error = 'No hay datos de LAI disponibles para esta fecha';
                 return;
             }
 
@@ -88,6 +120,7 @@ class OfficialLAICard extends Component
             'fparData' => $this->fparData,
             'yieldEstimate' => $this->yieldEstimate,
             'error' => $this->error,
+            'availableDates' => $this->availableDates,
         ]);
     }
 }
