@@ -110,6 +110,10 @@ class SpectralBandsCard extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.remote-sensing.spectral-bands-card');
+        return view('livewire.viticulturist.remote-sensing.spectral-bands-card', [
+            'spectralData' => $this->spectralData,
+            'indices' => $this->indices,
+            'error' => $this->error,
+        ]);
     }
 }

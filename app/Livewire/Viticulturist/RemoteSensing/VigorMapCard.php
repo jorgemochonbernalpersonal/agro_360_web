@@ -87,6 +87,10 @@ class VigorMapCard extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.remote-sensing.vigor-map-card');
+        return view('livewire.viticulturist.remote-sensing.vigor-map-card', [
+            'areaStats' => $this->areaStats,
+            'vigorZones' => $this->vigorZones,
+            'error' => $this->error,
+        ]);
     }
 }

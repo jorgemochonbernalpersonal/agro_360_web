@@ -112,6 +112,12 @@ class ThermalStressCard extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.remote-sensing.thermal-stress-card');
+        return view('livewire.viticulturist.remote-sensing.thermal-stress-card', [
+            'lstData' => $this->lstData,
+            'cwsiData' => $this->cwsiData,
+            'heatStress' => $this->heatStress,
+            'frostRisk' => $this->frostRisk,
+            'error' => $this->error,
+        ]);
     }
 }

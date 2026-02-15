@@ -1,3 +1,11 @@
+@php
+    $lstData = $lstData ?? null;
+    $cwsiData = $cwsiData ?? null;
+    $heatStress = $heatStress ?? null;
+    $frostRisk = $frostRisk ?? null;
+    $loading = $loading ?? false;
+    $error = $error ?? null;
+@endphp
 <div class="bg-white rounded-lg shadow-md p-6">
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">

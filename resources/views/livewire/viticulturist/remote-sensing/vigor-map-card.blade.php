@@ -1,3 +1,8 @@
+@php
+    $areaStats = $areaStats ?? null;
+    $vigorZones = $vigorZones ?? null;
+    $error = $error ?? null;
+@endphp
 <div class="bg-white rounded-lg shadow-md p-6">
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
