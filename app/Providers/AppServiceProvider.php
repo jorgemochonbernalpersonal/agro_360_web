@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Registrar macros personalizados
-        \App\Macros\CollectionMacros::register();
+        (new \App\Macros\CollectionMacros())->register();
         \App\Macros\StringMacros::register();
 
         // Forzar HTTPS solo en producción (no en local)

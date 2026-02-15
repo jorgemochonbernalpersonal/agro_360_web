@@ -6,6 +6,8 @@ use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
 use App\Services\RemoteSensing\NasaEarthdataService;
 use App\Services\RemoteSensing\WeatherService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -20,6 +22,7 @@ class Dashboard extends Component
     #[Url]
     public ?int $selectedPlotId = null;
     
+    #[Url(as: 'tab')]
     public string $activeTab = 'satellite';
     
     // All plots for selector
@@ -54,7 +57,10 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $user = auth()->user();
+        $user = Auth::user();
+        if (!$user) {
+            return;
+        }
         // ✅ OPTIMIZACIÓN: Solo campos necesarios
         $this->plots = Plot::forUser($user)
             ->select(['id', 'name', 'area'])
@@ -63,8 +69,9 @@ class Dashboard extends Component
         $this->loadStats();
         
         // Load first plot if none selected
-        if (!$this->selectedPlotId && $this->plots->count() > 0) {
-            $this->selectedPlotId = $this->plots->first()->id;
+        $plots = collect($this->plots);
+        if (!$this->selectedPlotId && $plots->isNotEmpty()) {
+            $this->selectedPlotId = $plots->first()->id;
         }
         
         if ($this->selectedPlotId) {
@@ -110,14 +117,15 @@ class Dashboard extends Component
             $this->compareSoil = $weatherService->getSoilData($this->comparePlot);
             $this->compareSolar = $weatherService->getSolarData($this->comparePlot);
         } catch (\Exception $e) {
-            \Log::error('Comparison data error', ['error' => $e->getMessage()]);
+            Log::error('Comparison data error', ['error' => $e->getMessage()]);
         }
     }
 
     public function loadStats()
     {
         // ✅ OPTIMIZACIÓN: Cargar todos los datos NDVI de una vez en lugar de uno por uno
-        $plotIds = $this->plots->pluck('id');
+        $plots = collect($this->plots);
+        $plotIds = $plots->pluck('id');
         
         if ($plotIds->isEmpty()) {
             $this->stats = [
@@ -153,7 +161,7 @@ class Dashboard extends Component
         $totalNdvi = 0;
         $ndviCount = 0;
 
-        foreach ($this->plots as $plot) {
+        foreach ($plots as $plot) {
             $data = $latestNdviData->get($plot->id);
             if ($data) {
                 $ndviCount++;
@@ -171,7 +179,7 @@ class Dashboard extends Component
         }
 
         $this->stats = [
-            'total_plots' => $this->plots->count(),
+            'total_plots' => $plots->count(),
             'with_data' => $ndviCount,
             'average_ndvi' => $ndviCount > 0 ? round($totalNdvi / $ndviCount, 3) : 0,
             'excellent' => $excellent,
@@ -219,7 +227,7 @@ class Dashboard extends Component
             $this->generateRecommendations();
             
         } catch (\Exception $e) {
-            \Log::error('Dashboard load error', ['error' => $e->getMessage()]);
+            Log::error('Dashboard load error', ['error' => $e->getMessage()]);
         }
 
         $this->isLoading = false;
@@ -321,8 +329,8 @@ class Dashboard extends Component
 
     public function refreshData()
     {
-        // Clear all caches
-        $nasaService = new NasaEarthdataService();
+        // Clear all caches (resolve from container for proper DI)
+        $nasaService = app(NasaEarthdataService::class);
         $nasaService->clearCache($this->selectedPlot);
         
         $weatherService = new WeatherService();
@@ -467,7 +475,7 @@ class Dashboard extends Component
                 return $service->downloadReport($result['pdf_path']);
             }
         } catch (\Exception $e) {
-            \Log::error('Report generation error', ['error' => $e->getMessage()]);
+            Log::error('Report generation error', ['error' => $e->getMessage()]);
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => 'Error al generar el informe: ' . $e->getMessage(),

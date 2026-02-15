@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\RemoteSensingController;
 use App\Http\Controllers\RemoteSensingExportController;
 use App\Livewire\Viticulturist\RemoteSensing\Dashboard;
+use App\Livewire\Viticulturist\RemoteSensing\ExecutiveDashboard;
 use App\Livewire\Viticulturist\RemoteSensing\PlotAnalysis;
 use App\Services\RemoteSensing\RemoteSensingReportService;
 use App\Models\Plot;
@@ -19,8 +20,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'check.beta'])->group(function () {
     Route::prefix('remote-sensing')->name('remote-sensing.')->group(function () {
-        // Dashboard principal de teledetección
-        Route::get('/', Dashboard::class)->name('dashboard');
+        // Dashboard ejecutivo (vista resumen)
+        Route::get('/', ExecutiveDashboard::class)->name('dashboard');
+        
+        // Dashboard avanzado (13 pestañas detalladas)
+        Route::get('/advanced', Dashboard::class)->name('advanced');
+        
+        // Vista de detalle por sección (para modales)
+        Route::get('/detail', Dashboard::class)->name('detail');
         
         // Análisis unificado por parcela
         Route::get('/plot/{plot}', PlotAnalysis::class)->name('plot');

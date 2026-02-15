@@ -2,10 +2,19 @@
     <!-- Header -->
     <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
+            <div class="flex items-center gap-3 mb-2">
+                <a href="{{ route('remote-sensing.dashboard') }}" 
+                   class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    <span class="text-sm font-medium">Volver al Resumen</span>
+                </a>
+            </div>
             <h1 class="text-3xl font-bold text-[var(--color-agro-green-dark)] flex items-center gap-3">
-                🛰️ Teledetección
+                🛰️ Análisis Avanzado
             </h1>
-            <p class="text-gray-600 mt-1">Datos satelitales y meteorológicos de tus parcelas</p>
+            <p class="text-gray-600 mt-1">Datos satelitales y meteorológicos detallados</p>
         </div>
         
         <div class="flex items-center gap-3">
