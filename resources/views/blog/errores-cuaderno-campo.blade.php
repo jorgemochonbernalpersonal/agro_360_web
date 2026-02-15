@@ -47,12 +47,12 @@
                 </div>
 
                 <p class="text-xl text-gray-600 leading-relaxed mb-8">
-                    El <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a> es obligatorio para recibir ayudas PAC. Estos son los errores más habituales que pueden costarte una sanción.
+                    El <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a> es obligatorio para recibir ayudas PAC. Estos son los errores más habituales que pueden costarte una sanción.
                 </p>
 
                 <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mt-8 mb-4">❌ Error 1: No vincular tratamientos a parcelas SIGPAC</h2>
                 <p class="text-gray-700 leading-relaxed mb-4">
-                    Cada <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamiento fitosanitario</a> debe estar vinculado a parcelas concretas con su código <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>. Registrar tratamientos "genéricos" sin parcela es motivo de sanción.
+                    Cada <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamiento fitosanitario</a> debe estar vinculado a parcelas concretas con su código <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>. Registrar tratamientos "genéricos" sin parcela es motivo de sanción.
                 </p>
                 <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg mb-6">
                     <p class="text-gray-700">✅ <strong>Solución:</strong> En Agro365, al crear una actividad se seleccionan automáticamente las parcelas afectadas.</p>

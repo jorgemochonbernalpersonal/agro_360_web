@@ -94,13 +94,13 @@
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📋 Cuaderno de Campo</h3>
                             <p class="text-gray-700 text-sm">
-                                <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a> obligatorio desde 2027 con todas las actividades registradas.
+                                <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a> obligatorio desde 2027 con todas las actividades registradas.
                             </p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">🗺️ SIGPAC Correcto</h3>
                             <p class="text-gray-700 text-sm">
-                                Parcelas con códigos <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> correctamente declarados.
+                                Parcelas con códigos <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> correctamente declarados.
                             </p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
@@ -171,7 +171,7 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Cumplir con la PAC usando Agro365</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Agro365</a> incluye un <strong>Dashboard de Cumplimiento PAC</strong> que valida automáticamente:
+                        <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Agro365</a> incluye un <strong>Dashboard de Cumplimiento PAC</strong> que valida automáticamente:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                         <li>✅ Códigos SIGPAC correctamente declarados</li>
@@ -200,7 +200,7 @@
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Es obligatorio el cuaderno digital?</h3>
-                            <p class="text-gray-700">Sí, desde 2027 será obligatorio. <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Más información aquí</a>.</p>
+                            <p class="text-gray-700">Sí, desde 2027 será obligatorio. <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Más información aquí</a>.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Cómo me preparo para una inspección?</h3>

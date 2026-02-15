@@ -89,7 +89,7 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Por Qué es Obligatorio el Registro de Fitosanitarios?</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        La <strong>normativa europea</strong> y española obliga a todos los agricultores a mantener un registro detallado de todos los <strong>productos fitosanitarios</strong> aplicados en sus parcelas. Este registro es parte esencial del <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a>.
+                        La <strong>normativa europea</strong> y española obliga a todos los agricultores a mantener un registro detallado de todos los <strong>productos fitosanitarios</strong> aplicados en sus parcelas. Este registro es parte esencial del <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a>.
                     </p>
                     <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg mb-6">
                         <p class="text-gray-800 font-semibold mb-2">⚠️ Importante:</p>
@@ -107,7 +107,7 @@
                             <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">📅 Datos del Tratamiento</h3>
                             <ul class="text-gray-700 text-sm space-y-1">
                                 <li>• Fecha y hora de aplicación</li>
-                                <li>• Parcela tratada (código <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)]">SIGPAC</a>)</li>
+                                <li>• Parcela tratada (código <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)]">SIGPAC</a>)</li>
                                 <li>• Superficie tratada (ha)</li>
                                 <li>• Plaga, enfermedad o mala hierba</li>
                             </ul>

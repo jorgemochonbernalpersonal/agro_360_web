@@ -97,7 +97,7 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Integración con Cuaderno de Campo</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Cada actividad registrada en el <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a> se puede vincular a una cuadrilla:
+                        Cada actividad registrada en el <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a> se puede vincular a una cuadrilla:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                         <li>Quién realizó la poda</li>

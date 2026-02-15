@@ -358,7 +358,7 @@ class WeatherService
     private function getPlotCoordinates(Plot $plot): array
     {
         // 1. Try to get from geometry
-        $multipart = $plot->multipartPlotSigpacs()
+        $multipart = $plot->multiplePlotSigpacs()
             ->whereNotNull('plot_geometry_id')
             ->with('plotGeometry')
             ->first();

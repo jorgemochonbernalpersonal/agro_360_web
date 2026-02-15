@@ -117,7 +117,7 @@
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📋 Vinculación al Cuaderno</h3>
-                            <p class="text-gray-700">Cada tarea completada se registra automáticamente en el <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a>.</p>
+                            <p class="text-gray-700">Cada tarea completada se registra automáticamente en el <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a>.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">👥 Asignación a Cuadrillas</h3>

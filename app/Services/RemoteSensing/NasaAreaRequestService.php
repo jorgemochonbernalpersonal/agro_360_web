@@ -250,7 +250,7 @@ class NasaAreaRequestService
      */
     private function getPlotPolygon(Plot $plot): ?array
     {
-        $multipart = $plot->multipartPlotSigpacs()
+        $multipart = $plot->multiplePlotSigpacs()
             ->whereNotNull('plot_geometry_id')
             ->with('plotGeometry')
             ->first();

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" itemscope itemtype="https://schema.org/WebSite">
 <head>
     <meta charset="utf-8">
@@ -366,7 +366,7 @@
                 "position": 3,
                 "name": "Crea tu primera parcela",
                 "text": "Añade tus parcelas con códigos SIGPAC. Puedes importar desde SIGPAC o crear manualmente.",
-                "url": "{{ route('content.que-es-sigpac') }}"
+                "url": "{{ content_route('content.que-es-sigpac') }}"
             },
             {
                 "@@type": "HowToStep",
@@ -446,7 +446,7 @@
                     </h1>
                     
                     <p class="text-xl text-gray-600 leading-relaxed">
-                        <strong><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027, <strong><a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">gestión de parcelas SIGPAC</a></strong>, control de actividades agrícolas, <strong>informes oficiales con firma electrónica</strong>, facturación de cosechas y cumplimiento normativo. Todo en una plataforma completa diseñada para <strong><a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a></strong> en España.
+                        <strong><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027, <strong><a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">gestión de parcelas SIGPAC</a></strong>, control de actividades agrícolas, <strong>informes oficiales con firma electrónica</strong>, facturación de cosechas y cumplimiento normativo. Todo en una plataforma completa diseñada para <strong><a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a></strong> en España.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
@@ -534,7 +534,7 @@
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Card 1: Cuaderno Digital -->
-                <a href="{{ route('content.cuaderno-digital') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
+                <a href="{{ content_route('content.cuaderno-digital') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
                     <div class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -549,7 +549,7 @@
                 </a>
 
                 <!-- Card 2: SIGPAC -->
-                <a href="{{ route('content.que-es-sigpac') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
+                <a href="{{ content_route('content.que-es-sigpac') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
                     <div class="w-14 h-14 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
@@ -564,7 +564,7 @@
                 </a>
 
                 <!-- Card 3: NDVI -->
-                <a href="{{ route('content.ndvi-teledeteccion') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
+                <a href="{{ content_route('content.ndvi-teledeteccion') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
                     <div class="w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
@@ -579,7 +579,7 @@
                 </a>
 
                 <!-- Card 4: Facturación -->
-                <a href="{{ route('content.facturacion-agricola') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
+                <a href="{{ content_route('content.facturacion-agricola') }}" class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-agro-green-light)]/30">
                     <div class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -604,7 +604,7 @@
                     Software Agrícola Completo: Cuaderno Digital, SIGPAC e Informes Oficiales
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Herramientas profesionales para <strong><a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong>: <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital obligatorio</a>, gestión de parcelas SIGPAC, informes oficiales con firma electrónica, control de vendimia y facturación integrada.
+                    Herramientas profesionales para <strong><a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong>: <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital obligatorio</a>, gestión de parcelas SIGPAC, informes oficiales con firma electrónica, control de vendimia y facturación integrada.
                 </p>
             </div>
             
@@ -618,7 +618,7 @@
                     </div>
                     <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Cuaderno de Campo Digital Obligatorio 2027</h3>
                     <p class="text-gray-600 leading-relaxed mb-4">
-                        <strong><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027 según normativa europea. Registra tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales desde cualquier lugar. Cumplimiento normativo garantizado para inspecciones PAC.
+                        <strong><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027 según normativa europea. Registra tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales desde cualquier lugar. Cumplimiento normativo garantizado para inspecciones PAC.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-center gap-2">
@@ -796,7 +796,7 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Viticultores -->
-                <a href="{{ route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                <a href="{{ content_route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
                     <div class="w-14 h-14 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -813,7 +813,7 @@
                 </a>
 
                 <!-- Bodegas -->
-                <a href="{{ route('content.bodegas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                <a href="{{ content_route('content.bodegas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
                     <div class="w-14 h-14 rounded-xl bg-red-100 text-red-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.051.155A2 2 0 004 17.145V19a2 2 0 002 2h12a2 2 0 002-2v-1.572a2 2 0 00-.572-1.428z"/>
@@ -831,7 +831,7 @@
                 </a>
 
                 <!-- Cooperativas -->
-                <a href="{{ route('content.cooperativas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                <a href="{{ content_route('content.cooperativas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
                     <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 01-4 4H9a4 4 0 01-4-4V5a4 4 0 014-4h4a4 4 0 014 4v2z"/>
@@ -848,7 +848,7 @@
                 </a>
 
                 <!-- Ingenieros -->
-                <a href="{{ route('content.ingenieros-agronomos') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
+                <a href="{{ content_route('content.ingenieros-agronomos') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
                     <div class="w-14 h-14 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
@@ -875,7 +875,7 @@
                     ¿Por qué elegir Agro365 para tu Viñedo?
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Miles de <strong><a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong> en España confían en nuestro <strong><a href="{{ route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">software agrícola profesional</a></strong> para gestionar sus explotaciones. Cumplimiento normativo, <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital</a> SIGPAC y control total de parcelas.
+                    Miles de <strong><a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong> en España confían en nuestro <strong><a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">software agrícola profesional</a></strong> para gestionar sus explotaciones. Cumplimiento normativo, <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital</a> SIGPAC y control total de parcelas.
                 </p>
             </div>
             

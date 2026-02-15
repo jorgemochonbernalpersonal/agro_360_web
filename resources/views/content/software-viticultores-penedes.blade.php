@@ -48,7 +48,7 @@
             <!-- Breadcrumbs -->
             <nav class="text-sm text-gray-500 mb-6">
                 <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a> → 
-                <a href="{{ route('content.software-viticultores') }}" class="hover:text-[var(--color-agro-green)]">Software Viticultores</a> → 
+                <a href="{{ content_route('content.software-viticultores') }}" class="hover:text-[var(--color-agro-green)]">Software Viticultores</a> → 
                 <span class="text-gray-700">Penedès</span>
             </nav>
 
@@ -344,7 +344,7 @@
         "@@type": "BreadcrumbList",
         "itemListElement": [
             {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
-            {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ route('content.software-viticultores') }}"},
+            {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ content_route('content.software-viticultores') }}"},
             {"@@type": "ListItem", "position": 3, "name": "Penedès", "item": "{{ url('/software-viticultores-penedes') }}"}
         ]
     }

@@ -267,7 +267,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     private function getPlotBoundingBox(Plot $plot): array
     {
         // Try to get from plot geometry
-        $multipart = $plot->multipartPlotSigpacs()
+        $multipart = $plot->multiplePlotSigpacs()
             ->whereNotNull('plot_geometry_id')
             ->with('plotGeometry')
             ->first();

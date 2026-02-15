@@ -36,7 +36,7 @@
             <!-- Breadcrumbs -->
             <nav class="text-sm text-gray-500 mb-6">
                 <a href="{{ url('/') }}" class="hover:text-[var(--color-agro-green)]">Inicio</a> → 
-                <a href="{{ route('content.software-viticultores') }}" class="hover:text-[var(--color-agro-green)]">Software Viticultores</a> → 
+                <a href="{{ content_route('content.software-viticultores') }}" class="hover:text-[var(--color-agro-green)]">Software Viticultores</a> → 
                 <span class="text-gray-700">Rioja</span>
             </nav>
 
@@ -102,10 +102,10 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Funcionalidades para Rioja</h2>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
-                        <li><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a> adaptado a normativa DOCa</li>
+                        <li><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a> adaptado a normativa DOCa</li>
                         <li>Control de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamientos fitosanitarios</a></li>
                         <li>Gestión de <a href="{{ url('/gestion-vendimia') }}" class="text-[var(--color-agro-green)] hover:underline">vendimia</a> con trazabilidad completa</li>
-                        <li>Códigos <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> de La Rioja integrados</li>
+                        <li>Códigos <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> de La Rioja integrados</li>
                         <li><a href="{{ url('/informes-oficiales-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">Informes oficiales</a> para Consejo Regulador</li>
                     </ul>
                 </section>
@@ -132,7 +132,7 @@
         "@@type": "BreadcrumbList",
         "itemListElement": [
             {"@@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ url('/') }}"},
-            {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ route('content.software-viticultores') }}"},
+            {"@@type": "ListItem", "position": 2, "name": "Software Viticultores", "item": "{{ content_route('content.software-viticultores') }}"},
             {"@@type": "ListItem", "position": 3, "name": "Rioja", "item": "{{ url('/software-viticultores-rioja') }}"}
         ]
     }

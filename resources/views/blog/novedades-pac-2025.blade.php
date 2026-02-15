@@ -52,11 +52,11 @@
 
                 <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mt-8 mb-4">1. Cuaderno Digital Obligatorio</h2>
                 <p class="text-gray-700 leading-relaxed mb-4">
-                    A partir de 2025, el <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a> será obligatorio para todas las explotaciones que reciban ayudas PAC. Las principales implicaciones:
+                    A partir de 2025, el <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a> será obligatorio para todas las explotaciones que reciban ayudas PAC. Las principales implicaciones:
                 </p>
                 <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
                     <li>Registro digital de tratamientos fitosanitarios</li>
-                    <li>Vinculación de actividades a parcelas <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
+                    <li>Vinculación de actividades a parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
                     <li>Interoperabilidad con sistemas oficiales</li>
                     <li>Plazo de registro máximo: 1 mes desde la actividad</li>
                 </ul>

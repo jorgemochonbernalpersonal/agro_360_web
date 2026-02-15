@@ -103,7 +103,7 @@
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
                         <li><strong>Detección temprana de estrés:</strong> Identifica zonas con problemas antes de que sean visibles</li>
                         <li><strong>Gestión del riego:</strong> Optimiza el riego basándote en datos reales de humedad</li>
-                        <li><strong>Comparativa entre parcelas:</strong> Compara el vigor de diferentes parcelas <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
+                        <li><strong>Comparativa entre parcelas:</strong> Compara el vigor de diferentes parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a></li>
                         <li><strong>Histórico de evolución:</strong> Analiza cómo cambia el viñedo a lo largo del año</li>
                         <li><strong>Decisiones de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">tratamiento</a>:</strong> Prioriza zonas que necesitan atención</li>
                     </ul>

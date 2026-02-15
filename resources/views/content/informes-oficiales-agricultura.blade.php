@@ -54,7 +54,7 @@
                                 <span class="text-2xl">📋</span>
                                 <h3 class="font-bold text-[var(--color-agro-green-dark)]">1. Cuaderno de Campo Completo</h3>
                             </div>
-                            <p class="text-gray-700 text-sm">Todas las actividades del <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a>.</p>
+                            <p class="text-gray-700 text-sm">Todas las actividades del <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a>.</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">
@@ -68,7 +68,7 @@
                                 <span class="text-2xl">🗺️</span>
                                 <h3 class="font-bold text-[var(--color-agro-green-dark)]">3. Parcelas SIGPAC</h3>
                             </div>
-                            <p class="text-gray-700 text-sm">Listado de parcelas con códigos <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>.</p>
+                            <p class="text-gray-700 text-sm">Listado de parcelas con códigos <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>.</p>
                         </div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <div class="flex items-center gap-3 mb-2">

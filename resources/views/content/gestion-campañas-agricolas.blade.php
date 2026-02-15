@@ -50,7 +50,7 @@
                         Una <strong>campaña agrícola</strong> en viticultura típicamente va desde la poda (enero-febrero) hasta la vendimia (septiembre-octubre) del mismo año. En Agro365, cada campaña agrupa:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6 ml-4">
-                        <li>Todas las actividades del <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a></li>
+                        <li>Todas las actividades del <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo</a></li>
                         <li><a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">Tratamientos fitosanitarios</a></li>
                         <li><a href="{{ url('/gestion-vendimia') }}" class="text-[var(--color-agro-green)] hover:underline">Vendimia</a> y contenedores</li>
                         <li><a href="{{ url('/facturacion-agricola') }}" class="text-[var(--color-agro-green)] hover:underline">Facturación</a> a clientes</li>

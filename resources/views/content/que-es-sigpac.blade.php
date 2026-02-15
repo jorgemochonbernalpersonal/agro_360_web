@@ -166,7 +166,7 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Gestionar SIGPAC con Agro365</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> integra SIGPAC completamente. Si eres <a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultor profesional</a>, nuestra <a href="{{ route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a> te permite:
+                        <strong>Agro365</strong> integra SIGPAC completamente. Si eres <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultor profesional</a>, nuestra <a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a> te permite:
                     </p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
                         <li><strong>Importar códigos SIGPAC:</strong> Añade tus códigos SIGPAC directamente desde el sistema oficial</li>

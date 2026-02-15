@@ -64,7 +64,7 @@
                     Facturación Agrícola para Viticultores
                 </h1>
                 <p class="text-xl text-gray-600 leading-relaxed">
-                    <strong>Factura tus cosechas directamente</strong> desde el registro de vendimia. Gestión de clientes (bodegas), control de pagos, albaranes de entrega y cumplimiento fiscal. Todo integrado en <a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Agro365</a>.
+                    <strong>Factura tus cosechas directamente</strong> desde el registro de vendimia. Gestión de clientes (bodegas), control de pagos, albaranes de entrega y cumplimiento fiscal. Todo integrado en <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Agro365</a>.
                 </p>
             </div>
 

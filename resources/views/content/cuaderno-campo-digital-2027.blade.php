@@ -194,7 +194,7 @@
                 <section class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cómo Cumple Agro365 con la Normativa 2027</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        <strong>Agro365</strong> está diseñado específicamente para cumplir con todos los requisitos del cuaderno de campo digital obligatorio. Especialmente para <a href="{{ route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a>, nuestro <a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital para viticultores</a> incluye:
+                        <strong>Agro365</strong> está diseñado específicamente para cumplir con todos los requisitos del cuaderno de campo digital obligatorio. Especialmente para <a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a>, nuestro <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital para viticultores</a> incluye:
                     </p>
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20 mb-6">
                         <ul class="space-y-4 text-gray-800">

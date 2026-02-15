@@ -44,13 +44,13 @@
             <div>
                 <h4 class="font-semibold text-lg mb-4">Producto</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
-                    <li><a href="{{ route('content.software-viticultura') }}" class="hover:text-white transition-colors">Software Viticultura</a></li>
-                    <li><a href="{{ route('content.cuaderno-digital') }}" class="hover:text-white transition-colors">Cuaderno Digital</a></li>
-                    <li><a href="{{ route('content.que-es-sigpac') }}" class="hover:text-white transition-colors">Gestión SIGPAC</a></li>
-                    <li><a href="{{ route('content.gestion-vendimia') }}" class="hover:text-white transition-colors">Gestión Vendimia</a></li>
-                    <li><a href="{{ route('content.facturacion-agricola') }}" class="hover:text-white transition-colors">Facturación</a></li>
-                    <li><a href="{{ route('content.ndvi-teledeteccion') }}" class="hover:text-white transition-colors">NDVI Teledetección</a></li>
-                    <li><a href="{{ route('content.trazabilidad-agricola') }}" class="hover:text-white transition-colors">Trazabilidad</a></li>
+                    <li><a href="{{ content_route('content.software-viticultura') }}" class="hover:text-white transition-colors">Software Viticultura</a></li>
+                    <li><a href="{{ content_route('content.cuaderno-digital') }}" class="hover:text-white transition-colors">Cuaderno Digital</a></li>
+                    <li><a href="{{ content_route('content.que-es-sigpac') }}" class="hover:text-white transition-colors">Gestión SIGPAC</a></li>
+                    <li><a href="{{ content_route('content.gestion-vendimia') }}" class="hover:text-white transition-colors">Gestión Vendimia</a></li>
+                    <li><a href="{{ content_route('content.facturacion-agricola') }}" class="hover:text-white transition-colors">Facturación</a></li>
+                    <li><a href="{{ content_route('content.ndvi-teledeteccion') }}" class="hover:text-white transition-colors">NDVI Teledetección</a></li>
+                    <li><a href="{{ content_route('content.trazabilidad-agricola') }}" class="hover:text-white transition-colors">Trazabilidad</a></li>
                 </ul>
             </div>
 
@@ -58,12 +58,12 @@
             <div>
                 <h4 class="font-semibold text-lg mb-4">Sectores</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
-                    <li><a href="{{ route('content.viticultores') }}" class="hover:text-white transition-colors">Viticultores</a></li>
-                    <li><a href="{{ route('content.bodegas') }}" class="hover:text-white transition-colors">Bodegas</a></li>
-                    <li><a href="{{ route('content.cooperativas') }}" class="hover:text-white transition-colors">Cooperativas</a></li>
-                    <li><a href="{{ route('content.ingenieros-agronomos') }}" class="hover:text-white transition-colors">Ingenieros Agrónomos</a></li>
-                    <li><a href="{{ route('content.app-agricultura') }}" class="hover:text-white transition-colors">Apps para el Campo</a></li>
-                    <li><a href="{{ route('content.software-gestion-agricola') }}" class="hover:text-white transition-colors">Gestión Agrícola</a></li>
+                    <li><a href="{{ content_route('content.viticultores') }}" class="hover:text-white transition-colors">Viticultores</a></li>
+                    <li><a href="{{ content_route('content.bodegas') }}" class="hover:text-white transition-colors">Bodegas</a></li>
+                    <li><a href="{{ content_route('content.cooperativas') }}" class="hover:text-white transition-colors">Cooperativas</a></li>
+                    <li><a href="{{ content_route('content.ingenieros-agronomos') }}" class="hover:text-white transition-colors">Ingenieros Agrónomos</a></li>
+                    <li><a href="{{ content_route('content.app-agricultura') }}" class="hover:text-white transition-colors">Apps para el Campo</a></li>
+                    <li><a href="{{ content_route('content.software-gestion-agricola') }}" class="hover:text-white transition-colors">Gestión Agrícola</a></li>
                 </ul>
             </div>
             
@@ -71,15 +71,15 @@
             <div>
                 <h4 class="font-semibold text-lg mb-4">Regiones</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
-                    <li><a href="{{ route('content.viticultores-rioja') }}" class="hover:text-white transition-colors">DOCa Rioja</a></li>
-                    <li><a href="{{ route('content.viticultores-ribera') }}" class="hover:text-white transition-colors">Ribera del Duero</a></li>
-                    <li><a href="{{ route('content.viticultores-rueda') }}" class="hover:text-white transition-colors">DO Rueda</a></li>
-                    <li><a href="{{ route('content.viticultores-priorat') }}" class="hover:text-white transition-colors">DOQ Priorat</a></li>
-                    <li><a href="{{ route('content.viticultores-rias-baixas') }}" class="hover:text-white transition-colors">Rías Baixas</a></li>
-                    <li><a href="{{ route('content.viticultores-penedes') }}" class="hover:text-white transition-colors">DO Penedès</a></li>
-                    <li><a href="{{ route('content.viticultores-la-mancha') }}" class="hover:text-white transition-colors">DO La Mancha</a></li>
-                    <li><a href="{{ route('content.viticultores-toro') }}" class="hover:text-white transition-colors">DO Toro</a></li>
-                    <li><a href="{{ route('content.viticultores-jumilla') }}" class="hover:text-white transition-colors">DO Jumilla</a></li>
+                    <li><a href="{{ content_route('content.viticultores-rioja') }}" class="hover:text-white transition-colors">DOCa Rioja</a></li>
+                    <li><a href="{{ content_route('content.viticultores-ribera') }}" class="hover:text-white transition-colors">Ribera del Duero</a></li>
+                    <li><a href="{{ content_route('content.viticultores-rueda') }}" class="hover:text-white transition-colors">DO Rueda</a></li>
+                    <li><a href="{{ content_route('content.viticultores-priorat') }}" class="hover:text-white transition-colors">DOQ Priorat</a></li>
+                    <li><a href="{{ content_route('content.viticultores-rias-baixas') }}" class="hover:text-white transition-colors">Rías Baixas</a></li>
+                    <li><a href="{{ content_route('content.viticultores-penedes') }}" class="hover:text-white transition-colors">DO Penedès</a></li>
+                    <li><a href="{{ content_route('content.viticultores-la-mancha') }}" class="hover:text-white transition-colors">DO La Mancha</a></li>
+                    <li><a href="{{ content_route('content.viticultores-toro') }}" class="hover:text-white transition-colors">DO Toro</a></li>
+                    <li><a href="{{ content_route('content.viticultores-jumilla') }}" class="hover:text-white transition-colors">DO Jumilla</a></li>
                 </ul>
             </div>
             
@@ -97,9 +97,9 @@
                 <ul class="space-y-2 text-white/70 text-sm mb-6">
                     <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
                     <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog Agro365</a></li>
-                    <li><a href="{{ route('content.normativa-pac') }}" class="hover:text-white transition-colors">Normativa PAC</a></li>
-                    <li><a href="{{ route('content.comparativa') }}" class="hover:text-white transition-colors">Comparativa Software</a></li>
-                    <li><a href="{{ route('content.informes-oficiales') }}" class="hover:text-white transition-colors">Informes Oficiales</a></li>
+                    <li><a href="{{ content_route('content.normativa-pac') }}" class="hover:text-white transition-colors">Normativa PAC</a></li>
+                    <li><a href="{{ content_route('content.comparativa') }}" class="hover:text-white transition-colors">Comparativa Software</a></li>
+                    <li><a href="{{ content_route('content.informes-oficiales') }}" class="hover:text-white transition-colors">Informes Oficiales</a></li>
                 </ul>
                 
                 <h4 class="font-semibold text-lg mb-4">Legal</h4>

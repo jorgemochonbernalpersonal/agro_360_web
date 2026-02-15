@@ -142,7 +142,7 @@
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">🔗</div>
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Trazabilidad Completa</h3>
-                            <p class="text-gray-700">Desde el recinto <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> hasta la factura final. Cada kilo de uva está identificado.</p>
+                            <p class="text-gray-700">Desde el recinto <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a> hasta la factura final. Cada kilo de uva está identificado.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <div class="text-3xl mb-3">💰</div>
@@ -168,7 +168,7 @@
                         <li><strong>Estados de contenedor:</strong> Vacío, En Campo, En Transporte, Entregado, Facturado</li>
                         <li><strong>Historial completo:</strong> Cada contenedor mantiene su historial de movimientos</li>
                         <li><strong>Control de stock:</strong> Sabe cuántos contenedores tienes disponibles en cada momento</li>
-                        <li><strong>Asociación a parcelas:</strong> Cada contenedor se vincula a su <a href="{{ route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">código SIGPAC</a> de origen</li>
+                        <li><strong>Asociación a parcelas:</strong> Cada contenedor se vincula a su <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">código SIGPAC</a> de origen</li>
                         <li><strong>Datos de calidad:</strong> Registra grado baumé, estado sanitario y observaciones</li>
                     </ul>
                 </section>
@@ -206,8 +206,8 @@
                         La gestión de vendimia se integra perfectamente con el resto del sistema:
                     </p>
                     <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6 ml-4">
-                        <li><strong><a href="{{ route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de Campo Digital</a>:</strong> Los tratamientos aplicados se vinculan a la cosecha</li>
-                        <li><strong><a href="{{ route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">Cumplimiento PAC</a>:</strong> Los rendimientos se validan contra los límites de producción</li>
+                        <li><strong><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de Campo Digital</a>:</strong> Los tratamientos aplicados se vinculan a la cosecha</li>
+                        <li><strong><a href="{{ content_route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">Cumplimiento PAC</a>:</strong> Los rendimientos se validan contra los límites de producción</li>
                         <li><strong>Informes Oficiales:</strong> Genera informes de cosecha certificados con firma digital</li>
                         <li><strong>Facturación:</strong> De vendimia a factura en un solo clic</li>
                     </ul>
@@ -254,7 +254,7 @@
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Puedo registrar contenedores desde el móvil?</h3>
-                            <p class="text-gray-700">Sí, la <a href="{{ route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de Agro365</a> está optimizada para uso en campo. Registra contenedores directamente desde tu smartphone.</p>
+                            <p class="text-gray-700">Sí, la <a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de Agro365</a> está optimizada para uso en campo. Registra contenedores directamente desde tu smartphone.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Se puede facturar directamente a varias bodegas?</h3>
