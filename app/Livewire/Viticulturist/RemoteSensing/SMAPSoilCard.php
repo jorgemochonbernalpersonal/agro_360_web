@@ -81,6 +81,10 @@ class SMAPSoilCard extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.remote-sensing.smap-soil-card');
+        return view('livewire.viticulturist.remote-sensing.smap-soil-card', [
+            'smapData' => $this->smapData,
+            'comparison' => $this->comparison,
+            'error' => $this->error,
+        ]);
     }
 }

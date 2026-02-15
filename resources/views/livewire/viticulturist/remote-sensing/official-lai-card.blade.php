@@ -1,3 +1,9 @@
+@php
+    $laiData = $laiData ?? null;
+    $error = $error ?? null;
+    $yieldEstimate = $yieldEstimate ?? null;
+    $fparData = $fparData ?? null;
+@endphp
 <div class="bg-white rounded-lg shadow-md p-6">
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">

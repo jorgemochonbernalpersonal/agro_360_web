@@ -50,7 +50,7 @@ class OfficialLAICard extends Component
                 ], $classification);
 
                 // Yield estimate
-                $areaHa = $this->plot->surface ?? 1;
+                $areaHa = $this->plot->area ?? 1;
                 $varietyType = 'red'; // TODO: Get from plot data
                 $this->yieldEstimate = $laiService->estimateYield($remoteSensing->lai, $areaHa, $varietyType);
             }
@@ -83,6 +83,11 @@ class OfficialLAICard extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.remote-sensing.official-lai-card');
+        return view('livewire.viticulturist.remote-sensing.official-lai-card', [
+            'laiData' => $this->laiData,
+            'fparData' => $this->fparData,
+            'yieldEstimate' => $this->yieldEstimate,
+            'error' => $this->error,
+        ]);
     }
 }
