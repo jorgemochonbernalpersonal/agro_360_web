@@ -2,78 +2,36 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
 use Database\Seeders\CompleteTestUserSeeder;
+use Illuminate\Console\Command;
 
 class SeedUserDataCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'user:seed-data {user : ID del usuario para poblar datos}';
+    protected $signature = 'user:seed-data {user_id : The ID of the user to seed data for}';
+    protected $description = 'Seed complete test data for a specific user';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Pobla datos de prueba (campañas 2024 y 2025) para un usuario específico con 20 elementos por tipo';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): int
     {
-        $userId = $this->argument('user');
+        $userId = (int) $this->argument('user_id');
         
-        // Verificar que el usuario existe
-        $user = User::find($userId);
-        if (!$user) {
-            $this->error("❌ No se encontró el usuario con ID: {$userId}");
-            return 1;
+        $this->info("🚀 Generando datos completos para usuario ID: {$userId}");
+        $this->newLine();
+
+        try {
+            $seeder = new CompleteTestUserSeeder();
+            $seeder->setCommand($this);
+            $seeder->run($userId);
+            
+            $this->newLine();
+            $this->info('✅ Datos generados exitosamente!');
+            $this->info('💡 Ahora puedes generar datos de remote sensing:');
+            $this->info('   php artisan remote-sensing:regenerate-mock');
+            
+            return self::SUCCESS;
+        } catch (\Exception $e) {
+            $this->error('❌ Error: ' . $e->getMessage());
+            $this->error($e->getTraceAsString());
+            return self::FAILURE;
         }
-        
-        $this->info("🌱 Poblando datos para el usuario: {$user->name} ({$user->email})");
-        $this->info("📊 Generando 20 elementos por cada tipo de dato...");
-        $this->info("");
-        
-        // Asegurar que los datos base existen
-        $this->info("🔄 Verificando datos base (comunidades, provincias, municipios)...");
-        $this->call('db:seed', [
-            '--class' => 'Database\\Seeders\\AutonomousCommunitySeeder',
-        ]);
-        $this->call('db:seed', [
-            '--class' => 'Database\\Seeders\\ProvinceSeeder',
-        ]);
-        $this->call('db:seed', [
-            '--class' => 'Database\\Seeders\\MunicipalitySeeder',
-        ]);
-        $this->call('db:seed', [
-            '--class' => 'Database\\Seeders\\SigpacUseSeeder',
-        ]);
-        $this->call('db:seed', [
-            '--class' => 'Database\\Seeders\\GrapeVarietySeeder',
-        ]);
-        $this->call('db:seed', [
-            '--class' => 'Database\\Seeders\\TrainingSystemSeeder',
-        ]);
-        $this->call('db:seed', [
-            '--class' => 'Database\\Seeders\\MachineryTypeSeeder',
-        ]);
-        $this->info("✅ Datos base verificados");
-        $this->info("");
-        
-        // Ejecutar el seeder completo para este usuario
-        $seeder = new CompleteTestUserSeeder();
-        $seeder->setCommand($this);
-        $seeder->run($userId);
-        
-        $this->info("");
-        $this->info("✅ Datos poblados exitosamente para el usuario ID: {$userId}");
-        
-        return 0;
     }
 }

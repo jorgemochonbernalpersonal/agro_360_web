@@ -33,7 +33,7 @@ class PlotNdviCard extends Component
         $this->error = '';
 
         try {
-            $service = new NasaEarthdataService();
+            $service = app(NasaEarthdataService::class);
             
             // Force refresh will generate new data for today if needed
             $this->latestData = $service->getLatestData($this->plot, false);

@@ -20,6 +20,14 @@ use Carbon\Carbon;
  */
 class NasaEarthdataService implements RemoteSensingProviderInterface
 {
+    private ?NasaLSTService $lstService = null;
+    private ?NasaAreaRequestService $areaService = null;
+    private ?NasaVIIRSService $viirsService = null;
+    private ?NasaSpectralBandsService $spectralService = null;
+    private ?NasaLAIService $laiService = null;
+    private ?NasaSMAPService $smapService = null;
+    private ?NasaETService $etService = null;
+
     public function __construct(
         private PlotRemoteSensingRepository $repository,
         private RemoteSensingCacheService $cacheService,
@@ -28,6 +36,15 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         $this->username = config('services.nasa_earthdata.username') ?? '';
         $this->password = config('services.nasa_earthdata.password') ?? '';
         $this->useMockData = config('services.nasa_earthdata.mock') ?? true;
+        
+        // Initialize all NASA services
+        $this->lstService = app(NasaLSTService::class);
+        $this->areaService = app(NasaAreaRequestService::class);
+        $this->viirsService = app(NasaVIIRSService::class);
+        $this->spectralService = app(NasaSpectralBandsService::class);
+        $this->laiService = app(NasaLAIService::class);
+        $this->smapService = app(NasaSMAPService::class);
+        $this->etService = app(NasaETService::class);
     }
     private string $username;
     private string $password;
@@ -458,10 +475,191 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 'soil_moisture' => mt_rand(15, 45),
                 'et0' => round(mt_rand(30, 70) / 10, 1),
             ]);
+        }
         
         Log::info('Mock historical data persisted', [
             'plot_id' => $plot->id,
             'records_created' => 20,
         ]);
+    }
+
+    /**
+     * Fetch enriched data (NDVI + LST + Area stats)
+     * 
+     * @param Plot $plot
+     * @param bool $includeArea Whether to include area statistics
+     * @return PlotRemoteSensing|null
+     */
+    public function fetchEnrichedData(Plot $plot, bool $includeArea = false): ?PlotRemoteSensing
+    {
+        // Get base NDVI data
+        $result = $this->getLatestData($plot, true);
+        
+        if (!$result) {
+            return null;
+        }
+
+        try {
+            $token = $this->getAuthToken();
+            
+            if (!$token) {
+                Log::warning('Cannot fetch enriched data without auth token');
+                return $result;
+            }
+
+            // Fetch LST data
+            $lstData = $this->lstService->fetchLSTData($plot, $token);
+            
+            if ($lstData) {
+                // Calculate CWSI if we have both LST and air temp
+                if ($lstData['lst_day'] && $result->temperature && $result->humidity) {
+                    $cwsi = $this->lstService->calculateCWSI(
+                        $lstData['lst_day'],
+                        $result->temperature,
+                        $result->humidity
+                    );
+                    $lstData['cwsi'] = $cwsi;
+                }
+
+                // Update with LST data
+                $result->update($lstData);
+            }
+
+            // Fetch area statistics if requested
+            if ($includeArea) {
+                $areaStats = $this->areaService->requestAreaData($plot, $token);
+                
+                if ($areaStats && isset($areaStats['task_id'])) {
+                    // Store task ID in metadata for later retrieval
+                    $metadata = $result->metadata ?? [];
+                    $metadata['area_task_id'] = $areaStats['task_id'];
+                    $metadata['area_task_created'] = $areaStats['created_at'];
+                    $result->update(['metadata' => $metadata]);
+                }
+            }
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch enriched data', [
+                'plot_id' => $plot->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return $result;
+        }
+    }
+
+    /**
+     * Get LST service instance
+     */
+    public function getLSTService(): NasaLSTService
+    {
+        return $this->lstService;
+    }
+
+    /**
+     * Get Area service instance
+     */
+    public function getAreaService(): NasaAreaRequestService
+    {
+        return $this->areaService;
+    }
+
+    /**
+     * Fetch ultra-enriched data (ALL NASA products)
+     * 
+     * Includes:
+     * - VIIRS NDVI (better than MODIS)
+     * - Spectral bands (real GNDVI/NDRE)
+     * - Official LAI
+     * - LST
+     * - SMAP Soil Moisture
+     * - Official ET
+     * - Optional Area Request
+     * 
+     * @param Plot $plot
+     * @param bool $includeArea Whether to include area statistics
+     * @return PlotRemoteSensing|null
+     */
+    public function fetchUltraEnrichedData(Plot $plot, bool $includeArea = false): ?PlotRemoteSensing
+    {
+        $token = $this->getAuthToken();
+        
+        if (!$token) {
+            Log::warning('Cannot fetch ultra-enriched data without auth token');
+            return $this->getLatestData($plot);
+        }
+
+        try {
+            // Start with VIIRS NDVI (better than MODIS)
+            $viirsData = $this->viirsService->fetchVIIRSNDVI($plot, $token);
+            
+            // Fetch spectral bands for real indices
+            $spectralData = $this->spectralService->fetchSpectralBands($plot, $token);
+            
+            // Fetch official LAI
+            $laiData = $this->laiService->fetchOfficialLAI($plot, $token);
+            
+            // Fetch LST
+            $lstData = $this->lstService->fetchLSTData($plot, $token);
+            
+            // Fetch SMAP soil moisture
+            $smapData = $this->smapService->fetchSoilMoisture($plot, $token);
+            
+            // Fetch official ET
+            $etData = $this->etService->fetchEvapotranspiration($plot, $token);
+
+            // Merge all data
+            $mergedData = array_merge(
+                $viirsData ?? [],
+                $spectralData ?? [],
+                $laiData ?? [],
+                $lstData ?? [],
+                $smapData ?? [],
+                $etData ?? []
+            );
+
+            // Store in database
+            $result = $this->repository->createOrUpdate($plot, $mergedData);
+
+            // Area request (async) if requested
+            if ($includeArea && $result) {
+                $areaStats = $this->areaService->requestAreaData($plot, $token);
+                
+                if ($areaStats && isset($areaStats['task_id'])) {
+                    $metadata = $result->metadata ?? [];
+                    $metadata['area_task_id'] = $areaStats['task_id'];
+                    $metadata['area_task_created'] = $areaStats['created_at'];
+                    $result->update(['metadata' => $metadata]);
+                }
+            }
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch ultra-enriched data', [
+                'plot_id' => $plot->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return $this->getLatestData($plot);
+        }
+    }
+
+    /**
+     * Get all NASA services (for external use)
+     */
+    public function getAllServices(): array
+    {
+        return [
+            'lst' => $this->lstService,
+            'area' => $this->areaService,
+            'viirs' => $this->viirsService,
+            'spectral' => $this->spectralService,
+            'lai' => $this->laiService,
+            'smap' => $this->smapService,
+            'et' => $this->etService,
+        ];
     }
 }

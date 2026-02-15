@@ -26,7 +26,7 @@ class DashboardWidget extends Component
         
         $user = auth()->user();
         $plots = Plot::forUser($user)->get();
-        $service = new NasaEarthdataService();
+        $service = app(NasaEarthdataService::class);
 
         $excellent = 0;
         $good = 0;

@@ -104,6 +104,31 @@
                             {{ $activeTab === 'satellite' ? 'border-green-500 text-green-600 bg-green-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
                     🛰️ Satélite
                 </button>
+                <button wire:click="setTab('spectral')" 
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
+                            {{ $activeTab === 'spectral' ? 'border-rainbow-500 text-purple-600 bg-purple-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                    🌈 Espectral
+                </button>
+                <button wire:click="setTab('lai-official')" 
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
+                            {{ $activeTab === 'lai-official' ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                    🌿 LAI Oficial
+                </button>
+                <button wire:click="setTab('thermal')" 
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
+                            {{ $activeTab === 'thermal' ? 'border-orange-500 text-orange-600 bg-orange-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                    🌡️ Térmico
+                </button>
+                <button wire:click="setTab('smap-soil')" 
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
+                            {{ $activeTab === 'smap-soil' ? 'border-brown-500 text-amber-600 bg-amber-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                    🛰️ SMAP Suelo
+                </button>
+                <button wire:click="setTab('vigor-map')" 
+                        class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
+                            {{ $activeTab === 'vigor-map' ? 'border-purple-500 text-purple-600 bg-purple-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                    🗺️ Mapa Vigor
+                </button>
                 <button wire:click="setTab('weather')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
                             {{ $activeTab === 'weather' ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
@@ -225,6 +250,31 @@
                     <span>📅 {{ $ndviData?->image_date?->format('d/m/Y') ?? 'N/A' }}</span>
                     <span>☁️ {{ $ndviData?->cloud_coverage ?? 0 }}% nubes</span>
                 </div>
+            @endif
+
+            <!-- Spectral Bands Tab -->
+            @if($activeTab === 'spectral')
+                @livewire('viticulturist.remote-sensing.spectral-bands-card', ['plot' => $selectedPlot], key('spectral-'.$selectedPlot->id))
+            @endif
+
+            <!-- Official LAI Tab -->
+            @if($activeTab === 'lai-official')
+                @livewire('viticulturist.remote-sensing.official-lai-card', ['plot' => $selectedPlot], key('lai-official-'.$selectedPlot->id))
+            @endif
+
+            <!-- Thermal Tab -->
+            @if($activeTab === 'thermal')
+                @livewire('viticulturist.remote-sensing.thermal-stress-card', ['plot' => $selectedPlot], key('thermal-'.$selectedPlot->id))
+            @endif
+
+            <!-- Vigor Map Tab -->
+            @if($activeTab === 'vigor-map')
+                @livewire('viticulturist.remote-sensing.vigor-map-card', ['plot' => $selectedPlot], key('vigor-'.$selectedPlot->id))
+            @endif
+
+            <!-- SMAP Soil Tab -->
+            @if($activeTab === 'smap-soil')
+                @livewire('viticulturist.remote-sensing.smap-soil-card', ['plot' => $selectedPlot], key('smap-'.$selectedPlot->id))
             @endif
 
             <!-- Weather Tab -->
@@ -610,9 +660,24 @@
         </div>
 
         <!-- Footer Info -->
-        <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700 flex items-center gap-2">
-            <span>ℹ️</span>
-            <span>🛰️ NASA MODIS | 🌦️ Open-Meteo | APIs 100% gratuitas</span>
+        <div class="mt-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-2">
+                <span>🌟</span>
+                <span class="font-semibold text-gray-900">Teledetección NASA - Nivel Profesional</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-700">
+                <div>🛰️ <strong>VIIRS</strong> NDVI (375m)</div>
+                <div>🌈 <strong>Bandas</strong> Espectrales</div>
+                <div>🌿 <strong>LAI</strong> Oficial MODIS</div>
+                <div>🌡️ <strong>LST</strong> Temperatura</div>
+                <div>🛰️ <strong>SMAP</strong> Humedad Suelo</div>
+                <div>💧 <strong>ET</strong> NASA Oficial</div>
+                <div>🗺️ <strong>Area</strong> Request</div>
+                <div>🌦️ <strong>Open-Meteo</strong> Weather</div>
+            </div>
+            <div class="mt-2 text-xs text-blue-700">
+                <strong>✓ 100% Gratuito</strong> • 7 Productos NASA • Datos Reales (no modelos)
+            </div>
         </div>
     @else
         <div class="text-center py-16 bg-gray-50 rounded-lg">

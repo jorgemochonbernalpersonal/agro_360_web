@@ -48,7 +48,7 @@ class RegenerateMockRemoteSensingDataCommand extends Command
             return self::FAILURE;
         }
 
-        $service = new NasaEarthdataService();
+        $service = app(NasaEarthdataService::class);
         $bar = $this->output->createProgressBar($plots->count());
         $bar->start();
 

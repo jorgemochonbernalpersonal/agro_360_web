@@ -133,6 +133,30 @@ class RemoteSensingCacheService implements CacheServiceInterface
     }
 
     /**
+     * Get from cache with a custom key
+     */
+    public function get(string $key)
+    {
+        return Cache::get($key);
+    }
+
+    /**
+     * Put in cache with a custom key and TTL
+     */
+    public function put(string $key, $value, int $ttl): void
+    {
+        Cache::put($key, $value, $ttl);
+    }
+
+    /**
+     * Forget a specific cache key
+     */
+    public function forget(string $key): void
+    {
+        Cache::forget($key);
+    }
+
+    /**
      * Clear all cache for a plot
      */
     public function clearAllForPlot(Plot $plot): void

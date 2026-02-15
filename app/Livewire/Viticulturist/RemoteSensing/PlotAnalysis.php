@@ -50,7 +50,7 @@ class PlotAnalysis extends Component
 
         try {
             // Load satellite data
-            $nasaService = new NasaEarthdataService();
+            $nasaService = app(NasaEarthdataService::class);
             $this->ndviData = $nasaService->getLatestData($this->plot);
             $historical = $nasaService->getHistoricalData($this->plot, 90);
             $this->historicalData = $historical->map(fn($item) => [

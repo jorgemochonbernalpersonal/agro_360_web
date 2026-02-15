@@ -36,7 +36,7 @@ class CheckRemoteSensingAlerts extends Command
             ->with('viticulturist')
             ->get();
             
-        $service = new NasaEarthdataService();
+        $service = app(NasaEarthdataService::class);
         $alertsSent = 0;
         
         foreach ($plots as $plot) {

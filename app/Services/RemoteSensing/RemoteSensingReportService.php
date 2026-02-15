@@ -23,7 +23,7 @@ class RemoteSensingReportService
         $user = auth()->user();
         
         // Get historical data
-        $service = new NasaEarthdataService();
+        $service = app(NasaEarthdataService::class);
         $historicalData = $service->getHistoricalData($plot, $days);
         $latestData = $service->getLatestData($plot);
         

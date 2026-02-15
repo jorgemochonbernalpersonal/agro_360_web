@@ -24,7 +24,7 @@ class RemoteSensingController extends Controller
     {
         $this->authorize('view', $plot);
         
-        $service = new NasaEarthdataService();
+        $service = app(NasaEarthdataService::class);
         $data = $service->getLatestData($plot);
         
         if (!$data) {
@@ -86,7 +86,7 @@ class RemoteSensingController extends Controller
     public function getAllPlotsNdvi(Request $request)
     {
         $user = auth()->user();
-        $service = new NasaEarthdataService();
+        $service = app(NasaEarthdataService::class);
         
         $plots = Plot::forUser($user)->get();
         

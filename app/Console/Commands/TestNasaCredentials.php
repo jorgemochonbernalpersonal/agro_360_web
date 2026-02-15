@@ -45,7 +45,7 @@ class TestNasaCredentials extends Command
 
         // Test the service
         try {
-            $service = new NasaEarthdataService();
+            $service = app(NasaEarthdataService::class);
             
             $this->info('📡 Fetching NDVI data...');
             $data = $service->getLatestData($plot, true);

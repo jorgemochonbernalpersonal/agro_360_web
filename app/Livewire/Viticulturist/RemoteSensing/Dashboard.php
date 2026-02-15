@@ -102,7 +102,7 @@ class Dashboard extends Component
         if (!$this->comparePlot) return;
 
         try {
-            $nasaService = new NasaEarthdataService();
+            $nasaService = app(NasaEarthdataService::class);
             $this->compareNdviData = $nasaService->getLatestData($this->comparePlot);
             
             $weatherService = new WeatherService();
@@ -196,8 +196,8 @@ class Dashboard extends Component
         }
 
         try {
-            // Load satellite data
-            $nasaService = new NasaEarthdataService();
+            // Load satellite data using dependency injection
+            $nasaService = app(NasaEarthdataService::class);
             $this->ndviData = $nasaService->getLatestData($this->selectedPlot, $forceRefresh);
             $historical = $nasaService->getHistoricalData($this->selectedPlot, 90);
             $this->historicalData = $historical->map(fn($item) => [

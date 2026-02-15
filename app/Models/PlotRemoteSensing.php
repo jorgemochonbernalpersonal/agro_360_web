@@ -47,6 +47,43 @@ class PlotRemoteSensing extends Model
         'et0',
         'sunshine_hours',
         'water_stress_status',
+        // Advanced metrics
+        'lai',
+        'gndvi',
+        'ndre',
+        'chlorophyll_content',
+        'maturity_index',
+        'predicted_brix',
+        'days_to_harvest',
+        'anomaly_detected',
+        'anomaly_severity',
+        'anomaly_type',
+        // LST and area data
+        'lst_day',
+        'lst_night',
+        'lst_diff',
+        'cwsi',
+        'area_statistics',
+        'data_source',
+        'satellite',
+        'pixel_reliability',
+        // Spectral bands
+        'red_band',
+        'nir_band',
+        'green_band',
+        'blue_band',
+        'msr',
+        'ci_green',
+        'arvi',
+        // Official LAI
+        'fpar',
+        'lai_quality',
+        // SMAP Soil Moisture
+        'soil_moisture_surface_smap',
+        'soil_moisture_rootzone_smap',
+        // NASA ET
+        'et_nasa',
+        'pet_nasa',
     ];
 
     protected $casts = [
@@ -74,6 +111,39 @@ class PlotRemoteSensing extends Model
         'solar_radiation' => 'decimal:2',
         'et0' => 'decimal:2',
         'sunshine_hours' => 'decimal:1',
+        // Advanced metrics casts
+        'lai' => 'decimal:2',
+        'gndvi' => 'decimal:4',
+        'ndre' => 'decimal:4',
+        'chlorophyll_content' => 'decimal:2',
+        'maturity_index' => 'decimal:2',
+        'predicted_brix' => 'decimal:2',
+        'days_to_harvest' => 'integer',
+        'anomaly_detected' => 'boolean',
+        // LST and area casts
+        'lst_day' => 'decimal:2',
+        'lst_night' => 'decimal:2',
+        'lst_diff' => 'decimal:2',
+        'cwsi' => 'decimal:3',
+        'area_statistics' => 'array',
+        'pixel_reliability' => 'integer',
+        // Spectral bands casts
+        'red_band' => 'decimal:4',
+        'nir_band' => 'decimal:4',
+        'green_band' => 'decimal:4',
+        'blue_band' => 'decimal:4',
+        'msr' => 'decimal:4',
+        'ci_green' => 'decimal:4',
+        'arvi' => 'decimal:4',
+        // Official LAI casts
+        'fpar' => 'decimal:3',
+        'lai_quality' => 'integer',
+        // SMAP casts
+        'soil_moisture_surface_smap' => 'decimal:2',
+        'soil_moisture_rootzone_smap' => 'decimal:2',
+        // NASA ET casts
+        'et_nasa' => 'decimal:2',
+        'pet_nasa' => 'decimal:2',
     ];
 
     /**
