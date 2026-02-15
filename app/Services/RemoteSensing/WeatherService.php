@@ -382,7 +382,7 @@ class WeatherService
             $query = "{$plot->municipality->name}, {$plot->province->name}, Spain";
             $cacheKey = "geo_loc_" . Str::slug($query);
 
-            $coords = Cache::rememberSerialized($cacheKey, 86400 * 30, function () use ($query) {
+            $coords = Cache::remember($cacheKey, 86400 * 30, function () use ($query) {
                 try {
                     $response = Http::get('https://geocoding-api.open-meteo.com/v1/search', [
                         'name' => $query,
