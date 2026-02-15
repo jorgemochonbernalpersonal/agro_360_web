@@ -44,6 +44,22 @@ class OfficialReportService
     }
 
     /**
+     * Generar PDF de tratamientos fitosanitarios (llamado por Job)
+     */
+    public function generatePDF(OfficialReport $report, $user, $treatments, $stats): string
+    {
+        return $this->phytosanitaryGenerator->generatePDF($report, $user, $treatments, $stats);
+    }
+
+    /**
+     * Generar PDF de cuaderno digital completo (llamado por Job)
+     */
+    public function generateFullNotebookPDF(OfficialReport $report, $user, $campaign, $activities, $stats): string
+    {
+        return $this->fullNotebookGenerator->generatePDF($report, $user, $campaign, $activities, $stats);
+    }
+
+    /**
      * Descargar PDF del informe
      */
     public function downloadReport(OfficialReport $report)

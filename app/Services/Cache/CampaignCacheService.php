@@ -60,8 +60,8 @@ class CampaignCacheService
     {
         $this->invalidateStats($campaign);
         
-        if ($campaign->user) {
-            $this->invalidateUserCampaigns($campaign->user);
+        if ($campaign->viticulturist) {
+            $this->invalidateUserCampaigns($campaign->viticulturist);
         }
 
         // Invalidar cache de tags

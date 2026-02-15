@@ -16,13 +16,15 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         
-        // CRÍTICO: Verificar que usamos agro365_test, NO agro365
-        $database = config('database.connections.'.config('database.default').'.database');
+        // CRÍTICO: Verificar que usamos BD de test, NO producción (agro365)
+        $connection = config('database.default');
+        $database = config("database.connections.{$connection}.database");
+        $allowedDatabases = ['agro365_test', ':memory:'];
         
-        if ($database !== 'agro365_test') {
+        if (! in_array($database, $allowedDatabases)) {
             throw new \Exception(
                 "🚨 PELIGRO: Los tests NO pueden ejecutarse en la base de datos '{$database}'. " .
-                "Solo se permite 'agro365_test'. " .
+                "Solo se permite agro365_test o :memory: (SQLite). " .
                 "Revisa tu configuración en phpunit.xml"
             );
         }
@@ -34,10 +36,6 @@ trait CreatesApplication
     public function createApplication()
     {
         $app = require __DIR__.'/../bootstrap/app.php';
-
-        // SOLUCIÓN: Forzar variables de entorno de testing desde phpunit.xml
-        // NO depender de .env.testing que puede no existir
-        
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;

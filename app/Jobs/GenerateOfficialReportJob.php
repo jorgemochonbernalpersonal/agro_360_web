@@ -33,7 +33,7 @@ class GenerateOfficialReportJob implements ShouldQueue
         public string $password
     ) {}
 
-    public function handle()
+    public function handle(OfficialReportService $service)
     {
         // Optimización: Aumentar límites de memoria y tiempo para trabajos largos
         ini_set('memory_limit', '512M');
@@ -73,8 +73,6 @@ class GenerateOfficialReportJob implements ShouldQueue
                 'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
                 'peak_memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
             ]);
-
-            $service = new OfficialReportService();
 
             // Generar datos según tipo
             if ($this->reportType === 'phytosanitary_treatments') {

@@ -337,7 +337,6 @@ class WeatherService
                 }
 
                 return $solarData;
-                return $solarData;
             } else {
                 Log::error('Open-Meteo solar API failed', [
                     'status' => $response->status(),

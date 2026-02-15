@@ -12,7 +12,6 @@ class CheckBetaAccessTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
     public function middleware_blocks_beta_expired_users_without_subscription()
     {
         $user = User::factory()->create([
@@ -30,7 +29,6 @@ class CheckBetaAccessTest extends TestCase
         Carbon::setTestNow(); // Reset
     }
 
-    /** @test */
     public function middleware_allows_access_to_users_with_active_subscription()
     {
         $user = User::factory()->create([
@@ -63,7 +61,6 @@ class CheckBetaAccessTest extends TestCase
         Carbon::setTestNow(); // Reset
     }
 
-    /** @test */
     public function beta_expired_page_is_accessible()
     {
         $user = User::factory()->create();
@@ -79,7 +76,6 @@ class CheckBetaAccessTest extends TestCase
         Carbon::setTestNow(); // Reset
     }
 
-    /** @test */
     public function all_protected_routes_require_beta_access()
     {
         $user = User::factory()->create([

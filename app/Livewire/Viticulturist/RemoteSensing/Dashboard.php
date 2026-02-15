@@ -9,6 +9,7 @@ use App\Services\RemoteSensing\WeatherService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Unified Remote Sensing Dashboard with plot selector and analysis tabs
@@ -320,6 +321,16 @@ class Dashboard extends Component
 
     public function refreshData()
     {
+        // Clear all caches
+        $nasaService = new NasaEarthdataService();
+        $nasaService->clearCache($this->selectedPlot);
+        
+        $weatherService = new WeatherService();
+        Cache::forget("weather_{$this->selectedPlotId}");
+        Cache::forget("forecast_{$this->selectedPlotId}_7");
+        Cache::forget("soil_{$this->selectedPlotId}");
+        Cache::forget("solar_{$this->selectedPlotId}");
+        
         $this->loadPlotData(true);
         $this->dispatch('notify', [
             'type' => 'success',

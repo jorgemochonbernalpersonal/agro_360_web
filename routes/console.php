@@ -26,9 +26,19 @@ Schedule::command('logs:cleanup')
     ->withoutOverlapping()
     ->onOneServer();
 
-// 🛰️ Actualizar NDVI de todas las parcelas cada domingo a las 6 AM
-Schedule::job(new UpdateAllPlotsNdviJob(), 'remote-sensing')
-    ->weeklyOn(0, '06:00')
+// 🛰️ Actualizar NDVI de todas las parcelas diariamente a las 2 AM
+// Usa queue para no bloquear, con delay entre requests para respetar rate limits
+Schedule::command('remote-sensing:update-all', [
+    '--queue' => 'remote-sensing',
+    '--delay' => 2, // 2 segundos entre cada plot
+])
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+// 📊 Limpiar datos antiguos de remote sensing (opcional - cada lunes)
+Schedule::command('remote-sensing:clean-old-data', ['--days' => 365])
+    ->weeklyOn(1, '03:00')
     ->withoutOverlapping()
     ->onOneServer();
 

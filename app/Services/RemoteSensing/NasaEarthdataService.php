@@ -2,11 +2,14 @@
 
 namespace App\Services\RemoteSensing;
 
+use App\Contracts\RemoteSensing\RemoteSensingProviderInterface;
 use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
+use App\Repositories\PlotRemoteSensingRepository;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
 /**
@@ -15,20 +18,22 @@ use Carbon\Carbon;
  * 
  * Register free at: https://urs.earthdata.nasa.gov/
  */
-class NasaEarthdataService
+class NasaEarthdataService implements RemoteSensingProviderInterface
 {
+    public function __construct(
+        private PlotRemoteSensingRepository $repository,
+        private RemoteSensingCacheService $cacheService,
+        private RateLimitService $rateLimitService
+    ) {
+        $this->username = config('services.nasa_earthdata.username') ?? '';
+        $this->password = config('services.nasa_earthdata.password') ?? '';
+        $this->useMockData = config('services.nasa_earthdata.mock') ?? true;
+    }
     private string $username;
     private string $password;
     private string $baseUrl = 'https://appeears.earthdatacloud.nasa.gov/api';
     private bool $useMockData;
     private ?string $token = null;
-
-    public function __construct()
-    {
-        $this->username = config('services.nasa_earthdata.username') ?? '';
-        $this->password = config('services.nasa_earthdata.password') ?? '';
-        $this->useMockData = config('services.nasa_earthdata.mock') ?? true;
-    }
 
     /**
      * Get the latest NDVI data for a plot
@@ -37,11 +42,9 @@ class NasaEarthdataService
     {
         // Check database first if not forced
         if (!$forceRefresh) {
-            $existing = PlotRemoteSensing::where('plot_id', $plot->id)
-                ->orderBy('image_date', 'desc')
-                ->first();
-
-            if ($existing && $existing->image_date->isToday()) {
+            $existing = $this->repository->getTodayForPlot($plot);
+            
+            if ($existing) {
                 return $existing;
             }
         }
@@ -53,22 +56,50 @@ class NasaEarthdataService
             return $this->storeData($plot, $data);
         }
 
-        return $existing;
+        return $this->repository->getLatestForPlot($plot);
+    }
+
+    /**
+     * Fetch and store NDVI data (used by UpdatePlotNdviJob)
+     * 
+     * @param Plot $plot
+     * @return PlotRemoteSensing|null
+     */
+    public function fetchAndStoreNdvi(Plot $plot): ?PlotRemoteSensing
+    {
+        return $this->getLatestData($plot, true);
+    }
+    
+    /**
+     * Clear all cached data for a plot
+     */
+    public function clearCache(Plot $plot): void
+    {
+        $this->cacheService->clearNdviForPlot($plot);
     }
 
     /**
      * Get historical NDVI data for a plot
      */
-    public function getHistoricalData(Plot $plot, int $days = 90)
+    public function getHistoricalData(Plot $plot, int $days = 90): Collection
     {
-        if ($this->useMockData) {
-            return $this->generateMockHistorical($plot, $days);
+        // Always check database first
+        $existingData = $this->repository->getHistoricalForPlot($plot, $days);
+
+        // If we have enough recent data, return it
+        if ($existingData->count() >= 10) {
+            return $existingData;
         }
 
-        return PlotRemoteSensing::where('plot_id', $plot->id)
-            ->where('image_date', '>=', now()->subDays($days))
-            ->orderBy('image_date', 'desc')
-            ->get();
+        // If in mock mode and no data, generate and persist
+        if ($this->useMockData && $existingData->isEmpty()) {
+            $this->generateAndPersistMockHistorical($plot);
+            
+            // Re-fetch from database
+            return $this->repository->getHistoricalForPlot($plot, $days);
+        }
+
+        return $existingData;
     }
 
     /**
@@ -80,10 +111,31 @@ class NasaEarthdataService
             return $this->generateMockData($plot);
         }
 
+        // Check rate limit before making request
+        if (!$this->rateLimitService->canMakeNasaRequest()) {
+            Log::warning('NASA API rate limit reached', [
+                'plot_id' => $plot->id,
+                'usage' => $this->rateLimitService->getUsage('nasa'),
+            ]);
+            
+            // Return null to use existing data from database
+            return null;
+        }
+
         try {
             $token = $this->getAuthToken();
             if (!$token) {
-                Log::error('NASA Earthdata: Failed to get auth token');
+                Log::error('NASA Earthdata: Failed to get auth token', [
+                    'plot_id' => $plot->id,
+                    'username' => $this->username,
+                    'env' => config('app.env'),
+                ]);
+                
+                // En producción, mejor retornar null y usar datos existentes
+                if (config('app.env') === 'production') {
+                    return null;
+                }
+                
                 return $this->generateMockData($plot);
             }
 
@@ -100,6 +152,9 @@ class NasaEarthdataService
                     'endDate' => now()->format('m-d-Y'),
                 ]);
 
+            // Record successful API call
+            $this->rateLimitService->recordNasaRequest();
+
             if ($response->successful()) {
                 return $this->parseNasaResponse($response->json());
             }
@@ -107,15 +162,28 @@ class NasaEarthdataService
             Log::warning('NASA Earthdata API request failed', [
                 'status' => $response->status(),
                 'plot_id' => $plot->id,
+                'username' => $this->username,
             ]);
 
+            // En producción, retornar null para usar datos existentes
+            if (config('app.env') === 'production') {
+                return null;
+            }
+            
             return $this->generateMockData($plot);
 
         } catch (\Exception $e) {
             Log::error('NASA Earthdata API error', [
                 'error' => $e->getMessage(),
                 'plot_id' => $plot->id,
+                'trace' => $e->getTraceAsString(),
             ]);
+            
+            // En producción, retornar null para usar datos existentes
+            if (config('app.env') === 'production') {
+                return null;
+            }
+            
             return $this->generateMockData($plot);
         }
     }
@@ -129,7 +197,7 @@ class NasaEarthdataService
             return $this->token;
         }
 
-        $cacheKey = 'nasa_earthdata_token';
+        $cacheKey = $this->cacheService->getNasaTokenKey();
         $cached = Cache::get($cacheKey);
         
         if ($cached) {
@@ -143,7 +211,7 @@ class NasaEarthdataService
 
             if ($response->successful()) {
                 $this->token = $response->json('token');
-                Cache::put($cacheKey, $this->token, now()->addHours(24));
+                Cache::put($cacheKey, $this->token, $this->cacheService->getNasaTokenTtl());
                 return $this->token;
             }
         } catch (\Exception $e) {
@@ -211,12 +279,11 @@ class NasaEarthdataService
     private function storeData(Plot $plot, array $data): PlotRemoteSensing
     {
         $healthStatus = $this->calculateHealthStatus($data['ndvi_mean']);
+        $trend = $this->calculateTrend($plot, $data['ndvi_mean'], $data['image_date']);
 
-        return PlotRemoteSensing::updateOrCreate(
-            [
-                'plot_id' => $plot->id,
-                'image_date' => $data['image_date']->format('Y-m-d'),
-            ],
+        return $this->repository->createOrUpdate(
+            $plot,
+            $data['image_date'],
             [
                 'ndvi_mean' => $data['ndvi_mean'],
                 'ndvi_min' => $data['ndvi_min'],
@@ -224,7 +291,7 @@ class NasaEarthdataService
                 'cloud_coverage' => $data['cloud_coverage'],
                 'image_source' => $data['image_source'],
                 'health_status' => $healthStatus,
-                'trend' => $this->calculateTrend($plot, $data['ndvi_mean']),
+                'trend' => $trend,
             ]
         );
     }
@@ -246,12 +313,9 @@ class NasaEarthdataService
     /**
      * Calculate trend compared to previous reading
      */
-    private function calculateTrend(Plot $plot, float $currentNdvi): string
+    private function calculateTrend(Plot $plot, float $currentNdvi, Carbon $currentDate): string
     {
-        $previous = PlotRemoteSensing::where('plot_id', $plot->id)
-            ->orderBy('image_date', 'desc')
-            ->skip(1)
-            ->first();
+        $previous = $this->repository->getPreviousData($plot, $currentDate);
 
         if (!$previous) {
             return 'stable';
@@ -268,10 +332,16 @@ class NasaEarthdataService
 
     /**
      * Generate realistic mock data for development
+     * Uses plot_id as seed for consistency
      */
     private function generateMockData(Plot $plot): array
     {
         $month = now()->month;
+        $day = now()->day;
+        
+        // Use plot ID as seed for consistent data per plot
+        $seed = $plot->id * 1000 + ($month * 100) + $day;
+        mt_srand($seed);
         
         // Seasonal NDVI for vineyards
         $seasonalBase = match (true) {
@@ -281,7 +351,7 @@ class NasaEarthdataService
             default => 0.25,                      // Winter: dormant
         };
 
-        // Add some randomness
+        // Add some randomness (but consistent for the same day)
         $variation = (mt_rand(-10, 10) / 100);
         $ndvi = max(0.1, min(0.9, $seasonalBase + $variation));
 
@@ -295,6 +365,9 @@ class NasaEarthdataService
             default => 0.05,                      // Winter: low
         };
         $ndwi = $ndwiBase + (mt_rand(-15, 15) / 100);
+        
+        // Reset random seed
+        mt_srand();
 
         return [
             'ndvi_mean' => round($ndvi, 3),
@@ -311,16 +384,25 @@ class NasaEarthdataService
     }
 
     /**
-     * Generate mock historical data
+     * Generate and persist mock historical data to database
+     * Only creates data if it doesn't already exist for that date
      */
-    private function generateMockHistorical(Plot $plot, int $days): \Illuminate\Support\Collection
+    private function generateAndPersistMockHistorical(Plot $plot): void
     {
-        $data = collect();
         $currentDate = now();
 
-        for ($i = 0; $i < 20; $i++) { // Generate 20 data points
+        for ($i = 0; $i < 20; $i++) { // Generate 20 data points (every 16 days for ~1 year)
             $date = $currentDate->copy()->subDays($i * 16);
             $month = $date->month;
+            
+            // Skip if data already exists for this date
+            if ($this->repository->existsForDate($plot, $date)) {
+                continue;
+            }
+
+            // Use consistent seed based on plot_id and date
+            $seed = $plot->id * 10000 + ($date->year * 100) + $date->dayOfYear;
+            mt_srand($seed);
 
             $seasonalBase = match (true) {
                 $month >= 6 && $month <= 8 => 0.75,
@@ -349,8 +431,15 @@ class NasaEarthdataService
                 default => 8,
             };
             $temp = $tempBase + mt_rand(-5, 5);
+            
+            // Calculate trend from previous data
+            $trend = $this->calculateTrend($plot, $ndvi, $date);
+            
+            // Reset seed
+            mt_srand();
 
-            $record = new PlotRemoteSensing([
+            // Create record in database
+            $this->repository->createOrUpdate($plot, $date, [
                 'plot_id' => $plot->id,
                 'ndvi_mean' => round($ndvi, 3),
                 'ndvi_min' => round($ndvi - 0.03, 3),
@@ -362,17 +451,17 @@ class NasaEarthdataService
                 'image_date' => $date,
                 'image_source' => 'NASA MODIS (Mock)',
                 'health_status' => $this->calculateHealthStatus($ndvi),
-                'trend' => 'stable',
+                'trend' => $trend,
                 'temperature' => $temp,
                 'precipitation' => mt_rand(0, 20),
                 'humidity' => mt_rand(40, 80),
                 'soil_moisture' => mt_rand(15, 45),
                 'et0' => round(mt_rand(30, 70) / 10, 1),
             ]);
-
-            $data->push($record);
-        }
-
-        return $data;
+        
+        Log::info('Mock historical data persisted', [
+            'plot_id' => $plot->id,
+            'records_created' => 20,
+        ]);
     }
 }

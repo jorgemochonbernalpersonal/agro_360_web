@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,14 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('plots', function (Blueprint $table) {
-            // Índice compuesto para búsquedas comunes: viticulturist_id + active
-            // Nota: winery_id fue eliminado de plots en una migración posterior (2025_12_18_101200)
-            $table->index(['viticulturist_id', 'active'], 'idx_plots_viticulturist_active');
-            
-            // Índice para búsquedas por nombre (si se usa frecuentemente)
-            $table->index('name', 'idx_plots_name');
-        });
+        $connection = Schema::getConnection();
+        
+        // Usar SQL crudo con IF NOT EXISTS para ser idempotente
+        // Índice compuesto para búsquedas comunes: viticulturist_id + active
+        $connection->statement('CREATE INDEX IF NOT EXISTS idx_plots_viticulturist_active ON plots (viticulturist_id, active)');
+        
+        // Índice para búsquedas por nombre
+        $connection->statement('CREATE INDEX IF NOT EXISTS idx_plots_name ON plots (name)');
     }
 
     /**
@@ -26,9 +27,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('plots', function (Blueprint $table) {
-            $table->dropIndex('idx_plots_viticulturist_active');
-            $table->dropIndex('idx_plots_name');
-        });
+        $connection = Schema::getConnection();
+        
+        $connection->statement('DROP INDEX IF EXISTS idx_plots_viticulturist_active ON plots');
+        $connection->statement('DROP INDEX IF EXISTS idx_plots_name ON plots');
     }
 };

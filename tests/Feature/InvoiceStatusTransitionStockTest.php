@@ -34,7 +34,6 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->actingAs($this->user);
     }
 
-    /** @test */
     public function changing_draft_to_sent_converts_reservations_to_sales()
     {
         // Arrange - Create draft invoice with items
@@ -80,7 +79,6 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals($quantity, $containerState->sold_qty);
     }
 
-    /** @test */
     public function changing_draft_to_approved_converts_reservations_to_sales()
     {
         // Arrange
@@ -115,7 +113,6 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->reserved_qty);
     }
 
-    /** @test */
     public function changing_sent_back_to_draft_converts_sales_to_reservations()
     {
         // Arrange - Create sent invoice
@@ -153,7 +150,6 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->sold_qty);
     }
 
-    /** @test */
     public function cancelling_draft_invoice_releases_all_stock()
     {
         // Arrange
@@ -192,7 +188,6 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->reserved_qty);
     }
 
-    /** @test */
     public function cancelling_sent_invoice_releases_sold_stock()
     {
         // Arrange
@@ -229,7 +224,6 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->sold_qty);
     }
 
-    /** @test */
     public function deleting_invoice_releases_all_stock()
     {
         // Arrange
@@ -266,7 +260,6 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->sold_qty);
     }
 
-    /** @test */
     public function multiple_items_transition_correctly()
     {
         // Arrange - Create draft invoice with multiple harvest items

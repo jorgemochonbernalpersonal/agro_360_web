@@ -34,7 +34,6 @@ class StockManagementIntegrationTest extends TestCase
         $this->actingAs($this->user);
     }
 
-    /** @test */
     public function complete_flow_create_approve_cancel_restores_stock()
     {
         // Get initial stock
@@ -97,7 +96,6 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(0, $containerState->sold_qty);
     }
 
-    /** @test */
     public function stock_accuracy_after_multiple_operations()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
@@ -161,7 +159,6 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($initialAvailable - $quantities[0], $finalStock->available_qty);
     }
 
-    /** @test */
     public function modifying_quantities_maintains_stock_integrity()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
@@ -214,7 +211,6 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(150, $finalStock->sold_qty);
     }
 
-    /** @test */
     public function preventing_overselling_maintains_data_integrity()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
@@ -284,7 +280,6 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(50, $stockAfterCancel->available_qty);
     }
 
-    /** @test */
     public function stock_movements_create_complete_audit_trail()
     {
         $invoice = Invoice::factory()->draft()->create([

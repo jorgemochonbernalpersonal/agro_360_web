@@ -8,6 +8,7 @@ use App\Services\RemoteSensing\NasaEarthdataService;
 use App\Services\RemoteSensing\WeatherService;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Unified plot analysis view with all remote sensing and weather data
@@ -201,6 +202,15 @@ class PlotAnalysis extends Component
 
     public function refreshData()
     {
+        // Clear all caches
+        $nasaService = new NasaEarthdataService();
+        $nasaService->clearCache($this->plot);
+        
+        Cache::forget("weather_{$this->plot->id}");
+        Cache::forget("forecast_{$this->plot->id}_7");
+        Cache::forget("soil_{$this->plot->id}");
+        Cache::forget("solar_{$this->plot->id}");
+        
         $this->loadAllData();
         $this->dispatch('notify', [
             'type' => 'success',

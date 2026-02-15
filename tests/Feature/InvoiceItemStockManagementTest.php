@@ -33,7 +33,6 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->actingAs($this->user);
     }
 
-    /** @test */
     public function creating_draft_invoice_item_reserves_stock()
     {
         // Arrange
@@ -78,7 +77,6 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($quantity, $containerState->reserved_qty);
     }
 
-    /** @test */
     public function creating_approved_invoice_item_marks_as_sold()
     {
         // Arrange
@@ -122,7 +120,6 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($quantity, $containerState->sold_qty);
     }
 
-    /** @test */
     public function updating_quantity_in_draft_adjusts_reservation()
     {
         // Arrange
@@ -157,7 +154,6 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockAfterCreate->available_qty - 100, $latestStock->available_qty);
     }
 
-    /** @test */
     public function updating_quantity_in_sent_invoice_adjusts_sale()
     {
         // Arrange
@@ -192,7 +188,6 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockAfterCreate->available_qty + 50, $latestStock->available_qty);
     }
 
-    /** @test */
     public function deleting_draft_item_unreserves_stock()
     {
         // Arrange
@@ -229,7 +224,6 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockBeforeDelete->reserved_qty - $quantity, $latestStock->reserved_qty);
     }
 
-    /** @test */
     public function deleting_sent_item_returns_stock()
     {
         // Arrange
@@ -266,7 +260,6 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockBeforeDelete->sold_qty - $quantity, $latestStock->sold_qty);
     }
 
-    /** @test */
     public function container_state_updates_correctly_on_all_operations()
     {
         // Arrange

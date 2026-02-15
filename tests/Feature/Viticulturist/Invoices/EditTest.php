@@ -46,7 +46,6 @@ class EditTest extends TestCase
         $this->actingAs($this->user);
     }
 
-    /** @test */
     public function it_can_load_invoice_data()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -70,7 +69,6 @@ class EditTest extends TestCase
         $component->assertSet('items.0.unit_price', 2.5);
     }
 
-    /** @test */
     public function it_calculates_subtotal_correctly()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -112,7 +110,6 @@ class EditTest extends TestCase
         $component->assertSet('subtotal', 104.0);
     }
 
-    /** @test */
     public function it_calculates_discount_amount_correctly()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -140,7 +137,6 @@ class EditTest extends TestCase
         $component->assertSet('discountAmount', 150.0);
     }
 
-    /** @test */
     public function it_calculates_tax_amount_correctly()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -169,7 +165,6 @@ class EditTest extends TestCase
         $component->assertSet('taxAmount', 42.0);
     }
 
-    /** @test */
     public function it_calculates_total_amount_correctly()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -201,7 +196,6 @@ class EditTest extends TestCase
         $component->assertSet('totalAmount', 1089.0);
     }
 
-    /** @test */
     public function it_recalculates_totals_when_item_quantity_changes()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -235,7 +229,6 @@ class EditTest extends TestCase
         $component->assertSet('subtotal', 100.0);
     }
 
-    /** @test */
     public function it_recalculates_totals_when_item_price_changes()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -266,7 +259,6 @@ class EditTest extends TestCase
         $component->assertSet('subtotal', 75.0);
     }
 
-    /** @test */
     public function it_recalculates_totals_when_item_discount_changes()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -303,7 +295,6 @@ class EditTest extends TestCase
         $component->assertSet('discountAmount', 200.0);
     }
 
-    /** @test */
     public function it_recalculates_totals_when_item_tax_changes()
     {
         $tax10 = Tax::create([
@@ -343,7 +334,6 @@ class EditTest extends TestCase
         $component->assertSet('taxAmount', 100.0);
     }
 
-    /** @test */
     public function it_recalculates_totals_when_item_is_added()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -383,7 +373,6 @@ class EditTest extends TestCase
         $component->assertSet('subtotal', 110.0);
     }
 
-    /** @test */
     public function it_recalculates_totals_when_item_is_removed()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -427,7 +416,6 @@ class EditTest extends TestCase
         $component->assertSet('subtotal', 50.0);
     }
 
-    /** @test */
     public function it_resets_all_data_when_cancel_is_called()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -476,7 +464,6 @@ class EditTest extends TestCase
         $component->assertSet('items.0.unit_price', 10.0);
     }
 
-    /** @test */
     public function it_updates_invoice_when_update_is_called()
     {
         $invoice = Invoice::factory()->draft()->create([
@@ -527,7 +514,6 @@ class EditTest extends TestCase
         $this->assertEquals(283.5, round($invoice->tax_amount, 2));
     }
 
-    /** @test */
     public function it_updates_container_state_when_invoice_item_with_harvest_is_modified()
     {
         // Crear contenedor y cosecha

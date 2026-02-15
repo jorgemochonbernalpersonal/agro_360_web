@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Builders\PlotQueryBuilder;
+use App\Models\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plot extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
     
     protected $fillable = [
         'name',
@@ -168,12 +169,10 @@ class Plot extends Model
     }
     
     /**
-     * Logs de auditoría de la parcela
+     * Historial de auditoría de la parcela (gestionado por trait Auditable)
+     * El trait Auditable proporciona auditLogs() via MorphMany
      */
-    public function auditLogs(): HasMany
-    {
-        return $this->hasMany(PlotAuditLog::class);
-    }
+    // ELIMINADO - ahora se usa el trait Auditable
 
     /**
      * Datos de teledetección de la parcela

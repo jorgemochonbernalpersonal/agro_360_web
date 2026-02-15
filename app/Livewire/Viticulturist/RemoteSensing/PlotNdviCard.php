@@ -34,7 +34,9 @@ class PlotNdviCard extends Component
 
         try {
             $service = new NasaEarthdataService();
-            $this->latestData = $service->getLatestData($this->plot);
+            
+            // Force refresh will generate new data for today if needed
+            $this->latestData = $service->getLatestData($this->plot, false);
             
             // Calculate year-over-year comparison
             $this->calculateYearComparison();
@@ -52,6 +54,7 @@ class PlotNdviCard extends Component
             \Log::error('Error loading remote sensing data', [
                 'plot_id' => $this->plot->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
         }
 
@@ -101,6 +104,10 @@ class PlotNdviCard extends Component
 
     public function refreshData()
     {
+        // Clear cache first
+        $service = new NasaEarthdataService();
+        $service->clearCache($this->plot);
+        
         $this->loadData();
         $this->dispatch('notify', [
             'type' => 'success',

@@ -83,6 +83,14 @@ class PhytosanitaryReportGenerator
     }
 
     /**
+     * Generar solo el PDF (para uso en Jobs)
+     */
+    public function generatePDF(OfficialReport $report, $user, $treatments, $stats): string
+    {
+        return $this->pdfGenerator->generatePhytosanitaryPdf($report, $user, $treatments, $stats);
+    }
+
+    /**
      * Validar contraseña de firma digital
      */
     protected function validateDigitalSignature(User $user, string $password): void

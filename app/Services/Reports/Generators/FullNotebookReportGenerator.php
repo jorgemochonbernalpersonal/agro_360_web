@@ -98,6 +98,14 @@ class FullNotebookReportGenerator
     }
 
     /**
+     * Generar solo el PDF (para uso en Jobs)
+     */
+    public function generatePDF(OfficialReport $report, $user, $campaign, $activities, $stats): string
+    {
+        return $this->pdfGenerator->generateFullNotebookPdf($report, $user, $campaign, $activities, $stats);
+    }
+
+    /**
      * Validar contraseña de firma digital
      */
     protected function validateDigitalSignature(User $user, string $password): void

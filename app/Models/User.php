@@ -130,6 +130,22 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Parcelas donde el usuario es viticultor
+     */
+    public function plots()
+    {
+        return $this->hasMany(Plot::class, 'viticulturist_id');
+    }
+
+    /**
+     * Campañas donde el usuario es viticultor
+     */
+    public function campaigns()
+    {
+        return $this->hasMany(Campaign::class, 'viticulturist_id');
+    }
+
+    /**
      * Boot del modelo - limpiar cache cuando se actualiza
      */
     protected static function booted()
