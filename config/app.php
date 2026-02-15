@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Legal Owner (LSSI - Ley 34/2002)
+    |--------------------------------------------------------------------------
+    |
+    | Datos identificativos del titular para cumplir normativa española.
+    |
+    */
+
+    'legal_owner_name' => env('LEGAL_OWNER_NAME', ''),
+    'legal_owner_dni' => env('LEGAL_OWNER_DNI', ''),
+    'legal_contact_email' => env('LEGAL_CONTACT_EMAIL', 'info@agro365.es'),
+
 ];

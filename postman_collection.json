@@ -1,0 +1,166 @@
+{
+  "info": {
+    "name": "Agro365 API",
+    "description": "API REST para el cuaderno de campo digital Agro365",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@agro365.es\",\n  \"password\": \"password\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plots",
+      "item": [
+        {
+          "name": "List Plots",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/plots?page=1&per_page=15",
+              "host": ["{{base_url}}"],
+              "path": ["plots"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "per_page", "value": "15"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Plot",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/plots/1",
+              "host": ["{{base_url}}"],
+              "path": ["plots", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Plot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/plots",
+              "host": ["{{base_url}}"],
+              "path": ["plots"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nueva Parcela\",\n  \"area\": 5.5,\n  \"tenure_regime\": \"propiedad\",\n  \"viticulturist_id\": 1,\n  \"province_id\": 26,\n  \"municipality_id\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activities",
+      "item": [
+        {
+          "name": "List Activities",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/activities?campaign_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["activities"],
+              "query": [
+                {"key": "campaign_id", "value": "1"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities",
+              "host": ["{{base_url}}"],
+              "path": ["activities"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plot_id\": 1,\n  \"campaign_id\": 1,\n  \"activity_type\": \"phytosanitary\",\n  \"activity_date\": \"2026-02-15\",\n  \"temperature\": 20\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

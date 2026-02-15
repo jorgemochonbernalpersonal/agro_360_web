@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Builders\PlotQueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class Plot extends Model
 {
     use HasFactory;
+    
     protected $fillable = [
         'name',
         'description',
@@ -42,6 +44,14 @@ class Plot extends Model
         'locked_at' => 'datetime',
         'alert_email_enabled' => 'boolean',
     ];
+
+    /**
+     * Usar Query Builder personalizado
+     */
+    public function newEloquentBuilder($query): PlotQueryBuilder
+    {
+        return new PlotQueryBuilder($query);
+    }
 
     /**
      * Viticultor asignado a la parcela
@@ -259,85 +269,8 @@ class Plot extends Model
     }
 
     /**
-     * Scope para filtrar parcelas según el usuario
-     */
-    public function scopeForUser($query, User $user)
-    {
-        return match ($user->role) {
-            'admin' => $query,
-            'supervisor' => $query->whereIn('viticulturist_id', function($q) use ($user) {
-                // Obtener viticultores pertenecientes a las wineries supervisadas
-                $q->select('viticulturist_id')
-                  ->from('winery_viticulturist')
-                  ->whereIn('winery_id', function($sq) use ($user) {
-                      $sq->select('winery_id')
-                         ->from('supervisor_winery')
-                         ->where('supervisor_id', $user->id);
-                  });
-            }),
-            'winery' => $query->whereIn('viticulturist_id', function($q) use ($user) {
-                $q->select('viticulturist_id')
-                  ->from('winery_viticulturist')
-                  ->where('winery_id', $user->id);
-            }),
-            'viticulturist' => $query->forViticulturist($user),
-            default => $query->whereRaw('1 = 0'),
-        };
-    }
-
-    /**
-     * Scope para filtrar parcelas visibles para un viticultor
-     * Incluye sus propias parcelas y parcelas de viticultores visibles
-     * ✅ OPTIMIZADO: Usa subconsultas directas en lugar de múltiples queries
-     */
-    public function scopeForViticulturist($query, User $user)
-    {
-        if (!$user->isViticulturist()) {
-            return $query->whereRaw('1 = 0');
-        }
-
-        return $query->where(function($q) use ($user) {
-            // Sus propias parcelas
-            $q->where('viticulturist_id', $user->id);
-            
-            // ✅ OPTIMIZACIÓN: Parcelas de viticultores creados por él (subconsulta directa)
-            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
-                $subQuery->select('viticulturist_id')
-                    ->from('winery_viticulturist')
-                    ->where('parent_viticulturist_id', $user->id)
-                    ->where('source', 'viticulturist'); // ✅ FIX: Usar string literal en lugar de constante
-            });
-            
-            // ✅ OPTIMIZACIÓN: Parcelas de viticultores del supervisor (subconsulta directa)
-            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
-                $subQuery->select('wv2.viticulturist_id')
-                    ->from('winery_viticulturist as wv1')
-                    ->join('winery_viticulturist as wv2', function($join) {
-                        $join->on('wv2.supervisor_id', '=', 'wv1.supervisor_id')
-                             ->where('wv2.source', '=', 'supervisor'); // ✅ FIX: Usar string literal
-                    })
-                    ->where('wv1.viticulturist_id', $user->id)
-                    ->where('wv1.source', 'supervisor') // ✅ FIX: Usar string literal
-                    ->whereNotNull('wv1.supervisor_id');
-            });
-            
-            // ✅ OPTIMIZACIÓN: Parcelas de viticultores de sus wineries (subconsulta directa)
-            $q->orWhereIn('viticulturist_id', function($subQuery) use ($user) {
-                $subQuery->select('wv2.viticulturist_id')
-                    ->from('winery_viticulturist as wv1')
-                    ->join('winery_viticulturist as wv2', 'wv2.winery_id', '=', 'wv1.winery_id')
-                    ->where('wv1.viticulturist_id', $user->id)
-                    ->whereNotNull('wv1.winery_id')
-                    ->where(function($wineryQ) {
-                        $wineryQ->where('wv2.source', 'own') // ✅ FIX: Usar string literal
-                                ->orWhere('wv2.source', 'viticulturist'); // ✅ FIX: Usar string literal
-                    });
-            });
-        });
-    }
-
-    /**
      * Tratamientos con plazo de seguridad activo (optimizado)
+     * NOTA: Este método permanece en el modelo porque opera sobre una instancia
      */
     public function activeWithdrawalPeriods()
     {

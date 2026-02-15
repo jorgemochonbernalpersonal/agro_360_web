@@ -64,8 +64,12 @@
                     </p>
                     <ul class="mt-4 space-y-2 text-gray-700">
                         <li><strong>Denominación social:</strong> Agro365</li>
+                        @if(config('app.legal_owner_name'))
+                        <li><strong>Titular / Responsable:</strong> {{ config('app.legal_owner_name') }}</li>
+                        <li><strong>NIF/DNI:</strong> {{ config('app.legal_owner_dni') }}</li>
+                        @endif
                         <li><strong>Dominio:</strong> agro365.es</li>
-                        <li><strong>Email de contacto:</strong> info@agro365.es</li>
+                        <li><strong>Email de contacto:</strong> <a href="mailto:{{ config('app.legal_contact_email') }}" class="text-[var(--color-agro-green-dark)] hover:underline">{{ config('app.legal_contact_email') }}</a></li>
                         <li><strong>Actividad:</strong> Software de gestión agrícola</li>
                     </ul>
                 </section>

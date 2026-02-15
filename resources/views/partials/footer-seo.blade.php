@@ -17,12 +17,18 @@
                 <p class="text-white/70 mb-4 text-sm">
                     Software de gestión agrícola profesional para viticultores en España.
                 </p>
-                <div class="flex items-center gap-2 text-white/60 text-sm mb-4">
+                <div class="flex items-center gap-2 text-white/60 text-sm mb-2">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
                     </svg>
                     <span>España</span>
                 </div>
+                <a href="mailto:{{ config('app.legal_contact_email', 'info@agro365.es') }}" class="flex items-center gap-2 text-white hover:text-white/90 text-sm font-medium transition-colors mb-4">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    {{ config('app.legal_contact_email', 'info@agro365.es') }}
+                </a>
                 @guest
                     <a href="{{ route('register') }}" rel="nofollow" class="inline-block px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-sm font-semibold">
                         Prueba Gratis 6 Meses
@@ -79,7 +85,15 @@
             
             <!-- Recursos & Legal -->
             <div>
-                <h4 class="font-semibold text-lg mb-4">Recursos</h4>
+                <h4 class="font-semibold text-lg mb-4">Contacto</h4>
+                <p class="text-white/70 text-sm mb-4">
+                    ¿Dudas? Escríbenos:
+                </p>
+                <a href="mailto:{{ config('app.legal_contact_email', 'info@agro365.es') }}" class="text-white font-medium hover:underline transition-colors">
+                    {{ config('app.legal_contact_email', 'info@agro365.es') }}
+                </a>
+                
+                <h4 class="font-semibold text-lg mb-4 mt-6">Recursos</h4>
                 <ul class="space-y-2 text-white/70 text-sm mb-6">
                     <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
                     <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog Agro365</a></li>
@@ -92,6 +106,7 @@
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ route('aviso-legal') }}" class="hover:text-white transition-colors">Aviso Legal</a></li>
                     <li><a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Privacidad</a></li>
+                    <li><a href="{{ route('cookies') }}" class="hover:text-white transition-colors">Cookies</a></li>
                     <li><a href="{{ route('terms') }}" class="hover:text-white transition-colors">Términos</a></li>
                 </ul>
             </div>
@@ -102,6 +117,9 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
                 <p class="text-white/60">
                     &copy; {{ date('Y') }} Agro365. Todos los derechos reservados.
+                    @if(config('app.legal_owner_name'))
+                        <span class="text-white/50"> · Titular: {{ config('app.legal_owner_name') }}</span>
+                    @endif
                 </p>
                 <p class="text-white/50">
                     Software gestión agrícola para viticultores profesionales · Versión Beta
@@ -130,7 +148,7 @@
     "foundingDate": "2024",
     "contactPoint": {
         "@@type": "ContactPoint",
-        "email": "info@agro365.es",
+        "email": "{{ config('app.legal_contact_email', 'info@agro365.es') }}",
         "contactType": "customer service",
         "availableLanguage": ["Spanish"],
         "areaServed": "ES"

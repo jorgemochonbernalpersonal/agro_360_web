@@ -1,0 +1,65 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "align_multiline_comment": true,
+        "array_indentation": true,
+        "blank_line_after_opening_tag": true,
+        "blank_line_between_import_groups": true,
+        "class_attributes_separation": {
+            "elements": {
+                "const": "one",
+                "method": "one",
+                "property": "one",
+                "trait_import": "none"
+            }
+        },
+        "method_chaining_indentation": true,
+        "no_extra_blank_lines": {
+            "tokens": [
+                "extra",
+                "throw",
+                "use"
+            ]
+        },
+        "no_spaces_around_offset": {
+            "positions": ["inside", "outside"]
+        },
+        "no_unused_imports": true,
+        "no_useless_return": true,
+        "ordered_class_elements": {
+            "order": [
+                "use_trait",
+                "constant_public",
+                "constant_protected",
+                "constant_private",
+                "property_public",
+                "property_protected",
+                "property_private",
+                "construct",
+                "destruct",
+                "magic",
+                "phpunit",
+                "method_public",
+                "method_protected",
+                "method_private"
+            ]
+        },
+        "ordered_imports": {
+            "sort_algorithm": "alpha"
+        },
+        "phpdoc_add_missing_param_annotation": true,
+        "phpdoc_align": {
+            "align": "vertical"
+        },
+        "phpdoc_order": true,
+        "phpdoc_separation": true,
+        "phpdoc_single_line_var_spacing": true,
+        "return_type_declaration": {
+            "space_before": "none"
+        },
+        "single_quote": true,
+        "trailing_comma_in_multiline": {
+            "elements": ["arrays"]
+        }
+    }
+}
