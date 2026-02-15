@@ -620,8 +620,16 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 $etData ?? []
             );
 
+            // Extract image_date for unique key (services may not provide it)
+            $imageDate = isset($mergedData['image_date'])
+                ? Carbon::parse($mergedData['image_date'])
+                : Carbon::today();
+
+            // Prepare data for repository: map service keys to model columns, exclude image_date
+            $data = $this->prepareUltraEnrichedDataForStorage($plot, $mergedData, $imageDate);
+
             // Store in database
-            $result = $this->repository->createOrUpdate($plot, $mergedData);
+            $result = $this->repository->createOrUpdate($plot, $imageDate, $data);
 
             // Area request (async) if requested
             if ($includeArea && $result) {
@@ -645,6 +653,40 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             
             return $this->getLatestData($plot);
         }
+    }
+
+    /**
+     * Prepare merged ultra-enriched data for storage.
+     * Maps service keys to model columns and computes health_status/trend.
+     */
+    private function prepareUltraEnrichedDataForStorage(Plot $plot, array $mergedData, Carbon $imageDate): array
+    {
+        // Map service-specific keys to model column names
+        $data = [];
+        $keyMap = [
+            'soil_moisture_surface' => 'soil_moisture_surface_smap',
+            'soil_moisture_rootzone' => 'soil_moisture_rootzone_smap',
+            'et_daily' => 'et_nasa',
+            'pet_daily' => 'pet_nasa',
+        ];
+
+        foreach ($mergedData as $key => $value) {
+            if ($key === 'image_date') {
+                continue; // Used for unique key, not in update data
+            }
+            $modelKey = $keyMap[$key] ?? $key;
+            $data[$modelKey] = $value;
+        }
+
+        // Compute health_status and trend from NDVI if available
+        $ndvi = $mergedData['ndvi_mean'] ?? null;
+        if ($ndvi !== null && is_numeric($ndvi)) {
+            $ndviFloat = (float) $ndvi;
+            $data['health_status'] = $this->calculateHealthStatus($ndviFloat);
+            $data['trend'] = $this->calculateTrend($plot, $ndviFloat, $imageDate);
+        }
+
+        return $data;
     }
 
     /**
