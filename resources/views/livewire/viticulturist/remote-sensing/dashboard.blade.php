@@ -642,28 +642,157 @@
 
             <!-- History Tab -->
             @if($activeTab === 'history')
-                <h3 class="text-md font-semibold mb-3">📈 Evolución NDVI - 90 días</h3>
-                @if(count($historicalData) > 0)
-                    <div class="h-48 flex items-end justify-between gap-1 bg-gray-50 rounded-lg p-3">
-                        @foreach($historicalData as $index => $data)
-                            @php
-                                $height = ($data['ndvi'] + 1) / 2 * 100;
-                                $color = $data['ndvi'] >= 0.5 ? 'bg-green-500' : ($data['ndvi'] >= 0.3 ? 'bg-yellow-500' : 'bg-red-500');
-                            @endphp
-                            <div class="flex-1 flex flex-col items-center group relative">
-                                <div class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 z-10">
-                                    {{ $data['fullDate'] }}: {{ number_format($data['ndvi'], 3) }}
+                {{-- Period Selector --}}
+                <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        {{-- Predefined Periods --}}
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                📅 Período de análisis
+                            </label>
+                            <select wire:model.live="historyPeriod" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                <option value="7_days">Últimos 7 días</option>
+                                <option value="30_days">Últimos 30 días</option>
+                                <option value="90_days">Últimos 90 días (por defecto)</option>
+                                <option value="current_season">Temporada actual (Abril - Hoy)</option>
+                                <option value="last_season">Temporada anterior (Abril - Octubre)</option>
+                                <option value="1_year">Último año</option>
+                                <option value="custom">🎯 Personalizado</option>
+                            </select>
+                        </div>
+
+                        {{-- Custom Date Range (only visible when custom is selected) --}}
+                        @if($historyPeriod === 'custom')
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Rango personalizado
+                                </label>
+                                <div class="flex gap-2 items-end">
+                                    <div class="flex-1">
+                                        <input type="date" 
+                                               wire:model="customStartDate"
+                                               max="{{ now()->format('Y-m-d') }}"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                                               placeholder="Desde">
+                                    </div>
+                                    <span class="text-gray-500">→</span>
+                                    <div class="flex-1">
+                                        <input type="date" 
+                                               wire:model="customEndDate"
+                                               max="{{ now()->format('Y-m-d') }}"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                                               placeholder="Hasta">
+                                    </div>
+                                    <button wire:click="applyCustomDateRange"
+                                            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
+                                        Aplicar
+                                    </button>
                                 </div>
-                                <div class="w-full {{ $color }} rounded-t transition-all hover:opacity-80" style="height: {{ max(10, $height) }}%;"></div>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Máximo: 2 años de rango
+                                </p>
                             </div>
-                        @endforeach
+                        @endif
                     </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>← 90 días</span>
-                        <span>Hoy →</span>
+
+                    {{-- Period Info --}}
+                    <div class="mt-3 flex items-center gap-4 text-sm text-gray-600">
+                        <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Mostrando: <strong>{{ $historyDays }} días</strong>
+                        </span>
+                        @if(count($historicalData) > 0)
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                <strong>{{ count($historicalData) }}</strong> registros
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Historical Chart --}}
+                <h3 class="text-md font-semibold mb-3">📈 Evolución NDVI</h3>
+                @if(count($historicalData) > 0)
+                    <div class="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+                        <div class="h-64 flex items-end justify-between gap-1 bg-gray-50 rounded-lg p-4">
+                            @foreach($historicalData as $index => $data)
+                                @php
+                                    $height = ($data['ndvi'] + 1) / 2 * 100;
+                                    $color = match($data['health_status'] ?? 'moderate') {
+                                        'excellent' => 'bg-green-600',
+                                        'good' => 'bg-green-500',
+                                        'moderate' => 'bg-yellow-500',
+                                        'poor' => 'bg-orange-500',
+                                        'critical' => 'bg-red-500',
+                                        default => 'bg-gray-400',
+                                    };
+                                @endphp
+                                <div class="flex-1 flex flex-col items-center group relative">
+                                    {{-- Tooltip --}}
+                                    <div class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded py-2 px-3 z-10 whitespace-nowrap">
+                                        <div class="font-semibold">{{ $data['fullDate'] }}</div>
+                                        <div>NDVI: {{ number_format($data['ndvi'], 3) }}</div>
+                                        <div class="text-gray-300 capitalize">{{ $data['health_status'] ?? 'N/A' }}</div>
+                                    </div>
+                                    {{-- Bar --}}
+                                    <div class="w-full {{ $color }} rounded-t transition-all hover:opacity-80 cursor-pointer" 
+                                         style="height: {{ max(10, $height) }}%;"></div>
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        {{-- X-axis labels --}}
+                        <div class="flex justify-between text-xs text-gray-500 mt-2 px-2">
+                            @if(count($historicalData) > 0)
+                                <span>← {{ $historicalData[count($historicalData) - 1]['fullDate'] ?? '' }}</span>
+                                <span>{{ $historicalData[0]['fullDate'] ?? '' }} →</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Statistics Summary --}}
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        @php
+                            $ndviValues = array_column($historicalData, 'ndvi');
+                            $avgNdvi = count($ndviValues) > 0 ? array_sum($ndviValues) / count($ndviValues) : 0;
+                            $maxNdvi = count($ndviValues) > 0 ? max($ndviValues) : 0;
+                            $minNdvi = count($ndviValues) > 0 ? min($ndviValues) : 0;
+                            $stdDev = count($ndviValues) > 1 ? sqrt(array_sum(array_map(fn($x) => pow($x - $avgNdvi, 2), $ndviValues)) / count($ndviValues)) : 0;
+                        @endphp
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                            <div class="text-xs text-blue-600 mb-1">Promedio</div>
+                            <div class="text-2xl font-bold text-blue-900">{{ number_format($avgNdvi, 3) }}</div>
+                        </div>
+                        
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                            <div class="text-xs text-green-600 mb-1">Máximo</div>
+                            <div class="text-2xl font-bold text-green-900">{{ number_format($maxNdvi, 3) }}</div>
+                        </div>
+                        
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                            <div class="text-xs text-orange-600 mb-1">Mínimo</div>
+                            <div class="text-2xl font-bold text-orange-900">{{ number_format($minNdvi, 3) }}</div>
+                        </div>
+                        
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+                            <div class="text-xs text-purple-600 mb-1">Variabilidad</div>
+                            <div class="text-2xl font-bold text-purple-900">{{ number_format($stdDev, 3) }}</div>
+                        </div>
                     </div>
                 @else
-                    <p class="text-center text-gray-500 py-8">No hay datos históricos</p>
+                    <div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <p class="text-gray-600 font-medium mb-1">No hay datos históricos</p>
+                        <p class="text-sm text-gray-500">Para el período seleccionado</p>
+                    </div>
                 @endif
             @endif
         </div>

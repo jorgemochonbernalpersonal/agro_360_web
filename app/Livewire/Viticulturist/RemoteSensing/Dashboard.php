@@ -36,6 +36,12 @@ class Dashboard extends Component
     public ?float $lastYearNdvi = null;
     public ?float $yearChange = null;
     
+    // Historical data filters
+    public string $historyPeriod = '90_days';
+    public ?string $customStartDate = null;
+    public ?string $customEndDate = null;
+    public int $historyDays = 90;
+    
     // Weather data
     public array $weather = [];
     public array $soil = [];
@@ -207,12 +213,7 @@ class Dashboard extends Component
             // Load satellite data using dependency injection
             $nasaService = app(NasaEarthdataService::class);
             $this->ndviData = $nasaService->getLatestData($this->selectedPlot, $forceRefresh);
-            $historical = $nasaService->getHistoricalData($this->selectedPlot, 90);
-            $this->historicalData = $historical->map(fn($item) => [
-                'date' => $item->image_date->format('d/m'),
-                'ndvi' => $item->ndvi_mean,
-                'fullDate' => $item->image_date->format('d/m/Y'),
-            ])->values()->toArray();
+            $this->loadHistoricalData();
             
             $this->calculateYearComparison();
             
@@ -231,6 +232,130 @@ class Dashboard extends Component
         }
 
         $this->isLoading = false;
+    }
+
+    /**
+     * Load historical data based on selected period
+     */
+    private function loadHistoricalData()
+    {
+        if (!$this->selectedPlot) return;
+        
+        $nasaService = app(NasaEarthdataService::class);
+        
+        // Calculate date range based on period selection
+        $startDate = null;
+        $endDate = now();
+        
+        switch ($this->historyPeriod) {
+            case '7_days':
+                $this->historyDays = 7;
+                break;
+            case '30_days':
+                $this->historyDays = 30;
+                break;
+            case '90_days':
+                $this->historyDays = 90;
+                break;
+            case 'current_season':
+                // Viñedo: abril a octubre
+                $currentYear = now()->year;
+                $startDate = \Carbon\Carbon::create($currentYear, 4, 1);
+                $endDate = now();
+                if (now()->month < 4) {
+                    $startDate = \Carbon\Carbon::create($currentYear - 1, 4, 1);
+                }
+                $this->historyDays = $startDate->diffInDays($endDate);
+                break;
+            case 'last_season':
+                $currentYear = now()->year;
+                $startDate = \Carbon\Carbon::create($currentYear - 1, 4, 1);
+                $endDate = \Carbon\Carbon::create($currentYear - 1, 10, 31);
+                $this->historyDays = $startDate->diffInDays($endDate);
+                break;
+            case '1_year':
+                $this->historyDays = 365;
+                break;
+            case 'custom':
+                if ($this->customStartDate && $this->customEndDate) {
+                    $startDate = \Carbon\Carbon::parse($this->customStartDate);
+                    $endDate = \Carbon\Carbon::parse($this->customEndDate);
+                    $this->historyDays = $startDate->diffInDays($endDate);
+                } else {
+                    $this->historyDays = 90; // Fallback
+                }
+                break;
+            default:
+                $this->historyDays = 90;
+        }
+        
+        // Load historical data
+        if ($startDate && $endDate && $this->historyPeriod === 'custom') {
+            // Custom date range query
+            $historical = PlotRemoteSensing::where('plot_id', $this->selectedPlot->id)
+                ->whereBetween('image_date', [$startDate, $endDate])
+                ->orderBy('image_date', 'asc')
+                ->get();
+        } else {
+            // Use service method for X days
+            $historical = $nasaService->getHistoricalData($this->selectedPlot, $this->historyDays);
+        }
+        
+        $this->historicalData = $historical->map(fn($item) => [
+            'date' => $item->image_date->format('d/m'),
+            'ndvi' => $item->ndvi_mean,
+            'fullDate' => $item->image_date->format('d/m/Y'),
+            'health_status' => $item->health_status,
+        ])->values()->toArray();
+    }
+
+    /**
+     * Update historical data when period changes
+     */
+    public function updatedHistoryPeriod()
+    {
+        $this->loadHistoricalData();
+    }
+
+    /**
+     * Apply custom date range
+     */
+    public function applyCustomDateRange()
+    {
+        if (!$this->customStartDate || !$this->customEndDate) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Por favor, selecciona ambas fechas',
+            ]);
+            return;
+        }
+        
+        $start = \Carbon\Carbon::parse($this->customStartDate);
+        $end = \Carbon\Carbon::parse($this->customEndDate);
+        
+        if ($start->gt($end)) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'La fecha inicial debe ser anterior a la final',
+            ]);
+            return;
+        }
+        
+        if ($start->diffInDays($end) > 730) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => 'El rango máximo es de 2 años',
+            ]);
+            return;
+        }
+        
+        $this->historyPeriod = 'custom';
+        $this->loadHistoricalData();
+        
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Rango personalizado aplicado',
+        ]);
     }
 
     private function calculateYearComparison(): void
