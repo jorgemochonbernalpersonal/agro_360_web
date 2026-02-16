@@ -87,9 +87,10 @@
     @elseif($selectedPlot)
         <!-- Recommendations Banner -->
         @if(count($recommendations) > 0)
-            <div class="mb-6 flex flex-wrap gap-3">
-                @foreach($recommendations as $rec)
-                    <div class="flex-1 min-w-[200px] p-3 rounded-lg border-l-4
+            <div class="mb-6 flex flex-wrap gap-3" wire:key="recommendations-{{ $selectedPlotId }}">
+                @foreach($recommendations as $index => $rec)
+                    <div wire:key="rec-{{ $selectedPlotId }}-{{ $index }}" 
+                         class="flex-1 min-w-[200px] p-3 rounded-lg border-l-4
                         @if($rec['type'] === 'danger') bg-red-50 border-red-500
                         @elseif($rec['type'] === 'warning') bg-amber-50 border-amber-500
                         @elseif($rec['type'] === 'success') bg-green-50 border-green-500
@@ -177,7 +178,7 @@
         </div>
 
         <!-- Tab Content -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="bg-white rounded-lg shadow-lg p-6" wire:key="tab-content-{{ $selectedPlotId }}-{{ $activeTab }}">
             <!-- Header with plot name -->
             <div class="flex items-center gap-3 mb-4 pb-4 border-b">
                 <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -191,6 +192,115 @@
 
             <!-- Satellite Tab -->
             @if($activeTab === 'satellite')
+                {{-- Date Selector for Satellite Tab --}}
+                <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div class="flex flex-col md:flex-row md:items-center gap-2">
+                        <span class="text-sm font-medium text-gray-700">📅 Fecha de análisis:</span>
+                        @if(count($satelliteAvailableDates) > 0)
+                            <select wire:model.live="satelliteSelectedDate" 
+                                    class="text-sm border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 px-3 py-2">
+                                <option value="">Último dato disponible</option>
+                                @foreach($satelliteAvailableDates as $date)
+                                    <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <span class="text-sm text-amber-600 font-medium bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
+                                ⚠️ Sin datos históricos - Carga datos para comenzar
+                            </span>
+                        @endif
+                    </div>
+                    
+                    <div class="flex items-center gap-2 flex-wrap">
+                        @if($satelliteSelectedDate && count($satelliteAvailableDates) > 0)
+                            <button wire:click="$set('satelliteSelectedDate', '')" 
+                                    class="text-sm text-blue-600 hover:text-blue-800 transition font-medium">
+                                🔄 Ver último dato
+                            </button>
+                        @endif
+                        
+                        {{-- Botón para solicitar datos si no existen o están en cero --}}
+                        @if(!$ndviData || ($ndviData->ndvi_mean ?? 0) == 0)
+                            <button wire:click="requestDataForDate" 
+                                    wire:loading.attr="disabled"
+                                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-medium rounded-lg transition-all shadow-md disabled:opacity-50">
+                                <svg wire:loading.remove wire:target="requestDataForDate" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                <svg wire:loading wire:target="requestDataForDate" class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                <span wire:loading.remove wire:target="requestDataForDate">🛰️ Cargar Datos NASA</span>
+                                <span wire:loading wire:target="requestDataForDate">Cargando...</span>
+                            </button>
+                        @endif
+                    </div>
+                </div>
+                
+                {{-- Alert when no data --}}
+                @if(!$ndviData || ($ndviData->ndvi_mean ?? 0) == 0)
+                    <div class="mb-6 bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-400 rounded-r-lg p-5 shadow-sm">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                                </svg>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h4 class="text-base font-semibold text-yellow-900 mb-2">
+                                    📡 Sin datos satelitales para esta parcela
+                                </h4>
+                                <div class="text-sm text-yellow-800 space-y-2 mb-3">
+                                    <p>Esta parcela <strong>{{ $selectedPlot->name }}</strong> no tiene datos de Remote Sensing cargados
+                                    @if($satelliteSelectedDate)
+                                        para la fecha <strong>{{ \Carbon\Carbon::parse($satelliteSelectedDate)->format('d/m/Y') }}</strong>
+                                    @endif.</p>
+                                    
+                                    <p class="font-medium">🎯 ¿Qué hacer?</p>
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>Haz clic en <strong>"🛰️ Cargar Datos NASA"</strong> para obtener datos satelitales actuales</li>
+                                        <li>Los datos se cargarán directamente desde NASA Earthdata (gratuito)</li>
+                                        <li>Verás NDVI, humedad, temperatura y más indicadores en 30-60 segundos</li>
+                                    </ul>
+                                </div>
+                                
+                                {{-- Verificación de requisitos --}}
+                                <div class="bg-white rounded-lg p-3 text-xs border border-yellow-200">
+                                    <p class="font-semibold text-gray-800 mb-2">📋 Verifica que:</p>
+                                    <div class="space-y-1 text-gray-700">
+                                        <div class="flex items-center gap-2">
+                                            @if($selectedPlot->latitude && $selectedPlot->longitude)
+                                                <span class="text-green-600">✓</span>
+                                                <span>La parcela tiene coordenadas (Lat: {{ number_format($selectedPlot->latitude, 4) }}°, Lon: {{ number_format($selectedPlot->longitude, 4) }}°)</span>
+                                            @else
+                                                <span class="text-red-600">✗</span>
+                                                <span class="text-red-600 font-semibold">⚠️ La parcela NO tiene coordenadas GPS configuradas</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-blue-600">ℹ️</span>
+                                            <span>Las credenciales NASA están configuradas en el servidor</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-blue-600">ℹ️</span>
+                                            <span>La cola de trabajos está procesándose</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                @if($dataLoadError)
+                                    <div class="mt-3 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <p class="text-sm text-red-700">
+                                            <strong>❌ Error:</strong> {{ $dataLoadError }}
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- NDVI Card -->
                     <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-5 border border-green-200">
@@ -254,11 +364,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-4 bg-gray-50 rounded-lg p-3 text-sm text-gray-600 flex gap-4">
-                    <span>📡 NASA MODIS</span>
-                    <span>📅 {{ $ndviData?->image_date?->format('d/m/Y') ?? 'N/A' }}</span>
-                    <span>☁️ {{ $ndviData?->cloud_coverage ?? 0 }}% nubes</span>
-                </div>
+                
+                @if($ndviData && ($ndviData->ndvi_mean ?? 0) > 0)
+                    <div class="mt-4 bg-gray-50 rounded-lg p-3 text-sm text-gray-600 flex gap-4">
+                        <span>📡 NASA MODIS</span>
+                        <span>📅 {{ $ndviData?->image_date?->format('d/m/Y') ?? 'N/A' }}</span>
+                        <span>☁️ {{ $ndviData?->cloud_coverage ?? 0 }}% nubes</span>
+                    </div>
+                @endif
             @endif
 
             <!-- Spectral Bands Tab -->
@@ -642,6 +755,7 @@
 
             <!-- History Tab -->
             @if($activeTab === 'history')
+                <div wire:key="history-tab-content-{{ $selectedPlotId }}-{{ $historyPeriod }}">
                 {{-- Period Selector --}}
                 <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
                     <div class="flex flex-col md:flex-row gap-4">
@@ -998,6 +1112,7 @@
                         <p class="text-sm text-gray-500">Para el período seleccionado</p>
                     </div>
                 @endif
+                </div>{{-- cierre wire:key history-tab --}}
             @endif
         </div>
 

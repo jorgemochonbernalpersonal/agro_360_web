@@ -36,6 +36,12 @@ class Dashboard extends Component
     public ?float $lastYearNdvi = null;
     public ?float $yearChange = null;
     
+    // Date selector for satellite tab
+    public ?string $satelliteSelectedDate = null;
+    public array $satelliteAvailableDates = [];
+    public bool $loadingDataForDate = false;
+    public ?string $dataLoadError = null;
+    
     // Historical data filters
     public string $historyPeriod = '90_days';
     public ?string $customStartDate = null;
@@ -220,9 +226,12 @@ class Dashboard extends Component
         }
 
         try {
+            // Load available dates for satellite tab
+            $this->loadSatelliteAvailableDates();
+            
             // Load satellite data using dependency injection
             $nasaService = app(NasaEarthdataService::class);
-            $this->ndviData = $nasaService->getLatestData($this->selectedPlot, $forceRefresh);
+            $this->loadSatelliteData($forceRefresh);
             $this->loadHistoricalData();
             
             $this->calculateYearComparison();
@@ -242,6 +251,159 @@ class Dashboard extends Component
         }
 
         $this->isLoading = false;
+    }
+    
+    /**
+     * Load available dates for satellite data selector
+     */
+    private function loadSatelliteAvailableDates()
+    {
+        if (!$this->selectedPlot) return;
+        
+        $dates = $this->selectedPlot->remoteSensingData()
+            ->whereNotNull('ndvi_mean')
+            ->orderBy('image_date', 'desc')
+            ->limit(30)
+            ->pluck('image_date')
+            ->map(fn($date) => $date->format('Y-m-d'))
+            ->toArray();
+        
+        $this->satelliteAvailableDates = $dates;
+        
+        // Set default to latest if not selected
+        if (empty($this->satelliteSelectedDate) && !empty($dates)) {
+            $this->satelliteSelectedDate = $dates[0];
+        }
+    }
+    
+    /**
+     * Load satellite data for selected date
+     */
+    private function loadSatelliteData(bool $forceRefresh = false)
+    {
+        if (!$this->selectedPlot) return;
+        
+        $nasaService = app(NasaEarthdataService::class);
+        
+        // If specific date selected, load that date
+        if ($this->satelliteSelectedDate) {
+            $this->ndviData = $this->selectedPlot->remoteSensingData()
+                ->whereDate('image_date', $this->satelliteSelectedDate)
+                ->whereNotNull('ndvi_mean')
+                ->orderBy('image_date', 'desc')
+                ->first();
+        } else {
+            // Load latest data
+            $this->ndviData = $nasaService->getLatestData($this->selectedPlot, $forceRefresh);
+        }
+    }
+    
+    /**
+     * Update satellite data when date changes
+     */
+    public function updatedSatelliteSelectedDate()
+    {
+        $this->loadSatelliteData();
+        $this->calculateYearComparison();
+        $this->generateRecommendations();
+    }
+    
+    /**
+     * Request data for a specific date from NASA
+     */
+    public function requestDataForDate(?string $date = null)
+    {
+        if (!$this->selectedPlot) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'No hay parcela seleccionada',
+            ]);
+            return;
+        }
+        
+        $this->loadingDataForDate = true;
+        $this->dataLoadError = null;
+        
+        try {
+            $nasaService = app(NasaEarthdataService::class);
+            
+            // For now, fetch latest data (NASA API doesn't easily support specific historical dates)
+            // In future, this could be enhanced to request specific dates via AppEEARS task
+            $result = $nasaService->fetchEnrichedData(
+                $this->selectedPlot, 
+                includeArea: false
+            );
+            
+            if ($result) {
+                // Reload available dates and data
+                $this->loadSatelliteAvailableDates();
+                $this->loadSatelliteData();
+                $this->calculateYearComparison();
+                $this->generateRecommendations();
+                
+                $this->dispatch('notify', [
+                    'type' => 'success',
+                    'message' => 'Datos satelitales cargados correctamente',
+                ]);
+            } else {
+                throw new \Exception('No se pudieron obtener datos satelitales. Verifica las credenciales NASA en el servidor.');
+            }
+            
+        } catch (\Exception $e) {
+            $this->dataLoadError = $e->getMessage();
+            Log::error('Error requesting satellite data', [
+                'plot_id' => $this->selectedPlot->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al cargar datos: ' . $e->getMessage(),
+            ]);
+        } finally {
+            $this->loadingDataForDate = false;
+        }
+    }
+    
+    /**
+     * Request data for a date range (batch request)
+     */
+    public function requestInitialData()
+    {
+        if (!$this->selectedPlot) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'No hay parcela seleccionada',
+            ]);
+            return;
+        }
+        
+        $this->loadingDataForDate = true;
+        
+        try {
+            // Dispatch job to load data in background
+            \App\Jobs\UpdatePlotNdviJob::dispatch($this->selectedPlot)
+                ->onQueue('default');
+            
+            $this->dispatch('notify', [
+                'type' => 'info',
+                'message' => 'Solicitando datos satelitales... Se actualizará en 1-2 minutos.',
+            ]);
+            
+            // Poll for data after delay
+            $this->dispatch('poll-for-data', [
+                'plotId' => $this->selectedPlot->id,
+                'delay' => 30000, // 30 seconds
+            ]);
+            
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al solicitar datos: ' . $e->getMessage(),
+            ]);
+        } finally {
+            $this->loadingDataForDate = false;
+        }
     }
 
     /**

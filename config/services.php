@@ -73,7 +73,7 @@ return [
     */
 
     'nasa_earthdata' => [
-        'mock' => env('NASA_EARTHDATA_MOCK', true), // true = usa datos simulados
+        'mock' => filter_var(env('NASA_EARTHDATA_MOCK', 'false'), FILTER_VALIDATE_BOOLEAN), // false = usa datos reales de NASA
         'username' => env('NASA_EARTHDATA_USERNAME'),
         'password' => env('NASA_EARTHDATA_PASSWORD'),
         'api_url' => env('NASA_EARTHDATA_API_URL', 'https://appeears.earthdatacloud.nasa.gov/api'),
@@ -91,7 +91,7 @@ return [
     */
 
     'open_meteo' => [
-        'mock' => env('OPEN_METEO_MOCK', true), // true = usa datos simulados
+        'mock' => filter_var(env('OPEN_METEO_MOCK', 'false'), FILTER_VALIDATE_BOOLEAN), // false = usa datos reales
     ],
 
 ];
