@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * Service for NASA Earthdata API (100% FREE)
@@ -266,27 +267,11 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
      */
     private function getPlotBoundingBox(Plot $plot): array
     {
-        // Try to get from plot geometry
-        $multipart = $plot->multiplePlotSigpacs()
-            ->whereNotNull('plot_geometry_id')
-            ->with('plotGeometry')
-            ->first();
-
-        if ($multipart && $multipart->plotGeometry) {
-            $wkt = $multipart->plotGeometry->getWktCoordinates();
-            // Extract center point from WKT (simplified)
-            if (preg_match('/(-?\d+\.?\d*)\s+(-?\d+\.?\d*)/', $wkt, $matches)) {
-                return [
-                    'lon' => (float) $matches[1],
-                    'lat' => (float) $matches[2],
-                ];
-            }
-        }
-
-        // Default to central Spain (placeholder)
+        $coords = CoordinatesHelper::getCoordinates($plot);
+        
         return [
-            'lat' => 40.4168,
-            'lon' => -3.7038,
+            'lat' => $coords['lat'],
+            'lon' => $coords['lon'],
         ];
     }
 

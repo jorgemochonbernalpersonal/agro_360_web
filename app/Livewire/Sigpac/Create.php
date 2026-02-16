@@ -7,8 +7,10 @@ use App\Models\Plot;
 use App\Models\SigpacCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('layouts.app')]
 class Create extends Component
 {
     use WithToastNotifications;
@@ -359,6 +361,6 @@ class Create extends Component
 
         return view('livewire.sigpac.create', [
             'plots' => $plots,
-        ])->layout('layouts.app');
+        ]);
     }
 }

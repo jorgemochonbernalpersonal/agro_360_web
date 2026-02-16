@@ -46,9 +46,8 @@ class UpdateEnrichedRemoteSensingData extends Command
                 return Command::FAILURE;
             }
         } else {
-            $plots = Plot::whereNotNull('latitude')
-                ->whereNotNull('longitude')
-                ->get();
+            // Get plots that have at least one geometry
+            $plots = Plot::whereHas('plotGeometries')->get();
         }
 
         if ($plots->isEmpty()) {

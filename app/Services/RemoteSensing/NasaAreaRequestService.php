@@ -3,6 +3,7 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
@@ -45,7 +46,7 @@ class NasaAreaRequestService
         // Check rate limit
         if (!$this->rateLimitService->canMakeNasaRequest()) {
             Log::warning('NASA API rate limit reached for area request', [
-                'plot_id' => $plot->id,
+                'plot_id' => $plot->getKey(),
             ]);
             return null;
         }
@@ -55,16 +56,17 @@ class NasaAreaRequestService
             $polygon = $this->getPlotPolygon($plot);
             
             if (!$polygon) {
-                Log::warning('Plot has no polygon geometry', ['plot_id' => $plot->id]);
+                Log::warning('Plot has no polygon geometry', ['plot_id' => $plot->getKey()]);
                 return null;
             }
 
             // Submit area task
+            /** @var Response $response */
             $response = Http::withToken($token)
                 ->timeout(60)
                 ->post("{$this->baseUrl}/task", [
                     'task_type' => 'area',
-                    'task_name' => "Plot_{$plot->id}_" . now()->format('YmdHis'),
+                    'task_name' => "Plot_{$plot->getKey()}_" . now()->format('YmdHis'),
                     'params' => [
                         'dates' => [
                             [
@@ -88,7 +90,7 @@ class NasaAreaRequestService
                 $taskId = $response->json('task_id');
                 
                 Log::info('Area request task created', [
-                    'plot_id' => $plot->id,
+                    'plot_id' => $plot->getKey(),
                     'task_id' => $taskId,
                 ]);
 
@@ -101,7 +103,7 @@ class NasaAreaRequestService
 
             Log::warning('Area request failed', [
                 'status' => $response->status(),
-                'plot_id' => $plot->id,
+                'plot_id' => $plot->getKey(),
                 'body' => $response->body(),
             ]);
 
@@ -110,7 +112,7 @@ class NasaAreaRequestService
         } catch (\Exception $e) {
             Log::error('Area request error', [
                 'error' => $e->getMessage(),
-                'plot_id' => $plot->id,
+                'plot_id' => $plot->getKey(),
             ]);
             return null;
         }
@@ -122,6 +124,7 @@ class NasaAreaRequestService
     public function checkTaskStatus(string $taskId, string $token): ?array
     {
         try {
+            /** @var Response $response */
             $response = Http::withToken($token)
                 ->timeout(30)
                 ->get("{$this->baseUrl}/task/{$taskId}");
@@ -155,6 +158,7 @@ class NasaAreaRequestService
     public function downloadAreaData(string $taskId, string $token): ?array
     {
         try {
+            /** @var Response $response */
             $response = Http::withToken($token)
                 ->timeout(120)
                 ->get("{$this->baseUrl}/bundle/{$taskId}");
@@ -216,7 +220,7 @@ class NasaAreaRequestService
      */
     private function generateMockAreaStatistics(Plot $plot): array
     {
-        $seed = $plot->id * 3000;
+        $seed = (int) $plot->getKey() * 3000;
         mt_srand($seed);
 
         // Simulate spatial variability
@@ -283,7 +287,7 @@ class NasaAreaRequestService
             }
         } catch (\Exception $e) {
             Log::error('Failed to parse plot polygon', [
-                'plot_id' => $plot->id,
+                'plot_id' => $plot->getKey(),
                 'error' => $e->getMessage(),
             ]);
         }

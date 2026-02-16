@@ -173,12 +173,8 @@
 
         // Inicializar mapa con lazy loading de Leaflet
         async function initMap() {
-            console.log('🗺️ Inicializando mapa SIGPAC');
-            console.log('Geometrías cargadas:', plotGeometries.length);
-
             // ✅ Cargar Leaflet de forma lazy
             const L = await window.loadLeaflet();
-            console.log('✅ Leaflet cargado');
 
             map = L.map('map', {
                 zoomControl: true,
@@ -217,8 +213,6 @@
         }
 
         function renderAllPlots() {
-            console.log('Renderizando todos los recintos...');
-            
             // Limpiar capas anteriores
             polygonLayers.forEach(layer => map.removeLayer(layer));
             polygonLayers = [];
@@ -290,8 +284,6 @@
                 allBounds.push(bounds.getSouthWest());
             });
 
-            console.log(`✅ ${polygonLayers.length} polígonos renderizados`);
-
             // Ajustar vista
             if (allBounds.length > 0) {
                 const bounds = L.latLngBounds(allBounds);
@@ -319,8 +311,6 @@
         function zoomToRecinto(index) {
             const geometry = plotGeometries[index];
             if (!geometry) return;
-
-            console.log(`Zoom a recinto ${index + 1}: ${geometry.sigpac_formatted}`);
 
             // Resaltar solo el seleccionado
             polygonLayers.forEach((layer, i) => {
@@ -420,7 +410,6 @@
         }
 
         function applyNdviColors(color) {
-            console.log('🛰️ Applying NDVI colors:', color);
             polygonLayers.forEach((layer, index) => {
                 layer.setStyle({
                     color: color.line,
@@ -432,7 +421,6 @@
         }
 
         function restoreOriginalColors() {
-            console.log('🎨 Restoring original colors');
             polygonLayers.forEach((layer, index) => {
                 if (originalStyles[index]) {
                     layer.setStyle(originalStyles[index]);

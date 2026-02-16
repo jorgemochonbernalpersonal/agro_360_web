@@ -3,8 +3,10 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA Spectral Bands Service
@@ -40,9 +42,9 @@ class NasaSpectralBandsService
         }
 
         try {
-            $coords = $this->getPlotCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot);
 
-            // VNP09A1: VIIRS Surface Reflectance 8-Day 500m
+            /** @var Response $response */
             $response = Http::withToken($token)
                 ->timeout(60)
                 ->get("{$this->baseUrl}/bundle/VNP09A1.001/point", [
@@ -254,14 +256,4 @@ class NasaSpectralBandsService
         ], $indices);
     }
 
-    /**
-     * Get plot coordinates
-     */
-    private function getPlotCoordinates(Plot $plot): array
-    {
-        return [
-            'lat' => $plot->latitude ?? 40.4168,
-            'lon' => $plot->longitude ?? -3.7038,
-        ];
-    }
 }

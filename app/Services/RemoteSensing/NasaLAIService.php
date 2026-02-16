@@ -5,6 +5,7 @@ namespace App\Services\RemoteSensing;
 use App\Models\Plot;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA Official LAI Service
@@ -40,7 +41,7 @@ class NasaLAIService
         }
 
         try {
-            $coords = $this->getPlotCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot);
 
             // MCD15A2H: MODIS LAI/FPAR 500m, 8-day
             $response = Http::withToken($token)
@@ -277,14 +278,4 @@ class NasaLAIService
         ];
     }
 
-    /**
-     * Get plot coordinates
-     */
-    private function getPlotCoordinates(Plot $plot): array
-    {
-        return [
-            'lat' => $plot->latitude ?? 40.4168,
-            'lon' => $plot->longitude ?? -3.7038,
-        ];
-    }
 }

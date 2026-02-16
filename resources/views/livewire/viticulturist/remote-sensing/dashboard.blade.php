@@ -21,9 +21,13 @@
             <!-- Plot Selector -->
             <select wire:model.live="selectedPlotId" 
                     class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 min-w-[200px]">
-                @foreach($plots as $plot)
-                    <option value="{{ $plot->id }}">{{ $plot->name }}</option>
-                @endforeach
+                @if(count($plots) > 0)
+                    @foreach($plots as $plot)
+                        <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                    @endforeach
+                @else
+                    <option value="">Sin parcelas con geometrías</option>
+                @endif
             </select>
             
             <button wire:click="refreshData" 
@@ -189,6 +193,117 @@
                     <p class="text-sm text-gray-500">{{ $selectedPlot->municipality?->name ?? 'Sin municipio' }}</p>
                 </div>
             </div>
+            
+            {{-- Recinto Selector --}}
+            @if(!empty($availableRecintos))
+                {{-- Caso 1: Solo 1 recinto - Info estática --}}
+                @if(count($availableRecintos) === 1)
+                    <div class="mb-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-3">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <div class="text-sm font-semibold text-blue-900">
+                                    📍 {{ $availableRecintos[0]['display_name'] }}
+                                </div>
+                                <div class="text-xs text-blue-700 mt-1">
+                                    ✓ Analizando {{ number_format($availableRecintos[0]['area_ha'], 2) }} hectáreas
+                                    @if($availableRecintos[0]['centroid'])
+                                        • Lat: {{ number_format($availableRecintos[0]['centroid']['lat'], 4) }}°, 
+                                        Lon: {{ number_format($availableRecintos[0]['centroid']['lng'], 4) }}°
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {{-- Caso 2: 2-4 recintos - Botones Radio --}}
+                @elseif(count($availableRecintos) <= 4)
+                    <div class="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                        <label class="block text-sm font-semibold text-gray-800 mb-3">
+                            📍 Selecciona recinto a analizar:
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach($availableRecintos as $recinto)
+                                <button 
+                                    wire:click="$set('selectedRecintoId', {{ $recinto['id'] }})"
+                                    wire:key="recinto-btn-{{ $recinto['id'] }}"
+                                    class="text-left p-3 rounded-lg border-2 transition-all
+                                        {{ $selectedRecintoId == $recinto['id'] 
+                                            ? 'border-green-500 bg-green-50 shadow-md' 
+                                            : 'border-gray-300 bg-white hover:border-blue-400' }}">
+                                    
+                                    <div class="flex items-start gap-2">
+                                        <div class="mt-0.5">
+                                            @if($selectedRecintoId == $recinto['id'])
+                                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                                                </svg>
+                                            @else
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                                                    <circle cx="10" cy="10" r="8" stroke-width="2"/>
+                                                </svg>
+                                            @endif
+                                        </div>
+                                        
+                                        <div class="flex-1">
+                                            <div class="text-sm font-semibold {{ $selectedRecintoId == $recinto['id'] ? 'text-green-900' : 'text-gray-900' }}">
+                                                {{ $recinto['display_name'] }}
+                                            </div>
+                                            <div class="text-xs {{ $selectedRecintoId == $recinto['id'] ? 'text-green-700' : 'text-gray-600' }} mt-1">
+                                                📏 {{ number_format($recinto['area_ha'], 2) }} ha
+                                                @if($recinto['centroid'])
+                                                    <br>📍 {{ number_format($recinto['centroid']['lat'], 4) }}°, {{ number_format($recinto['centroid']['lng'], 4) }}°
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                
+                {{-- Caso 3: Más de 4 recintos - Dropdown --}}
+                @else
+                    <div class="mb-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+                            <div class="flex-1">
+                                <label class="block text-sm font-semibold text-gray-800 mb-2">
+                                    📍 Recinto a analizar
+                                    <span class="text-xs font-normal text-gray-600">
+                                        (parcela con {{ count($availableRecintos) }} recintos)
+                                    </span>
+                                </label>
+                                
+                                <select wire:model.live="selectedRecintoId" 
+                                        class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-sm">
+                                    @foreach($availableRecintos as $recinto)
+                                        <option value="{{ $recinto['id'] }}">
+                                            {{ $recinto['display_name'] }} 
+                                            ({{ number_format($recinto['area_ha'], 2) }} ha)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            @php
+                                $selectedRecinto = collect($availableRecintos)->firstWhere('id', $selectedRecintoId);
+                            @endphp
+                            
+                            @if($selectedRecinto && $selectedRecinto['centroid'])
+                                <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 text-xs">
+                                    <div class="font-semibold text-gray-700 mb-1">Coordenadas:</div>
+                                    <div class="text-gray-600">
+                                        📍 Lat: {{ number_format($selectedRecinto['centroid']['lat'], 6) }}°<br>
+                                        📍 Lon: {{ number_format($selectedRecinto['centroid']['lng'], 6) }}°
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            @endif
 
             <!-- Satellite Tab -->
             @if($activeTab === 'satellite')
@@ -270,12 +385,15 @@
                                     <p class="font-semibold text-gray-800 mb-2">📋 Verifica que:</p>
                                     <div class="space-y-1 text-gray-700">
                                         <div class="flex items-center gap-2">
-                                            @if($selectedPlot->latitude && $selectedPlot->longitude)
+                                            @php
+                                                $recintoCoords = $this->getSelectedRecintoCoordinates();
+                                            @endphp
+                                            @if($recintoCoords)
                                                 <span class="text-green-600">✓</span>
-                                                <span>La parcela tiene coordenadas (Lat: {{ number_format($selectedPlot->latitude, 4) }}°, Lon: {{ number_format($selectedPlot->longitude, 4) }}°)</span>
+                                                <span>El recinto tiene coordenadas (Lat: {{ number_format($recintoCoords['lat'], 4) }}°, Lon: {{ number_format($recintoCoords['lng'], 4) }}°)</span>
                                             @else
                                                 <span class="text-red-600">✗</span>
-                                                <span class="text-red-600 font-semibold">⚠️ La parcela NO tiene coordenadas GPS configuradas</span>
+                                                <span class="text-red-600 font-semibold">⚠️ El recinto seleccionado NO tiene geometría configurada</span>
                                             @endif
                                         </div>
                                         <div class="flex items-center gap-2">

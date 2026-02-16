@@ -3,8 +3,10 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA SMAP Soil Moisture Service
@@ -42,9 +44,10 @@ class NasaSMAPService
         }
 
         try {
-            $coords = $this->getPlotCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot);
 
             // SPL4SMGP: SMAP L4 Global 9km daily
+            /** @var Response $response */
             $response = Http::withToken($token)
                 ->timeout(60)
                 ->get("{$this->baseUrl}/bundle/SPL4SMGP.007/point", [
@@ -235,14 +238,4 @@ class NasaSMAPService
         ];
     }
 
-    /**
-     * Get plot coordinates
-     */
-    private function getPlotCoordinates(Plot $plot): array
-    {
-        return [
-            'lat' => $plot->latitude ?? 40.4168,
-            'lon' => $plot->longitude ?? -3.7038,
-        ];
-    }
 }

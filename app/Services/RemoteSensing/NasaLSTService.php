@@ -3,8 +3,10 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA LST (Land Surface Temperature) Service
@@ -40,8 +42,9 @@ class NasaLSTService
         }
 
         try {
-            $coords = $this->getPlotCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot);
 
+            /** @var Response $response */
             $response = Http::withToken($token)
                 ->timeout(60)
                 ->get("{$this->baseUrl}/bundle/MOD11A2.061/point", [
@@ -103,7 +106,7 @@ class NasaLSTService
     private function generateMockLST(Plot $plot): array
     {
         $month = now()->month;
-        $seed = $plot->id * 2000 + now()->dayOfYear;
+        $seed = (int) $plot->getKey() * 2000 + now()->dayOfYear;
         mt_srand($seed);
 
         // Seasonal LST for Spain
@@ -281,14 +284,4 @@ class NasaLSTService
         return null;
     }
 
-    /**
-     * Get plot coordinates
-     */
-    private function getPlotCoordinates(Plot $plot): array
-    {
-        return [
-            'lat' => $plot->latitude ?? 40.4168,
-            'lon' => $plot->longitude ?? -3.7038,
-        ];
-    }
 }

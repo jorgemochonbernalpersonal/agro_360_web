@@ -5,10 +5,12 @@ namespace App\Livewire\Sigpac;
 use App\Models\SigpacCode;
 use App\Models\Plot;
 use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+#[Layout('layouts.app')]
 class Edit extends Component
 {
     use WithToastNotifications;
@@ -234,6 +236,6 @@ class Edit extends Component
 
         return view('livewire.sigpac.edit', [
             'plots' => $plots,
-        ])->layout('layouts.app');
+        ]);
     }
 }

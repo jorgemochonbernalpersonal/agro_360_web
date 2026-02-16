@@ -3,8 +3,10 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA VIIRS Service (Superior to MODIS)
@@ -38,14 +40,14 @@ class NasaVIIRSService
         }
 
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached for VIIRS', ['plot_id' => $plot->id]);
+            Log::warning('NASA API rate limit reached for VIIRS', ['plot_id' => $plot->getKey()]);
             return null;
         }
 
         try {
-            $coords = $this->getPlotCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot);
 
-            // VNP13A1: VIIRS Vegetation Indices 500m, 16-day
+            /** @var Response $response */
             $response = Http::withToken($token)
                 ->timeout(60)
                 ->get("{$this->baseUrl}/bundle/VNP13A1.001/point", [
@@ -63,7 +65,7 @@ class NasaVIIRSService
 
             Log::warning('NASA VIIRS API request failed', [
                 'status' => $response->status(),
-                'plot_id' => $plot->id,
+                'plot_id' => $plot->getKey(),
             ]);
 
             if (config('app.env') !== 'production') {
@@ -75,7 +77,7 @@ class NasaVIIRSService
         } catch (\Exception $e) {
             Log::error('NASA VIIRS API error', [
                 'error' => $e->getMessage(),
-                'plot_id' => $plot->id,
+                'plot_id' => $plot->getKey(),
             ]);
 
             if (config('app.env') !== 'production') {
@@ -138,7 +140,7 @@ class NasaVIIRSService
     private function generateMockVIIRS(Plot $plot): array
     {
         $month = now()->month;
-        $seed = $plot->id * 1500 + now()->dayOfYear;
+        $seed = (int) $plot->getKey() * 1500 + now()->dayOfYear;
         mt_srand($seed);
 
         // VIIRS has better sensitivity, so slightly higher precision
@@ -169,16 +171,6 @@ class NasaVIIRSService
         ];
     }
 
-    /**
-     * Get plot coordinates
-     */
-    private function getPlotCoordinates(Plot $plot): array
-    {
-        return [
-            'lat' => $plot->latitude ?? 40.4168,
-            'lon' => $plot->longitude ?? -3.7038,
-        ];
-    }
 
     /**
      * Compare VIIRS vs MODIS quality

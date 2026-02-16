@@ -25,12 +25,16 @@ class Dashboard extends Component
     #[Url(as: 'tab')]
     public string $activeTab = 'satellite';
     
+    #[Url(as: 'recinto')]
+    public ?int $selectedRecintoId = null;
+    
     // All plots for selector
     public $plots = [];
     public array $stats = [];
     
     // Selected plot data
     public ?Plot $selectedPlot = null;
+    public array $availableRecintos = [];
     public ?PlotRemoteSensing $ndviData = null;
     public array $historicalData = [];
     public ?float $lastYearNdvi = null;
@@ -83,11 +87,14 @@ class Dashboard extends Component
         if (!$user) {
             return;
         }
-        // ✅ OPTIMIZACIÓN: Solo campos necesarios
+        
+        // Solo parcelas con geometrías configuradas
         $this->plots = Plot::forUser($user)
+            ->whereHas('plotGeometries')
             ->select(['id', 'name', 'area'])
             ->orderBy('name')
             ->get();
+        
         $this->loadStats();
         
         // Load first plot if none selected
@@ -97,13 +104,23 @@ class Dashboard extends Component
         }
         
         if ($this->selectedPlotId) {
+            $this->loadAvailableRecintos();
+            $this->autoSelectRecinto();
             $this->loadPlotData();
         }
     }
 
     public function updatedSelectedPlotId()
     {
+        $this->selectedPlot = Plot::find($this->selectedPlotId);
+        $this->loadAvailableRecintos();
+        $this->autoSelectRecinto();
         $this->loadPlotData();
+    }
+    
+    public function updatedSelectedRecintoId()
+    {
+        $this->loadPlotData(forceRefresh: true);
     }
 
     public function setTab(string $tab)
@@ -404,6 +421,75 @@ class Dashboard extends Component
         } finally {
             $this->loadingDataForDate = false;
         }
+    }
+    
+    /**
+     * Load available recintos for selected plot
+     */
+    private function loadAvailableRecintos()
+    {
+        if (!$this->selectedPlot) {
+            $this->availableRecintos = [];
+            return;
+        }
+        
+        $this->availableRecintos = $this->selectedPlot->multiplePlotSigpacs()
+            ->with(['sigpacCode', 'plotGeometry'])
+            ->get()
+            ->map(function($mps) {
+                $geometry = $mps->plotGeometry;
+                $centroid = $geometry?->getCentroidAsArray();
+                
+                // Calculate area from geometry
+                $area = null;
+                if ($geometry) {
+                    $result = \DB::selectOne(
+                        'SELECT ST_Area(coordinates) / 10000 as area_ha FROM plot_geometry WHERE id = ?',
+                        [$geometry->id]
+                    );
+                    $area = $result?->area_ha;
+                }
+                
+                return [
+                    'id' => $mps->id,
+                    'sigpac_code' => $mps->sigpacCode->code ?? 'Sin código',
+                    'display_name' => $this->selectedPlot->name . ' - ' . ($mps->sigpacCode->code ?? 'Recinto ' . $mps->id),
+                    'area_ha' => $area ? round($area, 2) : 0,
+                    'centroid' => $centroid,
+                ];
+            })
+            ->toArray();
+    }
+    
+    /**
+     * Auto-select first recinto
+     */
+    private function autoSelectRecinto()
+    {
+        if (empty($this->availableRecintos)) {
+            $this->selectedRecintoId = null;
+            return;
+        }
+        
+        // Auto-select first if none selected
+        if (!$this->selectedRecintoId || !collect($this->availableRecintos)->contains('id', $this->selectedRecintoId)) {
+            $this->selectedRecintoId = $this->availableRecintos[0]['id'];
+        }
+    }
+    
+    /**
+     * Get coordinates of selected recinto
+     */
+    private function getSelectedRecintoCoordinates(): ?array
+    {
+        if (!$this->selectedRecintoId || empty($this->availableRecintos)) {
+            return null;
+        }
+        
+        $recinto = collect($this->availableRecintos)
+            ->firstWhere('id', $this->selectedRecintoId);
+        
+        return $recinto['centroid'] ?? null;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Services\RemoteSensing;
 use App\Models\Plot;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * NASA Official Evapotranspiration Service
@@ -39,7 +40,7 @@ class NasaETService
         }
 
         try {
-            $coords = $this->getPlotCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot);
 
             // MOD16A2: MODIS ET 500m, 8-day
             $response = Http::withToken($token)
@@ -218,14 +219,4 @@ class NasaETService
         ];
     }
 
-    /**
-     * Get plot coordinates
-     */
-    private function getPlotCoordinates(Plot $plot): array
-    {
-        return [
-            'lat' => $plot->latitude ?? 40.4168,
-            'lon' => $plot->longitude ?? -3.7038,
-        ];
-    }
 }

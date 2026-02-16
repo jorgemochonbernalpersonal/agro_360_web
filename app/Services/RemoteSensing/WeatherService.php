@@ -3,11 +3,12 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Services\RemoteSensing\CoordinatesHelper;
 
 /**
  * Service for weather data via Open-Meteo API (100% FREE)
@@ -35,7 +36,7 @@ class WeatherService
         }
 
         $coords = $this->getPlotCoordinates($plot);
-        $cacheKey = "weather_{$plot->id}";
+        $cacheKey = "weather_{$plot->getKey()}";
 
         if ($forceRefresh) {
             Cache::forget($cacheKey);
@@ -56,7 +57,7 @@ class WeatherService
         }
 
         $coords = $this->getPlotCoordinates($plot);
-        $cacheKey = "forecast_{$plot->id}_{$days}";
+        $cacheKey = "forecast_{$plot->getKey()}_{$days}";
 
         if ($forceRefresh) {
             Cache::forget($cacheKey);
@@ -77,7 +78,7 @@ class WeatherService
         }
 
         $coords = $this->getPlotCoordinates($plot);
-        $cacheKey = "soil_{$plot->id}";
+        $cacheKey = "soil_{$plot->getKey()}";
 
         if ($forceRefresh) {
             Cache::forget($cacheKey);
@@ -98,7 +99,7 @@ class WeatherService
         }
 
         $coords = $this->getPlotCoordinates($plot);
-        $cacheKey = "solar_{$plot->id}";
+        $cacheKey = "solar_{$plot->getKey()}";
 
         if ($forceRefresh) {
             Cache::forget($cacheKey);
@@ -115,6 +116,7 @@ class WeatherService
     private function fetchWeatherData(float $lat, float $lon): array
     {
         try {
+            /** @var Response $response */
             $response = Http::timeout(30)->get($this->baseUrl, [
                 'latitude' => $lat,
                 'longitude' => $lon,
@@ -184,6 +186,7 @@ class WeatherService
     private function fetchForecastData(float $lat, float $lon, int $days): array
     {
         try {
+            /** @var Response $response */
             $response = Http::timeout(30)->get($this->baseUrl, [
                 'latitude' => $lat,
                 'longitude' => $lon,
@@ -244,6 +247,7 @@ class WeatherService
     private function fetchSoilData(float $lat, float $lon): array
     {
         try {
+            /** @var Response $response */
             $response = Http::timeout(30)->get($this->baseUrl, [
                 'latitude' => $lat,
                 'longitude' => $lon,
@@ -308,6 +312,7 @@ class WeatherService
     private function fetchSolarData(float $lat, float $lon): array
     {
         try {
+            /** @var Response $response */
             $response = Http::timeout(30)->get($this->baseUrl, [
                 'latitude' => $lat,
                 'longitude' => $lon,
@@ -353,63 +358,11 @@ class WeatherService
     }
 
     /**
-     * Get plot coordinates
+     * Get plot coordinates (with geocoding fallback)
      */
     private function getPlotCoordinates(Plot $plot): array
     {
-        // 1. Try to get from geometry
-        $multipart = $plot->multiplePlotSigpacs()
-            ->whereNotNull('plot_geometry_id')
-            ->with('plotGeometry')
-            ->first();
-
-        if ($multipart && $multipart->plotGeometry) {
-            $wkt = $multipart->plotGeometry->getWktCoordinates();
-            if (preg_match('/(-?\d+\.?\d*)\s+(-?\d+\.?\d*)/', $wkt, $matches)) {
-                return [
-                    'lon' => (float) $matches[1],
-                    'lat' => (float) $matches[2],
-                ];
-            }
-        }
-
-        // 2. Try Geocoding by Municipality Name
-        // This relies on the Open-Meteo Geocoding API or simple lookup.
-        // For simplicity and robustness, we check if the municipality model has coords, or use a geocoding service.
-        // Assuming we don't have stored coords for municipalities, we'll use Open-Meteo's geocoding API.
-        
-        if ($plot->municipality && $plot->province) {
-            $query = "{$plot->municipality->name}, {$plot->province->name}, Spain";
-            $cacheKey = "geo_loc_" . Str::slug($query);
-
-            $coords = Cache::remember($cacheKey, 86400 * 30, function () use ($query) {
-                try {
-                    $response = Http::get('https://geocoding-api.open-meteo.com/v1/search', [
-                        'name' => $query,
-                        'count' => 1,
-                        'language' => 'es',
-                        'format' => 'json'
-                    ]);
-
-                    if ($response->successful() && isset($response['results'][0])) {
-                        return [
-                            'lat' => $response['results'][0]['latitude'],
-                            'lon' => $response['results'][0]['longitude']
-                        ];
-                    }
-                } catch (\Exception $e) {
-                    Log::warning("Geocoding failed for: $query");
-                }
-                return null;
-            });
-
-            if ($coords) {
-                return $coords;
-            }
-        }
-
-        // 3. Fallback Default: Central Spain
-        return ['lat' => 41.6167, 'lon' => -3.7033];
+        return CoordinatesHelper::getCoordinatesWithGeocoding($plot);
     }
 
     /**
