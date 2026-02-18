@@ -55,8 +55,10 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
     /**
      * Get the latest NDVI data for a plot
+     * 
+     * @param array|null $coordinates Override ['lat'=>x,'lon'=>y] del recinto seleccionado (MultipartPlotSigpac)
      */
-    public function getLatestData(Plot $plot, bool $forceRefresh = false): ?PlotRemoteSensing
+    public function getLatestData(Plot $plot, bool $forceRefresh = false, ?array $coordinates = null): ?PlotRemoteSensing
     {
         // Check database first if not forced
         if (!$forceRefresh) {
@@ -68,7 +70,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         }
 
         // Get fresh data
-        $data = $this->fetchNdviData($plot);
+        $data = $this->fetchNdviData($plot, $coordinates);
 
         if ($data) {
             return $this->storeData($plot, $data);
@@ -122,8 +124,10 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
     /**
      * Fetch NDVI data from NASA API or generate mock
+     * 
+     * @param array|null $coordinates Override del recinto seleccionado ['lat','lng'|'lon']
      */
-    private function fetchNdviData(Plot $plot): ?array
+    private function fetchNdviData(Plot $plot, ?array $coordinates = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockData($plot);
@@ -157,8 +161,8 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 return $this->generateMockData($plot);
             }
 
-            // Get plot bounding box
-            $bbox = $this->getPlotBoundingBox($plot);
+            // Get plot bounding box (usa coordenadas del recinto si se pasan)
+            $bbox = $this->getPlotBoundingBox($plot, $coordinates);
 
             // Request NDVI data from MODIS
             $response = Http::withToken($token)
@@ -263,16 +267,15 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     }
 
     /**
-     * Get plot center coordinates
+     * Get plot center coordinates (usa recinto seleccionado si se pasan coordinates)
      */
-    private function getPlotBoundingBox(Plot $plot): array
+    private function getPlotBoundingBox(Plot $plot, ?array $coordinates = null): array
     {
-        $coords = CoordinatesHelper::getCoordinates($plot);
-        
-        return [
-            'lat' => $coords['lat'],
-            'lon' => $coords['lon'],
-        ];
+        $coords = $coordinates
+            ? CoordinatesHelper::getCoordinates($plot, null, $coordinates)
+            : CoordinatesHelper::getCoordinates($plot);
+
+        return ['lat' => $coords['lat'], 'lon' => $coords['lon']];
     }
 
     /**
@@ -470,31 +473,31 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
     /**
      * Fetch enriched data (NDVI + LST + Area stats)
-     * 
+     *
      * @param Plot $plot
      * @param bool $includeArea Whether to include area statistics
+     * @param array|null $coordinates Coordenadas del recinto seleccionado ['lat','lng']
+     * @param int|null $recintoId ID de MultipartPlotSigpac para polygon area
      * @return PlotRemoteSensing|null
      */
-    public function fetchEnrichedData(Plot $plot, bool $includeArea = false): ?PlotRemoteSensing
+    public function fetchEnrichedData(Plot $plot, bool $includeArea = false, ?array $coordinates = null, ?int $recintoId = null): ?PlotRemoteSensing
     {
-        // Get base NDVI data
-        $result = $this->getLatestData($plot, true);
-        
+        $result = $this->getLatestData($plot, true, $coordinates);
+
         if (!$result) {
             return null;
         }
 
         try {
             $token = $this->getAuthToken();
-            
+
             if (!$token) {
                 Log::warning('Cannot fetch enriched data without auth token');
                 return $result;
             }
 
-            // Fetch LST data
-            $lstData = $this->lstService->fetchLSTData($plot, $token);
-            
+            $lstData = $this->lstService->fetchLSTData($plot, $token, $coordinates);
+
             if ($lstData) {
                 // Calculate CWSI if we have both LST and air temp
                 if ($lstData['lst_day'] && $result->temperature && $result->humidity) {
@@ -510,9 +513,8 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 $result->update($lstData);
             }
 
-            // Fetch area statistics if requested
             if ($includeArea) {
-                $areaStats = $this->areaService->requestAreaData($plot, $token);
+                $areaStats = $this->areaService->requestAreaData($plot, $token, $recintoId);
                 
                 if ($areaStats && isset($areaStats['task_id'])) {
                     // Store task ID in metadata for later retrieval

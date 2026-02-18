@@ -29,21 +29,20 @@ class NasaAreaRequestService
 
     /**
      * Request area data for a plot
-     * 
+     *
      * NOTE: Area requests are ASYNC - they create a task that processes in background
-     * Can take 5-30 minutes to complete
      *
      * @param Plot $plot
      * @param string $token NASA auth token
+     * @param int|null $recintoId MultipartPlotSigpac (recinto) para usar su geometría
      * @return array|null Task info or null
      */
-    public function requestAreaData(Plot $plot, string $token): ?array
+    public function requestAreaData(Plot $plot, string $token, ?int $recintoId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockAreaStatistics($plot);
         }
 
-        // Check rate limit
         if (!$this->rateLimitService->canMakeNasaRequest()) {
             Log::warning('NASA API rate limit reached for area request', [
                 'plot_id' => $plot->getKey(),
@@ -52,8 +51,7 @@ class NasaAreaRequestService
         }
 
         try {
-            // Get plot polygon from SIGPAC
-            $polygon = $this->getPlotPolygon($plot);
+            $polygon = $this->getPlotPolygon($plot, $recintoId);
             
             if (!$polygon) {
                 Log::warning('Plot has no polygon geometry', ['plot_id' => $plot->getKey()]);
@@ -250,14 +248,19 @@ class NasaAreaRequestService
     }
 
     /**
-     * Get plot polygon from SIGPAC geometry
+     * Get plot polygon from SIGPAC geometry (usa recinto seleccionado si se pasa recintoId)
      */
-    private function getPlotPolygon(Plot $plot): ?array
+    private function getPlotPolygon(Plot $plot, ?int $recintoId = null): ?array
     {
-        $multipart = $plot->multiplePlotSigpacs()
+        $query = $plot->multiplePlotSigpacs()
             ->whereNotNull('plot_geometry_id')
-            ->with('plotGeometry')
-            ->first();
+            ->with('plotGeometry');
+
+        if ($recintoId) {
+            $query->where('id', $recintoId);
+        }
+
+        $multipart = $query->first();
 
         if (!$multipart || !$multipart->plotGeometry) {
             return null;

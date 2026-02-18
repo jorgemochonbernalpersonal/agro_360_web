@@ -347,8 +347,10 @@ class Dashboard extends Component
             // For now, fetch latest data (NASA API doesn't easily support specific historical dates)
             // In future, this could be enhanced to request specific dates via AppEEARS task
             $result = $nasaService->fetchEnrichedData(
-                $this->selectedPlot, 
-                includeArea: false
+                $this->selectedPlot,
+                includeArea: false,
+                coordinates: $this->getSelectedRecintoCoordinates(),
+                recintoId: $this->selectedRecintoId
             );
             
             if ($result) {
@@ -434,6 +436,7 @@ class Dashboard extends Component
         }
         
         $this->availableRecintos = $this->selectedPlot->multiplePlotSigpacs()
+            ->whereNotNull('plot_geometry_id')
             ->with(['sigpacCode', 'plotGeometry'])
             ->get()
             ->map(function($mps) {
@@ -478,9 +481,9 @@ class Dashboard extends Component
     }
     
     /**
-     * Get coordinates of selected recinto
+     * Get coordinates of selected recinto (usado por vista y para pasar a NASA)
      */
-    private function getSelectedRecintoCoordinates(): ?array
+    public function getSelectedRecintoCoordinates(): ?array
     {
         if (!$this->selectedRecintoId || empty($this->availableRecintos)) {
             return null;

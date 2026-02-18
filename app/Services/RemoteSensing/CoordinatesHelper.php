@@ -20,29 +20,41 @@ class CoordinatesHelper
      * Obtener coordenadas de una parcela desde su geometría
      * 
      * @param Plot $plot
+     * @param int|null $recintoId ID de MultipartPlotSigpac (recinto) para usar su PlotGeometry
+     * @param array|null $overrideCoords ['lat' => float, 'lng'|'lon' => float] para forzar coordenadas
      * @return array ['lat' => float, 'lon' => float]
      */
-    public static function getCoordinates(Plot $plot): array
+    public static function getCoordinates(Plot $plot, ?int $recintoId = null, ?array $overrideCoords = null): array
     {
-        // Intentar obtener desde PlotGeometry centroid
-        $geometry = $plot->plotGeometries()->first();
-        
-        if ($geometry) {
-            $centroid = $geometry->getCentroidAsArray();
-            
-            if ($centroid && self::isValidCoordinate($centroid['lat'], $centroid['lng'])) {
-                return [
-                    'lat' => $centroid['lat'],
-                    'lon' => $centroid['lng'],
-                ];
+        // 1. Override explícito (p.ej. desde recinto seleccionado en Dashboard)
+        if ($overrideCoords && isset($overrideCoords['lat'])) {
+            $lon = $overrideCoords['lng'] ?? $overrideCoords['lon'] ?? self::DEFAULT_LON;
+            if (self::isValidCoordinate($overrideCoords['lat'], $lon)) {
+                return ['lat' => $overrideCoords['lat'], 'lon' => $lon];
             }
         }
 
-        // Fallback: coordenadas por defecto
-        return [
-            'lat' => self::DEFAULT_LAT,
-            'lon' => self::DEFAULT_LON,
-        ];
+        // 2. Coordenadas del recinto seleccionado (MultipartPlotSigpac → PlotGeometry)
+        if ($recintoId) {
+            $mps = $plot->multiplePlotSigpacs()->with('plotGeometry')->find($recintoId);
+            if ($mps?->plotGeometry) {
+                $centroid = $mps->plotGeometry->getCentroidAsArray();
+                if ($centroid && self::isValidCoordinate($centroid['lat'], $centroid['lng'])) {
+                    return ['lat' => $centroid['lat'], 'lon' => $centroid['lng']];
+                }
+            }
+        }
+
+        // 3. Primera geometría de la parcela (plotGeometries vía multipart)
+        $geometry = $plot->plotGeometries()->first();
+        if ($geometry) {
+            $centroid = $geometry->getCentroidAsArray();
+            if ($centroid && self::isValidCoordinate($centroid['lat'], $centroid['lng'])) {
+                return ['lat' => $centroid['lat'], 'lon' => $centroid['lng']];
+            }
+        }
+
+        return ['lat' => self::DEFAULT_LAT, 'lon' => self::DEFAULT_LON];
     }
 
     /**

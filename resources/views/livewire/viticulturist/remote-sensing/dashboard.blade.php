@@ -23,7 +23,7 @@
                     class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 min-w-[200px]">
                 @if(count($plots) > 0)
                     @foreach($plots as $plot)
-                        <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                        <option value="{{ $plot->id }}" wire:key="plot-{{ $plot->id }}">{{ $plot->name }}</option>
                     @endforeach
                 @else
                     <option value="">Sin parcelas con geometrías</option>
@@ -80,8 +80,9 @@
         </div>
     </div>
 
+    <div wire:key="dashboard-body-{{ $isLoading ? 'loading' : ($selectedPlotId ?? 'none') }}">
     @if($isLoading)
-        <div class="flex items-center justify-center py-16">
+        <div class="flex items-center justify-center py-16" wire:key="loading-state">
             <svg class="w-12 h-12 animate-spin text-green-600" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
@@ -91,9 +92,9 @@
     @elseif($selectedPlot)
         <!-- Recommendations Banner -->
         @if(count($recommendations) > 0)
-            <div class="mb-6 flex flex-wrap gap-3" wire:key="recommendations-{{ $selectedPlotId }}">
+            <div class="mb-6 flex flex-wrap gap-3" wire:key="recommendations-{{ $selectedPlotId ?? 'none' }}">
                 @foreach($recommendations as $index => $rec)
-                    <div wire:key="rec-{{ $selectedPlotId }}-{{ $index }}" 
+                    <div wire:key="rec-{{ $selectedPlotId ?? 'none' }}-{{ $index }}" 
                          class="flex-1 min-w-[200px] p-3 rounded-lg border-l-4
                         @if($rec['type'] === 'danger') bg-red-50 border-red-500
                         @elseif($rec['type'] === 'warning') bg-amber-50 border-amber-500
@@ -182,7 +183,7 @@
         </div>
 
         <!-- Tab Content -->
-        <div class="bg-white rounded-lg shadow-lg p-6" wire:key="tab-content-{{ $selectedPlotId }}-{{ $activeTab }}">
+        <div class="bg-white rounded-lg shadow-lg p-6" wire:key="tab-content-{{ $selectedPlotId ?? 'none' }}-{{ $activeTab }}">
             <!-- Header with plot name -->
             <div class="flex items-center gap-3 mb-4 pb-4 border-b">
                 <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -873,7 +874,7 @@
 
             <!-- History Tab -->
             @if($activeTab === 'history')
-                <div wire:key="history-tab-content-{{ $selectedPlotId }}-{{ $historyPeriod }}">
+                <div wire:key="history-tab-content-{{ $selectedPlotId ?? 'none' }}-{{ $historyPeriod }}">
                 {{-- Period Selector --}}
                 <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
                     <div class="flex flex-col md:flex-row gap-4">
@@ -1255,9 +1256,10 @@
             </div>
         </div>
     @else
-        <div class="text-center py-16 bg-gray-50 rounded-lg">
+        <div class="text-center py-16 bg-gray-50 rounded-lg" wire:key="empty-state">
             <span class="text-6xl">🛰️</span>
             <p class="text-gray-600 mt-4">Selecciona una parcela para ver el análisis</p>
         </div>
     @endif
+    </div>{{-- cierre wire:key dashboard-body --}}
 </div>
