@@ -3,47 +3,47 @@
         $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>';
     @endphp
     
-    <x-page-header 
+    <x-agro.page-header 
         :icon="$icon"
         title="Dashboard de Cumplimiento PAC"
         description="Monitoriza el estado de cumplimiento normativo de tu cuaderno digital en tiempo real"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+        icon-color="from-agro-500 to-agro-700"
     />
 
     {{-- Filtro de Rango Temporal --}}
-    <x-filter-section title="Per√≠odo de An√°lisis" color="green">
-        <x-filter-select wire:model.live="timeRange">
-            <option value="30">√öltimos 30 d√≠as</option>
-            <option value="90">√öltimos 90 d√≠as</option>
-            <option value="180">√öltimos 6 meses</option>
-            <option value="365">√öltimo a√±o</option>
+    <x-agro.filter-section title="PerÌodo de An·lisis" color="green">
+        <x-agro.filter-select wire:model.live="timeRange">
+            <option value="30">⁄ltimos 30 dÌas</option>
+            <option value="90">⁄ltimos 90 dÌas</option>
+            <option value="180">⁄ltimos 6 meses</option>
+            <option value="365">⁄ltimo aÒo</option>
             <option value="all">Todas las actividades</option>
-        </x-filter-select>
-    </x-filter-section>
+        </x-agro.filter-select>
+    </x-agro.filter-section>
 
     {{-- Medidor de Cumplimiento Global --}}
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold text-gray-800">Cumplimiento Global</h2>
+            <h2 class="text-xl font-semibold text-zinc-800">Cumplimiento Global</h2>
             <span class="text-3xl font-bold {{ $compliancePercentage >= 95 ? 'text-green-600' : ($compliancePercentage >= 80 ? 'text-amber-600' : 'text-red-600') }}">
                 {{ number_format($compliancePercentage, 1) }}%
             </span>
         </div>
         
         {{-- Barra de Progreso --}}
-        <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+        <div class="w-full bg-zinc-200 rounded-full h-4 mb-4">
             <div class="h-4 rounded-full transition-all duration-500 {{ $compliancePercentage >= 95 ? 'bg-green-500' : ($compliancePercentage >= 80 ? 'bg-amber-500' : 'bg-red-500') }}" 
                  style="width: {{ $compliancePercentage }}%"></div>
         </div>
         
-        {{-- Estad√≠sticas R√°pidas --}}
+        {{-- EstadÌsticas R·pidas --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
                 <div class="text-sm text-blue-600 font-medium">Total Actividades</div>
                 <div class="text-2xl font-bold text-blue-900">{{ $totalActivities }}</div>
             </div>
             <div class="bg-red-50 rounded-lg p-4 border border-red-100">
-                <div class="text-sm text-red-600 font-medium">Con Errores Cr√≠ticos</div>
+                <div class="text-sm text-red-600 font-medium">Con Errores CrÌticos</div>
                 <div class="text-2xl font-bold text-red-900">{{ $activitiesWithErrors }}</div>
             </div>
             <div class="bg-amber-50 rounded-lg p-4 border border-amber-100">
@@ -53,9 +53,9 @@
         </div>
     </div>
 
-    {{-- Nuevas M√©tricas: Productos Fitosanitarios --}}
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">üì¶ Productos Fitosanitarios</h2>
+    {{-- Nuevas MÈtricas: Productos Fitosanitarios --}}
+    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
+        <h2 class="text-xl font-semibold text-zinc-800 mb-4">?? Productos Fitosanitarios</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
@@ -63,14 +63,14 @@
                 <div class="text-2xl font-bold text-blue-900">{{ $totalProducts }}</div>
             </div>
             <div class="bg-green-50 rounded-lg p-4 border border-green-100">
-                <div class="text-sm text-green-600 font-medium">Registro V√°lido</div>
+                <div class="text-sm text-green-600 font-medium">Registro V·lido</div>
                 <div class="text-2xl font-bold text-green-900">{{ $productsWithValidRegistration }}</div>
                 <div class="text-xs text-green-600 mt-1">{{ $productRegistrationPercentage }}%</div>
             </div>
             <div class="bg-amber-50 rounded-lg p-4 border border-amber-100">
-                <div class="text-sm text-amber-600 font-medium">Pr√≥ximos a Caducar</div>
+                <div class="text-sm text-amber-600 font-medium">PrÛximos a Caducar</div>
                 <div class="text-2xl font-bold text-amber-900">{{ $productsExpiringSoon }}</div>
-                <div class="text-xs text-amber-600 mt-1">Pr√≥ximos 30 d√≠as</div>
+                <div class="text-xs text-amber-600 mt-1">PrÛximos 30 dÌas</div>
             </div>
             <div class="bg-red-50 rounded-lg p-4 border border-red-100">
                 <div class="text-sm text-red-600 font-medium">Caducados/Revocados</div>
@@ -78,21 +78,21 @@
             </div>
         </div>
 
-        {{-- Barra de progreso de productos v√°lidos --}}
+        {{-- Barra de progreso de productos v·lidos --}}
         <div class="mb-4">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-700">Estado de Registros</span>
+                <span class="text-sm font-medium text-zinc-700">Estado de Registros</span>
                 <span class="text-sm font-bold {{ $productRegistrationPercentage >= 95 ? 'text-green-600' : ($productRegistrationPercentage >= 80 ? 'text-amber-600' : 'text-red-600') }}">
                     {{ $productRegistrationPercentage }}%
                 </span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-3">
+            <div class="w-full bg-zinc-200 rounded-full h-3">
                 <div class="h-3 rounded-full transition-all duration-500 {{ $productRegistrationPercentage >= 95 ? 'bg-green-500' : ($productRegistrationPercentage >= 80 ? 'bg-amber-500' : 'bg-red-500') }}" 
                      style="width: {{ $productRegistrationPercentage }}%"></div>
             </div>
         </div>
 
-        {{-- Alertas de productos pr√≥ximos a caducar --}}
+        {{-- Alertas de productos prÛximos a caducar --}}
         @if($productsExpiringSoon > 0)
             <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mt-4">
                 <div class="flex items-start">
@@ -102,7 +102,7 @@
                         </svg>
                     </div>
                     <div class="ml-3 flex-1">
-                        <p class="text-sm font-medium text-amber-800">Productos pr√≥ximos a caducar</p>
+                        <p class="text-sm font-medium text-amber-800">Productos prÛximos a caducar</p>
                         <div class="mt-2 text-sm text-amber-700 space-y-1">
                             @foreach($expiringProducts as $product)
                                 <div class="flex items-center justify-between">
@@ -113,7 +113,7 @@
                         </div>
                         <p class="mt-2 text-xs text-amber-600">
                             <a href="{{ route('viticulturist.phytosanitary-products.index') }}" class="underline hover:text-amber-800">
-                                Ver todos los productos ‚Üí
+                                Ver todos los productos ?
                             </a>
                         </p>
                     </div>
@@ -122,14 +122,14 @@
         @endif
     </div>
 
-    {{-- Nuevas M√©tricas: Actividades Bloqueadas --}}
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">üîí Actividades Bloqueadas</h2>
+    {{-- Nuevas MÈtricas: Actividades Bloqueadas --}}
+    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
+        <h2 class="text-xl font-semibold text-zinc-800 mb-4">?? Actividades Bloqueadas</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div class="text-sm text-gray-600 font-medium">Total Bloqueadas</div>
-                <div class="text-2xl font-bold text-gray-900">{{ $totalLockedActivities }}</div>
+            <div class="bg-zinc-50 rounded-lg p-4 border border-zinc-200">
+                <div class="text-sm text-zinc-600 font-medium">Total Bloqueadas</div>
+                <div class="text-2xl font-bold text-zinc-900">{{ $totalLockedActivities }}</div>
             </div>
             <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
                 <div class="text-sm text-blue-600 font-medium">% Bloqueadas</div>
@@ -138,32 +138,32 @@
             <div class="bg-purple-50 rounded-lg p-4 border border-purple-100">
                 <div class="text-sm text-purple-600 font-medium">Bloqueadas Recientemente</div>
                 <div class="text-2xl font-bold text-purple-900">{{ $recentlyLockedActivities->count() }}</div>
-                <div class="text-xs text-purple-600 mt-1">√öltimos 7 d√≠as</div>
+                <div class="text-xs text-purple-600 mt-1">⁄ltimos 7 dÌas</div>
             </div>
         </div>
 
         {{-- Lista de actividades bloqueadas recientemente --}}
         @if($recentlyLockedActivities->count() > 0)
-            <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <div class="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                    <h3 class="text-sm font-semibold text-gray-700">Actividades bloqueadas recientemente</h3>
+            <div class="border border-zinc-200 rounded-lg overflow-hidden">
+                <div class="bg-zinc-50 px-4 py-2 border-b border-zinc-200">
+                    <h3 class="text-sm font-semibold text-zinc-700">Actividades bloqueadas recientemente</h3>
                 </div>
-                <div class="divide-y divide-gray-200">
+                <div class="divide-y divide-zinc-200">
                     @foreach($recentlyLockedActivities as $activity)
-                        <div class="px-4 py-3 hover:bg-gray-50">
+                        <div class="px-4 py-3 hover:bg-zinc-50">
                             <div class="flex items-center justify-between">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-sm font-medium text-gray-900">
+                                        <span class="text-sm font-medium text-zinc-900">
                                             {{ ucfirst($activity->activity_type) }}
                                         </span>
-                                        <span class="text-xs text-gray-500">‚Ä¢</span>
-                                        <span class="text-xs text-gray-600">
+                                        <span class="text-xs text-zinc-500">ï</span>
+                                        <span class="text-xs text-zinc-600">
                                             {{ $activity->plot->name ?? 'Sin parcela' }}
                                         </span>
                                     </div>
-                                    <div class="text-xs text-gray-500 mt-1">
-                                        Fecha: {{ $activity->activity_date->format('d/m/Y') }} ‚Ä¢ 
+                                    <div class="text-xs text-zinc-500 mt-1">
+                                        Fecha: {{ $activity->activity_date->format('d/m/Y') }} ï 
                                         Bloqueada: {{ $activity->locked_at->diffForHumans() }}
                                     </div>
                                 </div>
@@ -174,38 +174,38 @@
                 </div>
             </div>
         @else
-            <p class="text-sm text-gray-500 text-center py-4">No hay actividades bloqueadas recientemente</p>
+            <p class="text-sm text-zinc-500 text-center py-4">No hay actividades bloqueadas recientemente</p>
         @endif
 
         <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
             <p class="text-xs text-blue-700">
-                <strong>‚ÑπÔ∏è Informaci√≥n:</strong> Las actividades se bloquean autom√°ticamente despu√©s de 7 d√≠as para garantizar el cumplimiento PAC y prevenir modificaciones retroactivas.
+                <strong>?? InformaciÛn:</strong> Las actividades se bloquean autom·ticamente despuÈs de 7 dÌas para garantizar el cumplimiento PAC y prevenir modificaciones retroactivas.
             </p>
         </div>
     </div>
 
-    {{-- Nuevas M√©tricas: Validaci√≥n de Cosechas --}}
+    {{-- Nuevas MÈtricas: ValidaciÛn de Cosechas --}}
     @if($totalHarvests > 0)
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">üåæ Validaci√≥n de Plazos de Seguridad en Cosechas</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
+            <h2 class="text-xl font-semibold text-zinc-800 mb-4">?? ValidaciÛn de Plazos de Seguridad en Cosechas</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
                     <div class="text-sm text-blue-600 font-medium">Total Cosechas</div>
                     <div class="text-2xl font-bold text-blue-900">{{ $totalHarvests }}</div>
-                    <div class="text-xs text-blue-600 mt-1">En el per√≠odo seleccionado</div>
+                    <div class="text-xs text-blue-600 mt-1">En el perÌodo seleccionado</div>
                 </div>
                 <div class="bg-red-50 rounded-lg p-4 border border-red-100">
                     <div class="text-sm text-red-600 font-medium">Con Errores de Plazo</div>
                     <div class="text-2xl font-bold text-red-900">{{ $harvestsWithWithdrawalIssues }}</div>
                     @if($harvestsWithWithdrawalIssues > 0)
-                        <div class="text-xs text-red-600 mt-1">‚ö†Ô∏è Requieren atenci√≥n</div>
+                        <div class="text-xs text-red-600 mt-1">?? Requieren atenciÛn</div>
                     @endif
                 </div>
                 <div class="bg-amber-50 rounded-lg p-4 border border-amber-100">
                     <div class="text-sm text-amber-600 font-medium">Con Advertencias</div>
                     <div class="text-2xl font-bold text-amber-900">{{ $harvestsWithWarnings }}</div>
-                    <div class="text-xs text-amber-600 mt-1">Cerca del l√≠mite</div>
+                    <div class="text-xs text-amber-600 mt-1">Cerca del lÌmite</div>
                 </div>
             </div>
 
@@ -222,8 +222,8 @@
                                 Se detectaron {{ $harvestsWithWithdrawalIssues }} cosecha(s) que no cumplen el plazo de seguridad
                             </p>
                             <p class="text-xs text-red-700 mt-1">
-                                Estas cosechas se realizaron antes de cumplirse el plazo de seguridad del √∫ltimo tratamiento fitosanitario. 
-                                Revisa el cuaderno digital para m√°s detalles.
+                                Estas cosechas se realizaron antes de cumplirse el plazo de seguridad del ˙ltimo tratamiento fitosanitario. 
+                                Revisa el cuaderno digital para m·s detalles.
                             </p>
                         </div>
                     </div>
@@ -238,7 +238,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-green-800">
-                                ‚úÖ Todas las cosechas cumplen con los plazos de seguridad
+                                ? Todas las cosechas cumplen con los plazos de seguridad
                             </p>
                         </div>
                     </div>
@@ -248,17 +248,17 @@
     @endif
 
     {{-- Cumplimiento por Tipo de Actividad --}}
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Cumplimiento por Tipo de Actividad</h2>
+    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
+        <h2 class="text-xl font-semibold text-zinc-800 mb-4">Cumplimiento por Tipo de Actividad</h2>
         
         @if(empty($statsByType))
-            <p class="text-gray-500 text-center py-8">No hay actividades registradas en este per√≠odo</p>
+            <p class="text-zinc-500 text-center py-8">No hay actividades registradas en este perÌodo</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach($statsByType as $type => $stats)
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-[var(--color-agro-green-light)] transition-all">
+                    <div class="border border-zinc-200 rounded-lg p-4 hover:shadow-md hover:border-agro-400 transition-all">
                         <div class="flex items-center justify-between mb-2">
-                            <h3 class="font-semibold text-gray-700">
+                            <h3 class="font-semibold text-zinc-700">
                                 @switch($type)
                                     @case('phytosanitary') Fitosanitarios @break
                                     @case('irrigation') Riegos @break
@@ -273,12 +273,12 @@
                             </span>
                         </div>
                         
-                        <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                        <div class="w-full bg-zinc-200 rounded-full h-2 mb-3">
                             <div class="h-2 rounded-full {{ $stats['percentage'] >= 95 ? 'bg-green-500' : ($stats['percentage'] >= 80 ? 'bg-amber-500' : 'bg-red-500') }}" 
                                  style="width: {{ $stats['percentage'] }}%"></div>
                         </div>
                         
-                        <div class="text-sm text-gray-600 space-y-1">
+                        <div class="text-sm text-zinc-600 space-y-1">
                             <div class="flex justify-between">
                                 <span>Total:</span>
                                 <span class="font-medium">{{ $stats['total'] }}</span>
@@ -306,11 +306,11 @@
         @endif
     </div>
 
-    {{-- Errores Cr√≠ticos --}}
+    {{-- Errores CrÌticos --}}
     @if(count($criticalErrors) > 0)
         <div class="bg-white rounded-lg shadow-sm border border-red-200 p-6">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold text-red-800">Errores Cr√≠ticos PAC</h2>
+                <h2 class="text-xl font-semibold text-red-800">Errores CrÌticos PAC</h2>
                 <span class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full">
                     {{ count($criticalErrors) }} {{ count($criticalErrors) === 1 ? 'error' : 'errores' }}
                 </span>
@@ -344,9 +344,9 @@
             </div>
             
             @if($activitiesWithErrors > 10)
-                <p class="text-sm text-gray-600 mt-4 text-center">
+                <p class="text-sm text-zinc-600 mt-4 text-center">
                     Mostrando 10 de {{ $activitiesWithErrors }} errores. 
-                    <a href="{{ route('viticulturist.digital-notebook') }}" class="text-[var(--color-agro-green)] hover:underline font-medium">Ver todas las actividades</a>
+                    <a href="{{ route('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline font-medium">Ver todas las actividades</a>
                 </p>
             @endif
         </div>
@@ -390,23 +390,23 @@
             </div>
             
             @if($activitiesWithWarnings > 10)
-                <p class="text-sm text-gray-600 mt-4 text-center">
+                <p class="text-sm text-zinc-600 mt-4 text-center">
                     Mostrando 10 de {{ $activitiesWithWarnings }} advertencias.
                 </p>
             @endif
         </div>
     @endif
 
-    {{-- Mensaje de √âxito --}}
+    {{-- Mensaje de …xito --}}
     @if($compliancePercentage >= 95 && $activitiesWithErrors === 0)
         <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
             <svg class="mx-auto h-12 w-12 text-green-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <h3 class="text-xl font-semibold text-green-800 mb-2">¬°Excelente Cumplimiento PAC!</h3>
+            <h3 class="text-xl font-semibold text-green-800 mb-2">°Excelente Cumplimiento PAC!</h3>
             <p class="text-green-700">
                 Tu cuaderno digital cumple con todos los requisitos normativos. 
-                Todas tus actividades est√°n correctamente registradas y listas para auditor√≠as PAC.
+                Todas tus actividades est·n correctamente registradas y listas para auditorÌas PAC.
             </p>
         </div>
     @endif

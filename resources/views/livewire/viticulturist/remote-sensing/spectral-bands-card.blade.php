@@ -9,8 +9,8 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-gray-900">🌈 Bandas Espectrales</h3>
-            <p class="text-sm text-gray-500 mt-1">
+            <h3 class="text-xl font-bold text-zinc-900">🌈 Bandas Espectrales</h3>
+            <p class="text-sm text-zinc-500 mt-1">
                 Reflectancias reales del satélite
                 @if($spectralData)
                     - {{ $spectralData['date'] }} ({{ $spectralData['satellite'] }})
@@ -20,13 +20,13 @@
         
         <div class="flex items-center gap-2">
             @if(count($availableDates) > 0)
-                <select wire:model.live="selectedDate" 
-                        class="text-sm border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+                <flux:select wire:model.live="selectedDate" 
+                        >
                     <option value="">Último dato</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                     @endforeach
-                </select>
+                </flux:select>
             @endif
             
             <button 
@@ -53,7 +53,7 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <p class="text-gray-600">Cargando bandas espectrales...</p>
+                <p class="text-zinc-600">Cargando bandas espectrales...</p>
             </div>
         </div>
     @endif
@@ -74,7 +74,7 @@
     @if($spectralData)
         {{-- Bandas Crudas --}}
         <div class="mb-6">
-            <h4 class="text-lg font-semibold text-gray-800 mb-3">📊 Reflectancias por Banda</h4>
+            <h4 class="text-lg font-semibold text-zinc-800 mb-3">📊 Reflectancias por Banda</h4>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
                     <div class="text-xs text-red-600 font-medium mb-1">RED</div>
@@ -104,7 +104,7 @@
 
         {{-- Índices Vegetación --}}
         <div>
-            <h4 class="text-lg font-semibold text-gray-800 mb-3">📈 Índices de Vegetación</h4>
+            <h4 class="text-lg font-semibold text-zinc-800 mb-3">📈 Índices de Vegetación</h4>
             <div class="space-y-3">
                 @foreach($indices as $key => $index)
                     @if($index['value'])
@@ -129,7 +129,7 @@
                             </div>
                             
                             {{-- Progress bar --}}
-                            <div class="mt-3 relative h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="mt-3 relative h-2 bg-zinc-200 rounded-full overflow-hidden">
                                 <div class="absolute top-0 left-0 h-full bg-{{ $index['color'] }}-500" 
                                      style="width: {{ min(100, max(0, (($index['value'] + 1) / 2) * 100)) }}%"></div>
                             </div>

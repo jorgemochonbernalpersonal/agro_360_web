@@ -1,6 +1,6 @@
 <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
     <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-[var(--color-agro-green-dark)] flex items-center gap-2">
+        <h2 class="text-xl font-bold text-agro-700 flex items-center gap-2">
             🌦️ Datos Meteorológicos
         </h2>
         <button wire:click="refreshData" 
@@ -28,7 +28,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
-            <span class="ml-2 text-gray-600">Cargando datos meteorológicos...</span>
+            <span class="ml-2 text-zinc-600">Cargando datos meteorológicos...</span>
         </div>
     @else
         <!-- Weather Cards Grid -->
@@ -36,13 +36,13 @@
             <!-- Temperature -->
             <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-600">Temperatura</span>
+                    <span class="text-sm font-semibold text-zinc-600">Temperatura</span>
                     <span class="text-xl">🌡️</span>
                 </div>
                 <div class="text-2xl font-bold text-orange-600">
                     {{ $weather['temperature'] ?? '--' }}°C
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="text-xs text-zinc-500 mt-1">
                     Min: {{ $weather['temperature_min'] ?? '--' }}° / Max: {{ $weather['temperature_max'] ?? '--' }}°
                 </div>
             </div>
@@ -50,13 +50,13 @@
             <!-- Humidity -->
             <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-600">Humedad</span>
+                    <span class="text-sm font-semibold text-zinc-600">Humedad</span>
                     <span class="text-xl">💧</span>
                 </div>
                 <div class="text-2xl font-bold text-blue-600">
                     {{ $weather['humidity'] ?? '--' }}%
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="text-xs text-zinc-500 mt-1">
                     Relativa del aire
                 </div>
             </div>
@@ -64,13 +64,13 @@
             <!-- Precipitation -->
             <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-600">Precipitación</span>
+                    <span class="text-sm font-semibold text-zinc-600">Precipitación</span>
                     <span class="text-xl">🌧️</span>
                 </div>
                 <div class="text-2xl font-bold text-indigo-600">
                     {{ $weather['precipitation'] ?? 0 }} mm
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="text-xs text-zinc-500 mt-1">
                     Últimas 24h
                 </div>
             </div>
@@ -78,13 +78,13 @@
             <!-- Wind -->
             <div class="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg p-4 border border-teal-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-600">Viento</span>
+                    <span class="text-sm font-semibold text-zinc-600">Viento</span>
                     <span class="text-xl">💨</span>
                 </div>
                 <div class="text-2xl font-bold text-teal-600">
                     {{ $weather['wind_speed'] ?? '--' }} km/h
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="text-xs text-zinc-500 mt-1">
                     Velocidad media
                 </div>
             </div>
@@ -95,17 +95,17 @@
             <!-- Soil Moisture -->
             <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-4 border border-amber-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-600">Humedad Suelo</span>
+                    <span class="text-sm font-semibold text-zinc-600">Humedad Suelo</span>
                     <span class="text-xl">🌱</span>
                 </div>
                 <div class="text-2xl font-bold text-amber-700">
                     {{ $soil['soil_moisture'] ?? '--' }}%
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div class="w-full bg-zinc-200 rounded-full h-2 mt-2">
                     <div class="h-2 rounded-full bg-gradient-to-r from-amber-300 to-amber-600" 
                          style="width: {{ min(100, $soil['soil_moisture'] ?? 0) }}%"></div>
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="text-xs text-zinc-500 mt-1">
                     Temp. suelo: {{ $soil['soil_temperature'] ?? '--' }}°C
                 </div>
             </div>
@@ -113,13 +113,13 @@
             <!-- Solar Radiation -->
             <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 border border-yellow-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-600">Radiación Solar</span>
+                    <span class="text-sm font-semibold text-zinc-600">Radiación Solar</span>
                     <span class="text-xl">☀️</span>
                 </div>
                 <div class="text-2xl font-bold text-yellow-600">
                     {{ $solar['solar_radiation'] ?? '--' }} MJ/m²
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="text-xs text-zinc-500 mt-1">
                     {{ $solar['sunshine_hours'] ?? '--' }}h de sol
                 </div>
             </div>
@@ -127,13 +127,13 @@
             <!-- Water Stress -->
             <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-600">Estrés Hídrico</span>
+                    <span class="text-sm font-semibold text-zinc-600">Estrés Hídrico</span>
                     <span class="text-xl">{{ $waterStress['emoji'] }}</span>
                 </div>
                 <div class="text-2xl font-bold {{ $waterStress['color'] }}">
                     {{ $waterStress['text'] }}
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="text-xs text-zinc-500 mt-1">
                     ET0: {{ $solar['et0'] ?? '--' }} mm/día
                 </div>
             </div>
@@ -164,11 +164,11 @@
         <!-- 7-Day Forecast -->
         @if($showForecast && count($forecast) > 0)
             <div class="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">📅 Pronóstico 7 días</h3>
+                <h3 class="text-sm font-semibold text-zinc-700 mb-3">📅 Pronóstico 7 días</h3>
                 <div class="grid grid-cols-7 gap-2">
                     @foreach($forecast as $day)
                         <div class="text-center p-2 bg-white rounded-lg shadow-sm">
-                            <div class="text-xs text-gray-500">
+                            <div class="text-xs text-zinc-500">
                                 {{ \Carbon\Carbon::parse($day['date'])->locale('es')->isoFormat('ddd') }}
                             </div>
                             <div class="text-xl my-1">

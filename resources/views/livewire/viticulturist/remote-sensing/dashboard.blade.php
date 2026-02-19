@@ -11,16 +11,16 @@
                     <span class="text-sm font-medium">Volver al Resumen</span>
                 </a>
             </div>
-            <h1 class="text-3xl font-bold text-[var(--color-agro-green-dark)] flex items-center gap-3">
+            <h1 class="text-3xl font-bold text-agro-700 flex items-center gap-3">
                 🛰️ Análisis Avanzado
             </h1>
-            <p class="text-gray-600 mt-1">Datos satelitales y meteorológicos detallados</p>
+            <p class="text-zinc-600 mt-1">Datos satelitales y meteorológicos detallados</p>
         </div>
         
         <div class="flex items-center gap-3">
             <!-- Plot Selector -->
-            <select wire:model.live="selectedPlotId" 
-                    class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 min-w-[200px]">
+            <flux:select wire:model.live="selectedPlotId" 
+                    >
                 @if(count($plots) > 0)
                     @foreach($plots as $plot)
                         <option value="{{ $plot->id }}" wire:key="plot-{{ $plot->id }}">{{ $plot->name }}</option>
@@ -28,7 +28,7 @@
                 @else
                     <option value="">Sin parcelas con geometrías</option>
                 @endif
-            </select>
+            </flux:select>
             
             <button wire:click="refreshData" 
                     class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition flex items-center gap-2 shadow-lg">
@@ -43,7 +43,7 @@
             </button>
             
             <button wire:click="downloadReport" 
-                    class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 shadow-sm">
+                    class="bg-white text-zinc-700 border border-zinc-300 px-4 py-2 rounded-lg hover:bg-zinc-50 transition flex items-center gap-2 shadow-sm">
                 <svg wire:loading.remove wire:target="downloadReport" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
@@ -59,24 +59,24 @@
     <!-- Stats Overview -->
     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <div class="bg-white rounded-lg shadow p-3 text-center">
-            <div class="text-2xl font-bold text-gray-700">{{ $stats['total_plots'] ?? 0 }}</div>
-            <div class="text-xs text-gray-500">Parcelas</div>
+            <div class="text-2xl font-bold text-zinc-700">{{ $stats['total_plots'] ?? 0 }}</div>
+            <div class="text-xs text-zinc-500">Parcelas</div>
         </div>
         <div class="bg-green-50 rounded-lg shadow p-3 text-center border border-green-200">
             <div class="text-2xl font-bold text-green-600">{{ $stats['average_ndvi'] ?? 0 }}</div>
-            <div class="text-xs text-gray-500">NDVI Medio</div>
+            <div class="text-xs text-zinc-500">NDVI Medio</div>
         </div>
         <div class="bg-emerald-50 rounded-lg shadow p-3 text-center border border-emerald-200">
             <div class="text-2xl font-bold text-emerald-600">{{ ($stats['excellent'] ?? 0) + ($stats['good'] ?? 0) }}</div>
-            <div class="text-xs text-gray-500">Saludables</div>
+            <div class="text-xs text-zinc-500">Saludables</div>
         </div>
         <div class="bg-yellow-50 rounded-lg shadow p-3 text-center border border-yellow-200">
             <div class="text-2xl font-bold text-yellow-600">{{ $stats['moderate'] ?? 0 }}</div>
-            <div class="text-xs text-gray-500">Moderadas</div>
+            <div class="text-xs text-zinc-500">Moderadas</div>
         </div>
         <div class="bg-red-50 rounded-lg shadow p-3 text-center border border-red-200">
             <div class="text-2xl font-bold text-red-600">{{ $stats['alerts'] ?? 0 }}</div>
-            <div class="text-xs text-gray-500">⚠️ Alertas</div>
+            <div class="text-xs text-zinc-500">⚠️ Alertas</div>
         </div>
     </div>
 
@@ -87,7 +87,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
-            <span class="ml-3 text-gray-600 text-lg">Cargando datos...</span>
+            <span class="ml-3 text-zinc-600 text-lg">Cargando datos...</span>
         </div>
     @elseif($selectedPlot)
         <!-- Recommendations Banner -->
@@ -105,78 +105,78 @@
                             <span class="text-lg">{{ $rec['icon'] }}</span>
                             <span class="font-semibold text-sm">{{ $rec['title'] }}</span>
                         </div>
-                        <p class="text-xs text-gray-600 mt-1">{{ $rec['text'] }}</p>
+                        <p class="text-xs text-zinc-600 mt-1">{{ $rec['text'] }}</p>
                     </div>
                 @endforeach
             </div>
         @endif
 
         <!-- Tabs Navigation -->
-        <div class="mb-4 border-b border-gray-200">
+        <div class="mb-4 border-b border-zinc-200">
             <nav class="flex gap-1 overflow-x-auto" aria-label="Tabs">
                 <button wire:click="setTab('satellite')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'satellite' ? 'border-green-500 text-green-600 bg-green-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'satellite' ? 'border-green-500 text-green-600 bg-green-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🛰️ Satélite
                 </button>
                 <button wire:click="setTab('spectral')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'spectral' ? 'border-rainbow-500 text-purple-600 bg-purple-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'spectral' ? 'border-rainbow-500 text-purple-600 bg-purple-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🌈 Espectral
                 </button>
                 <button wire:click="setTab('lai-official')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'lai-official' ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'lai-official' ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🌿 LAI Oficial
                 </button>
                 <button wire:click="setTab('thermal')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'thermal' ? 'border-orange-500 text-orange-600 bg-orange-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'thermal' ? 'border-orange-500 text-orange-600 bg-orange-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🌡️ Térmico
                 </button>
                 <button wire:click="setTab('smap-soil')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'smap-soil' ? 'border-brown-500 text-amber-600 bg-amber-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'smap-soil' ? 'border-brown-500 text-amber-600 bg-amber-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🛰️ SMAP Suelo
                 </button>
                 <button wire:click="setTab('vigor-map')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'vigor-map' ? 'border-purple-500 text-purple-600 bg-purple-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'vigor-map' ? 'border-purple-500 text-purple-600 bg-purple-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🗺️ Mapa Vigor
                 </button>
                 <button wire:click="setTab('weather')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'weather' ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'weather' ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🌦️ Clima
                 </button>
                 <button wire:click="setTab('soil')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'soil' ? 'border-amber-500 text-amber-600 bg-amber-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'soil' ? 'border-amber-500 text-amber-600 bg-amber-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🌱 Suelo
                 </button>
                 <button wire:click="setTab('solar')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'solar' ? 'border-yellow-500 text-yellow-600 bg-yellow-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'solar' ? 'border-yellow-500 text-yellow-600 bg-yellow-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     ☀️ Radiación
                 </button>
                 <button wire:click="setTab('irrigation')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'irrigation' ? 'border-cyan-500 text-cyan-600 bg-cyan-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'irrigation' ? 'border-cyan-500 text-cyan-600 bg-cyan-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     💧 Riego
                 </button>
                 <button wire:click="setTab('harvest')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'harvest' ? 'border-pink-500 text-pink-600 bg-pink-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'harvest' ? 'border-pink-500 text-pink-600 bg-pink-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     🍇 Cosecha
                 </button>
                 <button wire:click="setTab('compare')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'compare' ? 'border-violet-500 text-violet-600 bg-violet-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'compare' ? 'border-violet-500 text-violet-600 bg-violet-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     ⚖️ Comparar
                 </button>
                 <button wire:click="setTab('history')" 
                         class="px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap
-                            {{ $activeTab === 'history' ? 'border-purple-500 text-purple-600 bg-purple-50' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                            {{ $activeTab === 'history' ? 'border-purple-500 text-purple-600 bg-purple-50' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}">
                     📊 Histórico
                 </button>
             </nav>
@@ -191,7 +191,7 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-lg">{{ $selectedPlot->name }}</h2>
-                    <p class="text-sm text-gray-500">{{ $selectedPlot->municipality?->name ?? 'Sin municipio' }}</p>
+                    <p class="text-sm text-zinc-500">{{ $selectedPlot->municipality?->name ?? 'Sin municipio' }}</p>
                 </div>
             </div>
             
@@ -222,7 +222,7 @@
                 {{-- Caso 2: 2-4 recintos - Botones Radio --}}
                 @elseif(count($availableRecintos) <= 4)
                     <div class="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-                        <label class="block text-sm font-semibold text-gray-800 mb-3">
+                        <label class="block text-sm font-semibold text-zinc-800 mb-3">
                             📍 Selecciona recinto a analizar:
                         </label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -233,7 +233,7 @@
                                     class="text-left p-3 rounded-lg border-2 transition-all
                                         {{ $selectedRecintoId == $recinto['id'] 
                                             ? 'border-green-500 bg-green-50 shadow-md' 
-                                            : 'border-gray-300 bg-white hover:border-blue-400' }}">
+                                            : 'border-zinc-300 bg-white hover:border-blue-400' }}">
                                     
                                     <div class="flex items-start gap-2">
                                         <div class="mt-0.5">
@@ -242,17 +242,17 @@
                                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                                                 </svg>
                                             @else
-                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                                                <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 20 20">
                                                     <circle cx="10" cy="10" r="8" stroke-width="2"/>
                                                 </svg>
                                             @endif
                                         </div>
                                         
                                         <div class="flex-1">
-                                            <div class="text-sm font-semibold {{ $selectedRecintoId == $recinto['id'] ? 'text-green-900' : 'text-gray-900' }}">
+                                            <div class="text-sm font-semibold {{ $selectedRecintoId == $recinto['id'] ? 'text-green-900' : 'text-zinc-900' }}">
                                                 {{ $recinto['display_name'] }}
                                             </div>
-                                            <div class="text-xs {{ $selectedRecintoId == $recinto['id'] ? 'text-green-700' : 'text-gray-600' }} mt-1">
+                                            <div class="text-xs {{ $selectedRecintoId == $recinto['id'] ? 'text-green-700' : 'text-zinc-600' }} mt-1">
                                                 📏 {{ number_format($recinto['area_ha'], 2) }} ha
                                                 @if($recinto['centroid'])
                                                     <br>📍 {{ number_format($recinto['centroid']['lat'], 4) }}°, {{ number_format($recinto['centroid']['lng'], 4) }}°
@@ -270,22 +270,22 @@
                     <div class="mb-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
                         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
                             <div class="flex-1">
-                                <label class="block text-sm font-semibold text-gray-800 mb-2">
+                                <label class="block text-sm font-semibold text-zinc-800 mb-2">
                                     📍 Recinto a analizar
-                                    <span class="text-xs font-normal text-gray-600">
+                                    <span class="text-xs font-normal text-zinc-600">
                                         (parcela con {{ count($availableRecintos) }} recintos)
                                     </span>
                                 </label>
                                 
-                                <select wire:model.live="selectedRecintoId" 
-                                        class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-sm">
+                                <flux:select wire:model.live="selectedRecintoId" 
+                                        >
                                     @foreach($availableRecintos as $recinto)
                                         <option value="{{ $recinto['id'] }}">
                                             {{ $recinto['display_name'] }} 
                                             ({{ number_format($recinto['area_ha'], 2) }} ha)
                                         </option>
                                     @endforeach
-                                </select>
+                                </flux:select>
                             </div>
                             
                             @php
@@ -294,8 +294,8 @@
                             
                             @if($selectedRecinto && $selectedRecinto['centroid'])
                                 <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 text-xs">
-                                    <div class="font-semibold text-gray-700 mb-1">Coordenadas:</div>
-                                    <div class="text-gray-600">
+                                    <div class="font-semibold text-zinc-700 mb-1">Coordenadas:</div>
+                                    <div class="text-zinc-600">
                                         📍 Lat: {{ number_format($selectedRecinto['centroid']['lat'], 6) }}°<br>
                                         📍 Lon: {{ number_format($selectedRecinto['centroid']['lng'], 6) }}°
                                     </div>
@@ -311,15 +311,15 @@
                 {{-- Date Selector for Satellite Tab --}}
                 <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                     <div class="flex flex-col md:flex-row md:items-center gap-2">
-                        <span class="text-sm font-medium text-gray-700">📅 Fecha de análisis:</span>
+                        <span class="text-sm font-medium text-zinc-700">📅 Fecha de análisis:</span>
                         @if(count($satelliteAvailableDates) > 0)
-                            <select wire:model.live="satelliteSelectedDate" 
-                                    class="text-sm border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 px-3 py-2">
+                            <flux:select wire:model.live="satelliteSelectedDate" 
+                                    >
                                 <option value="">Último dato disponible</option>
                                 @foreach($satelliteAvailableDates as $date)
                                     <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                                 @endforeach
-                            </select>
+                            </flux:select>
                         @else
                             <span class="text-sm text-amber-600 font-medium bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
                                 ⚠️ Sin datos históricos - Carga datos para comenzar
@@ -383,8 +383,8 @@
                                 
                                 {{-- Verificación de requisitos --}}
                                 <div class="bg-white rounded-lg p-3 text-xs border border-yellow-200">
-                                    <p class="font-semibold text-gray-800 mb-2">📋 Verifica que:</p>
-                                    <div class="space-y-1 text-gray-700">
+                                    <p class="font-semibold text-zinc-800 mb-2">📋 Verifica que:</p>
+                                    <div class="space-y-1 text-zinc-700">
                                         <div class="flex items-center gap-2">
                                             @php
                                                 $recintoCoords = $this->getSelectedRecintoCoordinates();
@@ -424,13 +424,13 @@
                     <!-- NDVI Card -->
                     <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-5 border border-green-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">NDVI</span>
+                            <span class="text-sm font-semibold text-zinc-600">NDVI</span>
                             <span class="text-2xl">{{ $ndviData?->health_emoji ?? '❓' }}</span>
                         </div>
                         <div class="text-4xl font-bold text-green-700 mb-2">
                             {{ number_format($ndviData?->ndvi_mean ?? 0, 2) }}
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                        <div class="w-full bg-zinc-200 rounded-full h-2.5 mb-2">
                             <div class="h-2.5 rounded-full" style="width: {{ $ndviData?->ndvi_percentage ?? 0 }}%; background: linear-gradient(90deg, #ef4444, #eab308, #22c55e);"></div>
                         </div>
                         <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full
@@ -447,35 +447,35 @@
                     <!-- NDWI Card -->
                     <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-5 border border-blue-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">NDWI (Agua)</span>
+                            <span class="text-sm font-semibold text-zinc-600">NDWI (Agua)</span>
                             <span class="text-2xl">💧</span>
                         </div>
                         <div class="text-4xl font-bold text-blue-700 mb-2">
                             {{ number_format($ndviData?->ndwi_mean ?? 0, 2) }}
                         </div>
-                        <p class="text-xs text-gray-600">Contenido de agua en vegetación</p>
+                        <p class="text-xs text-zinc-600">Contenido de agua en vegetación</p>
                     </div>
 
                     <!-- Year Comparison -->
                     <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-5 border border-amber-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">vs {{ now()->year - 1 }}</span>
+                            <span class="text-sm font-semibold text-zinc-600">vs {{ now()->year - 1 }}</span>
                             <span class="text-2xl">📅</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <div class="text-center">
-                                <div class="text-xs text-gray-500">{{ now()->year - 1 }}</div>
-                                <div class="text-xl font-bold text-gray-600">{{ number_format($lastYearNdvi ?? 0, 2) }}</div>
+                                <div class="text-xs text-zinc-500">{{ now()->year - 1 }}</div>
+                                <div class="text-xl font-bold text-zinc-600">{{ number_format($lastYearNdvi ?? 0, 2) }}</div>
                             </div>
                             <span class="text-xl">→</span>
                             <div class="text-center">
-                                <div class="text-xs text-gray-500">{{ now()->year }}</div>
+                                <div class="text-xs text-zinc-500">{{ now()->year }}</div>
                                 <div class="text-xl font-bold text-green-600">{{ number_format($ndviData?->ndvi_mean ?? 0, 2) }}</div>
                             </div>
                             <div class="px-2 py-1 rounded-full text-xs font-bold
                                 @if($yearChange > 0) bg-green-100 text-green-700
                                 @elseif($yearChange < 0) bg-red-100 text-red-700
-                                @else bg-gray-100 text-gray-700
+                                @else bg-zinc-100 text-zinc-700
                                 @endif">
                                 @if($yearChange > 0)↑@elseif($yearChange < 0)↓@else=@endif
                                 {{ number_format(abs(($yearChange ?? 0) * 100), 1) }}%
@@ -485,7 +485,7 @@
                 </div>
                 
                 @if($ndviData && ($ndviData->ndvi_mean ?? 0) > 0)
-                    <div class="mt-4 bg-gray-50 rounded-lg p-3 text-sm text-gray-600 flex gap-4">
+                    <div class="mt-4 bg-zinc-50 rounded-lg p-3 text-sm text-zinc-600 flex gap-4">
                         <span>📡 NASA MODIS</span>
                         <span>📅 {{ $ndviData?->image_date?->format('d/m/Y') ?? 'N/A' }}</span>
                         <span>☁️ {{ $ndviData?->cloud_coverage ?? 0 }}% nubes</span>
@@ -524,22 +524,22 @@
                     <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200 text-center">
                         <span class="text-2xl">🌡️</span>
                         <div class="text-2xl font-bold text-orange-600">{{ $weather['temperature'] ?? '--' }}°C</div>
-                        <div class="text-xs text-gray-500">{{ $weather['temperature_min'] ?? '--' }}° / {{ $weather['temperature_max'] ?? '--' }}°</div>
+                        <div class="text-xs text-zinc-500">{{ $weather['temperature_min'] ?? '--' }}° / {{ $weather['temperature_max'] ?? '--' }}°</div>
                     </div>
                     <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200 text-center">
                         <span class="text-2xl">💧</span>
                         <div class="text-2xl font-bold text-blue-600">{{ $weather['humidity'] ?? '--' }}%</div>
-                        <div class="text-xs text-gray-500">Humedad</div>
+                        <div class="text-xs text-zinc-500">Humedad</div>
                     </div>
                     <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200 text-center">
                         <span class="text-2xl">🌧️</span>
                         <div class="text-2xl font-bold text-indigo-600">{{ $weather['precipitation'] ?? 0 }}mm</div>
-                        <div class="text-xs text-gray-500">Precipitación</div>
+                        <div class="text-xs text-zinc-500">Precipitación</div>
                     </div>
                     <div class="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg p-4 border border-teal-200 text-center">
                         <span class="text-2xl">💨</span>
                         <div class="text-2xl font-bold text-teal-600">{{ $weather['wind_speed'] ?? '--' }}km/h</div>
-                        <div class="text-xs text-gray-500">Viento</div>
+                        <div class="text-xs text-zinc-500">Viento</div>
                     </div>
                 </div>
                 
@@ -548,7 +548,7 @@
                 <div class="grid grid-cols-7 gap-2">
                     @foreach($forecast as $day)
                         <div class="text-center p-2 bg-gradient-to-b from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                            <div class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($day['date'])->locale('es')->isoFormat('ddd') }}</div>
+                            <div class="text-xs text-zinc-500">{{ \Carbon\Carbon::parse($day['date'])->locale('es')->isoFormat('ddd') }}</div>
                             <div class="text-xl my-1">{{ \App\Services\RemoteSensing\WeatherService::getWeatherIcon($day['weather_code'] ?? 0) }}</div>
                             <div class="text-xs font-bold">
                                 <span class="text-red-500">{{ round($day['temp_max'] ?? 0) }}°</span>
@@ -564,24 +564,24 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-5 border border-amber-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">Humedad Suelo</span>
+                            <span class="text-sm font-semibold text-zinc-600">Humedad Suelo</span>
                             <span class="text-2xl">🌱</span>
                         </div>
                         <div class="text-4xl font-bold text-amber-700">{{ $soil['soil_moisture'] ?? '--' }}%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
+                        <div class="w-full bg-zinc-200 rounded-full h-3 mt-2">
                             <div class="h-3 rounded-full bg-gradient-to-r from-amber-300 to-amber-600" style="width: {{ min(100, $soil['soil_moisture'] ?? 0) }}%"></div>
                         </div>
                     </div>
                     <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-5 border border-orange-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">Temp. Suelo</span>
+                            <span class="text-sm font-semibold text-zinc-600">Temp. Suelo</span>
                             <span class="text-2xl">🌡️</span>
                         </div>
                         <div class="text-4xl font-bold text-orange-700">{{ $soil['soil_temperature'] ?? '--' }}°C</div>
                     </div>
                     <div class="bg-gradient-to-br {{ $waterStress['bg'] }} rounded-lg p-5 border border-green-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">Estrés Hídrico</span>
+                            <span class="text-sm font-semibold text-zinc-600">Estrés Hídrico</span>
                             <span class="text-2xl">{{ $waterStress['emoji'] }}</span>
                         </div>
                         <div class="text-4xl font-bold {{ $waterStress['color'] }}">{{ $waterStress['text'] }}</div>
@@ -594,23 +594,23 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-5 border border-yellow-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">Radiación Solar</span>
+                            <span class="text-sm font-semibold text-zinc-600">Radiación Solar</span>
                             <span class="text-2xl">☀️</span>
                         </div>
                         <div class="text-4xl font-bold text-yellow-600">{{ $solar['solar_radiation'] ?? '--' }}</div>
-                        <p class="text-xs text-gray-500 mt-1">MJ/m²</p>
+                        <p class="text-xs text-zinc-500 mt-1">MJ/m²</p>
                     </div>
                     <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">ET0</span>
+                            <span class="text-sm font-semibold text-zinc-600">ET0</span>
                             <span class="text-2xl">💦</span>
                         </div>
                         <div class="text-4xl font-bold text-blue-600">{{ $solar['et0'] ?? '--' }}</div>
-                        <p class="text-xs text-gray-500 mt-1">mm/día</p>
+                        <p class="text-xs text-zinc-500 mt-1">mm/día</p>
                     </div>
                     <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-5 border border-amber-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-600">Horas de Sol</span>
+                            <span class="text-sm font-semibold text-zinc-600">Horas de Sol</span>
                             <span class="text-2xl">🌤️</span>
                         </div>
                         <div class="text-4xl font-bold text-amber-600">{{ round($solar['sunshine_hours'] ?? 0, 1) }}h</div>
@@ -623,33 +623,33 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Water Balance -->
                     <div class="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg p-5 border border-cyan-200">
-                        <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <h3 class="font-semibold text-zinc-800 mb-4 flex items-center gap-2">
                             💧 Balance Hídrico Semanal
                         </h3>
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">ET0 (evapotranspiración)</span>
+                                <span class="text-sm text-zinc-600">ET0 (evapotranspiración)</span>
                                 <span class="font-bold text-blue-600">{{ $irrigationNeeds['et0'] }} mm/día</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Kc (coef. cultivo vid)</span>
+                                <span class="text-sm text-zinc-600">Kc (coef. cultivo vid)</span>
                                 <span class="font-bold">{{ $irrigationNeeds['kc'] }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">ETc (necesidad cultivo)</span>
+                                <span class="text-sm text-zinc-600">ETc (necesidad cultivo)</span>
                                 <span class="font-bold text-cyan-600">{{ $irrigationNeeds['etc'] }} mm/día</span>
                             </div>
-                            <hr class="border-gray-200">
+                            <hr class="border-zinc-200">
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Necesidad semanal</span>
+                                <span class="text-sm text-zinc-600">Necesidad semanal</span>
                                 <span class="font-bold">{{ $irrigationNeeds['weekly_need_mm'] }} mm</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Lluvia prevista</span>
+                                <span class="text-sm text-zinc-600">Lluvia prevista</span>
                                 <span class="font-bold text-indigo-600">-{{ $irrigationNeeds['expected_rain_mm'] }} mm</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Reserva suelo</span>
+                                <span class="text-sm text-zinc-600">Reserva suelo</span>
                                 <span class="font-bold text-amber-600">-{{ $irrigationNeeds['soil_reserve_mm'] }} mm</span>
                             </div>
                         </div>
@@ -657,7 +657,7 @@
 
                     <!-- Recommendation -->
                     <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-5 border border-green-200">
-                        <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <h3 class="font-semibold text-zinc-800 mb-4 flex items-center gap-2">
                             🚿 Recomendación de Riego
                         </h3>
                         <div class="text-center py-4">
@@ -665,12 +665,12 @@
                             <div class="text-3xl font-bold {{ $irrigationNeeds['recommendation']['color'] }}">
                                 {{ $irrigationNeeds['irrigation_need_mm'] }} mm
                             </div>
-                            <div class="text-sm text-gray-600 mt-1">Déficit hídrico esta semana</div>
+                            <div class="text-sm text-zinc-600 mt-1">Déficit hídrico esta semana</div>
                             <div class="mt-4 px-4 py-2 rounded-full font-bold {{ $irrigationNeeds['recommendation']['bg'] }} {{ $irrigationNeeds['recommendation']['color'] }}">
                                 {{ $irrigationNeeds['recommendation']['text'] }}
                             </div>
                             @if($irrigationNeeds['liters_per_ha'] > 0)
-                                <div class="mt-4 text-sm text-gray-600">
+                                <div class="mt-4 text-sm text-zinc-600">
                                     ≈ <strong>{{ number_format($irrigationNeeds['liters_per_ha']) }}</strong> litros/ha
                                 </div>
                             @endif
@@ -684,7 +684,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Phenological Stage -->
                     <div class="bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg p-5 border border-pink-200">
-                        <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <h3 class="font-semibold text-zinc-800 mb-4 flex items-center gap-2">
                             🍇 Estado Fenológico
                         </h3>
                         <div class="text-center py-4">
@@ -700,11 +700,11 @@
                                 @endswitch
                             </div>
                             <div class="text-2xl font-bold text-purple-700">{{ $gdd['stage']['name'] }}</div>
-                            <div class="w-full bg-gray-200 rounded-full h-4 mt-4">
+                            <div class="w-full bg-zinc-200 rounded-full h-4 mt-4">
                                 <div class="h-4 rounded-full bg-gradient-to-r from-green-400 to-purple-500" 
                                      style="width: {{ $gdd['stage']['progress'] }}%"></div>
                             </div>
-                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <div class="flex justify-between text-xs text-zinc-500 mt-1">
                                 <span>Brotación</span>
                                 <span>Vendimia</span>
                             </div>
@@ -713,32 +713,32 @@
 
                     <!-- GDD Stats -->
                     <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-5 border border-amber-200">
-                        <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <h3 class="font-semibold text-zinc-800 mb-4 flex items-center gap-2">
                             🌡️ Grados-Día Acumulados (GDD)
                         </h3>
                         <div class="space-y-4">
                             <div class="bg-white rounded-lg p-3 shadow-sm">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">GDD Hoy</span>
+                                    <span class="text-sm text-zinc-600">GDD Hoy</span>
                                     <span class="font-bold text-orange-600">+{{ $gdd['gdd_today'] }}°</span>
                                 </div>
                             </div>
                             <div class="bg-white rounded-lg p-3 shadow-sm">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">GDD Próximos 7 días</span>
+                                    <span class="text-sm text-zinc-600">GDD Próximos 7 días</span>
                                     <span class="font-bold text-amber-600">+{{ $gdd['gdd_week_forecast'] }}°</span>
                                 </div>
                             </div>
                             <div class="bg-white rounded-lg p-3 shadow-sm">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">GDD Acumulado (desde 1 abril)</span>
+                                    <span class="text-sm text-zinc-600">GDD Acumulado (desde 1 abril)</span>
                                     <span class="font-bold text-red-600">{{ $gdd['gdd_accumulated'] }}°</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="w-full bg-zinc-200 rounded-full h-2 mt-2">
                                     <div class="h-2 rounded-full bg-gradient-to-r from-amber-400 to-red-500" 
                                          style="width: {{ min(100, ($gdd['gdd_accumulated'] / $gdd['gdd_target']) * 100) }}%"></div>
                                 </div>
-                                <div class="text-xs text-gray-500 mt-1 text-right">{{ $gdd['gdd_accumulated'] }} / {{ $gdd['gdd_target'] }}° objetivo</div>
+                                <div class="text-xs text-zinc-500 mt-1 text-right">{{ $gdd['gdd_accumulated'] }} / {{ $gdd['gdd_target'] }}° objetivo</div>
                             </div>
                             @if($gdd['estimated_harvest_date'])
                                 <div class="bg-purple-100 rounded-lg p-4 text-center">
@@ -755,16 +755,16 @@
             <!-- Compare Tab -->
             @if($activeTab === 'compare')
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Selecciona parcela para comparar:</label>
-                    <select wire:model.live="comparePlotId" 
-                            class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500 min-w-[200px]">
+                    <label class="block text-sm font-medium text-zinc-700 mb-2">Selecciona parcela para comparar:</label>
+                    <flux:select wire:model.live="comparePlotId" 
+                            >
                         <option value="">-- Seleccionar --</option>
                         @foreach($plots as $plot)
                             @if($plot->id !== $selectedPlotId)
                                 <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                             @endif
                         @endforeach
-                    </select>
+                    </flux:select>
                 </div>
 
                 @if($comparePlot)
@@ -776,27 +776,27 @@
                             </h3>
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">NDVI</span>
+                                    <span class="text-sm text-zinc-600">NDVI</span>
                                     <span class="font-bold text-2xl text-green-600">{{ number_format($ndviData?->ndvi_mean ?? 0, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">NDWI</span>
+                                    <span class="text-sm text-zinc-600">NDWI</span>
                                     <span class="font-bold text-blue-600">{{ number_format($ndviData?->ndwi_mean ?? 0, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">Temperatura</span>
+                                    <span class="text-sm text-zinc-600">Temperatura</span>
                                     <span class="font-bold text-orange-600">{{ $weather['temperature'] ?? '--' }}°C</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">Humedad Suelo</span>
+                                    <span class="text-sm text-zinc-600">Humedad Suelo</span>
                                     <span class="font-bold text-amber-600">{{ $soil['soil_moisture'] ?? '--' }}%</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">ET0</span>
+                                    <span class="text-sm text-zinc-600">ET0</span>
                                     <span class="font-bold text-cyan-600">{{ $solar['et0'] ?? '--' }} mm</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2">
-                                    <span class="text-sm text-gray-600">Estado</span>
+                                    <span class="text-sm text-zinc-600">Estado</span>
                                     <span class="px-2 py-1 rounded text-sm font-bold
                                         @if($ndviData?->health_status === 'excellent') bg-green-100 text-green-800
                                         @elseif($ndviData?->health_status === 'good') bg-emerald-100 text-emerald-800
@@ -815,27 +815,27 @@
                             </h3>
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">NDVI</span>
+                                    <span class="text-sm text-zinc-600">NDVI</span>
                                     <span class="font-bold text-2xl text-violet-600">{{ number_format($compareNdviData?->ndvi_mean ?? 0, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">NDWI</span>
+                                    <span class="text-sm text-zinc-600">NDWI</span>
                                     <span class="font-bold text-blue-600">{{ number_format($compareNdviData?->ndwi_mean ?? 0, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">Temperatura</span>
+                                    <span class="text-sm text-zinc-600">Temperatura</span>
                                     <span class="font-bold text-orange-600">{{ $compareWeather['temperature'] ?? '--' }}°C</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">Humedad Suelo</span>
+                                    <span class="text-sm text-zinc-600">Humedad Suelo</span>
                                     <span class="font-bold text-amber-600">{{ $compareSoil['soil_moisture'] ?? '--' }}%</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-b">
-                                    <span class="text-sm text-gray-600">ET0</span>
+                                    <span class="text-sm text-zinc-600">ET0</span>
                                     <span class="font-bold text-cyan-600">{{ $compareSolar['et0'] ?? '--' }} mm</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2">
-                                    <span class="text-sm text-gray-600">Estado</span>
+                                    <span class="text-sm text-zinc-600">Estado</span>
                                     <span class="px-2 py-1 rounded text-sm font-bold
                                         @if($compareNdviData?->health_status === 'excellent') bg-green-100 text-green-800
                                         @elseif($compareNdviData?->health_status === 'good') bg-emerald-100 text-emerald-800
@@ -852,12 +852,12 @@
                     @php
                         $ndviDiff = ($ndviData?->ndvi_mean ?? 0) - ($compareNdviData?->ndvi_mean ?? 0);
                     @endphp
-                    <div class="mt-4 bg-gray-100 rounded-lg p-4 text-center">
-                        <span class="text-sm text-gray-600">Diferencia NDVI:</span>
-                        <span class="ml-2 font-bold text-lg {{ $ndviDiff > 0 ? 'text-green-600' : ($ndviDiff < 0 ? 'text-red-600' : 'text-gray-600') }}">
+                    <div class="mt-4 bg-zinc-100 rounded-lg p-4 text-center">
+                        <span class="text-sm text-zinc-600">Diferencia NDVI:</span>
+                        <span class="ml-2 font-bold text-lg {{ $ndviDiff > 0 ? 'text-green-600' : ($ndviDiff < 0 ? 'text-red-600' : 'text-zinc-600') }}">
                             {{ $ndviDiff > 0 ? '+' : '' }}{{ number_format($ndviDiff, 3) }}
                         </span>
-                        <span class="ml-2 text-sm {{ $ndviDiff > 0 ? 'text-green-600' : ($ndviDiff < 0 ? 'text-red-600' : 'text-gray-600') }}">
+                        <span class="ml-2 text-sm {{ $ndviDiff > 0 ? 'text-green-600' : ($ndviDiff < 0 ? 'text-red-600' : 'text-zinc-600') }}">
                             @if($ndviDiff > 0.05) ({{ $selectedPlot->name }} mejor)
                             @elseif($ndviDiff < -0.05) ({{ $comparePlot->name }} mejor)
                             @else (similares)
@@ -865,9 +865,9 @@
                         </span>
                     </div>
                 @else
-                    <div class="text-center py-12 bg-gray-50 rounded-lg">
+                    <div class="text-center py-12 bg-zinc-50 rounded-lg">
                         <span class="text-4xl">⚖️</span>
-                        <p class="text-gray-600 mt-4">Selecciona una parcela para comparar con <strong>{{ $selectedPlot->name }}</strong></p>
+                        <p class="text-zinc-600 mt-4">Selecciona una parcela para comparar con <strong>{{ $selectedPlot->name }}</strong></p>
                     </div>
                 @endif
             @endif
@@ -876,15 +876,15 @@
             @if($activeTab === 'history')
                 <div wire:key="history-tab-content-{{ $selectedPlotId ?? 'none' }}-{{ $historyPeriod }}">
                 {{-- Period Selector --}}
-                <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
+                <div class="mb-6 bg-white rounded-lg border border-zinc-200 p-4">
                     <div class="flex flex-col md:flex-row gap-4">
                         {{-- Predefined Periods --}}
                         <div class="flex-1">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block text-sm font-medium text-zinc-700 mb-2">
                                 📅 Período de análisis
                             </label>
-                            <select wire:model.live="historyPeriod" 
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <flux:select wire:model.live="historyPeriod" 
+                                    >
                                 <option value="7_days">Últimos 7 días</option>
                                 <option value="30_days">Últimos 30 días</option>
                                 <option value="90_days">Últimos 90 días (por defecto)</option>
@@ -892,13 +892,13 @@
                                 <option value="last_season">Temporada anterior (Abril - Octubre)</option>
                                 <option value="1_year">Último año</option>
                                 <option value="custom">🎯 Personalizado</option>
-                            </select>
+                            </flux:select>
                         </div>
 
                         {{-- Custom Date Range (only visible when custom is selected) --}}
                         @if($historyPeriod === 'custom')
                             <div class="flex-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <label class="block text-sm font-medium text-zinc-700 mb-2">
                                     Rango personalizado
                                 </label>
                                 <div class="flex gap-2 items-end">
@@ -906,15 +906,15 @@
                                         <input type="date" 
                                                wire:model="customStartDate"
                                                max="{{ now()->format('Y-m-d') }}"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                                               class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
                                                placeholder="Desde">
                                     </div>
-                                    <span class="text-gray-500">→</span>
+                                    <span class="text-zinc-500">→</span>
                                     <div class="flex-1">
                                         <input type="date" 
                                                wire:model="customEndDate"
                                                max="{{ now()->format('Y-m-d') }}"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                                               class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
                                                placeholder="Hasta">
                                     </div>
                                     <button wire:click="applyCustomDateRange"
@@ -922,7 +922,7 @@
                                         Aplicar
                                     </button>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">
+                                <p class="text-xs text-zinc-500 mt-1">
                                     Máximo: 2 años de rango
                                 </p>
                             </div>
@@ -930,7 +930,7 @@
                     </div>
 
                     {{-- Period Info --}}
-                    <div class="mt-3 flex items-center gap-4 text-sm text-gray-600">
+                    <div class="mt-3 flex items-center gap-4 text-sm text-zinc-600">
                         <span class="flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -951,8 +951,8 @@
                 {{-- Historical Chart --}}
                 <h3 class="text-md font-semibold mb-3">📈 Evolución NDVI</h3>
                 @if(count($historicalData) > 0)
-                    <div class="bg-white rounded-lg border border-gray-200 p-4 mb-4">
-                        <div class="h-64 flex items-end justify-between gap-1 bg-gray-50 rounded-lg p-4">
+                    <div class="bg-white rounded-lg border border-zinc-200 p-4 mb-4">
+                        <div class="h-64 flex items-end justify-between gap-1 bg-zinc-50 rounded-lg p-4">
                             @foreach($historicalData as $index => $data)
                                 @php
                                     $height = ($data['ndvi'] + 1) / 2 * 100;
@@ -962,15 +962,15 @@
                                         'moderate' => 'bg-yellow-500',
                                         'poor' => 'bg-orange-500',
                                         'critical' => 'bg-red-500',
-                                        default => 'bg-gray-400',
+                                        default => 'bg-zinc-400',
                                     };
                                 @endphp
                                 <div class="flex-1 flex flex-col items-center group relative">
                                     {{-- Tooltip --}}
-                                    <div class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded py-2 px-3 z-10 whitespace-nowrap">
+                                    <div class="absolute bottom-full mb-2 hidden group-hover:block bg-zinc-900 text-white text-xs rounded py-2 px-3 z-10 whitespace-nowrap">
                                         <div class="font-semibold">{{ $data['fullDate'] }}</div>
                                         <div>NDVI: {{ number_format($data['ndvi'], 3) }}</div>
-                                        <div class="text-gray-300 capitalize">{{ $data['health_status'] ?? 'N/A' }}</div>
+                                        <div class="text-zinc-300 capitalize">{{ $data['health_status'] ?? 'N/A' }}</div>
                                     </div>
                                     {{-- Bar --}}
                                     <div class="w-full {{ $color }} rounded-t transition-all hover:opacity-80 cursor-pointer" 
@@ -980,7 +980,7 @@
                         </div>
                         
                         {{-- X-axis labels --}}
-                        <div class="flex justify-between text-xs text-gray-500 mt-2 px-2">
+                        <div class="flex justify-between text-xs text-zinc-500 mt-2 px-2">
                             @if(count($historicalData) > 0)
                                 <span>← {{ $historicalData[count($historicalData) - 1]['fullDate'] ?? '' }}</span>
                                 <span>{{ $historicalData[0]['fullDate'] ?? '' }} →</span>
@@ -1038,7 +1038,7 @@
                         </button>
 
                         <button wire:click="toggleComparison" 
-                                class="inline-flex items-center px-4 py-2 {{ $showComparison ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-600 hover:bg-gray-700' }} text-white rounded-lg transition-colors text-sm font-medium">
+                                class="inline-flex items-center px-4 py-2 {{ $showComparison ? 'bg-purple-600 hover:bg-purple-700' : 'bg-zinc-600 hover:bg-zinc-700' }} text-white rounded-lg transition-colors text-sm font-medium">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
@@ -1051,30 +1051,30 @@
                         <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
                             <div class="flex items-center justify-between mb-4">
                                 <h4 class="text-lg font-semibold text-purple-900">📊 Comparación de Períodos</h4>
-                                <select wire:model.live="comparisonPeriod" 
-                                        class="text-sm border-purple-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                                <flux:select wire:model.live="comparisonPeriod" 
+                                        >
                                     <option value="last_year">Mismo período año anterior</option>
                                     <option value="last_season">Temporada anterior</option>
                                     <option value="same_month_last_year">Mismo mes año anterior</option>
-                                </select>
+                                </flux:select>
                             </div>
 
                             @if(count($comparisonData) > 0)
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {{-- Current Period --}}
                                     <div class="bg-white rounded-lg p-4">
-                                        <h5 class="text-sm font-semibold text-gray-700 mb-3">Período Actual</h5>
+                                        <h5 class="text-sm font-semibold text-zinc-700 mb-3">Período Actual</h5>
                                         <div class="space-y-2 text-sm">
                                             <div class="flex justify-between">
-                                                <span class="text-gray-600">NDVI Promedio:</span>
+                                                <span class="text-zinc-600">NDVI Promedio:</span>
                                                 <span class="font-bold text-green-600">{{ number_format($avgNdvi, 3) }}</span>
                                             </div>
                                             <div class="flex justify-between">
-                                                <span class="text-gray-600">Máximo:</span>
+                                                <span class="text-zinc-600">Máximo:</span>
                                                 <span class="font-semibold">{{ number_format($maxNdvi, 3) }}</span>
                                             </div>
                                             <div class="flex justify-between">
-                                                <span class="text-gray-600">Registros:</span>
+                                                <span class="text-zinc-600">Registros:</span>
                                                 <span class="font-semibold">{{ count($historicalData) }}</span>
                                             </div>
                                         </div>
@@ -1082,7 +1082,7 @@
 
                                     {{-- Comparison Period --}}
                                     <div class="bg-white rounded-lg p-4">
-                                        <h5 class="text-sm font-semibold text-gray-700 mb-3">Período Comparación</h5>
+                                        <h5 class="text-sm font-semibold text-zinc-700 mb-3">Período Comparación</h5>
                                         @php
                                             $compNdviValues = array_column($comparisonData, 'ndvi');
                                             $compAvgNdvi = count($compNdviValues) > 0 ? array_sum($compNdviValues) / count($compNdviValues) : 0;
@@ -1090,15 +1090,15 @@
                                         @endphp
                                         <div class="space-y-2 text-sm">
                                             <div class="flex justify-between">
-                                                <span class="text-gray-600">NDVI Promedio:</span>
+                                                <span class="text-zinc-600">NDVI Promedio:</span>
                                                 <span class="font-bold text-blue-600">{{ number_format($compAvgNdvi, 3) }}</span>
                                             </div>
                                             <div class="flex justify-between">
-                                                <span class="text-gray-600">Máximo:</span>
+                                                <span class="text-zinc-600">Máximo:</span>
                                                 <span class="font-semibold">{{ number_format($compMaxNdvi, 3) }}</span>
                                             </div>
                                             <div class="flex justify-between">
-                                                <span class="text-gray-600">Registros:</span>
+                                                <span class="text-zinc-600">Registros:</span>
                                                 <span class="font-semibold">{{ count($comparisonData) }}</span>
                                             </div>
                                         </div>
@@ -1111,8 +1111,8 @@
                                     $percentChange = $compAvgNdvi > 0 ? ($avgDiff / $compAvgNdvi) * 100 : 0;
                                 @endphp
                                 <div class="mt-4 bg-white rounded-lg p-4 text-center">
-                                    <div class="text-sm text-gray-600 mb-1">Diferencia Promedio</div>
-                                    <div class="text-3xl font-bold {{ $avgDiff > 0 ? 'text-green-600' : ($avgDiff < 0 ? 'text-red-600' : 'text-gray-600') }}">
+                                    <div class="text-sm text-zinc-600 mb-1">Diferencia Promedio</div>
+                                    <div class="text-3xl font-bold {{ $avgDiff > 0 ? 'text-green-600' : ($avgDiff < 0 ? 'text-red-600' : 'text-zinc-600') }}">
                                         {{ $avgDiff > 0 ? '+' : '' }}{{ number_format($avgDiff, 3) }}
                                         <span class="text-lg">({{ $percentChange > 0 ? '+' : '' }}{{ number_format($percentChange, 1) }}%)</span>
                                     </div>
@@ -1122,7 +1122,7 @@
                                         @elseif($avgDiff < -0.05)
                                             <span class="text-red-600">⚠️ Reducción respecto al período anterior</span>
                                         @else
-                                            <span class="text-gray-600">➡️ Valores similares al período anterior</span>
+                                            <span class="text-zinc-600">➡️ Valores similares al período anterior</span>
                                         @endif
                                     </div>
                                 </div>
@@ -1140,14 +1140,14 @@
                             </h4>
                             
                             <div class="mb-3">
-                                <label class="text-sm text-gray-700 font-medium">Umbral NDVI:</label>
+                                <label class="text-sm text-zinc-700 font-medium">Umbral NDVI:</label>
                                 <input type="range" 
                                        wire:model.live="ndviThreshold"
                                        min="0" 
                                        max="1" 
                                        step="0.05"
-                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                                <div class="flex justify-between text-xs text-gray-600 mt-1">
+                                       class="w-full h-2 bg-zinc-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-zinc-600 mt-1">
                                     <span>0.0</span>
                                     <span class="font-bold text-yellow-700">{{ number_format($ndviThreshold, 2) }}</span>
                                     <span>1.0</span>
@@ -1159,8 +1159,8 @@
                                     <div class="flex items-start gap-3 p-3 bg-white rounded-lg {{ $alert['severity'] === 'critical' ? 'border-l-4 border-red-500' : 'border-l-4 border-yellow-500' }}">
                                         <span class="text-2xl">{{ $alert['severity'] === 'critical' ? '🚨' : '⚠️' }}</span>
                                         <div class="flex-1">
-                                            <div class="text-sm font-semibold text-gray-900">{{ $alert['message'] }}</div>
-                                            <div class="text-xs text-gray-600 mt-1">Tipo: {{ $alert['type'] }}</div>
+                                            <div class="text-sm font-semibold text-zinc-900">{{ $alert['message'] }}</div>
+                                            <div class="text-xs text-zinc-600 mt-1">Tipo: {{ $alert['type'] }}</div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -1177,8 +1177,8 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                 <div class="bg-white rounded-lg p-3 text-center">
-                                    <div class="text-xs text-gray-600 mb-1">Tendencia</div>
-                                    <div class="text-2xl font-bold {{ $trendPrediction['trend'] === 'improving' ? 'text-green-600' : ($trendPrediction['trend'] === 'declining' ? 'text-red-600' : 'text-gray-600') }}">
+                                    <div class="text-xs text-zinc-600 mb-1">Tendencia</div>
+                                    <div class="text-2xl font-bold {{ $trendPrediction['trend'] === 'improving' ? 'text-green-600' : ($trendPrediction['trend'] === 'declining' ? 'text-red-600' : 'text-zinc-600') }}">
                                         @if($trendPrediction['trend'] === 'improving')
                                             ↗️ Mejorando
                                         @elseif($trendPrediction['trend'] === 'declining')
@@ -1190,14 +1190,14 @@
                                 </div>
 
                                 <div class="bg-white rounded-lg p-3 text-center">
-                                    <div class="text-xs text-gray-600 mb-1">Pendiente</div>
+                                    <div class="text-xs text-zinc-600 mb-1">Pendiente</div>
                                     <div class="text-2xl font-bold text-blue-900">
                                         {{ number_format($trendPrediction['slope'], 4) }}
                                     </div>
                                 </div>
 
                                 <div class="bg-white rounded-lg p-3 text-center">
-                                    <div class="text-xs text-gray-600 mb-1">Confianza (R²)</div>
+                                    <div class="text-xs text-zinc-600 mb-1">Confianza (R²)</div>
                                     <div class="text-2xl font-bold text-purple-900">
                                         {{ number_format($trendPrediction['confidence'] * 100, 1) }}%
                                     </div>
@@ -1205,11 +1205,11 @@
                             </div>
 
                             <div class="bg-white rounded-lg p-4">
-                                <h5 class="text-sm font-semibold text-gray-700 mb-3">Valores Predichos:</h5>
+                                <h5 class="text-sm font-semibold text-zinc-700 mb-3">Valores Predichos:</h5>
                                 <div class="grid grid-cols-7 gap-2">
                                     @foreach($trendPrediction['predictions'] as $pred)
                                         <div class="text-center p-2 bg-blue-50 rounded">
-                                            <div class="text-xs text-gray-600">+{{ $pred['day'] }}d</div>
+                                            <div class="text-xs text-zinc-600">+{{ $pred['day'] }}d</div>
                                             <div class="text-sm font-bold text-blue-900">{{ number_format($pred['ndvi'], 3) }}</div>
                                         </div>
                                     @endforeach
@@ -1223,12 +1223,12 @@
                         </div>
                     @endif
                 @else
-                    <div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="text-center py-12 bg-zinc-50 rounded-lg border border-zinc-200">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
-                        <p class="text-gray-600 font-medium mb-1">No hay datos históricos</p>
-                        <p class="text-sm text-gray-500">Para el período seleccionado</p>
+                        <p class="text-zinc-600 font-medium mb-1">No hay datos históricos</p>
+                        <p class="text-sm text-zinc-500">Para el período seleccionado</p>
                     </div>
                 @endif
                 </div>{{-- cierre wire:key history-tab --}}
@@ -1239,9 +1239,9 @@
         <div class="mt-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
             <div class="flex items-center gap-2 mb-2">
                 <span>🌟</span>
-                <span class="font-semibold text-gray-900">Teledetección NASA - Nivel Profesional</span>
+                <span class="font-semibold text-zinc-900">Teledetección NASA - Nivel Profesional</span>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-700">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-zinc-700">
                 <div>🛰️ <strong>VIIRS</strong> NDVI (375m)</div>
                 <div>🌈 <strong>Bandas</strong> Espectrales</div>
                 <div>🌿 <strong>LAI</strong> Oficial MODIS</div>
@@ -1256,9 +1256,9 @@
             </div>
         </div>
     @else
-        <div class="text-center py-16 bg-gray-50 rounded-lg" wire:key="empty-state">
+        <div class="text-center py-16 bg-zinc-50 rounded-lg" wire:key="empty-state">
             <span class="text-6xl">🛰️</span>
-            <p class="text-gray-600 mt-4">Selecciona una parcela para ver el análisis</p>
+            <p class="text-zinc-600 mt-4">Selecciona una parcela para ver el análisis</p>
         </div>
     @endif
     </div>{{-- cierre wire:key dashboard-body --}}

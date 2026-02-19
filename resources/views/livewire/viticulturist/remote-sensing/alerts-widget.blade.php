@@ -1,6 +1,6 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="bg-white rounded-xl shadow-sm border border-zinc-200 p-6">
     <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+        <h3 class="text-lg font-semibold text-zinc-900 flex items-center gap-2">
             🔔 Alertas de Teledetección
             @if($totalCount > 0)
                 <span class="px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">
@@ -8,7 +8,7 @@
                 </span>
             @endif
         </h3>
-        <button wire:click="refresh" class="text-gray-400 hover:text-gray-600 transition-colors" title="Actualizar">
+        <button wire:click="refresh" class="text-zinc-400 hover:text-zinc-600 transition-colors" title="Actualizar">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
@@ -34,10 +34,10 @@
                                     <span class="text-lg">
                                         {{ \App\Services\RemoteSensing\AlertService::getSeverityIcon($alert['severity']) }}
                                     </span>
-                                    <span class="font-semibold text-gray-900">{{ $alert['title'] }}</span>
+                                    <span class="font-semibold text-zinc-900">{{ $alert['title'] }}</span>
                                 </div>
-                                <p class="text-sm text-gray-600">{{ $alert['message'] }}</p>
-                                <div class="mt-2 flex items-center gap-4 text-xs text-gray-500">
+                                <p class="text-sm text-zinc-600">{{ $alert['message'] }}</p>
+                                <div class="mt-2 flex items-center gap-4 text-xs text-zinc-500">
                                     <span>📍 {{ $plotData['plot']->name }}</span>
                                     <span>📅 {{ $alert['date'] }}</span>
                                 </div>
@@ -58,8 +58,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <h4 class="text-lg font-medium text-gray-900 mb-1">Sin alertas activas</h4>
-            <p class="text-sm text-gray-500">Todas tus parcelas están en buen estado</p>
+            <h4 class="text-lg font-medium text-zinc-900 mb-1">Sin alertas activas</h4>
+            <p class="text-sm text-zinc-500">Todas tus parcelas están en buen estado</p>
         </div>
     @endif
 </div>

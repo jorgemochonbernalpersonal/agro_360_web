@@ -2,11 +2,11 @@
 @if($showInvalidateModal && $reportToInvalidate)
     <div class="fixed z-50 inset-0 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeInvalidateModal"></div>
+            <div class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity" wire:click="closeInvalidateModal"></div>
             
             <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">⚠️ Invalidar Informe</h3>
-                <p class="text-gray-600 mb-6">
+                <h3 class="text-2xl font-bold text-zinc-900 mb-4">⚠️ Invalidar Informe</h3>
+                <p class="text-zinc-600 mb-6">
                     Esta acción marcará el informe como <strong>INVALIDADO</strong>. El documento seguirá siendo visible pero NO será legalmente válido.
                 </p>
 
@@ -43,30 +43,30 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Motivo de invalidación</label>
+                    <label class="block text-sm font-semibold text-zinc-700 mb-2">Motivo de invalidación</label>
                     <textarea 
                         wire:model="invalidateReason"
                         rows="3"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         placeholder="Explica por qué invalidas este informe (mínimo 10 caracteres)..."
                     ></textarea>
                     @error('invalidateReason') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="mb-6" x-data="{ showPassword: false }">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Confirma tu contraseña</label>
+                    <label class="block text-sm font-semibold text-zinc-700 mb-2">Confirma tu contraseña</label>
                     <div class="relative">
                         <input 
                             type="password" 
                             wire:model="invalidatePassword"
                             x-bind:type="showPassword ? 'text' : 'password'"
-                            class="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                            class="w-full px-4 py-2 pr-12 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                             placeholder="Introduce tu contraseña"
                         >
                         <button
                             type="button"
                             x-on:click="showPassword = !showPassword"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-500 hover:text-zinc-700 focus:outline-none"
                             tabindex="-1"
                         >
                             <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@
                         wire:click="closeInvalidateModal"
                         wire:loading.attr="disabled"
                         wire:target="invalidateReport"
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+                        class="px-4 py-2 bg-zinc-200 text-zinc-700 rounded-lg hover:bg-zinc-300 transition-colors disabled:opacity-50"
                     >
                         Cancelar
                     </button>

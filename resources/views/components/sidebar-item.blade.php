@@ -1,33 +1,32 @@
 {{-- Sidebar Item Component --}}
-<div class="mb-1">
+<div class="mb-0.5">
     <a 
         href="{{ route($item['route']) }}" 
-        class="flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-200 group
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
                {{ $item['active'] 
-                   ? 'bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white shadow-lg shadow-[var(--color-agro-green)]/30' 
-                   : 'text-gray-700 hover:bg-[var(--color-agro-green-bg)] hover:text-[var(--color-agro-green-dark)]' 
+                   ? 'bg-white/15 text-white shadow-sm' 
+                   : 'text-white/60 hover:bg-white/8 hover:text-white' 
                }}"
         title="{{ $item['label'] }}"
         data-cy="sidebar-nav-{{ strtolower(str_replace(' ', '-', $item['label'])) }}"
     >
-        <span class="flex-shrink-0 w-8 text-center">
+        <span class="flex-shrink-0 w-5 flex items-center justify-center {{ $item['active'] ? 'text-white' : 'text-white/50 group-hover:text-white/80' }} transition-colors duration-200">
             {!! $item['icon_svg'] ?? $item['icon'] !!}
         </span>
-        <span class="font-semibold flex-1 sidebar-text whitespace-nowrap overflow-hidden">{{ $item['label'] }}</span>
+        <span class="font-medium text-sm flex-1 sidebar-text whitespace-nowrap overflow-hidden leading-tight">{{ $item['label'] }}</span>
         @if(isset($item['badge']) && $item['badge'] > 0)
-            <span class="px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded-full sidebar-indicator">
+            <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full sidebar-indicator">
                 {{ $item['badge'] }}
             </span>
         @elseif($item['active'])
-            <div class="w-2 h-2 rounded-full bg-white sidebar-indicator"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-white/60 sidebar-indicator flex-shrink-0"></div>
         @endif
     </a>
     
     @if(isset($item['submenu']) && $item['active'])
-        <div class="ml-12 mt-2 space-y-1 sidebar-submenu" data-cy="sidebar-submenu-{{ strtolower(str_replace(' ', '-', $item['label'])) }}">
+        <div class="ml-8 mt-1 space-y-0.5 sidebar-submenu" data-cy="sidebar-submenu-{{ strtolower(str_replace(' ', '-', $item['label'])) }}">
             @foreach($item['submenu'] as $subitem)
                 @php
-                    // Determinar qué policy usar según la ruta
                     $canShow = true;
                     if (str_contains($subitem['route'], 'digital-notebook.treatment.create') || 
                         str_contains($subitem['route'], 'digital-notebook.fertilization.create') ||
@@ -41,7 +40,6 @@
                 @endphp
                 @if($canShow)
                     @php
-                        // Agregar query string si existe en el item
                         $routeUrl = route($subitem['route']);
                         if (isset($subitem['query'])) {
                             $routeUrl .= '?' . http_build_query($subitem['query']);
@@ -49,14 +47,14 @@
                     @endphp
                     <a 
                         href="{{ $routeUrl }}" 
-                        class="flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all duration-200
                                {{ $subitem['active'] 
-                                   ? 'bg-[var(--color-agro-green-bg)] text-[var(--color-agro-green-dark)] font-medium border-l-4 border-[var(--color-agro-green-dark)]' 
-                                   : 'text-gray-600 hover:bg-gray-100 hover:text-[var(--color-agro-green-dark)]' 
+                                   ? 'bg-white/12 text-white font-semibold' 
+                                   : 'text-white/50 hover:bg-white/8 hover:text-white/80' 
                                }}"
                         data-cy="sidebar-submenu-item-{{ strtolower(str_replace(' ', '-', $subitem['label'])) }}"
                     >
-                        <span class="w-1.5 h-1.5 rounded-full bg-current mr-3 opacity-50"></span>
+                        <span class="w-1 h-1 rounded-full {{ $subitem['active'] ? 'bg-white' : 'bg-white/30' }} flex-shrink-0"></span>
                         {{ $subitem['label'] }}
                     </a>
                 @endif

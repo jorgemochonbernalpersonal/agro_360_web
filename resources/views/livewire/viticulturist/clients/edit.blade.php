@@ -1,158 +1,129 @@
-<div>
-    <x-form-card
+﻿<div>
+    <x-agro.form-card
         title="Editar Cliente"
         description="Modifica los datos del cliente"
-        icon="👥"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
         :back-url="route('viticulturist.clients.show', $client->id)"
     >
         <form wire:submit="update" class="space-y-8" data-cy="client-edit-form">
-            <x-form-section title="Tipo de Cliente" color="green">
-                <div>
-                    <x-label for="client_type" required>Tipo</x-label>
-                    <x-select wire:model.live="client_type" id="client_type" data-cy="client-type" required>
-                        <option value="individual">Particular</option>
-                        <option value="company">Empresa</option>
-                    </x-select>
-                </div>
-            </x-form-section>
+            <x-agro.form-section title="Tipo de Cliente">
+                <flux:field>
+                    <flux:label>Tipo <span class="text-red-500">*</span></flux:label>
+                    <flux:select wire:model.live="client_type" id="client_type" data-cy="client-type">
+                        <flux:select.option value="individual">Particular</flux:select.option>
+                        <flux:select.option value="company">Empresa</flux:select.option>
+                    </flux:select>
+                </flux:field>
+            </x-agro.form-section>
 
             @if($client_type === 'individual')
-                <x-form-section title="Datos Personales" color="green">
+                <x-agro.form-section title="Datos Personales">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <x-label for="first_name" required>Nombre</x-label>
-                            <x-input wire:model="first_name" id="first_name" data-cy="first-name" required />
-                            @error('first_name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <x-label for="last_name" required>Apellidos</x-label>
-                            <x-input wire:model="last_name" id="last_name" data-cy="last-name" required />
-                            @error('last_name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <x-label for="particular_document">DNI/NIE</x-label>
-                            <x-input wire:model="particular_document" id="particular_document" data-cy="particular-document" />
-                            @error('particular_document')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <flux:field>
+                            <flux:label>Nombre <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="first_name" id="first_name" data-cy="first-name" required />
+                            <flux:error name="first_name" />
+                        </flux:field>
+                        <flux:field>
+                            <flux:label>Apellidos <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="last_name" id="last_name" data-cy="last-name" required />
+                            <flux:error name="last_name" />
+                        </flux:field>
+                        <flux:field>
+                            <flux:label>DNI/NIE</flux:label>
+                            <flux:input wire:model="particular_document" id="particular_document" data-cy="particular-document" />
+                            <flux:error name="particular_document" />
+                        </flux:field>
                     </div>
-                </x-form-section>
+                </x-agro.form-section>
             @else
-                <x-form-section title="Datos de la Empresa" color="green">
+                <x-agro.form-section title="Datos de la Empresa">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <x-label for="company_name" required>Nombre de la Empresa</x-label>
-                            <x-input wire:model="company_name" id="company_name" data-cy="company-name" required />
-                            @error('company_name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <x-label for="company_document" required>CIF/NIF</x-label>
-                            <x-input 
-                                wire:model="company_document" 
-                                id="company_document" 
-                                data-cy="company-document"
-                                :error="$errors->first('company_document')"
-                                required
-                            />
-                        </div>
+                        <flux:field>
+                            <flux:label>Nombre de la Empresa <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="company_name" id="company_name" data-cy="company-name" required />
+                            <flux:error name="company_name" />
+                        </flux:field>
+                        <flux:field>
+                            <flux:label>CIF/NIF <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="company_document" id="company_document" data-cy="company-document" required />
+                            <flux:error name="company_document" />
+                        </flux:field>
                     </div>
-                </x-form-section>
+                </x-agro.form-section>
             @endif
 
-            <x-form-section title="Contacto" color="green">
+            <x-agro.form-section title="Contacto">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <x-label for="email">Email</x-label>
-                        <x-input wire:model="email" id="email" data-cy="email" type="email" />
-                        @error('email')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <x-label for="phone">Teléfono</x-label>
-                        <x-input wire:model="phone" id="phone" data-cy="phone" />
-                        @error('phone')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <flux:field>
+                        <flux:label>Email</flux:label>
+                        <flux:input wire:model="email" id="email" data-cy="email" type="email" />
+                        <flux:error name="email" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Teléfono</flux:label>
+                        <flux:input wire:model="phone" id="phone" data-cy="phone" />
+                        <flux:error name="phone" />
+                    </flux:field>
                 </div>
-            </x-form-section>
+            </x-agro.form-section>
 
-            <x-form-section title="Configuración" color="green">
+            <x-agro.form-section title="Configuración">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <x-label for="default_discount">Descuento por defecto (%)</x-label>
-                        <x-input wire:model="default_discount" id="default_discount" type="number" step="0.01" min="0" max="100" />
-                        @error('default_discount')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <x-label for="payment_method">Método de pago</x-label>
-                        <x-select wire:model="payment_method" id="payment_method">
-                            <option value="">Selecciona...</option>
-                            <option value="cash">Efectivo</option>
-                            <option value="transfer">Transferencia</option>
-                            <option value="check">Cheque</option>
-                            <option value="other">Otro</option>
-                        </x-select>
-                        @error('payment_method')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <x-label for="account_number">Número de cuenta</x-label>
-                        <x-input wire:model="account_number" id="account_number" />
-                        @error('account_number')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <flux:field>
+                        <flux:label>Descuento por defecto (%)</flux:label>
+                        <flux:input wire:model="default_discount" id="default_discount" type="number" step="0.01" min="0" max="100" />
+                        <flux:error name="default_discount" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Método de pago</flux:label>
+                        <flux:select wire:model="payment_method" id="payment_method">
+                            <flux:select.option value="">Selecciona...</flux:select.option>
+                            <flux:select.option value="cash">Efectivo</flux:select.option>
+                            <flux:select.option value="transfer">Transferencia</flux:select.option>
+                            <flux:select.option value="check">Cheque</flux:select.option>
+                            <flux:select.option value="other">Otro</flux:select.option>
+                        </flux:select>
+                        <flux:error name="payment_method" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Número de cuenta</flux:label>
+                        <flux:input wire:model="account_number" id="account_number" />
+                        <flux:error name="account_number" />
+                    </flux:field>
                 </div>
-            </x-form-section>
+            </x-agro.form-section>
 
-            <x-form-section title="CAE (Canarias)" color="green">
+            <x-agro.form-section title="CAE (Canarias)">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex items-center">
-                        <x-checkbox wire:model.live="has_cae" id="has_cae" />
-                        <x-label for="has_cae" class="ml-2">Tiene CAE</x-label>
+                        <flux:checkbox wire:model.live="has_cae" id="has_cae" />
+                        <flux:label for="has_cae" class="ml-2">Tiene CAE</flux:label>
                     </div>
                     @if($has_cae)
-                        <div>
-                            <x-label for="cae_number">Número CAE</x-label>
-                            <x-input wire:model="cae_number" id="cae_number" />
-                            @error('cae_number')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <flux:field>
+                            <flux:label>Número CAE</flux:label>
+                            <flux:input wire:model="cae_number" id="cae_number" />
+                            <flux:error name="cae_number" />
+                        </flux:field>
                     @endif
                 </div>
-            </x-form-section>
+            </x-agro.form-section>
 
-            <x-form-section title="Direcciones" color="blue">
+            <x-agro.form-section title="Direcciones">
                 <div class="space-y-4">
                     @foreach($addresses as $index => $address)
-                        <div class="border-2 border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:border-blue-300 transition-colors" data-cy="address-item" data-cy-address-index="{{ $index }}">
+                        <div class="border-2 border-zinc-200 rounded-lg p-4 bg-white shadow-xs hover:border-blue-300 transition-colors" data-cy="address-item" data-cy-address-index="{{ $index }}">
                             <div class="flex justify-between items-center mb-4">
                                 <div class="flex items-center gap-2">
-                                    <h4 class="font-bold text-gray-900">Dirección #{{ $index + 1 }}</h4>
+                                    <h4 class="font-bold text-zinc-900">Dirección #{{ $index + 1 }}</h4>
                                     @if($address['is_default'])
-                                        <span class="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
-                                            Por defecto
-                                        </span>
+                                        <flux:badge color="blue" size="sm">Por defecto</flux:badge>
                                     @endif
                                 </div>
-                                
+
                                 <div class="flex gap-2">
                                     @if(!$address['is_default'])
-                                        <button 
+                                        <button
                                             type="button"
                                             wire:click="setDefaultAddress({{ $index }})"
                                             class="text-blue-600 hover:text-blue-800 text-xs font-medium"
@@ -162,147 +133,135 @@
                                             Marcar por defecto
                                         </button>
                                     @endif
-                                    
+
                                     @if(count($addresses) > 1)
-                                        <button 
+                                        <button
                                             type="button"
                                             wire:click="removeAddress({{ $index }})"
                                             class="text-red-600 hover:text-red-800 text-xs font-medium flex items-center gap-1"
                                             data-cy="remove-address"
                                             data-cy-address-index="{{ $index }}"
                                         >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
+                                            <flux:icon icon="trash" class="size-4" />
                                             Eliminar
                                         </button>
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
-                                    <x-label for="addresses_{{ $index }}_address" required>Dirección completa</x-label>
-                                    <x-input 
-                                        wire:model="addresses.{{ $index }}.address" 
-                                        id="addresses_{{ $index }}_address" 
-                                        data-cy="address-address"
-                                        data-cy-address-index="{{ $index }}"
-                                        placeholder="Calle, número, piso, puerta..."
-                                        required 
-                                    />
-                                    @error('addresses.' . $index . '.address')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <flux:field>
+                                        <flux:label>Dirección completa <span class="text-red-500">*</span></flux:label>
+                                        <flux:input
+                                            wire:model="addresses.{{ $index }}.address"
+                                            id="addresses_{{ $index }}_address"
+                                            data-cy="address-address"
+                                            data-cy-address-index="{{ $index }}"
+                                            placeholder="Calle, número, piso, puerta..."
+                                            required
+                                        />
+                                        <flux:error name="addresses.{{ $index }}.address" />
+                                    </flux:field>
                                 </div>
-                                
-                                <div>
-                                    <x-label for="addresses_{{ $index }}_autonomous_community_id" required>Comunidad Autónoma</x-label>
-                                    <x-select 
-                                        wire:model.live="addresses.{{ $index }}.autonomous_community_id" 
-                                        id="addresses_{{ $index }}_autonomous_community_id" 
-                                        data-cy="address-autonomous-community" 
+
+                                <flux:field>
+                                    <flux:label>Comunidad Autónoma <span class="text-red-500">*</span></flux:label>
+                                    <flux:select
+                                        wire:model.live="addresses.{{ $index }}.autonomous_community_id"
+                                        id="addresses_{{ $index }}_autonomous_community_id"
+                                        data-cy="address-autonomous-community"
                                         data-cy-address-index="{{ $index }}"
-                                        :error="$errors->first('addresses.' . $index . '.autonomous_community_id')"
-                                        required
                                     >
-                                        <option value="">Seleccionar...</option>
+                                        <flux:select.option value="">Seleccionar...</flux:select.option>
                                         @foreach($autonomousCommunities as $ca)
-                                            <option value="{{ $ca->id }}">{{ $ca->name }}</option>
+                                            <flux:select.option value="{{ $ca->id }}">{{ $ca->name }}</flux:select.option>
                                         @endforeach
-                                    </x-select>
-                                </div>
-                                
-                                <div>
-                                    <x-label for="addresses_{{ $index }}_province_id" required>Provincia</x-label>
-                                    <x-select 
-                                        wire:model.live="addresses.{{ $index }}.province_id" 
-                                        id="addresses_{{ $index }}_province_id" 
-                                        data-cy="address-province" 
+                                    </flux:select>
+                                    <flux:error name="addresses.{{ $index }}.autonomous_community_id" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Provincia <span class="text-red-500">*</span></flux:label>
+                                    <flux:select
+                                        wire:model.live="addresses.{{ $index }}.province_id"
+                                        id="addresses_{{ $index }}_province_id"
+                                        data-cy="address-province"
                                         data-cy-address-index="{{ $index }}"
-                                        :error="$errors->first('addresses.' . $index . '.province_id')"
                                         :disabled="!($addresses[$index]['autonomous_community_id'] ?? null)"
-                                        required
                                     >
-                                        <option value="">Seleccionar...</option>
+                                        <flux:select.option value="">Seleccionar...</flux:select.option>
                                         @if(isset($provinces[$index]))
                                             @foreach($provinces[$index] as $province)
-                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                                <flux:select.option value="{{ $province->id }}">{{ $province->name }}</flux:select.option>
                                             @endforeach
                                         @endif
-                                    </x-select>
-                                </div>
-                                
-                                <div>
-                                    <x-label for="addresses_{{ $index }}_municipality_id" required>Municipio</x-label>
-                                    <x-select 
-                                        wire:model.live="addresses.{{ $index }}.municipality_id" 
-                                        id="addresses_{{ $index }}_municipality_id" 
-                                        data-cy="address-municipality" 
+                                    </flux:select>
+                                    <flux:error name="addresses.{{ $index }}.province_id" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Municipio <span class="text-red-500">*</span></flux:label>
+                                    <flux:select
+                                        wire:model.live="addresses.{{ $index }}.municipality_id"
+                                        id="addresses_{{ $index }}_municipality_id"
+                                        data-cy="address-municipality"
                                         data-cy-address-index="{{ $index }}"
-                                        :error="$errors->first('addresses.' . $index . '.municipality_id')"
                                         :disabled="!($addresses[$index]['province_id'] ?? null)"
-                                        required
                                     >
-                                        <option value="">Seleccionar...</option>
+                                        <flux:select.option value="">Seleccionar...</flux:select.option>
                                         @if(isset($municipalities[$index]))
                                             @foreach($municipalities[$index] as $municipality)
-                                                <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
+                                                <flux:select.option value="{{ $municipality->id }}">{{ $municipality->name }}</flux:select.option>
                                             @endforeach
                                         @endif
-                                    </x-select>
-                                </div>
-                                
-                                <div>
-                                    <x-label for="addresses_{{ $index }}_postal_code" required>Código Postal</x-label>
-                                    <x-input 
-                                        wire:model="addresses.{{ $index }}.postal_code" 
-                                        id="addresses_{{ $index }}_postal_code" 
-                                        data-cy="address-postal-code" 
-                                        data-cy-address-index="{{ $index }}" 
+                                    </flux:select>
+                                    <flux:error name="addresses.{{ $index }}.municipality_id" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Código Postal <span class="text-red-500">*</span></flux:label>
+                                    <flux:input
+                                        wire:model="addresses.{{ $index }}.postal_code"
+                                        id="addresses_{{ $index }}_postal_code"
+                                        data-cy="address-postal-code"
+                                        data-cy-address-index="{{ $index }}"
                                         placeholder="28001"
-                                        :error="$errors->first('addresses.' . $index . '.postal_code')"
                                         required
                                     />
-                                </div>
-                                
-                                <div>
-                                    <x-label for="addresses_{{ $index }}_description">Observaciones</x-label>
-                                    <x-input wire:model="addresses.{{ $index }}.description" id="addresses_{{ $index }}_description" data-cy="address-description" data-cy-address-index="{{ $index }}" placeholder="Notas adicionales..." />
-                                </div>
-                                
+                                    <flux:error name="addresses.{{ $index }}.postal_code" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Observaciones</flux:label>
+                                    <flux:input wire:model="addresses.{{ $index }}.description" id="addresses_{{ $index }}_description" data-cy="address-description" data-cy-address-index="{{ $index }}" placeholder="Notas adicionales..." />
+                                </flux:field>
+
                             </div>
                         </div>
                     @endforeach
-                    
-                    <button 
+
+                    <button
                         type="button"
                         wire:click="addAddress"
-                        class="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-gray-600 hover:text-blue-600 font-semibold flex items-center justify-center gap-2"
+                        class="w-full py-3 border-2 border-dashed border-zinc-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-zinc-600 hover:text-blue-600 font-semibold flex items-center justify-center gap-2"
                         data-cy="add-address-button"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
+                        <flux:icon icon="plus" class="size-5" />
                         Añadir otra dirección
                     </button>
                 </div>
-            </x-form-section>
+            </x-agro.form-section>
 
-            <x-form-section title="Notas" color="green">
-                <div>
-                    <x-label for="notes">Notas</x-label>
-                    <x-textarea wire:model="notes" id="notes" rows="3" />
-                    @error('notes')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-            </x-form-section>
+            <x-agro.form-section title="Notas">
+                <flux:field>
+                    <flux:label>Notas</flux:label>
+                    <flux:textarea wire:model="notes" id="notes" rows="3" />
+                    <flux:error name="notes" />
+                </flux:field>
+            </x-agro.form-section>
 
-            <div class="flex justify-end gap-4">
-                <x-button type="button" variant="ghost" href="{{ route('viticulturist.clients.show', $client->id) }}" data-cy="cancel-button">Cancelar</x-button>
-                <x-button type="submit" variant="primary" data-cy="submit-button">Actualizar Cliente</x-button>
-            </div>
+            <x-agro.form-actions :cancel-url="route('viticulturist.clients.show', $client->id)" submit-label="Actualizar Cliente" />
         </form>
-    </x-form-card>
+    </x-agro.form-card>
 </div>

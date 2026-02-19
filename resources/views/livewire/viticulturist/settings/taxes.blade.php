@@ -2,20 +2,20 @@
     @php
         $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
     @endphp
-    <x-page-header
+    <x-agro.page-header
         :icon="$icon"
-        title="Configuraci√≥n de Impuestos"
-        description="Selecciona el impuesto que se aplicar√° por defecto en tus facturas"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+        title="ConfiguraciÛn de Impuestos"
+        description="Selecciona el impuesto que se aplicar· por defecto en tus facturas"
+        icon-color="from-agro-500 to-agro-700"
     />
 
-    <div class="glass-card rounded-xl p-8">
+    <div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-8">
         <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            <h3 class="text-lg font-semibold text-zinc-900 mb-2">
                 Impuesto activo
             </h3>
-            <p class="text-sm text-gray-600">
-                Solo puedes tener un tipo de impuesto activo. Selecciona el que corresponda seg√∫n tu ubicaci√≥n.
+            <p class="text-sm text-zinc-600">
+                Solo puedes tener un tipo de impuesto activo. Selecciona el que corresponda seg˙n tu ubicaciÛn.
             </p>
         </div>
 
@@ -24,7 +24,7 @@
                 @php
                     $isActive = $activeTaxId == $tax->id;
                     $colors = [
-                        'EXENTO' => ['border' => 'border-gray-300', 'bg' => 'bg-gray-50', 'text' => 'text-gray-900', 'active-border' => 'border-gray-600', 'active-bg' => 'bg-gray-100'],
+                        'EXENTO' => ['border' => 'border-zinc-300', 'bg' => 'bg-zinc-50', 'text' => 'text-zinc-900', 'active-border' => 'border-zinc-600', 'active-bg' => 'bg-zinc-100'],
                         'IVA' => ['border' => 'border-blue-300', 'bg' => 'bg-blue-50', 'text' => 'text-blue-900', 'active-border' => 'border-blue-600', 'active-bg' => 'bg-blue-100'],
                         'IGIC' => ['border' => 'border-green-300', 'bg' => 'bg-green-50', 'text' => 'text-green-900', 'active-border' => 'border-green-600', 'active-bg' => 'bg-green-100'],
                     ];
@@ -36,7 +36,7 @@
                     class="relative p-6 border-2 rounded-xl transition-all duration-200 hover:shadow-lg
                         {{ $isActive ? $color['active-border'] . ' ' . $color['active-bg'] . ' shadow-md' : $color['border'] . ' bg-white hover:' . $color['bg'] }}"
                 >
-                    {{-- Badge de selecci√≥n --}}
+                    {{-- Badge de selecciÛn --}}
                     @if($isActive)
                         <div class="absolute top-3 right-3">
                             <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -73,13 +73,13 @@
                             {{ number_format($tax->rate, 0) }}%
                         </p>
 
-                        {{-- Regi√≥n --}}
-                        <p class="text-sm text-gray-600 mb-3">
+                        {{-- RegiÛn --}}
+                        <p class="text-sm text-zinc-600 mb-3">
                             {{ $tax->region }}
                         </p>
 
-                        {{-- Descripci√≥n --}}
-                        <p class="text-xs text-gray-500">
+                        {{-- DescripciÛn --}}
+                        <p class="text-xs text-zinc-500">
                             {{ $tax->description }}
                         </p>
 
@@ -92,7 +92,7 @@
                                 Activo
                             </div>
                         @else
-                            <div class="mt-4 text-sm text-gray-500">
+                            <div class="mt-4 text-sm text-zinc-500">
                                 Click para activar
                             </div>
                         @endif
@@ -101,7 +101,7 @@
             @endforeach
         </div>
 
-        {{-- Informaci√≥n adicional --}}
+        {{-- InformaciÛn adicional --}}
         <div class="mt-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
             <div class="flex items-start gap-3">
                 <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -109,13 +109,13 @@
                 </svg>
                 <div class="flex-1">
                     <h4 class="text-sm font-semibold text-blue-900 mb-1">
-                        ‚ÑπÔ∏è Informaci√≥n importante
+                        ?? InformaciÛn importante
                     </h4>
                     <ul class="text-xs text-blue-800 space-y-1">
-                        <li>‚Ä¢ El impuesto seleccionado se aplicar√° autom√°ticamente en todas tus facturas</li>
-                        <li>‚Ä¢ <strong>Exento</strong>: Sin impuestos (0%)</li>
-                        <li>‚Ä¢ <strong>IVA</strong>: Para Espa√±a Peninsular y Baleares (21%)</li>
-                        <li>‚Ä¢ <strong>IGIC</strong>: Para Islas Canarias (7%)</li>
+                        <li>ï El impuesto seleccionado se aplicar· autom·ticamente en todas tus facturas</li>
+                        <li>ï <strong>Exento</strong>: Sin impuestos (0%)</li>
+                        <li>ï <strong>IVA</strong>: Para EspaÒa Peninsular y Baleares (21%)</li>
+                        <li>ï <strong>IGIC</strong>: Para Islas Canarias (7%)</li>
                     </ul>
                 </div>
             </div>

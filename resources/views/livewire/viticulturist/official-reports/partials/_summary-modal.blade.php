@@ -2,11 +2,11 @@
 @if($showSummaryModal)
     <div class="fixed z-50 inset-0 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeSummaryModal"></div>
+            <div class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity" wire:click="closeSummaryModal"></div>
             
             <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">📊 Resumen del Informe</h3>
-                <p class="text-gray-600 mb-6">
+                <h3 class="text-2xl font-bold text-zinc-900 mb-4">📊 Resumen del Informe</h3>
+                <p class="text-zinc-600 mb-6">
                     Revisa los datos antes de firmar electrónicamente. Este proceso puede tardar varios segundos.
                 </p>
 
@@ -14,43 +14,43 @@
                     @if($reportSummary['type'] ?? '' === 'phytosanitary_treatments')
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Periodo</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $reportSummary['period'] ?? '-' }}</p>
+                                <p class="text-sm text-zinc-600 mb-1">Periodo</p>
+                                <p class="text-lg font-bold text-zinc-900">{{ $reportSummary['period'] ?? '-' }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Total Tratamientos</p>
+                                <p class="text-sm text-zinc-600 mb-1">Total Tratamientos</p>
                                 <p class="text-lg font-bold text-blue-900">{{ $reportSummary['total_treatments'] ?? 0 }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Parcelas Afectadas</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $reportSummary['plots_count'] ?? 0 }}</p>
+                                <p class="text-sm text-zinc-600 mb-1">Parcelas Afectadas</p>
+                                <p class="text-lg font-bold text-zinc-900">{{ $reportSummary['plots_count'] ?? 0 }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Productos Usados</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $reportSummary['products_count'] ?? 0 }}</p>
+                                <p class="text-sm text-zinc-600 mb-1">Productos Usados</p>
+                                <p class="text-lg font-bold text-zinc-900">{{ $reportSummary['products_count'] ?? 0 }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Área Total Tratada</p>
+                                <p class="text-sm text-zinc-600 mb-1">Área Total Tratada</p>
                                 <p class="text-lg font-bold text-green-900">{{ $reportSummary['total_area'] ?? 0 }} ha</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Tamaño Estimado</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $reportSummary['estimated_size'] ?? '-' }}</p>
+                                <p class="text-sm text-zinc-600 mb-1">Tamaño Estimado</p>
+                                <p class="text-lg font-bold text-zinc-900">{{ $reportSummary['estimated_size'] ?? '-' }}</p>
                             </div>
                         </div>
                     @else
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2">
-                                <p class="text-sm text-gray-600 mb-1">Campaña</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $reportSummary['campaign'] ?? '-' }}</p>
+                                <p class="text-sm text-zinc-600 mb-1">Campaña</p>
+                                <p class="text-lg font-bold text-zinc-900">{{ $reportSummary['campaign'] ?? '-' }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Total Actividades</p>
+                                <p class="text-sm text-zinc-600 mb-1">Total Actividades</p>
                                 <p class="text-lg font-bold text-blue-900">{{ $reportSummary['total_activities'] ?? 0 }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Tamaño Estimado</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $reportSummary['estimated_size'] ?? '-' }}</p>
+                                <p class="text-sm text-zinc-600 mb-1">Tamaño Estimado</p>
+                                <p class="text-lg font-bold text-zinc-900">{{ $reportSummary['estimated_size'] ?? '-' }}</p>
                             </div>
                         </div>
                     @endif
@@ -77,7 +77,7 @@
                                     <ul class="space-y-2">
                                         @foreach($batchPeriods as $period)
                                             <li class="flex items-center justify-between text-sm">
-                                                <span class="font-semibold text-gray-700">{{ $period['label'] }}</span>
+                                                <span class="font-semibold text-zinc-700">{{ $period['label'] }}</span>
                                                 <span class="text-blue-600 font-medium">{{ $period['count'] }} actividades</span>
                                             </li>
                                         @endforeach
@@ -156,7 +156,7 @@
 
                 {{-- Campo de Contraseña en el Modal --}}
                 <div class="mb-6" x-data="{ showPassword: false }">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <label class="block text-sm font-semibold text-zinc-700 mb-2 flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
@@ -172,14 +172,14 @@
                                 disabled
                                 readonly
                             @endif
-                            class="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition {{ $hasDigitalSignature ? '' : 'opacity-50 cursor-not-allowed bg-gray-100' }}"
+                            class="w-full px-4 py-3 pr-12 border-2 border-zinc-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition {{ $hasDigitalSignature ? '' : 'opacity-50 cursor-not-allowed bg-zinc-100' }}"
                             placeholder="{{ $hasDigitalSignature ? 'Introduce tu contraseña de firma digital' : 'Configura tu contraseña primero' }}"
                             @if($hasDigitalSignature) autofocus @endif
                         >
                         <button
                             type="button"
                             x-on:click="showPassword = !showPassword"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-500 hover:text-zinc-700 focus:outline-none"
                             tabindex="-1"
                         >
                             <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,8 +191,8 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="mt-2 flex items-center gap-2 text-xs text-gray-600">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="mt-2 flex items-center gap-2 text-xs text-zinc-600">
+                        <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
                         <span>Se usa exclusivamente para firmar documentos oficiales</span>
@@ -218,7 +218,7 @@
                 <div class="flex justify-end space-x-3">
                     <button 
                         wire:click="closeSummaryModal"
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                        class="px-4 py-2 bg-zinc-200 text-zinc-700 rounded-lg hover:bg-zinc-300 transition-colors"
                     >
                         Cancelar
                     </button>
@@ -247,7 +247,7 @@
                         <button 
                             wire:click="forceGenerateSingle"
                             wire:loading.attr="disabled"
-                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                            class="px-4 py-2 bg-zinc-500 text-white rounded-lg hover:bg-zinc-600 transition-colors text-sm"
                             title="Generar un solo informe (puede tardar más tiempo)"
                         >
                             Un solo informe

@@ -1,37 +1,31 @@
-@php
-    $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>';
-@endphp
-
-<x-form-card
+﻿<x-agro.form-card
     title="Editar Riego"
     description="Modifica los datos del riego"
-    :icon="$icon"
-    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     :back-url="route('viticulturist.digital-notebook')"
 >
     <form wire:submit="update" class="space-y-8" data-cy="irrigation-form">
-        <x-form-section title="Información Básica" color="green">
+        <x-agro.form-section title="Información Básica">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <x-label for="plot_id" required>Parcela</x-label>
-                        <x-select wire:model.live="plot_id" id="plot_id" data-cy="plot-select" :error="$errors->first('plot_id')" required>
+                        <flux:label for="plot_id" required>Parcela</flux:label>
+                        <flux:select wire:model.live="plot_id" id="plot_id" data-cy="plot-select" :error="$errors->first('plot_id')" required>
                             <option value="">Selecciona una parcela</option>
                             @foreach($plots as $plot)
                                 <option value="{{ $plot->id }}">{{ $plot->name }}</option>
                             @endforeach
-                        </x-select>
+                        </flux:select>
                     </div>
                     @if($plot_id)
                         <div>
-                            <x-label for="plot_planting_id" :required="count($availablePlantings) > 0">
+                            <flux:label for="plot_planting_id" :required="count($availablePlantings) > 0">
                                 Plantación
                                 @if(count($availablePlantings) > 0)
                                     <span class="text-red-500">*</span>
                                 @else
-                                    <span class="text-gray-500 text-sm">(Opcional)</span>
+                                    <span class="text-zinc-500 text-sm">(Opcional)</span>
                                 @endif
-                            </x-label>
-                            <x-select wire:model="plot_planting_id" id="plot_planting_id" data-cy="plot-planting-select" :error="$errors->first('plot_planting_id')" :required="count($availablePlantings) > 0">
+                            </flux:label>
+                            <flux:select wire:model="plot_planting_id" id="plot_planting_id" data-cy="plot-planting-select" :error="$errors->first('plot_planting_id')" :required="count($availablePlantings) > 0">
                                 <option value="">-- Selecciona una plantación --</option>
                                 @foreach($availablePlantings as $planting)
                                     <option value="{{ $planting->id }}">
@@ -41,16 +35,16 @@
                                         @endif
                                     </option>
                                 @endforeach
-                            </x-select>
+                            </flux:select>
                         </div>
                     @endif
                     <div>
-                        <x-label for="activity_date" required>Fecha</x-label>
-                        <x-input wire:model="activity_date" type="date" id="activity_date" data-cy="activity-date-input" :error="$errors->first('activity_date')" required />
+                        <flux:label for="activity_date" required>Fecha</flux:label>
+                        <flux:input wire:model="activity_date" type="date" id="activity_date" data-cy="activity-date-input" :error="$errors->first('activity_date')" required />
                     </div>
                     <div>
-                        <x-label for="phenological_stage">Estadio Fenológico</x-label>
-                        <x-select wire:model="phenological_stage" id="phenological_stage" data-cy="phenological-stage-select" :error="$errors->first('phenological_stage')">
+                        <flux:label for="phenological_stage">Estadio Fenológico</flux:label>
+                        <flux:select wire:model="phenological_stage" id="phenological_stage" data-cy="phenological-stage-select" :error="$errors->first('phenological_stage')">
                             <option value="">Selecciona un estadio</option>
                             <option value="Brotación">Brotación</option>
                             <option value="Desarrollo vegetativo">Desarrollo vegetativo</option>
@@ -61,48 +55,48 @@
                             <option value="Vendimia">Vendimia</option>
                             <option value="Caída de hoja">Caída de hoja</option>
                             <option value="Reposo invernal">Reposo invernal</option>
-                        </x-select>
-                        <p class="text-xs text-gray-500 mt-1">Recomendado para trazabilidad PAC</p>
+                        </flux:select>
+                        <p class="text-xs text-zinc-500 mt-1">Recomendado para trazabilidad PAC</p>
                     </div>
                 </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <x-form-section title="Información del Riego" color="green">
+        <x-agro.form-section title="Información del Riego">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <x-label for="water_volume">Volumen de Agua (L)</x-label>
-                        <x-input wire:model="water_volume" type="number" step="0.001" id="water_volume" data-cy="water-volume-input" placeholder="0.000" :error="$errors->first('water_volume')" />
+                        <flux:label for="water_volume">Volumen de Agua (L)</flux:label>
+                        <flux:input wire:model="water_volume" type="number" step="0.001" id="water_volume" data-cy="water-volume-input" placeholder="0.000" :error="$errors->first('water_volume')" />
                     </div>
                     <div>
-                        <x-label for="irrigation_method">Método de Riego</x-label>
-                        <x-select wire:model="irrigation_method" id="irrigation_method" data-cy="irrigation-method-select" :error="$errors->first('irrigation_method')">
+                        <flux:label for="irrigation_method">Método de Riego</flux:label>
+                        <flux:select wire:model="irrigation_method" id="irrigation_method" data-cy="irrigation-method-select" :error="$errors->first('irrigation_method')">
                             <option value="">Selecciona un método</option>
                             <option value="goteo">Goteo</option>
                             <option value="aspersión">Aspersión</option>
                             <option value="superficie">Superficie</option>
                             <option value="subterráneo">Subterráneo</option>
                             <option value="otro">Otro</option>
-                        </x-select>
+                        </flux:select>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                     <div>
-                        <x-label for="duration_minutes">Duración (minutos)</x-label>
-                        <x-input wire:model="duration_minutes" type="number" id="duration_minutes" placeholder="0" :error="$errors->first('duration_minutes')" />
+                        <flux:label for="duration_minutes">Duración (minutos)</flux:label>
+                        <flux:input wire:model="duration_minutes" type="number" id="duration_minutes" placeholder="0" :error="$errors->first('duration_minutes')" />
                     </div>
                     <div>
-                        <x-label for="soil_moisture_before">Humedad del Suelo Antes (%)</x-label>
-                        <x-input wire:model="soil_moisture_before" type="number" step="0.1" min="0" max="100" id="soil_moisture_before" placeholder="0.0" :error="$errors->first('soil_moisture_before')" />
+                        <flux:label for="soil_moisture_before">Humedad del Suelo Antes (%)</flux:label>
+                        <flux:input wire:model="soil_moisture_before" type="number" step="0.1" min="0" max="100" id="soil_moisture_before" placeholder="0.0" :error="$errors->first('soil_moisture_before')" />
                     </div>
                     <div>
-                        <x-label for="soil_moisture_after">Humedad del Suelo Después (%)</x-label>
-                        <x-input wire:model="soil_moisture_after" type="number" step="0.1" min="0" max="100" id="soil_moisture_after" placeholder="0.0" :error="$errors->first('soil_moisture_after')" />
+                        <flux:label for="soil_moisture_after">Humedad del Suelo Después (%)</flux:label>
+                        <flux:input wire:model="soil_moisture_after" type="number" step="0.1" min="0" max="100" id="soil_moisture_after" placeholder="0.0" :error="$errors->first('soil_moisture_after')" />
                     </div>
                 </div>
-        </x-form-section>
+        </x-agro.form-section>
 
         {{-- Sección PAC Obligatoria --}}
-        <x-form-section title="Cumplimiento PAC (Obligatorio)" color="amber">
+        <x-agro.form-section title="Cumplimiento PAC (Obligatorio)">
             <div class="space-y-6">
                 {{-- Info box PAC --}}
                 <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
@@ -122,9 +116,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Origen del Agua --}}
                     <div>
-                        <x-label for="water_source">Origen del Agua</x-label>
-                        <x-select 
-                            wire:model="water_source" 
+                        <flux:label for="water_source">Origen del Agua</flux:label>
+                        <flux:select
+                            wire:model="water_source"
                             id="water_source"
                             data-cy="water-source-select"
                             :error="$errors->first('water_source')"
@@ -136,20 +130,20 @@
                             <option value="Cauce público (río/arroyo)">Cauce público (río/arroyo)</option>
                             <option value="Aguas regeneradas">Aguas regeneradas</option>
                             <option value="Otro">Otro</option>
-                        </x-select>
+                        </flux:select>
                     </div>
 
                     {{-- Nº Concesión --}}
                     <div>
-                        <x-label for="water_concession">Nº Concesión / Autorización</x-label>
-                        <x-input 
-                            wire:model="water_concession" 
-                            type="text" 
+                        <flux:label for="water_concession">Nº Concesión / Autorización</flux:label>
+                        <flux:input
+                            wire:model="water_concession"
+                            type="text"
                             id="water_concession"
                             placeholder="Ej: 2023/CONF/1234"
                             :error="$errors->first('water_concession')"
                         />
-                        <p class="mt-1 text-xs text-gray-500">
+                        <p class="mt-1 text-xs text-zinc-500">
                             Número de expediente de la Confederación Hidrográfica
                         </p>
                     </div>
@@ -157,11 +151,11 @@
 
                 {{-- Caudal --}}
                 <div class="md:w-1/2">
-                    <x-label for="flow_rate">Caudal de Riego (L/h)</x-label>
-                    <x-input 
-                        wire:model="flow_rate" 
-                        type="number" 
-                        step="0.01" 
+                    <flux:label for="flow_rate">Caudal de Riego (L/h)</flux:label>
+                    <flux:input
+                        wire:model="flow_rate"
+                        type="number"
+                        step="0.01"
                         id="flow_rate"
                         placeholder="Ej: 2000.00"
                         min="0"
@@ -169,33 +163,33 @@
                     />
                 </div>
             </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <x-form-section title="Información Adicional" color="green" class="pb-6">
+        <x-agro.form-section title="Información Adicional">
                 <!-- ¿Quién realizó el trabajo? -->
                 <div class="mb-6">
-                    <x-label class="mb-3 block font-semibold text-gray-700">¿Quién realizó el trabajo?</x-label>
+                    <flux:label class="mb-3 block font-semibold text-zinc-700">¿Quién realizó el trabajo?</flux:label>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Opción: Equipo completo -->
-                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'crew' ? 'border-[var(--color-agro-green)] bg-[var(--color-agro-green-bg)]' : 'border-gray-200 hover:border-gray-300' }}">
+                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'crew' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
                             <label class="flex items-center gap-3 cursor-pointer">
-                                <input 
-                                    type="radio" 
-                                    wire:model.live="workType" 
-                                    value="crew" 
+                                <input
+                                    type="radio"
+                                    wire:model.live="workType"
+                                    value="crew"
                                     data-cy="work-type-crew-radio"
-                                    class="w-5 h-5 text-[var(--color-agro-green)] focus:ring-[var(--color-agro-green)]"
+                                    class="w-5 h-5 text-agro-500 focus:ring-agro-500"
                                 />
                                 <div class="flex-1">
-                                    <span class="font-semibold text-gray-900">Equipo completo</span>
-                                    <p class="text-sm text-gray-500 mt-1">Todo el equipo trabajó en esta actividad</p>
+                                    <span class="font-semibold text-zinc-900">Equipo completo</span>
+                                    <p class="text-sm text-zinc-500 mt-1">Todo el equipo trabajó en esta actividad</p>
                                 </div>
                             </label>
                             @if($workType === 'crew')
                                 <div class="mt-4">
-                                    <x-label for="crew_id" class="text-sm">Selecciona el equipo</x-label>
-                                    <x-select 
-                                        wire:model="crew_id" 
+                                    <flux:label for="crew_id" class="text-sm">Selecciona el equipo</flux:label>
+                                    <flux:select
+                                        wire:model="crew_id"
                                         id="crew_id"
                                         class="mt-1"
                                         :error="$errors->first('crew_id')"
@@ -204,31 +198,31 @@
                                         @foreach($crews as $crew)
                                             <option value="{{ $crew->id }}">{{ $crew->name }}</option>
                                         @endforeach
-                                    </x-select>
+                                    </flux:select>
                                 </div>
                             @endif
                         </div>
 
                         <!-- Opción: Viticultor individual -->
-                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'individual' ? 'border-[var(--color-agro-green)] bg-[var(--color-agro-green-bg)]' : 'border-gray-200 hover:border-gray-300' }}">
+                        <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'individual' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
                             <label class="flex items-center gap-3 cursor-pointer">
-                                <input 
-                                    type="radio" 
-                                    wire:model.live="workType" 
-                                    value="individual" 
+                                <input
+                                    type="radio"
+                                    wire:model.live="workType"
+                                    value="individual"
                                     data-cy="work-type-individual-radio"
-                                    class="w-5 h-5 text-[var(--color-agro-green)] focus:ring-[var(--color-agro-green)]"
+                                    class="w-5 h-5 text-agro-500 focus:ring-agro-500"
                                 />
                                 <div class="flex-1">
-                                    <span class="font-semibold text-gray-900">Viticultor individual</span>
-                                    <p class="text-sm text-gray-500 mt-1">Un viticultor específico realizó el trabajo</p>
+                                    <span class="font-semibold text-zinc-900">Viticultor individual</span>
+                                    <p class="text-sm text-zinc-500 mt-1">Un viticultor específico realizó el trabajo</p>
                                 </div>
                             </label>
                             @if($workType === 'individual')
                                 <div class="mt-4">
-                                    <x-label for="crew_member_id" class="text-sm">Selecciona el viticultor</x-label>
-                                    <x-select 
-                                        wire:model="crew_member_id" 
+                                    <flux:label for="crew_member_id" class="text-sm">Selecciona el viticultor</flux:label>
+                                    <flux:select
+                                        wire:model="crew_member_id"
                                         id="crew_member_id"
                                         class="mt-1"
                                         :error="$errors->first('crew_member_id')"
@@ -241,7 +235,7 @@
                                                 </option>
                                             @endforeach
                                         @endif
-                                    </x-select>
+                                    </flux:select>
                                 </div>
                             @endif
                         </div>
@@ -253,34 +247,33 @@
 
                 <!-- Maquinaria -->
                 <div>
-                    <x-label for="machinery_id">Maquinaria</x-label>
-                    <x-select wire:model="machinery_id" id="machinery_id" data-cy="machinery-select" :error="$errors->first('machinery_id')">
+                    <flux:label for="machinery_id">Maquinaria</flux:label>
+                    <flux:select wire:model="machinery_id" id="machinery_id" data-cy="machinery-select" :error="$errors->first('machinery_id')">
                         <option value="">Sin maquinaria asignada</option>
                         @foreach($machinery as $item)
                             <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->type }})</option>
                         @endforeach
-                    </x-select>
+                    </flux:select>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div>
-                        <x-label for="weather_conditions">Condiciones Meteorológicas</x-label>
-                        <x-input wire:model="weather_conditions" type="text" id="weather_conditions" placeholder="Ej: Soleado, nublado" :error="$errors->first('weather_conditions')" />
+                        <flux:label for="weather_conditions">Condiciones Meteorológicas</flux:label>
+                        <flux:input wire:model="weather_conditions" type="text" id="weather_conditions" placeholder="Ej: Soleado, nublado" :error="$errors->first('weather_conditions')" />
                     </div>
                     <div>
-                        <x-label for="temperature">Temperatura (°C)</x-label>
-                        <x-input wire:model="temperature" type="number" step="0.1" id="temperature" placeholder="20.0" :error="$errors->first('temperature')" />
+                        <flux:label for="temperature">Temperatura (°C)</flux:label>
+                        <flux:input wire:model="temperature" type="number" step="0.1" id="temperature" placeholder="20.0" :error="$errors->first('temperature')" />
                     </div>
                 </div>
                 <div class="mt-6">
-                    <x-label for="notes">Notas</x-label>
-                    <x-textarea wire:model="notes" id="notes" rows="4" placeholder="Observaciones, comentarios, etc." :error="$errors->first('notes')" />
+                    <flux:label for="notes">Notas</flux:label>
+                    <flux:textarea wire:model="notes" id="notes" rows="4" placeholder="Observaciones, comentarios, etc." :error="$errors->first('notes')" />
                 </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <x-form-actions 
+        <x-agro.form-actions
             :cancel-url="route('viticulturist.digital-notebook')"
             submit-label="Actualizar Riego"
         />
     </form>
-</x-form-card>
-
+</x-agro.form-card>

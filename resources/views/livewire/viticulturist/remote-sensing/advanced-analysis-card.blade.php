@@ -2,8 +2,8 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h3 class="text-xl font-bold text-gray-900">Análisis Avanzado</h3>
-            <p class="text-sm text-gray-500 mt-1">
+            <h3 class="text-xl font-bold text-zinc-900">Análisis Avanzado</h3>
+            <p class="text-sm text-zinc-500 mt-1">
                 @if($analysis && isset($analysis['data_date']))
                     Datos del {{ \Carbon\Carbon::parse($analysis['data_date'])->format('d/m/Y') }}
                 @else
@@ -36,7 +36,7 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <p class="text-gray-600">Analizando datos...</p>
+                <p class="text-zinc-600">Analizando datos...</p>
             </div>
         </div>
     @endif
@@ -61,16 +61,16 @@
         {{-- Executive Summary --}}
         @if(isset($analysis['summary']) && count($analysis['summary']) > 0)
             <div class="mb-6">
-                <h4 class="text-lg font-semibold text-gray-800 mb-4">Resumen Ejecutivo</h4>
+                <h4 class="text-lg font-semibold text-zinc-800 mb-4">Resumen Ejecutivo</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach($analysis['summary'] as $item)
-                        <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="bg-zinc-50 rounded-lg p-4">
                             <div class="flex items-center mb-2">
                                 <span class="text-2xl mr-2">{{ $item['icon'] }}</span>
-                                <span class="text-xs font-medium text-gray-500 uppercase">{{ $item['category'] }}</span>
+                                <span class="text-xs font-medium text-zinc-500 uppercase">{{ $item['category'] }}</span>
                             </div>
-                            <div class="text-sm font-semibold text-gray-900 mb-1">{{ $item['status'] }}</div>
-                            <p class="text-xs text-gray-600">{{ $item['text'] }}</p>
+                            <div class="text-sm font-semibold text-zinc-900 mb-1">{{ $item['status'] }}</div>
+                            <p class="text-xs text-zinc-600">{{ $item['text'] }}</p>
                         </div>
                     @endforeach
                 </div>
@@ -80,20 +80,20 @@
         {{-- Priority Actions --}}
         @if(isset($analysis['priority_actions']) && count($analysis['priority_actions']) > 0)
             <div class="mb-6">
-                <h4 class="text-lg font-semibold text-gray-800 mb-4">Acciones Prioritarias</h4>
+                <h4 class="text-lg font-semibold text-zinc-800 mb-4">Acciones Prioritarias</h4>
                 <div class="space-y-3">
                     @foreach($analysis['priority_actions'] as $action)
-                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div class="border border-zinc-200 rounded-lg p-4 hover:bg-zinc-50 transition-colors">
                             <div class="flex items-start">
                                 <span class="text-2xl mr-3 flex-shrink-0">{{ $action['icon'] }}</span>
                                 <div class="flex-1">
                                     <div class="flex items-center mb-1">
-                                        <span class="text-sm font-semibold text-gray-900">{{ $action['title'] }}</span>
+                                        <span class="text-sm font-semibold text-zinc-900">{{ $action['title'] }}</span>
                                         <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded bg-{{ $action['priority'] == 1 ? 'red' : ($action['priority'] == 2 ? 'orange' : 'yellow') }}-100 text-{{ $action['priority'] == 1 ? 'red' : ($action['priority'] == 2 ? 'orange' : 'yellow') }}-800">
                                             P{{ $action['priority'] }}
                                         </span>
                                     </div>
-                                    <p class="text-sm text-gray-600 mb-2">{{ $action['description'] }}</p>
+                                    <p class="text-sm text-zinc-600 mb-2">{{ $action['description'] }}</p>
                                     <div class="flex items-center text-xs text-blue-600 font-medium">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -112,21 +112,21 @@
         <div class="space-y-4">
             {{-- LAI Section --}}
             @if(isset($analysis['lai']))
-                <details class="border border-gray-200 rounded-lg">
-                    <summary class="cursor-pointer px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors font-medium text-gray-900">
+                <details class="border border-zinc-200 rounded-lg">
+                    <summary class="cursor-pointer px-4 py-3 bg-zinc-50 hover:bg-zinc-100 transition-colors font-medium text-zinc-900">
                         🌿 LAI - Predicción de Rendimiento
                     </summary>
                     <div class="p-4 space-y-3">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <span class="text-xs text-gray-500">LAI Actual</span>
-                                <div class="text-2xl font-bold text-gray-900">{{ number_format($analysis['lai']['value'], 2) }}</div>
+                                <span class="text-xs text-zinc-500">LAI Actual</span>
+                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['lai']['value'], 2) }}</div>
                                 <span class="text-xs text-{{ $analysis['lai']['classification']['color'] }}-600">{{ $analysis['lai']['classification']['label'] }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-gray-500">Rendimiento Estimado</span>
-                                <div class="text-2xl font-bold text-gray-900">{{ number_format($analysis['lai']['yield_estimation']['yield_per_ha']) }} <span class="text-sm">kg/ha</span></div>
-                                <span class="text-xs text-gray-600">{{ number_format($analysis['lai']['yield_estimation']['total_yield_tons'], 2) }} toneladas totales</span>
+                                <span class="text-xs text-zinc-500">Rendimiento Estimado</span>
+                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['lai']['yield_estimation']['yield_per_ha']) }} <span class="text-sm">kg/ha</span></div>
+                                <span class="text-xs text-zinc-600">{{ number_format($analysis['lai']['yield_estimation']['total_yield_tons'], 2) }} toneladas totales</span>
                             </div>
                         </div>
                         
@@ -146,20 +146,20 @@
 
             {{-- Chlorophyll/Nitrogen Section --}}
             @if(isset($analysis['chlorophyll']))
-                <details class="border border-gray-200 rounded-lg">
-                    <summary class="cursor-pointer px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors font-medium text-gray-900">
+                <details class="border border-zinc-200 rounded-lg">
+                    <summary class="cursor-pointer px-4 py-3 bg-zinc-50 hover:bg-zinc-100 transition-colors font-medium text-zinc-900">
                         🌱 Estado Nutricional (N)
                     </summary>
                     <div class="p-4 space-y-3">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <span class="text-xs text-gray-500">Contenido de Clorofila</span>
-                                <div class="text-2xl font-bold text-gray-900">{{ number_format($analysis['chlorophyll']['chlorophyll_percent'], 1) }}%</div>
+                                <span class="text-xs text-zinc-500">Contenido de Clorofila</span>
+                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['chlorophyll']['chlorophyll_percent'], 1) }}%</div>
                                 <span class="text-xs text-{{ $analysis['chlorophyll']['diagnosis']['color'] }}-600">{{ $analysis['chlorophyll']['diagnosis']['label'] }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-gray-500">GNDVI</span>
-                                <div class="text-2xl font-bold text-gray-900">{{ number_format($analysis['chlorophyll']['gndvi'], 3) }}</div>
+                                <span class="text-xs text-zinc-500">GNDVI</span>
+                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['chlorophyll']['gndvi'], 3) }}</div>
                             </div>
                         </div>
                         
@@ -179,27 +179,27 @@
 
             {{-- Maturity Section --}}
             @if(isset($analysis['maturity']))
-                <details class="border border-gray-200 rounded-lg">
-                    <summary class="cursor-pointer px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors font-medium text-gray-900">
+                <details class="border border-zinc-200 rounded-lg">
+                    <summary class="cursor-pointer px-4 py-3 bg-zinc-50 hover:bg-zinc-100 transition-colors font-medium text-zinc-900">
                         🍇 Maduración y Vendimia
                     </summary>
                     <div class="p-4 space-y-3">
                         <div class="grid grid-cols-3 gap-4">
                             <div>
-                                <span class="text-xs text-gray-500">Índice de Madurez</span>
-                                <div class="text-2xl font-bold text-gray-900">{{ number_format($analysis['maturity']['maturity_index'], 0) }}%</div>
+                                <span class="text-xs text-zinc-500">Índice de Madurez</span>
+                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['maturity']['maturity_index'], 0) }}%</div>
                                 <span class="text-xs text-{{ $analysis['maturity']['classification']['color'] }}-600">{{ $analysis['maturity']['classification']['label'] }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-gray-500">°Brix Estimado</span>
-                                <div class="text-2xl font-bold text-gray-900">{{ number_format($analysis['maturity']['predicted_brix']['value'], 1) }}</div>
-                                <span class="text-xs text-gray-600">±{{ number_format($analysis['maturity']['predicted_brix']['max'] - $analysis['maturity']['predicted_brix']['value'], 1) }}</span>
+                                <span class="text-xs text-zinc-500">°Brix Estimado</span>
+                                <div class="text-2xl font-bold text-zinc-900">{{ number_format($analysis['maturity']['predicted_brix']['value'], 1) }}</div>
+                                <span class="text-xs text-zinc-600">±{{ number_format($analysis['maturity']['predicted_brix']['max'] - $analysis['maturity']['predicted_brix']['value'], 1) }}</span>
                             </div>
                             <div>
-                                <span class="text-xs text-gray-500">Días para Vendimia</span>
-                                <div class="text-2xl font-bold text-gray-900">{{ $analysis['maturity']['estimated_days_to_harvest'] ?? 'N/A' }}</div>
+                                <span class="text-xs text-zinc-500">Días para Vendimia</span>
+                                <div class="text-2xl font-bold text-zinc-900">{{ $analysis['maturity']['estimated_days_to_harvest'] ?? 'N/A' }}</div>
                                 @if(isset($analysis['maturity']['optimal_harvest_date']))
-                                    <span class="text-xs text-gray-600">{{ \Carbon\Carbon::parse($analysis['maturity']['optimal_harvest_date'])->format('d/m/Y') }}</span>
+                                    <span class="text-xs text-zinc-600">{{ \Carbon\Carbon::parse($analysis['maturity']['optimal_harvest_date'])->format('d/m/Y') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -232,19 +232,19 @@
                                     <span class="text-2xl mr-2">{{ $anomaly['icon'] }}</span>
                                     <div class="flex-1">
                                         <div class="flex items-center mb-1">
-                                            <span class="text-sm font-semibold text-gray-900">{{ $anomaly['title'] }}</span>
+                                            <span class="text-sm font-semibold text-zinc-900">{{ $anomaly['title'] }}</span>
                                             <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded bg-{{ $anomaly['color'] }}-100 text-{{ $anomaly['color'] }}-800">
                                                 {{ strtoupper($anomaly['severity']) }}
                                             </span>
                                         </div>
-                                        <p class="text-sm text-gray-700 mb-2">{{ $anomaly['description'] }}</p>
+                                        <p class="text-sm text-zinc-700 mb-2">{{ $anomaly['description'] }}</p>
                                     </div>
                                 </div>
                                 
                                 @if(isset($anomaly['recommended_actions']))
                                     <div class="mt-2 pl-9">
-                                        <div class="text-xs font-medium text-gray-700 mb-1">Acciones recomendadas:</div>
-                                        <ul class="text-xs text-gray-600 space-y-1">
+                                        <div class="text-xs font-medium text-zinc-700 mb-1">Acciones recomendadas:</div>
+                                        <ul class="text-xs text-zinc-600 space-y-1">
                                             @foreach($anomaly['recommended_actions'] as $action)
                                                 <li>• {{ $action }}</li>
                                             @endforeach
@@ -258,8 +258,8 @@
             @endif
         </div>
     @elseif(isset($analysis['error']))
-        <div class="text-center py-8 text-gray-500">
-            <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center py-8 text-zinc-500">
+            <svg class="w-16 h-16 mx-auto mb-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
             </svg>
             <p>{{ $analysis['error'] }}</p>

@@ -20,20 +20,17 @@ class SecurityHeaders
         // Detectar si estamos en desarrollo
         $isDevelopment = app()->environment('local', 'development');
         
-        // Vite dev server URLs
-        $viteUrl = $isDevelopment ? 'http://localhost:5173 http://[::1]:5173' : '';
-        
         // Build CSP directive
         $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://challenges.cloudflare.com";
         $styleSrc = "'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net";
         $fontSrc = "'self' data: https://fonts.gstatic.com https://fonts.bunny.net";
         $connectSrc = "'self'";
-        
-        // Add Vite support in development
+
+        // Add Vite HMR support in development (only localhost, IPv6 bracket syntax is invalid in CSP)
         if ($isDevelopment) {
-            $scriptSrc .= " {$viteUrl}";
-            $styleSrc .= " {$viteUrl}";
-            $connectSrc .= " {$viteUrl} ws://localhost:5173 ws://[::1]:5173";
+            $scriptSrc .= " http://localhost:5173";
+            $styleSrc .= " http://localhost:5173";
+            $connectSrc .= " http://localhost:5173 ws://localhost:5173";
         }
 
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');

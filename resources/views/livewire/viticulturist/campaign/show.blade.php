@@ -1,238 +1,218 @@
-<div class="space-y-6 animate-fade-in">
+﻿<div class="space-y-6 animate-fade-in">
     <!-- Mensajes Flash -->
     @if(session('message'))
-        <div class="glass-card rounded-xl p-4 bg-green-50 border-l-4 border-green-600">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-semibold text-green-800">{{ session('message') }}</p>
-            </div>
-        </div>
+        <flux:callout variant="success">
+            {{ session('message') }}
+        </flux:callout>
     @endif
 
     @if(session('error'))
-        <div class="glass-card rounded-xl p-4 bg-red-50 border-l-4 border-red-600">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-semibold text-red-800">{{ session('error') }}</p>
-            </div>
-        </div>
+        <flux:callout variant="danger">
+            {{ session('error') }}
+        </flux:callout>
     @endif
 
     <!-- Header -->
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+    <x-agro.page-header
         :title="$campaign->name"
         :description="'Campaña del año ' . $campaign->year"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
-        <x-slot:actionButton>
-            <div class="flex items-center gap-3">
-                @if(!$campaign->active)
-                    @can('activate', $campaign)
-                        <button 
-                            wire:click="activate"
-                            data-cy="activate-campaign-button"
-                            class="px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-all font-semibold"
-                        >
-                            Activar Campaña
-                        </button>
-                    @endcan
-                @endif
-                @can('update', $campaign)
-                    <a href="{{ route('viticulturist.campaign.edit', $campaign) }}" data-cy="edit-campaign-button" class="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all font-semibold">
-                        Editar
-                    </a>
+        <x-slot:actions>
+            @if(!$campaign->active)
+                @can('activate', $campaign)
+                    <flux:button wire:click="activate" variant="primary" data-cy="activate-campaign-button">
+                        Activar Campaña
+                    </flux:button>
                 @endcan
-                <a href="{{ route('viticulturist.campaign.index') }}" data-cy="back-button" class="px-4 py-2 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all font-semibold">
-                    Volver
-                </a>
-            </div>
-        </x-slot:actionButton>
-    </x-page-header>
+            @endif
+            @can('update', $campaign)
+                <flux:button href="{{ route('viticulturist.campaign.edit', $campaign) }}" variant="outline" icon="pencil-square" data-cy="edit-campaign-button">
+                    Editar
+                </flux:button>
+            @endcan
+            <flux:button href="{{ route('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left" data-cy="back-button">
+                Volver
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     <!-- Estadísticas -->
-    <div class="glass-card rounded-xl p-6" data-cy="campaign-statistics">
-        <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4">Estadísticas de la Campaña</h3>
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-4" data-cy="campaign-stats-grid">
-            <div class="text-center">
-                <div class="text-2xl font-bold text-[var(--color-agro-green-dark)]">{{ $campaign->activities_count }}</div>
-                <div class="text-sm text-gray-600">Total</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-red-600">{{ $campaign->phytosanitary_count }}</div>
-                <div class="text-sm text-gray-600">Tratamientos</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-blue-600">{{ $campaign->fertilization_count }}</div>
-                <div class="text-sm text-gray-600">Fertilizaciones</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-cyan-600">{{ $campaign->irrigation_count }}</div>
-                <div class="text-sm text-gray-600">Riegos</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-purple-600">{{ $campaign->cultural_count }}</div>
-                <div class="text-sm text-gray-600">Labores</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-amber-600">{{ $campaign->observation_count }}</div>
-                <div class="text-sm text-gray-600">Observaciones</div>
-            </div>
-        </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" data-cy="campaign-statistics">
+        <x-agro.stat-card label="Total"           :value="$campaign->activities_count"    icon="clipboard-document-list" color="agro"   />
+        <x-agro.stat-card label="Tratamientos"    :value="$campaign->phytosanitary_count" icon="beaker"                  color="red"    />
+        <x-agro.stat-card label="Fertilizaciones" :value="$campaign->fertilization_count" icon="sparkles"                color="blue"   />
+        <x-agro.stat-card label="Riegos"          :value="$campaign->irrigation_count"    icon="cloud"                   color="purple" />
+        <x-agro.stat-card label="Labores"         :value="$campaign->cultural_count"      icon="wrench-screwdriver"      color="orange" />
+        <x-agro.stat-card label="Observaciones"   :value="$campaign->observation_count"   icon="eye"                     color="yellow" />
     </div>
 
     <!-- Información de la Campaña -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Información General -->
-        <div class="glass-card rounded-xl p-6" data-cy="campaign-info">
-            <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4">Información General</h3>
+        <x-agro.card data-cy="campaign-info">
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 rounded-lg bg-agro-50">
+                        <flux:icon icon="information-circle" class="size-4 text-agro-600" />
+                    </div>
+                    <span class="font-semibold text-zinc-900 text-sm">Información General</span>
+                </div>
+            </x-slot:header>
             <div class="space-y-4">
                 <div>
-                    <span class="text-sm font-semibold text-gray-600">Estado:</span>
+                    <span class="text-sm font-semibold text-zinc-600">Estado:</span>
                     @if($campaign->active)
-                        <span class="ml-2 inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-green-50 text-green-700 ring-1 ring-green-600/20">
-                            Activa
-                        </span>
+                        <x-agro.status-badge :active="true" />
                     @else
-                        <span class="ml-2 inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-gray-50 text-gray-700 ring-1 ring-gray-600/20">
-                            Inactiva
-                        </span>
+                        <x-agro.status-badge :active="false" />
                     @endif
                 </div>
                 <div>
-                    <span class="text-sm font-semibold text-gray-600">Año:</span>
-                    <span class="ml-2 text-sm text-gray-900 font-medium">{{ $campaign->year }}</span>
+                    <span class="text-sm font-semibold text-zinc-600">Año:</span>
+                    <span class="ml-2 text-sm text-zinc-900 font-medium">{{ $campaign->year }}</span>
                 </div>
                 @if($campaign->start_date && $campaign->end_date)
                     <div>
-                        <span class="text-sm font-semibold text-gray-600">Período:</span>
-                        <span class="ml-2 text-sm text-gray-900">
+                        <span class="text-sm font-semibold text-zinc-600">Período:</span>
+                        <span class="ml-2 text-sm text-zinc-900">
                             {{ $campaign->start_date->format('d/m/Y') }} - {{ $campaign->end_date->format('d/m/Y') }}
                         </span>
                     </div>
                 @endif
                 @if($campaign->description)
                     <div>
-                        <span class="text-sm font-semibold text-gray-600">Descripción:</span>
-                        <p class="mt-1 text-sm text-gray-900">{{ $campaign->description }}</p>
+                        <span class="text-sm font-semibold text-zinc-600">Descripción:</span>
+                        <p class="mt-1 text-sm text-zinc-900">{{ $campaign->description }}</p>
                     </div>
                 @endif
             </div>
-        </div>
+        </x-agro.card>
 
         <!-- Acciones Rápidas -->
-        <div class="glass-card rounded-xl p-6" data-cy="campaign-quick-actions">
-            <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-4">Acciones Rápidas</h3>
+        <x-agro.card data-cy="campaign-quick-actions">
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 rounded-lg bg-agro-50">
+                        <flux:icon icon="bolt" class="size-4 text-agro-600" />
+                    </div>
+                    <span class="font-semibold text-zinc-900 text-sm">Acciones Rápidas</span>
+                </div>
+            </x-slot:header>
             <div class="space-y-3">
-                <a 
+                <flux:button
                     href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
+                    variant="primary"
+                    class="w-full justify-center"
                     data-cy="view-activities-button"
-                    class="block w-full px-4 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all font-semibold text-center"
                 >
                     Ver Actividades en Cuaderno Digital
-                </a>
+                </flux:button>
                 @can('create', \App\Models\AgriculturalActivity::class)
                     <div class="grid grid-cols-2 gap-2">
-                        <a 
+                        <flux:button
                             href="{{ route('viticulturist.digital-notebook.treatment.create') }}"
+                            variant="danger"
+                            size="sm"
                             data-cy="create-treatment-button"
-                            class="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition text-sm font-semibold text-center"
                         >
                             + Tratamiento
-                        </a>
-                        <a 
+                        </flux:button>
+                        <flux:button
                             href="{{ route('viticulturist.digital-notebook.fertilization.create') }}"
+                            variant="primary"
+                            size="sm"
                             data-cy="create-fertilization-button"
-                            class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm font-semibold text-center"
                         >
                             + Fertilización
-                        </a>
+                        </flux:button>
                     </div>
                 @endcan
             </div>
-        </div>
+        </x-agro.card>
     </div>
 
     <!-- Últimas Actividades -->
     @if($recentActivities->count() > 0)
-        <div class="glass-card rounded-xl p-6" data-cy="recent-activities">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)]">Últimas Actividades</h3>
-                <a 
-                    href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
-                    data-cy="view-all-activities-link"
-                    class="text-sm font-semibold text-[var(--color-agro-green-dark)] hover:underline"
-                >
-                    Ver todas →
-                </a>
-            </div>
+        <x-agro.card data-cy="recent-activities">
+            <x-slot:header>
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-blue-50">
+                            <flux:icon icon="clock" class="size-4 text-blue-600" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">Últimas Actividades</span>
+                    </div>
+                    <flux:button
+                        href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
+                        variant="ghost"
+                        size="sm"
+                        data-cy="view-all-activities-link"
+                    >
+                        Ver todas &rarr;
+                    </flux:button>
+                </div>
+            </x-slot:header>
             <div class="space-y-3">
                 @foreach($recentActivities as $activity)
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    @php
+                        [$typeLabel, $typeColor] = match($activity->activity_type) {
+                            'phytosanitary' => ['Tratamiento', 'red'],
+                            'fertilization' => ['Fertilización', 'blue'],
+                            'irrigation'    => ['Riego', 'purple'],
+                            'cultural'      => ['Labor', 'orange'],
+                            default         => ['Observación', null],
+                        };
+                    @endphp
+                    <div class="flex items-center justify-between p-4 bg-zinc-50 rounded-lg hover:bg-zinc-100 transition-colors">
                         <div class="flex items-center gap-4">
-                            <div class="text-sm font-semibold text-gray-900">
+                            <div class="text-sm font-semibold text-zinc-900">
                                 {{ $activity->activity_date->format('d/m/Y') }}
                             </div>
-                            <div>
-                                <span class="text-sm font-medium text-gray-900">{{ $activity->plot->name }}</span>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-sm font-medium text-zinc-900">{{ $activity->plot->name }}</span>
                                 @if($activity->plotPlanting)
-                                    <span class="ml-2 text-xs text-gray-600">
-                                        - {{ $activity->plotPlanting->name }}
+                                    <span class="text-xs text-zinc-500">
+                                        — {{ $activity->plotPlanting->name }}
                                         @if($activity->plotPlanting->grapeVariety)
                                             ({{ $activity->plotPlanting->grapeVariety->name }})
                                         @endif
                                     </span>
                                 @endif
-                                <span class="ml-2 text-xs text-gray-500">
-                                    @if($activity->activity_type === 'phytosanitary')
-                                        Tratamiento
-                                    @elseif($activity->activity_type === 'fertilization')
-                                        Fertilización
-                                    @elseif($activity->activity_type === 'irrigation')
-                                        Riego
-                                    @elseif($activity->activity_type === 'cultural')
-                                        Labor
-                                    @else
-                                        Observación
-                                    @endif
-                                </span>
+                                <flux:badge :color="$typeColor" size="sm">{{ $typeLabel }}</flux:badge>
                             </div>
                         </div>
                         @can('view', $activity)
-                            <a 
+                            <flux:button
                                 href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
-                                class="text-xs font-semibold text-blue-600 hover:underline"
+                                variant="ghost"
+                                size="xs"
                             >
-                                Ver →
-                            </a>
+                                Ver &rarr;
+                            </flux:button>
                         @endcan
                     </div>
                 @endforeach
             </div>
-        </div>
+        </x-agro.card>
     @else
-        <div class="glass-card rounded-xl p-8 text-center" data-cy="no-activities-message">
-            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">No hay actividades registradas</h3>
-            <p class="text-gray-500 mb-6">Esta campaña aún no tiene actividades registradas</p>
-            @can('create', \App\Models\AgriculturalActivity::class)
-                <a 
-                    href="{{ route('viticulturist.digital-notebook.treatment.create') }}"
-                    data-cy="register-first-activity-button"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all shadow-lg hover:shadow-xl font-semibold"
-                >
-                    Registrar Primera Actividad
-                </a>
-            @endcan
-        </div>
+        <x-agro.empty-state
+            message="No hay actividades registradas"
+            description="Esta campaña aún no tiene actividades registradas"
+            icon="document-text"
+            data-cy="no-activities-message"
+        >
+            <x-slot name="action">
+                @can('create', \App\Models\AgriculturalActivity::class)
+                    <flux:button
+                        href="{{ route('viticulturist.digital-notebook.treatment.create') }}"
+                        variant="primary"
+                        icon="plus"
+                        data-cy="register-first-activity-button"
+                    >
+                        Registrar Primera Actividad
+                    </flux:button>
+                @endcan
+            </x-slot>
+        </x-agro.empty-state>
     @endif
 </div>

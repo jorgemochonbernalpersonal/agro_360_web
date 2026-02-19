@@ -1,133 +1,143 @@
-<div class="space-y-6 animate-fade-in">
+﻿<div class="space-y-6 animate-fade-in">
     <!-- Header -->
-    <x-page-header
+    <x-agro.page-header
         title="Editar Geometría SIGPAC"
         :description="'Código: ' . $sigpac->full_code"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     />
 
     <!-- Selección de Parcela -->
     @if(!$plotId)
-        <div class="glass-card rounded-xl p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Seleccionar Parcela</h3>
-            <p class="text-sm text-gray-600 mb-4">Selecciona una parcela para crear o editar su geometría:</p>
-            
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 rounded-lg bg-agro-50">
+                        <flux:icon icon="map" class="size-4 text-agro-600" />
+                    </div>
+                    <span class="font-semibold text-zinc-900 text-sm">Seleccionar Parcela</span>
+                </div>
+            </x-slot:header>
+            <p class="text-sm text-zinc-600 mb-4">Selecciona una parcela para crear o editar su geometría:</p>
+
             @if($availablePlots->count() > 0)
                 <div class="space-y-2">
                     @foreach($availablePlots as $availablePlot)
-                        <a 
+                        <a
                             href="{{ route('sigpac.geometry.edit-plot', ['sigpacId' => $sigpacId, 'plotId' => $availablePlot->id]) }}"
-                            class="block p-4 border border-gray-200 rounded-lg hover:border-[var(--color-agro-green)] hover:bg-[var(--color-agro-green-bg)] transition-colors"
+                            class="block p-4 border border-zinc-200 rounded-lg hover:border-agro-500 hover:bg-agro-50 transition-colors"
                         >
-                            <div class="font-semibold text-gray-900">{{ $availablePlot->name }}</div>
-                            <div class="text-sm text-gray-600">{{ $availablePlot->municipality->name ?? 'Sin municipio' }}</div>
+                            <div class="font-semibold text-zinc-900">{{ $availablePlot->name }}</div>
+                            <div class="text-sm text-zinc-600">{{ $availablePlot->municipality->name ?? 'Sin municipio' }}</div>
                         </a>
                     @endforeach
                 </div>
             @else
-                <p class="text-sm text-gray-500">No hay parcelas disponibles con este código SIGPAC.</p>
+                <x-agro.empty-state icon="map" message="No hay parcelas disponibles con este código SIGPAC" />
             @endif
-        </div>
+        </x-agro.card>
     @else
         <!-- Mapa -->
-        <div class="glass-card rounded-xl p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-900">
-                    {{ $viewOnly ? 'Visualización de Mapa' : 'Geometría de la Parcela' }}
-                </h3>
-                @if(!$viewOnly)
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-agro-50">
+                            <flux:icon icon="map" class="size-4 text-agro-600" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">{{ $viewOnly ? 'Visualización de Mapa' : 'Geometría de la Parcela' }}</span>
+                    </div>
+                    @if(!$viewOnly)
                     <div class="flex gap-2">
                         @if($geometryId)
-                            <button
+                            <flux:button
                                 wire:click="delete"
                                 wire:confirm="¿Estás seguro de eliminar esta geometría?"
-                                class="px-4 py-2 text-sm font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                                variant="danger"
+                                size="sm"
                             >
                                 Eliminar
-                            </button>
+                            </flux:button>
                         @endif
                         @if($plotId)
-                            <button
+                            <flux:button
                                 wire:click="generateMapFromSigpac"
                                 wire:loading.attr="disabled"
-                                class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                                variant="primary"
+                                size="sm"
                             >
-                                <span wire:loading.remove wire:target="generateMapFromSigpac">
-                                    Generar desde SIGPAC
-                                </span>
-                                <span wire:loading wire:target="generateMapFromSigpac" class="flex items-center gap-2">
-                                    <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Generando...
-                                </span>
-                            </button>
+                                <span wire:loading.remove wire:target="generateMapFromSigpac">Generar desde SIGPAC</span>
+                                <span wire:loading wire:target="generateMapFromSigpac">Generando...</span>
+                            </flux:button>
                         @endif
-                        <button
+                        <flux:button
                             wire:click="$set('showMap', true)"
-                            class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
+                            variant="primary"
+                            size="sm"
                         >
                             {{ $geometryId ? 'Editar Mapa' : 'Crear Mapa' }}
-                        </button>
+                        </flux:button>
                     </div>
                 @else
-                    <a
+                    <flux:button
                         href="{{ route('sigpac.geometry.edit-plot', ['sigpacId' => $sigpacId, 'plotId' => $plotId]) }}"
-                        class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
+                        variant="primary"
+                        size="sm"
                     >
                         Editar Mapa
-                    </a>
+                    </flux:button>
                 @endif
-            </div>
+                </div>
+            </x-slot:header>
 
             @if($showMap && !$viewOnly)
-                <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p class="text-sm text-blue-800 mb-2">
+                <flux:callout variant="info" class="mb-4">
+                    <flux:callout.text>
                         <strong>Instrucciones:</strong> Haz clic en el mapa para añadir puntos. Haz clic en "Guardar" cuando termines.
-                    </p>
-                </div>
+                    </flux:callout.text>
+                </flux:callout>
 
                 <!-- Mapa con Leaflet -->
-                <div id="map" style="height: 500px; width: 100%;" class="rounded-lg border border-gray-300"></div>
+                <div id="map" style="height: 500px; width: 100%;" class="rounded-lg border border-zinc-300"></div>
 
                 <div class="mt-4 flex justify-end gap-2">
-                    <button
+                    <flux:button
                         wire:click="$set('showMap', false)"
-                        class="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                        variant="outline"
+                        size="sm"
                     >
                         Cancelar
-                    </button>
-                    <button
+                    </flux:button>
+                    <flux:button
                         wire:click="save"
-                        class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
+                        variant="primary"
+                        size="sm"
                     >
                         Guardar Geometría
-                    </button>
+                    </flux:button>
                 </div>
             @elseif($geometryId && !empty($coordinates))
                 <!-- Mostrar mapa existente (solo lectura o modo edición) -->
                 <div class="mb-4 p-4 {{ $viewOnly ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200' }} border rounded-lg">
                     <p class="text-sm {{ $viewOnly ? 'text-blue-800' : 'text-green-800' }}">
-                        <strong>{{ $viewOnly ? 'Vista del mapa:' : 'Mapa de geometría:' }}</strong> 
+                        <strong>{{ $viewOnly ? 'Vista del mapa:' : 'Mapa de geometría:' }}</strong>
                         {{ $viewOnly ? 'Visualización de la geometría guardada para este código SIGPAC.' : 'Esta es la geometría guardada para este código SIGPAC.' }}
                     </p>
                 </div>
-                <div id="map-view" style="height: 500px; width: 100%;" class="rounded-lg border border-gray-300"></div>
+                <div id="map-view" style="height: 500px; width: 100%;" class="rounded-lg border border-zinc-300"></div>
                 @if(!$viewOnly)
                     <div class="mt-4 flex justify-end gap-2">
-                        <button
+                        <flux:button
                             wire:click="$set('showMap', true)"
-                            class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] rounded-lg hover:opacity-90 transition-opacity"
+                            variant="primary"
+                            size="sm"
                         >
                             Editar Geometría
-                        </button>
+                        </flux:button>
                     </div>
                 @endif
             @else
-                <p class="text-sm text-gray-500 text-center py-8">No hay geometría guardada. Haz clic en "Crear Mapa" para añadir una.</p>
+                <p class="text-sm text-zinc-500 text-center py-8">No hay geometría guardada. Haz clic en "Crear Mapa" para añadir una.</p>
             @endif
-        </div>
+        </x-agro.card>
     @endif
 </div>
 
@@ -166,7 +176,7 @@ document.addEventListener('livewire:init', () => {
                     const marker = L.marker([coord.lat, coord.lng]).addTo(map);
                     markers.push(marker);
                 });
-                
+
                 polygon = L.polygon(
                     existingCoords.map(c => [c.lat, c.lng]),
                     {color: '#10b981', fillColor: '#10b981', fillOpacity: 0.3, weight: 2}
@@ -179,16 +189,16 @@ document.addEventListener('livewire:init', () => {
         map.on('click', function(e) {
             const marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
             markers.push(marker);
-            
+
             // Actualizar polígono
             updatePolygon();
-            
+
             // Actualizar coordenadas en Livewire
             const coords = markers.map(m => ({
                 lat: m.getLatLng().lat,
                 lng: m.getLatLng().lng
             }));
-            
+
             @this.set('coordinates', coords);
         });
 
@@ -211,7 +221,7 @@ document.addEventListener('livewire:init', () => {
         if (polygon) {
             map.removeLayer(polygon);
         }
-        
+
         if (markers.length >= 3) {
             const coords = markers.map(m => [m.getLatLng().lat, m.getLatLng().lng]);
             polygon = L.polygon(coords, {
@@ -228,7 +238,7 @@ document.addEventListener('livewire:init', () => {
         if (!mapViewElement || mapView) return;
 
         mapView = L.map('map-view').setView([40.4168, -3.7038], 6);
-        
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(mapView);
@@ -269,4 +279,3 @@ document.addEventListener('livewire:init', () => {
 });
 </script>
 @endpush
-

@@ -8,8 +8,8 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-gray-900">🛰️ SMAP - Humedad Suelo Satelital</h3>
-            <p class="text-sm text-gray-500 mt-1">
+            <h3 class="text-xl font-bold text-zinc-900">🛰️ SMAP - Humedad Suelo Satelital</h3>
+            <p class="text-sm text-zinc-500 mt-1">
                 Medición directa desde satélite (9km resolución)
                 @if($smapData)
                     - {{ $smapData['date'] }}
@@ -19,13 +19,13 @@
         
         <div class="flex items-center gap-2">
             @if(count($availableDates) > 0)
-                <select wire:model.live="selectedDate" 
-                        class="text-sm border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+                <flux:select wire:model.live="selectedDate" 
+                        >
                     <option value="">Último dato</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                     @endforeach
-                </select>
+                </flux:select>
             @endif
             
             <button 
@@ -60,7 +60,7 @@
             <div class="bg-gradient-to-br from-{{ $smapData['surface_status']['color'] }}-50 to-{{ $smapData['surface_status']['color'] }}-100 rounded-lg p-5 border border-{{ $smapData['surface_status']['color'] }}-200">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <div class="text-sm text-gray-600">Superficie (0-5cm)</div>
+                        <div class="text-sm text-zinc-600">Superficie (0-5cm)</div>
                         <div class="text-4xl font-bold text-{{ $smapData['surface_status']['color'] }}-900">
                             {{ number_format($smapData['surface'], 1) }}%
                         </div>
@@ -69,17 +69,17 @@
                 </div>
                 
                 <div class="bg-white rounded p-2">
-                    <div class="text-xs text-gray-600">Estado:</div>
+                    <div class="text-xs text-zinc-600">Estado:</div>
                     <div class="font-semibold text-{{ $smapData['surface_status']['color'] }}-900">
                         {{ $smapData['surface_status']['label'] }}
                     </div>
-                    <div class="text-xs text-gray-600 mt-1">
+                    <div class="text-xs text-zinc-600 mt-1">
                         {{ $smapData['surface_status']['description'] }}
                     </div>
                 </div>
                 
                 {{-- Progress bar --}}
-                <div class="mt-3 relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div class="mt-3 relative h-3 bg-zinc-200 rounded-full overflow-hidden">
                     <div class="absolute top-0 left-0 h-full bg-{{ $smapData['surface_status']['color'] }}-500" 
                          style="width: {{ min(100, $smapData['surface']) }}%"></div>
                 </div>
@@ -89,7 +89,7 @@
             <div class="bg-gradient-to-br from-{{ $smapData['rootzone_status']['color'] }}-50 to-{{ $smapData['rootzone_status']['color'] }}-100 rounded-lg p-5 border border-{{ $smapData['rootzone_status']['color'] }}-200">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <div class="text-sm text-gray-600">Zona Radicular</div>
+                        <div class="text-sm text-zinc-600">Zona Radicular</div>
                         <div class="text-4xl font-bold text-{{ $smapData['rootzone_status']['color'] }}-900">
                             {{ number_format($smapData['rootzone'], 1) }}%
                         </div>
@@ -98,17 +98,17 @@
                 </div>
                 
                 <div class="bg-white rounded p-2">
-                    <div class="text-xs text-gray-600">Estado:</div>
+                    <div class="text-xs text-zinc-600">Estado:</div>
                     <div class="font-semibold text-{{ $smapData['rootzone_status']['color'] }}-900">
                         {{ $smapData['rootzone_status']['label'] }}
                     </div>
-                    <div class="text-xs text-gray-600 mt-1">
+                    <div class="text-xs text-zinc-600 mt-1">
                         {{ $smapData['rootzone_status']['description'] }}
                     </div>
                 </div>
                 
                 {{-- Progress bar --}}
-                <div class="mt-3 relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div class="mt-3 relative h-3 bg-zinc-200 rounded-full overflow-hidden">
                     <div class="absolute top-0 left-0 h-full bg-{{ $smapData['rootzone_status']['color'] }}-500" 
                          style="width: {{ min(100, $smapData['rootzone']) }}%"></div>
                 </div>
@@ -127,29 +127,29 @@
 
         {{-- Comparison with Model --}}
         @if($comparison)
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-900 mb-3">
+            <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-zinc-900 mb-3">
                     📊 Comparación: Satélite vs Modelo
                 </h4>
                 
                 <div class="grid grid-cols-2 gap-4 mb-3">
                     <div class="text-center">
-                        <div class="text-xs text-gray-600">SMAP (Satélite)</div>
+                        <div class="text-xs text-zinc-600">SMAP (Satélite)</div>
                         <div class="text-2xl font-bold text-blue-900">{{ number_format($comparison['smap_value'], 1) }}%</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-xs text-gray-600">Open-Meteo (Modelo)</div>
-                        <div class="text-2xl font-bold text-gray-700">{{ number_format($comparison['model_value'], 1) }}%</div>
+                        <div class="text-xs text-zinc-600">Open-Meteo (Modelo)</div>
+                        <div class="text-2xl font-bold text-zinc-700">{{ number_format($comparison['model_value'], 1) }}%</div>
                     </div>
                 </div>
                 
                 <div class="bg-white rounded p-3">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs text-gray-600">Diferencia:</span>
-                        <span class="font-semibold text-gray-900">{{ number_format($comparison['difference'], 1) }}%</span>
+                        <span class="text-xs text-zinc-600">Diferencia:</span>
+                        <span class="font-semibold text-zinc-900">{{ number_format($comparison['difference'], 1) }}%</span>
                     </div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs text-gray-600">Estado:</span>
+                        <span class="text-xs text-zinc-600">Estado:</span>
                         <span class="px-2 py-0.5 text-xs font-semibold rounded 
                             @if($comparison['reliability'] === 'high') bg-green-100 text-green-800
                             @elseif($comparison['reliability'] === 'medium') bg-yellow-100 text-yellow-800
@@ -158,7 +158,7 @@
                             {{ $comparison['message'] }}
                         </span>
                     </div>
-                    <div class="text-xs text-gray-600 mt-2 pt-2 border-t">
+                    <div class="text-xs text-zinc-600 mt-2 pt-2 border-t">
                         <strong>Recomendación:</strong> {{ $comparison['recommendation'] }}
                     </div>
                 </div>

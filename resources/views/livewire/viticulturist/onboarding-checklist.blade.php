@@ -10,9 +10,9 @@
                             🚀
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-gray-900">Primeros pasos en Agro365</h3>
+                            <h3 class="text-sm font-bold text-zinc-900">Primeros pasos en Agro365</h3>
                             <div class="flex items-center gap-2 mt-0.5">
-                                <div class="w-32 bg-gray-200 rounded-full h-1.5">
+                                <div class="w-32 bg-zinc-200 rounded-full h-1.5">
                                     <div class="bg-green-500 h-1.5 rounded-full transition-all duration-500" 
                                          style="width: {{ $progressPercentage }}%"></div>
                                 </div>
@@ -21,10 +21,10 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-gray-500">
+                        <span class="text-xs text-zinc-500">
                             {{ count(array_filter($steps, fn($s) => $s['completed'])) }}/{{ count($steps) }}
                         </span>
-                        <svg class="w-5 h-5 text-gray-400 transition-transform" 
+                        <svg class="w-5 h-5 text-zinc-400 transition-transform" 
                              :class="{ 'rotate-180': expanded }"
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -36,12 +36,12 @@
             {{-- Expanded Content --}}
             <div x-show="expanded" 
                  x-collapse
-                 class="mt-2 bg-white rounded-lg border border-gray-200 p-4">
+                 class="mt-2 bg-white rounded-lg border border-zinc-200 p-4">
                 
                 {{-- Steps List --}}
                 <div class="space-y-2 mb-3">
                     @foreach($steps as $step)
-                        <div class="flex items-center gap-2 p-2 rounded hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-2 p-2 rounded hover:bg-zinc-50 transition-colors">
                             {{-- Checkbox --}}
                             <div class="flex-shrink-0">
                                 @if($step['completed'])
@@ -51,13 +51,13 @@
                                         </svg>
                                     </div>
                                 @else
-                                    <div class="w-5 h-5 rounded-full border-2 border-gray-300"></div>
+                                    <div class="w-5 h-5 rounded-full border-2 border-zinc-300"></div>
                                 @endif
                             </div>
 
                             {{-- Content --}}
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 {{ $step['completed'] ? 'line-through text-gray-500' : '' }}">
+                                <p class="text-sm font-medium text-zinc-900 {{ $step['completed'] ? 'line-through text-zinc-500' : '' }}">
                                     {{ $step['icon'] }} {{ $step['title'] }}
                                 </p>
                             </div>
@@ -75,9 +75,9 @@
                 </div>
 
                 {{-- Actions --}}
-                <div class="flex items-center justify-between pt-3 border-t border-gray-200">
+                <div class="flex items-center justify-between pt-3 border-t border-zinc-200">
                     <button wire:click="skipAll" 
-                            class="text-xs text-gray-500 hover:text-gray-700 transition-colors">
+                            class="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
                         Saltar tour
                     </button>
                     
@@ -108,7 +108,7 @@
         {{-- Botón discreto para reactivar onboarding cuando está oculto --}}
         <div class="mb-4">
             <button wire:click="resetOnboarding" 
-                    class="text-xs text-gray-500 hover:text-green-600 transition-colors flex items-center gap-1">
+                    class="text-xs text-zinc-500 hover:text-green-600 transition-colors flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                 </svg>

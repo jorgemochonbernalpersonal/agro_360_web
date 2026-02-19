@@ -16,7 +16,7 @@
              x-transition:leave="ease-in duration-200"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+             class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity"></div>
 
         {{-- Modal Content --}}
         <div class="flex min-h-full items-center justify-center p-4">
@@ -50,8 +50,8 @@
                                 <span class="text-xl">📅</span>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900 text-sm">Campañas</h3>
-                                <p class="text-xs text-gray-600">Organiza por año vitícola</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">Campañas</h3>
+                                <p class="text-xs text-zinc-600">Organiza por año vitícola</p>
                             </div>
                         </div>
 
@@ -60,8 +60,8 @@
                                 <span class="text-xl">🗺️</span>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900 text-sm">Parcelas</h3>
-                                <p class="text-xs text-gray-600">Con datos SIGPAC y plantaciones</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">Parcelas</h3>
+                                <p class="text-xs text-zinc-600">Con datos SIGPAC y plantaciones</p>
                             </div>
                         </div>
 
@@ -70,8 +70,8 @@
                                 <span class="text-xl">🧪</span>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900 text-sm">Productos fitosanitarios</h3>
-                                <p class="text-xs text-gray-600">Catálogo con números ROPO</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">Productos fitosanitarios</h3>
+                                <p class="text-xs text-zinc-600">Catálogo con números ROPO</p>
                             </div>
                         </div>
 
@@ -80,8 +80,8 @@
                                 <span class="text-xl">📓</span>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900 text-sm">Cuaderno digital</h3>
-                                <p class="text-xs text-gray-600">Tratamientos, riegos y labores</p>
+                                <h3 class="font-semibold text-zinc-900 text-sm">Cuaderno digital</h3>
+                                <p class="text-xs text-zinc-600">Tratamientos, riegos y labores</p>
                             </div>
                         </div>
                     </div>
@@ -94,10 +94,10 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-700 font-medium">
+                                <p class="text-sm text-zinc-700 font-medium">
                                     4 pasos para configurar tus datos maestros
                                 </p>
-                                <p class="text-xs text-gray-600 mt-1">
+                                <p class="text-xs text-zinc-600 mt-1">
                                     Campaña → Parcelas → Productos fitosanitarios → Primera actividad
                                 </p>
                             </div>
@@ -106,10 +106,10 @@
                 </div>
 
                 {{-- Actions --}}
-                <div class="bg-gray-50 px-8 py-4 flex items-center justify-between gap-4">
+                <div class="bg-zinc-50 px-8 py-4 flex items-center justify-between gap-4">
                     <button wire:click="skipTour"
                             type="button"
-                            class="text-sm text-gray-600 hover:text-gray-800 transition-colors font-medium">
+                            class="text-sm text-zinc-600 hover:text-zinc-800 transition-colors font-medium">
                         Saltar introducción
                     </button>
                     <button wire:click="startTour"

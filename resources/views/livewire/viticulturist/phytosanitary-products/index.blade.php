@@ -1,97 +1,76 @@
 <div class="space-y-6 animate-fade-in">
     <!-- Mensajes Flash -->
     @if(session('message'))
-        <div class="glass-card rounded-xl p-4 bg-green-50 border-l-4 border-green-600">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-semibold text-green-800">{{ session('message') }}</p>
-            </div>
-        </div>
+        <flux:callout variant="success" icon="check-circle">
+            {{ session('message') }}
+        </flux:callout>
     @endif
 
     @if(session('error'))
-        <div class="glass-card rounded-xl p-4 bg-red-50 border-l-4 border-red-600">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-semibold text-red-800">{{ session('error') }}</p>
-            </div>
-        </div>
+        <flux:callout variant="danger" icon="exclamation-circle">
+            {{ session('error') }}
+        </flux:callout>
     @endif
 
     <!-- Header -->
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+    <x-agro.page-header
         title="Productos Fitosanitarios"
-        description="Gestiona el cat√°logo de productos fitosanitarios que utilizas en tus tratamientos"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+        description="Gestiona el cat·logo de productos fitosanitarios que utilizas en tus tratamientos"
     >
-        <x-slot:actionButton>
-            <a href="{{ route('viticulturist.phytosanitary-products.create') }}" class="group" data-cy="create-product-button">
-                <button
-                    class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4v16m8-8H4" />
-                    </svg>
+        <x-slot:actions>
+            <a href="{{ route('viticulturist.phytosanitary-products.create') }}" data-cy="create-product-button">
+                <flux:button variant="primary" icon="plus">
                     Nuevo Producto
-                </button>
+                </flux:button>
             </a>
-        </x-slot:actionButton>
-    </x-page-header>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     <!-- Tabs Navigation -->
-    <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div class="border-b border-gray-200">
+    <div class="bg-white rounded-xl shadow-lg border border-zinc-200 overflow-hidden">
+        <div class="border-b border-zinc-200">
             <nav class="flex -mb-px">
-                <button 
+                <button
                     wire:click="switchTab('active')"
                     class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'active' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                        {{ $currentTab === 'active' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span>Activos</span>
                     @if($stats['active'] > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'active' ? 'bg-[var(--color-agro-green-dark)] text-white' : 'bg-gray-200 text-gray-700' }}">
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'active' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                             {{ $stats['active'] }}
                         </span>
                     @endif
                 </button>
-                
-                <button 
+
+                <button
                     wire:click="switchTab('inactive')"
                     class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'inactive' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                        {{ $currentTab === 'inactive' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span>Inactivos</span>
                     @if($stats['inactive'] > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'inactive' ? 'bg-[var(--color-agro-green-dark)] text-white' : 'bg-gray-200 text-gray-700' }}">
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'inactive' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
                             {{ $stats['inactive'] }}
                         </span>
                     @endif
                 </button>
 
-                <button 
+                <button
                     wire:click="switchTab('statistics')"
                     class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'statistics' ? 'border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}"
+                        {{ $currentTab === 'statistics' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
-                    <span>Estad√≠sticas</span>
+                    <span>EstadÌsticas</span>
                 </button>
             </nav>
         </div>
@@ -100,28 +79,28 @@
             {{-- ACTIVE/INACTIVE TABS --}}
             @if($currentTab === 'active' || $currentTab === 'inactive')
             <!-- Filtros -->
-            <x-filter-section title="Filtros de B√∫squeda" color="green">
-        <x-filter-input 
+            <x-agro.filter-section title="Filtros de B˙squeda" color="green">
+        <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
             placeholder="Buscar por nombre, materia activa, registro o fabricante..."
             data-cy="product-search-input"
         />
 
-        <x-filter-select wire:model.live="typeFilter" data-cy="product-type-filter">
+        <x-agro.filter-select wire:model.live="typeFilter" data-cy="product-type-filter">
             <option value="">Todos los tipos</option>
             @foreach($types as $type)
                 <option value="{{ $type }}">{{ ucfirst($type) }}</option>
             @endforeach
-        </x-filter-select>
+        </x-agro.filter-select>
 
         <x-slot:actions>
             @if($search || $typeFilter)
-                <x-button wire:click="clearFilters" variant="ghost" size="sm">
+                <flux:button wire:click="clearFilters" variant="ghost" size="sm">
                     Limpiar Filtros
-                </x-button>
+                </flux:button>
             @endif
         </x-slot:actions>
-    </x-filter-section>
+    </x-agro.filter-section>
 
     @php
         $headers = [
@@ -133,50 +112,50 @@
         ];
     @endphp
 
-    <x-data-table 
-        :headers="$headers" 
-        empty-message="No hay productos registrados" 
+    <x-agro.data-table
+        :headers="$headers"
+        empty-message="No hay productos registrados"
         empty-description="Comienza creando tu primer producto fitosanitario para poder usarlo en los tratamientos"
         color="green"
     >
         @if($products->count() > 0)
             @foreach($products as $product)
-                <x-table-row wire:key="product-{{ $product->id }}">
-                    <x-table-cell>
+                <x-agro.table-row wire:key="product-{{ $product->id }}">
+                    <x-agro.table-cell>
                         <div class="flex flex-col">
-                            <span class="text-sm font-bold text-gray-900">{{ $product->name }}</span>
+                            <span class="text-sm font-bold text-zinc-900">{{ $product->name }}</span>
                             @if($product->manufacturer)
-                                <span class="text-xs text-gray-500">Fabricante: {{ $product->manufacturer }}</span>
+                                <span class="text-xs text-zinc-500">Fabricante: {{ $product->manufacturer }}</span>
                             @endif
                         </div>
-                    </x-table-cell>
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700">
-                            {{ $product->active_ingredient ?: '‚Äî' }}
+                    </x-agro.table-cell>
+                    <x-agro.table-cell>
+                        <span class="text-sm text-zinc-700">
+                            {{ $product->active_ingredient ?: 'ó' }}
                         </span>
-                    </x-table-cell>
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700">
-                            {{ $product->type ?: '‚Äî' }}
+                    </x-agro.table-cell>
+                    <x-agro.table-cell>
+                        <span class="text-sm text-zinc-700">
+                            {{ $product->type ?: 'ó' }}
                         </span>
-                    </x-table-cell>
-                    <x-table-cell>
-                        <div class="flex flex-col text-sm text-gray-700">
+                    </x-agro.table-cell>
+                    <x-agro.table-cell>
+                        <div class="flex flex-col text-sm text-zinc-700">
                             <span>
-                                N¬∫ Reg.: {{ $product->registration_number ?: '‚Äî' }}
+                                N∫ Reg.: {{ $product->registration_number ?: 'ó' }}
                             </span>
-                            <span class="text-xs text-gray-500">
-                                PS: {{ $product->withdrawal_period_days !== null ? $product->withdrawal_period_days . ' d√≠as' : '‚Äî' }}
+                            <span class="text-xs text-zinc-500">
+                                PS: {{ $product->withdrawal_period_days !== null ? $product->withdrawal_period_days . ' dÌas' : 'ó' }}
                             </span>
                         </div>
-                    </x-table-cell>
-                    <x-table-actions align="right">
-                        <x-action-button 
-                            variant="edit" 
+                    </x-agro.table-cell>
+                    <x-agro.table-actions align="right">
+                        <x-agro.action-button
+                            variant="edit"
                             href="{{ route('viticulturist.phytosanitary-products.edit', $product) }}"
                             data-cy="edit-product-button"
                         />
-                        <button 
+                        <button
                             wire:click="toggleActive({{ $product->id }})"
                             wire:loading.attr="disabled"
                             wire:target="toggleActive({{ $product->id }})"
@@ -201,27 +180,27 @@
                                 </svg>
                             </span>
                         </button>
-                    </x-table-actions>
-                </x-table-row>
+                    </x-agro.table-actions>
+                </x-agro.table-row>
             @endforeach
 
             <x-slot name="pagination">
                 {{ $products->links() }}
             </x-slot>
         @endif
-    </x-data-table>
+    </x-agro.data-table>
             @endif
 
             {{-- STATISTICS TAB --}}
             @if($currentTab === 'statistics')
                 <div class="space-y-6">
-                    {{-- Filtro de A√±o --}}
+                    {{-- Filtro de AÒo --}}
                     <div class="flex justify-end">
-                        <select wire:model.live="yearFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green)] focus:border-transparent">
+                        <flux:select wire:model.live="yearFilter" >
                             @for($year = now()->year; $year >= now()->year - 5; $year--)
                                 <option value="{{ $year }}">{{ $year }}</option>
                             @endfor
-                        </select>
+                        </flux:select>
                     </div>
 
                     {{-- KPIs --}}
@@ -232,7 +211,7 @@
                             <p class="text-xs text-blue-600 mt-2">Todos los productos</p>
                         </div>
                         <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-                            <p class="text-sm font-medium text-green-700">Con Registro V√°lido</p>
+                            <p class="text-sm font-medium text-green-700">Con Registro V·lido</p>
                             <p class="text-3xl font-bold text-green-900 mt-1">{{ $advancedStats['withValidRegistration'] ?? 0 }}</p>
                             <p class="text-xs text-green-600 mt-2">Registro activo</p>
                         </div>
@@ -243,15 +222,15 @@
                         </div>
                         <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border border-orange-200">
                             <p class="text-sm font-medium text-orange-700">PS Promedio</p>
-                            <p class="text-3xl font-bold text-orange-900 mt-1">{{ number_format($advancedStats['avgWithdrawalPeriod'] ?? 0, 0) }} d√≠as</p>
+                            <p class="text-3xl font-bold text-orange-900 mt-1">{{ number_format($advancedStats['avgWithdrawalPeriod'] ?? 0, 0) }} dÌas</p>
                             <p class="text-xs text-orange-600 mt-2">Plazo de seguridad</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {{-- Distribuci√≥n por Tipo --}}
-                        <div class="bg-white rounded-xl p-6 border border-gray-200">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">üìä Distribuci√≥n por Tipo</h3>
+                        {{-- DistribuciÛn por Tipo --}}
+                        <div class="bg-white rounded-xl p-6 border border-zinc-200">
+                            <h3 class="text-lg font-bold text-zinc-900 mb-4">DistribuciÛn por Tipo</h3>
                             <div class="space-y-4">
                                 @forelse(($advancedStats['typeStats'] ?? []) as $type => $data)
                                     @php
@@ -260,26 +239,26 @@
                                     @endphp
                                     <div>
                                         <div class="flex justify-between mb-2">
-                                            <span class="text-sm font-medium text-gray-700">{{ ucfirst($type) }}</span>
-                                            <span class="text-sm font-bold text-gray-900">{{ $data['count'] }} ({{ number_format($percentage, 1) }}%)</span>
+                                            <span class="text-sm font-medium text-zinc-700">{{ ucfirst($type) }}</span>
+                                            <span class="text-sm font-bold text-zinc-900">{{ $data['count'] }} ({{ number_format($percentage, 1) }}%)</span>
                                         </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-3">
-                                            <div class="bg-[var(--color-agro-green)] h-3 rounded-full" style="width: {{ $percentage }}%"></div>
+                                        <div class="w-full bg-zinc-200 rounded-full h-3">
+                                            <div class="bg-agro-500 h-3 rounded-full" style="width: {{ $percentage }}%"></div>
                                         </div>
-                                        <div class="flex gap-4 mt-1 text-xs text-gray-500">
+                                        <div class="flex gap-4 mt-1 text-xs text-zinc-500">
                                             <span>Activos: {{ $data['active'] }}</span>
                                             <span>Inactivos: {{ $data['inactive'] }}</span>
                                         </div>
                                     </div>
                                 @empty
-                                    <p class="text-gray-500 text-center py-4">No hay datos de tipos</p>
+                                    <p class="text-zinc-500 text-center py-4">No hay datos de tipos</p>
                                 @endforelse
                             </div>
                         </div>
 
-                        {{-- Distribuci√≥n por Clase de Toxicidad --}}
-                        <div class="bg-white rounded-xl p-6 border border-gray-200">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">‚ö†Ô∏è Distribuci√≥n por Toxicidad</h3>
+                        {{-- DistribuciÛn por Clase de Toxicidad --}}
+                        <div class="bg-white rounded-xl p-6 border border-zinc-200">
+                            <h3 class="text-lg font-bold text-zinc-900 mb-4">DistribuciÛn por Toxicidad</h3>
                             <div class="space-y-4">
                                 @forelse(($advancedStats['toxicityStats'] ?? []) as $class => $count)
                                     @php
@@ -289,15 +268,15 @@
                                     @endphp
                                     <div>
                                         <div class="flex justify-between mb-2">
-                                            <span class="text-sm font-medium text-gray-700">Clase {{ $class }}</span>
-                                            <span class="text-sm font-bold text-gray-900">{{ $count }} ({{ number_format($percentage, 1) }}%)</span>
+                                            <span class="text-sm font-medium text-zinc-700">Clase {{ $class }}</span>
+                                            <span class="text-sm font-bold text-zinc-900">{{ $count }} ({{ number_format($percentage, 1) }}%)</span>
                                         </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-3">
-                                            <div class="{{ $colors[$class] ?? 'bg-gray-500' }} h-3 rounded-full" style="width: {{ $percentage }}%"></div>
+                                        <div class="w-full bg-zinc-200 rounded-full h-3">
+                                            <div class="{{ $colors[$class] ?? 'bg-zinc-500' }} h-3 rounded-full" style="width: {{ $percentage }}%"></div>
                                         </div>
                                     </div>
                                 @empty
-                                    <p class="text-gray-500 text-center py-4">No hay datos de toxicidad</p>
+                                    <p class="text-zinc-500 text-center py-4">No hay datos de toxicidad</p>
                                 @endforelse
                             </div>
                         </div>
@@ -305,15 +284,15 @@
 
                     {{-- Registro y Plazo de Seguridad --}}
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-xl p-6 border border-gray-200">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">üìÑ Estado de Registro</h3>
+                        <div class="bg-white rounded-xl p-6 border border-zinc-200">
+                            <h3 class="text-lg font-bold text-zinc-900 mb-4">Estado de Registro</h3>
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-700">Con Registro V√°lido</span>
-                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['withValidRegistration'] ?? 0 }}</span>
+                                        <span class="text-sm font-medium text-zinc-700">Con Registro V·lido</span>
+                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['withValidRegistration'] ?? 0 }}</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="w-full bg-zinc-200 rounded-full h-3">
                                         @php
                                             $validPct = $stats['total'] > 0 ? (($advancedStats['withValidRegistration'] ?? 0) / $stats['total']) * 100 : 0;
                                         @endphp
@@ -322,10 +301,10 @@
                                 </div>
                                 <div>
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-700">Sin Registro V√°lido</span>
-                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['withoutValidRegistration'] ?? 0 }}</span>
+                                        <span class="text-sm font-medium text-zinc-700">Sin Registro V·lido</span>
+                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['withoutValidRegistration'] ?? 0 }}</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="w-full bg-zinc-200 rounded-full h-3">
                                         @php
                                             $invalidPct = $stats['total'] > 0 ? (($advancedStats['withoutValidRegistration'] ?? 0) / $stats['total']) * 100 : 0;
                                         @endphp
@@ -335,15 +314,15 @@
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-xl p-6 border border-gray-200">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">‚è±Ô∏è Plazo de Seguridad</h3>
+                        <div class="bg-white rounded-xl p-6 border border-zinc-200">
+                            <h3 class="text-lg font-bold text-zinc-900 mb-4">Plazo de Seguridad</h3>
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-700">Con PS Definido</span>
-                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['withWithdrawalPeriod'] ?? 0 }}</span>
+                                        <span class="text-sm font-medium text-zinc-700">Con PS Definido</span>
+                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['withWithdrawalPeriod'] ?? 0 }}</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="w-full bg-zinc-200 rounded-full h-3">
                                         @php
                                             $withPSPct = $stats['total'] > 0 ? (($advancedStats['withWithdrawalPeriod'] ?? 0) / $stats['total']) * 100 : 0;
                                         @endphp
@@ -352,53 +331,53 @@
                                 </div>
                                 <div>
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-700">Sin PS Definido</span>
-                                        <span class="text-sm font-bold text-gray-900">{{ $advancedStats['withoutWithdrawalPeriod'] ?? 0 }}</span>
+                                        <span class="text-sm font-medium text-zinc-700">Sin PS Definido</span>
+                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['withoutWithdrawalPeriod'] ?? 0 }}</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="w-full bg-zinc-200 rounded-full h-3">
                                         @php
                                             $withoutPSPct = $stats['total'] > 0 ? (($advancedStats['withoutWithdrawalPeriod'] ?? 0) / $stats['total']) * 100 : 0;
                                         @endphp
-                                        <div class="bg-gray-500 h-3 rounded-full" style="width: {{ $withoutPSPct }}%"></div>
+                                        <div class="bg-zinc-500 h-3 rounded-full" style="width: {{ $withoutPSPct }}%"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Top 10 Productos M√°s Usados --}}
-                    <div class="bg-white rounded-xl p-6 border border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">üèÜ Top 10 Productos M√°s Usados</h3>
+                    {{-- Top 10 Productos M·s Usados --}}
+                    <div class="bg-white rounded-xl p-6 border border-zinc-200">
+                        <h3 class="text-lg font-bold text-zinc-900 mb-4">Top 10 Productos M·s Usados</h3>
                         <div class="space-y-3">
                             @forelse(($advancedStats['mostUsed'] ?? []) as $index => $product)
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div class="flex items-center justify-between p-3 bg-zinc-50 rounded-lg hover:bg-zinc-100 transition-colors">
                                     <div class="flex items-center gap-3">
-                                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--color-agro-green)] text-white flex items-center justify-center font-bold text-sm">
+                                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-agro-500 text-white flex items-center justify-center font-bold text-sm">
                                             {{ $index + 1 }}
                                         </span>
                                         <div>
-                                            <p class="font-semibold text-gray-900">{{ $product['name'] }}</p>
-                                            <p class="text-xs text-gray-500">{{ ucfirst($product['type']) }}</p>
+                                            <p class="font-semibold text-zinc-900">{{ $product['name'] }}</p>
+                                            <p class="text-xs text-zinc-500">{{ ucfirst($product['type']) }}</p>
                                         </div>
                                     </div>
-                                    <span class="font-bold text-[var(--color-agro-green-dark)]">{{ $product['treatments_count'] }} tratamientos</span>
+                                    <span class="font-bold text-agro-700">{{ $product['treatments_count'] }} tratamientos</span>
                                 </div>
                             @empty
-                                <p class="text-gray-500 text-center py-4">No hay datos de uso</p>
+                                <p class="text-zinc-500 text-center py-4">No hay datos de uso</p>
                             @endforelse
                         </div>
                     </div>
 
                     {{-- Nuevos Productos por Mes --}}
-                    <div class="bg-white rounded-xl p-6 border border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">üìà Nuevos Productos (√öltimos 12 meses)</h3>
+                    <div class="bg-white rounded-xl p-6 border border-zinc-200">
+                        <h3 class="text-lg font-bold text-zinc-900 mb-4">Nuevos Productos (⁄ltimos 12 meses)</h3>
                         <div class="h-64 flex items-end justify-between gap-2">
                             @foreach(($advancedStats['newProductsByMonth'] ?? []) as $month)
                                 <div class="flex-1 flex flex-col items-center">
-                                    <div class="w-full bg-[var(--color-agro-green)] rounded-t-lg transition-all hover:bg-[var(--color-agro-green-dark)]" 
+                                    <div class="w-full bg-agro-500 rounded-t-lg transition-all hover:bg-agro-700"
                                         style="height: {{ $month['count'] > 0 ? ($month['count'] / max(collect($advancedStats['newProductsByMonth'] ?? [])->pluck('count')->max(), 1)) * 100 : 5 }}%"
                                         title="{{ $month['count'] }} productos"></div>
-                                    <span class="text-xs text-gray-600 mt-2">{{ $month['month'] }}</span>
+                                    <span class="text-xs text-zinc-600 mt-2">{{ $month['month'] }}</span>
                                 </div>
                             @endforeach
                         </div>
@@ -408,5 +387,3 @@
         </div>
     </div>
 </div>
-
-

@@ -1,215 +1,207 @@
-@php
-    $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-@endphp
-
-<x-form-card
+﻿<x-agro.form-card
     title="Nueva Maquinaria"
-    description="Registra una nueva maquinaria o equipo agrícola"
-    :icon="$icon"
-    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+    description="Registra una nueva maquinaria o equipo agricola"
     :back-url="route('viticulturist.machinery.index')"
 >
     <form wire:submit="save" class="space-y-8" enctype="multipart/form-data" data-cy="machinery-create-form">
-        <x-form-section title="Información Básica" color="green">
-                
+        <x-agro.form-section title="Informacion Basica">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nombre -->
-                    <div>
-                        <x-label for="name" required>Nombre</x-label>
-                        <x-input 
-                            wire:model="name" 
-                            type="text" 
+                    <flux:field>
+                        <flux:label>Nombre *</flux:label>
+                        <flux:input
+                            wire:model="name"
+                            type="text"
                             id="name"
                             data-cy="machinery-name"
                             placeholder="Ej: Tractor John Deere"
-                            :error="$errors->first('name')"
                             required
                         />
-                    </div>
+                        <flux:error name="name" />
+                    </flux:field>
 
                     <!-- Tipo -->
-                    <div>
-                        <x-label for="machinery_type_id" required>Tipo</x-label>
-                        <x-select 
-                            wire:model="machinery_type_id" 
+                    <flux:field>
+                        <flux:label>Tipo *</flux:label>
+                        <flux:select
+                            wire:model="machinery_type_id"
                             id="machinery_type_id"
                             data-cy="machinery-type-id"
-                            :error="$errors->first('machinery_type_id')"
                             required
                         >
                             <option value="">Selecciona un tipo</option>
                             @foreach($machineryTypes as $type)
                                 <option value="{{ $type->id }}">{{ $type->name }}</option>
                             @endforeach
-                        </x-select>
-                    </div>
+                        </flux:select>
+                        <flux:error name="machinery_type_id" />
+                    </flux:field>
 
                     <!-- Marca -->
-                    <div>
-                        <x-label for="brand">Marca</x-label>
-                        <x-input 
-                            wire:model="brand" 
-                            type="text" 
+                    <flux:field>
+                        <flux:label>Marca</flux:label>
+                        <flux:input
+                            wire:model="brand"
+                            type="text"
                             id="brand"
                             data-cy="machinery-brand"
                             placeholder="Ej: John Deere"
-                            :error="$errors->first('brand')"
                         />
-                    </div>
+                        <flux:error name="brand" />
+                    </flux:field>
 
                     <!-- Modelo -->
-                    <div>
-                        <x-label for="model">Modelo</x-label>
-                        <x-input 
-                            wire:model="model" 
-                            type="text" 
+                    <flux:field>
+                        <flux:label>Modelo</flux:label>
+                        <flux:input
+                            wire:model="model"
+                            type="text"
                             id="model"
                             data-cy="machinery-model"
                             placeholder="Ej: 6120M"
-                            :error="$errors->first('model')"
                         />
-                    </div>
+                        <flux:error name="model" />
+                    </flux:field>
 
-                    <!-- Número de Serie -->
-                    <div>
-                        <x-label for="serial_number">Número de Serie</x-label>
-                        <x-input 
-                            wire:model="serial_number" 
-                            type="text" 
+                    <!-- Numero de Serie -->
+                    <flux:field>
+                        <flux:label>Numero de Serie</flux:label>
+                        <flux:input
+                            wire:model="serial_number"
+                            type="text"
                             id="serial_number"
                             data-cy="machinery-serial-number"
                             placeholder="Ej: JD123456"
-                            :error="$errors->first('serial_number')"
                         />
-                    </div>
+                        <flux:error name="serial_number" />
+                    </flux:field>
 
-                    <!-- Año -->
-                    <div>
-                        <x-label for="year">Año</x-label>
-                        <x-input 
-                            wire:model="year" 
-                            type="number" 
+                    <!-- Ano -->
+                    <flux:field>
+                        <flux:label>Ano</flux:label>
+                        <flux:input
+                            wire:model="year"
+                            type="number"
                             min="1900"
                             max="{{ now()->year + 1 }}"
                             id="year"
                             data-cy="machinery-year"
-                            :error="$errors->first('year')"
                         />
-                    </div>
+                        <flux:error name="year" />
+                    </flux:field>
                 </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <x-form-section title="Registro y Propiedad" color="green">
-                
+        <x-agro.form-section title="Registro y Propiedad">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Inscripción ROMA -->
-                    <div>
-                        <x-label for="roma_registration">Inscripción ROMA</x-label>
-                        <x-input 
-                            wire:model="roma_registration" 
-                            type="text" 
+                    <!-- Inscripcion ROMA -->
+                    <flux:field>
+                        <flux:label>Inscripcion ROMA</flux:label>
+                        <flux:input
+                            wire:model="roma_registration"
+                            type="text"
                             id="roma_registration"
                             placeholder="Ej: ROMA-12345"
-                            :error="$errors->first('roma_registration')"
                         />
-                    </div>
+                        <flux:error name="roma_registration" />
+                    </flux:field>
 
                     <!-- Capacidad -->
-                    <div>
-                        <x-label for="capacity">Capacidad</x-label>
-                        <x-input 
-                            wire:model="capacity" 
-                            type="text" 
+                    <flux:field>
+                        <flux:label>Capacidad</flux:label>
+                        <flux:input
+                            wire:model="capacity"
+                            type="text"
                             id="capacity"
-                            placeholder="Ej: 1000L, 5m³"
-                            :error="$errors->first('capacity')"
+                            placeholder="Ej: 1000L, 5m3"
                         />
-                    </div>
+                        <flux:error name="capacity" />
+                    </flux:field>
                 </div>
 
                 <!-- Es Alquilada -->
                 <div class="mt-6 flex items-center">
-                    <input 
-                        wire:model="is_rented" 
+                    <input
+                        wire:model="is_rented"
                         type="checkbox"
                         id="is_rented"
                         data-cy="machinery-is-rented"
-                        class="w-4 h-4 text-[var(--color-agro-brown-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-brown-dark)]"
+                        class="w-4 h-4 text-agro-700 border-zinc-300 rounded focus:ring-agro-700"
                     >
-                    <label for="is_rented" class="ml-3 text-sm font-semibold text-gray-700">
+                    <label for="is_rented" class="ml-3 text-sm font-semibold text-zinc-700">
                         Maquinaria alquilada
                     </label>
                 </div>
-                @error('is_rented') 
-                    <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                @enderror
-        </x-form-section>
+                <flux:error name="is_rented" />
+        </x-agro.form-section>
 
-        <x-form-section title="Fechas y Valores" color="green">
-                
+        <x-agro.form-section title="Fechas y Valores">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Fecha de Compra -->
-                    <div>
-                        <x-label for="purchase_date">Fecha de Compra</x-label>
-                        <x-input 
-                            wire:model="purchase_date" 
-                            type="date" 
+                    <flux:field>
+                        <flux:label>Fecha de Compra</flux:label>
+                        <flux:input
+                            wire:model="purchase_date"
+                            type="date"
                             id="purchase_date"
-                            :error="$errors->first('purchase_date')"
                         />
-                    </div>
+                        <flux:error name="purchase_date" />
+                    </flux:field>
 
-                    <!-- Fecha de Última Revisión -->
-                    <div>
-                        <x-label for="last_revision_date">Fecha de Última Revisión</x-label>
-                        <x-input 
-                            wire:model="last_revision_date" 
-                            type="date" 
+                    <!-- Fecha de Ultima Revision -->
+                    <flux:field>
+                        <flux:label>Fecha de Ultima Revision</flux:label>
+                        <flux:input
+                            wire:model="last_revision_date"
+                            type="date"
                             id="last_revision_date"
-                            :error="$errors->first('last_revision_date')"
                         />
-                    </div>
+                        <flux:error name="last_revision_date" />
+                    </flux:field>
 
                     <!-- Precio de Compra -->
-                    <div>
-                        <x-label for="purchase_price">Precio de Compra (€)</x-label>
-                        <x-input 
-                            wire:model="purchase_price" 
-                            type="number" 
+                    <flux:field>
+                        <flux:label>Precio de Compra (EUR)</flux:label>
+                        <flux:input
+                            wire:model="purchase_price"
+                            type="number"
                             step="0.01"
                             min="0"
                             id="purchase_price"
                             placeholder="0.00"
-                            :error="$errors->first('purchase_price')"
                         />
-                    </div>
+                        <flux:error name="purchase_price" />
+                    </flux:field>
 
                     <!-- Valor Actual -->
-                    <div>
-                        <x-label for="current_value">Valor Actual (€)</x-label>
-                        <x-input 
-                            wire:model="current_value" 
-                            type="number" 
+                    <flux:field>
+                        <flux:label>Valor Actual (EUR)</flux:label>
+                        <flux:input
+                            wire:model="current_value"
+                            type="number"
                             step="0.01"
                             min="0"
                             id="current_value"
                             placeholder="0.00"
-                            :error="$errors->first('current_value')"
                         />
-                    </div>
+                        <flux:error name="current_value" />
+                    </flux:field>
                 </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <x-form-section title="Imagen y Notas" color="green">
-                
+        <x-agro.form-section title="Imagen y Notas">
+
                 <!-- Imagen -->
                 <div class="mb-6">
-                    <label for="image" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label for="image" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Imagen
                     </label>
-                    <input 
-                        wire:model="image" 
-                        type="file" 
+                    <input
+                        wire:model="image"
+                        type="file"
                         accept="image/*"
                         id="image"
                         onchange="
@@ -246,18 +238,16 @@
                                 }
                             }
                         "
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-transparent transition-all"
+                        class="w-full px-4 py-3 border-2 border-zinc-200 rounded-xl focus:ring-2 focus:ring-agro-700 focus:border-transparent transition-all"
                     >
-                    @error('image') 
-                        <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                    @enderror
+                    <flux:error name="image" />
                     <div id="machinery-image-preview-container" wire:ignore class="mt-4 hidden">
-                        <p class="text-sm text-gray-600 mb-2 font-semibold">Vista previa:</p>
-                        <img 
-                            id="machinery-image-preview" 
-                            src="" 
-                            alt="Vista previa" 
-                            class="max-w-xs rounded-lg border-2 border-gray-200 hidden"
+                        <p class="text-sm text-zinc-600 mb-2 font-semibold">Vista previa:</p>
+                        <img
+                            id="machinery-image-preview"
+                            src=""
+                            alt="Vista previa"
+                            class="max-w-xs rounded-lg border-2 border-zinc-200 hidden"
                             style="max-height: 300px; object-fit: contain;"
                             onerror="this.style.display='none'; document.getElementById('machinery-image-preview-container').style.display='none'; document.getElementById('machinery-image-preview-container').classList.add('hidden');"
                         >
@@ -265,22 +255,22 @@
                 </div>
 
                 <!-- Notas -->
-                <div>
-                    <x-label for="notes">Notas</x-label>
-                    <x-textarea 
-                        wire:model="notes" 
+                <flux:field>
+                    <flux:label>Notas</flux:label>
+                    <flux:textarea
+                        wire:model="notes"
                         id="notes"
                         data-cy="machinery-notes"
                         rows="4"
                         placeholder="Notas adicionales sobre la maquinaria..."
-                        :error="$errors->first('notes')"
                     />
-                </div>
-        </x-form-section>
+                    <flux:error name="notes" />
+                </flux:field>
+        </x-agro.form-section>
 
-        <x-form-actions 
+        <x-agro.form-actions
             :cancel-url="route('viticulturist.machinery.index')"
             submit-label="Crear Maquinaria"
         />
     </form>
-</x-form-card>
+</x-agro.form-card>

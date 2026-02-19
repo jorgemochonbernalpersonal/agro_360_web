@@ -1,160 +1,125 @@
-<div class="space-y-6 animate-fade-in">
+﻿<div class="space-y-6 animate-fade-in">
     <!-- Mensajes Flash -->
     @if(session('message'))
-        <div class="glass-card rounded-xl p-4 bg-green-50 border-l-4 border-green-600">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-semibold text-green-800">{{ session('message') }}</p>
-            </div>
-        </div>
+        <flux:callout variant="success">
+            {{ session('message') }}
+        </flux:callout>
     @endif
 
     @if(session('error'))
-        <div class="glass-card rounded-xl p-4 bg-red-50 border-l-4 border-red-600">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-semibold text-red-800">{{ session('error') }}</p>
-            </div>
-        </div>
+        <flux:callout variant="danger">
+            {{ session('error') }}
+        </flux:callout>
     @endif
 
     <!-- Header -->
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+    <x-agro.page-header
         title="Gestión de Campañas"
         description="Administra y visualiza todas tus campañas vitícolas"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
-        <x-slot:actionButton>
+        <x-slot:actions>
             @can('create', \App\Models\Campaign::class)
-                <a href="{{ route('viticulturist.campaign.create') }}" class="group" data-cy="create-campaign-button">
-                    <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                        <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Nueva Campaña
-                    </button>
-                </a>
+                <flux:button href="{{ route('viticulturist.campaign.create') }}" variant="primary" icon="plus" data-cy="create-campaign-button">
+                    Nueva Campaña
+                </flux:button>
             @endcan
-        </x-slot:actionButton>
-    </x-page-header>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     <!-- Filtros -->
-    <x-filter-section title="Filtros de Búsqueda" color="green">
-        <x-filter-input 
-            wire:model.live.debounce.300ms="search" 
+    <x-agro.filter-bar>
+        <x-agro.filter-input
+            wire:model.live.debounce.300ms="search"
             placeholder="Buscar por nombre o descripción..."
             data-cy="campaign-search-input"
         />
-        <x-filter-select wire:model.live="yearFilter" icon="calendar" data-cy="campaign-year-filter">
+        <x-agro.filter-select wire:model.live="yearFilter" data-cy="campaign-year-filter">
             <option value="">Todos los años</option>
             @foreach($years as $year)
                 <option value="{{ $year }}">{{ $year }}</option>
             @endforeach
-        </x-filter-select>
-        <x-slot:actions>
-            @if($search || $yearFilter)
-                <x-button wire:click="clearFilters" variant="ghost" size="sm">
-                    Limpiar Filtros
-                </x-button>
-            @endif
-        </x-slot:actions>
-    </x-filter-section>
+        </x-agro.filter-select>
+        @if($search || $yearFilter)
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm">
+                Limpiar Filtros
+            </flux:button>
+        @endif
+    </x-agro.filter-bar>
 
     <!-- Tabla de Campañas -->
     @php
-        $headers = [
-            ['label' => 'Campaña', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
-            ['label' => 'Año', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
-            ['label' => 'Período', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
-            ['label' => 'Estado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
-            ['label' => 'Actividades', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>'],
-            'Acciones',
-        ];
+        $headers = ['Campaña', 'Año', 'Período', 'Estado', 'Actividades', 'Acciones'];
     @endphp
 
-    <x-data-table 
-        :headers="$headers" 
-        empty-message="No hay campañas registradas" 
+    <x-agro.data-table
+        :headers="$headers"
+        empty-message="No hay campañas registradas"
         empty-description="{{ ($search || $yearFilter) ? 'No se encontraron campañas con los filtros seleccionados' : 'Comienza creando tu primera campaña vitícola' }}"
-        color="green"
     >
         @if($campaigns->count() > 0)
             @foreach($campaigns as $campaign)
-                <x-table-row>
-                    <x-table-cell>
+                <x-agro.table-row>
+                    <x-agro.table-cell>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
+                            <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0">
+                                <flux:icon icon="calendar" class="size-5 text-agro-600" />
                             </div>
                             <div>
-                                <div class="text-sm font-bold text-gray-900">{{ $campaign->name }}</div>
+                                <div class="text-sm font-bold text-zinc-900">{{ $campaign->name }}</div>
                                 @if($campaign->description)
-                                    <div class="text-xs text-gray-500 mt-1">{{ Str::limit($campaign->description, 50) }}</div>
+                                    <div class="text-xs text-zinc-500 mt-1">{{ Str::limit($campaign->description, 50) }}</div>
                                 @endif
                             </div>
                         </div>
-                    </x-table-cell>
-                    <x-table-cell>
-                        <span class="text-sm font-medium text-gray-900">{{ $campaign->year }}</span>
-                    </x-table-cell>
-                    <x-table-cell>
+                    </x-agro.table-cell>
+                    <x-agro.table-cell>
+                        <span class="text-sm font-medium text-zinc-900">{{ $campaign->year }}</span>
+                    </x-agro.table-cell>
+                    <x-agro.table-cell>
                         @if($campaign->start_date && $campaign->end_date)
-                            <span class="text-sm text-gray-700">
+                            <span class="text-sm text-zinc-700">
                                 {{ $campaign->start_date->format('d/m/Y') }} - {{ $campaign->end_date->format('d/m/Y') }}
                             </span>
                         @else
-                            <span class="text-sm text-gray-400">-</span>
+                            <span class="text-sm text-zinc-400">-</span>
                         @endif
-                    </x-table-cell>
-                    <x-table-cell>
-                        <x-status-badge :active="$campaign->active" />
-                    </x-table-cell>
-                    <x-table-cell>
-                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--color-agro-blue-light)] text-[var(--color-agro-blue)] text-sm font-semibold">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
-                            {{ $campaign->activities_count }}
-                        </span>
-                    </x-table-cell>
-                    <x-table-actions align="right">
-                        @can('view', $campaign)
-                            <x-action-button variant="view" href="{{ route('viticulturist.campaign.show', $campaign) }}" data-cy="view-campaign-button" />
-                        @endcan
-                        @can('update', $campaign)
-                            <x-action-button variant="edit" href="{{ route('viticulturist.campaign.edit', $campaign) }}" data-cy="edit-campaign-button" />
-                        @endcan
-                        @if(!$campaign->active)
-                            @can('activate', $campaign)
-                                <x-action-button 
-                                    variant="activate"
-                                    wireClick="activate({{ $campaign->id }})"
-                                />
+                    </x-agro.table-cell>
+                    <x-agro.table-cell>
+                        <x-agro.status-badge :active="$campaign->active" />
+                    </x-agro.table-cell>
+                    <x-agro.table-cell>
+                        <flux:badge color="blue" size="sm">{{ $campaign->activities_count }}</flux:badge>
+                    </x-agro.table-cell>
+                    <x-agro.table-cell align="right">
+                        <div class="flex items-center justify-end gap-2">
+                            @can('view', $campaign)
+                                <x-agro.action-button variant="view" href="{{ route('viticulturist.campaign.show', $campaign) }}" data-cy="view-campaign-button" />
                             @endcan
-                        @endif
-                        @can('delete', $campaign)
-                            @if($campaign->activities_count === 0)
-                                <x-action-button 
-                                    variant="delete" 
-                                    wireClick="delete({{ $campaign->id }})"
-                                    wireConfirm="¿Estás seguro de eliminar esta campaña?"
-                                />
-                            @else
-                                <x-action-button variant="delete" disabled title="No se puede eliminar: tiene actividades" />
+                            @can('update', $campaign)
+                                <x-agro.action-button variant="edit" href="{{ route('viticulturist.campaign.edit', $campaign) }}" data-cy="edit-campaign-button" />
+                            @endcan
+                            @if(!$campaign->active)
+                                @can('activate', $campaign)
+                                    <x-agro.action-button
+                                        variant="activate"
+                                        wireClick="activate({{ $campaign->id }})"
+                                    />
+                                @endcan
                             @endif
-                        @endcan
-                    </x-table-actions>
-                </x-table-row>
+                            @can('delete', $campaign)
+                                @if($campaign->activities_count === 0)
+                                    <x-agro.action-button
+                                        variant="delete"
+                                        wireClick="delete({{ $campaign->id }})"
+                                        wireConfirm="¿Estás seguro de eliminar esta campaña?"
+                                    />
+                                @else
+                                    <x-agro.action-button variant="delete" disabled title="No se puede eliminar: tiene actividades" />
+                                @endif
+                            @endcan
+                        </div>
+                    </x-agro.table-cell>
+                </x-agro.table-row>
             @endforeach
             <x-slot name="pagination">
                 {{ $campaigns->links() }}
@@ -162,14 +127,11 @@
         @else
             <x-slot name="emptyAction">
                 @can('create', \App\Models\Campaign::class)
-                    <x-button href="{{ route('viticulturist.campaign.create') }}" variant="primary">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
+                    <flux:button href="{{ route('viticulturist.campaign.create') }}" variant="primary" icon="plus">
                         Crear Primera Campaña
-                    </x-button>
+                    </flux:button>
                 @endcan
             </x-slot>
         @endif
-    </x-data-table>
+    </x-agro.data-table>
 </div>

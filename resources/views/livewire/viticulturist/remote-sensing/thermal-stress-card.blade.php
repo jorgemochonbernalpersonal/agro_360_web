@@ -11,8 +11,8 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-gray-900">🌡️ Análisis Térmico</h3>
-            <p class="text-sm text-gray-500 mt-1">
+            <h3 class="text-xl font-bold text-zinc-900">🌡️ Análisis Térmico</h3>
+            <p class="text-sm text-zinc-500 mt-1">
                 Temperatura de superficie y estrés
                 @if($lstData)
                     - {{ $lstData['date'] }}
@@ -22,13 +22,13 @@
         
         <div class="flex items-center gap-2">
             @if(count($availableDates) > 0)
-                <select wire:model.live="selectedDate" 
-                        class="text-sm border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+                <flux:select wire:model.live="selectedDate" 
+                        >
                     <option value="">Último dato</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                     @endforeach
-                </select>
+                </flux:select>
             @endif
             
             <button 
@@ -55,7 +55,7 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <p class="text-gray-600">Cargando datos térmicos...</p>
+                <p class="text-zinc-600">Cargando datos térmicos...</p>
             </div>
         </div>
     @endif
@@ -79,38 +79,38 @@
             {{-- Day Temperature --}}
             <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700">Temp. Día</span>
+                    <span class="text-sm font-medium text-zinc-700">Temp. Día</span>
                     <span class="text-2xl">☀️</span>
                 </div>
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($lstData['day'], 1) }}°C</div>
-                <p class="text-xs text-gray-600 mt-1">Temperatura de superficie</p>
+                <div class="text-3xl font-bold text-zinc-900">{{ number_format($lstData['day'], 1) }}°C</div>
+                <p class="text-xs text-zinc-600 mt-1">Temperatura de superficie</p>
             </div>
 
             {{-- Night Temperature --}}
             <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700">Temp. Noche</span>
+                    <span class="text-sm font-medium text-zinc-700">Temp. Noche</span>
                     <span class="text-2xl">🌙</span>
                 </div>
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($lstData['night'], 1) }}°C</div>
-                <p class="text-xs text-gray-600 mt-1">Mínima nocturna</p>
+                <div class="text-3xl font-bold text-zinc-900">{{ number_format($lstData['night'], 1) }}°C</div>
+                <p class="text-xs text-zinc-600 mt-1">Mínima nocturna</p>
             </div>
 
             {{-- Temperature Difference --}}
             <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-200">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700">Amplitud Térmica</span>
+                    <span class="text-sm font-medium text-zinc-700">Amplitud Térmica</span>
                     <span class="text-2xl">📊</span>
                 </div>
-                <div class="text-3xl font-bold text-gray-900">{{ number_format($lstData['diff'], 1) }}°C</div>
-                <p class="text-xs text-gray-600 mt-1">Diferencia día-noche</p>
+                <div class="text-3xl font-bold text-zinc-900">{{ number_format($lstData['diff'], 1) }}°C</div>
+                <p class="text-xs text-zinc-600 mt-1">Diferencia día-noche</p>
             </div>
         </div>
 
         {{-- CWSI Section --}}
         @if($cwsiData)
             <div class="mb-6">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Índice de Estrés Hídrico (CWSI)</h4>
+                <h4 class="text-lg font-semibold text-zinc-800 mb-3">Índice de Estrés Hídrico (CWSI)</h4>
                 <div class="bg-{{ $cwsiData['color'] }}-50 border border-{{ $cwsiData['color'] }}-200 rounded-lg p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center">
@@ -127,11 +127,11 @@
                     </div>
                     
                     {{-- CWSI Bar --}}
-                    <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="relative h-3 bg-zinc-200 rounded-full overflow-hidden">
                         <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 via-yellow-500 via-orange-500 to-red-500" 
                              style="width: {{ min(100, $cwsiData['value'] * 100) }}%"></div>
                     </div>
-                    <div class="flex justify-between text-xs text-gray-600 mt-1">
+                    <div class="flex justify-between text-xs text-zinc-600 mt-1">
                         <span>0 (Sin estrés)</span>
                         <span>1 (Estrés máximo)</span>
                     </div>

@@ -1,107 +1,91 @@
-@php
-    $plotIcon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>';
-@endphp
-
-<x-form-card title="Editar Parcela" description="Modifica los datos de la parcela" :icon="$plotIcon"
-    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]" :back-url="route('plots.index')">
+﻿<x-agro.form-card title="Editar Parcela" description="Modifica los datos de la parcela" :back-url="route('plots.index')">
     <form wire:submit.prevent="update" class="space-y-8" data-cy="plot-edit-form">
         @error('general')
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-red-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <div>
-                        <h3 class="text-sm font-semibold text-red-800">Error</h3>
-                        <p class="mt-1 text-sm text-red-700">{{ $message }}</p>
-                    </div>
-                </div>
-            </div>
+            <flux:callout variant="danger" icon="x-circle">
+                <flux:callout.heading>Error</flux:callout.heading>
+                <flux:callout.text>{{ $message }}</flux:callout.text>
+            </flux:callout>
         @enderror
-        
-        <!-- Configuración de Alertas -->
-        <x-form-section title="Configuración de Alertas (Teledetección)" color="green">
+
+        <!-- Configuracion de Alertas -->
+        <x-agro.form-section title="Configuracion de Alertas (Teledeteccion)">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <x-label for="ndvi_alert_threshold">Umbral de Alerta NDVI (Vigor)</x-label>
-                    <div class="mt-1 flex rounded-md shadow-sm">
-                        <x-input wire:model="ndvi_alert_threshold" type="number" step="0.05" min="0" max="1" 
-                            id="ndvi_alert_threshold" class="flex-1 rounded-none rounded-l-md"
-                            placeholder="0.30" :error="$errors->first('ndvi_alert_threshold')" />
-                        <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                            NDVI
-                        </span>
-                    </div>
-                    <p class="mt-1 text-xs text-gray-500">Recibirás una alerta si el vigor baja de este valor (Por defecto: 0.30)</p>
+                    <flux:field>
+                        <flux:label for="ndvi_alert_threshold">Umbral de Alerta NDVI (Vigor)</flux:label>
+                        <div class="mt-1 flex rounded-md shadow-sm">
+                            <flux:input wire:model="ndvi_alert_threshold" type="number" step="0.05" min="0" max="1"
+                                id="ndvi_alert_threshold" placeholder="0.30" />
+                            <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-zinc-300 bg-zinc-50 text-zinc-500 text-sm">
+                                NDVI
+                            </span>
+                        </div>
+                        <flux:error name="ndvi_alert_threshold" />
+                    </flux:field>
+                    <p class="mt-1 text-xs text-zinc-500">Recibiras una alerta si el vigor baja de este valor (Por defecto: 0.30)</p>
                 </div>
 
                 <div class="flex items-center mt-6">
-                    <x-checkbox wire:model="alert_email_enabled" id="alert_email_enabled" />
-                    <div class="ml-3 text-sm">
-                        <label for="alert_email_enabled" class="font-medium text-gray-700">Recibir alertas por Email</label>
-                        <p class="text-gray-500">Además de la notificación en la web, te enviaremos un correo.</p>
-                    </div>
+                    <flux:checkbox wire:model="alert_email_enabled" id="alert_email_enabled" label="Recibir alertas por Email" description="Ademas de la notificacion en la web, te enviaremos un correo." />
                 </div>
             </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <x-form-section title="Información Básica" color="green">
+        <x-agro.form-section title="Informacion Basica">
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Nombre -->
-                <div>
-                    <x-label for="name" required>Nombre de la Parcela</x-label>
-                    <x-input wire:model="name" type="text" id="name" data-cy="plot-name" :error="$errors->first('name')" required />
-                </div>
+                <flux:field>
+                    <flux:label for="name">Nombre de la Parcela *</flux:label>
+                    <flux:input wire:model="name" type="text" id="name" data-cy="plot-name" required />
+                    <flux:error name="name" />
+                </flux:field>
 
-                <!-- Área -->
-                <div>
-                    <x-label for="area">Área (hectáreas)</x-label>
-                    <x-input wire:model="area" type="number" step="0.001" id="area" data-cy="plot-area" :error="$errors->first('area')" />
-                </div>
+                <!-- Area -->
+                <flux:field>
+                    <flux:label for="area">Area (hectareas)</flux:label>
+                    <flux:input wire:model="area" type="number" step="0.001" id="area" data-cy="plot-area" />
+                    <flux:error name="area" />
+                </flux:field>
             </div>
 
-            <!-- Descripción -->
+            <!-- Descripcion -->
             <div class="mt-6">
-                <x-label for="description">Descripción</x-label>
-                <x-textarea wire:model="description" id="description" data-cy="plot-description" rows="3" :error="$errors->first('description')" />
+                <flux:field>
+                    <flux:label for="description">Descripcion</flux:label>
+                    <flux:textarea wire:model="description" id="description" data-cy="plot-description" rows="3" />
+                    <flux:error name="description" />
+                </flux:field>
             </div>
-        </x-form-section>
+        </x-agro.form-section>
 
         <!-- Asignaciones -->
         @if ($this->canSelectWinery() || $this->canSelectViticulturist() || $this->canSelectSigpac())
-            <x-form-section title="Asignaciones" color="green">
+            <x-agro.form-section title="Asignaciones">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Bodega removed: plots now belong to viticultor, not directly to a winery -->
 
                     <!-- Viticultor (Solo admin/supervisor/winery) -->
                     @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']))
-                        <div>
-                            <x-label for="viticulturist_id" required>Viticultor Asignado</x-label>
-                            <x-select wire:model="viticulturist_id" id="viticulturist_id" data-cy="plot-viticulturist-id"
-                                :error="$errors->first('viticulturist_id')" required>
+                        <flux:field>
+                            <flux:label for="viticulturist_id">Viticultor Asignado *</flux:label>
+                            <flux:select wire:model="viticulturist_id" id="viticulturist_id" data-cy="plot-viticulturist-id" required>
                                 <option value="">Seleccionar...</option>
                                 @forelse ($this->viticulturists as $viticulturist)
                                     <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}</option>
                                 @empty
                                     <option value="" disabled>No hay viticultores disponibles</option>
                                 @endforelse
-                            </x-select>
-                            @error('viticulturist_id')
-                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p>
-                            @enderror
-                        </div>
+                            </flux:select>
+                            <flux:error name="viticulturist_id" />
+                        </flux:field>
                     @endif
 
-                    <!-- Usos SIGPAC (select múltiple junto al viticultor) -->
+                    <!-- Usos SIGPAC (select multiple junto al viticultor) -->
                     @if ($this->canSelectSigpac())
-                        <div>
-                            <x-label for="sigpac_use" required>Usos SIGPAC</x-label>
-                            <x-select wire:model="sigpac_use" id="sigpac_use" data-cy="plot-sigpac-use" multiple size="5"
-                                :error="$errors->first('sigpac_use')" required>
+                        <flux:field>
+                            <flux:label for="sigpac_use">Usos SIGPAC *</flux:label>
+                            <flux:select wire:model="sigpac_use" id="sigpac_use" data-cy="plot-sigpac-use" multiple size="5" required>
                                 @forelse ($sigpacUses as $use)
                                     <option value="{{ $use->id }}">
                                         {{ $use->code }} - {{ $use->description }}
@@ -109,60 +93,60 @@
                                 @empty
                                     <option value="" disabled>No hay usos SIGPAC disponibles</option>
                                 @endforelse
-                            </x-select>
-                            <p class="mt-1 text-xs text-gray-500">
-                                Mantén pulsado Ctrl (o Cmd en Mac) para seleccionar varios usos.
-                            </p>
-                            @error('sigpac_use')
-                                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p>
-                            @enderror
-                        </div>
+                            </flux:select>
+                            <flux:description>
+                                Manten pulsado Ctrl (o Cmd en Mac) para seleccionar varios usos.
+                            </flux:description>
+                            <flux:error name="sigpac_use" />
+                        </flux:field>
                     @endif
                 </div>
-            </x-form-section>
+            </x-agro.form-section>
         @endif
 
-        <!-- Ubicación -->
-        <x-form-section title="Ubicación" color="green">
+        <!-- Ubicacion -->
+        <x-agro.form-section title="Ubicacion">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Comunidad Autónoma -->
-                <div>
-                    <x-label for="autonomous_community_id" required>Comunidad Autónoma</x-label>
-                    <x-select wire:model.live="autonomous_community_id" id="autonomous_community_id" data-cy="plot-autonomous-community-id"
-                        :error="$errors->first('autonomous_community_id')" required>
+                <!-- Comunidad Autonoma -->
+                <flux:field>
+                    <flux:label for="autonomous_community_id">Comunidad Autonoma *</flux:label>
+                    <flux:select wire:model.live="autonomous_community_id" id="autonomous_community_id" data-cy="plot-autonomous-community-id" required>
                         <option value="">Seleccionar...</option>
                         @foreach ($autonomousCommunities as $community)
                             <option value="{{ $community->id }}">{{ $community->name }}</option>
                         @endforeach
-                    </x-select>
-                </div>
+                    </flux:select>
+                    <flux:error name="autonomous_community_id" />
+                </flux:field>
 
                 <!-- Provincia -->
-                <div>
-                    <x-label for="province_id" required>Provincia</x-label>
-                    <x-select wire:model.live="province_id" id="province_id" data-cy="plot-province-id" :error="$errors->first('province_id')"
-                        required :disabled="!$autonomous_community_id">
+                <flux:field>
+                    <flux:label for="province_id">Provincia *</flux:label>
+                    <flux:select wire:model.live="province_id" id="province_id" data-cy="plot-province-id" required
+                        :disabled="!$autonomous_community_id">
                         <option value="">Seleccionar...</option>
                         @foreach ($provinces as $province)
                             <option value="{{ $province->id }}">{{ $province->name }}</option>
                         @endforeach
-                    </x-select>
-                </div>
+                    </flux:select>
+                    <flux:error name="province_id" />
+                </flux:field>
 
                 <!-- Municipio -->
-                <div>
-                    <x-label for="municipality_id" required>Municipio</x-label>
-                    <x-select wire:model.live="municipality_id" id="municipality_id" data-cy="plot-municipality-id"
-                        :error="$errors->first('municipality_id')" required :disabled="!$province_id">
+                <flux:field>
+                    <flux:label for="municipality_id">Municipio *</flux:label>
+                    <flux:select wire:model.live="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
+                        :disabled="!$province_id">
                         <option value="">Seleccionar...</option>
                         @foreach ($municipalities as $municipality)
                             <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
                         @endforeach
-                    </x-select>
-                </div>
+                    </flux:select>
+                    <flux:error name="municipality_id" />
+                </flux:field>
             </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <x-form-actions :cancel-url="route('plots.index')" submit-label="Actualizar Parcela" />
+        <x-agro.form-actions :cancel-url="route('plots.index')" submit-label="Actualizar Parcela" />
     </form>
-</x-form-card>
+</x-agro.form-card>
