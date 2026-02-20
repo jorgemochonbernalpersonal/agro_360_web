@@ -4,7 +4,7 @@
         :description="$container->serial_number ? 'SN: ' . $container->serial_number : 'Contenedor de bodega'"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.digital-notebook.containers.edit', $container->id) }}" variant="primary" icon="pencil-square">
+            <flux:button href="{{ route('viticulturist.containers.edit', $container->id) }}" variant="primary" icon="pencil-square">
                 Editar
             </flux:button>
         </x-slot:actions>
@@ -141,7 +141,7 @@
                         Nueva Vendimia
                     </flux:button>
                     <flux:button
-                        href="{{ route('viticulturist.digital-notebook.containers.edit', $container->id) }}"
+                        href="{{ route('viticulturist.containers.edit', $container->id) }}"
                         variant="ghost"
                         icon="pencil-square"
                         class="w-full justify-center"

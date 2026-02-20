@@ -4,7 +4,12 @@
       "Bash(ls:*)",
       "WebFetch(domain:fluxui.dev)",
       "Bash(git -C \"C:/Users/jorge/Desktop/agro365\" status --short)",
-      "Bash(git -C \"C:\\\\Users\\\\jorge\\\\Desktop\\\\agro365\" status -s)"
+      "Bash(git -C \"C:\\\\Users\\\\jorge\\\\Desktop\\\\agro365\" status -s)",
+      "Bash(python3 -c \" import re with open\\(''C:/Users/jorge/Desktop/agro365/vendor/livewire/flux/dist/flux.min.js'', ''r''\\) as f: content = f.read\\(\\) # Find context around ''dark'' string matches = [\\(m.start\\(\\), content[max\\(0,m.start\\(\\)-100\\):m.end\\(\\)+100]\\) for m in re.finditer\\(''\"\"dark\"\"'', content\\)] for pos, ctx in matches[:5]: print\\(f''--- pos {pos} ---''\\) print\\(ctx\\) print\\(\\) \")",
+      "Bash(# Final check - no remaining old references grep -rn \"\"digital-notebook\\\\.containers\"\" /c/Users/jorge/Desktop/agro365/resources/views/ /c/Users/jorge/Desktop/agro365/app/)",
+      "Bash(xargs cat:*)",
+      "Bash(xxd:*)",
+      "Bash(php artisan:*)"
     ]
   }
 }

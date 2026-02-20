@@ -12,22 +12,15 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public $currentTab = 'active'; // 'active', 'inactive', 'statistics'
+    public $currentTab = 'active'; // 'active', 'inactive'
     public $search = '';
     public $filterType = '';
-    public $yearFilter;
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
         'search' => ['except' => ''],
         'filterType' => ['except' => ''],
-        'yearFilter' => ['as' => 'year'],
     ];
-
-    public function mount()
-    {
-        $this->yearFilter = $this->yearFilter ?? now()->year;
-    }
 
     public function switchTab($tab)
     {
@@ -45,27 +38,29 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function clearFilters(): void
+    {
+        $this->search     = '';
+        $this->filterType = '';
+        $this->resetPage();
+    }
+
     public function toggleActive($clientId)
     {
         $user = Auth::user();
         $client = Client::forUser($user->id)->findOrFail($clientId);
-        
-        $wasActive = $client->active;
-        $newActiveState = !$wasActive;
-        
-        $client->update([
-            'active' => $newActiveState
-        ]);
+
+        $newActiveState = !$client->active;
+
+        $client->update(['active' => $newActiveState]);
 
         if ($newActiveState) {
             $this->toastSuccess('Cliente activado exitosamente.');
-            // Si estamos en el tab de inactivos, cambiar al tab de activos para ver el cambio
             if ($this->currentTab === 'inactive') {
                 $this->currentTab = 'active';
             }
         } else {
             $this->toastSuccess('Cliente desactivado exitosamente.');
-            // Si estamos en el tab de activos, cambiar al tab de inactivos para ver el cambio
             if ($this->currentTab === 'active') {
                 $this->currentTab = 'inactive';
             }
@@ -76,24 +71,21 @@ class Index extends Component
     {
         $user = Auth::user();
 
-        // Lista de clientes
         $query = Client::forUser($user->id)
-            ->with(['addresses.municipality', 'addresses.province', 'addresses.autonomousCommunity', 'invoices']);
+            ->with(['addresses.municipality', 'addresses.province', 'invoices']);
 
         if ($this->filterType) {
             $query->where('client_type', $this->filterType);
         }
 
-        // Filtro por tab (activo/inactivo)
         if ($this->currentTab === 'active') {
-            $query->where('active', true); // Activos
+            $query->where('active', true);
         } elseif ($this->currentTab === 'inactive') {
-            $query->where('active', false); // Inactivos
+            $query->where('active', false);
         }
-        // Si es 'statistics', no filtrar por activo/inactivo
 
         if ($this->search) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->where('first_name', 'like', '%' . $this->search . '%')
                   ->orWhere('last_name', 'like', '%' . $this->search . '%')
                   ->orWhere('company_name', 'like', '%' . $this->search . '%')
@@ -104,96 +96,19 @@ class Index extends Component
             });
         }
 
-        $clients = $query->orderBy('created_at', 'desc')->paginate(15);
+        $clients = $query->orderBy('created_at', 'desc')->paginate(12);
 
-        // Estadísticas básicas
         $stats = [
-            'total' => Client::forUser($user->id)->count(),
-            'active' => Client::forUser($user->id)->active()->count(),
+            'active'   => Client::forUser($user->id)->active()->count(),
             'inactive' => Client::forUser($user->id)->where('active', false)->count(),
-            'individual' => Client::forUser($user->id)->where('client_type', 'individual')->count(),
-            'company' => Client::forUser($user->id)->where('client_type', 'company')->count(),
         ];
-
-        // Estadísticas avanzadas (solo para tab de estadísticas)
-        $advancedStats = [];
-        if ($this->currentTab === 'statistics') {
-            $advancedStats = $this->getAdvancedStatistics($user);
-        }
 
         return view('livewire.viticulturist.clients.index', [
             'clients' => $clients,
-            'stats' => $stats,
-            'advancedStats' => $advancedStats,
+            'stats'   => $stats,
         ])->layout('layouts.app', [
-            'title' => 'Clientes - Agro365',
+            'title'       => 'Clientes - Agro365',
             'description' => 'Gestiona tus clientes y analiza tu cartera. Control completo de clientes particulares y empresas.',
         ]);
-    }
-
-    private function getAdvancedStatistics($user)
-    {
-        $year = $this->yearFilter;
-        
-        // Clientes con facturas este año
-        $activeThisYear = Client::forUser($user->id)
-            ->whereHas('invoices', function($q) use ($year) {
-                $q->whereYear('invoice_date', $year);
-            })
-            ->count();
-
-        // Clientes inactivos (sin facturas este año)
-        $inactiveThisYear = Client::forUser($user->id)->count() - $activeThisYear;
-
-        // Facturación media por cliente
-        $avgInvoicePerClient = Client::forUser($user->id)
-            ->withSum(['invoices' => fn($q) => $q->whereYear('invoice_date', $year)], 'total_amount')
-            ->get()
-            ->filter(fn($c) => $c->invoices_sum_total_amount > 0)
-            ->avg('invoices_sum_total_amount') ?? 0;
-
-        // Top 10 clientes por facturación
-        $topClients = Client::forUser($user->id)
-            ->withSum(['invoices' => fn($q) => $q->whereYear('invoice_date', $year)], 'total_amount')
-            ->get()
-            ->filter(fn($c) => $c->invoices_sum_total_amount > 0)
-            ->sortByDesc('invoices_sum_total_amount')
-            ->take(10)
-            ->map(function($client) {
-                return [
-                    'id' => $client->id,
-                    'name' => $client->company_name ?: $client->first_name . ' ' . $client->last_name,
-                    'total' => $client->invoices_sum_total_amount,
-                    'type' => $client->client_type,
-                ];
-            });
-
-        // Distribución por tipo
-        $distributionByType = Client::forUser($user->id)
-            ->selectRaw('client_type, COUNT(*) as count')
-            ->groupBy('client_type')
-            ->get()
-            ->mapWithKeys(fn($item) => [$item->client_type => $item->count]);
-
-        // Nuevos clientes por mes (últimos 12 meses)
-        $newClientsByMonth = collect(range(11, 0))->map(function($monthsAgo) use ($user) {
-            $date = now()->subMonths($monthsAgo);
-            return [
-                'month' => $date->format('M'),
-                'count' => Client::forUser($user->id)
-                    ->whereYear('created_at', $date->year)
-                    ->whereMonth('created_at', $date->month)
-                    ->count(),
-            ];
-        });
-
-        return [
-            'activeThisYear' => $activeThisYear,
-            'inactiveThisYear' => $inactiveThisYear,
-            'avgInvoicePerClient' => $avgInvoicePerClient,
-            'topClients' => $topClients,
-            'distributionByType' => $distributionByType,
-            'newClientsByMonth' => $newClientsByMonth,
-        ];
     }
 }

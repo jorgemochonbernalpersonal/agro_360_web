@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Registrar Tratamiento Fitosanitario"
     description="Registra un nuevo tratamiento fitosanitario en el cuaderno digital"
     :back-url="route('viticulturist.digital-notebook')"

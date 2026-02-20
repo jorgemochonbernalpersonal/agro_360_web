@@ -1,453 +1,258 @@
 <div class="space-y-6 animate-fade-in">
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>';
-    @endphp
+
     <x-agro.page-header
-        :icon="$icon"
         title="Rendimientos Estimados"
-        description="Gestiona las estimaciones de rendimiento por plantaci髇 y campa馻"
-        icon-color="from-agro-500 to-agro-700"
-    >
-        <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.digital-notebook.estimated-yields.create') }}" variant="primary">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Nueva Estimaci髇
-            </flux:button>
-        </x-slot:actions>
-    </x-agro.page-header>
+        description="Gestiona las estimaciones de rendimiento por plantaci贸n y campa帽a"
+    />
 
-    <!-- Tabs Navigation -->
-    <div class="bg-white rounded-xl shadow-lg border border-zinc-200 overflow-hidden">
-        <div class="border-b border-zinc-200">
-            <nav class="flex -mb-px">
-                <button 
-                    wire:click="switchTab('active')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'active' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span>Activas</span>
-                    @if($stats['active'] > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'active' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
-                            {{ $stats['active'] }}
-                        </span>
-                    @endif
-                </button>
-                
-                <button 
-                    wire:click="switchTab('inactive')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'inactive' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span>Inactivas</span>
-                    @if($stats['inactive'] > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'inactive' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
-                            {{ $stats['inactive'] }}
-                        </span>
-                    @endif
-                </button>
+    {{-- Tabs --}}
+    <x-agro.tabs
+        :tabs="[
+            'active'   => ['label' => 'Activas',   'count' => $stats['active']],
+            'inactive' => ['label' => 'Inactivas', 'count' => $stats['inactive']],
+        ]"
+        :active="$currentTab"
+        wireMethod="switchTab"
+    />
 
-                <button 
-                    wire:click="switchTab('statistics')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'statistics' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
-                    <span>Estad韘ticas</span>
-                </button>
-            </nav>
+    {{-- Toolbar --}}
+    @php
+        $filterCount = (int)(!empty($selectedCampaign)) + (int)(!empty($filterStatus));
+    @endphp
+
+    <div class="flex items-center gap-3">
+
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar por parcela, variedad, notas..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
         </div>
 
-        <div class="p-6">
-            {{-- ACTIVE/INACTIVE TABS --}}
-            @if($currentTab === 'active' || $currentTab === 'inactive')
-            <!-- Filtros -->
-            <x-agro.filter-section title="Filtros de B鷖queda" color="green">
-                <x-agro.filter-input 
-                    wire:model.live.debounce.300ms="search" 
-                    placeholder="Buscar por parcela, variedad, notas..."
-                />
-                <x-agro.filter-select wire:model.live="selectedCampaign">
-                    <option value="">Todas las campa馻s</option>
+        <button
+            x-on:click="$dispatch('open-modal', 'yield-filters')"
+            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+        >
+            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+            Filtros
+            @if($filterCount > 0)
+                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                    {{ $filterCount }}
+                </span>
+            @endif
+        </button>
+
+        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
+        <flux:button href="{{ route('viticulturist.digital-notebook.estimated-yields.create') }}" variant="primary" icon="plus">
+            Nueva Estimaci贸n
+        </flux:button>
+
+    </div>
+
+    {{-- Chips de filtros activos --}}
+    @if($search || $selectedCampaign || $filterStatus)
+        <div class="flex flex-wrap items-center gap-2">
+            @if($search)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="magnifying-glass" class="size-3" />
+                    "{{ $search }}"
+                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            @if($filterStatus)
+                @php $statusLabels = ['draft' => 'Borrador', 'confirmed' => 'Confirmada']; @endphp
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    {{ $statusLabels[$filterStatus] ?? $filterStatus }}
+                    <button wire:click="$set('filterStatus', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
+                Limpiar todo
+            </button>
+        </div>
+    @endif
+
+    {{-- Card grid --}}
+    @if($estimatedYields->count() > 0)
+        @php
+            $statusMap = [
+                'draft'    => ['label' => 'Borrador',   'color' => null],
+                'confirmed'=> ['label' => 'Confirmada', 'color' => 'green'],
+                'archived' => ['label' => 'Archivada',  'color' => 'blue'],
+            ];
+            $btnBase   = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+            $btnDanger = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-orange-500 hover:bg-orange-50 transition-colors';
+            $btnGreen  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors';
+        @endphp
+
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="search, selectedCampaign, filterStatus, clearFilters, switchTab"
+        >
+            @foreach($estimatedYields as $i => $yield)
+                @php
+                    $statusInfo = $statusMap[$yield->status] ?? ['label' => ucfirst($yield->status), 'color' => null];
+                @endphp
+
+                <x-agro.card
+                    wire:key="yield-{{ $yield->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-agro-50 rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
+                                    {{ $yield->plotPlanting->plot->name ?? 'Sin parcela' }}
+                                </p>
+                                @if($yield->plotPlanting->grapeVariety)
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">
+                                        {{ $yield->plotPlanting->grapeVariety->name }}
+                                    </p>
+                                @endif
+                            </div>
+                            <flux:badge :color="$statusInfo['color']" size="sm" class="shrink-0">
+                                {{ $statusInfo['label'] }}
+                            </flux:badge>
+                        </div>
+                    </x-slot:header>
+
+                    {{-- Campa帽a + fecha --}}
+                    <div class="flex items-center gap-2 mb-3">
+                        <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
+                        <span class="text-xs text-zinc-600">
+                            {{ $yield->campaign->name ?? 'Sin campa帽a' }} 路 {{ $yield->estimation_date->format('d/m/Y') }}
+                        </span>
+                    </div>
+
+                    {{-- Rendimientos --}}
+                    <div class="bg-zinc-50 rounded-xl p-2.5 mb-3 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-zinc-500">Estimado</span>
+                            <span class="text-xs font-bold text-zinc-900">
+                                {{ number_format($yield->estimated_total_yield, 0) }} kg
+                                <span class="font-normal text-zinc-400">({{ number_format($yield->estimated_yield_per_hectare, 0) }} kg/ha)</span>
+                            </span>
+                        </div>
+                        @if($yield->hasActualYield())
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-zinc-500">Real</span>
+                                <span class="text-xs font-bold text-green-700">
+                                    {{ number_format($yield->actual_total_yield, 0) }} kg
+                                    <span class="font-normal text-zinc-400">({{ number_format($yield->actual_yield_per_hectare, 0) }} kg/ha)</span>
+                                </span>
+                            </div>
+                            @if($yield->variance_percentage !== null)
+                                <div class="flex items-center justify-between border-t border-zinc-200 pt-1.5">
+                                    <span class="text-xs text-zinc-500">Diferencia</span>
+                                    <span class="text-xs font-bold {{ $yield->variance_percentage >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                        {{ $yield->variance_percentage >= 0 ? '+' : '' }}{{ number_format($yield->variance_percentage, 1) }}%
+                                    </span>
+                                </div>
+                            @endif
+                        @else
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-zinc-500">Real</span>
+                                <span class="text-xs text-zinc-400 italic">Sin datos reales</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end gap-1">
+                            <a href="{{ route('viticulturist.digital-notebook.estimated-yields.edit', $yield->id) }}" class="{{ $btnBase }}" title="Editar">
+                                <flux:icon icon="pencil-square" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="toggleActive({{ $yield->id }})"
+                                class="{{ $yield->active ? $btnDanger : $btnGreen }}"
+                                title="{{ $yield->active ? 'Desactivar' : 'Activar' }}"
+                            >
+                                <flux:icon icon="{{ $yield->active ? 'x-circle' : 'check-circle' }}" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($estimatedYields->hasPages())
+            <div class="flex justify-center">{{ $estimatedYields->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="chart-bar"
+            message="No hay estimaciones registradas"
+            :description="($search || $selectedCampaign || $filterStatus) ? 'No se encontraron estimaciones con los filtros seleccionados.' : 'Comienza creando tu primera estimaci贸n de rendimiento.'"
+        >
+            @if($search || $selectedCampaign || $filterStatus)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="yield-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'yield-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campa帽a</label>
+                <select wire:model.live="selectedCampaign"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todas las campa帽as</option>
                     @foreach($campaigns as $campaign)
-                        <option value="{{ $campaign->id }}">Campa馻 {{ $campaign->year }}</option>
+                        <option value="{{ $campaign->id }}">{{ $campaign->name }} ({{ $campaign->year }})</option>
                     @endforeach
-                </x-agro.filter-select>
-                <x-agro.filter-select wire:model.live="filterStatus">
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
+                <select wire:model.live="filterStatus"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
                     <option value="">Todos los estados</option>
                     <option value="draft">Borrador</option>
                     <option value="confirmed">Confirmada</option>
-                </x-agro.filter-select>
-                <x-slot:actions>
-                    @if($search || $selectedCampaign || $filterStatus)
-                        <flux:button wire:click="$set('search', ''); $set('selectedCampaign', ''); $set('filterStatus', '')" variant="ghost" size="sm">
-                            Limpiar Filtros
-                        </flux:button>
-                    @endif
-                </x-slot:actions>
-            </x-agro.filter-section>
-
-    <!-- Tabla de Rendimientos Estimados -->
-    @php
-        $headers = [
-            ['label' => 'Plantaci髇', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>'],
-            ['label' => 'Campa馻', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
-            ['label' => 'Rendimiento Estimado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>'],
-            ['label' => 'Rendimiento Real', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>'],
-            ['label' => 'Diferencia', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>'],
-            ['label' => 'Estado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
-            'Acciones',
-        ];
-    @endphp
-
-    <x-agro.data-table 
-        :headers="$headers" 
-        empty-message="No hay rendimientos estimados registrados" 
-        empty-description="{{ ($search || $selectedCampaign || $filterStatus) ? 'No se encontraron estimaciones con los filtros seleccionados' : 'Comienza creando tu primera estimaci髇 de rendimiento' }}"
-        color="green"
-    >
-        @if($estimatedYields->count() > 0)
-            @foreach($estimatedYields as $yield)
-                <x-agro.table-row wire:key="yield-{{ $yield->id }}">
-                    <x-agro.table-cell>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-agro-400 to-agro-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-sm font-bold text-zinc-900">
-                                    {{ $yield->plotPlanting->plot->name ?? 'Sin parcela' }}
-                                </div>
-                                <div class="text-xs text-zinc-500 mt-1">
-                                    {{ $yield->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}
-                                </div>
-                            </div>
-                        </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <div class="text-sm font-medium text-zinc-900">
-                            {{ $yield->campaign->name ?? 'Sin campa馻' }}
-                        </div>
-                        <div class="text-xs text-zinc-500 mt-1">
-                            {{ $yield->estimation_date->format('d/m/Y') }}
-                        </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <div>
-                            <div class="text-sm font-bold text-zinc-900">
-                                {{ number_format($yield->estimated_total_yield, 2) }} kg
-                            </div>
-                            <div class="text-xs text-zinc-500 mt-1">
-                                {{ number_format($yield->estimated_yield_per_hectare, 2) }} kg/ha
-                            </div>
-                        </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($yield->hasActualYield())
-                            <div>
-                                <div class="text-sm font-bold text-green-700">
-                                    {{ number_format($yield->actual_total_yield, 2) }} kg
-                                </div>
-                                <div class="text-xs text-zinc-500 mt-1">
-                                    {{ number_format($yield->actual_yield_per_hectare, 2) }} kg/ha
-                                </div>
-                            </div>
-                        @else
-                            <span class="text-sm text-zinc-400">Sin datos reales</span>
-                        @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($yield->hasActualYield() && $yield->variance_percentage !== null)
-                            <div class="text-sm font-bold {{ $yield->variance_percentage > 0 ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $yield->variance_percentage > 0 ? '+' : '' }}{{ number_format($yield->variance_percentage, 2) }}%
-                            </div>
-                            <div class="text-xs text-zinc-500 mt-1">
-                                {{ $yield->variance_percentage > 0 ? 'Mayor' : 'Menor' }} al estimado
-                            </div>
-                        @else
-                            <span class="text-sm text-zinc-400">-</span>
-                        @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @php
-                            $statusColors = [
-                                'draft' => 'bg-zinc-100 text-zinc-800',
-                                'confirmed' => 'bg-green-100 text-green-800',
-                                'archived' => 'bg-blue-100 text-blue-800',
-                            ];
-                            $statusLabels = [
-                                'draft' => 'Borrador',
-                                'confirmed' => 'Confirmada',
-                                'archived' => 'Archivada',
-                            ];
-                            $color = $statusColors[$yield->status] ?? 'bg-zinc-100 text-zinc-800';
-                            $label = $statusLabels[$yield->status] ?? ucfirst($yield->status);
-                        @endphp
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $color }}">
-                            {{ $label }}
-                        </span>
-                    </x-agro.table-cell>
-                    <x-agro.table-actions>
-                        <a 
-                            href="{{ route('viticulturist.digital-notebook.estimated-yields.edit', $yield->id) }}"
-                            class="p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition"
-                            title="Editar estimaci髇"
-                        >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                        </a>
-                        <button 
-                            wire:click="toggleActive({{ $yield->id }})"
-                            wire:loading.attr="disabled"
-                            wire:target="toggleActive({{ $yield->id }})"
-                            class="p-2 rounded-lg transition-all duration-200 group/btn {{ $yield->active ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50' }} disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="{{ $yield->active ? 'Desactivar estimaci髇' : 'Activar estimaci髇' }}"
-                        >
-                            <span wire:loading.remove wire:target="toggleActive({{ $yield->id }})">
-                                @if($yield->active)
-                                    <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                @else
-                                    <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                @endif
-                            </span>
-                            <span wire:loading wire:target="toggleActive({{ $yield->id }})" class="inline-block">
-                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </span>
-                        </button>
-                    </x-agro.table-actions>
-                </x-agro.table-row>
-            @endforeach
-        @endif
-        <x-slot name="pagination">
-            {{ $estimatedYields->links() }}
-        </x-slot>
-    </x-agro.data-table>
-            @endif
-
-            {{-- STATISTICS TAB --}}
-            @if($currentTab === 'statistics')
-                <div class="space-y-6">
-                    {{-- Filtro de A駉 --}}
-                    <div class="flex justify-end">
-                        <flux:select wire:model.live="yearFilter" class="min-w-[120px]">
-                            @for($year = now()->year; $year >= now()->year - 5; $year--)
-                                <option value="{{ $year }}">{{ $year }}</option>
-                            @endfor
-                        </flux:select>
-                    </div>
-
-                    {{-- KPIs --}}
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-                            <p class="text-sm font-medium text-blue-700">Total Estimaciones</p>
-                            <p class="text-3xl font-bold text-blue-900 mt-1">{{ $stats['total'] }}</p>
-                            <p class="text-xs text-blue-600 mt-2">Todas las estimaciones</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-                            <p class="text-sm font-medium text-green-700">Confirmadas</p>
-                            <p class="text-3xl font-bold text-green-900 mt-1">{{ $stats['confirmed'] }}</p>
-                            <p class="text-xs text-green-600 mt-2">Estado confirmado</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-                            <p class="text-sm font-medium text-purple-700">Con Rendimiento Real</p>
-                            <p class="text-3xl font-bold text-purple-900 mt-1">{{ $stats['with_actual'] }}</p>
-                            <p class="text-xs text-purple-600 mt-2">Con datos reales</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border border-orange-200">
-                            <p class="text-sm font-medium text-orange-700">Diferencia Promedio</p>
-                            <p class="text-3xl font-bold text-orange-900 mt-1">{{ number_format($advancedStats['averageVariance'] ?? 0, 1) }}%</p>
-                            <p class="text-xs text-orange-600 mt-2">Estimado vs Real</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {{-- Distribuci髇 por Estado --}}
-                        <div class="bg-white rounded-xl p-6 border border-zinc-200">
-                            <h3 class="text-lg font-bold text-zinc-900 mb-4">?? Distribuci髇 por Estado</h3>
-                            <div class="space-y-4">
-                                @php
-                                    $total = ($advancedStats['statusStats'] ?? collect())->sum();
-                                @endphp
-                                @forelse(($advancedStats['statusStats'] ?? []) as $status => $count)
-                                    @php
-                                        $statusLabels = [
-                                            'draft' => 'Borrador',
-                                            'confirmed' => 'Confirmada',
-                                            'archived' => 'Archivada',
-                                        ];
-                                        $statusColors = [
-                                            'draft' => 'bg-zinc-500',
-                                            'confirmed' => 'bg-green-500',
-                                            'archived' => 'bg-blue-500',
-                                        ];
-                                        $percentage = $total > 0 ? ($count / $total) * 100 : 0;
-                                    @endphp
-                                    <div>
-                                        <div class="flex justify-between mb-2">
-                                            <span class="text-sm font-medium text-zinc-700">{{ $statusLabels[$status] ?? ucfirst($status) }}</span>
-                                            <span class="text-sm font-bold text-zinc-900">{{ $count }} ({{ number_format($percentage, 1) }}%)</span>
-                                        </div>
-                                        <div class="w-full bg-zinc-200 rounded-full h-3">
-                                            <div class="{{ $statusColors[$status] ?? 'bg-zinc-500' }} h-3 rounded-full" style="width: {{ $percentage }}%"></div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="text-zinc-500 text-center py-4">No hay datos de estados</p>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        {{-- Distribuci髇 por M閠odo --}}
-                        <div class="bg-white rounded-xl p-6 border border-zinc-200">
-                            <h3 class="text-lg font-bold text-zinc-900 mb-4">?? Distribuci髇 por M閠odo</h3>
-                            <div class="space-y-4">
-                                @php
-                                    $methodTotal = ($advancedStats['methodStats'] ?? collect())->sum();
-                                @endphp
-                                @forelse(($advancedStats['methodStats'] ?? []) as $method => $count)
-                                    @php
-                                        $methodLabels = [
-                                            'visual' => 'Visual',
-                                            'sampling' => 'Muestreo',
-                                            'historical' => 'Hist髍ico',
-                                            'ai' => 'IA',
-                                        ];
-                                        $percentage = $methodTotal > 0 ? ($count / $methodTotal) * 100 : 0;
-                                    @endphp
-                                    <div>
-                                        <div class="flex justify-between mb-2">
-                                            <span class="text-sm font-medium text-zinc-700">{{ $methodLabels[$method] ?? ucfirst($method) }}</span>
-                                            <span class="text-sm font-bold text-zinc-900">{{ $count }} ({{ number_format($percentage, 1) }}%)</span>
-                                        </div>
-                                        <div class="w-full bg-zinc-200 rounded-full h-3">
-                                            <div class="bg-agro-500 h-3 rounded-full" style="width: {{ $percentage }}%"></div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="text-zinc-500 text-center py-4">No hay datos de m閠odos</p>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Totales Estimado vs Real --}}
-                    <div class="bg-white rounded-xl p-6 border border-zinc-200">
-                        <h3 class="text-lg font-bold text-zinc-900 mb-4">?? Totales Estimado vs Real ({{ $yearFilter }})</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <p class="text-sm text-zinc-600 mb-2">Total Estimado</p>
-                                <p class="text-3xl font-bold text-blue-600">{{ number_format($advancedStats['totalEstimated'] ?? 0, 0) }} kg</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-zinc-600 mb-2">Total Real</p>
-                                <p class="text-3xl font-bold text-green-600">{{ number_format($advancedStats['totalActual'] ?? 0, 0) }} kg</p>
-                            </div>
-                        </div>
-                        @if(($advancedStats['totalEstimated'] ?? 0) > 0)
-                            @php
-                                $accuracy = abs(($advancedStats['totalActual'] ?? 0) - ($advancedStats['totalEstimated'] ?? 0)) / ($advancedStats['totalEstimated'] ?? 1) * 100;
-                            @endphp
-                            <div class="mt-4">
-                                <p class="text-sm text-zinc-600 mb-2">Precisi髇</p>
-                                <div class="w-full bg-zinc-200 rounded-full h-3">
-                                    <div class="bg-purple-500 h-3 rounded-full" style="width: {{ min(100, 100 - $accuracy) }}%"></div>
-                                </div>
-                                <p class="text-xs text-zinc-500 mt-1">Diferencia: {{ number_format($accuracy, 2) }}%</p>
-                            </div>
-                        @endif
-                    </div>
-
-                    {{-- Top 10 Estimaciones con Mayor Diferencia --}}
-                    <div class="bg-white rounded-xl p-6 border border-zinc-200">
-                        <h3 class="text-lg font-bold text-zinc-900 mb-4">?? Top 10 Estimaciones con Mayor Diferencia ({{ $yearFilter }})</h3>
-                        <div class="space-y-3">
-                            @forelse(($advancedStats['topVariances'] ?? []) as $index => $yield)
-                                <div class="flex items-center justify-between p-3 bg-zinc-50 rounded-lg hover:bg-zinc-100 transition-colors">
-                                    <div class="flex items-center gap-3">
-                                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-agro-500 text-white flex items-center justify-center font-bold text-sm">
-                                            {{ $index + 1 }}
-                                        </span>
-                                        <div>
-                                            <p class="font-semibold text-zinc-900">{{ $yield['plot_name'] }}</p>
-                                            <p class="text-xs text-zinc-500">{{ $yield['variety'] }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="font-bold {{ $yield['variance'] > 0 ? 'text-green-600' : 'text-red-600' }}">
-                                            {{ $yield['variance'] > 0 ? '+' : '' }}{{ number_format($yield['variance'], 2) }}%
-                                        </p>
-                                        <p class="text-xs text-zinc-500">
-                                            Est: {{ number_format($yield['estimated'], 0) }} kg
-                                        </p>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-zinc-500 text-center py-4">No hay datos de diferencias</p>
-                            @endforelse
-                        </div>
-                    </div>
-
-                    {{-- Estimaciones por Mes --}}
-                    <div class="bg-white rounded-xl p-6 border border-zinc-200">
-                        <h3 class="text-lg font-bold text-zinc-900 mb-4">?? Estimaciones por Mes (趌timos 12 meses)</h3>
-                        <div class="h-64 flex items-end justify-between gap-2">
-                            @foreach(($advancedStats['yieldsByMonth'] ?? []) as $month)
-                                <div class="flex-1 flex flex-col items-center">
-                                    <div class="w-full bg-agro-500 rounded-t-lg transition-all hover:bg-agro-700" 
-                                        style="height: {{ $month['count'] > 0 ? ($month['count'] / max(collect($advancedStats['yieldsByMonth'] ?? [])->pluck('count')->max(), 1)) * 100 : 5 }}%"
-                                        title="{{ $month['count'] }} estimaciones"></div>
-                                    <span class="text-xs text-zinc-600 mt-2">{{ $month['month'] }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    {{-- Distribuci髇 por Campa馻 --}}
-                    <div class="bg-white rounded-xl p-6 border border-zinc-200">
-                        <h3 class="text-lg font-bold text-zinc-900 mb-4">?? Distribuci髇 por Campa馻 ({{ $yearFilter }})</h3>
-                        <div class="space-y-4">
-                            @forelse(($advancedStats['campaignStats'] ?? []) as $campaign)
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-zinc-700">{{ $campaign['name'] }}</span>
-                                        <span class="text-sm font-bold text-zinc-900">{{ $campaign['count'] }} estimaciones</span>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4 text-xs text-zinc-600">
-                                        <div>
-                                            <span>Estimado: {{ number_format($campaign['total_estimated'], 0) }} kg</span>
-                                        </div>
-                                        <div>
-                                            <span>Real: {{ number_format($campaign['total_actual'], 0) }} kg</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-zinc-500 text-center py-4">No hay datos de campa馻s</p>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-            @endif
+                </select>
+            </div>
         </div>
-    </div>
-</div>
 
+        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
+            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'yield-filters')"
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
+                Limpiar filtros
+            </button>
+            <flux:button x-on:click="$dispatch('close-modal', 'yield-filters')" variant="primary" size="sm">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
+</div>

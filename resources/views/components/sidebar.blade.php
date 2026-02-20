@@ -82,14 +82,22 @@
 
     {{-- User footer --}}
     <div class="p-3 border-t border-white/10">
-        <div class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors duration-200 cursor-default">
+        <div class="flex items-center gap-2 px-3 py-2">
             <div class="w-7 h-7 rounded-full bg-agro-500 flex items-center justify-center flex-shrink-0">
                 <span class="text-xs font-bold text-white">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
             </div>
-            <div class="sidebar-text min-w-0">
+            <div class="sidebar-text min-w-0 flex-1">
                 <p class="text-xs font-semibold text-white truncate">{{ auth()->user()->name }}</p>
                 <p class="text-[10px] text-white/40 truncate">{{ auth()->user()->email }}</p>
             </div>
+            <form method="POST" action="{{ route('logout') }}" class="sidebar-text shrink-0">
+                @csrf
+                <button type="submit"
+                        title="Cerrar sesión"
+                        class="w-7 h-7 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors duration-200">
+                    <flux:icon icon="arrow-right-start-on-rectangle" class="size-4" />
+                </button>
+            </form>
         </div>
     </div>
 </aside>

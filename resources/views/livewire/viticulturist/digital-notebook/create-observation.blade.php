@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Registrar Observación"
     description="Registra una nueva observación en el cuaderno digital"
     :back-url="route('viticulturist.digital-notebook')"

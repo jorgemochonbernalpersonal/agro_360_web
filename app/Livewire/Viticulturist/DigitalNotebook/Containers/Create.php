@@ -89,7 +89,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Contenedor creado exitosamente.');
-            return redirect()->route('viticulturist.digital-notebook.containers.index');
+            return redirect()->route('viticulturist.containers.index');
         } catch (\Exception $e) {
             \Log::error('Error al crear contenedor', [
                 'error' => $e->getMessage(),
@@ -101,7 +101,7 @@ class Create extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.digital-notebook.containers.create')
+        return view('livewire.viticulturist.containers.create')
             ->layout('layouts.app');
     }
 }

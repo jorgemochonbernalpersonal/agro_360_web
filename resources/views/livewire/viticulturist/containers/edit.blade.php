@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Contenedor"
     description="Modifica los datos del contenedor"
-    :back-url="route('viticulturist.digital-notebook.containers.index')"
+    :back-url="route('viticulturist.containers.index')"
 >
     @if($container->used_capacity > 0)
         <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-lg mb-6">
@@ -152,7 +152,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.containers.show', $container->id)"
+            :cancel-url="route('viticulturist.containers.show', $container->id)"
             submit-label="Guardar Cambios"
         />
     </form>

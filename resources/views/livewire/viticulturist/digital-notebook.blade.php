@@ -1,394 +1,421 @@
-﻿<div class="space-y-6 animate-fade-in">
-    <!-- Mensajes Flash -->
-    @if(session('message'))
-        <flux:callout variant="success" icon="check-circle">
-            {{ session('message') }}
-        </flux:callout>
-    @endif
+<div class="space-y-6 animate-fade-in">
 
-    @if(session('error'))
-        <flux:callout variant="danger" icon="exclamation-circle">
-            {{ session('error') }}
-        </flux:callout>
-    @endif
-
-    <!-- Header -->
     <x-agro.page-header
         title="Cuaderno Digital"
-        :description="$currentCampaign ? 'Campaña ' . $currentCampaign->name . ' - ' . $currentCampaign->year : 'Registro completo de todas tus actividades agrícolas'"
-    >
-        <x-slot:actions>
-            @if($currentCampaign)
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-semibold text-zinc-700">Campaña:</span>
-                    <flux:select wire:model.live="selectedCampaign">
-                        @foreach($campaigns as $campaign)
-                            <option value="{{ $campaign->id }}">
-                                {{ $campaign->name }} ({{ $campaign->year }})
-                                @if($campaign->active) [Activa] @endif
-                            </option>
-                        @endforeach
-                    </flux:select>
-                </div>
-            @endif
-        </x-slot:actions>
-    </x-agro.page-header>
+        :description="$currentCampaign ? 'Campaña ' . $currentCampaign->name . ' · ' . $currentCampaign->year : 'Registro completo de todas tus actividades agrícolas'"
+    />
 
     @if($currentCampaign)
-        <!-- Estadísticas de la Campaña -->
+        {{-- Stats rápidas --}}
         <x-agro.card>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="text-center">
                     <div class="text-2xl font-bold text-agro-700">{{ $stats['total'] }}</div>
-                    <div class="text-sm text-zinc-600">Total Actividades</div>
+                    <div class="text-sm text-zinc-500">Total</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-red-600">{{ $stats['phytosanitary'] }}</div>
-                    <div class="text-sm text-zinc-600">Tratamientos</div>
+                    <div class="text-sm text-zinc-500">Tratamientos</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-blue-600">{{ $stats['fertilization'] }}</div>
-                    <div class="text-sm text-zinc-600">Fertilizaciones</div>
+                    <div class="text-sm text-zinc-500">Fertilizaciones</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-cyan-600">{{ $stats['irrigation'] }}</div>
-                    <div class="text-sm text-zinc-600">Riegos</div>
+                    <div class="text-sm text-zinc-500">Riegos</div>
                 </div>
             </div>
 
-            <!-- Botones de acción rápida -->
             @can('create', \App\Models\AgriculturalActivity::class)
-                <div class="mt-6 pt-6 border-t border-zinc-200" data-cy="quick-actions">
-                    <div class="flex flex-wrap gap-3 justify-center">
-                        <flux:button href="{{ route('viticulturist.digital-notebook.treatment.create') }}" data-cy="create-treatment-button" variant="danger" size="sm">
-                            + Tratamiento
-                        </flux:button>
-                        <flux:button href="{{ route('viticulturist.digital-notebook.fertilization.create') }}" data-cy="create-fertilization-button" variant="primary" size="sm" class="!bg-blue-600 hover:!bg-blue-700">
-                            + Fertilización
-                        </flux:button>
-                        <flux:button href="{{ route('viticulturist.digital-notebook.irrigation.create') }}" data-cy="create-irrigation-button" variant="primary" size="sm" class="!bg-cyan-600 hover:!bg-cyan-700">
-                            + Riego
-                        </flux:button>
-                        <flux:button href="{{ route('viticulturist.digital-notebook.cultural.create') }}" data-cy="create-cultural-button" variant="primary" size="sm" class="!bg-purple-600 hover:!bg-purple-700">
-                            + Labor
-                        </flux:button>
-                        <flux:button href="{{ route('viticulturist.digital-notebook.observation.create') }}" data-cy="create-observation-button" variant="primary" size="sm" class="!bg-amber-600 hover:!bg-amber-700">
-                            + Observación
-                        </flux:button>
-                        <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" data-cy="create-harvest-button" variant="primary" size="sm" class="!bg-purple-600 hover:!bg-purple-700">
-                            Cosecha
-                        </flux:button>
+                <div class="mt-5 pt-5 border-t border-zinc-100">
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <flux:button href="{{ route('viticulturist.digital-notebook.treatment.create') }}" variant="danger" size="sm">+ Tratamiento</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.fertilization.create') }}" variant="primary" size="sm" class="!bg-blue-600 hover:!bg-blue-700">+ Fertilización</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.irrigation.create') }}" variant="primary" size="sm" class="!bg-cyan-600 hover:!bg-cyan-700">+ Riego</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.cultural.create') }}" variant="primary" size="sm" class="!bg-purple-600 hover:!bg-purple-700">+ Labor</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.observation.create') }}" variant="primary" size="sm" class="!bg-amber-600 hover:!bg-amber-700">+ Observación</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" variant="primary" size="sm" class="!bg-purple-600 hover:!bg-purple-700">Cosecha</flux:button>
                     </div>
                 </div>
             @endcan
         </x-agro.card>
     @endif
 
-    <!-- Filtros -->
-    <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="selectedPlot" data-cy="plot-filter">
-            <option value="">Todas las parcelas</option>
-            @foreach($plots as $plot)
-                <option value="{{ $plot->id }}">{{ $plot->name }}</option>
-            @endforeach
-        </x-agro.filter-select>
-
-        <x-agro.filter-select wire:model.live="activityType" data-cy="activity-type-filter">
-            <option value="">Todas las actividades</option>
-            <option value="phytosanitary">Tratamientos Fitosanitarios</option>
-            <option value="fertilization">Fertilizaciones</option>
-            <option value="irrigation">Riegos</option>
-            <option value="cultural">Labores Culturales</option>
-            <option value="observation">Observaciones</option>
-            <option value="harvest">Cosechas / Vendimias</option>
-        </x-agro.filter-select>
-
-        @if($activityType === 'phytosanitary' && $products->count() > 0)
-            <x-agro.filter-select wire:model.live="productFilter">
-                <option value="">Todos los productos</option>
-                @foreach($products as $product)
-                    <option value="{{ $product->id }}">{{ $product->name }}</option>
-                @endforeach
-            </x-agro.filter-select>
-        @endif
-
-        <x-agro.filter-input
-            wire:model.live="dateFrom"
-            type="date"
-            placeholder="Fecha desde..."
-        />
-
-        <x-agro.filter-input
-            wire:model.live="dateTo"
-            type="date"
-            placeholder="Fecha hasta..."
-        />
-
-        <x-agro.filter-input
-            wire:model.live.debounce.300ms="search"
-            placeholder="Buscar en notas, parcelas, productos..."
-            data-cy="activity-search-input"
-        />
-
-        @if($selectedPlot || $activityType || $search || $dateFrom || $dateTo || $productFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm">
-                Limpiar Filtros
-            </flux:button>
-        @endif
-    </x-agro.filter-bar>
-
-    <!-- Tabla de Actividades -->
+    {{-- Toolbar --}}
     @php
-        $headers = ['Fecha', 'Parcela', 'Tipo', 'Detalle', 'Equipo', 'Notas', 'Acciones'];
+        $filterCount = (int)(!empty($selectedPlot))
+                     + (int)(!empty($activityType))
+                     + (int)(!empty($dateFrom))
+                     + (int)(!empty($dateTo))
+                     + (int)(!empty($productFilter));
     @endphp
 
-    <x-agro.data-table
-        :headers="$headers"
-        empty-message="No hay actividades registradas"
-        empty-description="{{ ($selectedPlot || $activityType || $search || $dateFrom || $dateTo || $productFilter) ? 'No se encontraron actividades con los filtros seleccionados' : 'Comienza registrando tu primera actividad agrícola' }}"
-    >
-        @if($activities->count() > 0)
-            @foreach($activities as $activity)
-                <x-agro.table-row>
-                    <x-agro.table-cell>
-                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-blue-100 text-blue-700 text-sm font-semibold">
-                            <flux:icon icon="calendar-days" class="size-4" />
-                            {{ $activity->activity_date->format('d/m/Y') }}
-                        </span>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <div class="flex items-center gap-2">
-                            <flux:icon icon="map" class="size-4 text-agro-500 flex-shrink-0" />
-                            <div>
-                                <span class="text-sm font-medium text-zinc-900">{{ $activity->plot->name }}</span>
-                                @if($activity->plotPlanting)
-                                    <br><span class="text-xs text-zinc-600">
-                                        {{ $activity->plotPlanting->name }}
-                                        @if($activity->plotPlanting->grapeVariety)
-                                            - {{ $activity->plotPlanting->grapeVariety->name }}
-                                        @endif
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @php
-                            $typeMap = [
-                                'phytosanitary' => ['label' => 'Tratamiento',   'color' => 'red'],
-                                'fertilization' => ['label' => 'Fertilización', 'color' => 'blue'],
-                                'irrigation'    => ['label' => 'Riego',         'color' => 'cyan'],
-                                'cultural'      => ['label' => 'Labor',         'color' => 'yellow'],
-                                'observation'   => ['label' => 'Observación',   'color' => null],
-                                'harvest'       => ['label' => 'Cosecha',       'color' => 'purple'],
-                            ];
-                            $typeInfo = $typeMap[$activity->activity_type] ?? ['label' => ucfirst($activity->activity_type), 'color' => null];
-                        @endphp
-                        <flux:badge :color="$typeInfo['color']" size="sm">{{ $typeInfo['label'] }}</flux:badge>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($activity->phytosanitaryTreatment)
-                            <div class="text-sm">
-                                <span class="font-semibold text-zinc-900">{{ $activity->phytosanitaryTreatment->product->name }}</span>
-                                @if($activity->phytosanitaryTreatment->area_treated)
-                                    <span class="text-zinc-600"> - {{ number_format($activity->phytosanitaryTreatment->area_treated, 3) }} ha</span>
-                                @endif
-                                @if($activity->phytosanitaryTreatment->pest)
-                                    <div class="text-xs text-zinc-500 mt-1">Objetivo: {{ $activity->phytosanitaryTreatment->pest->name }}</div>
-                                @endif
+    <div class="flex items-center gap-3">
 
-                                {{-- Safety Interval Badge --}}
-                                @php
-                                    $product = $activity->phytosanitaryTreatment->product;
-                                    $safetyDays = $product->withdrawal_period_days ?? 0;
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar en notas, parcelas, productos..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
+        </div>
 
-                                    if ($safetyDays > 0) {
-                                        $treatmentDate = \Carbon\Carbon::parse($activity->activity_date);
-                                        $safeDate = $treatmentDate->copy()->addDays($safetyDays);
-                                        $isPassed = \Carbon\Carbon::today() >= $safeDate;
-                                        $daysRemaining = \Carbon\Carbon::today()->diffInDays($safeDate, false);
-                                    }
-                                @endphp
+        <button
+            x-on:click="$dispatch('open-modal', 'notebook-filters')"
+            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+        >
+            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+            Filtros
+            @if($filterCount > 0)
+                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                    {{ $filterCount }}
+                </span>
+            @endif
+        </button>
 
-                                @if($safetyDays > 0)
-                                    <div class="mt-2">
-                                        @if($isPassed)
-                                            <x-agro.status-badge
-                                                :label="'Puede cosechar (desde ' . $safeDate->format('d/m/Y') . ')'"
-                                                type="success"
-                                            />
-                                        @else
-                                            <x-agro.status-badge
-                                                :label="'Esperar ' . abs($daysRemaining) . ' día' . (abs($daysRemaining) != 1 ? 's' : '') . ' (hasta ' . $safeDate->format('d/m/Y') . ')'"
-                                                type="warning"
-                                            />
-                                        @endif
-                                    </div>
-                                @elseif($safetyDays === 0)
-                                    <div class="mt-2">
-                                        <flux:badge size="sm">Sin plazo definido</flux:badge>
-                                    </div>
-                                @endif
-                            </div>
-                        @elseif($activity->fertilization)
-                            <div class="text-sm">
-                                <span class="font-semibold text-zinc-900">{{ $activity->fertilization->fertilizer_name ?: 'Fertilización' }}</span>
-                                @if($activity->fertilization->quantity)
-                                    <span class="text-zinc-600"> - {{ number_format($activity->fertilization->quantity, 2) }} kg</span>
-                                @endif
-                            </div>
-                        @elseif($activity->irrigation)
-                            <div class="text-sm">
-                                <span class="font-semibold text-zinc-900">Riego</span>
-                                @if($activity->irrigation->water_volume)
-                                    <span class="text-zinc-600"> - {{ number_format($activity->irrigation->water_volume, 2) }} L</span>
-                                @endif
-                            </div>
-                        @elseif($activity->culturalWork)
-                            <div class="text-sm">
-                                <span class="font-semibold text-zinc-900">{{ $activity->culturalWork->work_type ?: 'Labor cultural' }}</span>
-                                @if($activity->culturalWork->hours_worked)
-                                    <span class="text-zinc-600"> - {{ number_format($activity->culturalWork->hours_worked, 2) }} h</span>
-                                @endif
-                            </div>
-                        @elseif($activity->observation)
-                            <div class="text-sm">
-                                <span class="font-semibold text-zinc-900">{{ $activity->observation->observation_type ?: 'Observación' }}</span>
-                                @if($activity->observation->severity)
-                                    <span class="text-zinc-600"> - {{ ucfirst($activity->observation->severity) }}</span>
-                                @endif
-                            </div>
-                        @elseif($activity->harvest)
-                            <div class="text-sm">
-                                <span class="font-semibold text-purple-900">Vendimia</span>
-                                @if($activity->harvest->plotPlanting && $activity->harvest->plotPlanting->grapeVariety)
-                                    <span class="text-purple-700"> - {{ $activity->harvest->plotPlanting->grapeVariety->name }}</span>
-                                @endif
-                                <div class="flex gap-3 mt-1">
-                                    <span class="text-xs font-semibold text-zinc-700">{{ number_format($activity->harvest->total_weight, 0) }} kg</span>
-                                    @if($activity->harvest->yield_per_hectare)
-                                        <span class="text-xs text-zinc-600">({{ number_format($activity->harvest->yield_per_hectare, 0) }} kg/ha)</span>
-                                    @endif
-                                    @if($activity->harvest->total_value)
-                                        <span class="text-xs font-semibold text-green-700">{{ number_format($activity->harvest->total_value, 2) }}€</span>
-                                    @endif
-                                </div>
-                            </div>
-                        @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($activity->crew)
-                            <span class="text-sm text-zinc-700">
-                                Cuadrilla: {{ $activity->crew->name }}
-                            </span>
-                        @elseif($activity->crewMember && $activity->crewMember->viticulturist)
-                            <span class="text-sm text-zinc-700">
-                                Trabajador: {{ $activity->crewMember->viticulturist->name }}
-                            </span>
-                        @else
-                            <span class="text-sm text-zinc-400">-</span>
-                        @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($activity->notes)
-                            <span class="text-sm text-zinc-600">{{ Str::limit($activity->notes, 50) }}</span>
-                        @else
-                            <span class="text-sm text-zinc-400">-</span>
-                        @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell align="right">
-                        <div class="flex items-center gap-1 justify-end">
-                            {{-- Botón de Historial de Auditoría --}}
-                            <flux:button
-                                wire:click="openAuditHistory({{ $activity->id }})"
-                                variant="ghost"
-                                size="sm"
-                                icon="clock"
-                                tooltip="Ver historial de cambios"
-                            />
+        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-                            {{-- Badge de actividad bloqueada --}}
-                            @if($activity->is_locked)
-                                <x-activity-locked-badge :activity="$activity" />
-                            @endif
-
-                            @if($activity->harvest)
-                                {{-- Para cosechas, mostrar botones de ver y editar con iconos --}}
-                                <x-agro.action-button variant="view" href="{{ route('viticulturist.digital-notebook.harvest.show', $activity->harvest->id) }}" />
-                                @can('update', $activity)
-                                    @if(!$activity->is_locked)
-                                        <x-agro.action-button variant="edit" href="{{ route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id) }}" />
-                                    @endif
-                                @endcan
-                            @else
-                                {{-- Edit buttons for all activity types (same pattern as harvest) --}}
-                                @can('update', $activity)
-                                    @if(!$activity->is_locked)
-                                        @if($activity->activity_type === 'phytosanitary')
-                                            <x-agro.action-button variant="edit" href="{{ route('viticulturist.digital-notebook.treatment.edit', $activity->id) }}" />
-                                        @elseif($activity->activity_type === 'fertilization')
-                                            <x-agro.action-button variant="edit" href="{{ route('viticulturist.digital-notebook.fertilization.edit', $activity->id) }}" />
-                                        @elseif($activity->activity_type === 'irrigation')
-                                            <x-agro.action-button variant="edit" href="{{ route('viticulturist.digital-notebook.irrigation.edit', $activity->id) }}" />
-                                        @elseif($activity->activity_type === 'cultural')
-                                            <x-agro.action-button variant="edit" href="{{ route('viticulturist.digital-notebook.cultural.edit', $activity->id) }}" />
-                                        @elseif($activity->activity_type === 'observation')
-                                            <x-agro.action-button variant="edit" href="{{ route('viticulturist.digital-notebook.observation.edit', $activity->id) }}" />
-                                        @endif
-                                    @endif
-                                @endcan
-                                @can('delete', $activity)
-                                    @if(!$activity->is_locked)
-                                        <x-agro.action-button
-                                            variant="delete"
-                                            wireClick="deleteActivity({{ $activity->id }})"
-                                            wireConfirm="¿Estás seguro de eliminar esta actividad?"
-                                        />
-                                    @endif
-                                @endcan
-                            @endif
-                        </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
-            @endforeach
-            <x-slot name="pagination">
-                {{ $activities->links() }}
-            </x-slot>
+        {{-- Selector de campaña --}}
+        @if($campaigns->count() > 0)
+            <select
+                wire:model.live="selectedCampaign"
+                class="px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            >
+                @foreach($campaigns as $campaign)
+                    <option value="{{ $campaign->id }}">
+                        {{ $campaign->name }} ({{ $campaign->year }}){{ $campaign->active ? ' ★' : '' }}
+                    </option>
+                @endforeach
+            </select>
         @endif
-    </x-agro.data-table>
 
-    {{-- Modal de Historial de Auditoría --}}
+    </div>
+
+    {{-- Chips de filtros activos --}}
+    @if($search || $selectedPlot || $activityType || $dateFrom || $dateTo || $productFilter)
+        <div class="flex flex-wrap items-center gap-2">
+            @if($search)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="magnifying-glass" class="size-3" />
+                    "{{ $search }}"
+                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            @if($activityType)
+                @php $typeLabels = ['phytosanitary' => 'Tratamiento', 'fertilization' => 'Fertilización', 'irrigation' => 'Riego', 'cultural' => 'Labor', 'observation' => 'Observación', 'harvest' => 'Cosecha']; @endphp
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    {{ $typeLabels[$activityType] ?? $activityType }}
+                    <button wire:click="$set('activityType', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            @if($dateFrom || $dateTo)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="calendar-days" class="size-3" />
+                    {{ $dateFrom ?? '…' }} — {{ $dateTo ?? '…' }}
+                    <button wire:click="$set('dateFrom', ''); $set('dateTo', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
+                Limpiar todo
+            </button>
+        </div>
+    @endif
+
+    {{-- Card grid --}}
+    @if($activities->count() > 0)
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="search, selectedPlot, activityType, dateFrom, dateTo, productFilter, clearFilters, selectedCampaign"
+        >
+            @foreach($activities as $i => $activity)
+                @php
+                    $typeConfig = [
+                        'phytosanitary' => ['label' => 'Tratamiento',   'color' => 'red',    'bg' => 'bg-red-50',    'icon_color' => 'text-red-600',    'badge' => 'red',    'icon' => 'shield-exclamation'],
+                        'fertilization' => ['label' => 'Fertilización', 'color' => 'blue',   'bg' => 'bg-blue-50',   'icon_color' => 'text-blue-600',   'badge' => 'blue',   'icon' => 'beaker'],
+                        'irrigation'    => ['label' => 'Riego',         'color' => 'cyan',   'bg' => 'bg-cyan-50',   'icon_color' => 'text-cyan-600',   'badge' => 'cyan',   'icon' => 'cloud'],
+                        'cultural'      => ['label' => 'Labor',         'color' => 'yellow', 'bg' => 'bg-amber-50',  'icon_color' => 'text-amber-600',  'badge' => 'yellow', 'icon' => 'wrench-screwdriver'],
+                        'observation'   => ['label' => 'Observación',   'color' => null,     'bg' => 'bg-zinc-100',  'icon_color' => 'text-zinc-500',   'badge' => null,     'icon' => 'eye'],
+                        'harvest'       => ['label' => 'Cosecha',       'color' => 'purple', 'bg' => 'bg-purple-50', 'icon_color' => 'text-purple-600', 'badge' => 'purple', 'icon' => 'scissors'],
+                    ];
+                    $tc = $typeConfig[$activity->activity_type] ?? ['label' => ucfirst($activity->activity_type), 'color' => null, 'bg' => 'bg-zinc-100', 'icon_color' => 'text-zinc-500', 'badge' => null, 'icon' => 'document'];
+
+                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                @endphp
+
+                <x-agro.card
+                    wire:key="activity-{{ $activity->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 {{ $tc['bg'] }} rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="{{ $tc['icon'] }}" class="size-4 {{ $tc['icon_color'] }}" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $activity->plot->name }}</p>
+                                @if($activity->plotPlanting?->grapeVariety)
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $activity->plotPlanting->grapeVariety->name }}</p>
+                                @endif
+                            </div>
+                            <flux:badge :color="$tc['badge']" size="sm" class="shrink-0">{{ $tc['label'] }}</flux:badge>
+                        </div>
+                    </x-slot:header>
+
+                    {{-- Fecha --}}
+                    <div class="flex items-center gap-2 mb-3">
+                        <flux:icon icon="calendar-days" class="size-3.5 text-zinc-400 shrink-0" />
+                        <span class="text-xs font-semibold text-zinc-700">{{ $activity->activity_date->format('d/m/Y') }}</span>
+                        @if($activity->is_locked)
+                            <flux:badge color="yellow" size="sm" class="ml-auto">Bloqueada</flux:badge>
+                        @endif
+                    </div>
+
+                    {{-- Detalle según tipo --}}
+                    <div class="bg-zinc-50 rounded-xl p-2.5 mb-3 space-y-1">
+                        @if($activity->phytosanitaryTreatment)
+                            <p class="text-xs font-semibold text-zinc-700 truncate">{{ $activity->phytosanitaryTreatment->product->name }}</p>
+                            @if($activity->phytosanitaryTreatment->area_treated)
+                                <p class="text-xs text-zinc-500">Área: {{ number_format($activity->phytosanitaryTreatment->area_treated, 2) }} ha</p>
+                            @endif
+                            @if($activity->phytosanitaryTreatment->pest)
+                                <p class="text-xs text-zinc-500">Objetivo: {{ $activity->phytosanitaryTreatment->pest->name }}</p>
+                            @endif
+                            @php
+                                $safetyDays = $activity->phytosanitaryTreatment->product->withdrawal_period_days ?? 0;
+                                if ($safetyDays > 0) {
+                                    $safeDate = \Carbon\Carbon::parse($activity->activity_date)->addDays($safetyDays);
+                                    $isPassed = \Carbon\Carbon::today() >= $safeDate;
+                                    $daysLeft = \Carbon\Carbon::today()->diffInDays($safeDate, false);
+                                }
+                            @endphp
+                            @if($safetyDays > 0)
+                                <p class="text-xs {{ $isPassed ? 'text-green-600' : 'text-red-600' }} font-medium">
+                                    {{ $isPassed ? '✓ Puede cosechar' : 'Esperar ' . abs($daysLeft) . 'd (hasta ' . $safeDate->format('d/m') . ')' }}
+                                </p>
+                            @endif
+                        @elseif($activity->fertilization)
+                            <p class="text-xs font-semibold text-zinc-700">{{ $activity->fertilization->fertilizer_name ?: 'Fertilización' }}</p>
+                            @if($activity->fertilization->quantity)
+                                <p class="text-xs text-zinc-500">Cantidad: {{ number_format($activity->fertilization->quantity, 2) }} kg</p>
+                            @endif
+                        @elseif($activity->irrigation)
+                            <p class="text-xs font-semibold text-zinc-700">Riego</p>
+                            @if($activity->irrigation->water_volume)
+                                <p class="text-xs text-zinc-500">Volumen: {{ number_format($activity->irrigation->water_volume, 2) }} L</p>
+                            @endif
+                        @elseif($activity->culturalWork)
+                            <p class="text-xs font-semibold text-zinc-700">{{ $activity->culturalWork->work_type ?: 'Labor cultural' }}</p>
+                            @if($activity->culturalWork->hours_worked)
+                                <p class="text-xs text-zinc-500">Duración: {{ number_format($activity->culturalWork->hours_worked, 1) }} h</p>
+                            @endif
+                        @elseif($activity->observation)
+                            <p class="text-xs font-semibold text-zinc-700">{{ $activity->observation->observation_type ?: 'Observación' }}</p>
+                            @if($activity->observation->severity)
+                                <p class="text-xs text-zinc-500">Severidad: {{ ucfirst($activity->observation->severity) }}</p>
+                            @endif
+                        @elseif($activity->harvest)
+                            <p class="text-xs font-semibold text-purple-700">Vendimia</p>
+                            <p class="text-xs text-zinc-500">{{ number_format($activity->harvest->total_weight, 0) }} kg
+                                @if($activity->harvest->total_value) · {{ number_format($activity->harvest->total_value, 2) }}€ @endif
+                            </p>
+                        @endif
+                    </div>
+
+                    {{-- Equipo + Notas --}}
+                    @if($activity->crew || ($activity->crewMember && $activity->crewMember->viticulturist))
+                        <div class="flex items-center gap-2 mb-2">
+                            <flux:icon icon="users" class="size-3.5 text-zinc-400 shrink-0" />
+                            <span class="text-xs text-zinc-600 truncate">
+                                {{ $activity->crew?->name ?? $activity->crewMember?->viticulturist?->name }}
+                            </span>
+                        </div>
+                    @endif
+                    @if($activity->notes)
+                        <p class="text-xs text-zinc-400 truncate">{{ Str::limit($activity->notes, 60) }}</p>
+                    @endif
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <button wire:click="openAuditHistory({{ $activity->id }})" class="{{ $btnBase }}" title="Historial de cambios">
+                                    <flux:icon icon="clock" class="size-4" />
+                                </button>
+                                @if($activity->harvest)
+                                    <a href="{{ route('viticulturist.digital-notebook.harvest.show', $activity->harvest->id) }}" class="{{ $btnBase }}" title="Ver cosecha">
+                                        <flux:icon icon="eye" class="size-4" />
+                                    </a>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-1">
+                                @if(!$activity->is_locked)
+                                    @can('update', $activity)
+                                        @if($activity->harvest)
+                                            <a href="{{ route('viticulturist.digital-notebook.harvest.edit', $activity->harvest->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @elseif($activity->activity_type === 'phytosanitary')
+                                            <a href="{{ route('viticulturist.digital-notebook.treatment.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @elseif($activity->activity_type === 'fertilization')
+                                            <a href="{{ route('viticulturist.digital-notebook.fertilization.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @elseif($activity->activity_type === 'irrigation')
+                                            <a href="{{ route('viticulturist.digital-notebook.irrigation.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @elseif($activity->activity_type === 'cultural')
+                                            <a href="{{ route('viticulturist.digital-notebook.cultural.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @elseif($activity->activity_type === 'observation')
+                                            <a href="{{ route('viticulturist.digital-notebook.observation.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @endif
+                                    @endcan
+                                    @can('delete', $activity)
+                                        <button
+                                            wire:click="deleteActivity({{ $activity->id }})"
+                                            wire:confirm="¿Estás seguro de eliminar esta actividad?"
+                                            class="{{ $btnDanger }}"
+                                            title="Eliminar"
+                                        >
+                                            <flux:icon icon="trash" class="size-4" />
+                                        </button>
+                                    @endcan
+                                @endif
+                            </div>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($activities->hasPages())
+            <div class="flex justify-center">{{ $activities->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="book-open"
+            message="No hay actividades registradas"
+            description="{{ ($selectedPlot || $activityType || $search || $dateFrom || $dateTo || $productFilter) ? 'Ninguna actividad coincide con los filtros aplicados.' : 'Comienza registrando tu primera actividad agrícola.' }}"
+        >
+            @if($selectedPlot || $activityType || $search || $dateFrom || $dateTo || $productFilter)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="notebook-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'notebook-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Parcela</label>
+                <select wire:model.live="selectedPlot"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todas las parcelas</option>
+                    @foreach($plots as $plot)
+                        <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de actividad</label>
+                <select wire:model.live="activityType"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todas las actividades</option>
+                    <option value="phytosanitary">Tratamientos Fitosanitarios</option>
+                    <option value="fertilization">Fertilizaciones</option>
+                    <option value="irrigation">Riegos</option>
+                    <option value="cultural">Labores Culturales</option>
+                    <option value="observation">Observaciones</option>
+                    <option value="harvest">Cosechas / Vendimias</option>
+                </select>
+            </div>
+            @if($activityType === 'phytosanitary' && $products->count() > 0)
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Producto</label>
+                    <select wire:model.live="productFilter"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                        <option value="">Todos los productos</option>
+                        @foreach($products as $product)
+                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Fecha desde</label>
+                    <input wire:model.live="dateFrom" type="date"
+                           class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent" />
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Fecha hasta</label>
+                    <input wire:model.live="dateTo" type="date"
+                           class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent" />
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
+            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'notebook-filters')"
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
+                Limpiar filtros
+            </button>
+            <flux:button x-on:click="$dispatch('close-modal', 'notebook-filters')" variant="primary" size="sm">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
+    {{-- Modal Auditoría --}}
     @if($showAuditHistory && $selectedActivityId)
         <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-                {{-- Header --}}
                 <div class="bg-zinc-50 px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
                     <flux:heading size="sm">Historial de Auditoría</flux:heading>
-                    <flux:button
-                        wire:click="closeAuditHistory"
-                        variant="ghost"
-                        size="sm"
-                        icon="x-mark"
-                    />
+                    <flux:button wire:click="closeAuditHistory" variant="ghost" size="sm" icon="x-mark" />
                 </div>
-
-                {{-- Content --}}
                 <div class="px-6 py-4 overflow-y-auto flex-1">
                     @livewire('viticulturist.digital-notebook.activity-audit-history', ['activity' => \App\Models\AgriculturalActivity::find($selectedActivityId)], 'audit-'.$selectedActivityId)
                 </div>
-
-                {{-- Footer --}}
                 <div class="bg-zinc-50 px-6 py-3 border-t border-zinc-200 flex justify-end">
-                    <flux:button
-                        wire:click="closeAuditHistory"
-                        variant="outline"
-                    >
-                        Cerrar
-                    </flux:button>
+                    <flux:button wire:click="closeAuditHistory" variant="outline">Cerrar</flux:button>
                 </div>
             </div>
         </div>
     @endif
-
 
 </div>

@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Contenedor"
     description="Modifica la informacion del contenedor"
-    :back-url="route('viticulturist.digital-notebook.containers.index')"
+    :back-url="route('viticulturist.containers.index')"
 >
     @if($container && $container->getCurrentHarvest())
         @php $currentHarvest = $container->getCurrentHarvest(); @endphp
@@ -91,7 +91,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.containers.index')"
+            :cancel-url="route('viticulturist.containers.index')"
             submit-label="Guardar Cambios"
         />
     </form>

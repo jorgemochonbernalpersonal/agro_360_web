@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Editar Fertilización"
     description="Modifica los datos de la fertilización"
     :back-url="route('viticulturist.digital-notebook')"

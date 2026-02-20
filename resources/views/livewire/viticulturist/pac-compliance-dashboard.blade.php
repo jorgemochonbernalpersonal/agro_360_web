@@ -1,84 +1,90 @@
 <div class="space-y-6 animate-fade-in">
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>';
-    @endphp
-    
-    <x-agro.page-header 
-        :icon="$icon"
+
+    <x-agro.page-header
         title="Dashboard de Cumplimiento PAC"
         description="Monitoriza el estado de cumplimiento normativo de tu cuaderno digital en tiempo real"
-        icon-color="from-agro-500 to-agro-700"
     />
 
-    {{-- Filtro de Rango Temporal --}}
-    <x-agro.filter-section title="Período de Análisis" color="green">
-        <x-agro.filter-select wire:model.live="timeRange">
-            <option value="30">Últimos 30 días</option>
-            <option value="90">Últimos 90 días</option>
-            <option value="180">Últimos 6 meses</option>
-            <option value="365">Último año</option>
+    {{-- Selector de perÃ­odo --}}
+    <div class="flex items-center gap-3">
+        <span class="text-sm font-medium text-zinc-600">PerÃ­odo de anÃ¡lisis:</span>
+        <select
+            wire:model.live="timeRange"
+            class="px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm text-zinc-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+        >
+            <option value="30">Ãšltimos 30 dÃ­as</option>
+            <option value="90">Ãšltimos 90 dÃ­as</option>
+            <option value="180">Ãšltimos 6 meses</option>
+            <option value="365">Ãšltimo aÃ±o</option>
             <option value="all">Todas las actividades</option>
-        </x-agro.filter-select>
-    </x-agro.filter-section>
-
-    {{-- Medidor de Cumplimiento Global --}}
-    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold text-zinc-800">Cumplimiento Global</h2>
-            <span class="text-3xl font-bold {{ $compliancePercentage >= 95 ? 'text-green-600' : ($compliancePercentage >= 80 ? 'text-amber-600' : 'text-red-600') }}">
-                {{ number_format($compliancePercentage, 1) }}%
-            </span>
-        </div>
-        
-        {{-- Barra de Progreso --}}
-        <div class="w-full bg-zinc-200 rounded-full h-4 mb-4">
-            <div class="h-4 rounded-full transition-all duration-500 {{ $compliancePercentage >= 95 ? 'bg-green-500' : ($compliancePercentage >= 80 ? 'bg-amber-500' : 'bg-red-500') }}" 
-                 style="width: {{ $compliancePercentage }}%"></div>
-        </div>
-        
-        {{-- Estadísticas Rápidas --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                <div class="text-sm text-blue-600 font-medium">Total Actividades</div>
-                <div class="text-2xl font-bold text-blue-900">{{ $totalActivities }}</div>
-            </div>
-            <div class="bg-red-50 rounded-lg p-4 border border-red-100">
-                <div class="text-sm text-red-600 font-medium">Con Errores Críticos</div>
-                <div class="text-2xl font-bold text-red-900">{{ $activitiesWithErrors }}</div>
-            </div>
-            <div class="bg-amber-50 rounded-lg p-4 border border-amber-100">
-                <div class="text-sm text-amber-600 font-medium">Con Advertencias</div>
-                <div class="text-2xl font-bold text-amber-900">{{ $activitiesWithWarnings }}</div>
-            </div>
-        </div>
+        </select>
     </div>
 
-    {{-- Nuevas Métricas: Productos Fitosanitarios --}}
-    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
-        <h2 class="text-xl font-semibold text-zinc-800 mb-4">?? Productos Fitosanitarios</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                <div class="text-sm text-blue-600 font-medium">Total Productos</div>
+    {{-- Cumplimiento Global --}}
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-agro-50 rounded-full flex items-center justify-center shrink-0">
+                    <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
+                </div>
+                <span class="font-semibold text-zinc-900">Cumplimiento Global</span>
+                <span class="ml-auto text-2xl font-bold {{ $compliancePercentage >= 95 ? 'text-green-600' : ($compliancePercentage >= 80 ? 'text-amber-600' : 'text-red-600') }}">
+                    {{ number_format($compliancePercentage, 1) }}%
+                </span>
+            </div>
+        </x-slot:header>
+
+        <div class="w-full bg-zinc-200 rounded-full h-3 mb-6">
+            <div class="h-3 rounded-full transition-all duration-500 {{ $compliancePercentage >= 95 ? 'bg-green-500' : ($compliancePercentage >= 80 ? 'bg-amber-500' : 'bg-red-500') }}"
+                 style="width: {{ $compliancePercentage }}%"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <div class="text-2xl font-bold text-blue-900">{{ $totalActivities }}</div>
+                <div class="text-xs text-blue-600 mt-1 font-medium">Total Actividades</div>
+            </div>
+            <div class="text-center p-4 bg-red-50 rounded-xl border border-red-100">
+                <div class="text-2xl font-bold text-red-900">{{ $activitiesWithErrors }}</div>
+                <div class="text-xs text-red-600 mt-1 font-medium">Con Errores CrÃ­ticos</div>
+            </div>
+            <div class="text-center p-4 bg-amber-50 rounded-xl border border-amber-100">
+                <div class="text-2xl font-bold text-amber-900">{{ $activitiesWithWarnings }}</div>
+                <div class="text-xs text-amber-600 mt-1 font-medium">Con Advertencias</div>
+            </div>
+        </div>
+    </x-agro.card>
+
+    {{-- Productos Fitosanitarios --}}
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <flux:icon icon="shield-exclamation" class="size-4 text-red-600" />
+                <span class="font-semibold text-zinc-900">Productos Fitosanitarios</span>
+            </div>
+        </x-slot:header>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+            <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
                 <div class="text-2xl font-bold text-blue-900">{{ $totalProducts }}</div>
+                <div class="text-xs text-blue-600 mt-1 font-medium">Total Productos</div>
             </div>
-            <div class="bg-green-50 rounded-lg p-4 border border-green-100">
-                <div class="text-sm text-green-600 font-medium">Registro Válido</div>
+            <div class="text-center p-4 bg-green-50 rounded-xl border border-green-100">
                 <div class="text-2xl font-bold text-green-900">{{ $productsWithValidRegistration }}</div>
-                <div class="text-xs text-green-600 mt-1">{{ $productRegistrationPercentage }}%</div>
+                <div class="text-xs text-green-600 mt-1 font-medium">Registro VÃ¡lido</div>
+                <div class="text-xs text-green-500 mt-0.5">{{ $productRegistrationPercentage }}%</div>
             </div>
-            <div class="bg-amber-50 rounded-lg p-4 border border-amber-100">
-                <div class="text-sm text-amber-600 font-medium">Próximos a Caducar</div>
+            <div class="text-center p-4 bg-amber-50 rounded-xl border border-amber-100">
                 <div class="text-2xl font-bold text-amber-900">{{ $productsExpiringSoon }}</div>
-                <div class="text-xs text-amber-600 mt-1">Próximos 30 días</div>
+                <div class="text-xs text-amber-600 mt-1 font-medium">PrÃ³ximos a Caducar</div>
+                <div class="text-xs text-amber-500 mt-0.5">PrÃ³ximos 30 dÃ­as</div>
             </div>
-            <div class="bg-red-50 rounded-lg p-4 border border-red-100">
-                <div class="text-sm text-red-600 font-medium">Caducados/Revocados</div>
+            <div class="text-center p-4 bg-red-50 rounded-xl border border-red-100">
                 <div class="text-2xl font-bold text-red-900">{{ $productsExpiredOrRevoked }}</div>
+                <div class="text-xs text-red-600 mt-1 font-medium">Caducados/Revocados</div>
             </div>
         </div>
 
-        {{-- Barra de progreso de productos válidos --}}
         <div class="mb-4">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-medium text-zinc-700">Estado de Registros</span>
@@ -86,86 +92,75 @@
                     {{ $productRegistrationPercentage }}%
                 </span>
             </div>
-            <div class="w-full bg-zinc-200 rounded-full h-3">
-                <div class="h-3 rounded-full transition-all duration-500 {{ $productRegistrationPercentage >= 95 ? 'bg-green-500' : ($productRegistrationPercentage >= 80 ? 'bg-amber-500' : 'bg-red-500') }}" 
+            <div class="w-full bg-zinc-200 rounded-full h-2.5">
+                <div class="h-2.5 rounded-full transition-all duration-500 {{ $productRegistrationPercentage >= 95 ? 'bg-green-500' : ($productRegistrationPercentage >= 80 ? 'bg-amber-500' : 'bg-red-500') }}"
                      style="width: {{ $productRegistrationPercentage }}%"></div>
             </div>
         </div>
 
-        {{-- Alertas de productos próximos a caducar --}}
         @if($productsExpiringSoon > 0)
-            <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mt-4">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <div class="ml-3 flex-1">
-                        <p class="text-sm font-medium text-amber-800">Productos próximos a caducar</p>
-                        <div class="mt-2 text-sm text-amber-700 space-y-1">
-                            @foreach($expiringProducts as $product)
-                                <div class="flex items-center justify-between">
-                                    <span>{{ $product->name }} ({{ $product->registration_number }})</span>
-                                    <span class="font-medium">{{ $product->registration_expiry_date->format('d/m/Y') }}</span>
-                                </div>
-                            @endforeach
+            <flux:callout variant="warning" icon="exclamation-triangle">
+                <flux:heading>Productos prÃ³ximos a caducar</flux:heading>
+                <div class="mt-2 space-y-1">
+                    @foreach($expiringProducts as $product)
+                        <div class="flex items-center justify-between text-sm">
+                            <span>{{ $product->name }} ({{ $product->registration_number }})</span>
+                            <span class="font-medium">{{ $product->registration_expiry_date->format('d/m/Y') }}</span>
                         </div>
-                        <p class="mt-2 text-xs text-amber-600">
-                            <a href="{{ route('viticulturist.phytosanitary-products.index') }}" class="underline hover:text-amber-800">
-                                Ver todos los productos ?
-                            </a>
-                        </p>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+                <div class="mt-2">
+                    <a href="{{ route('viticulturist.phytosanitary-products.index') }}" class="text-sm text-amber-700 underline hover:text-amber-900">
+                        Ver todos los productos â†’
+                    </a>
+                </div>
+            </flux:callout>
         @endif
-    </div>
+    </x-agro.card>
 
-    {{-- Nuevas Métricas: Actividades Bloqueadas --}}
-    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
-        <h2 class="text-xl font-semibold text-zinc-800 mb-4">?? Actividades Bloqueadas</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-zinc-50 rounded-lg p-4 border border-zinc-200">
-                <div class="text-sm text-zinc-600 font-medium">Total Bloqueadas</div>
+    {{-- Actividades Bloqueadas --}}
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <flux:icon icon="lock-closed" class="size-4 text-zinc-600" />
+                <span class="font-semibold text-zinc-900">Actividades Bloqueadas</span>
+            </div>
+        </x-slot:header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+            <div class="text-center p-4 bg-zinc-50 rounded-xl border border-zinc-200">
                 <div class="text-2xl font-bold text-zinc-900">{{ $totalLockedActivities }}</div>
+                <div class="text-xs text-zinc-600 mt-1 font-medium">Total Bloqueadas</div>
             </div>
-            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                <div class="text-sm text-blue-600 font-medium">% Bloqueadas</div>
+            <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
                 <div class="text-2xl font-bold text-blue-900">{{ $lockedActivitiesPercentage }}%</div>
+                <div class="text-xs text-blue-600 mt-1 font-medium">% Bloqueadas</div>
             </div>
-            <div class="bg-purple-50 rounded-lg p-4 border border-purple-100">
-                <div class="text-sm text-purple-600 font-medium">Bloqueadas Recientemente</div>
+            <div class="text-center p-4 bg-purple-50 rounded-xl border border-purple-100">
                 <div class="text-2xl font-bold text-purple-900">{{ $recentlyLockedActivities->count() }}</div>
-                <div class="text-xs text-purple-600 mt-1">Últimos 7 días</div>
+                <div class="text-xs text-purple-600 mt-1 font-medium">Bloqueadas Recientemente</div>
+                <div class="text-xs text-purple-500 mt-0.5">Ãšltimos 7 dÃ­as</div>
             </div>
         </div>
 
-        {{-- Lista de actividades bloqueadas recientemente --}}
         @if($recentlyLockedActivities->count() > 0)
-            <div class="border border-zinc-200 rounded-lg overflow-hidden">
+            <div class="border border-zinc-200 rounded-xl overflow-hidden mb-4">
                 <div class="bg-zinc-50 px-4 py-2 border-b border-zinc-200">
-                    <h3 class="text-sm font-semibold text-zinc-700">Actividades bloqueadas recientemente</h3>
+                    <p class="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Actividades bloqueadas recientemente</p>
                 </div>
-                <div class="divide-y divide-zinc-200">
+                <div class="divide-y divide-zinc-100">
                     @foreach($recentlyLockedActivities as $activity)
-                        <div class="px-4 py-3 hover:bg-zinc-50">
+                        <div class="px-4 py-3 hover:bg-zinc-50 transition-colors">
                             <div class="flex items-center justify-between">
-                                <div class="flex-1">
+                                <div>
                                     <div class="flex items-center gap-2">
-                                        <span class="text-sm font-medium text-zinc-900">
-                                            {{ ucfirst($activity->activity_type) }}
-                                        </span>
-                                        <span class="text-xs text-zinc-500">•</span>
-                                        <span class="text-xs text-zinc-600">
-                                            {{ $activity->plot->name ?? 'Sin parcela' }}
-                                        </span>
+                                        <span class="text-sm font-medium text-zinc-900">{{ ucfirst($activity->activity_type) }}</span>
+                                        <span class="text-xs text-zinc-400">Â·</span>
+                                        <span class="text-xs text-zinc-600">{{ $activity->plot->name ?? 'Sin parcela' }}</span>
                                     </div>
-                                    <div class="text-xs text-zinc-500 mt-1">
-                                        Fecha: {{ $activity->activity_date->format('d/m/Y') }} • 
-                                        Bloqueada: {{ $activity->locked_at->diffForHumans() }}
-                                    </div>
+                                    <p class="text-xs text-zinc-400 mt-0.5">
+                                        Fecha: {{ $activity->activity_date->format('d/m/Y') }} Â· Bloqueada: {{ $activity->locked_at->diffForHumans() }}
+                                    </p>
                                 </div>
                                 <x-activity-locked-badge :activity="$activity" />
                             </div>
@@ -177,108 +172,90 @@
             <p class="text-sm text-zinc-500 text-center py-4">No hay actividades bloqueadas recientemente</p>
         @endif
 
-        <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <p class="text-xs text-blue-700">
-                <strong>?? Información:</strong> Las actividades se bloquean automáticamente después de 7 días para garantizar el cumplimiento PAC y prevenir modificaciones retroactivas.
-            </p>
-        </div>
-    </div>
+        <flux:callout variant="info" icon="information-circle">
+            Las actividades se bloquean automÃ¡ticamente despuÃ©s de 7 dÃ­as para garantizar el cumplimiento PAC y prevenir modificaciones retroactivas.
+        </flux:callout>
+    </x-agro.card>
 
-    {{-- Nuevas Métricas: Validación de Cosechas --}}
+    {{-- ValidaciÃ³n de Cosechas --}}
     @if($totalHarvests > 0)
-        <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
-            <h2 class="text-xl font-semibold text-zinc-800 mb-4">?? Validación de Plazos de Seguridad en Cosechas</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                    <div class="text-sm text-blue-600 font-medium">Total Cosechas</div>
-                    <div class="text-2xl font-bold text-blue-900">{{ $totalHarvests }}</div>
-                    <div class="text-xs text-blue-600 mt-1">En el período seleccionado</div>
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="scissors" class="size-4 text-purple-600" />
+                    <span class="font-semibold text-zinc-900">ValidaciÃ³n de Plazos de Seguridad en Cosechas</span>
                 </div>
-                <div class="bg-red-50 rounded-lg p-4 border border-red-100">
-                    <div class="text-sm text-red-600 font-medium">Con Errores de Plazo</div>
+            </x-slot:header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div class="text-2xl font-bold text-blue-900">{{ $totalHarvests }}</div>
+                    <div class="text-xs text-blue-600 mt-1 font-medium">Total Cosechas</div>
+                    <div class="text-xs text-blue-500 mt-0.5">En el perÃ­odo seleccionado</div>
+                </div>
+                <div class="text-center p-4 bg-red-50 rounded-xl border border-red-100">
                     <div class="text-2xl font-bold text-red-900">{{ $harvestsWithWithdrawalIssues }}</div>
+                    <div class="text-xs text-red-600 mt-1 font-medium">Con Errores de Plazo</div>
                     @if($harvestsWithWithdrawalIssues > 0)
-                        <div class="text-xs text-red-600 mt-1">?? Requieren atención</div>
+                        <div class="text-xs text-red-500 mt-0.5">Requieren atenciÃ³n</div>
                     @endif
                 </div>
-                <div class="bg-amber-50 rounded-lg p-4 border border-amber-100">
-                    <div class="text-sm text-amber-600 font-medium">Con Advertencias</div>
+                <div class="text-center p-4 bg-amber-50 rounded-xl border border-amber-100">
                     <div class="text-2xl font-bold text-amber-900">{{ $harvestsWithWarnings }}</div>
-                    <div class="text-xs text-amber-600 mt-1">Cerca del límite</div>
+                    <div class="text-xs text-amber-600 mt-1 font-medium">Con Advertencias</div>
+                    <div class="text-xs text-amber-500 mt-0.5">Cerca del lÃ­mite</div>
                 </div>
             </div>
 
             @if($harvestsWithWithdrawalIssues > 0)
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800">
-                                Se detectaron {{ $harvestsWithWithdrawalIssues }} cosecha(s) que no cumplen el plazo de seguridad
-                            </p>
-                            <p class="text-xs text-red-700 mt-1">
-                                Estas cosechas se realizaron antes de cumplirse el plazo de seguridad del último tratamiento fitosanitario. 
-                                Revisa el cuaderno digital para más detalles.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <flux:callout variant="danger" icon="x-circle">
+                    <flux:heading>Se detectaron {{ $harvestsWithWithdrawalIssues }} cosecha(s) que no cumplen el plazo de seguridad</flux:heading>
+                    Estas cosechas se realizaron antes de cumplirse el plazo de seguridad del Ãºltimo tratamiento fitosanitario. Revisa el cuaderno digital para mÃ¡s detalles.
+                </flux:callout>
             @else
-                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">
-                                ? Todas las cosechas cumplen con los plazos de seguridad
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <flux:callout variant="success" icon="check-circle">
+                    Todas las cosechas cumplen con los plazos de seguridad.
+                </flux:callout>
             @endif
-        </div>
+        </x-agro.card>
     @endif
 
     {{-- Cumplimiento por Tipo de Actividad --}}
-    <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-6">
-        <h2 class="text-xl font-semibold text-zinc-800 mb-4">Cumplimiento por Tipo de Actividad</h2>
-        
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <flux:icon icon="squares-2x2" class="size-4 text-agro-600" />
+                <span class="font-semibold text-zinc-900">Cumplimiento por Tipo de Actividad</span>
+            </div>
+        </x-slot:header>
+
         @if(empty($statsByType))
-            <p class="text-zinc-500 text-center py-8">No hay actividades registradas en este período</p>
+            <p class="text-zinc-500 text-center py-8">No hay actividades registradas en este perÃ­odo</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach($statsByType as $type => $stats)
-                    <div class="border border-zinc-200 rounded-lg p-4 hover:shadow-md hover:border-agro-400 transition-all">
+                    @php
+                        $typeLabels = [
+                            'phytosanitary' => 'Fitosanitarios',
+                            'irrigation'    => 'Riegos',
+                            'fertilization' => 'Fertilizaciones',
+                            'harvest'       => 'Cosechas',
+                            'cultural'      => 'Labores Culturales',
+                            'observation'   => 'Observaciones',
+                        ];
+                    @endphp
+                    <div class="border border-zinc-200 rounded-xl p-4 hover:shadow-md hover:border-agro-300 transition-all">
                         <div class="flex items-center justify-between mb-2">
-                            <h3 class="font-semibold text-zinc-700">
-                                @switch($type)
-                                    @case('phytosanitary') Fitosanitarios @break
-                                    @case('irrigation') Riegos @break
-                                    @case('fertilization') Fertilizaciones @break
-                                    @case('harvest') Cosechas @break
-                                    @case('cultural') Labores Culturales @break
-                                    @case('observation') Observaciones @break
-                                @endswitch
-                            </h3>
-                            <span class="text-lg font-bold {{ $stats['percentage'] >= 95 ? 'text-green-600' : ($stats['percentage'] >= 80 ? 'text-amber-600' : 'text-red-600') }}">
+                            <h3 class="text-sm font-semibold text-zinc-700">{{ $typeLabels[$type] ?? ucfirst($type) }}</h3>
+                            <span class="text-base font-bold {{ $stats['percentage'] >= 95 ? 'text-green-600' : ($stats['percentage'] >= 80 ? 'text-amber-600' : 'text-red-600') }}">
                                 {{ number_format($stats['percentage'], 1) }}%
                             </span>
                         </div>
-                        
                         <div class="w-full bg-zinc-200 rounded-full h-2 mb-3">
-                            <div class="h-2 rounded-full {{ $stats['percentage'] >= 95 ? 'bg-green-500' : ($stats['percentage'] >= 80 ? 'bg-amber-500' : 'bg-red-500') }}" 
+                            <div class="h-2 rounded-full {{ $stats['percentage'] >= 95 ? 'bg-green-500' : ($stats['percentage'] >= 80 ? 'bg-amber-500' : 'bg-red-500') }}"
                                  style="width: {{ $stats['percentage'] }}%"></div>
                         </div>
-                        
-                        <div class="text-sm text-zinc-600 space-y-1">
+                        <div class="text-xs text-zinc-600 space-y-1">
                             <div class="flex justify-between">
                                 <span>Total:</span>
                                 <span class="font-medium">{{ $stats['total'] }}</span>
@@ -304,110 +281,97 @@
                 @endforeach
             </div>
         @endif
-    </div>
+    </x-agro.card>
 
-    {{-- Errores Críticos --}}
+    {{-- Errores CrÃ­ticos --}}
     @if(count($criticalErrors) > 0)
-        <div class="bg-white rounded-lg shadow-sm border border-red-200 p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold text-red-800">Errores Críticos PAC</h2>
-                <span class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full">
-                    {{ count($criticalErrors) }} {{ count($criticalErrors) === 1 ? 'error' : 'errores' }}
-                </span>
-            </div>
-            
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <flux:icon icon="x-circle" class="size-4 text-red-600" />
+                        <span class="font-semibold text-red-800">Errores CrÃ­ticos PAC</span>
+                    </div>
+                    <flux:badge color="red" size="sm">
+                        {{ count($criticalErrors) }} {{ count($criticalErrors) === 1 ? 'error' : 'errores' }}
+                    </flux:badge>
+                </div>
+            </x-slot:header>
+
             <div class="space-y-3">
                 @foreach($criticalErrors as $error)
-                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <div class="ml-3 flex-1">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-red-800">
-                                        Actividad #{{ $error['activity_id'] }} - {{ ucfirst($error['activity_type']) }}
-                                    </p>
-                                    <span class="text-xs text-red-600">{{ $error['activity_date'] }}</span>
-                                </div>
-                                <ul class="mt-2 text-sm text-red-700 list-disc list-inside space-y-1">
-                                    @foreach($error['errors'] as $errorMsg)
-                                        <li>{{ $errorMsg }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <p class="text-sm font-medium text-red-800">
+                                Actividad #{{ $error['activity_id'] }} â€” {{ ucfirst($error['activity_type']) }}
+                            </p>
+                            <span class="text-xs text-red-600 shrink-0">{{ $error['activity_date'] }}</span>
                         </div>
+                        <ul class="text-sm text-red-700 list-disc list-inside space-y-0.5">
+                            @foreach($error['errors'] as $errorMsg)
+                                <li>{{ $errorMsg }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 @endforeach
             </div>
-            
+
             @if($activitiesWithErrors > 10)
-                <p class="text-sm text-zinc-600 mt-4 text-center">
-                    Mostrando 10 de {{ $activitiesWithErrors }} errores. 
+                <p class="text-sm text-zinc-500 mt-4 text-center">
+                    Mostrando 10 de {{ $activitiesWithErrors }} errores.
                     <a href="{{ route('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline font-medium">Ver todas las actividades</a>
                 </p>
             @endif
-        </div>
+        </x-agro.card>
     @endif
 
     {{-- Advertencias --}}
     @if(count($warnings) > 0)
-        <div class="bg-white rounded-lg shadow-sm border border-amber-200 p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold text-amber-800">Advertencias PAC</h2>
-                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">
-                    {{ count($warnings) }} {{ count($warnings) === 1 ? 'advertencia' : 'advertencias' }}
-                </span>
-            </div>
-            
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <flux:icon icon="exclamation-triangle" class="size-4 text-amber-600" />
+                        <span class="font-semibold text-amber-800">Advertencias PAC</span>
+                    </div>
+                    <flux:badge color="yellow" size="sm">
+                        {{ count($warnings) }} {{ count($warnings) === 1 ? 'advertencia' : 'advertencias' }}
+                    </flux:badge>
+                </div>
+            </x-slot:header>
+
             <div class="space-y-3">
                 @foreach($warnings as $warning)
-                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <div class="ml-3 flex-1">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-amber-800">
-                                        Actividad #{{ $warning['activity_id'] }} - {{ ucfirst($warning['activity_type']) }}
-                                    </p>
-                                    <span class="text-xs text-amber-600">{{ $warning['activity_date'] }}</span>
-                                </div>
-                                <ul class="mt-2 text-sm text-amber-700 list-disc list-inside space-y-1">
-                                    @foreach($warning['warnings'] as $warningMsg)
-                                        <li>{{ $warningMsg }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <p class="text-sm font-medium text-amber-800">
+                                Actividad #{{ $warning['activity_id'] }} â€” {{ ucfirst($warning['activity_type']) }}
+                            </p>
+                            <span class="text-xs text-amber-600 shrink-0">{{ $warning['activity_date'] }}</span>
                         </div>
+                        <ul class="text-sm text-amber-700 list-disc list-inside space-y-0.5">
+                            @foreach($warning['warnings'] as $warningMsg)
+                                <li>{{ $warningMsg }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 @endforeach
             </div>
-            
+
             @if($activitiesWithWarnings > 10)
-                <p class="text-sm text-zinc-600 mt-4 text-center">
+                <p class="text-sm text-zinc-500 mt-4 text-center">
                     Mostrando 10 de {{ $activitiesWithWarnings }} advertencias.
                 </p>
             @endif
-        </div>
+        </x-agro.card>
     @endif
 
-    {{-- Mensaje de Éxito --}}
+    {{-- Ã‰xito total --}}
     @if($compliancePercentage >= 95 && $activitiesWithErrors === 0)
-        <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-            <svg class="mx-auto h-12 w-12 text-green-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <h3 class="text-xl font-semibold text-green-800 mb-2">¡Excelente Cumplimiento PAC!</h3>
-            <p class="text-green-700">
-                Tu cuaderno digital cumple con todos los requisitos normativos. 
-                Todas tus actividades están correctamente registradas y listas para auditorías PAC.
-            </p>
-        </div>
+        <flux:callout variant="success" icon="check-circle">
+            <flux:heading>Â¡Excelente Cumplimiento PAC!</flux:heading>
+            Tu cuaderno digital cumple con todos los requisitos normativos. Todas tus actividades estÃ¡n correctamente registradas y listas para auditorÃ­as PAC.
+        </flux:callout>
     @endif
+
 </div>

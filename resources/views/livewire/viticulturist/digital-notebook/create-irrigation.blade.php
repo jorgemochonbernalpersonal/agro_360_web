@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Registrar Riego"
     description="Registra un nuevo riego en el cuaderno digital"
     :back-url="route('viticulturist.digital-notebook')"

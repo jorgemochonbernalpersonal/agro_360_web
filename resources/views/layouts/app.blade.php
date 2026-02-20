@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-flux-appearance="light">
 <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -57,7 +57,6 @@
 
     @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @fluxAppearance
 </head>
 <body class="bg-zinc-50 min-h-screen">
     <!-- GTM noscript -->

@@ -1,227 +1,257 @@
 <div class="space-y-6 animate-fade-in">
+
     <x-agro.page-header
         title="Contenedores"
-        description="Gestiona tus barricas, depositos y tanques de bodega"
-    >
-        <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.digital-notebook.containers.create') }}" variant="primary" icon="plus">
-                Nuevo Contenedor
-            </flux:button>
-        </x-slot:actions>
-    </x-agro.page-header>
+        description="Gestiona tus barricas, depósitos y tanques de bodega"
+    />
 
     {{-- Tabs --}}
-    @php
-        $activeCount = $stats['total_containers'] - \App\Models\Container::where('user_id', auth()->id())->where('archived', true)->count();
-        $inactiveCount = \App\Models\Container::where('user_id', auth()->id())->where('archived', true)->count();
-        $currentTabValue = $viewMode === 'stats' ? 'statistics' : ($filterStatus === 'archived' ? 'inactive' : 'active');
-    @endphp
+    <x-agro.tabs
+        :tabs="[
+            'active'   => ['label' => 'Activos',     'count' => $stats['active']],
+            'archived' => ['label' => 'Archivados',  'count' => $stats['archived']],
+        ]"
+        :active="$currentTab"
+        wireMethod="switchTab"
+    />
 
-    <x-agro.card :padding="false">
-        <div class="border-b border-zinc-200">
-            <nav class="flex -mb-px">
-                <button
-                    wire:click="switchTab('active')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTabValue === 'active' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span>Activos</span>
-                    @if($activeCount > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTabValue === 'active' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
-                            {{ $activeCount }}
-                        </span>
-                    @endif
-                </button>
-                <button
-                    wire:click="switchTab('inactive')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTabValue === 'inactive' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-                    </svg>
-                    <span>Archivados</span>
-                    @if($inactiveCount > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTabValue === 'inactive' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
-                            {{ $inactiveCount }}
-                        </span>
-                    @endif
-                </button>
-                <button
-                    wire:click="switchTab('statistics')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTabValue === 'statistics' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
-                    <span>Estadisticas</span>
-                </button>
-            </nav>
-        </div>
+    {{-- Toolbar --}}
+    <div class="space-y-3">
+        <div class="flex items-center gap-3">
 
-        <div class="p-6">
-            {{-- STATS TAB --}}
-            @if($viewMode === 'stats')
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <x-agro.card>
-                        <h3 class="text-lg font-bold text-zinc-900 mb-4">Capacidad Total</h3>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-zinc-600">Total instalada:</span>
-                                <span class="font-bold text-zinc-900">{{ number_format($stats['total_capacity'], 0) }} L</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-zinc-600">Ocupada:</span>
-                                <span class="font-bold text-blue-600">{{ number_format($stats['used_capacity'], 0) }} L</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-zinc-600">Disponible:</span>
-                                <span class="font-bold text-green-600">{{ number_format($stats['available_capacity'], 0) }} L</span>
-                            </div>
-                            <div class="pt-3 border-t">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-zinc-600">Ocupacion:</span>
-                                    <span class="font-bold text-zinc-900">{{ $stats['occupancy_percentage'] }}%</span>
-                                </div>
-                                <x-agro.progress-bar :percentage="$stats['occupancy_percentage']" />
-                            </div>
-                        </div>
-                    </x-agro.card>
-
-                    <x-agro.card>
-                        <h3 class="text-lg font-bold text-zinc-900 mb-4">Distribucion por Estado</h3>
-                        <div class="space-y-4">
-                            @foreach([
-                                ['label' => 'Vacios', 'value' => $stats['empty_containers'], 'color' => 'bg-blue-500'],
-                                ['label' => 'Disponibles', 'value' => $stats['available_containers'], 'color' => 'bg-green-500'],
-                                ['label' => 'Llenos', 'value' => $stats['full_containers'], 'color' => 'bg-red-500'],
-                            ] as $item)
-                                <div>
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-sm text-zinc-600">{{ $item['label'] }}</span>
-                                        <span class="text-sm font-semibold text-zinc-900">{{ $item['value'] }}</span>
-                                    </div>
-                                    <div class="w-full bg-zinc-200 rounded-full h-2">
-                                        <div class="{{ $item['color'] }} h-2 rounded-full"
-                                             style="width: {{ $stats['total_containers'] > 0 ? ($item['value'] / $stats['total_containers'] * 100) : 0 }}%">
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </x-agro.card>
-
-                    <x-agro.card>
-                        <h3 class="text-lg font-bold text-zinc-900 mb-4">Resumen General</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                                <span class="text-sm text-zinc-700">Total Contenedores</span>
-                                <span class="text-2xl font-bold text-blue-600">{{ $stats['total_containers'] }}</span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                                <span class="text-sm text-zinc-700">Capacidad Media</span>
-                                <span class="text-lg font-bold text-green-600">
-                                    {{ $stats['total_containers'] > 0 ? number_format($stats['total_capacity'] / $stats['total_containers'], 0) : 0 }} L
-                                </span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                                <span class="text-sm text-zinc-700">Eficiencia de Uso</span>
-                                <span class="text-lg font-bold text-purple-600">{{ $stats['occupancy_percentage'] }}%</span>
-                            </div>
-                        </div>
-                    </x-agro.card>
+            <div class="flex-1 relative">
+                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
                 </div>
-            @else
-                {{-- Filtros --}}
-                <div class="flex flex-wrap items-center gap-3 mb-6">
-                    <x-agro.filter-input
-                        wire:model.live.debounce.300ms="search"
-                        placeholder="Buscar por nombre o numero de serie..."
-                    />
-                    <x-agro.filter-select wire:model.live="filterStatus">
-                        <option value="">Todos los estados</option>
-                        <option value="empty">Vacios</option>
-                        <option value="available">Disponibles</option>
-                        <option value="full">Llenos</option>
-                        <option value="archived">Archivados</option>
-                    </x-agro.filter-select>
-                    @if($search || $filterStatus)
-                        <flux:button wire:click="resetFilters" variant="ghost" size="sm">
-                            Limpiar Filtros
-                        </flux:button>
-                    @endif
-                </div>
+                <input
+                    wire:model.live.debounce.300ms="search"
+                    type="text"
+                    placeholder="Buscar por nombre o número de serie..."
+                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+                />
+            </div>
 
-                {{-- Grid de Contenedores --}}
-                @if($containers->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($containers as $container)
-                            <x-agro.card>
-                                <div class="flex items-start justify-between mb-3">
-                                    <div>
-                                        <h3 class="font-semibold text-zinc-900 text-lg">{{ $container->name }}</h3>
-                                        @if($container->serial_number)
-                                            <p class="text-xs text-zinc-500 mt-1">SN: {{ $container->serial_number }}</p>
-                                        @endif
-                                    </div>
-                                    <span class="text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0
-                                        {{ $container->isEmpty() ? 'bg-blue-100 text-blue-800' : ($container->isFull() ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800') }}">
-                                        {{ $container->isEmpty() ? 'Vacio' : ($container->isFull() ? 'Lleno' : 'Disponible') }}
-                                    </span>
-                                </div>
-
-                                <div class="mb-4">
-                                    <x-agro.progress-bar
-                                        :percentage="$container->getOccupancyPercentage()"
-                                        label="Ocupacion"
-                                        :current-value="$container->used_capacity"
-                                        :max-value="$container->capacity"
-                                        unit="L"
-                                    />
-                                </div>
-
-                                <div class="pt-3 border-t border-zinc-100 flex gap-2 justify-center">
-                                    <x-agro.action-button
-                                        variant="view"
-                                        href="{{ route('viticulturist.digital-notebook.containers.show', $container->id) }}"
-                                    />
-                                    <x-agro.action-button
-                                        variant="edit"
-                                        href="{{ route('viticulturist.digital-notebook.containers.edit', $container->id) }}"
-                                    />
-                                    @if(!$container->archived)
-                                        <x-agro.action-button
-                                            variant="archive"
-                                            wireClick="archive({{ $container->id }})"
-                                        />
-                                    @else
-                                        <x-agro.action-button
-                                            variant="activate"
-                                            wireClick="unarchive({{ $container->id }})"
-                                        />
-                                    @endif
-                                </div>
-                            </x-agro.card>
-                        @endforeach
-                    </div>
-                    <div class="mt-6">{{ $containers->links() }}</div>
-                @else
-                    <x-agro.empty-state
-                        message="No hay contenedores"
-                        description="Comienza creando tu primer contenedor para gestionar tu bodega."
-                    >
-                        <x-slot name="action">
-                            <flux:button href="{{ route('viticulturist.digital-notebook.containers.create') }}" variant="primary" icon="plus">
-                                Crear Contenedor
-                            </flux:button>
-                        </x-slot>
-                    </x-agro.empty-state>
+            @php $filterCount = ($filterStatus !== '' ? 1 : 0); @endphp
+            <button
+                x-on:click="$dispatch('open-modal', 'container-filters')"
+                class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+            >
+                <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+                Filtros
+                @if($filterCount > 0)
+                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {{ $filterCount }}
+                    </span>
                 @endif
-            @endif
+            </button>
+
+            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
+            <flux:button href="{{ route('viticulturist.containers.create') }}" variant="primary" icon="plus">
+                Nuevo
+            </flux:button>
+
         </div>
-    </x-agro.card>
+
+        {{-- Active filter chips --}}
+        @if($search || $filterStatus !== '')
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs text-zinc-400">Filtros activos:</span>
+
+                @if($search)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        <flux:icon icon="magnifying-glass" class="size-3" />
+                        "{{ $search }}"
+                        <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterStatus !== '')
+                    @php
+                        $statusLabels = ['empty' => 'Vacíos', 'available' => 'Disponibles', 'full' => 'Llenos'];
+                    @endphp
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        Estado: {{ $statusLabels[$filterStatus] ?? $filterStatus }}
+                        <button wire:click="$set('filterStatus', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
+                    Limpiar todo
+                </button>
+            </div>
+        @endif
+    </div>
+
+    {{-- Card grid --}}
+    @if($containers->count() > 0)
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="switchTab, search, filterStatus, clearFilters"
+        >
+            @foreach($containers as $i => $container)
+                @php
+                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+
+                    $occupancy = $container->getOccupancyPercentage();
+                    [$statusLabel, $statusDot] = match(true) {
+                        $container->isEmpty() => ['Vacío',      'bg-blue-400'],
+                        $container->isFull()  => ['Lleno',      'bg-red-400'],
+                        default               => ['Disponible', 'bg-agro-400'],
+                    };
+                @endphp
+
+                <x-agro.card
+                    wire:key="container-{{ $container->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1 {{ $container->archived ? 'opacity-60' : '' }}"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="beaker" class="size-4 text-zinc-500" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $container->name }}</p>
+                                @if($container->serial_number)
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5">SN: {{ $container->serial_number }}</p>
+                                @endif
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 shrink-0">
+                                <span class="w-2 h-2 rounded-full {{ $statusDot }}"></span>
+                                {{ $statusLabel }}
+                            </span>
+                        </div>
+                    </x-slot:header>
+
+                    {{-- Ocupación --}}
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1.5">
+                            <span class="text-xs text-zinc-500">Ocupación</span>
+                            <span class="text-xs font-semibold text-zinc-700">{{ $occupancy }}%</span>
+                        </div>
+                        <div class="w-full bg-zinc-100 rounded-full h-2">
+                            <div
+                                class="h-2 rounded-full transition-all {{ $occupancy >= 90 ? 'bg-red-400' : ($occupancy >= 50 ? 'bg-amber-400' : 'bg-agro-400') }}"
+                                style="width: {{ $occupancy }}%"
+                            ></div>
+                        </div>
+                    </div>
+
+                    {{-- Capacidad --}}
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-agro-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Capacidad</p>
+                            <p class="text-sm font-bold text-agro-700">{{ number_format($container->capacity, 0) }} L</p>
+                        </div>
+                        <div class="bg-zinc-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Disponible</p>
+                            <p class="text-sm font-bold text-zinc-700">{{ number_format($container->getAvailableCapacity(), 0) }} L</p>
+                        </div>
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <a href="{{ route('viticulturist.containers.show', $container->id) }}" class="{{ $btnBase }}" title="Ver contenedor">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </a>
+                                <a href="{{ route('viticulturist.containers.edit', $container->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                @if(!$container->archived)
+                                    <button wire:click="archive({{ $container->id }})" class="{{ $btnDanger }}" title="Archivar">
+                                        <flux:icon icon="archive-box" class="size-4" />
+                                    </button>
+                                @else
+                                    <button wire:click="unarchive({{ $container->id }})" class="{{ $btnSuccess }}" title="Restaurar">
+                                        <flux:icon icon="arrow-uturn-left" class="size-4" />
+                                    </button>
+                                    @if($container->isEmpty())
+                                        <button
+                                            wire:click="delete({{ $container->id }})"
+                                            wire:confirm="¿Seguro que deseas eliminar este contenedor?"
+                                            class="{{ $btnDanger }}"
+                                            title="Eliminar"
+                                        >
+                                            <flux:icon icon="trash" class="size-4" />
+                                        </button>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($containers->hasPages())
+            <div class="flex justify-center">{{ $containers->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="beaker"
+            message="{{ $currentTab === 'active' ? 'No hay contenedores activos' : 'No hay contenedores archivados' }}"
+            description="{{ $search || $filterStatus !== '' ? 'Ningún contenedor coincide con los filtros aplicados.' : 'Crea tu primer contenedor para gestionar tu bodega.' }}"
+        >
+            @if($search || $filterStatus !== '')
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @elseif($currentTab === 'active')
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.containers.create') }}" variant="primary" icon="plus">
+                        Nuevo Contenedor
+                    </flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="container-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5">
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de ocupación</label>
+            <select wire:model.live="filterStatus"
+                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                <option value="">Todos</option>
+                <option value="empty">Vacíos</option>
+                <option value="available">Disponibles</option>
+                <option value="full">Llenos</option>
+            </select>
+        </div>
+
+        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
+            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'container-filters')"
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
+                Limpiar filtros
+            </button>
+            <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="primary" size="sm">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
 </div>

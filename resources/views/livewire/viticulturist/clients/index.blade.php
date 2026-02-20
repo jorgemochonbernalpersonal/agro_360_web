@@ -1,278 +1,248 @@
-﻿<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in">
+
     <x-agro.page-header
         title="Clientes"
         description="Gestiona tus clientes y analiza tu cartera"
-    >
-        <x-slot:actions>
+    />
+
+    {{-- Tabs --}}
+    <x-agro.tabs
+        :tabs="[
+            'active'   => ['label' => 'Activos',   'count' => $stats['active']],
+            'inactive' => ['label' => 'Inactivos', 'count' => $stats['inactive']],
+        ]"
+        :active="$currentTab"
+        wireMethod="switchTab"
+    />
+
+    {{-- Toolbar --}}
+    <div class="space-y-3">
+        <div class="flex items-center gap-3">
+
+            <div class="flex-1 relative">
+                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+                </div>
+                <input
+                    wire:model.live.debounce.300ms="search"
+                    type="text"
+                    placeholder="Buscar por nombre, email, teléfono o documento..."
+                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+                />
+            </div>
+
+            @php $filterCount = $filterType ? 1 : 0; @endphp
+            <button
+                x-on:click="$dispatch('open-modal', 'client-filters')"
+                class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+            >
+                <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+                Filtros
+                @if($filterCount > 0)
+                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {{ $filterCount }}
+                    </span>
+                @endif
+            </button>
+
+            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
             <flux:button href="{{ route('viticulturist.clients.create') }}" variant="primary" icon="plus">
                 Nuevo Cliente
             </flux:button>
-        </x-slot:actions>
-    </x-agro.page-header>
 
-    {{-- Tabs Navigation --}}
-    <x-agro.tabs
-        :tabs="[
-            'active' => ['label' => 'Activos', 'count' => $stats['active'] > 0 ? $stats['active'] : null],
-            'inactive' => ['label' => 'Inactivos', 'count' => $stats['inactive'] > 0 ? $stats['inactive'] : null],
-            'statistics' => ['label' => 'Estadísticas'],
-        ]"
-        :active="$currentTab"
-    />
+        </div>
 
-    {{-- Tab Content --}}
-    <div>
-        {{-- ACTIVE/INACTIVE TABS --}}
-        @if($currentTab === 'active' || $currentTab === 'inactive')
-            <div class="space-y-6">
-                {{-- Estadísticas rápidas --}}
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <x-agro.stat-card label="Total" :value="$stats['total']" icon="users" color="blue" />
-                    <x-agro.stat-card label="Activos" :value="$stats['active']" icon="check-circle" color="agro" />
-                    <x-agro.stat-card label="Particulares" :value="$stats['individual']" icon="user" color="purple" />
-                    <x-agro.stat-card label="Empresas" :value="$stats['company']" icon="building-office" color="blue" />
-                </div>
+        {{-- Active filter chips --}}
+        @if($search || $filterType)
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs text-zinc-400">Filtros activos:</span>
 
-                {{-- Filtros --}}
-                <x-agro.filter-bar>
-                    <x-agro.filter-input wire:model.live="search" placeholder="Buscar clientes..." />
-                    <x-agro.filter-select wire:model.live="filterType">
-                        <option value="">Todos los tipos</option>
-                        <option value="individual">Particular</option>
-                        <option value="company">Empresa</option>
-                    </x-agro.filter-select>
-                </x-agro.filter-bar>
+                @if($search)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        <flux:icon icon="magnifying-glass" class="size-3" />
+                        "{{ $search }}"
+                        <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
 
-                {{-- Tabla --}}
-                @php
-                    $headers = ['Nombre', 'Tipo', 'Contacto', 'Dirección', 'Estado', 'Acciones'];
-                @endphp
+                @if($filterType)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        {{ $filterType === 'individual' ? 'Particular' : 'Empresa' }}
+                        <button wire:click="$set('filterType', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
 
-                <x-agro.data-table :headers="$headers" empty-message="No se encontraron clientes" empty-description="Comienza agregando tu primer cliente al sistema">
-                    @if($clients->count() > 0)
-                        @foreach($clients as $client)
-                            <x-agro.table-row>
-                                <x-agro.table-cell>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center flex-shrink-0">
-                                            <flux:icon icon="user" class="size-5 text-agro-600" />
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-bold text-zinc-900">{{ $client->full_name }}</div>
-                                            @if($client->company_name && $client->client_type === 'company')
-                                                <div class="text-xs text-zinc-500 mt-1">{{ $client->company_name }}</div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </x-agro.table-cell>
-                                <x-agro.table-cell>
-                                    <flux:badge :color="$client->client_type === 'company' ? 'blue' : null" size="sm">
-                                        {{ $client->client_type === 'company' ? 'Empresa' : 'Particular' }}
-                                    </flux:badge>
-                                </x-agro.table-cell>
-                                <x-agro.table-cell>
-                                    <div class="text-sm text-zinc-700">
-                                        @if($client->email)
-                                            <div class="flex items-center gap-1">
-                                                <flux:icon icon="envelope" class="size-4 text-zinc-400 flex-shrink-0" />
-                                                <span>{{ $client->email }}</span>
-                                            </div>
-                                        @endif
-                                        @if($client->phone)
-                                            <div class="flex items-center gap-1 mt-1">
-                                                <flux:icon icon="phone" class="size-4 text-zinc-400 flex-shrink-0" />
-                                                <span>{{ $client->phone }}</span>
-                                            </div>
-                                        @endif
-                                        @if(!$client->email && !$client->phone)
-                                            <span class="text-zinc-400">N/A</span>
-                                        @endif
-                                    </div>
-                                </x-agro.table-cell>
-                                <x-agro.table-cell>
-                                    @if($client->addresses && $client->addresses->count() > 0)
-                                        @php
-                                            // Obtener la dirección por defecto o la primera disponible
-                                            $defaultAddress = $client->addresses->where('is_default', true)->first()
-                                                ?? $client->addresses->first();
-                                        @endphp
-                                        <div class="space-y-1">
-                                            <div class="text-sm text-zinc-700 font-medium">
-                                                {{ $defaultAddress->address }}
-                                            </div>
-                                            <div class="text-xs text-zinc-500">
-                                                @if($defaultAddress->municipality)
-                                                    {{ $defaultAddress->municipality->name }}
-                                                    @if($defaultAddress->province)
-                                                        , {{ $defaultAddress->province->name }}
-                                                    @endif
-                                                @endif
-                                                @if($defaultAddress->postal_code)
-                                                    - {{ $defaultAddress->postal_code }}
-                                                @endif
-                                            </div>
-                                            @if($client->addresses->count() > 1)
-                                                <div class="text-xs text-zinc-400 mt-1">
-                                                    +{{ $client->addresses->count() - 1 }} {{ $client->addresses->count() - 1 === 1 ? 'dirección más' : 'direcciones más' }}
-                                                </div>
-                                            @endif
-                                        </div>
-                                    @else
-                                        <div class="flex items-center gap-2">
-                                            <flux:icon icon="x-mark" class="size-4 text-zinc-400" />
-                                            <span class="text-sm text-zinc-400">Sin dirección</span>
-                                        </div>
-                                    @endif
-                                </x-agro.table-cell>
-                                <x-agro.table-cell>
-                                    <x-agro.status-badge :active="$client->active" />
-                                </x-agro.table-cell>
-                                <x-agro.table-cell align="right">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <x-agro.action-button variant="view" href="{{ route('viticulturist.clients.show', $client->id) }}" />
-                                        <x-agro.action-button variant="edit" href="{{ route('viticulturist.clients.edit', $client->id) }}" />
-                                        <button
-                                            wire:click="toggleActive({{ $client->id }})"
-                                            class="p-2 rounded-lg transition-all duration-200 group/btn {{ $client->active ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50' }}"
-                                            title="{{ $client->active ? 'Desactivar cliente' : 'Activar cliente' }}"
-                                        >
-                                            @if($client->active)
-                                                <flux:icon icon="x-circle" class="size-5 group-hover/btn:scale-110 transition-transform" />
-                                            @else
-                                                <flux:icon icon="check-circle" class="size-5 group-hover/btn:scale-110 transition-transform" />
-                                            @endif
-                                        </button>
-                                    </div>
-                                </x-agro.table-cell>
-                            </x-agro.table-row>
-                        @endforeach
-                        <x-slot name="pagination">
-                            {{ $clients->links() }}
-                        </x-slot>
-                    @else
-                        <x-slot name="emptyAction">
-                            <flux:button href="{{ route('viticulturist.clients.create') }}" variant="primary" icon="plus">
-                                Crear mi primer cliente
-                            </flux:button>
-                        </x-slot>
-                    @endif
-                </x-agro.data-table>
-            </div>
-        @endif
-
-        {{-- STATISTICS TAB --}}
-        @if($currentTab === 'statistics')
-            <div class="space-y-6">
-                {{-- Filtro de Año --}}
-                <div class="flex justify-end">
-                    <flux:select wire:model.live="yearFilter" class="w-auto">
-                        @for($year = now()->year; $year >= now()->year - 5; $year--)
-                            <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
-                        @endfor
-                    </flux:select>
-                </div>
-
-                {{-- KPIs --}}
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <x-agro.stat-card label="Activos {{ $yearFilter }}" :value="$advancedStats['activeThisYear'] ?? 0" icon="check-circle" color="agro" />
-                    <x-agro.stat-card label="Inactivos {{ $yearFilter }}" :value="$advancedStats['inactiveThisYear'] ?? 0" icon="x-circle" />
-                    <x-agro.stat-card label="Facturación Media" :value="number_format($advancedStats['avgInvoicePerClient'] ?? 0, 0) . ' €'" icon="banknotes" color="blue" />
-                    <x-agro.stat-card label="Total Clientes" :value="$stats['total']" icon="users" color="purple" />
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {{-- Top 10 Clientes --}}
-                    <x-agro.card>
-                        <x-slot:header>
-                            <div class="flex items-center gap-2">
-                                <div class="p-1.5 rounded-lg bg-agro-50">
-                                    <flux:icon icon="trophy" class="size-4 text-agro-600" />
-                                </div>
-                                <span class="font-semibold text-zinc-900 text-sm">Top 10 Clientes por Facturación</span>
-                            </div>
-                        </x-slot:header>
-                        <div class="space-y-3">
-                            @forelse(($advancedStats['topClients'] ?? []) as $index => $client)
-                                <div class="flex items-center justify-between p-3 bg-zinc-50 rounded-lg hover:bg-zinc-100 transition-colors">
-                                    <div class="flex items-center gap-3">
-                                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-agro-500 text-white flex items-center justify-center font-bold text-sm">
-                                            {{ $index + 1 }}
-                                        </span>
-                                        <div>
-                                            <p class="font-semibold text-zinc-900">{{ $client['name'] }}</p>
-                                            <p class="text-xs text-zinc-500">{{ $client['type'] === 'company' ? 'Empresa' : 'Particular' }}</p>
-                                        </div>
-                                    </div>
-                                    <span class="font-bold text-agro-700">{{ number_format($client['total'], 0) }} €</span>
-                                </div>
-                            @empty
-                                <p class="text-zinc-500 text-center py-4">No hay datos de facturación</p>
-                            @endforelse
-                        </div>
-                    </x-agro.card>
-
-                    {{-- Distribución por Tipo --}}
-                    <x-agro.card>
-                        <x-slot:header>
-                            <div class="flex items-center gap-2">
-                                <div class="p-1.5 rounded-lg bg-blue-50">
-                                    <flux:icon icon="chart-pie" class="size-4 text-blue-600" />
-                                </div>
-                                <span class="font-semibold text-zinc-900 text-sm">Distribución por Tipo</span>
-                            </div>
-                        </x-slot:header>
-                        <div class="space-y-4">
-                            @php
-                                $total = ($advancedStats['distributionByType']['individual'] ?? 0) + ($advancedStats['distributionByType']['company'] ?? 0);
-                                $individualPct = $total > 0 ? (($advancedStats['distributionByType']['individual'] ?? 0) / $total) * 100 : 0;
-                                $companyPct = $total > 0 ? (($advancedStats['distributionByType']['company'] ?? 0) / $total) * 100 : 0;
-                            @endphp
-
-                            <div>
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-sm font-medium text-zinc-700">Particulares</span>
-                                    <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['distributionByType']['individual'] ?? 0 }} ({{ number_format($individualPct, 1) }}%)</span>
-                                </div>
-                                <div class="w-full bg-zinc-200 rounded-full h-3">
-                                    <div class="bg-purple-500 h-3 rounded-full" style="width: {{ $individualPct }}%"></div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-sm font-medium text-zinc-700">Empresas</span>
-                                    <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['distributionByType']['company'] ?? 0 }} ({{ number_format($companyPct, 1) }}%)</span>
-                                </div>
-                                <div class="w-full bg-zinc-200 rounded-full h-3">
-                                    <div class="bg-blue-500 h-3 rounded-full" style="width: {{ $companyPct }}%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </x-agro.card>
-                </div>
-
-                {{-- Nuevos Clientes --}}
-                <x-agro.card>
-                    <x-slot:header>
-                        <div class="flex items-center gap-2">
-                            <div class="p-1.5 rounded-lg bg-agro-50">
-                                <flux:icon icon="arrow-trending-up" class="size-4 text-agro-600" />
-                            </div>
-                            <span class="font-semibold text-zinc-900 text-sm">Nuevos Clientes (Últimos 12 meses)</span>
-                        </div>
-                    </x-slot:header>
-                    <div class="h-64 flex items-end justify-between gap-2">
-                        @foreach(($advancedStats['newClientsByMonth'] ?? []) as $month)
-                            <div class="flex-1 flex flex-col items-center">
-                                <div class="w-full bg-agro-500 rounded-t-lg transition-all hover:bg-agro-700"
-                                    style="height: {{ $month['count'] > 0 ? ($month['count'] / max(collect($advancedStats['newClientsByMonth'] ?? [])->pluck('count')->max(), 1)) * 100 : 5 }}%"
-                                    title="{{ $month['count'] }} clientes"></div>
-                                <span class="text-xs text-zinc-600 mt-2">{{ $month['month'] }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </x-agro.card>
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
+                    Limpiar todo
+                </button>
             </div>
         @endif
     </div>
+
+    {{-- Card grid --}}
+    @if($clients->count() > 0)
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="search, filterType, clearFilters, switchTab"
+        >
+            @foreach($clients as $i => $client)
+                @php
+                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+                    $isCompany  = $client->client_type === 'company';
+                    $defaultAddress = $client->addresses?->where('is_default', true)->first()
+                        ?? $client->addresses?->first();
+                @endphp
+
+                <x-agro.card
+                    wire:key="client-{{ $client->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1 {{ !$client->active ? 'opacity-70' : '' }}"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 {{ $isCompany ? 'bg-blue-50' : 'bg-agro-50' }} rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="{{ $isCompany ? 'building-office' : 'user' }}" class="size-4 {{ $isCompany ? 'text-blue-500' : 'text-agro-600' }}" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $client->full_name }}</p>
+                                @if($isCompany && $client->company_name)
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $client->company_name }}</p>
+                                @endif
+                            </div>
+                            <flux:badge :color="$isCompany ? 'blue' : null" size="sm" class="shrink-0">
+                                {{ $isCompany ? 'Empresa' : 'Particular' }}
+                            </flux:badge>
+                        </div>
+                    </x-slot:header>
+
+                    {{-- Contacto --}}
+                    <div class="space-y-1.5 mb-3">
+                        @if($client->email)
+                            <div class="flex items-center gap-2">
+                                <flux:icon icon="envelope" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span class="text-xs text-zinc-600 truncate">{{ $client->email }}</span>
+                            </div>
+                        @endif
+                        @if($client->phone)
+                            <div class="flex items-center gap-2">
+                                <flux:icon icon="phone" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span class="text-xs text-zinc-600">{{ $client->phone }}</span>
+                            </div>
+                        @endif
+                        @if(!$client->email && !$client->phone)
+                            <p class="text-xs text-zinc-400 italic">Sin datos de contacto</p>
+                        @endif
+                    </div>
+
+                    {{-- Dirección + Facturas --}}
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-zinc-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Ubicación</p>
+                            @if($defaultAddress)
+                                <p class="text-xs font-semibold text-zinc-700 truncate">
+                                    {{ $defaultAddress->municipality?->name ?? $defaultAddress->address }}
+                                </p>
+                                @if($defaultAddress->province)
+                                    <p class="text-[10px] text-zinc-400 truncate">{{ $defaultAddress->province->name }}</p>
+                                @endif
+                            @else
+                                <p class="text-xs text-zinc-400 italic">Sin dirección</p>
+                            @endif
+                        </div>
+                        <div class="bg-agro-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Facturas</p>
+                            <p class="text-sm font-bold text-agro-700">{{ $client->invoices->count() }}</p>
+                        </div>
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <a href="{{ route('viticulturist.clients.show', $client->id) }}" class="{{ $btnBase }}" title="Ver cliente">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </a>
+                                <a href="{{ route('viticulturist.clients.edit', $client->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                            </div>
+                            <button
+                                wire:click="toggleActive({{ $client->id }})"
+                                class="{{ $client->active ? $btnDanger : $btnSuccess }}"
+                                title="{{ $client->active ? 'Desactivar' : 'Activar' }}"
+                            >
+                                <flux:icon icon="{{ $client->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($clients->hasPages())
+            <div class="flex justify-center">{{ $clients->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="users"
+            message="{{ $currentTab === 'active' ? 'No hay clientes activos' : 'No hay clientes inactivos' }}"
+            description="{{ $search || $filterType ? 'Ningún cliente coincide con los filtros aplicados.' : ($currentTab === 'active' ? 'Crea tu primer cliente para empezar a gestionar tu cartera.' : 'Los clientes desactivados aparecerán aquí.') }}"
+        >
+            @if($search || $filterType)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @elseif($currentTab === 'active')
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.clients.create') }}" variant="primary" icon="plus">
+                        Nuevo Cliente
+                    </flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="client-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'client-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5">
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tipo de cliente</label>
+            <select wire:model.live="filterType"
+                    class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                <option value="">Todos los tipos</option>
+                <option value="individual">Particular</option>
+                <option value="company">Empresa</option>
+            </select>
+        </div>
+
+        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
+            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'client-filters')"
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
+                Limpiar filtros
+            </button>
+            <flux:button x-on:click="$dispatch('close-modal', 'client-filters')" variant="primary" size="sm">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
 </div>

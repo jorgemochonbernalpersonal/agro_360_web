@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Registrar Labor Cultural"
     description="Registra una nueva labor cultural en el cuaderno digital"
     :back-url="route('viticulturist.digital-notebook')"

@@ -152,7 +152,7 @@
                     @if($availableContainers->isEmpty())
                         <flux:description class="text-amber-600">
                             No hay contenedores disponibles.
-                            <a href="{{ route('viticulturist.digital-notebook.containers.create') }}" class="text-blue-600 hover:underline">Crea uno primero</a>
+                            <a href="{{ route('viticulturist.containers.create') }}" class="text-blue-600 hover:underline">Crea uno primero</a>
                         </flux:description>
                     @else
                         <flux:description>Solo se muestran contenedores disponibles (sin asignar a otra cosecha) y el contenedor actual</flux:description>

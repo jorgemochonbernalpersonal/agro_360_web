@@ -75,20 +75,20 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
             Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');
             
-            // Contenedores
-            Route::prefix('containers')->name('containers.')->group(function () {
-                Route::get('/', \App\Livewire\Viticulturist\Containers\Index::class)->name('index');
-                Route::get('/create', \App\Livewire\Viticulturist\Containers\Create::class)->name('create');
-                Route::get('/{id}', \App\Livewire\Viticulturist\Containers\Show::class)->name('show');
-                Route::get('/{id}/edit', \App\Livewire\Viticulturist\Containers\Edit::class)->name('edit');
-            });
-            
             // Rendimientos Estimados
             Route::prefix('estimated-yields')->name('estimated-yields.')->group(function () {
                 Route::get('/', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Index::class)->name('index');
                 Route::get('/create', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Create::class)->name('create');
                 Route::get('/{estimatedYield}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Edit::class)->name('edit');
             });
+        });
+
+        // Contenedores
+        Route::prefix('containers')->name('containers.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Containers\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Containers\Create::class)->name('create');
+            Route::get('/{id}', \App\Livewire\Viticulturist\Containers\Show::class)->name('show');
+            Route::get('/{id}/edit', \App\Livewire\Viticulturist\Containers\Edit::class)->name('edit');
         });
 
         // Personal (Equipos y Personal unificado)

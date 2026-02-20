@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Editar Tratamiento Fitosanitario"
     description="Modifica los datos del tratamiento fitosanitario"
     :back-url="route('viticulturist.digital-notebook')"

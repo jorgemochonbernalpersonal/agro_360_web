@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Force dark: variant to use .dark class — prevents OS dark mode from activating dark styles */
+@variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -59,6 +62,11 @@
     to   { opacity: 1; }
 }
 
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes slideInRight {
     from { transform: translateX(-10px); opacity: 0; }
     to   { transform: translateX(0);     opacity: 1; }
@@ -74,8 +82,14 @@
     to   { width: 0%;   }
 }
 
+@keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+}
+
 @layer utilities {
-    .animate-fade-in        { animation: fadeIn var(--transition-smooth) ease-in; }
+    .animate-fade-in        { animation: fadeIn var(--transition-smooth) ease-in both; }
+    .animate-fade-in-up     { animation: fadeInUp 0.5s ease-out both; }
     .animate-slide-in-right { animation: slideInRight var(--transition-base) ease-out; }
     .animate-scale-in       { animation: scaleIn var(--transition-base) ease-out; }
 
@@ -87,6 +101,27 @@
         box-shadow: var(--shadow-strong);
     }
 }
+
+/* Skeleton shimmer loader */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--color-agro-50) 25%,
+        #e4e4e7 50%,
+        var(--color-agro-50) 75%
+    );
+    background-size: 400px 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+    border-radius: 6px;
+}
+
+/* Stagger delay utilities for card entry animations */
+.delay-50  { animation-delay:  50ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-250 { animation-delay: 250ms; }
+.delay-300 { animation-delay: 300ms; }
 
 /* Toast progress bar */
 .toast-progress {
@@ -108,11 +143,29 @@
 ::-webkit-scrollbar-thumb  { background: var(--color-agro-400); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-agro-500); }
 
-/* Smooth scroll */
+/* Force light mode — app does not support dark theme */
 html {
+    color-scheme: light;
     scroll-behavior: smooth;
     scroll-padding-top: 80px;
 }
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
+}
+
+/* Fix browser autofill dark background (Chrome/Edge) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #18181b !important;
+    caret-color: #18181b;
 }

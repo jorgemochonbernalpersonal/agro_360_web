@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Editar Labor Cultural"
     description="Modifica los datos de la labor cultural"
     :back-url="route('viticulturist.digital-notebook')"

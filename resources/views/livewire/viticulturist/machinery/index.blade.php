@@ -1,349 +1,264 @@
-﻿<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in">
+
     <x-agro.page-header
         title="Maquinaria"
-        description="Gestiona tu maquinaria y equipos agricolas"
-    >
-        <x-slot:actions>
-            @can('create', \App\Models\Machinery::class)
-                <flux:button href="{{ route('viticulturist.machinery.create') }}" variant="primary" icon="plus">
-                    Nueva Maquinaria
-                </flux:button>
-            @endcan
-        </x-slot:actions>
-    </x-agro.page-header>
+        description="Gestiona tu maquinaria y equipos agrícolas"
+    />
 
-    <!-- Tabs Navigation -->
-    <x-agro.card :padding="false">
-        <div class="border-b border-zinc-200">
-            <nav class="flex -mb-px">
-                <button
-                    wire:click="switchTab('active')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'active' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <flux:icon icon="check-circle" class="size-5" />
-                    <span>Activas</span>
-                    @if($stats['active'] > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'active' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
-                            {{ $stats['active'] }}
-                        </span>
-                    @endif
-                </button>
+    {{-- Tabs --}}
+    <x-agro.tabs
+        :tabs="[
+            'active'   => ['label' => 'Activas',   'count' => $stats['active']],
+            'inactive' => ['label' => 'Inactivas',  'count' => $stats['inactive']],
+        ]"
+        :active="$currentTab"
+        wireMethod="switchTab"
+    />
 
-                <button
-                    wire:click="switchTab('inactive')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'inactive' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <flux:icon icon="x-circle" class="size-5" />
-                    <span>Inactivas</span>
-                    @if($stats['inactive'] > 0)
-                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $currentTab === 'inactive' ? 'bg-agro-700 text-white' : 'bg-zinc-200 text-zinc-700' }}">
-                            {{ $stats['inactive'] }}
-                        </span>
-                    @endif
-                </button>
+    {{-- Toolbar --}}
+    <div class="space-y-3">
+        <div class="flex items-center gap-3">
 
-                <button
-                    wire:click="switchTab('statistics')"
-                    class="group inline-flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors
-                        {{ $currentTab === 'statistics' ? 'border-agro-700 text-agro-700' : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300' }}"
-                >
-                    <flux:icon icon="chart-bar" class="size-5" />
-                    <span>Estadisticas</span>
-                </button>
-            </nav>
-        </div>
-
-        <div class="p-6">
-            {{-- ACTIVE/INACTIVE TABS --}}
-            @if($currentTab === 'active' || $currentTab === 'inactive')
-            <!-- Filtros -->
-            <div class="flex flex-wrap items-center gap-3 mb-6">
-                <x-agro.filter-input
+            {{-- Search --}}
+            <div class="flex-1 relative">
+                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+                </div>
+                <input
                     wire:model.live.debounce.300ms="search"
+                    type="text"
                     placeholder="Buscar por nombre, marca, modelo..."
+                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
                 />
-                <x-agro.filter-select wire:model.live="typeFilter">
-                    <option value="">Todos los tipos</option>
-                    @foreach($types as $type)
-                        <option value="{{ $type }}">{{ $type }}</option>
-                    @endforeach
-                </x-agro.filter-select>
-                @if($search || $typeFilter)
-                    <flux:button wire:click="clearFilters" variant="ghost" size="sm">
-                        Limpiar Filtros
-                    </flux:button>
-                @endif
             </div>
 
-    <x-agro.data-table :headers="['Maquinaria', 'Tipo', 'Marca/Modelo', 'ROMA', 'Estado', 'Actividades', 'Acciones']" empty-message="No hay maquinaria registrada" empty-description="Comienza agregando tu primera maquinaria o equipo agricola">
-        @if($machinery->count() > 0)
-            @foreach($machinery as $item)
-                <x-agro.table-row>
-                    <x-agro.table-cell>
+            {{-- Filtros --}}
+            @php $filterCount = ($typeFilter !== '' ? 1 : 0); @endphp
+            <button
+                x-on:click="$dispatch('open-modal', 'machinery-filters')"
+                class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+            >
+                <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+                Filtros
+                @if($filterCount > 0)
+                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {{ $filterCount }}
+                    </span>
+                @endif
+            </button>
+
+            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
+            {{-- Nueva Maquinaria --}}
+            @can('create', \App\Models\Machinery::class)
+                <flux:button href="{{ route('viticulturist.machinery.create') }}" variant="primary" icon="plus">
+                    Nueva
+                </flux:button>
+            @endcan
+
+        </div>
+
+        {{-- Active filter chips --}}
+        @if($search || $typeFilter !== '')
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs text-zinc-400">Filtros activos:</span>
+
+                @if($search)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        <flux:icon icon="magnifying-glass" class="size-3" />
+                        "{{ $search }}"
+                        <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                @if($typeFilter !== '')
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        Tipo: {{ $typeFilter }}
+                        <button wire:click="$set('typeFilter', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
+                    Limpiar todo
+                </button>
+            </div>
+        @endif
+    </div>
+
+    {{-- Card grid --}}
+    @if($machinery->count() > 0)
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="switchTab, search, typeFilter, clearFilters"
+        >
+            @foreach($machinery as $i => $item)
+                @php
+                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+                @endphp
+
+                <x-agro.card
+                    wire:key="machinery-{{ $item->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1 {{ !$item->active ? 'opacity-60' : '' }}"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center">
-                                <flux:icon icon="cog-6-tooth" class="size-5 text-agro-600" />
+                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="cog-6-tooth" class="size-4 text-zinc-500" />
                             </div>
-                            <div>
-                                <div class="text-sm font-bold text-zinc-900">{{ $item->name }}</div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $item->name }}</p>
                                 @if($item->year)
-                                    <div class="text-xs text-zinc-500 mt-1">Ano: {{ $item->year }}</div>
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5">Año {{ $item->year }}</p>
                                 @endif
                             </div>
+                            <x-agro.status-badge :status="$item->active" />
                         </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <span class="text-sm font-medium text-zinc-900">{{ $item->type }}</span>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($item->brand || $item->model)
-                            <span class="text-sm text-zinc-700">
-                                {{ $item->brand }} {{ $item->model }}
+                    </x-slot:header>
+
+                    {{-- Tipo --}}
+                    <div class="flex items-center gap-2 mb-3">
+                        <flux:icon icon="tag" class="size-3.5 text-zinc-400 shrink-0" />
+                        <span class="text-xs text-zinc-600 truncate">{{ $item->type ?? 'Sin tipo' }}</span>
+                        @if($item->is_rented)
+                            <span class="inline-flex items-center gap-1 text-xs text-blue-600 shrink-0">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                                Alquilada
                             </span>
-                        @else
-                            <span class="text-sm text-zinc-400">-</span>
                         @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($item->roma_registration)
-                            <span class="text-sm font-medium text-zinc-900">{{ $item->roma_registration }}</span>
-                        @else
-                            <span class="text-sm text-zinc-400">-</span>
-                        @endif
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <x-agro.status-badge :active="$item->active" />
-                            @if($item->is_rented)
-                                <x-agro.status-badge label="Alquilada" type="info" />
-                            @endif
+                    </div>
+
+                    {{-- Métricas --}}
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div class="bg-zinc-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Marca/Modelo</p>
+                            <p class="text-sm font-bold text-zinc-700 truncate">
+                                {{ ($item->brand || $item->model) ? trim(($item->brand ?? '') . ' ' . ($item->model ?? '')) : '—' }}
+                            </p>
                         </div>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <span class="text-sm font-semibold text-zinc-900">{{ $item->activities_count }}</span>
-                        <span class="text-xs text-zinc-500"> actividades</span>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <div class="flex items-center justify-end gap-2">
-                            @can('view', $item)
-                                <x-agro.action-button variant="view" href="{{ route('viticulturist.machinery.show', $item) }}" />
-                            @endcan
-                            @can('update', $item)
-                                <x-agro.action-button variant="edit" href="{{ route('viticulturist.machinery.edit', $item) }}" />
-                            @endcan
+                        <div class="bg-agro-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Actividades</p>
+                            <p class="text-sm font-bold text-agro-700">{{ $item->activities_count }}</p>
+                        </div>
+                    </div>
+
+                    {{-- ROMA --}}
+                    @if($item->roma_registration)
+                        <div class="flex items-center gap-2">
+                            <flux:icon icon="document-text" class="size-3.5 text-zinc-400 shrink-0" />
+                            <span class="text-xs text-zinc-600">ROMA: {{ $item->roma_registration }}</span>
+                        </div>
+                    @endif
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                @can('view', $item)
+                                    <a href="{{ route('viticulturist.machinery.show', $item) }}" class="{{ $btnBase }}" title="Ver maquinaria">
+                                        <flux:icon icon="eye" class="size-4" />
+                                    </a>
+                                @endcan
+                                @can('update', $item)
+                                    <a href="{{ route('viticulturist.machinery.edit', $item) }}" class="{{ $btnBase }}" title="Editar">
+                                        <flux:icon icon="pencil-square" class="size-4" />
+                                    </a>
+                                @endcan
+                            </div>
+
                             @can('update', $item)
                                 <button
                                     wire:click="toggleActive({{ $item->id }})"
                                     wire:loading.attr="disabled"
                                     wire:target="toggleActive({{ $item->id }})"
-                                    class="p-2 rounded-lg transition-all duration-200 group/btn {{ $item->active ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50' }} disabled:opacity-50 disabled:cursor-not-allowed"
-                                    title="{{ $item->active ? 'Desactivar maquinaria' : 'Activar maquinaria' }}"
+                                    class="{{ $item->active ? $btnDanger : $btnSuccess }}"
+                                    title="{{ $item->active ? 'Desactivar' : 'Activar' }}"
                                 >
                                     <span wire:loading.remove wire:target="toggleActive({{ $item->id }})">
-                                        @if($item->active)
-                                            <flux:icon icon="x-circle" class="size-5" />
-                                        @else
-                                            <flux:icon icon="check-circle" class="size-5" />
-                                        @endif
+                                        <flux:icon icon="{{ $item->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
                                     </span>
-                                    <span wire:loading wire:target="toggleActive({{ $item->id }})" class="inline-block">
-                                        <flux:icon icon="arrow-path" class="size-5 animate-spin" />
+                                    <span wire:loading wire:target="toggleActive({{ $item->id }})">
+                                        <svg class="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
                                     </span>
                                 </button>
                             @endcan
                         </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
+                    </x-slot:footer>
+                </x-agro.card>
             @endforeach
-            <x-slot name="pagination">
-                {{ $machinery->links() }}
-            </x-slot>
-        @else
-            <x-slot name="emptyAction">
-                @can('create', \App\Models\Machinery::class)
-                    <flux:button href="{{ route('viticulturist.machinery.create') }}" variant="primary" icon="plus">
-                        Agregar Maquinaria
-                    </flux:button>
-                @endcan
-            </x-slot>
-        @endif
-    </x-agro.data-table>
-            @endif
-
-            {{-- STATISTICS TAB --}}
-            @if($currentTab === 'statistics')
-                <div class="space-y-6">
-                    {{-- Filtro de Ano --}}
-                    <div class="flex justify-end">
-                        <flux:select wire:model.live="yearFilter" class="w-auto">
-                            @for($year = now()->year; $year >= now()->year - 5; $year--)
-                                <option value="{{ $year }}">{{ $year }}</option>
-                            @endfor
-                        </flux:select>
-                    </div>
-
-                    {{-- KPIs --}}
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <x-agro.stat-card label="Total Maquinaria" :value="$stats['total']" description="Todas las maquinas" icon="cog-6-tooth" color="agro" />
-                        <x-agro.stat-card label="Actividades {{ $yearFilter }}" :value="$advancedStats['totalActivities'] ?? 0" description="Este ano" icon="clipboard-document-list" color="blue" />
-                        <x-agro.stat-card label="Maquinaria Activa" :value="$stats['active']" :description="'De ' . $stats['total'] . ' totales'" icon="check-circle" color="purple" />
-                        <x-agro.stat-card label="Con Actividades" :value="$advancedStats['withActivities'] ?? 0" description="Este ano" icon="chart-bar" color="orange" />
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {{-- Distribucion por Tipo --}}
-                        <x-agro.card>
-                            <x-slot:header>
-                                <div class="flex items-center gap-2">
-                                    <div class="p-1.5 rounded-lg bg-agro-50">
-                                        <flux:icon icon="chart-pie" class="size-4 text-agro-600" />
-                                    </div>
-                                    <span class="font-semibold text-zinc-900 text-sm">Distribucion por Tipo</span>
-                                </div>
-                            </x-slot:header>
-                            <div class="space-y-4">
-                                @forelse(($advancedStats['typeStats'] ?? []) as $type => $data)
-                                    @php
-                                        $total = ($advancedStats['typeStats'] ?? [])->sum('count');
-                                        $percentage = $total > 0 ? ($data['count'] / $total) * 100 : 0;
-                                    @endphp
-                                    <div>
-                                        <div class="flex justify-between mb-2">
-                                            <span class="text-sm font-medium text-zinc-700">{{ $type }}</span>
-                                            <span class="text-sm font-bold text-zinc-900">{{ $data['count'] }} ({{ number_format($percentage, 1) }}%)</span>
-                                        </div>
-                                        <div class="w-full bg-zinc-200 rounded-full h-3">
-                                            <div class="bg-agro-500 h-3 rounded-full" style="width: {{ $percentage }}%"></div>
-                                        </div>
-                                        <div class="flex gap-4 mt-1 text-xs text-zinc-500">
-                                            <span>Activas: {{ $data['active'] }}</span>
-                                            <span>Inactivas: {{ $data['inactive'] }}</span>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="text-zinc-500 text-center py-4">No hay datos de tipos</p>
-                                @endforelse
-                            </div>
-                        </x-agro.card>
-
-                        {{-- Propiedad vs Alquiler --}}
-                        <x-agro.card>
-                            <x-slot:header>
-                                <div class="flex items-center gap-2">
-                                    <div class="p-1.5 rounded-lg bg-blue-50">
-                                        <flux:icon icon="arrow-trending-up" class="size-4 text-blue-600" />
-                                    </div>
-                                    <span class="font-semibold text-zinc-900 text-sm">Propiedad vs Alquiler</span>
-                                </div>
-                            </x-slot:header>
-                            <div class="space-y-4">
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-zinc-700">Propias</span>
-                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['ownedCount'] ?? 0 }}</span>
-                                    </div>
-                                    <div class="w-full bg-zinc-200 rounded-full h-3">
-                                        @php
-                                            $ownedPct = $stats['total'] > 0 ? (($advancedStats['ownedCount'] ?? 0) / $stats['total']) * 100 : 0;
-                                        @endphp
-                                        <div class="bg-green-500 h-3 rounded-full" style="width: {{ $ownedPct }}%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-zinc-700">Alquiladas</span>
-                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['rentedCount'] ?? 0 }}</span>
-                                    </div>
-                                    <div class="w-full bg-zinc-200 rounded-full h-3">
-                                        @php
-                                            $rentedPct = $stats['total'] > 0 ? (($advancedStats['rentedCount'] ?? 0) / $stats['total']) * 100 : 0;
-                                        @endphp
-                                        <div class="bg-blue-500 h-3 rounded-full" style="width: {{ $rentedPct }}%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-zinc-700">Con Actividades</span>
-                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['withActivities'] ?? 0 }}</span>
-                                    </div>
-                                    <div class="w-full bg-zinc-200 rounded-full h-3">
-                                        @php
-                                            $withActPct = $stats['total'] > 0 ? (($advancedStats['withActivities'] ?? 0) / $stats['total']) * 100 : 0;
-                                        @endphp
-                                        <div class="bg-purple-500 h-3 rounded-full" style="width: {{ $withActPct }}%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-zinc-700">Con ROMA</span>
-                                        <span class="text-sm font-bold text-zinc-900">{{ $advancedStats['withRoma'] ?? 0 }}</span>
-                                    </div>
-                                    <div class="w-full bg-zinc-200 rounded-full h-3">
-                                        @php
-                                            $romaPct = $stats['total'] > 0 ? (($advancedStats['withRoma'] ?? 0) / $stats['total']) * 100 : 0;
-                                        @endphp
-                                        <div class="bg-orange-500 h-3 rounded-full" style="width: {{ $romaPct }}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </x-agro.card>
-                    </div>
-
-                    {{-- Top 10 Maquinaria Mas Usada --}}
-                    <x-agro.card>
-                        <x-slot:header>
-                            <div class="flex items-center gap-2">
-                                <div class="p-1.5 rounded-lg bg-agro-50">
-                                    <flux:icon icon="trophy" class="size-4 text-agro-600" />
-                                </div>
-                                <span class="font-semibold text-zinc-900 text-sm">Top 10 Maquinaria Mas Usada ({{ $yearFilter }})</span>
-                            </div>
-                        </x-slot:header>
-                        <div class="space-y-3">
-                            @forelse(($advancedStats['mostUsed'] ?? []) as $index => $machinery)
-                                <div class="flex items-center justify-between p-3 bg-zinc-50 rounded-lg hover:bg-zinc-100 transition-colors">
-                                    <div class="flex items-center gap-3">
-                                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-agro-500 text-white flex items-center justify-center font-bold text-sm">
-                                            {{ $index + 1 }}
-                                        </span>
-                                        <div>
-                                            <p class="font-semibold text-zinc-900">{{ $machinery['name'] }}</p>
-                                            <p class="text-xs text-zinc-500">{{ $machinery['type'] }}</p>
-                                        </div>
-                                    </div>
-                                    <span class="font-bold text-agro-700">{{ $machinery['activities_count'] }} actividades</span>
-                                </div>
-                            @empty
-                                <p class="text-zinc-500 text-center py-4">No hay datos de uso</p>
-                            @endforelse
-                        </div>
-                    </x-agro.card>
-
-                    {{-- Nuevas Maquinarias --}}
-                    <x-agro.card>
-                        <x-slot:header>
-                            <div class="flex items-center gap-2">
-                                <div class="p-1.5 rounded-lg bg-purple-50">
-                                    <flux:icon icon="arrow-trending-up" class="size-4 text-purple-600" />
-                                </div>
-                                <span class="font-semibold text-zinc-900 text-sm">Nuevas Maquinarias (Ultimos 12 meses)</span>
-                            </div>
-                        </x-slot:header>
-                        <div class="h-64 flex items-end justify-between gap-2">
-                            @foreach(($advancedStats['newMachineryByMonth'] ?? []) as $month)
-                                <div class="flex-1 flex flex-col items-center">
-                                    <div class="w-full bg-agro-500 rounded-t-lg transition-all hover:bg-agro-700"
-                                        style="height: {{ $month['count'] > 0 ? ($month['count'] / max(collect($advancedStats['newMachineryByMonth'] ?? [])->pluck('count')->max(), 1)) * 100 : 5 }}%"
-                                        title="{{ $month['count'] }} maquinarias"></div>
-                                    <span class="text-xs text-zinc-600 mt-2">{{ $month['month'] }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </x-agro.card>
-                </div>
-            @endif
         </div>
-    </x-agro.card>
+
+        @if($machinery->hasPages())
+            <div class="flex justify-center">{{ $machinery->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="cog-6-tooth"
+            message="{{ $currentTab === 'active' ? 'No hay maquinaria activa' : 'No hay maquinaria inactiva' }}"
+            description="{{ $search || $typeFilter !== '' ? 'Ninguna maquinaria coincide con los filtros aplicados.' : 'Comienza registrando tu primera máquina o equipo agrícola.' }}"
+        >
+            @if($search || $typeFilter !== '')
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @else
+                @can('create', \App\Models\Machinery::class)
+                    <x-slot:action>
+                        <flux:button href="{{ route('viticulturist.machinery.create') }}" variant="primary" icon="plus">
+                            Nueva Maquinaria
+                        </flux:button>
+                    </x-slot:action>
+                @endcan
+            @endif
+        </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="machinery-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'machinery-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tipo de maquinaria</label>
+                <select wire:model.live="typeFilter"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todos los tipos</option>
+                    @foreach($types as $type)
+                        <option value="{{ $type }}">{{ $type }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
+            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'machinery-filters')"
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
+                Limpiar filtros
+            </button>
+            <flux:button x-on:click="$dispatch('close-modal', 'machinery-filters')" variant="primary" size="sm">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
 </div>

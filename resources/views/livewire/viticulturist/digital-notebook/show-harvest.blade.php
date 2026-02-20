@@ -186,7 +186,7 @@
                     <div class="flex items-center justify-between">
                         <flux:heading size="sm">Contenedor</flux:heading>
                         <flux:button
-                            :href="route('viticulturist.digital-notebook.containers.create') . '?harvest_id=' . $harvest->id"
+                            :href="route('viticulturist.containers.create') . '?harvest_id=' . $harvest->id"
                             variant="ghost"
                             size="sm"
                             icon="plus"
@@ -252,7 +252,7 @@
                             </div>
 
                             <flux:button
-                                :href="route('viticulturist.digital-notebook.containers.edit', $container)"
+                                :href="route('viticulturist.containers.edit', $container)"
                                 variant="ghost"
                                 size="sm"
                                 icon="pencil-square"
@@ -276,7 +276,7 @@
                     >
                         <x-slot:action>
                             <flux:button
-                                :href="route('viticulturist.digital-notebook.containers.create') . '?harvest_id=' . $harvest->id"
+                                :href="route('viticulturist.containers.create') . '?harvest_id=' . $harvest->id"
                                 variant="primary"
                                 icon="plus"
                             >

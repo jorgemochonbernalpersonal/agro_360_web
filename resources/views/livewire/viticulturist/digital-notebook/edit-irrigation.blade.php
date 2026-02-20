@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Editar Riego"
     description="Modifica los datos del riego"
     :back-url="route('viticulturist.digital-notebook')"

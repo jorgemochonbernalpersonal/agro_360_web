@@ -1,4 +1,4 @@
-﻿<x-agro.form-card
+<x-agro.form-card
     title="Registrar Fertilización"
     description="Registra una nueva fertilización en el cuaderno digital"
     :back-url="route('viticulturist.digital-notebook')"

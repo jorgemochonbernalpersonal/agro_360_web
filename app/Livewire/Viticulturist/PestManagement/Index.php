@@ -15,8 +15,9 @@ class Index extends Component
     public $showOnlyRisk = false;
 
     protected $queryString = [
-        'search' => ['except' => ''],
-        'typeFilter' => ['except' => 'all'],
+        'search'       => ['except' => ''],
+        'typeFilter'   => ['except' => 'all'],
+        'showOnlyRisk' => ['except' => false],
     ];
 
     public function updatingSearch()
@@ -31,6 +32,14 @@ class Index extends Component
 
     public function updatingShowOnlyRisk()
     {
+        $this->resetPage();
+    }
+
+    public function clearFilters(): void
+    {
+        $this->search       = '';
+        $this->typeFilter   = 'all';
+        $this->showOnlyRisk = false;
         $this->resetPage();
     }
 

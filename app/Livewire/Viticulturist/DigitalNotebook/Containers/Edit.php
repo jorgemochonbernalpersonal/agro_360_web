@@ -87,7 +87,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Contenedor actualizado exitosamente.');
-            return redirect()->route('viticulturist.digital-notebook.containers.index');
+            return redirect()->route('viticulturist.containers.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar contenedor', [
                 'error' => $e->getMessage(),
@@ -99,7 +99,7 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.digital-notebook.containers.edit')
+        return view('livewire.viticulturist.containers.edit')
             ->layout('layouts.app');
     }
 }

@@ -140,7 +140,7 @@ class Create extends Component
             ]);
 
             $this->toastSuccess('Contenedor creado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.containers.index');
+            return redirect()->route('viticulturist.containers.index');
             
         } catch (\Exception $e) {
             \Log::error('Error al crear contenedor', [
