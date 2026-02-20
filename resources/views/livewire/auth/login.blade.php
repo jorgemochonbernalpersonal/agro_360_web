@@ -1,189 +1,93 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-agro-green-bg)] via-white to-[var(--color-agro-green-bright)]/30 py-6 px-4" x-data="{ showPassword: false }">
-    <!-- Elementos decorativos -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-[var(--color-agro-green-light)]/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-[var(--color-agro-green)]/10 rounded-full blur-3xl"></div>
-    </div>
-    
-    <div class="w-full max-w-md mx-auto relative z-10">
-        <!-- Logo y Header -->
+﻿<div class="min-h-screen flex items-center justify-center bg-agro-50 py-6 px-4" x-data="{ showPassword: false }">
+    <div class="w-full max-w-md mx-auto">
+        {{-- Logo --}}
         <div class="text-center mb-8">
             <a href="{{ route('home') }}" class="inline-block group">
-                <div class="inline-block max-w-[180px] mx-auto mb-3">
-                    <img 
-                        src="{{ asset('images/logo.png') }}" 
-                        alt="Agro365 Logo" 
-                        width="180"
-                        height="96"
-                        loading="eager"
-                        fetchpriority="high"
-                        decoding="async"
-                        class="w-full h-auto max-h-24 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-200"
-                    >
-                </div>
+                <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="180" height="96" class="mx-auto max-h-24 object-contain group-hover:scale-105 transition-transform">
             </a>
-            <p class="text-gray-600 text-sm font-medium">Cuaderno de campo digital para viticultores</p>
+            <flux:subheading class="mt-2">Cuaderno de campo digital para viticultores</flux:subheading>
         </div>
-        <!-- Login Form -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <h2 class="text-2xl font-bold text-gray-900 mb-1 text-center">Iniciar Sesión</h2>
-            <p class="text-gray-500 mb-6 text-center text-sm">Ingresa tus credenciales para continuar</p>
-            
+
+        {{-- Form --}}
+        <x-agro.card>
+            <div class="text-center mb-6">
+                <flux:heading size="xl">Iniciar Sesión</flux:heading>
+                <flux:subheading>Ingresa tus credenciales para continuar</flux:subheading>
+            </div>
+
             <form wire:submit="login" class="space-y-5">
-                <div>
-                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Email
-                    </label>
-                    <input 
-                        wire:model="email" 
-                        type="email" 
-                        id="email"
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
-                        placeholder="correo@ejemplo.com"
-                        required
-                    >
-                    @error('email') 
-                        <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                    @enderror
+                <flux:field>
+                    <flux:label>Email</flux:label>
+                    <flux:input wire:model="email" type="email" placeholder="correo@ejemplo.com" required />
+                    <flux:error name="email" />
+                </flux:field>
+
+                {{-- Honeypot --}}
+                <div style="position: absolute; left: -9999px;" aria-hidden="true" tabindex="-1">
+                    <flux:input wire:model="honeypot" type="text" autocomplete="off" tabindex="-1" />
                 </div>
 
-                {{-- Honeypot: Campo oculto anti-bots --}}
-                {{-- Los bots automáticos lo rellenan, los humanos no lo ven --}}
-                <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true" tabindex="-1">
-                    <label for="website">Website (do not fill)</label>
-                    <input 
-                        wire:model="honeypot" 
-                        type="text" 
-                        id="website" 
-                        name="website" 
-                        autocomplete="off"
-                        tabindex="-1"
-                    >
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Contraseña
-                    </label>
+                <flux:field>
+                    <flux:label>Contraseña</flux:label>
                     <div class="relative">
-                        <input 
-                            wire:model="password" 
-                            type="password" 
-                            id="password"
-                            x-bind:type="showPassword ? 'text' : 'password'"
-                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition bg-gray-50 focus:bg-white"
-                            placeholder="••••••••"
-                            required
-                        >
-                        <button
-                            type="button"
-                            x-on:click="showPassword = !showPassword"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            tabindex="-1"
-                        >
-                            <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                            </svg>
+                        <flux:input wire:model="password" :type="'password'" x-bind:type="showPassword ? 'text' : 'password'" placeholder="••••••••" required />
+                        <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600" tabindex="-1">
+                            <flux:icon x-show="!showPassword" icon="eye" variant="micro" />
+                            <flux:icon x-show="showPassword" icon="eye-slash" variant="micro" x-cloak />
                         </button>
                     </div>
-                    @error('password') 
-                        <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p> 
-                    @enderror
-                </div>
+                    <flux:error name="password" />
+                </flux:field>
 
-                {{-- reCAPTCHA v2 - Solo se muestra después de 3 intentos fallidos --}}
+                {{-- reCAPTCHA --}}
                 @if($showCaptcha)
-                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                        <p class="text-sm text-yellow-800 mb-3 font-medium">
-                            <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            Por motivos de seguridad, por favor verifica que no eres un robot
-                        </p>
-                        
-                        <div class="flex justify-center" 
-                             x-data="{ 
-                                 recaptchaLoaded: false,
+                    <flux:callout variant="warning" icon="exclamation-triangle">
+                        <flux:callout.text>Por motivos de seguridad, verifica que no eres un robot</flux:callout.text>
+                        <div class="flex justify-center mt-3"
+                             x-data="{
                                  widgetId: null,
                                  init() {
                                      if (typeof grecaptcha === 'undefined') {
-                                         const script = document.createElement('script');
-                                         script.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
-                                         script.async = true;
-                                         script.defer = true;
-                                         document.head.appendChild(script);
-                                     } else {
-                                         this.renderCaptcha();
-                                     }
-                                     
-                                     window.onRecaptchaLoad = () => {
-                                         this.recaptchaLoaded = true;
-                                         this.renderCaptcha();
-                                     };
+                                         const s = document.createElement('script');
+                                         s.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
+                                         s.async = true; s.defer = true;
+                                         document.head.appendChild(s);
+                                     } else { this.renderCaptcha(); }
+                                     window.onRecaptchaLoad = () => this.renderCaptcha();
                                  },
                                  renderCaptcha() {
                                      if (this.widgetId === null && typeof grecaptcha !== 'undefined' && grecaptcha.render) {
                                          this.widgetId = grecaptcha.render('recaptcha-container', {
                                              'sitekey': '{{ config('services.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI') }}',
-                                             'callback': (token) => {
-                                                 @this.set('recaptchaToken', token);
-                                             },
-                                             'expired-callback': () => {
-                                                 @this.set('recaptchaToken', '');
-                                             }
+                                             'callback': (token) => @this.set('recaptchaToken', token),
+                                             'expired-callback': () => @this.set('recaptchaToken', ''),
                                          });
                                      }
                                  }
                              }">
                             <div id="recaptcha-container"></div>
                         </div>
-                    </div>
+                    </flux:callout>
                 @endif
 
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input 
-                            wire:model="remember" 
-                            type="checkbox" 
-                            id="remember"
-                            class="w-4 h-4 text-[var(--color-agro-green-dark)] border-gray-300 rounded focus:ring-[var(--color-agro-green-dark)]"
-                        >
-                        <label for="remember" class="ml-2 block text-sm text-gray-700">
-                            Recordarme
-                        </label>
-                    </div>
-                    <a href="{{ route('password.request') }}" class="text-sm text-[var(--color-agro-green-dark)] hover:underline font-medium">
+                    <flux:checkbox wire:model="remember" label="Recordarme" />
+                    <a href="{{ route('password.request') }}" class="text-sm text-agro-700 hover:underline font-medium">
                         ¿Olvidaste tu contraseña?
                     </a>
                 </div>
 
-                <button 
-                    type="submit"
-                    wire:loading.attr="disabled"
-                    class="w-full bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white py-3.5 px-4 rounded-lg font-bold hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-agro-green-dark)] transition-all transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                    <span wire:loading.remove>Iniciar Sesión</span>
-                    <span wire:loading class="flex items-center gap-2">
-                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Iniciando sesión...
-                    </span>
-                </button>
+                <flux:button type="submit" variant="primary" class="w-full">
+                    Iniciar Sesión
+                </flux:button>
             </form>
 
             <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600">
-                    ¿No tienes cuenta? 
-                    <a href="{{ route('register') }}" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">
-                        Regístrate aquí
-                    </a>
-                </p>
-        </div>
+                <flux:subheading>
+                    ¿No tienes cuenta?
+                    <a href="{{ route('register') }}" class="text-agro-700 hover:underline font-semibold">Regístrate aquí</a>
+                </flux:subheading>
+            </div>
+        </x-agro.card>
     </div>
 </div>

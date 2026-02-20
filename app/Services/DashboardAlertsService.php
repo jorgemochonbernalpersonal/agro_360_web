@@ -47,7 +47,7 @@ class DashboardAlertsService
                 'icon' => '📦',
                 'title' => 'Contenedores bajos',
                 'message' => "Solo quedan {$availableContainers} contenedores disponibles",
-                'action_url' => route('viticulturist.digital-notebook.containers.index'),
+                'action_url' => route('viticulturist.containers.index'),
                 'action_text' => 'Ver contenedores',
             ]);
         } elseif ($availableContainers === 0) {
@@ -57,7 +57,7 @@ class DashboardAlertsService
                 'icon' => '🚨',
                 'title' => 'Sin contenedores',
                 'message' => 'No hay contenedores disponibles',
-                'action_url' => route('viticulturist.digital-notebook.containers.index'),
+                'action_url' => route('viticulturist.containers.index'),
                 'action_text' => 'Añadir contenedores',
             ]);
         }

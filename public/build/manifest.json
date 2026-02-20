@@ -16,7 +16,7 @@
     "name": "vendor-axios"
   },
   "resources/css/app.css": {
-    "file": "css/app-8t8C7i8L.css",
+    "file": "css/app-DxT4uP7s.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -25,7 +25,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "js/app-CmcE_Vg7.js",
+    "file": "js/app-C3M8SzXt.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

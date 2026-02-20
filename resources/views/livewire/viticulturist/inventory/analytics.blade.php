@@ -1,193 +1,102 @@
 <div class="space-y-6 animate-fade-in">
     <!-- Header -->
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+    <x-agro.page-header
         title="Analíticas de Inventario"
         description="Estadísticas y proyecciones de consumo de productos fitosanitarios"
-        icon-color="from-purple-500 to-purple-600"
     >
-        <x-slot:actionButton>
-            <a href="{{ route('viticulturist.inventory.index') }}">
-                <button class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">
-                    Volver al Inventario
-                </button>
-            </a>
-        </x-slot:actionButton>
-    </x-page-header>
+        <x-slot:actions>
+            <flux:button href="{{ route('viticulturist.inventory.index') }}" variant="ghost" icon="arrow-left">
+                Volver al Inventario
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
-    <!-- KPIs -->
+    {{-- KPIs --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <!-- Total Productos -->
-        <div class="glass-card p-6 rounded-xl border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Total Productos</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['total_products'] }}</p>
-                </div>
-                <div class="p-3 rounded-full bg-blue-100">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Valor Total -->
-        <div class="glass-card p-6 rounded-xl border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Valor Total</p>
-                    <p class="text-3xl font-bold text-[var(--color-agro-green)] mt-1">{{ number_format($stats['total_value'], 2) }}€</p>
-                </div>
-                <div class="p-3 rounded-full bg-green-100">
-                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stock Bajo -->
-        <div class="glass-card p-6 rounded-xl border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Stock Bajo</p>
-                    <p class="text-3xl font-bold text-orange-600 mt-1">{{ $stats['low_stock_count'] }}</p>
-                </div>
-                <div class="p-3 rounded-full bg-orange-100">
-                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Próximos a Caducar -->
-        <div class="glass-card p-6 rounded-xl border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Próximos a Caducar</p>
-                    <p class="text-3xl font-bold text-red-600 mt-1">{{ $stats['expiring_count'] }}</p>
-                </div>
-                <div class="p-3 rounded-full bg-red-100">
-                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
+        <x-agro.stat-card label="Total Productos" :value="$stats['total_products']" icon="archive-box" color="blue" />
+        <x-agro.stat-card label="Valor Total" :value="number_format($stats['total_value'], 2) . ' €'" icon="banknotes" color="green" />
+        <x-agro.stat-card label="Stock Bajo" :value="$stats['low_stock_count']" icon="exclamation-triangle" color="yellow" />
+        <x-agro.stat-card label="Próximos a Caducar" :value="$stats['expiring_count']" icon="calendar" color="red" />
     </div>
 
-    <!-- Gráficos -->
+    {{-- Gráficos --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Consumo Mensual -->
-        <div class="glass-card p-6 rounded-xl border border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Consumo Mensual (Últimos 12 meses)</h3>
+        <x-agro.card>
+            <x-slot:header>
+                <flux:heading size="lg">Consumo Mensual (Últimos 12 meses)</flux:heading>
+            </x-slot:header>
             <canvas id="consumptionChart" height="300"></canvas>
-        </div>
-
-        <!-- Top 5 Productos -->
-        <div class="glass-card p-6 rounded-xl border border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Top 5 Productos Más Consumidos</h3>
+        </x-agro.card>
+        <x-agro.card>
+            <x-slot:header>
+                <flux:heading size="lg">Top 5 Productos Más Consumidos</flux:heading>
+            </x-slot:header>
             <canvas id="topProductsChart" height="300"></canvas>
-        </div>
+        </x-agro.card>
     </div>
 
-    <!-- Proyecciones de Agotamiento -->
+    {{-- Proyecciones de Agotamiento --}}
     @if(count($projections) > 0)
-        <div class="glass-card rounded-xl border border-gray-200">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Proyección de Agotamiento de Stock</h3>
-                <p class="text-sm text-gray-600 mt-1">Estimación basada en consumo promedio de los últimos 30 días</p>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Actual</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Consumo Diario</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Días Restantes</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Estimada</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($projections as $projection)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $projection['product'] }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ number_format($projection['current_stock'], 2) }} {{ $projection['unit'] }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ number_format($projection['avg_daily_consumption'], 3) }} {{ $projection['unit'] }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                    {{ $projection['days_until_empty'] }} días
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $projection['estimated_empty_date']->format('d/m/Y') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($projection['status'] === 'critical')
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                            🔴 Crítico
-                                        </span>
-                                    @elseif($projection['status'] === 'warning')
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
-                                            🟡 Advertencia
-                                        </span>
-                                    @else
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                            🟢 OK
-                                        </span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    @endif
-
-    <!-- Productos con Baja Rotación -->
-    @if(count($slowMoving) > 0)
-        <div class="glass-card rounded-xl border border-gray-200">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Productos con Baja Rotación</h3>
-                <p class="text-sm text-gray-600 mt-1">Productos sin movimiento reciente (posible stock muerto)</p>
-            </div>
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @foreach($slowMoving as $item)
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-900">{{ $item['product'] }}</p>
-                            <p class="text-sm text-gray-600 mt-1">Stock: {{ number_format($item['quantity'], 2) }} {{ $item['unit'] }}</p>
-                            <p class="text-sm text-gray-600">Valor: {{ number_format($item['value'], 2) }}€</p>
-                            <p class="text-sm text-orange-600 font-medium mt-2">
-                                Sin movimiento: {{ $item['days_without_movement'] }} días
-                            </p>
-                        </div>
-                    @endforeach
+        <x-agro.data-table
+            :headers="['Producto', 'Stock Actual', 'Consumo Diario', 'Días Restantes', 'Fecha Estimada', 'Estado']"
+            empty-message="Sin proyecciones"
+        >
+            <x-slot:header>
+                <div class="px-6 py-4 border-b border-zinc-200">
+                    <flux:heading size="lg">Proyección de Agotamiento de Stock</flux:heading>
+                    <flux:subheading>Estimación basada en consumo promedio de los últimos 30 días</flux:subheading>
                 </div>
-            </div>
-        </div>
+            </x-slot:header>
+            @foreach($projections as $projection)
+                <x-agro.table-row>
+                    <x-agro.table-cell class="font-medium text-zinc-900">{{ $projection['product'] }}</x-agro.table-cell>
+                    <x-agro.table-cell class="text-zinc-700">{{ number_format($projection['current_stock'], 2) }} {{ $projection['unit'] }}</x-agro.table-cell>
+                    <x-agro.table-cell class="text-zinc-700">{{ number_format($projection['avg_daily_consumption'], 3) }} {{ $projection['unit'] }}</x-agro.table-cell>
+                    <x-agro.table-cell class="font-semibold text-zinc-900">{{ $projection['days_until_empty'] }} días</x-agro.table-cell>
+                    <x-agro.table-cell class="text-zinc-700">{{ $projection['estimated_empty_date']->format('d/m/Y') }}</x-agro.table-cell>
+                    <x-agro.table-cell>
+                        @if($projection['status'] === 'critical')
+                            <x-agro.status-badge status="expired" label="Crítico" />
+                        @elseif($projection['status'] === 'warning')
+                            <x-agro.status-badge status="warning" label="Advertencia" />
+                        @else
+                            <x-agro.status-badge status="active" label="OK" />
+                        @endif
+                    </x-agro.table-cell>
+                </x-agro.table-row>
+            @endforeach
+        </x-agro.data-table>
     @endif
 
-    <!-- Botón Exportar -->
+    {{-- Productos con Baja Rotación --}}
+    @if(count($slowMoving) > 0)
+        <x-agro.card>
+            <x-slot:header>
+                <div>
+                    <flux:heading size="lg">Productos con Baja Rotación</flux:heading>
+                    <flux:subheading>Productos sin movimiento reciente (posible stock muerto)</flux:subheading>
+                </div>
+            </x-slot:header>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($slowMoving as $item)
+                    <div class="p-4 bg-zinc-50 rounded-lg border border-zinc-200">
+                        <p class="font-semibold text-zinc-900">{{ $item['product'] }}</p>
+                        <p class="text-sm text-zinc-600 mt-1">Stock: {{ number_format($item['quantity'], 2) }} {{ $item['unit'] }}</p>
+                        <p class="text-sm text-zinc-600">Valor: {{ number_format($item['value'], 2) }}€</p>
+                        <p class="text-sm text-orange-600 font-medium mt-2">
+                            Sin movimiento: {{ $item['days_without_movement'] }} días
+                        </p>
+                    </div>
+                @endforeach
+            </div>
+        </x-agro.card>
+    @endif
+
+    {{-- Exportar --}}
     <div class="flex justify-end">
-        <a href="{{ route('viticulturist.inventory.export') }}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
+        <flux:button href="{{ route('viticulturist.inventory.export') }}" variant="primary" icon="arrow-down-tray">
             Exportar a Excel
-        </a>
+        </flux:button>
     </div>
 </div>
 

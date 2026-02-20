@@ -136,7 +136,7 @@ class Edit extends Component
             ]);
 
             $this->toastSuccess('Contenedor actualizado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.containers.show', $this->container->id);
+            return redirect()->route('viticulturist.containers.show', $this->container->id);
             
         } catch (\Exception $e) {
             \Log::error('Error al actualizar contenedor', [

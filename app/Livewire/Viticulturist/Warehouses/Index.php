@@ -12,29 +12,37 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public $search = '';
+    public $currentTab = 'active'; // 'active', 'inactive'
+    public $search     = '';
 
     protected $queryString = [
-        'search' => ['except' => ''],
+        'currentTab' => ['as' => 'tab', 'except' => 'active'],
+        'search'     => ['except' => ''],
     ];
 
-    public function mount()
+    public function updatingSearch() { $this->resetPage(); }
+
+    public function switchTab($tab)
     {
-        if (!Auth::user()->isViticulturist()) {
-            abort(403);
-        }
+        $this->currentTab = $tab;
+        $this->resetPage();
     }
 
     public function toggleActive($warehouseId)
     {
-        $warehouse = Warehouse::where('user_id', Auth::id())
-            ->findOrFail($warehouseId);
-        
-        $warehouse->update([
-            'active' => !$warehouse->active
-        ]);
+        $warehouse = Warehouse::where('user_id', Auth::id())->findOrFail($warehouseId);
+        $warehouse->update(['active' => !$warehouse->active]);
 
-        $this->toastSuccess($warehouse->active ? 'Almacén activado exitosamente.' : 'Almacén desactivado exitosamente.');
+        $this->toastSuccess($warehouse->active
+            ? 'Almacén activado exitosamente.'
+            : 'Almacén desactivado exitosamente.'
+        );
+
+        if ($warehouse->active && $this->currentTab === 'inactive') {
+            $this->currentTab = 'active';
+        } elseif (!$warehouse->active && $this->currentTab === 'active') {
+            $this->currentTab = 'inactive';
+        }
     }
 
     public function delete($warehouseId)
@@ -52,35 +60,42 @@ class Index extends Component
         $this->toastSuccess('Almacén eliminado exitosamente.');
     }
 
+    public function clearFilters()
+    {
+        $this->search = '';
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $user = Auth::user();
-        
+        $user  = Auth::user();
         $query = Warehouse::where('user_id', $user->id);
 
         if ($this->search) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
                   ->orWhere('location', 'like', '%' . $this->search . '%');
             });
         }
 
-        $warehouses = $query->withCount('stocks')
-            ->orderBy('active', 'desc')
-            ->orderBy('name')
-            ->paginate(15);
+        if ($this->currentTab === 'active') {
+            $query->where('active', true);
+        } else {
+            $query->where('active', false);
+        }
 
+        $warehouses = $query->withCount('stocks')->orderBy('name')->paginate(12);
+
+        $baseQuery = Warehouse::where('user_id', $user->id);
         $stats = [
-            'total' => Warehouse::where('user_id', $user->id)->count(),
-            'active' => Warehouse::where('user_id', $user->id)->where('active', true)->count(),
-            'inactive' => Warehouse::where('user_id', $user->id)->where('active', false)->count(),
+            'total'    => (clone $baseQuery)->count(),
+            'active'   => (clone $baseQuery)->where('active', true)->count(),
+            'inactive' => (clone $baseQuery)->where('active', false)->count(),
         ];
 
-        return view('livewire.viticulturist.warehouses.index', [
-            'warehouses' => $warehouses,
-            'stats' => $stats,
-        ])->layout('layouts.app', [
-            'title' => 'Gestionar Almacenes - Agro365',
-        ]);
+        return view('livewire.viticulturist.warehouses.index', compact('warehouses', 'stats'))
+            ->layout('layouts.app', [
+                'title' => 'Gestionar Almacenes - Agro365',
+            ]);
     }
 }

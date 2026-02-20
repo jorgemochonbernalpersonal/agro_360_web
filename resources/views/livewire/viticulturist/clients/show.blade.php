@@ -1,114 +1,115 @@
-<div class="space-y-6 animate-fade-in">
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+﻿<div class="space-y-6 animate-fade-in">
+    <x-agro.page-header
         title="Cliente: {{ $client->full_name }}"
         description="Detalles del cliente"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
-        <x-slot:actionButton>
-            <x-button href="{{ route('viticulturist.clients.edit', $client->id) }}" variant="primary">
+        <x-slot:actions>
+            <flux:button href="{{ route('viticulturist.clients.edit', $client->id) }}" variant="primary" icon="pencil-square">
                 Editar
-            </x-button>
-        </x-slot:actionButton>
-    </x-page-header>
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Información del Cliente --}}
-    <div class="glass-card rounded-xl p-6">
-        <h3 class="text-lg font-bold mb-4">Información del Cliente</h3>
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <div class="p-1.5 rounded-lg bg-agro-50">
+                    <flux:icon icon="user" class="size-4 text-agro-600" />
+                </div>
+                <span class="font-semibold text-zinc-900 text-sm">Información del Cliente</span>
+            </div>
+        </x-slot:header>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <p class="text-sm text-gray-500">Tipo</p>
+                <p class="text-sm text-zinc-500">Tipo</p>
                 <p class="font-semibold">{{ $client->client_type === 'company' ? 'Empresa' : 'Particular' }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-500">Estado</p>
-                <x-status-badge :active="$client->active" />
+                <p class="text-sm text-zinc-500">Estado</p>
+                <x-agro.status-badge :active="$client->active" />
             </div>
             @if($client->email)
                 <div>
-                    <p class="text-sm text-gray-500">Email</p>
+                    <p class="text-sm text-zinc-500">Email</p>
                     <p class="font-semibold">{{ $client->email }}</p>
                 </div>
             @endif
             @if($client->phone)
                 <div>
-                    <p class="text-sm text-gray-500">Teléfono</p>
+                    <p class="text-sm text-zinc-500">Teléfono</p>
                     <p class="font-semibold">{{ $client->phone }}</p>
                 </div>
             @endif
             @if($client->client_type === 'company' && $client->company_document)
                 <div>
-                    <p class="text-sm text-gray-500">CIF/NIF</p>
+                    <p class="text-sm text-zinc-500">CIF/NIF</p>
                     <p class="font-semibold">{{ $client->company_document }}</p>
                 </div>
             @endif
             @if($client->client_type === 'individual' && $client->particular_document)
                 <div>
-                    <p class="text-sm text-gray-500">DNI/NIE</p>
+                    <p class="text-sm text-zinc-500">DNI/NIE</p>
                     <p class="font-semibold">{{ $client->particular_document }}</p>
                 </div>
             @endif
             @if($client->default_discount > 0)
                 <div>
-                    <p class="text-sm text-gray-500">Descuento por defecto</p>
+                    <p class="text-sm text-zinc-500">Descuento por defecto</p>
                     <p class="font-semibold">{{ number_format($client->default_discount, 2) }}%</p>
                 </div>
             @endif
             @if($client->payment_method)
                 <div>
-                    <p class="text-sm text-gray-500">Forma de pago</p>
-                    <p class="font-semibold">
-                        @if($client->payment_method === 'cash') Efectivo
-                        @elseif($client->payment_method === 'transfer') Transferencia
-                        @elseif($client->payment_method === 'check') Cheque
-                        @else Otro
-                        @endif
-                    </p>
+                    <p class="text-sm text-zinc-500">Forma de pago</p>
+                    <p class="font-semibold">{{ match($client->payment_method) { 'cash' => 'Efectivo', 'transfer' => 'Transferencia', 'check' => 'Cheque', default => 'Otro' } }}</p>
                 </div>
             @endif
             @if($client->account_number)
                 <div>
-                    <p class="text-sm text-gray-500">Número de cuenta</p>
+                    <p class="text-sm text-zinc-500">Número de cuenta</p>
                     <p class="font-semibold">{{ $client->account_number }}</p>
                 </div>
             @endif
             @if($client->has_cae && $client->cae_number)
                 <div>
-                    <p class="text-sm text-gray-500">CAE</p>
+                    <p class="text-sm text-zinc-500">CAE</p>
                     <p class="font-semibold">{{ $client->cae_number }}</p>
                 </div>
             @endif
         </div>
         @if($client->notes)
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <p class="text-sm text-gray-500 mb-2">Notas</p>
-                <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ $client->notes }}</p>
+            <div class="mt-4 pt-4 border-t border-zinc-200">
+                <p class="text-sm text-zinc-500 mb-2">Notas</p>
+                <p class="text-sm text-zinc-700 whitespace-pre-wrap">{{ $client->notes }}</p>
             </div>
         @endif
-    </div>
+    </x-agro.card>
 
     {{-- Direcciones --}}
-    <div class="glass-card rounded-xl p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold">Direcciones</h3>
-            @if($client->addresses && $client->addresses->count() > 0)
-                <span class="text-sm text-gray-500">
-                    {{ $client->addresses->count() }} {{ $client->addresses->count() === 1 ? 'dirección' : 'direcciones' }}
-                </span>
-            @endif
-        </div>
-        
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 rounded-lg bg-blue-50">
+                        <flux:icon icon="map-pin" class="size-4 text-blue-600" />
+                    </div>
+                    <span class="font-semibold text-zinc-900 text-sm">Direcciones</span>
+                </div>
+                @if($client->addresses && $client->addresses->count() > 0)
+                    <flux:badge color="blue" size="sm">{{ $client->addresses->count() }} {{ $client->addresses->count() === 1 ? 'dirección' : 'direcciones' }}</flux:badge>
+                @endif
+            </div>
+        </x-slot:header>
+
         @if($client->addresses && $client->addresses->count() > 0)
             <div class="space-y-4">
                 @foreach($client->addresses as $address)
-                    <div class="border-2 rounded-lg p-4 {{ $address->is_default ? 'border-[var(--color-agro-green)] bg-green-50/50' : 'border-gray-200 bg-white' }} hover:shadow-md transition-shadow">
+                    <div class="border-2 rounded-lg p-4 {{ $address->is_default ? 'border-agro-500 bg-agro-50/50' : 'border-zinc-200 bg-white' }} hover:shadow-md transition-shadow">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <h4 class="font-bold text-gray-900">
+                                    <h4 class="font-bold text-zinc-900">
                                         @if($address->description)
                                             {{ $address->description }}
                                         @else
@@ -116,15 +117,13 @@
                                         @endif
                                     </h4>
                                     @if($address->is_default)
-                                        <span class="px-2 py-0.5 text-xs font-semibold bg-[var(--color-agro-green)] text-white rounded-full">
-                                            Por defecto
-                                        </span>
+                                        <flux:badge color="green" size="sm">Por defecto</flux:badge>
                                     @endif
                                 </div>
-                                
-                                <div class="space-y-1 text-sm text-gray-700">
+
+                                <div class="space-y-1 text-sm text-zinc-700">
                                     <p class="font-medium">{{ $address->address }}</p>
-                                    <div class="flex flex-wrap items-center gap-2 text-gray-600">
+                                    <div class="flex flex-wrap items-center gap-2 text-zinc-600">
                                         @if($address->municipality)
                                             <span>{{ $address->municipality->name }}</span>
                                         @endif
@@ -132,7 +131,7 @@
                                             <span>{{ $address->province->name }}</span>
                                         @endif
                                         @if($address->autonomousCommunity)
-                                            <span class="text-gray-500">({{ $address->autonomousCommunity->name }})</span>
+                                            <span class="text-zinc-500">({{ $address->autonomousCommunity->name }})</span>
                                         @endif
                                         @if($address->postal_code)
                                             <span class="font-semibold">{{ $address->postal_code }}</span>
@@ -140,26 +139,20 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="ml-4">
-                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
+                                <flux:icon icon="map-pin" class="size-6 text-zinc-400" />
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
         @else
-            <div class="text-center py-8 text-gray-500">
-                <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <p class="font-medium">No hay direcciones registradas</p>
-                <p class="text-sm mt-1">Edita el cliente para agregar direcciones</p>
-            </div>
+            <x-agro.empty-state
+                message="No hay direcciones registradas"
+                description="Edita el cliente para agregar direcciones"
+                icon="map-pin"
+            />
         @endif
-    </div>
+    </x-agro.card>
 </div>

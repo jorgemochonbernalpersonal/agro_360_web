@@ -5,9 +5,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Total Plantaciones</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalPlantings }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $varieties }} variedades</p>
+                    <p class="text-sm font-medium text-zinc-600">Total Plantaciones</p>
+                    <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $totalPlantings }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">{{ $varieties }} variedades</p>
                 </div>
                 <div class="p-3 bg-green-100 rounded-full">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,9 +21,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Superficie Plantada</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalSurface }}</p>
-                    <p class="text-xs text-gray-500 mt-1">hectáreas</p>
+                    <p class="text-sm font-medium text-zinc-600">Superficie Plantada</p>
+                    <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $totalSurface }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">hectáreas</p>
                 </div>
                 <div class="p-3 bg-blue-100 rounded-full">
                     <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,9 +37,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Cumplimiento PAC</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $authorizationPercentage }}%</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $withAuthorization }}/{{ $needsAuthorization }} autorizadas</p>
+                    <p class="text-sm font-medium text-zinc-600">Cumplimiento PAC</p>
+                    <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $authorizationPercentage }}%</p>
+                    <p class="text-xs text-zinc-500 mt-1">{{ $withAuthorization }}/{{ $needsAuthorization }} autorizadas</p>
                 </div>
                 <div class="p-3 {{ $authorizationPercentage >= 90 ? 'bg-green-100' : 'bg-red-100' }} rounded-full">
                     <svg class="w-8 h-8 {{ $authorizationPercentage >= 90 ? 'text-green-600' : 'text-red-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,9 +54,9 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Sin Autorización</p>
+                        <p class="text-sm font-medium text-zinc-600">Sin Autorización</p>
                         <p class="text-3xl font-bold text-red-600 mt-2">{{ $missingAuthorization }}</p>
-                        <p class="text-xs text-gray-500 mt-1">requieren atención</p>
+                        <p class="text-xs text-zinc-500 mt-1">requieren atención</p>
                     </div>
                     <div class="p-3 bg-red-100 rounded-full">
                         <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,16 +70,16 @@
 
     {{-- Distribución por Estado --}}
     <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Distribución por Estado</h3>
+        <h3 class="text-lg font-semibold text-zinc-900 mb-4">📊 Distribución por Estado</h3>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @foreach(['active' => 'Activa', 'removed' => 'Arrancada', 'experimental' => 'Experimental', 'replanting' => 'Replantación'] as $key => $label)
                 @php
                     $stats = $statusStats->get($key, ['count' => 0, 'surface' => 0]);
                 @endphp
                 <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-gray-600">{{ $label }}</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['count'] }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ round($stats['surface'], 2) }} ha</p>
+                    <p class="text-sm font-medium text-zinc-600">{{ $label }}</p>
+                    <p class="text-2xl font-bold text-zinc-900 mt-1">{{ $stats['count'] }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">{{ round($stats['surface'], 2) }} ha</p>
                 </div>
             @endforeach
         </div>
@@ -87,30 +87,30 @@
 
     {{-- Distribución por Edad y Ciclo de Vida --}}
     <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Distribución por Edad</h3>
+        <h3 class="text-lg font-semibold text-zinc-900 mb-4">📊 Distribución por Edad</h3>
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div class="border rounded-lg p-4">
-                <p class="text-sm font-medium text-gray-600">Jóvenes (< 3 años)</p>
+                <p class="text-sm font-medium text-zinc-600">Jóvenes (< 3 años)</p>
                 <p class="text-2xl font-bold text-green-600 mt-1">{{ $ageStats['joven'] }}</p>
-                <p class="text-xs text-gray-500 mt-1">20-40% productividad</p>
+                <p class="text-xs text-zinc-500 mt-1">20-40% productividad</p>
             </div>
             <div class="border rounded-lg p-4">
-                <p class="text-sm font-medium text-gray-600">Desarrollo (3-8)</p>
+                <p class="text-sm font-medium text-zinc-600">Desarrollo (3-8)</p>
                 <p class="text-2xl font-bold text-blue-600 mt-1">{{ $ageStats['desarrollo'] }}</p>
-                <p class="text-xs text-gray-500 mt-1">60-80% productividad</p>
+                <p class="text-xs text-zinc-500 mt-1">60-80% productividad</p>
             </div>
             <div class="border rounded-lg p-4 bg-green-50">
-                <p class="text-sm font-medium text-gray-600">Productivas (8-25)</p>
+                <p class="text-sm font-medium text-zinc-600">Productivas (8-25)</p>
                 <p class="text-2xl font-bold text-green-700 mt-1">{{ $ageStats['productiva'] }}</p>
                 <p class="text-xs text-green-600 mt-1">⭐ 100% productividad</p>
             </div>
             <div class="border rounded-lg p-4">
-                <p class="text-sm font-medium text-gray-600">Maduras (25-40)</p>
+                <p class="text-sm font-medium text-zinc-600">Maduras (25-40)</p>
                 <p class="text-2xl font-bold text-amber-600 mt-1">{{ $ageStats['madura'] }}</p>
-                <p class="text-xs text-gray-500 mt-1">80-90% productividad</p>
+                <p class="text-xs text-zinc-500 mt-1">80-90% productividad</p>
             </div>
             <div class="border rounded-lg p-4 {{ $ageStats['vieja'] > 0 ? 'bg-yellow-50' : '' }}">
-                <p class="text-sm font-medium text-gray-600">Viejas (> 40)</p>
+                <p class="text-sm font-medium text-zinc-600">Viejas (> 40)</p>
                 <p class="text-2xl font-bold text-red-600 mt-1">{{ $ageStats['vieja'] }}</p>
                 <p class="text-xs text-red-600 mt-1">⚠️ Replantación</p>
             </div>
@@ -126,22 +126,22 @@
 
     {{-- Certificaciones --}}
     <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">🏆 Certificaciones</h3>
+        <h3 class="text-lg font-semibold text-zinc-900 mb-4">🏆 Certificaciones</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="border rounded-lg p-4">
-                <p class="text-sm font-medium text-gray-600">Plantaciones Certificadas</p>
+                <p class="text-sm font-medium text-zinc-600">Plantaciones Certificadas</p>
                 <p class="text-3xl font-bold text-purple-600 mt-1">{{ $certifiedPlantings }}</p>
-                <p class="text-xs text-gray-500 mt-1">de {{ $totalPlantings }} totales</p>
+                <p class="text-xs text-zinc-500 mt-1">de {{ $totalPlantings }} totales</p>
             </div>
             <div class="border rounded-lg p-4">
-                <p class="text-sm font-medium text-gray-600">Total Certificaciones</p>
+                <p class="text-sm font-medium text-zinc-600">Total Certificaciones</p>
                 <p class="text-3xl font-bold text-blue-600 mt-1">{{ $totalCertifications }}</p>
-                <p class="text-xs text-gray-500 mt-1">activas</p>
+                <p class="text-xs text-zinc-500 mt-1">activas</p>
             </div>
             <div class="border rounded-lg p-4 {{ $expiringCertifications > 0 ? 'bg-yellow-50' : '' }}">
-                <p class="text-sm font-medium text-gray-600">Próximas a Vencer</p>
+                <p class="text-sm font-medium text-zinc-600">Próximas a Vencer</p>
                 <p class="text-3xl font-bold text-yellow-600 mt-1">{{ $expiringCertifications }}</p>
-                <p class="text-xs text-gray-500 mt-1">en 30 días</p>
+                <p class="text-xs text-zinc-500 mt-1">en 30 días</p>
             </div>
         </div>
     </div>
@@ -149,17 +149,17 @@
     {{-- Tratamientos Fitosanitarios Recientes --}}
     @if($activeTreatments > 0)
         <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">🌿 Tratamientos Fitosanitarios (últimos 30 días)</h3>
+            <h3 class="text-lg font-semibold text-zinc-900 mb-4">🌿 Tratamientos Fitosanitarios (últimos 30 días)</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="border rounded-lg p-4 bg-green-50">
-                    <p class="text-sm font-medium text-gray-600">Tratamientos Aplicados</p>
+                    <p class="text-sm font-medium text-zinc-600">Tratamientos Aplicados</p>
                     <p class="text-3xl font-bold text-green-600 mt-1">{{ $activeTreatments }}</p>
-                    <p class="text-xs text-gray-500 mt-1">en el último mes</p>
+                    <p class="text-xs text-zinc-500 mt-1">en el último mes</p>
                 </div>
                 <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-gray-600">Plagas/Enfermedades Tratadas</p>
+                    <p class="text-sm font-medium text-zinc-600">Plagas/Enfermedades Tratadas</p>
                     <p class="text-3xl font-bold text-blue-600 mt-1">{{ $uniquePests }}</p>
-                    <p class="text-xs text-gray-500 mt-1">diferentes</p>
+                    <p class="text-xs text-zinc-500 mt-1">diferentes</p>
                 </div>
             </div>
             <div class="mt-3 bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r">
@@ -174,7 +174,7 @@
     @if($totalAlerts > 0)
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">🚨 Alertas de Cumplimiento</h3>
+                <h3 class="text-lg font-semibold text-zinc-900">🚨 Alertas de Cumplimiento</h3>
                 <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
                     {{ $totalAlerts }} {{ $totalAlerts === 1 ? 'alerta' : 'alertas' }}
                 </span>

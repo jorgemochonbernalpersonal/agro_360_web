@@ -1,180 +1,156 @@
 <div class="space-y-6 animate-fade-in">
-    <!-- Header -->
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
-        title="Gestionar Almacenes"
+
+    <x-agro.page-header
+        title="Almacenes"
         description="Organiza tus productos fitosanitarios por ubicación física"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-    >
-        <x-slot:actionButton>
-            <a href="{{ route('viticulturist.warehouses.create') }}" class="group">
-                <button
-                    class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4v16m8-8H4" />
-                    </svg>
-                    Nuevo Almacén
-                </button>
-            </a>
-        </x-slot:actionButton>
-    </x-page-header>
+    />
 
-    <!-- Estadísticas -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="glass-card rounded-xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Total Almacenes</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['total'] }}</p>
-                </div>
-                <div class="p-3 bg-blue-100 rounded-lg">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                </div>
+    {{-- Tabs --}}
+    <x-agro.tabs
+        :tabs="[
+            'active'   => ['label' => 'Activos',   'count' => $stats['active']],
+            'inactive' => ['label' => 'Inactivos',  'count' => $stats['inactive']],
+        ]"
+        :active="$currentTab"
+        wireMethod="switchTab"
+    />
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3">
+
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
             </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar por nombre o ubicación..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
         </div>
 
-        <div class="glass-card rounded-xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Activos</p>
-                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $stats['active'] }}</p>
-                </div>
-                <div class="p-3 bg-green-100 rounded-lg">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
+        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <div class="glass-card rounded-xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Inactivos</p>
-                    <p class="text-2xl font-bold text-gray-600 mt-1">{{ $stats['inactive'] }}</p>
-                </div>
-                <div class="p-3 bg-gray-100 rounded-lg">
-                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
+        <flux:button href="{{ route('viticulturist.warehouses.create') }}" variant="primary" icon="plus">
+            Nuevo
+        </flux:button>
+
     </div>
 
-    <!-- Filtros -->
-    <div class="glass-card rounded-xl p-6 border border-gray-200">
-        <div class="flex gap-4">
-            <div class="flex-1">
-                <x-label for="search">Buscar almacén</x-label>
-                <x-input 
-                    wire:model.live.debounce.300ms="search" 
-                    type="text" 
-                    id="search"
-                    placeholder="Nombre o ubicación..."
-                />
-            </div>
-        </div>
-    </div>
+    {{-- Card grid --}}
+    @if($warehouses->count() > 0)
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="switchTab, search, clearFilters"
+        >
+            @foreach($warehouses as $i => $warehouse)
+                @php
+                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+                @endphp
 
-    <!-- Tabla de Almacenes -->
-    <div class="glass-card rounded-xl border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ubicación</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Productos en Stock</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($warehouses as $warehouse)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="font-medium text-gray-900">{{ $warehouse->name }}</div>
-                                @if($warehouse->description)
-                                    <div class="text-sm text-gray-500 mt-1">{{ Str::limit($warehouse->description, 50) }}</div>
+                <x-agro.card
+                    wire:key="warehouse-{{ $warehouse->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1 {{ !$warehouse->active ? 'opacity-60' : '' }}"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="building-office" class="size-4 text-zinc-500" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $warehouse->name }}</p>
+                                @if($warehouse->location)
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $warehouse->location }}</p>
                                 @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $warehouse->location ?? '-' }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    {{ $warehouse->stocks_count }} productos
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if($warehouse->active)
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Activo
-                                    </span>
-                                @else
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                        Inactivo
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex items-center justify-end gap-2">
-                                    <button 
-                                        wire:click="toggleActive({{ $warehouse->id }})"
-                                        class="text-gray-600 hover:text-[var(--color-agro-green)] transition-colors"
-                                        title="{{ $warehouse->active ? 'Desactivar' : 'Activar' }}"
-                                    >
-                                        @if($warehouse->active)
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                            </svg>
-                                        @else
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                        @endif
-                                    </button>
-                                    <a href="{{ route('viticulturist.warehouses.edit', $warehouse->id) }}" 
-                                       class="text-[var(--color-agro-green)] hover:text-[var(--color-agro-green-dark)]">
-                                        Editar
-                                    </a>
-                                    @if($warehouse->stocks_count === 0)
-                                        <button 
-                                            wire:click="delete({{ $warehouse->id }})"
-                                            wire:confirm="¿Estás seguro de eliminar este almacén?"
-                                            class="text-red-600 hover:text-red-800 transition-colors">
-                                            Eliminar
-                                        </button>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
-                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                </svg>
-                                <p class="mt-4 text-sm">No hay almacenes registrados</p>
-                                <a href="{{ route('viticulturist.warehouses.create') }}" class="mt-2 text-[var(--color-agro-green)] hover:underline">
-                                    Crear primer almacén
+                            </div>
+                            <x-agro.status-badge :status="$warehouse->active" />
+                        </div>
+                    </x-slot:header>
+
+                    {{-- Descripción --}}
+                    @if($warehouse->description)
+                        <div class="flex items-start gap-2 mb-3">
+                            <flux:icon icon="information-circle" class="size-3.5 text-zinc-400 shrink-0 mt-0.5" />
+                            <span class="text-xs text-zinc-500 line-clamp-2">{{ $warehouse->description }}</span>
+                        </div>
+                    @endif
+
+                    {{-- Productos en stock --}}
+                    <div class="bg-agro-50 rounded-xl p-2.5">
+                        <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Productos en stock</p>
+                        <p class="text-sm font-bold text-agro-700">{{ $warehouse->stocks_count }}</p>
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <a href="{{ route('viticulturist.warehouses.edit', $warehouse->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
                                 </a>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <button
+                                    wire:click="toggleActive({{ $warehouse->id }})"
+                                    wire:loading.attr="disabled"
+                                    wire:target="toggleActive({{ $warehouse->id }})"
+                                    class="{{ $warehouse->active ? $btnDanger : $btnSuccess }}"
+                                    title="{{ $warehouse->active ? 'Desactivar' : 'Activar' }}"
+                                >
+                                    <span wire:loading.remove wire:target="toggleActive({{ $warehouse->id }})">
+                                        <flux:icon icon="{{ $warehouse->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
+                                    </span>
+                                    <span wire:loading wire:target="toggleActive({{ $warehouse->id }})">
+                                        <svg class="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                                @if($warehouse->stocks_count === 0)
+                                    <button
+                                        wire:click="delete({{ $warehouse->id }})"
+                                        wire:confirm="¿Seguro que deseas eliminar este almacén?"
+                                        wire:loading.attr="disabled"
+                                        class="{{ $btnDanger }}"
+                                        title="Eliminar"
+                                    >
+                                        <flux:icon icon="trash" class="size-4" />
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
         </div>
-        <div class="px-6 py-4 border-t border-gray-200">
-            {{ $warehouses->links() }}
-        </div>
-    </div>
+
+        @if($warehouses->hasPages())
+            <div class="flex justify-center">{{ $warehouses->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="building-office"
+            message="{{ $currentTab === 'active' ? 'No hay almacenes activos' : 'No hay almacenes inactivos' }}"
+            description="{{ $search ? 'Ningún almacén coincide con la búsqueda.' : 'Crea tu primer almacén para organizar el stock de productos.' }}"
+        >
+            @if($search)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar búsqueda</flux:button>
+                </x-slot:action>
+            @else
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.warehouses.create') }}" variant="primary" icon="plus">
+                        Nuevo Almacén
+                    </flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @endif
+
 </div>

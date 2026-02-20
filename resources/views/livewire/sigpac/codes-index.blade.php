@@ -1,305 +1,364 @@
 <div class="space-y-6 animate-fade-in">
-    <!-- Header -->
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+
+    <x-agro.page-header
         title="Códigos SIGPAC"
-        description="Gestiona los códigos de identificación SIGPAC"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-    >
-        <x-slot:actionButton>
-            <a 
-                href="{{ route('sigpac.codes.create') }}"
-                class="px-4 py-2 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all font-semibold"
+        description="Gestiona los códigos de identificación SIGPAC de tus parcelas"
+    />
+
+    {{-- Toolbar --}}
+    <div class="space-y-3">
+        <div class="flex items-center gap-3">
+
+            <div class="flex-1 relative">
+                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+                </div>
+                <input
+                    wire:model.live.debounce.300ms="search"
+                    type="text"
+                    placeholder="Buscar por código..."
+                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+                />
+            </div>
+
+            @php
+                $filterCount = ($filterAutonomousCommunity ? 1 : 0)
+                    + ($filterProvince ? 1 : 0)
+                    + ($filterMunicipality ? 1 : 0);
+            @endphp
+            <button
+                x-on:click="$dispatch('open-modal', 'sigpac-filters')"
+                class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
             >
-                + Crear Código SIGPAC
-            </a>
-        </x-slot:actionButton>
-    </x-page-header>
+                <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+                Filtros
+                @if($filterCount > 0)
+                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {{ $filterCount }}
+                    </span>
+                @endif
+            </button>
 
-    <!-- Búsqueda y Filtros -->
-    <x-filter-section title="Filtros de Búsqueda" color="green">
-        <x-filter-input 
-            wire:model.live.debounce.300ms="search" 
-            placeholder="Buscar por código..."
-        />
-        <x-filter-select wire:model.live="filterAutonomousCommunity">
-            <option value="">Todas las Comunidades Autónomas</option>
-            @foreach($this->autonomousCommunities as $id => $name)
-                <option value="{{ $id }}">{{ $name }}</option>
-            @endforeach
-        </x-filter-select>
-        @if($filterAutonomousCommunity)
-            <x-filter-select wire:model.live="filterProvince">
-                <option value="">Todas las Provincias</option>
-                @foreach($this->provinces as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
-            </x-filter-select>
-        @endif
-        @if($filterProvince)
-            <x-filter-select wire:model.live="filterMunicipality">
-                <option value="">Todos los Municipios</option>
-                @foreach($this->municipalities as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
-            </x-filter-select>
-        @endif
-        <x-slot:actions>
-            @if($search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality)
-                <x-button wire:click="clearFilters" variant="ghost" size="sm">
-                    Limpiar Filtros
-                </x-button>
-            @endif
-        </x-slot:actions>
-    </x-filter-section>
+            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-    <!-- ✅ Acciones Masivas para Municipio -->
+            <flux:button href="{{ route('sigpac.codes.create') }}" variant="primary" icon="plus">
+                Crear Código SIGPAC
+            </flux:button>
+
+        </div>
+
+        {{-- Active filter chips --}}
+        @if($search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality)
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs text-zinc-400">Filtros activos:</span>
+
+                @if($search)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        <flux:icon icon="magnifying-glass" class="size-3" />
+                        "{{ $search }}"
+                        <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterAutonomousCommunity)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        CA: {{ $this->autonomousCommunities[$filterAutonomousCommunity] ?? $filterAutonomousCommunity }}
+                        <button wire:click="$set('filterAutonomousCommunity', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterProvince)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        Prov: {{ $this->provinces[$filterProvince] ?? $filterProvince }}
+                        <button wire:click="$set('filterProvince', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterMunicipality)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        Mun: {{ $this->municipalities[$filterMunicipality] ?? $filterMunicipality }}
+                        <button wire:click="$set('filterMunicipality', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
+                    Limpiar todo
+                </button>
+            </div>
+        @endif
+    </div>
+
+    {{-- Acción masiva de municipio --}}
     @if($filterAutonomousCommunity && $filterProvince && $filterMunicipality && $this->municipalityHasSigpacCodes)
-        <div class="glass-card rounded-xl p-6 border-l-4 border-green-500">
-            <div class="flex items-center justify-between">
+        <x-agro.card>
+            <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                        </svg>
+                    <div class="w-10 h-10 bg-agro-50 rounded-lg flex items-center justify-center shrink-0">
+                        <flux:icon icon="map" class="size-5 text-agro-600" />
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">
-                            Acciones para {{ $this->municipalities[$filterMunicipality] ?? 'Municipio' }}
-                        </h3>
-                        <p class="text-sm text-gray-600">
+                        <p class="font-semibold text-zinc-900 text-sm">{{ $this->municipalities[$filterMunicipality] ?? 'Municipio' }}</p>
+                        <p class="text-xs text-zinc-500">
                             {{ $this->provinces[$filterProvince] ?? '' }}, {{ $this->autonomousCommunities[$filterAutonomousCommunity] ?? '' }}
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <!-- Botón Generar Todos los Mapas -->
-                    <button
+                <div class="flex items-center gap-2">
+                    <flux:button
                         wire:click="generateAllMapsForMunicipality"
                         wire:loading.attr="disabled"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        variant="primary"
+                        size="sm"
+                        icon="map"
                     >
-                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                        </span>
-                        <span wire:loading wire:target="generateAllMapsForMunicipality">
-                            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        </span>
-                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">Generar Todos los Mapas</span>
+                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">Generar todos los mapas</span>
                         <span wire:loading wire:target="generateAllMapsForMunicipality">Generando...</span>
-                    </button>
+                    </flux:button>
 
-                    <!-- Botón Ver Todos los Mapas -->
                     @php
-                        // Obtener primera parcela del municipio para la URL
                         $firstPlot = \App\Models\Plot::forUser(auth()->user())
                             ->where('municipality_id', $filterMunicipality)
                             ->first();
                     @endphp
-                    
                     @if($firstPlot)
-                        <a
+                        <flux:button
                             href="{{ route('map', ['id' => $firstPlot->id, 'municipality' => $filterMunicipality, 'return' => 'sigpac']) }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-semibold shadow-lg hover:shadow-xl"
+                            variant="outline"
+                            size="sm"
+                            icon="eye"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            Ver Todos los Mapas
-                        </a>
+                            Ver todos los mapas
+                        </flux:button>
                     @endif
                 </div>
             </div>
-        </div>
+        </x-agro.card>
     @endif
 
-    <!-- Tabla de códigos -->
-    @php
-        $headers = [
-            ['label' => 'Nombre Parcela', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>'],
-            ['label' => 'CA', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Provincia', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Municipio', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Agregado', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Zona', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Polígono', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Parcela', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Recinto', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Comunidad Autónoma', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'],
-            ['label' => 'Provincia', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'],
-            ['label' => 'Municipio', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'],
-            'Acciones',
-        ];
-    @endphp
-
-    <x-data-table 
-        :headers="$headers" 
-        empty-message="No se encontraron códigos" 
-        empty-description="{{ $search ? 'Intenta con otro término de búsqueda' : 'No hay códigos SIGPAC registrados' }}"
-        color="green"
-    >
-        @if($codes->count() > 0)
-            @foreach($codes as $code)
+    {{-- Card grid --}}
+    @if($codes->count() > 0)
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="search, filterAutonomousCommunity, filterProvince, filterMunicipality, clearFilters"
+        >
+            @foreach($codes as $i => $code)
                 @php
-                    $firstPlot = $code->plots->first();
+                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                    $firstPlot  = $code->plots->first();
+                    $hasGeometry = false;
+                    $multipartId = null;
+                    if ($firstPlot && $code->multiplePlotSigpacs ?? null) {
+                        $multipart = $code->multiplePlotSigpacs
+                            ->where('plot_id', $firstPlot->id)
+                            ->where('sigpac_code_id', $code->id)
+                            ->whereNotNull('plot_geometry_id')
+                            ->first();
+                        if ($multipart) {
+                            $hasGeometry = true;
+                            $multipartId = $multipart->id;
+                        }
+                    }
                 @endphp
-                <x-table-row>
-                    <!-- Nombre Parcela -->
-                    <x-table-cell>
-                        <span class="text-sm font-semibold text-gray-900">
-                            {{ $firstPlot ? $firstPlot->name : 'Sin parcela asociada' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- CA (Comunidad Autónoma) -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_autonomous_community ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Provincia -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_province ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Municipio -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_municipality ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Agregado -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_aggregate ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Zona -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_zone ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Polígono -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_polygon ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Parcela -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_plot ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Recinto -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700 font-mono">
-                            {{ $code->code_enclosure ?? '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Comunidad Autónoma -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700">
-                            {{ $firstPlot && $firstPlot->autonomousCommunity ? $firstPlot->autonomousCommunity->name : '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Provincia -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700">
-                            {{ $firstPlot && $firstPlot->province ? $firstPlot->province->name : '-' }}
-                        </span>
-                    </x-table-cell>
-                    <!-- Municipio -->
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700">
-                            {{ $firstPlot && $firstPlot->municipality ? $firstPlot->municipality->name : '-' }}
-                        </span>
-                    </x-table-cell>
-                    <x-table-actions align="right">
-                        <x-action-button 
-                            variant="view" 
-                            href="{{ route('plots.index', ['sigpac_code' => $code->id]) }}"
-                            title="Ver parcelas"
-                        />
-                        <x-action-button 
-                            variant="edit" 
-                            href="{{ route('sigpac.codes.edit', $code->id) }}"
-                            title="Editar código"
-                        />
-                        @php
-                            // Verificar si tiene parcelas asociadas
-                            $hasPlots = $code->plots_count > 0;
-                            
-                            // Obtener primera parcela asociada
-                            $firstPlot = $code->plots->first();
-                            
-                            // Verificar si ya tiene geometría: existe MultipartPlotSigpac con plot_geometry_id para este código y parcela
-                            $hasGeometry = false;
-                            $multipartId = null;
-                            if ($hasPlots && $firstPlot && $code->multiplePlotSigpacs) {
-                                $multipart = $code->multiplePlotSigpacs
-                                    ->where('plot_id', $firstPlot->id)
-                                    ->where('sigpac_code_id', $code->id)
-                                    ->whereNotNull('plot_geometry_id')
-                                    ->first();
-                                if ($multipart) {
-                                    $hasGeometry = true;
-                                    $multipartId = $multipart->id;
-                                }
-                            }
-                        @endphp
-                        
-                        @if($hasPlots && $firstPlot)
-                            @if($hasGeometry && $multipartId)
-                                {{-- Si tiene geometría, mostrar "Ver Mapa" --}}
-                                <a href="/map/{{ $firstPlot->id }}?recinto={{ $multipartId }}&return=sigpac"
-                                   class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-200"
-                                   title="Ver Mapa">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                                    </svg>
-                                    <span class="ml-1">Ver Mapa</span>
-                                </a>
-                            @else
-                                {{-- Si no tiene geometría, mostrar "Generar Mapa" --}}
-                                <button
-                                    wire:click="generateMap({{ $code->id }}, {{ $firstPlot->id }})"
-                                    wire:loading.attr="disabled"
-                                    class="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200 disabled:opacity-50"
-                                    title="Generar Mapa">
-                                    <span wire:loading.remove wire:target="generateMap({{ $code->id }}, {{ $firstPlot->id }})">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                                        </svg>
-                                        <span class="ml-1">Generar Mapa</span>
-                                    </span>
-                                    <span wire:loading wire:target="generateMap({{ $code->id }}, {{ $firstPlot->id }})" class="flex items-center gap-2">
-                                        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Generando...
-                                    </span>
-                                </button>
-                            @endif
-                        @endif
-                    </x-table-actions>
-                </x-table-row>
-            @endforeach
-            <x-slot name="pagination">
-                {{ $codes->links() }}
-            </x-slot>
-        @endif
-    </x-data-table>
-</div>
 
+                <x-agro.card
+                    wire:key="sigpac-{{ $code->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-agro-50 rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="map" class="size-4 text-agro-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
+                                    {{ $firstPlot ? $firstPlot->name : 'Sin parcela asociada' }}
+                                </p>
+                                <p class="text-xs text-zinc-400 leading-tight mt-0.5 font-mono">
+                                    {{ implode('/', array_filter([
+                                        $code->code_province,
+                                        $code->code_municipality,
+                                        $code->code_polygon,
+                                        $code->code_plot,
+                                        $code->code_enclosure,
+                                    ])) }}
+                                </p>
+                            </div>
+                            @if($hasGeometry)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-agro-100 text-agro-700 shrink-0">
+                                    Con mapa
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-100 text-zinc-500 shrink-0">
+                                    Sin mapa
+                                </span>
+                            @endif
+                        </div>
+                    </x-slot:header>
+
+                    {{-- Ubicación --}}
+                    @if($firstPlot)
+                        <div class="flex items-center gap-2 mb-3">
+                            <flux:icon icon="map-pin" class="size-3.5 text-zinc-400 shrink-0" />
+                            <span class="text-xs text-zinc-600 truncate">
+                                {{ implode(', ', array_filter([
+                                    $firstPlot->municipality?->name,
+                                    $firstPlot->province?->name,
+                                    $firstPlot->autonomousCommunity?->name,
+                                ])) ?: 'Sin ubicación' }}
+                            </span>
+                        </div>
+                    @endif
+
+                    {{-- Códigos SIGPAC --}}
+                    <div class="grid grid-cols-3 gap-1.5">
+                        @foreach([
+                            ['CA',  $code->code_autonomous_community],
+                            ['Pr',  $code->code_province],
+                            ['Mu',  $code->code_municipality],
+                            ['Po',  $code->code_polygon],
+                            ['Pa',  $code->code_plot],
+                            ['Re',  $code->code_enclosure],
+                        ] as [$label, $value])
+                            <div class="bg-zinc-50 rounded-lg p-1.5 text-center">
+                                <p class="text-[9px] text-zinc-400 font-medium uppercase">{{ $label }}</p>
+                                <p class="text-xs font-mono font-semibold text-zinc-700">{{ $value ?? '—' }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <a href="{{ route('plots.index', ['sigpac_code' => $code->id]) }}" class="{{ $btnBase }}" title="Ver parcelas">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </a>
+                                <a href="{{ route('sigpac.codes.edit', $code->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                            </div>
+
+                            @if($firstPlot)
+                                @if($hasGeometry && $multipartId)
+                                    <a href="/map/{{ $firstPlot->id }}?recinto={{ $multipartId }}&return=sigpac"
+                                       class="inline-flex items-center gap-1.5 text-xs font-medium text-agro-600 hover:text-agro-700 transition-colors">
+                                        <flux:icon icon="map" class="size-3.5" />
+                                        Ver mapa
+                                    </a>
+                                @else
+                                    <flux:button
+                                        wire:click="generateMap({{ $code->id }}, {{ $firstPlot->id }})"
+                                        wire:loading.attr="disabled"
+                                        variant="ghost"
+                                        size="sm"
+                                        icon="map"
+                                    >
+                                        <span wire:loading.remove wire:target="generateMap({{ $code->id }}, {{ $firstPlot->id }})">Generar mapa</span>
+                                        <span wire:loading wire:target="generateMap({{ $code->id }}, {{ $firstPlot->id }})">...</span>
+                                    </flux:button>
+                                @endif
+                            @endif
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($codes->hasPages())
+            <div class="flex justify-center">{{ $codes->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="map"
+            message="No se encontraron códigos SIGPAC"
+            description="{{ $search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality ? 'Ningún código coincide con los filtros aplicados.' : 'No hay códigos SIGPAC registrados.' }}"
+        >
+            @if($search || $filterAutonomousCommunity || $filterProvince || $filterMunicipality)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @else
+                <x-slot:action>
+                    <flux:button href="{{ route('sigpac.codes.create') }}" variant="primary" icon="plus">
+                        Crear Código SIGPAC
+                    </flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="sigpac-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'sigpac-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Comunidad Autónoma</label>
+                <select wire:model.live="filterAutonomousCommunity"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todas las Comunidades</option>
+                    @foreach($this->autonomousCommunities as $id => $name)
+                        <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            @if($filterAutonomousCommunity)
+                <div>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Provincia</label>
+                    <select wire:model.live="filterProvince"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                        <option value="">Todas las Provincias</option>
+                        @foreach($this->provinces as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            @if($filterProvince)
+                <div>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Municipio</label>
+                    <select wire:model.live="filterMunicipality"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                        <option value="">Todos los Municipios</option>
+                        @foreach($this->municipalities as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+        </div>
+
+        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
+            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'sigpac-filters')"
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
+                Limpiar filtros
+            </button>
+            <flux:button x-on:click="$dispatch('close-modal', 'sigpac-filters')" variant="primary" size="sm">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
+</div>

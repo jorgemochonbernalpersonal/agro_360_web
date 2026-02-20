@@ -1,166 +1,67 @@
-<div x-data="{ showCurrentPassword: false, showNewPassword: false, showNewPasswordConfirmation: false }">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)]">
-        <div class="w-full sm:max-w-md mt-6 px-6 py-8 bg-white shadow-2xl overflow-hidden sm:rounded-2xl">
-            <!-- Logo/Icon -->
-            <div class="flex justify-center mb-6">
-                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] flex items-center justify-center shadow-lg">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Title and Description -->
+﻿<div class="min-h-screen flex items-center justify-center bg-agro-50 p-4" x-data="{ showCurrentPassword: false, showNewPassword: false, showNewPasswordConfirmation: false }">
+    <div class="w-full max-w-md">
+        <x-agro.card>
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-2">
-                    Cambio de Contraseña Obligatorio
-                </h2>
-                <p class="text-sm text-gray-600">
-                    Por seguridad, debes cambiar tu contraseña temporal antes de continuar.
-                </p>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-agro-100 mb-4">
+                    <flux:icon icon="lock-closed" class="size-8 text-agro-700" />
+                </div>
+                <flux:heading size="xl" class="!text-agro-700">Cambio de Contraseña Obligatorio</flux:heading>
+                <flux:subheading class="mt-2">Por seguridad, debes cambiar tu contraseña temporal antes de continuar.</flux:subheading>
             </div>
 
-            <!-- Flash Message -->
-            @if (session()->has('message'))
-                <div class="mb-4 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                    <p class="text-sm text-green-700">{{ session('message') }}</p>
-                </div>
+            @if(session()->has('message'))
+                <flux:callout variant="success" icon="check-circle" class="mb-4">
+                    <flux:callout.text>{{ session('message') }}</flux:callout.text>
+                </flux:callout>
             @endif
 
-            <!-- Form -->
             <form wire:submit.prevent="updatePassword" class="space-y-6">
-                <!-- Contraseña Temporal -->
-                <div>
-                    <label for="current_password" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Contraseña Temporal *
-                    </label>
+                <flux:field>
+                    <flux:label>Contraseña Temporal *</flux:label>
                     <div class="relative">
-                        <input
-                            wire:model="current_password"
-                            type="password"
-                            id="current_password"
-                            x-bind:type="showCurrentPassword ? 'text' : 'password'"
-                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition @error('current_password') border-red-500 @enderror"
-                            placeholder="Ingresa la contraseña temporal recibida por email"
-                            required
-                            autocomplete="current-password"
-                        >
-                        <button
-                            type="button"
-                            x-on:click="showCurrentPassword = !showCurrentPassword"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            tabindex="-1"
-                        >
-                            <svg x-show="!showCurrentPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            <svg x-show="showCurrentPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                            </svg>
+                        <flux:input wire:model="current_password" :type="'password'" x-bind:type="showCurrentPassword ? 'text' : 'password'" placeholder="Ingresa la contraseña temporal recibida por email" required autocomplete="current-password" />
+                        <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600" tabindex="-1">
+                            <flux:icon x-show="!showCurrentPassword" icon="eye" variant="micro" />
+                            <flux:icon x-show="showCurrentPassword" icon="eye-slash" variant="micro" x-cloak />
                         </button>
                     </div>
-                    @error('current_password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <flux:error name="current_password" />
+                </flux:field>
 
-                <!-- Nueva Contraseña -->
-                <div>
-                    <label for="new_password" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Nueva Contraseña *
-                    </label>
+                <flux:field>
+                    <flux:label>Nueva Contraseña *</flux:label>
                     <div class="relative">
-                        <input
-                            wire:model="new_password"
-                            type="password"
-                            id="new_password"
-                            x-bind:type="showNewPassword ? 'text' : 'password'"
-                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition @error('new_password') border-red-500 @enderror"
-                            placeholder="Mínimo 8 caracteres"
-                            required
-                            autocomplete="new-password"
-                        >
-                        <button
-                            type="button"
-                            x-on:click="showNewPassword = !showNewPassword"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            tabindex="-1"
-                        >
-                            <svg x-show="!showNewPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            <svg x-show="showNewPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                            </svg>
+                        <flux:input wire:model="new_password" :type="'password'" x-bind:type="showNewPassword ? 'text' : 'password'" placeholder="Mínimo 8 caracteres" required autocomplete="new-password" />
+                        <button type="button" @click="showNewPassword = !showNewPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600" tabindex="-1">
+                            <flux:icon x-show="!showNewPassword" icon="eye" variant="micro" />
+                            <flux:icon x-show="showNewPassword" icon="eye-slash" variant="micro" x-cloak />
                         </button>
                     </div>
-                    @error('new_password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <flux:error name="new_password" />
+                </flux:field>
 
-                <!-- Confirmar Nueva Contraseña -->
-                <div>
-                    <label for="new_password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Confirmar Nueva Contraseña *
-                    </label>
+                <flux:field>
+                    <flux:label>Confirmar Nueva Contraseña *</flux:label>
                     <div class="relative">
-                        <input
-                            wire:model="new_password_confirmation"
-                            type="password"
-                            id="new_password_confirmation"
-                            x-bind:type="showNewPasswordConfirmation ? 'text' : 'password'"
-                            class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-agro-green-dark)] focus:border-[var(--color-agro-green-dark)] transition"
-                            placeholder="Repite tu nueva contraseña"
-                            required
-                            autocomplete="new-password"
-                        >
-                        <button
-                            type="button"
-                            x-on:click="showNewPasswordConfirmation = !showNewPasswordConfirmation"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                            tabindex="-1"
-                        >
-                            <svg x-show="!showNewPasswordConfirmation" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            <svg x-show="showNewPasswordConfirmation" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                            </svg>
+                        <flux:input wire:model="new_password_confirmation" :type="'password'" x-bind:type="showNewPasswordConfirmation ? 'text' : 'password'" placeholder="Repite tu nueva contraseña" required autocomplete="new-password" />
+                        <button type="button" @click="showNewPasswordConfirmation = !showNewPasswordConfirmation" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600" tabindex="-1">
+                            <flux:icon x-show="!showNewPasswordConfirmation" icon="eye" variant="micro" />
+                            <flux:icon x-show="showNewPasswordConfirmation" icon="eye-slash" variant="micro" x-cloak />
                         </button>
                     </div>
-                </div>
+                </flux:field>
 
-                <!-- Submit Button -->
-                <div>
-                    <button
-                        type="submit"
-                        class="w-full px-6 py-3 bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)] text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
-                    >
-                        Actualizar Contraseña
-                    </button>
-                </div>
+                <flux:button type="submit" variant="primary" class="w-full">
+                    Actualizar Contraseña
+                </flux:button>
 
-                <!-- Info Box -->
-                <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                        </svg>
-                        <div class="text-sm text-blue-800">
-                            <p class="font-semibold mb-1">Información importante:</p>
-                            <ul class="list-disc list-inside space-y-1 text-xs">
-                                <li>Al cambiar tu contraseña, tu email quedará automáticamente verificado</li>
-                                <li>Tu nueva contraseña debe tener al menos 8 caracteres</li>
-                                <li>Podrás acceder al sistema inmediatamente después</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <flux:callout icon="information-circle">
+                    <flux:callout.heading>Información importante</flux:callout.heading>
+                    <flux:callout.text>
+                        Al cambiar tu contraseña, tu email quedará automáticamente verificado. Tu nueva contraseña debe tener al menos 8 caracteres.
+                    </flux:callout.text>
+                </flux:callout>
             </form>
-        </div>
+        </x-agro.card>
     </div>
 </div>

@@ -238,6 +238,12 @@ class Index extends Component
         }
     }
 
+    public function switchTab(string $filter): void
+    {
+        $this->statusFilter = $filter;
+        $this->resetPage();
+    }
+
     /**
      * Resetear filtros
      */

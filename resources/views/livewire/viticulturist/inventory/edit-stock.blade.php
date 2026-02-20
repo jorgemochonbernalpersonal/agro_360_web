@@ -1,127 +1,94 @@
 <div class="space-y-6 animate-fade-in">
-    <!-- Header -->
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
-        title="Editar Stock"
-        description="Modifica los datos del registro de stock"
-        icon-color="from-blue-500 to-blue-600"
-    >
-        <x-slot:actionButton>
-            <a href="{{ route('viticulturist.inventory.index') }}">
-                <button class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">
-                    Cancelar
-                </button>
-            </a>
-        </x-slot:actionButton>
-    </x-page-header>
+    <x-agro.page-header title="Editar Stock" description="Modifica los datos del registro de stock">
+        <x-slot:actions>
+            <flux:button href="{{ route('viticulturist.inventory.index') }}" variant="ghost" icon="arrow-left">
+                Cancelar
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
-    <!-- Formulario -->
-    <div class="glass-card rounded-xl p-6 border border-gray-200">
-        <form wire:submit="save">
-            <!-- Información del Producto -->
-            <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h3 class="font-semibold text-blue-900 mb-2">{{ $product->name }}</h3>
+    <x-agro.form-card title="Datos del Stock">
+        <form wire:submit="save" class="space-y-6">
+            {{-- Info del producto --}}
+            <flux:callout variant="info">
+                <flux:callout.heading>{{ $product->name }}</flux:callout.heading>
                 @if($product->active_ingredient)
-                    <p class="text-sm text-blue-700">{{ $product->active_ingredient }}</p>
+                    <flux:callout.text>{{ $product->active_ingredient }}</flux:callout.text>
                 @endif
-            </div>
+            </flux:callout>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Cantidad -->
-                <div>
-                    <x-label for="quantity" class="required">Cantidad Actual</x-label>
+                <flux:field>
+                    <flux:label required>Cantidad Actual</flux:label>
                     <div class="flex gap-2">
-                        <x-input wire:model="quantity" type="number" step="0.001" id="quantity" class="flex-1" required />
-                        <span class="px-3 py-2 bg-gray-100 rounded-lg text-gray-700 font-medium">{{ $unit }}</span>
+                        <flux:input wire:model="quantity" type="number" step="0.001" id="quantity" class="flex-1" required />
+                        <span class="px-3 py-2 bg-zinc-100 rounded-lg text-zinc-700 font-medium text-sm self-center">{{ $unit }}</span>
                     </div>
-                    <x-input-error for="quantity" />
-                </div>
+                    <flux:error name="quantity" />
+                </flux:field>
 
-                <!-- Stock Mínimo -->
-                <div>
-                    <x-label for="minimum_stock">Stock Mínimo (Alerta)</x-label>
+                <flux:field>
+                    <flux:label>Stock Mínimo (Alerta)</flux:label>
                     <div class="flex gap-2">
-                        <x-input wire:model="minimum_stock" type="number" step="0.001" id="minimum_stock" class="flex-1" />
-                        <span class="px-3 py-2 bg-gray-100 rounded-lg text-gray-700 font-medium">{{ $unit }}</span>
+                        <flux:input wire:model="minimum_stock" type="number" step="0.001" id="minimum_stock" class="flex-1" />
+                        <span class="px-3 py-2 bg-zinc-100 rounded-lg text-zinc-700 font-medium text-sm self-center">{{ $unit }}</span>
                     </div>
-                    <p class="mt-1 text-sm text-gray-500">Se mostrará alerta cuando el stock sea menor a este valor</p>
-                    <x-input-error for="minimum_stock" />
-                </div>
+                    <flux:description>Se mostrará alerta cuando el stock sea menor a este valor</flux:description>
+                    <flux:error name="minimum_stock" />
+                </flux:field>
 
-                <!-- Precio Unitario -->
-                <div>
-                    <x-label for="unit_price">Precio Unitario</x-label>
+                <flux:field>
+                    <flux:label>Precio Unitario</flux:label>
                     <div class="flex gap-2">
-                        <x-input wire:model="unit_price" type="number" step="0.01" id="unit_price" class="flex-1" />
-                        <span class="px-3 py-2 bg-gray-100 rounded-lg text-gray-700 font-medium">€/{{ $unit }}</span>
+                        <flux:input wire:model="unit_price" type="number" step="0.01" id="unit_price" class="flex-1" />
+                        <span class="px-3 py-2 bg-zinc-100 rounded-lg text-zinc-700 font-medium text-sm self-center">€/{{ $unit }}</span>
                     </div>
-                    <x-input-error for="unit_price" />
-                </div>
+                    <flux:error name="unit_price" />
+                </flux:field>
 
-                <!-- Almacén -->
-                <div>
-                    <x-label for="warehouse_id">Almacén</x-label>
-                    <x-select wire:model="warehouse_id" id="warehouse_id">
+                <flux:field>
+                    <flux:label>Almacén</flux:label>
+                    <flux:select wire:model="warehouse_id" id="warehouse_id">
                         <option value="">Sin almacén asignado</option>
                         @foreach($warehouses as $warehouse)
                             <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                         @endforeach
-                    </x-select>
-                    <x-input-error for="warehouse_id" />
-                </div>
+                    </flux:select>
+                    <flux:error name="warehouse_id" />
+                </flux:field>
 
-                <!-- Número de Lote -->
-                <div>
-                    <x-label for="batch_number">Número de Lote</x-label>
-                    <x-input wire:model="batch_number" type="text" id="batch_number" />
-                </div>
+                <flux:field>
+                    <flux:label>Número de Lote</flux:label>
+                    <flux:input wire:model="batch_number" type="text" id="batch_number" />
+                    <flux:error name="batch_number" />
+                </flux:field>
 
-                <!-- Proveedor -->
-                <div>
-                    <x-label for="supplier">Proveedor</x-label>
-                    <x-input wire:model="supplier" type="text" id="supplier" />
-                </div>
+                <flux:field>
+                    <flux:label>Proveedor</flux:label>
+                    <flux:input wire:model="supplier" type="text" id="supplier" />
+                    <flux:error name="supplier" />
+                </flux:field>
 
-                <!-- Fecha de Fabricación -->
-                <div>
-                    <x-label for="manufacturing_date">Fecha de Fabricación</x-label>
-                    <x-input wire:model="manufacturing_date" type="date" id="manufacturing_date" />
-                </div>
+                <flux:field>
+                    <flux:label>Fecha de Fabricación</flux:label>
+                    <flux:input wire:model="manufacturing_date" type="date" id="manufacturing_date" />
+                    <flux:error name="manufacturing_date" />
+                </flux:field>
 
-                <!-- Fecha de Caducidad -->
-                <div>
-                    <x-label for="expiry_date">Fecha de Caducidad</x-label>
-                    <x-input wire:model="expiry_date" type="date" id="expiry_date" />
-                    <x-input-error for="expiry_date" />
-                </div>
+                <flux:field>
+                    <flux:label>Fecha de Caducidad</flux:label>
+                    <flux:input wire:model="expiry_date" type="date" id="expiry_date" />
+                    <flux:error name="expiry_date" />
+                </flux:field>
             </div>
 
-            <!-- Notas -->
-            <div class="mt-6">
-                <x-label for="notes">Notas</x-label>
-                <textarea 
-                    wire:model="notes" 
-                    id="notes" 
-                    rows="3"
-                    class="w-full rounded-lg border-gray-300 focus:border-[var(--color-agro-green)] focus:ring focus:ring-[var(--color-agro-green)] focus:ring-opacity-50"
-                ></textarea>
-            </div>
+            <flux:field>
+                <flux:label>Notas</flux:label>
+                <flux:textarea wire:model="notes" id="notes" rows="3" />
+                <flux:error name="notes" />
+            </flux:field>
 
-            <!-- Botones -->
-            <div class="mt-6 flex items-center justify-end gap-4">
-                <a href="{{ route('viticulturist.inventory.index') }}" 
-                   class="px-6 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">
-                    Cancelar
-                </a>
-                <button 
-                    type="submit"
-                    class="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl font-semibold">
-                    Guardar Cambios
-                </button>
-            </div>
+            <x-agro.form-actions :back-url="route('viticulturist.inventory.index')" submit-label="Guardar Cambios" />
         </form>
-    </div>
+    </x-agro.form-card>
 </div>

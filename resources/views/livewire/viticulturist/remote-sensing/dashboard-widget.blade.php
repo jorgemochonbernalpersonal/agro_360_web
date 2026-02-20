@@ -28,23 +28,23 @@
             <div class="grid grid-cols-3 gap-3 mb-4">
                 <div class="text-center">
                     <div class="text-2xl font-bold text-green-600">{{ number_format($stats['average_ndvi'], 2) }}</div>
-                    <div class="text-xs text-gray-500">NDVI Promedio</div>
+                    <div class="text-xs text-zinc-500">NDVI Promedio</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-emerald-600">{{ $stats['healthy_percent'] }}%</div>
-                    <div class="text-xs text-gray-500">Saludables</div>
+                    <div class="text-xs text-zinc-500">Saludables</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-2xl font-bold {{ $stats['alerts'] > 0 ? 'text-red-600' : 'text-gray-400' }}">
+                    <div class="text-2xl font-bold {{ $stats['alerts'] > 0 ? 'text-red-600' : 'text-zinc-400' }}">
                         {{ $stats['alerts'] }}
                     </div>
-                    <div class="text-xs text-gray-500">Alertas</div>
+                    <div class="text-xs text-zinc-500">Alertas</div>
                 </div>
             </div>
 
             <!-- Health Bar -->
             <div class="mb-4">
-                <div class="flex h-3 rounded-full overflow-hidden bg-gray-200">
+                <div class="flex h-3 rounded-full overflow-hidden bg-zinc-200">
                     @if($stats['total'] > 0)
                         @if($stats['excellent'] > 0)
                             <div class="bg-green-500" style="width: {{ ($stats['excellent'] / $stats['total']) * 100 }}%"></div>
@@ -63,7 +63,7 @@
                         @endif
                     @endif
                 </div>
-                <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+                <div class="flex justify-between text-[10px] text-zinc-400 mt-1">
                     <span>🌿 {{ $stats['excellent'] }}</span>
                     <span>🌱 {{ $stats['good'] }}</span>
                     <span>🌾 {{ $stats['moderate'] }}</span>
@@ -82,20 +82,20 @@
                                class="flex items-center justify-between p-2 bg-red-50 rounded-lg hover:bg-red-100 transition text-sm">
                                 <div class="flex items-center gap-2">
                                     <span>{{ $alert['emoji'] }}</span>
-                                    <span class="font-medium text-gray-900 truncate max-w-[120px]">{{ $alert['name'] }}</span>
+                                    <span class="font-medium text-zinc-900 truncate max-w-[120px]">{{ $alert['name'] }}</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="font-bold {{ $alert['status'] === 'critical' ? 'text-red-600' : 'text-orange-600' }}">
                                         {{ number_format($alert['ndvi'], 2) }}
                                     </span>
-                                    <span class="text-gray-400">{{ $alert['trend_icon'] }}</span>
+                                    <span class="text-zinc-400">{{ $alert['trend_icon'] }}</span>
                                 </div>
                             </a>
                         @endforeach
                     </div>
                 </div>
             @else
-                <div class="text-center py-2 text-sm text-gray-500">
+                <div class="text-center py-2 text-sm text-zinc-500">
                     ✅ Todas las parcelas en buen estado
                 </div>
             @endif

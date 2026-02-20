@@ -4,22 +4,6 @@ use App\Livewire\Counter;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (auth()->check()) {
-        $user = auth()->user();
-        
-        // Si el admin está impersonando, no forzar cambio de contraseña
-        if (!session()->has('impersonating') || session()->get('impersonating') !== true) {
-            // PRIMERO verificar si necesita cambiar contraseña
-            if ($user->password_must_reset) {
-                return redirect()->route('password.force-reset');
-            }
-        }
-        
-        // LUEGO redirigir a dashboard
-        return redirect()->route($user->role . '.dashboard');
-    }
-    
-    // Si no está autenticado, mostrar landing page
     return view('welcome');
 })->name('home');
 

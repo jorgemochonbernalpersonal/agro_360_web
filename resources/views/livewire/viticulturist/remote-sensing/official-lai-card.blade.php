@@ -9,8 +9,8 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
         <div class="flex-1">
-            <h3 class="text-xl font-bold text-gray-900">🌿 LAI Oficial NASA</h3>
-            <p class="text-sm text-gray-500 mt-1">
+            <h3 class="text-xl font-bold text-zinc-900">🌿 LAI Oficial NASA</h3>
+            <p class="text-sm text-zinc-500 mt-1">
                 Leaf Area Index + Eficiencia Fotosintética
                 @if($laiData)
                     - {{ $laiData['date'] }}
@@ -21,13 +21,13 @@
         <div class="flex items-center gap-2">
             {{-- Date Selector --}}
             @if(count($availableDates) > 0)
-                <select wire:model.live="selectedDate" 
-                        class="text-sm border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 px-3 py-2">
+                <flux:select wire:model.live="selectedDate" 
+                        >
                     <option value="">Último dato</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                     @endforeach
-                </select>
+                </flux:select>
             @endif
             
             <button 
@@ -63,7 +63,7 @@
                     <div class="flex items-center gap-3">
                         <span class="text-4xl">{{ $laiData['icon'] }}</span>
                         <div>
-                            <div class="text-sm text-gray-600">LAI Oficial</div>
+                            <div class="text-sm text-zinc-600">LAI Oficial</div>
                             <div class="text-4xl font-bold text-{{ $laiData['color'] }}-700">
                                 {{ number_format($laiData['value'], 2) }}
                             </div>
@@ -77,11 +77,11 @@
                 </div>
             </div>
             
-            <p class="text-sm text-gray-700 mb-3">{{ $laiData['description'] }}</p>
+            <p class="text-sm text-zinc-700 mb-3">{{ $laiData['description'] }}</p>
             
             <div class="bg-white rounded p-3">
-                <div class="text-xs text-gray-600 mb-1">Recomendación:</div>
-                <div class="text-sm font-medium text-gray-900">{{ $laiData['recommendation'] }}</div>
+                <div class="text-xs text-zinc-600 mb-1">Recomendación:</div>
+                <div class="text-sm font-medium text-zinc-900">{{ $laiData['recommendation'] }}</div>
             </div>
         </div>
 
@@ -95,14 +95,14 @@
                 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white rounded-lg p-3">
-                        <div class="text-xs text-gray-600">Por Hectárea</div>
+                        <div class="text-xs text-zinc-600">Por Hectárea</div>
                         <div class="text-2xl font-bold text-purple-900">
                             {{ number_format($yieldEstimate['yield_per_ha'], 2) }} <span class="text-sm">t/ha</span>
                         </div>
                     </div>
                     
                     <div class="bg-white rounded-lg p-3">
-                        <div class="text-xs text-gray-600">Total Parcela</div>
+                        <div class="text-xs text-zinc-600">Total Parcela</div>
                         <div class="text-2xl font-bold text-purple-900">
                             {{ number_format($yieldEstimate['total_yield_kg'], 0) }} <span class="text-sm">kg</span>
                         </div>
@@ -139,11 +139,11 @@
                 </div>
                 
                 {{-- FPAR Bar --}}
-                <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div class="relative h-3 bg-zinc-200 rounded-full overflow-hidden">
                     <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 via-yellow-400 to-green-500" 
                          style="width: {{ $fparData['fpar'] * 100 }}%"></div>
                 </div>
-                <div class="flex justify-between text-xs text-gray-600 mt-1">
+                <div class="flex justify-between text-xs text-zinc-600 mt-1">
                     <span>0 (Baja)</span>
                     <span>1 (Máxima)</span>
                 </div>

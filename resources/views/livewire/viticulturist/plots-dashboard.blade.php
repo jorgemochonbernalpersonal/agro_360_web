@@ -5,9 +5,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Total Parcelas</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalPlots }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $activePlots }} activas</p>
+                    <p class="text-sm font-medium text-zinc-600">Total Parcelas</p>
+                    <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $totalPlots }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">{{ $activePlots }} activas</p>
                 </div>
                 <div class="p-3 bg-green-100 rounded-full">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,9 +21,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Superficie Total</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalSurface }}</p>
-                    <p class="text-xs text-gray-500 mt-1">hectáreas</p>
+                    <p class="text-sm font-medium text-zinc-600">Superficie Total</p>
+                    <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $totalSurface }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">hectáreas</p>
                 </div>
                 <div class="p-3 bg-blue-100 rounded-full">
                     <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,9 +37,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Admisible PAC</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $eligibleSurface }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $eligibilityPercentage }}% del total</p>
+                    <p class="text-sm font-medium text-zinc-600">Admisible PAC</p>
+                    <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $eligibleSurface }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">{{ $eligibilityPercentage }}% del total</p>
                 </div>
                 <div class="p-3 bg-purple-100 rounded-full">
                     <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,9 +53,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Parcelas Bloqueadas</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $lockedPlots }}</p>
-                    <p class="text-xs text-gray-500 mt-1">protegidas</p>
+                    <p class="text-sm font-medium text-zinc-600">Parcelas Bloqueadas</p>
+                    <p class="text-3xl font-bold text-zinc-900 mt-2">{{ $lockedPlots }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">protegidas</p>
                 </div>
                 <div class="p-3 bg-yellow-100 rounded-full">
                     <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,16 +68,16 @@
 
     {{-- Distribución por Régimen de Tenencia --}}
     <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Distribución por Régimen de Tenencia</h3>
+        <h3 class="text-lg font-semibold text-zinc-900 mb-4">📊 Distribución por Régimen de Tenencia</h3>
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             @foreach(['propiedad' => 'Propiedad', 'arrendamiento' => 'Arrendamiento', 'aparceria' => 'Aparcería', 'cesion' => 'Cesión', 'usufructo' => 'Usufructo'] as $key => $label)
                 @php
                     $stats = $tenureStats->get($key, ['count' => 0, 'surface' => 0]);
                 @endphp
                 <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-gray-600">{{ $label }}</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['count'] }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ round($stats['surface'], 2) }} ha</p>
+                    <p class="text-sm font-medium text-zinc-600">{{ $label }}</p>
+                    <p class="text-2xl font-bold text-zinc-900 mt-1">{{ $stats['count'] }}</p>
+                    <p class="text-xs text-zinc-500 mt-1">{{ round($stats['surface'], 2) }} ha</p>
                 </div>
             @endforeach
         </div>
@@ -87,7 +87,7 @@
     @if($totalAlerts > 0)
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">⚠️ Alertas de Cumplimiento PAC</h3>
+                <h3 class="text-lg font-semibold text-zinc-900">⚠️ Alertas de Cumplimiento PAC</h3>
                 <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
                     {{ $totalAlerts }} {{ $totalAlerts === 1 ? 'alerta' : 'alertas' }}
                 </span>

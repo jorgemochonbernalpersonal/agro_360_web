@@ -1,208 +1,265 @@
 <div class="space-y-6 animate-fade-in">
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+
+    <x-agro.page-header
         title="Facturas / Pedidos"
         description="Gestiona tus facturas y pedidos"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
-    >
-        <x-slot:actionButton>
-            <a href="{{ route('viticulturist.invoices.create') }}" class="group">
-                <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
-                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    Nueva Factura
+    />
+
+    {{-- Toolbar --}}
+    <div class="space-y-3">
+        <div class="flex items-center gap-3">
+
+            <div class="flex-1 relative">
+                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+                </div>
+                <input
+                    wire:model.live.debounce.300ms="search"
+                    type="text"
+                    placeholder="Buscar por nº factura, albarán o cliente..."
+                    class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+                />
+            </div>
+
+            @php $filterCount = ($filterStatus ? 1 : 0) + ($filterPaymentStatus ? 1 : 0); @endphp
+            <button
+                x-on:click="$dispatch('open-modal', 'invoice-filters')"
+                class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+            >
+                <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+                Filtros
+                @if($filterCount > 0)
+                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {{ $filterCount }}
+                    </span>
+                @endif
+            </button>
+
+            <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
+            <flux:button href="{{ route('viticulturist.invoices.harvest.index') }}" variant="outline" icon="archive-box">
+                Por Cosecha
+            </flux:button>
+
+            <flux:button href="{{ route('viticulturist.invoices.create') }}" variant="primary" icon="plus">
+                Nueva Factura
+            </flux:button>
+
+        </div>
+
+        {{-- Active filter chips --}}
+        @if($search || $filterStatus || $filterPaymentStatus)
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs text-zinc-400">Filtros activos:</span>
+
+                @if($search)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        <flux:icon icon="magnifying-glass" class="size-3" />
+                        "{{ $search }}"
+                        <button wire:click="$set('search', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterStatus)
+                    @php $statusLabels = ['draft' => 'Borrador', 'sent' => 'Enviada', 'paid' => 'Pagada', 'cancelled' => 'Cancelada']; @endphp
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        Estado: {{ $statusLabels[$filterStatus] ?? $filterStatus }}
+                        <button wire:click="$set('filterStatus', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterPaymentStatus)
+                    @php $payLabels = ['unpaid' => 'Pendiente', 'partial' => 'Parcial', 'paid' => 'Pagado', 'overdue' => 'Vencido']; @endphp
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                        Pago: {{ $payLabels[$filterPaymentStatus] ?? $filterPaymentStatus }}
+                        <button wire:click="$set('filterPaymentStatus', '')" class="hover:text-agro-900 ml-0.5">
+                            <flux:icon icon="x-mark" class="size-3" />
+                        </button>
+                    </span>
+                @endif
+
+                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">
+                    Limpiar todo
                 </button>
-            </a>
-        </x-slot:actionButton>
-    </x-page-header>
-
-    <!-- Estadísticas -->
-    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <div class="glass-card rounded-xl p-6">
-            <p class="text-sm font-medium text-gray-600">Total</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['total'] }}</p>
-        </div>
-        <div class="glass-card rounded-xl p-6">
-            <p class="text-sm font-medium text-gray-600">Borradores</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['draft'] }}</p>
-        </div>
-        <div class="glass-card rounded-xl p-6">
-            <p class="text-sm font-medium text-gray-600">Enviadas</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['sent'] }}</p>
-        </div>
-        <div class="glass-card rounded-xl p-6">
-            <p class="text-sm font-medium text-gray-600">Pagadas</p>
-            <p class="text-2xl font-bold text-green-600 mt-1">{{ $stats['paid'] }}</p>
-        </div>
-        <div class="glass-card rounded-xl p-6">
-            <p class="text-sm font-medium text-gray-600">Pendientes</p>
-            <p class="text-2xl font-bold text-yellow-600 mt-1">{{ $stats['unpaid'] }}</p>
-        </div>
-        <div class="glass-card rounded-xl p-6">
-            <p class="text-sm font-medium text-gray-600">Vencidas</p>
-            <p class="text-2xl font-bold text-red-600 mt-1">{{ $stats['overdue'] }}</p>
-        </div>
-    </div>
-
-    <!-- Filtros -->
-    <div class="glass-card rounded-xl p-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <x-input wire:model.live="search" type="text" placeholder="Buscar facturas..." />
-            <x-select wire:model.live="filterStatus">
-                <option value="">Todos los estados</option>
-                <option value="draft">Borrador</option>
-                <option value="sent">Enviada</option>
-                <option value="paid">Pagada</option>
-                <option value="cancelled">Cancelada</option>
-            </x-select>
-            <x-select wire:model.live="filterPaymentStatus">
-                <option value="">Todos los pagos</option>
-                <option value="unpaid">Pendiente</option>
-                <option value="partial">Parcial</option>
-                <option value="paid">Pagado</option>
-                <option value="overdue">Vencido</option>
-            </x-select>
-        </div>
-    </div>
-
-
-    @php
-        $headers = [
-            ['label' => 'Código de Factura', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>'],
-            ['label' => 'Código Albarán', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'],
-            ['label' => 'Cliente', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>'],
-            ['label' => 'Fechas', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'],
-            ['label' => 'Total / Kilos', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
-            ['label' => 'Estado Entrega', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
-            ['label' => 'Estado Pago', 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'],
-            'Acciones',
-        ];
-    @endphp
-
-    <x-data-table 
-        :headers="$headers" 
-        empty-message="No hay facturas registradas" 
-        empty-description="Comienza creando tu primera factura"
-        color="green"
-    >
-        @if($invoices->count() > 0)
-            @foreach($invoices as $invoice)
-                <x-table-row>
-                    <x-table-cell>
-                        <span class="text-sm font-bold text-gray-900">{{ $invoice->invoice_number ?? '-' }}</span>
-                    </x-table-cell>
-                    
-                    <x-table-cell>
-                        <span class="text-sm font-medium text-gray-700">{{ $invoice->delivery_note_code ?? '-' }}</span>
-                    </x-table-cell>
-                    
-                    <x-table-cell>
-                        <span class="text-sm text-gray-700">{{ $invoice->client->full_name }}</span>
-                    </x-table-cell>
-                    
-                    <x-table-cell>
-                        <div class="flex flex-col gap-1 text-sm text-gray-700">
-                            <div>
-                                <span class="text-xs text-gray-500">Pedido:</span>
-                                <span class="ml-1">
-                                    @if($invoice->order_date)
-                                        {{ $invoice->order_date->format('d/m/Y') }}
-                                    @else
-                                        -
-                                    @endif
-                                </span>
-                            </div>
-                            <div>
-                                <span class="text-xs text-gray-500">Entrega:</span>
-                                <span class="ml-1">
-                                    @if($invoice->delivery_status === 'delivered' || $invoice->delivery_status === 'cancelled')
-                                        @if($invoice->delivery_note_date)
-                                            {{ $invoice->delivery_note_date->format('d/m/Y') }}
-                                        @else
-                                            -
-                                        @endif
-                                    @else
-                                        -
-                                    @endif
-                                </span>
-                            </div>
-                            <div>
-                                <span class="text-xs text-gray-500">Pago:</span>
-                                <span class="ml-1">
-                                    @if($invoice->payment_status === 'paid' && $invoice->payment_date)
-                                        {{ $invoice->payment_date->format('d/m/Y') }}
-                                    @else
-                                        -
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                    </x-table-cell>
-                    
-                    <x-table-cell>
-                        <div class="flex flex-col gap-1">
-                            <span class="text-sm font-semibold text-gray-900">{{ number_format($invoice->total_amount, 2) }} €</span>
-                            @php
-                                $totalKilos = $invoice->items->sum('quantity');
-                            @endphp
-                            @if($totalKilos > 0)
-                                <span class="text-xs text-gray-600">{{ number_format($totalKilos, 2) }} kg</span>
-                            @endif
-                        </div>
-                    </x-table-cell>
-                    
-                    <x-table-cell>
-                        @php
-                            $deliveryStatusColors = [
-                                'pending' => 'bg-yellow-100 text-yellow-800',
-                                'in_transit' => 'bg-blue-100 text-blue-800',
-                                'delivered' => 'bg-green-100 text-green-800',
-                                'cancelled' => 'bg-red-100 text-red-800',
-                            ];
-                            $deliveryStatusLabels = [
-                                'pending' => 'Pendiente',
-                                'in_transit' => 'En Tránsito',
-                                'delivered' => 'Entregado',
-                                'cancelled' => 'Cancelado',
-                            ];
-                            $color = $deliveryStatusColors[$invoice->delivery_status] ?? 'bg-gray-100 text-gray-800';
-                            $label = $deliveryStatusLabels[$invoice->delivery_status] ?? ucfirst($invoice->delivery_status);
-                        @endphp
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $color }}">
-                            {{ $label }}
-                        </span>
-                    </x-table-cell>
-                    
-                    <x-table-cell>
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $invoice->payment_status === 'paid' ? 'bg-green-100 text-green-800' : ($invoice->payment_status === 'overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                            {{ ucfirst($invoice->payment_status) }}
-                        </span>
-                    </x-table-cell>
-                    
-                    <x-table-cell>
-                        <x-table-actions align="right">
-                            <x-action-button 
-                                variant="view" 
-                                href="{{ route('viticulturist.invoices.show', $invoice->id) }}"
-                            />
-                            <x-action-button 
-                                variant="edit" 
-                                href="{{ route('viticulturist.invoices.edit', $invoice->id) }}"
-                            />
-                        </x-table-actions>
-                    </x-table-cell>
-                </x-table-row>
-            @endforeach
-
-            @if($invoices->hasPages())
-                <x-slot name="pagination">
-                    {{ $invoices->links() }}
-                </x-slot>
-            @endif
+            </div>
         @endif
-    </x-data-table>
+    </div>
+
+    {{-- Card grid --}}
+    @if($invoices->count() > 0)
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="search, filterStatus, filterPaymentStatus, clearFilters"
+        >
+            @foreach($invoices as $i => $invoice)
+                @php
+                    $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+
+                    [$deliveryLabel, $deliveryColor] = match($invoice->delivery_status) {
+                        'pending'    => ['Pendiente',   'yellow'],
+                        'in_transit' => ['En Tránsito', 'blue'],
+                        'delivered'  => ['Entregado',   'green'],
+                        'cancelled'  => ['Cancelado',   'red'],
+                        default      => [ucfirst($invoice->delivery_status ?? ''), null],
+                    };
+
+                    [$paymentLabel, $paymentColor] = match($invoice->payment_status) {
+                        'paid'    => ['Pagado',    'green'],
+                        'overdue' => ['Vencido',   'red'],
+                        'partial' => ['Parcial',   'blue'],
+                        'unpaid'  => ['Pendiente', 'yellow'],
+                        default   => [ucfirst($invoice->payment_status ?? ''), null],
+                    };
+
+                    $totalKilos = $invoice->items->sum('quantity');
+                @endphp
+
+                <x-agro.card
+                    wire:key="invoice-{{ $invoice->id }}"
+                    class="animate-fade-in-up hover:-translate-y-1"
+                    style="animation-delay: {{ min($i * 50, 400) }}ms"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="document-text" class="size-4 text-zinc-500" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
+                                    {{ $invoice->invoice_number ?? 'Sin número' }}
+                                </p>
+                                @if($invoice->delivery_note_code)
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5">Albarán: {{ $invoice->delivery_note_code }}</p>
+                                @endif
+                            </div>
+                            <flux:badge :color="$paymentColor" size="sm" class="shrink-0">{{ $paymentLabel }}</flux:badge>
+                        </div>
+                    </x-slot:header>
+
+                    {{-- Cliente --}}
+                    <div class="flex items-center gap-2 mb-3">
+                        <flux:icon icon="user" class="size-3.5 text-zinc-400 shrink-0" />
+                        <span class="text-xs text-zinc-600 truncate">{{ $invoice->client->full_name }}</span>
+                    </div>
+
+                    {{-- Total + Kilos --}}
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div class="bg-agro-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Total</p>
+                            <p class="text-sm font-bold text-agro-700">{{ number_format($invoice->total_amount, 2) }} €</p>
+                        </div>
+                        <div class="bg-zinc-50 rounded-xl p-2.5">
+                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Kilos</p>
+                            <p class="text-sm font-bold text-zinc-700">
+                                {{ $totalKilos > 0 ? number_format($totalKilos, 2) . ' kg' : '—' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Fechas --}}
+                    <div class="flex items-center gap-3 text-xs text-zinc-500">
+                        @if($invoice->order_date)
+                            <span>Pedido: {{ $invoice->order_date->format('d/m/Y') }}</span>
+                        @endif
+                        @if($invoice->payment_status === 'paid' && $invoice->payment_date)
+                            <span>· Pago: {{ $invoice->payment_date->format('d/m/Y') }}</span>
+                        @endif
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-between">
+                            <flux:badge :color="$deliveryColor" size="sm">{{ $deliveryLabel }}</flux:badge>
+                            <div class="flex items-center gap-1">
+                                <a href="{{ route('viticulturist.invoices.show', $invoice->id) }}" class="{{ $btnBase }}" title="Ver factura">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </a>
+                                <a href="{{ route('viticulturist.invoices.edit', $invoice->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                            </div>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($invoices->hasPages())
+            <div class="flex justify-center">{{ $invoices->links() }}</div>
+        @endif
+
+    @else
+        <x-agro.empty-state
+            icon="document-text"
+            message="No hay facturas"
+            description="{{ $search || $filterStatus || $filterPaymentStatus ? 'Ninguna factura coincide con los filtros aplicados.' : 'Crea tu primera factura para empezar a gestionar tu facturación.' }}"
+        >
+            @if($search || $filterStatus || $filterPaymentStatus)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @else
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.invoices.create') }}" variant="primary" icon="plus">
+                        Nueva Factura
+                    </flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="invoice-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'invoice-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de entrega</label>
+                <select wire:model.live="filterStatus"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todos</option>
+                    <option value="draft">Borrador</option>
+                    <option value="sent">Enviada</option>
+                    <option value="paid">Pagada</option>
+                    <option value="cancelled">Cancelada</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Estado de pago</label>
+                <select wire:model.live="filterPaymentStatus"
+                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                    <option value="">Todos</option>
+                    <option value="unpaid">Pendiente</option>
+                    <option value="partial">Parcial</option>
+                    <option value="paid">Pagado</option>
+                    <option value="overdue">Vencido</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
+            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'invoice-filters')"
+                    class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
+                Limpiar filtros
+            </button>
+            <flux:button x-on:click="$dispatch('close-modal', 'invoice-filters')" variant="primary" size="sm">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
 </div>

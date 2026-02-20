@@ -2,52 +2,52 @@
     {{-- Header --}}
     <div class="flex items-center justify-between">
         <div>
-            <h3 class="text-lg font-semibold text-gray-900">
+            <h3 class="text-lg font-semibold text-zinc-900">
                 📋 Historial de Auditoría
             </h3>
-            <p class="text-sm text-gray-600 mt-1">
+            <p class="text-sm text-zinc-600 mt-1">
                 Parcela: {{ $plot->name }} ({{ $plot->surface_area }} ha)
             </p>
         </div>
     </div>
 
     {{-- Filtros --}}
-    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <div class="bg-zinc-50 p-4 rounded-lg border border-zinc-200">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Usuario</label>
-                <select wire:model.live="filterUser" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                <label class="block text-xs font-medium text-zinc-700 mb-1">Usuario</label>
+                <flux:select wire:model.live="filterUser" >
                     <option value="">Todos</option>
                     @foreach($users as $user)
                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                     @endforeach
-                </select>
+                </flux:select>
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Acción</label>
-                <select wire:model.live="filterAction" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                <label class="block text-xs font-medium text-zinc-700 mb-1">Acción</label>
+                <flux:select wire:model.live="filterAction" >
                     <option value="">Todas</option>
                     @foreach($actions as $action)
                         <option value="{{ $action }}">{{ ucfirst($action) }}</option>
                     @endforeach
-                </select>
+                </flux:select>
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Desde</label>
-                <input type="date" wire:model.live="filterDateFrom" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                <label class="block text-xs font-medium text-zinc-700 mb-1">Desde</label>
+                <input type="date" wire:model.live="filterDateFrom" class="w-full rounded-md border-zinc-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Hasta</label>
-                <input type="date" wire:model.live="filterDateTo" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                <label class="block text-xs font-medium text-zinc-700 mb-1">Hasta</label>
+                <input type="date" wire:model.live="filterDateTo" class="w-full rounded-md border-zinc-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
             </div>
         </div>
 
         @if($filterUser || $filterAction || $filterDateFrom || $filterDateTo)
             <div class="mt-3">
-                <button wire:click="clearFilters" class="text-xs text-gray-600 hover:text-gray-900 underline">
+                <button wire:click="clearFilters" class="text-xs text-zinc-600 hover:text-zinc-900 underline">
                     Limpiar filtros
                 </button>
             </div>
@@ -57,7 +57,7 @@
     {{-- Timeline de cambios --}}
     <div class="space-y-4">
         @forelse($logs as $log)
-            <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="bg-white border border-zinc-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 {{-- Header del log --}}
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
@@ -82,8 +82,8 @@
                                     </svg>
                                 </div>
                             @else
-                                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
@@ -92,21 +92,21 @@
 
                         {{-- Información del log --}}
                         <div>
-                            <p class="text-sm font-semibold text-gray-900">
+                            <p class="text-sm font-semibold text-zinc-900">
                                 {{ $log->action_description }}
                             </p>
-                            <div class="flex items-center gap-2 mt-1 text-xs text-gray-600">
+                            <div class="flex items-center gap-2 mt-1 text-xs text-zinc-600">
                                 <span class="font-medium">{{ $log->user->name ?? 'Sistema' }}</span>
                                 <span>•</span>
                                 <span>{{ $log->created_at->format('d/m/Y H:i:s') }}</span>
                                 <span>•</span>
-                                <span class="text-gray-500">{{ $log->created_at->diffForHumans() }}</span>
+                                <span class="text-zinc-500">{{ $log->created_at->diffForHumans() }}</span>
                             </div>
                         </div>
                     </div>
 
                     {{-- Metadata --}}
-                    <div class="text-xs text-gray-500">
+                    <div class="text-xs text-zinc-500">
                         <div title="Dirección IP">🌐 {{ $log->ip_address }}</div>
                     </div>
                 </div>
@@ -117,20 +117,20 @@
                 @endphp
 
                 @if(!empty($diff))
-                    <div class="mt-3 pt-3 border-t border-gray-100">
-                        <p class="text-xs font-medium text-gray-700 mb-2">Cambios realizados:</p>
+                    <div class="mt-3 pt-3 border-t border-zinc-100">
+                        <p class="text-xs font-medium text-zinc-700 mb-2">Cambios realizados:</p>
                         <div class="space-y-2">
                             @foreach($diff as $change)
-                                <div class="bg-gray-50 rounded p-2 text-xs">
-                                    <p class="font-medium text-gray-700 mb-1">{{ $change['field'] }}</p>
+                                <div class="bg-zinc-50 rounded p-2 text-xs">
+                                    <p class="font-medium text-zinc-700 mb-1">{{ $change['field'] }}</p>
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="bg-red-50 border border-red-200 rounded p-2">
                                             <p class="text-red-600 font-medium mb-1">Antes:</p>
-                                            <p class="text-gray-700">{!! $change['old'] !!}</p>
+                                            <p class="text-zinc-700">{!! $change['old'] !!}</p>
                                         </div>
                                         <div class="bg-green-50 border border-green-200 rounded p-2">
                                             <p class="text-green-600 font-medium mb-1">Después:</p>
-                                            <p class="text-gray-700">{!! $change['new'] !!}</p>
+                                            <p class="text-zinc-700">{!! $change['new'] !!}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -140,11 +140,11 @@
                 @endif
             </div>
         @empty
-            <div class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center py-12 bg-zinc-50 rounded-lg border-2 border-dashed border-zinc-300">
+                <svg class="mx-auto h-12 w-12 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
-                <p class="mt-2 text-sm text-gray-600">No hay registros de auditoría para esta parcela</p>
+                <p class="mt-2 text-sm text-zinc-600">No hay registros de auditoría para esta parcela</p>
             </div>
         @endforelse
     </div>

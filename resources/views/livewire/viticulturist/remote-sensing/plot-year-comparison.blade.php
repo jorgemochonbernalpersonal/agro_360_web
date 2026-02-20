@@ -1,31 +1,31 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="bg-white rounded-xl shadow-sm border border-zinc-200 p-6">
     <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+        <h3 class="text-lg font-semibold text-zinc-900 flex items-center gap-2">
             📊 Comparativa Año a Año
         </h3>
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600">Año 1:</label>
-                <select wire:model.live="year1" class="text-sm border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                <label class="text-sm text-zinc-600">Año 1:</label>
+                <flux:select wire:model.live="year1" >
                     @foreach($availableYears as $year)
                         <option value="{{ $year }}">{{ $year }}</option>
                     @endforeach
                     @if(empty($availableYears))
                         <option value="{{ now()->year - 1 }}">{{ now()->year - 1 }}</option>
                     @endif
-                </select>
+                </flux:select>
             </div>
-            <span class="text-gray-400">vs</span>
+            <span class="text-zinc-400">vs</span>
             <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600">Año 2:</label>
-                <select wire:model.live="year2" class="text-sm border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                <label class="text-sm text-zinc-600">Año 2:</label>
+                <flux:select wire:model.live="year2" >
                     @foreach($availableYears as $year)
                         <option value="{{ $year }}">{{ $year }}</option>
                     @endforeach
                     @if(empty($availableYears))
                         <option value="{{ now()->year }}">{{ now()->year }}</option>
                     @endif
-                </select>
+                </flux:select>
             </div>
         </div>
     </div>
@@ -34,13 +34,13 @@
         {{-- Summary Cards --}}
         <div class="grid grid-cols-3 gap-4 mb-6">
             <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
-                <div class="text-sm text-gray-600 mb-1">NDVI Promedio {{ $year1 }}</div>
+                <div class="text-sm text-zinc-600 mb-1">NDVI Promedio {{ $year1 }}</div>
                 <div class="text-2xl font-bold text-green-700">
                     {{ $comparisonData['year1']['summary']['avg_ndvi'] !== null ? number_format($comparisonData['year1']['summary']['avg_ndvi'], 3) : 'N/A' }}
                 </div>
             </div>
             <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-                <div class="text-sm text-gray-600 mb-1">NDVI Promedio {{ $year2 }}</div>
+                <div class="text-sm text-zinc-600 mb-1">NDVI Promedio {{ $year2 }}</div>
                 <div class="text-2xl font-bold text-blue-700">
                     {{ $comparisonData['year2']['summary']['avg_ndvi'] !== null ? number_format($comparisonData['year2']['summary']['avg_ndvi'], 3) : 'N/A' }}
                 </div>
@@ -52,13 +52,13 @@
                     @elseif($comparisonData['comparison']['ndvi_trend'] === 'declining')
                         bg-gradient-to-br from-red-50 to-red-100 border-red-300
                     @else
-                        bg-gradient-to-br from-gray-50 to-gray-100 border-gray-300
+                        bg-gradient-to-br from-zinc-50 to-zinc-100 border-zinc-300
                     @endif
                 @else
-                    bg-gradient-to-br from-gray-50 to-gray-100 border-gray-300
+                    bg-gradient-to-br from-zinc-50 to-zinc-100 border-zinc-300
                 @endif
             ">
-                <div class="text-sm text-gray-600 mb-1">Variación</div>
+                <div class="text-sm text-zinc-600 mb-1">Variación</div>
                 <div class="text-2xl font-bold
                     @if(isset($comparisonData['comparison']['ndvi_change_percent']))
                         @if($comparisonData['comparison']['ndvi_change_percent'] > 0)
@@ -66,10 +66,10 @@
                         @elseif($comparisonData['comparison']['ndvi_change_percent'] < 0)
                             text-red-700
                         @else
-                            text-gray-700
+                            text-zinc-700
                         @endif
                     @else
-                        text-gray-700
+                        text-zinc-700
                     @endif
                 ">
                     @if(isset($comparisonData['comparison']['ndvi_change_percent']) && $comparisonData['comparison']['ndvi_change_percent'] !== null)
@@ -89,15 +89,15 @@
         {{-- Monthly Data Table --}}
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
-                <thead class="bg-gray-50">
+                <thead class="bg-zinc-50">
                     <tr>
-                        <th class="px-4 py-2 text-left text-gray-600">Mes</th>
+                        <th class="px-4 py-2 text-left text-zinc-600">Mes</th>
                         <th class="px-4 py-2 text-right text-green-700">NDVI {{ $year1 }}</th>
                         <th class="px-4 py-2 text-right text-blue-700">NDVI {{ $year2 }}</th>
-                        <th class="px-4 py-2 text-right text-gray-600">Diferencia</th>
+                        <th class="px-4 py-2 text-right text-zinc-600">Diferencia</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-zinc-100">
                     @php
                         $months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
                     @endphp
@@ -107,7 +107,7 @@
                             $y2Data = collect($comparisonData['year2']['data'])->firstWhere('month', $m);
                             $diff = ($y1Data && $y2Data) ? ($y2Data['ndvi_avg'] - $y1Data['ndvi_avg']) : null;
                         @endphp
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-zinc-50">
                             <td class="px-4 py-2 font-medium">{{ $months[$m-1] }}</td>
                             <td class="px-4 py-2 text-right text-green-700">
                                 {{ $y1Data ? number_format($y1Data['ndvi_avg'], 3) : '-' }}
@@ -115,7 +115,7 @@
                             <td class="px-4 py-2 text-right text-blue-700">
                                 {{ $y2Data ? number_format($y2Data['ndvi_avg'], 3) : '-' }}
                             </td>
-                            <td class="px-4 py-2 text-right {{ $diff !== null ? ($diff > 0 ? 'text-green-600' : ($diff < 0 ? 'text-red-600' : 'text-gray-500')) : 'text-gray-400' }}">
+                            <td class="px-4 py-2 text-right {{ $diff !== null ? ($diff > 0 ? 'text-green-600' : ($diff < 0 ? 'text-red-600' : 'text-zinc-500')) : 'text-zinc-400' }}">
                                 @if($diff !== null)
                                     {{ $diff > 0 ? '+' : '' }}{{ number_format($diff, 3) }}
                                 @else
@@ -128,8 +128,8 @@
             </table>
         </div>
     @else
-        <div class="text-center py-12 text-gray-500">
-            <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center py-12 text-zinc-500">
+            <svg class="w-12 h-12 mx-auto mb-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
             <p>No hay datos disponibles para la comparación</p>

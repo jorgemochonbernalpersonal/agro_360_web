@@ -1,53 +1,55 @@
-<div class="space-y-6 animate-fade-in">
-    @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
-    @endphp
-    <x-page-header
-        :icon="$icon"
+﻿<div class="space-y-6 animate-fade-in">
+    <x-agro.page-header
         title="Factura: {{ $invoice->invoice_number }}"
         description="Detalles de la factura"
-        icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
     >
-        <x-slot:actionButton>
-            <x-button href="{{ route('viticulturist.invoices.edit', $invoice->id) }}" variant="primary">
+        <x-slot:actions>
+            <flux:button href="{{ route('viticulturist.invoices.edit', $invoice->id) }}" variant="primary" icon="pencil-square">
                 Editar
-            </x-button>
-        </x-slot:actionButton>
-    </x-page-header>
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
-    <div class="glass-card rounded-xl p-6">
-        <h3 class="text-lg font-bold mb-4">Información de la Factura</h3>
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <div class="p-1.5 rounded-lg bg-agro-50">
+                    <flux:icon icon="document-text" class="size-4 text-agro-600" />
+                </div>
+                <span class="font-semibold text-zinc-900 text-sm">Información de la Factura</span>
+            </div>
+        </x-slot:header>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <p class="text-sm text-gray-500">Cliente</p>
+                <p class="text-sm text-zinc-500">Cliente</p>
                 <p class="font-semibold">{{ $invoice->client->full_name }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-500">Fecha</p>
+                <p class="text-sm text-zinc-500">Fecha</p>
                 <p class="font-semibold">{{ $invoice->invoice_date->format('d/m/Y') }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-500">Total</p>
+                <p class="text-sm text-zinc-500">Total</p>
                 <p class="font-semibold text-lg">{{ number_format($invoice->total_amount, 2) }} €</p>
             </div>
             <div>
-                <p class="text-sm text-gray-500">Estado</p>
+                <p class="text-sm text-zinc-500">Estado</p>
                 <p class="font-semibold">{{ ucfirst($invoice->status) }}</p>
             </div>
         </div>
 
         <div class="mt-6">
             <h4 class="font-bold mb-2">Items</h4>
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-zinc-200">
+                <thead class="bg-zinc-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cantidad</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase">Nombre</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase">Cantidad</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase">Precio</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase">Total</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-zinc-200">
                     @foreach($invoice->items as $item)
                         <tr>
                             <td class="px-6 py-4 text-sm">{{ $item->name }}</td>
@@ -59,5 +61,5 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </x-agro.card>
 </div>

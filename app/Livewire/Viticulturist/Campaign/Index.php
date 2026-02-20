@@ -13,103 +13,66 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
+    public $currentTab = 'active'; // 'active', 'inactive'
     public $search = '';
     public $yearFilter = '';
 
     protected $queryString = [
-        'search' => ['except' => ''],
+        'currentTab' => ['as' => 'tab', 'except' => 'active'],
+        'search'     => ['except' => ''],
         'yearFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingYearFilter()
-    {
-        $this->resetPage();
-    }
-
     public function mount()
     {
-        // Validar autorización
         if (!Auth::user()->can('viewAny', Campaign::class)) {
             abort(403, 'No tienes permiso para ver campañas.');
         }
     }
 
-    #[Layout('layouts.app', [
-        'title' => 'Campañas Agrícolas - Agro365',
-        'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
-    ])]
-    public function render()
+    public function switchTab($tab): void
     {
-        $user = Auth::user();
-
-        $query = Campaign::forViticulturist($user->id)
-            ->withCount('activities')
-            ->orderBy('year', 'desc');
-
-        if ($this->search) {
-            $search = '%' . strtolower($this->search) . '%';
-            $query->where(function($q) use ($search) {
-                $q->whereRaw('LOWER(name) LIKE ?', [$search])
-                  ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
-            });
-        }
-
-        if ($this->yearFilter) {
-            $query->forYear($this->yearFilter);
-        }
-
-        $campaigns = $query->paginate(10);
-
-        // Obtener años únicos para el filtro
-        $years = Campaign::forViticulturist($user->id)
-            ->select('year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
-
-        return view('livewire.viticulturist.campaign.index', [
-            'campaigns' => $campaigns,
-            'years' => $years,
-        ]);
+        $this->currentTab = $tab;
+        $this->resetPage();
     }
 
-    public function activate($campaignId)
+    public function updatingSearch(): void
     {
-        $campaign = Campaign::findOrFail($campaignId);
+        $this->resetPage();
+    }
 
-        if (!Auth::user()->can('activate', $campaign)) {
-            $this->toastError('No tienes permiso para activar esta campaña.');
+    public function updatingYearFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function clearFilters(): void
+    {
+        $this->search     = '';
+        $this->yearFilter = '';
+        $this->resetPage();
+    }
+
+    public function toggleActive($campaignId): void
+    {
+        $campaign = Campaign::forViticulturist(Auth::id())->findOrFail($campaignId);
+
+        if (!Auth::user()->can('update', $campaign)) {
+            $this->toastError('No tienes permiso para modificar esta campaña.');
             return;
         }
 
-        try {
-            $campaign->update(['status' => 'active']);
-            $this->toastSuccess("Campaña {$campaign->year} activada correctamente.");
-        } catch (\Exception $e) {
-            \Log::error('Error al activar campaña', [
-                'error' => $e->getMessage(),
-                'campaign_id' => $campaignId,
-                'user_id' => Auth::id(),
-            ]);
-
-            $this->toastError('Error al activar la campaña. Por favor, intenta de nuevo.');
+        if ($campaign->active) {
+            $campaign->update(['active' => false]);
+            $this->toastSuccess("Campaña {$campaign->year} desactivada.");
+        } else {
+            $campaign->activate();
+            $this->toastSuccess("Campaña {$campaign->year} activada como campaña actual.");
+            $this->currentTab = 'active';
         }
     }
 
-    public function closeCampaign($id)
-    {
-        $campaign = Campaign::forViticulturist(Auth::id())->findOrFail($id);
-        $campaign->update(['status' => 'closed']);
-
-        $this->toastSuccess("Campaña {$campaign->year} cerrada correctamente.");
-    }
-
-    public function delete($campaignId)
+    public function delete($campaignId): void
     {
         $campaign = Campaign::withCount('activities')->findOrFail($campaignId);
 
@@ -118,7 +81,6 @@ class Index extends Component
             return;
         }
 
-        // Validar que no tenga actividades
         if ($campaign->activities_count > 0) {
             $this->toastError('No se puede eliminar una campaña que tiene actividades registradas.');
             return;
@@ -129,19 +91,61 @@ class Index extends Component
             $this->toastSuccess('Campaña eliminada correctamente.');
         } catch (\Exception $e) {
             \Log::error('Error al eliminar campaña', [
-                'error' => $e->getMessage(),
+                'error'       => $e->getMessage(),
                 'campaign_id' => $campaignId,
-                'user_id' => Auth::id(),
+                'user_id'     => Auth::id(),
             ]);
-
             $this->toastError('Error al eliminar la campaña. Por favor, intenta de nuevo.');
         }
     }
 
-    public function clearFilters()
+    #[Layout('layouts.app', [
+        'title'       => 'Campañas Agrícolas - Agro365',
+        'description' => 'Gestiona tus campañas agrícolas por año. Organiza y controla todas las actividades de cada temporada vitivinícola.',
+    ])]
+    public function render()
     {
-        $this->search = '';
-        $this->yearFilter = '';
-        $this->resetPage();
+        $user = Auth::user();
+
+        $query = Campaign::forViticulturist($user->id)
+            ->withCount('activities')
+            ->orderBy('year', 'desc');
+
+        if ($this->currentTab === 'active') {
+            $query->where('active', true);
+        } else {
+            $query->where('active', false);
+        }
+
+        if ($this->search) {
+            $search = '%' . strtolower($this->search) . '%';
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(description) LIKE ?', [$search]);
+            });
+        }
+
+        if ($this->yearFilter) {
+            $query->forYear($this->yearFilter);
+        }
+
+        $campaigns = $query->paginate(12);
+
+        $stats = [
+            'active'   => Campaign::forViticulturist($user->id)->active()->count(),
+            'inactive' => Campaign::forViticulturist($user->id)->where('active', false)->count(),
+        ];
+
+        $years = Campaign::forViticulturist($user->id)
+            ->select('year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+
+        return view('livewire.viticulturist.campaign.index', [
+            'campaigns' => $campaigns,
+            'stats'     => $stats,
+            'years'     => $years,
+        ]);
     }
 }

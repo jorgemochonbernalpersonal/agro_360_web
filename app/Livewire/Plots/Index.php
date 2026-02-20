@@ -21,26 +21,20 @@ class Index extends Component
 {
     use WithPagination, WithToastNotifications;
 
-    public $currentTab = 'active';  // 'active', 'inactive', 'statistics'
+    public $currentTab = 'active';  // 'active', 'inactive'
     public $search = '';
-    public $yearFilter;
     public $filterAutonomousCommunity = '';
     public $filterProvince = '';
     public $filterMunicipality = '';
+    public $auditPlotId = null;
 
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'active'],
         'search' => ['except' => ''],
-        'yearFilter' => ['as' => 'year'],
         'filterAutonomousCommunity' => ['except' => ''],
         'filterProvince' => ['except' => ''],
         'filterMunicipality' => ['except' => ''],
     ];
-
-    public function mount()
-    {
-        $this->yearFilter = $this->yearFilter ?? now()->year;
-    }
 
     public function switchTab($tab)
     {
@@ -143,33 +137,35 @@ class Index extends Component
             ->distinct()
             ->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate(12);
 
-        // Estadísticas básicas
+        // Estadísticas
         $baseQuery = Plot::forUser(Auth::user());
         $stats = [
-            'total' => (clone $baseQuery)->count(),
-            'active' => (clone $baseQuery)->where('active', true)->count(),
+            'total'    => (clone $baseQuery)->count(),
+            'active'   => (clone $baseQuery)->where('active', true)->count(),
             'inactive' => (clone $baseQuery)->where('active', false)->count(),
         ];
 
-        // Estadísticas avanzadas (solo para tab de estadísticas)
-        $advancedStats = [];
-        if ($this->currentTab === 'statistics') {
-            $advancedStats = $this->getAdvancedStatistics(Auth::user());
-        }
+        $firstPlotForMap = $this->filterMunicipality
+            ? Plot::forUser(Auth::user())
+                ->where('municipality_id', $this->filterMunicipality)
+                ->select('id')
+                ->first()
+            : null;
 
-        // Calcular área máxima para representación visual
-        $maxPlotArea = (clone $baseQuery)->max('area') ?: 1;
+        $auditPlot = $this->auditPlotId
+            ? Plot::forUser(Auth::user())->find($this->auditPlotId)
+            : null;
 
         return view('livewire.plots.index', [
             'plots' => $plots,
             'stats' => $stats,
-            'advancedStats' => $advancedStats,
             'autonomousCommunities' => $this->autonomousCommunities,
             'provinces' => $this->provinces,
             'municipalities' => $this->municipalities,
-            'maxPlotArea' => $maxPlotArea,
+            'firstPlotForMap' => $firstPlotForMap,
+            'auditPlot' => $auditPlot,
         ])->layout('layouts.app', [
             'title' => 'Gestión de Parcelas - Agro365',
             'description' => 'Administra y visualiza todas tus parcelas agrícolas. Control total de viñedos con integración SIGPAC.',
@@ -288,94 +284,10 @@ class Index extends Component
         $this->resetPage();
     }
 
-    private function getAdvancedStatistics($user)
+    public function selectAuditPlot(int $plotId): void
     {
-        $year = $this->yearFilter;
-        // ✅ OPTIMIZACIÓN: Solo campos necesarios y eager loading de province
-        $allPlots = Plot::forUser($user)
-            ->select([
-                'id',
-                'name',
-                'area',
-                'pac_eligible_area',
-                'non_eligible_area',
-                'is_locked',
-                'province_id',
-                'tenure_regime',
-            ])
-            ->with(['province:id,name', 'sigpacCodes:id'])
-            ->get();
-
-        // Superficie total
-        $totalSurface = $allPlots->sum('area');
-        $eligibleSurface = $allPlots->sum('pac_eligible_area') ?: $totalSurface;
-        $nonEligibleSurface = $allPlots->sum('non_eligible_area');
-        $eligibilityPercentage = $totalSurface > 0 ? ($eligibleSurface / $totalSurface) * 100 : 0;
-
-        // Parcelas bloqueadas
-        $lockedPlots = $allPlots->where('is_locked', true)->count();
-        $unlockedPlots = $allPlots->where('is_locked', false)->count();
-
-        // Distribución por régimen de tenencia
-        $tenureStats = $allPlots->groupBy('tenure_regime')->map(function ($group) {
-            return [
-                'count' => $group->count(),
-                'surface' => $group->sum('area'),
-            ];
-        });
-
-        // Parcelas con/sin códigos SIGPAC
-        $withSigpac = $allPlots->filter(function ($plot) {
-            return $plot->sigpacCodes && $plot->sigpacCodes->count() > 0;
-        })->count();
-        $withoutSigpac = $allPlots->count() - $withSigpac;
-
-        // Distribución por provincia
-        $provinceStats = $allPlots->groupBy('province_id')->map(function ($group) {
-            return [
-                'count' => $group->count(),
-                'surface' => $group->sum('area'),
-                'province_name' => $group->first()->province->name ?? 'Sin provincia',
-            ];
-        })->sortByDesc('surface')->take(10);
-
-        // Nuevas parcelas por mes (últimos 12 meses)
-        $newPlotsByMonth = collect(range(11, 0))->map(function ($monthsAgo) use ($user) {
-            $date = now()->subMonths($monthsAgo);
-            return [
-                'month' => $date->format('M'),
-                'count' => Plot::forUser($user)
-                    ->whereYear('created_at', $date->year)
-                    ->whereMonth('created_at', $date->month)
-                    ->count(),
-            ];
-        });
-
-        // Parcelas con plantaciones
-        $withPlantings = $allPlots->filter(function ($plot) {
-            return $plot->plantings && $plot->plantings->count() > 0;
-        })->count();
-        $withoutPlantings = $allPlots->count() - $withPlantings;
-
-        // Superficie media por parcela
-        $avgSurfacePerPlot = $allPlots->count() > 0 ? $allPlots->avg('area') : 0;
-
-        return [
-            'totalSurface' => $totalSurface,
-            'eligibleSurface' => $eligibleSurface,
-            'nonEligibleSurface' => $nonEligibleSurface,
-            'eligibilityPercentage' => $eligibilityPercentage,
-            'lockedPlots' => $lockedPlots,
-            'unlockedPlots' => $unlockedPlots,
-            'tenureStats' => $tenureStats,
-            'withSigpac' => $withSigpac,
-            'withoutSigpac' => $withoutSigpac,
-            'provinceStats' => $provinceStats,
-            'newPlotsByMonth' => $newPlotsByMonth,
-            'withPlantings' => $withPlantings,
-            'withoutPlantings' => $withoutPlantings,
-            'avgSurfacePerPlot' => $avgSurfacePerPlot,
-        ];
+        $this->auditPlotId = $plotId;
+        $this->dispatch('open-modal', 'plot-audit');
     }
 
     public function generateMap($sigpacCodeId, $plotId)

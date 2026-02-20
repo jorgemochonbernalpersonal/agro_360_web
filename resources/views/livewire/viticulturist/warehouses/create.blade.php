@@ -1,61 +1,50 @@
-@php
-    $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>';
-@endphp
-
-<x-form-card
-    title="Crear Almacén"
-    description="Registra un nuevo almacén o ubicación para organizar tus productos fitosanitarios"
-    :icon="$icon"
-    icon-color="from-[var(--color-agro-green)] to-[var(--color-agro-green-dark)]"
+<x-agro.form-card
+    title="Crear Almacen"
+    description="Registra un nuevo almacen o ubicacion para organizar tus productos fitosanitarios"
     :back-url="route('viticulturist.warehouses.index')"
 >
     <form wire:submit="save" class="space-y-8">
-        <x-form-section title="Información del Almacén" color="green">
+        <x-agro.form-section title="Informacion del Almacen">
             <div class="grid grid-cols-1 gap-6">
-                <div>
-                    <x-label for="name" required>Nombre del Almacén</x-label>
-                    <x-input 
-                        wire:model="name" 
-                        type="text" 
+                <flux:field>
+                    <flux:label>Nombre del Almacen *</flux:label>
+                    <flux:input
+                        wire:model="name"
+                        type="text"
                         id="name"
-                        placeholder="Ej: Almacén Principal, Cobertizo Norte..."
-                        :error="$errors->first('name')"
+                        placeholder="Ej: Almacen Principal, Cobertizo Norte..."
                         required
                     />
-                    <p class="mt-1 text-sm text-gray-500">Nombre descriptivo para identificar el almacén</p>
-                </div>
-                <div>
-                    <x-label for="location">Ubicación</x-label>
-                    <x-input 
-                        wire:model="location" 
-                        type="text" 
+                    <flux:error name="name" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Ubicacion</flux:label>
+                    <flux:input
+                        wire:model="location"
+                        type="text"
                         id="location"
                         placeholder="Ej: Edificio A, Planta Baja, Sala 3..."
-                        :error="$errors->first('location')"
                     />
-                    <p class="mt-1 text-sm text-gray-500">Dirección o descripción de la ubicación física</p>
-                </div>
-                <div>
-                    <x-label for="description">Descripción</x-label>
-                    <x-textarea 
-                        wire:model="description" 
+                    <flux:error name="location" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Descripcion</flux:label>
+                    <flux:textarea
+                        wire:model="description"
                         id="description"
                         rows="3"
-                        placeholder="Información adicional sobre este almacén..."
-                        :error="$errors->first('description')"
+                        placeholder="Informacion adicional sobre este almacen..."
                     />
-                    <p class="mt-1 text-sm text-gray-500">Notas adicionales sobre el almacén</p>
-                </div>
+                    <flux:error name="description" />
+                </flux:field>
             </div>
-        </x-form-section>
+        </x-agro.form-section>
 
-        <div class="flex justify-end gap-4">
-            <a href="{{ route('viticulturist.warehouses.index') }}" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
-                Cancelar
-            </a>
-            <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
-                Crear Almacén
-            </button>
-        </div>
+        <x-agro.form-actions
+            :cancel-url="route('viticulturist.warehouses.index')"
+            submit-label="Crear Almacen"
+        />
     </form>
-</x-form-card>
+</x-agro.form-card>

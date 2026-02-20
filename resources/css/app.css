@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Force dark: variant to use .dark class — prevents OS dark mode from activating dark styles */
+@variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -8,107 +11,119 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    
-    /* Paleta de colores Agro365 - Diseño Agrícola Premium */
-    --color-agro-green-dark: #2d5016;      /* Verde Oscuro - Agricultura, Crecimiento, Sostenibilidad */
-    --color-agro-green: #4a7c59;           /* Verde Medio */
-    --color-agro-green-light: #6bcf7f;     /* Verde Claro - Frescura, Juventud, Vida */
-    --color-agro-green-bright: #a8e6cf;    /* Verde Muy Claro - Campos */
-    --color-agro-green-bg: #f0fdf4;        /* Fondo Verde Muy Claro */
-    --color-agro-blue: #3b82f6;            /* Azul - Tecnología, Digital, Confianza */
-    --color-agro-blue-light: #dbeafe;      /* Azul Claro - Cielo */
-    --color-agro-brown: #8b6f47;           /* Marrón - Tierra, Estabilidad, Tradición */
-    --color-agro-brown-light: #d4c4a8;     /* Marrón Claro - Tierra */
-    --color-agro-yellow: #fbbf24;          /* Amarillo - Sol, Cosecha */
-    --color-agro-yellow-light: #fef3c7;    /* Amarillo Claro */
-    --color-agro-white: #ffffff;           /* Blanco - Claridad, Limpieza */
-    
-    /* Glassmorphism y Efectos Premium */
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.18);
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    
-    /* Sombras Avanzadas */
-    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
-    --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
-    --shadow-premium: 0 20px 40px rgba(45, 80, 22, 0.15), 0 8px 16px rgba(45, 80, 22, 0.1);
-    
-    /* Animaciones */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Agro365 Green Palette (50-900) — compatible with bg-agro-50, text-agro-700, etc. */
+    --color-agro-50:  #f0fdf4;
+    --color-agro-100: #dcfce7;
+    --color-agro-200: #bbf7d0;
+    --color-agro-300: #86efac;
+    --color-agro-400: #6bcf7f;
+    --color-agro-500: #4a7c59;
+    --color-agro-600: #3d6b4a;
+    --color-agro-700: #2d5016;
+    --color-agro-800: #1a3a0e;
+    --color-agro-900: #0f2508;
+
+    /* Flux UI accent → green automatically */
+    --color-accent: var(--color-agro-500);
+    --color-accent-content: var(--color-agro-600);
+    --color-accent-foreground: var(--color-white);
+
+    /* Legacy CSS variable aliases — used in older blade components and landing page */
+    --color-agro-green:        var(--color-agro-500);
+    --color-agro-green-dark:   var(--color-agro-700);
+    --color-agro-green-light:  var(--color-agro-400);
+    --color-agro-green-bg:     var(--color-agro-50);
+    --color-agro-green-bright: var(--color-agro-300);
+
+    /* Semantic colors */
+    --color-agro-blue:         #3b82f6;
+    --color-agro-blue-light:   #dbeafe;
+    --color-agro-brown:        #8b6f47;
+    --color-agro-brown-light:  #d4c4a8;
+    --color-agro-yellow:       #fbbf24;
+    --color-agro-yellow-light: #fef3c7;
+
+    /* Shadows */
+    --shadow-soft:    0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-medium:  0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-strong:  0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+
+    /* Transitions */
+    --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base:   250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow:   350ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Utilidades personalizadas */
-@layer utilities {
-    .glass-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--glass-shadow);
-    }
-    
-    .hover-lift {
-        transition: transform var(--transition-base), box-shadow var(--transition-base);
-    }
-    
-    .hover-lift:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-premium);
-    }
-    
-    .animate-fade-in {
-        animation: fadeIn var(--transition-smooth) ease-in;
-    }
-    
-    .animate-slide-in-right {
-        animation: slideInRight var(--transition-base) ease-out;
-    }
-    
-    .animate-scale-in {
-        animation: scaleIn var(--transition-base) ease-out;
-    }
+/* Base animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInRight {
-    from {
-        transform: translateX(-10px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    from { transform: translateX(-10px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
 }
 
 @keyframes scaleIn {
-    from {
-        transform: scale(0.95);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+    from { transform: scale(0.95); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
 }
 
 @keyframes progress-linear {
     from { width: 100%; }
-    to { width: 0%; }
+    to   { width: 0%;   }
 }
 
+@keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+}
+
+@layer utilities {
+    .animate-fade-in        { animation: fadeIn var(--transition-smooth) ease-in both; }
+    .animate-fade-in-up     { animation: fadeInUp 0.5s ease-out both; }
+    .animate-slide-in-right { animation: slideInRight var(--transition-base) ease-out; }
+    .animate-scale-in       { animation: scaleIn var(--transition-base) ease-out; }
+
+    .hover-lift {
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-strong);
+    }
+}
+
+/* Skeleton shimmer loader */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--color-agro-50) 25%,
+        #e4e4e7 50%,
+        var(--color-agro-50) 75%
+    );
+    background-size: 400px 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+    border-radius: 6px;
+}
+
+/* Stagger delay utilities for card entry animations */
+.delay-50  { animation-delay:  50ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-250 { animation-delay: 250ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* Toast progress bar */
 .toast-progress {
     position: absolute;
     bottom: 0;
@@ -118,39 +133,39 @@
     opacity: 0.3;
     animation: progress-linear 5000ms linear forwards;
 }
-
 .toast-progress-paused {
     animation-play-state: paused;
 }
 
-/* Scrollbar personalizado */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
+/* Custom scrollbar */
+::-webkit-scrollbar       { width: 8px; height: 8px; }
+::-webkit-scrollbar-track  { background: var(--color-agro-50); }
+::-webkit-scrollbar-thumb  { background: var(--color-agro-400); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-agro-500); }
 
-::-webkit-scrollbar-track {
-    background: var(--color-agro-green-bg);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--color-agro-green-light);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--color-agro-green);
-}
-
-/* Smooth Scroll Behavior + Offset para Sticky Header */
+/* Force light mode — app does not support dark theme */
 html {
+    color-scheme: light;
     scroll-behavior: smooth;
-    scroll-padding-top: 80px; /* Ajusta según altura del header */
+    scroll-padding-top: 80px;
+}
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
 }
 
-/* Alternativa: Si quieres más control sobre la velocidad */
-@media (prefers-reduced-motion: no-preference) {
-    html {
-        scroll-behavior: smooth;
-    }
+/* Fix browser autofill dark background (Chrome/Edge) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #18181b !important;
+    caret-color: #18181b;
 }
