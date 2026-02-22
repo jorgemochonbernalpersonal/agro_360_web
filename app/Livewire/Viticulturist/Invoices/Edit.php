@@ -21,20 +21,18 @@ class Edit extends Component
     public $client_id = '';
     public $client_address_id = '';
     public $invoice_date = '';
+    public $delivery_note_date = '';
     public $delivery_status = '';
     public $payment_status = '';
     public $items = [];
     public $observations = '';
     public $observations_invoice = '';
-    public $delivery_note_code = ''; // Código de albarán (no editable una vez creado)
-    public $invoice_number = ''; // Código de factura (editable)
-    public $invoice_number_auto = ''; // Código de factura generado automáticamente
-    public $invoice_number_modified = false; // Flag para saber si el usuario lo modificó
+    public $delivery_note_code = ''; // Código de albarán (solo lectura)
+    public $invoice_number = '';     // Número de factura (solo lectura si ya está facturada)
 
-    // Propiedades para el modal de facturación
+    // Modal de confirmación de facturación
     public $showInvoiceModal = false;
-    public $invoice_date_modal = ''; // Fecha para el modal
-    public $invoice_number_modal = ''; // Código para el modal
+    public $invoice_date_modal = '';
 
     /**
      * Determina si la factura ya está facturada (no se puede modificar el código)
@@ -82,42 +80,46 @@ class Edit extends Component
 
     public function loadInvoiceData()
     {
-        $user = Auth::user();
-        $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
-
-        $this->client_id = $this->invoice->client_id;
-        $this->client_address_id = $this->invoice->client_address_id ?? '';
-        $this->invoice_date = $this->invoice->invoice_date ? $this->invoice->invoice_date->format('Y-m-d') : '';
-        $this->delivery_status = $this->invoice->delivery_status;
-        $this->payment_status = $this->invoice->payment_status;
-        $this->observations = $this->invoice->observations ?? '';
+        $this->client_id           = $this->invoice->client_id;
+        $this->client_address_id   = $this->invoice->client_address_id ?? '';
+        $this->invoice_date        = $this->invoice->invoice_date
+            ? $this->invoice->invoice_date->format('Y-m-d') : '';
+        $this->delivery_note_date  = $this->invoice->delivery_note_date
+            ? $this->invoice->delivery_note_date->format('Y-m-d') : '';
+        $this->delivery_status     = $this->invoice->delivery_status;
+        $this->payment_status      = $this->invoice->payment_status;
+        $this->observations        = $this->invoice->observations ?? '';
         $this->observations_invoice = $this->invoice->observations_invoice ?? '';
-        
-        // Cargar código de albarán existente (no se puede modificar)
-        $this->delivery_note_code = $this->invoice->delivery_note_code ?? '';
-        
-        // Cargar código de factura existente (solo si ya está facturada)
-        if ($this->invoice->invoice_number) {
-            $this->invoice_number = $this->invoice->invoice_number;
-            $this->invoice_number_auto = $this->invoice_number;
-        } else {
-            // No generar automáticamente, se generará en el modal cuando se facture
-            $this->invoice_number = '';
-            $this->invoice_number_auto = '';
-        }
+        $this->delivery_note_code  = $this->invoice->delivery_note_code ?? '';
+        $this->invoice_number      = $this->invoice->invoice_number ?? '';
 
-        $this->items = $this->invoice->items->map(function($item) {
+        $this->items = $this->invoice->items->map(function ($item) {
+            // Cargar stock disponible actual para items de cosecha
+            $availableQty = null;
+            $totalWeight  = null;
+            if ($item->harvest_id) {
+                $latestStock = \App\Models\HarvestStock::where('harvest_id', $item->harvest_id)
+                    ->latest('id')
+                    ->first();
+                // Disponible = stock actual + lo que ya tiene reservado este item
+                $currentAvail = $latestStock ? (float) $latestStock->available_qty : 0;
+                $availableQty = $currentAvail + (float) $item->quantity; // devolver lo de este item al pool
+                $totalWeight  = $item->harvest ? (float) $item->harvest->total_weight : null;
+            }
+
             return [
-                'id' => $item->id,
-                'harvest_id' => $item->harvest_id,
-                'name' => $item->name,
-                'description' => $item->description ?? '',
-                'sku' => $item->sku ?? '',
-                'quantity' => $item->quantity,
-                'unit_price' => $item->unit_price,
+                'id'                  => $item->id,
+                'harvest_id'          => $item->harvest_id,
+                'name'                => $item->name,
+                'description'         => $item->description ?? '',
+                'sku'                 => $item->sku ?? '',
+                'quantity'            => $item->quantity,
+                'available_qty'       => $availableQty,
+                'total_weight'        => $totalWeight,
+                'unit_price'          => $item->unit_price,
                 'discount_percentage' => $item->discount_percentage,
-                'tax_id' => $item->tax_id,
-                'concept_type' => $item->concept_type,
+                'tax_id'              => $item->tax_id,
+                'concept_type'        => $item->concept_type,
             ];
         })->toArray();
 
@@ -140,27 +142,49 @@ class Edit extends Component
     {
         $user = Auth::user();
         $this->availableClients = Client::forUser($user->id)->active()->get();
-        $this->availableTaxes = Tax::active()->get();
+
+        // Cargar solo los impuestos habilitados por el usuario
+        $this->availableTaxes = $user->taxes()->orderByPivot('order')->get();
+        if ($this->availableTaxes->isEmpty()) {
+            $this->availableTaxes = Tax::active()->orderBy('rate')->get();
+        }
+
         $this->loadHarvests();
     }
 
     public function loadHarvests()
     {
         $user = Auth::user();
-        
-        $query = Harvest::whereHas('activity', function($q) use ($user) {
+
+        // IDs de cosechas ya presentes en esta factura (no repetir)
+        $currentHarvestIds = collect($this->items)
+            ->pluck('harvest_id')
+            ->filter()
+            ->toArray();
+
+        $harvests = Harvest::whereHas('activity', function ($q) use ($user) {
             $q->where('viticulturist_id', $user->id);
         })
-        ->with(['activity.plot', 'plotPlanting.grapeVariety', 'activity.campaign'])
-        ->whereDoesntHave('invoiceItems'); // Solo cosechas sin facturar
+        ->with(['activity.plot', 'plotPlanting.grapeVariety', 'activity.campaign', 'container'])
+        ->when($this->selectedCampaign, fn ($q) =>
+            $q->whereHas('activity', fn ($q) => $q->where('campaign_id', $this->selectedCampaign))
+        )
+        ->where('total_weight', '>', 0)
+        ->orderBy('harvest_start_date', 'desc')
+        ->get();
 
-        if ($this->selectedCampaign) {
-            $query->whereHas('activity', function($q) {
-                $q->where('campaign_id', $this->selectedCampaign);
-            });
-        }
-
-        $this->availableHarvests = $query->orderBy('harvest_start_date', 'desc')->get();
+        $this->availableHarvests = $harvests
+            ->map(function ($harvest) {
+                $latestStock = \App\Models\HarvestStock::where('harvest_id', $harvest->id)
+                    ->latest('id')
+                    ->first();
+                $harvest->available_qty_computed = $latestStock
+                    ? (float) $latestStock->available_qty
+                    : (float) $harvest->total_weight;
+                return $harvest;
+            })
+            ->filter(fn ($h) => $h->available_qty_computed > 0)
+            ->values();
     }
 
     public function updatedSelectedCampaign()
@@ -183,57 +207,46 @@ class Edit extends Component
             return;
         }
 
-        // Verificar que la cosecha no esté ya en los items locales
+        // Verificar que la cosecha no esté ya en los items locales (esta factura)
         foreach ($this->items as $item) {
             if (isset($item['harvest_id']) && $item['harvest_id'] == $harvest->id) {
                 $this->toastError('Esta cosecha ya está en la factura actual.');
                 return;
             }
         }
-        
-        // VALIDACIÓN CRÍTICA: Verificar que la cosecha no esté ya facturada en OTRA factura
-        $alreadyInvoiced = \App\Models\InvoiceItem::where('harvest_id', $harvest->id)
-            ->whereHas('invoice', function($q) {
-                $q->where('status', '!=', 'cancelled') // Excluir facturas canceladas
-                  ->where('id', '!=', $this->invoice->id) // Excluir la factura actual
-                  ->where('user_id', auth()->id()); // Solo verificar facturas del mismo usuario
-            })
-            ->exists();
-        
-        if ($alreadyInvoiced) {
-            $this->toastError('Esta cosecha ya está facturada en otra factura válida. No puedes facturar la misma cosecha dos veces.');
+
+        // Stock disponible real
+        $latestStock  = \App\Models\HarvestStock::where('harvest_id', $harvest->id)->latest('id')->first();
+        $availableQty = $latestStock ? (float) $latestStock->available_qty : (float) $harvest->total_weight;
+
+        if ($availableQty <= 0) {
+            $this->toastError('Esta cosecha no tiene stock disponible para facturar.');
             return;
         }
 
-        // Obtener el impuesto por defecto del usuario si existe
-        $defaultTax = null;
-        $user = Auth::user();
-        $userDefaultTax = $user->defaultTax()->first();
-        if ($userDefaultTax) {
-            $defaultTax = $userDefaultTax;
-        } else {
-            // Si no hay impuesto por defecto, usar el primero disponible o el IVA general
-            $defaultTax = $this->availableTaxes->where('code', 'IVA')->where('rate', 21)->first() 
-                        ?? $this->availableTaxes->first();
-        }
+        $user       = Auth::user();
+        $defaultTax = $user->defaultTax()->first()
+            ?? $this->availableTaxes->where('code', 'IVA')->where('rate', 21)->first()
+            ?? $this->availableTaxes->first();
 
-        // Crear item con datos de la cosecha
         $grapeVarietyName = $harvest->plotPlanting->grapeVariety->name ?? 'Uva';
-        $plotName = $harvest->activity->plot->name ?? '';
-        $itemName = $grapeVarietyName . ($plotName ? ' - ' . $plotName : '');
+        $plotName         = $harvest->activity->plot->name ?? '';
+        $itemName         = $grapeVarietyName . ($plotName ? ' - ' . $plotName : '');
 
         $this->items[] = [
-            'id' => null,
-            'harvest_id' => $harvest->id,
-            'name' => $itemName,
-            'description' => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') . 
-                           ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
-            'sku' => 'HARV-' . $harvest->id,
-            'quantity' => $harvest->total_weight,
-            'unit_price' => $harvest->price_per_kg ?? 0,
+            'id'                  => null,
+            'harvest_id'          => $harvest->id,
+            'name'                => $itemName,
+            'description'         => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') .
+                                     ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
+            'sku'                 => 'HARV-' . $harvest->id,
+            'quantity'            => $availableQty,
+            'available_qty'       => $availableQty,
+            'total_weight'        => (float) $harvest->total_weight,
+            'unit_price'          => $harvest->price_per_kg ?? 0,
             'discount_percentage' => 0,
-            'tax_id' => $defaultTax ? $defaultTax->id : null,
-            'concept_type' => 'harvest',
+            'tax_id'              => $defaultTax ? $defaultTax->id : null,
+            'concept_type'        => 'harvest',
         ];
 
         $this->selectedHarvestId = '';
@@ -271,77 +284,48 @@ class Edit extends Component
     }
 
 
-    public function updatedInvoiceNumber($value)
-    {
-        // Marcar como modificado si el usuario cambió el código
-        if ($value !== $this->invoice_number_auto) {
-            $this->invoice_number_modified = true;
-        } else {
-            $this->invoice_number_modified = false;
-        }
-    }
-
     public function openInvoiceModal()
     {
         if ($this->invoice->status !== 'draft') {
-            $this->toastError('Solo se pueden facturar facturas en estado borrador.');
+            $this->toastError('Solo se puede facturar un albarán en estado borrador.');
             return;
         }
-        
+
         $this->invoice_date_modal = $this->invoice_date ?: now()->format('Y-m-d');
-        
-        // Generar código si no existe
-        if (!$this->invoice->invoice_number) {
-            $settings = \App\Models\InvoicingSetting::getOrCreateForUser(Auth::user()->id);
-            $this->invoice_number_modal = $settings->generateInvoiceCode();
-        } else {
-            $this->invoice_number_modal = $this->invoice->invoice_number;
-        }
-        
-        $this->showInvoiceModal = true;
+        $this->showInvoiceModal   = true;
     }
 
     public function closeInvoiceModal()
     {
-        $this->showInvoiceModal = false;
+        $this->showInvoiceModal   = false;
         $this->invoice_date_modal = '';
-        $this->invoice_number_modal = '';
     }
 
     public function markAsSent()
     {
-        $this->validate([
-            'invoice_date_modal' => 'required|date',
-            'invoice_number_modal' => 'required|string|max:255',
-        ], [
-            'invoice_date_modal.required' => 'Debes seleccionar una fecha de factura.',
-            'invoice_number_modal.required' => 'El código de factura es obligatorio.',
-        ]);
+        $this->validate(
+            ['invoice_date_modal' => 'required|date'],
+            ['invoice_date_modal.required' => 'Debes indicar la fecha de la factura.']
+        );
 
         try {
             DB::transaction(function () {
-                // Actualizar la factura con la fecha y código del modal
-                $this->invoice->update([
-                    'status' => 'sent',
+                $updateData = [
+                    'status'       => 'sent',
                     'invoice_date' => $this->invoice_date_modal,
-                    'invoice_number' => $this->invoice_number_modal,
-                ]);
-                
-                // Si se generó un nuevo código, incrementar el contador
-                if (!$this->invoice->getOriginal('invoice_number')) {
+                ];
+
+                // Fallback para albaranes antiguos sin número de factura
+                if (! $this->invoice->invoice_number) {
                     $settings = \App\Models\InvoicingSetting::getOrCreateForUser(Auth::user()->id);
-                    $settings->incrementInvoiceCounter();
+                    $updateData['invoice_number'] = $settings->generateAndIncrementInvoiceCode();
                 }
+
+                $this->invoice->update($updateData);
             });
-            
-            $this->toastSuccess('Factura marcada como enviada/facturada exitosamente.');
+
+            $this->toastSuccess('Factura emitida correctamente.');
             $this->closeInvoiceModal();
-            
-            // Refrescar datos
-            $this->invoice->refresh();
-            $this->loadInvoiceData();
-            
-            // Redirigir a la lista
             return redirect()->route('viticulturist.invoices.index');
         } catch (\Exception $e) {
             $this->toastError('Error al facturar: ' . $e->getMessage());
@@ -467,10 +451,9 @@ class Edit extends Component
             'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
             'items.*.tax_id' => 'nullable|exists:taxes,id',
             'items.*.concept_type' => 'nullable|in:harvest,service,product,other',
+            'delivery_note_date' => 'nullable|date',
             'observations' => 'nullable|string',
             'observations_invoice' => 'nullable|string',
-            'delivery_note_code' => 'required|string|max:255',
-            'invoice_number' => 'nullable|string|max:255',
         ];
     }
 
@@ -498,58 +481,28 @@ class Edit extends Component
                 }
 
                 // Si no está bloqueada, actualizar normalmente
-                $user = Auth::user();
-                $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
                 
-                // El código de albarán no se puede modificar, usar el existente
-                $deliveryNoteCode = $this->invoice->delivery_note_code;
-                
-                // Si la factura ya está facturada, no permitir modificar el código
-                $invoiceNumber = $this->invoice->invoice_number;
-                if ($this->isInvoiced) {
-                    // Si ya está facturada, mantener el código original (no se puede modificar)
-                    $invoiceNumber = $this->invoice->invoice_number;
-                } else {
-                    // Si no está facturada, permitir modificar o generar
-                    if ($this->invoice_number) {
-                        $invoiceNumber = $this->invoice_number_modified 
-                            ? $this->invoice_number 
-                            : ($this->invoice->invoice_number ?? $settings->generateAndIncrementInvoiceCode());
-                    }
-                }
-                
-                // Usar propiedades computadas para los totales (ya calculados automáticamente)
-                $subtotal = $this->subtotal;
+                $subtotal       = $this->subtotal;
                 $discountAmount = $this->discountAmount;
-                $taxAmount = $this->taxAmount;
-                $totalAmount = $this->totalAmount;
+                $taxAmount      = $this->taxAmount;
+                $totalAmount    = $this->totalAmount;
 
-                // Actualizar factura
-                $updateData = [
-                    'client_id' => $this->client_id,
-                    'client_address_id' => $this->client_address_id ?: null,
-                    // Solo actualizar invoice_date si la factura ya está facturada (ya tiene fecha)
-                    // Si está en draft, la fecha se establecerá cuando se facture en el modal
-                    'invoice_date' => $this->invoice->invoice_date ? ($this->invoice_date ?: $this->invoice->invoice_date->format('Y-m-d')) : ($this->invoice_date ?: null),
-                    'delivery_status' => $this->delivery_status,
-                    'payment_status' => $this->payment_status,
-                    'delivery_note_code' => $deliveryNoteCode,
-                    'subtotal' => $subtotal,
-                    'discount_amount' => $discountAmount,
-                    'tax_base' => $subtotal,
-                    'tax_rate' => $taxAmount > 0 ? ($taxAmount / $subtotal) * 100 : 0,
-                    'tax_amount' => $taxAmount,
-                    'total_amount' => $totalAmount,
-                    'observations' => $this->observations ?: null,
+                $this->invoice->update([
+                    'client_id'          => $this->client_id,
+                    'client_address_id'  => $this->client_address_id ?: null,
+                    'invoice_date'       => $this->invoice_date ?: null,
+                    'delivery_note_date' => $this->delivery_note_date ?: null,
+                    'delivery_status'    => $this->delivery_status,
+                    'payment_status'     => $this->payment_status,
+                    'subtotal'           => $subtotal,
+                    'discount_amount'    => $discountAmount,
+                    'tax_base'           => $subtotal,
+                    'tax_rate'           => $taxAmount > 0 && $subtotal > 0 ? ($taxAmount / $subtotal) * 100 : 0,
+                    'tax_amount'         => $taxAmount,
+                    'total_amount'       => $totalAmount,
+                    'observations'       => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
-                ];
-                
-                // Solo actualizar invoice_number si existe o se va a aprobar
-                if ($invoiceNumber !== null) {
-                    $updateData['invoice_number'] = $invoiceNumber;
-                }
-                
-                $this->invoice->update($updateData);
+                ]);
 
                 // Eliminar items existentes
                 $this->invoice->items()->delete();

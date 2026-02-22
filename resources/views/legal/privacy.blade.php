@@ -259,7 +259,7 @@
 
             <!-- Footer Links -->
             <div class="mt-8 flex flex-wrap gap-4 justify-center text-sm">
-                <a href="{{ route('legal.aviso-legal') }}" class="text-[var(--color-agro-green-dark)] hover:underline">Aviso Legal</a>
+                <a href="{{ route('aviso-legal') }}" class="text-[var(--color-agro-green-dark)] hover:underline">Aviso Legal</a>
                 <span class="text-gray-400">•</span>
                 <a href="{{ route('terms') }}" class="text-[var(--color-agro-green-dark)] hover:underline">Términos y Condiciones</a>
                 <span class="text-gray-400">•</span>

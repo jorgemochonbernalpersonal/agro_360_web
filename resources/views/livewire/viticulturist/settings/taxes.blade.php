@@ -1,124 +1,133 @@
 <div class="space-y-6 animate-fade-in">
     @php
-        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+        $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>';
     @endphp
+
     <x-agro.page-header
         :icon="$icon"
-        title="Configuración de Impuestos"
-        description="Selecciona el impuesto que se aplicará por defecto en tus facturas"
+        title="ConfiguraciÃ³n de Impuestos"
+        description="Activa los impuestos que usas y define cuÃ¡l se aplica por defecto en tus facturas"
         icon-color="from-agro-500 to-agro-700"
     />
 
-    <div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-8">
-        <div class="mb-6">
-            <h3 class="text-lg font-semibold text-zinc-900 mb-2">
-                Impuesto activo
-            </h3>
-            <p class="text-sm text-zinc-600">
-                Solo puedes tener un tipo de impuesto activo. Selecciona el que corresponda según tu ubicación.
-            </p>
-        </div>
+    {{-- Resumen del estado actual --}}
+    @if(count($enabledTaxIds) === 0)
+        <flux:callout variant="warning" icon="exclamation-triangle">
+            <flux:callout.heading>Sin impuesto configurado</flux:callout.heading>
+            <flux:callout.text>
+                Activa al menos un impuesto para poder emitir facturas correctamente.
+            </flux:callout.text>
+        </flux:callout>
+    @else
+        @php $defaultTax = $taxes->firstWhere('id', $defaultTaxId); @endphp
+        @if($defaultTax)
+            <flux:callout variant="success" icon="check-circle">
+                <flux:callout.heading>Impuesto por defecto activo</flux:callout.heading>
+                <flux:callout.text>
+                    <strong>{{ $defaultTax->name }}</strong> ({{ $defaultTax->formatted_rate }})
+                    se aplicarÃ¡ automÃ¡ticamente en los nuevos Ã­tems de factura.
+                    Tienes {{ count($enabledTaxIds) }} {{ count($enabledTaxIds) === 1 ? 'impuesto habilitado' : 'impuestos habilitados' }}.
+                </flux:callout.text>
+            </flux:callout>
+        @endif
+    @endif
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {{-- Grid de impuestos --}}
+    <x-agro.form-card>
+        <x-slot:header>
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                </svg>
+            </div>
+            <span>Impuestos disponibles</span>
+        </x-slot:header>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($taxes as $tax)
                 @php
-                    $isActive = $activeTaxId == $tax->id;
-                    $colors = [
-                        'EXENTO' => ['border' => 'border-zinc-300', 'bg' => 'bg-zinc-50', 'text' => 'text-zinc-900', 'active-border' => 'border-zinc-600', 'active-bg' => 'bg-zinc-100'],
-                        'IVA' => ['border' => 'border-blue-300', 'bg' => 'bg-blue-50', 'text' => 'text-blue-900', 'active-border' => 'border-blue-600', 'active-bg' => 'bg-blue-100'],
-                        'IGIC' => ['border' => 'border-green-300', 'bg' => 'bg-green-50', 'text' => 'text-green-900', 'active-border' => 'border-green-600', 'active-bg' => 'bg-green-100'],
-                    ];
-                    $color = $colors[$tax->code] ?? $colors['EXENTO'];
+                    $isEnabled = in_array($tax->id, $enabledTaxIds);
+                    $isDefault = $defaultTaxId === $tax->id;
                 @endphp
 
-                <button
-                    wire:click="selectTax({{ $tax->id }})"
-                    class="relative p-6 border-2 rounded-xl transition-all duration-200 hover:shadow-lg
-                        {{ $isActive ? $color['active-border'] . ' ' . $color['active-bg'] . ' shadow-md' : $color['border'] . ' bg-white hover:' . $color['bg'] }}"
-                >
-                    {{-- Badge de selección --}}
-                    @if($isActive)
-                        <div class="absolute top-3 right-3">
-                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <div @class([
+                    'relative rounded-xl border-2 p-5 transition-all duration-200',
+                    'border-agro-500 bg-agro-50 shadow-md'   => $isDefault,
+                    'border-zinc-300 bg-white hover:border-zinc-400 hover:shadow-sm' => $isEnabled && !$isDefault,
+                    'border-zinc-200 bg-zinc-50 opacity-60'  => !$isEnabled,
+                ])>
+                    {{-- Badge defecto --}}
+                    @if($isDefault)
+                        <span class="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-agro-500 text-white">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                        </div>
+                            Defecto
+                        </span>
                     @endif
 
-                    <div class="text-center">
-                        {{-- Icono --}}
-                        <div class="mb-4 flex justify-center">
-                            @if($tax->code === 'EXENTO')
-                                <svg class="w-16 h-16 {{ $color['text'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                </svg>
-                            @elseif($tax->code === 'IVA')
-                                <svg class="w-16 h-16 {{ $color['text'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                            @else
-                                <svg class="w-16 h-16 {{ $color['text'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            @endif
-                        </div>
-
-                        {{-- Nombre --}}
-                        <h4 class="text-xl font-bold {{ $color['text'] }} mb-2">
-                            {{ $tax->name }}
-                        </h4>
-
-                        {{-- Tasa --}}
-                        <p class="text-3xl font-extrabold {{ $color['text'] }} mb-3">
-                            {{ number_format($tax->rate, 0) }}%
-                        </p>
-
-                        {{-- Región --}}
-                        <p class="text-sm text-zinc-600 mb-3">
-                            {{ $tax->region }}
-                        </p>
-
-                        {{-- Descripción --}}
-                        <p class="text-xs text-zinc-500">
-                            {{ $tax->description }}
-                        </p>
-
-                        {{-- Estado --}}
-                        @if($isActive)
-                            <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                Activo
-                            </div>
-                        @else
-                            <div class="mt-4 text-sm text-zinc-500">
-                                Click para activar
-                            </div>
+                    {{-- Nombre y tasa --}}
+                    <div class="mb-4 pr-16">
+                        <p class="text-xl font-extrabold text-zinc-900">{{ $tax->formatted_rate }}</p>
+                        <p class="text-sm font-semibold text-zinc-700">{{ $tax->name }}</p>
+                        @if($tax->region)
+                            <p class="text-xs text-zinc-500 mt-0.5">{{ $tax->region }}</p>
                         @endif
                     </div>
-                </button>
+
+                    @if($tax->description)
+                        <p class="text-xs text-zinc-500 mb-4">{{ $tax->description }}</p>
+                    @endif
+
+                    {{-- Acciones --}}
+                    <div class="flex items-center gap-2 pt-3 border-t border-zinc-100">
+                        {{-- Toggle activar/desactivar --}}
+                        <button
+                            wire:click="toggleTax({{ $tax->id }})"
+                            wire:loading.attr="disabled"
+                            @class([
+                                'flex-1 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors',
+                                'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' => $isEnabled,
+                                'bg-zinc-100 text-zinc-700 border-zinc-200 hover:bg-zinc-200' => !$isEnabled,
+                            ])
+                        >
+                            {{ $isEnabled ? 'Desactivar' : 'Activar' }}
+                        </button>
+
+                        {{-- BotÃ³n defecto (solo si estÃ¡ habilitado y no es ya el defecto) --}}
+                        @if($isEnabled && !$isDefault)
+                            <button
+                                wire:click="setDefault({{ $tax->id }})"
+                                wire:loading.attr="disabled"
+                                class="flex-1 text-xs font-medium px-3 py-1.5 rounded-lg border bg-agro-50 text-agro-700 border-agro-200 hover:bg-agro-100 transition-colors"
+                            >
+                                Usar por defecto
+                            </button>
+                        @endif
+                    </div>
+                </div>
             @endforeach
         </div>
 
-        {{-- Información adicional --}}
-        <div class="mt-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-            <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                <div class="flex-1">
-                    <h4 class="text-sm font-semibold text-blue-900 mb-1">
-                        ?? Información importante
-                    </h4>
-                    <ul class="text-xs text-blue-800 space-y-1">
-                        <li>• El impuesto seleccionado se aplicará automáticamente en todas tus facturas</li>
-                        <li>• <strong>Exento</strong>: Sin impuestos (0%)</li>
-                        <li>• <strong>IVA</strong>: Para España Peninsular y Baleares (21%)</li>
-                        <li>• <strong>IGIC</strong>: Para Islas Canarias (7%)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+        @if($taxes->isEmpty())
+            <x-agro.empty-state
+                icon="document-text"
+                title="No hay impuestos configurados en el sistema"
+                description="Contacta con el administrador para que aÃ±ada los tipos de impuesto disponibles."
+            />
+        @endif
+    </x-agro.form-card>
+
+    {{-- InformaciÃ³n --}}
+    <flux:callout variant="info" icon="information-circle">
+        <flux:callout.heading>Â¿CÃ³mo funciona?</flux:callout.heading>
+        <flux:callout.text>
+            <ul class="mt-1 space-y-1 text-sm">
+                <li><strong>Activa</strong> los impuestos que necesitas usar en tus facturas.</li>
+                <li><strong>Defecto</strong>: el impuesto marcado se pre-selecciona automÃ¡ticamente en cada nuevo Ã­tem de factura. Puedes cambiarlo manualmente en la factura.</li>
+                <li>Puedes tener varios activos â€” por ejemplo IVA 21% para servicios e IVA 10% para productos alimenticios.</li>
+            </ul>
+        </flux:callout.text>
+    </flux:callout>
+
 </div>

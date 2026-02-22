@@ -70,7 +70,9 @@ trait CreatesTestHarvest
             'material_id' => 1,
         ]);
 
-        // Create harvest
+        // Create harvest — HarvestObserver::created fires initializeStock(),
+        // which creates the initial HarvestStock, updates Container.used_capacity
+        // and ContainerCurrentState automatically.
         $harvest = Harvest::create([
             'activity_id' => $activity->id,
             'plot_planting_id' => $planting->id,
@@ -81,26 +83,6 @@ trait CreatesTestHarvest
             'unit' => 'kg',
         ]);
 
-        // El HarvestObserver actualizará automáticamente used_capacity y ContainerCurrentState
-
-        // Create initial stock
-        HarvestStock::create([
-            'harvest_id' => $harvest->id,
-            'container_id' => $container->id,
-            'user_id' => $user->id,
-            'movement_type' => 'initial',
-            'quantity_change' => $weight,
-            'quantity_after' => $weight,
-            'available_qty' => $weight,
-            'reserved_qty' => 0,
-            'sold_qty' => 0,
-            'gifted_qty' => 0,
-            'lost_qty' => 0,
-            'notes' => 'Initial test stock',
-        ]);
-
-        // El ContainerCurrentState se crea automáticamente por el HarvestObserver
-        // Refrescar para obtener los datos actualizados
         $container->refresh();
 
         return $harvest->fresh();

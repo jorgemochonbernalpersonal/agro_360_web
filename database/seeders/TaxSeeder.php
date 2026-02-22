@@ -38,6 +38,17 @@ class TaxSeeder extends Seeder
                 'description' => 'Impuesto sobre el Valor Añadido - Tipo general',
             ],
             
+            // IVA reducido (productos alimenticios)
+            [
+                'name' => 'IVA (10%)',
+                'code' => 'IVA',
+                'rate' => 10.00,
+                'region' => 'España Peninsular',
+                'is_default' => false,
+                'active' => true,
+                'description' => 'Impuesto sobre el Valor Añadido - Tipo reducido (alimentación)',
+            ],
+
             // IGIC Canarias
             [
                 'name' => 'IGIC (7%)',

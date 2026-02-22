@@ -70,8 +70,8 @@ class Invoicing extends Component
     {
         $now = now();
         return str_replace(
-            ['{YEAR}', '{MONTH}', '{DAY}'],
-            [$now->format('Y'), $now->format('m'), $now->format('d')],
+            ['{YEAR}', '{YY}', '{MONTH}', '{DAY}'],
+            [$now->format('Y'), $now->format('y'), $now->format('m'), $now->format('d')],
             $prefix
         );
     }

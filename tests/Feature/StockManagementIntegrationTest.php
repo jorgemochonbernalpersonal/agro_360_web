@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class StockManagementIntegrationTest extends TestCase
 {
     use RefreshDatabase;
+    use \Tests\Traits\CreatesTestHarvest;
 
     protected User $user;
     protected Client $client;
@@ -24,42 +25,42 @@ class StockManagementIntegrationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
         $this->client = Client::factory()->create(['user_id' => $this->user->id]);
-        $this->harvest = Harvest::factory()->withAvailableStock()->create([
-            'activity' => fn() => ['viticulturist_id' => $this->user->id]
-        ]);
-        
+        $this->harvest = $this->createHarvestWithStock($this->user);
+
         $this->actingAs($this->user);
     }
 
-    public function complete_flow_create_approve_cancel_restores_stock()
+    public function test_complete_flow_create_approve_revert_cancel_restores_stock()
     {
-        // Get initial stock
-        $initialStock = $this->harvest->stockMovements()->latest()->first();
+        // Flujo: draft (reserve) → sent (confirm) → draft (revert) → cancel (release).
+        // No se puede cancelar directamente desde sent (requiere rectificativa).
+
+        $initialStock     = $this->harvest->stockMovements()->latest()->first();
         $initialAvailable = $initialStock->available_qty;
 
-        // Step 1: Create draft invoice
+        // Step 1: Create draft invoice and add item
         $invoice = Invoice::factory()->draft()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
         $quantity = 200;
-        $item = InvoiceItem::create([
-            'invoice_id' => $invoice->id,
-            'harvest_id' => $this->harvest->id,
-            'name' => 'Uva Tempranillo',
-            'quantity' => $quantity,
-            'unit_price' => 2.0,
+        InvoiceItem::create([
+            'invoice_id'          => $invoice->id,
+            'harvest_id'          => $this->harvest->id,
+            'name'                => 'Uva Tempranillo',
+            'quantity'            => $quantity,
+            'unit_price'          => 2.0,
             'discount_percentage' => 0,
-            'discount_amount' => 0,
-            'tax_base' => 400,
-            'tax_amount' => 0,
-            'subtotal' => 400,
-            'total' => 400,
-            'concept_type' => 'harvest',
+            'discount_amount'     => 0,
+            'tax_base'            => 400,
+            'tax_amount'          => 0,
+            'subtotal'            => 400,
+            'total'               => 400,
+            'concept_type'        => 'harvest',
         ]);
 
         // Verify: Stock reserved
@@ -68,19 +69,25 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($quantity, $stockAfterDraft->reserved_qty);
         $this->assertEquals(0, $stockAfterDraft->sold_qty);
 
-        // Step 2: Approve invoice
-        $invoice->update(['status' => 'approved']);
+        // Step 2: Send invoice (draft → sent converts reservations to sales)
+        $invoice->update(['status' => 'sent']);
 
-        // Verify: Stock moved to sold
-        $stockAfterApprove = $this->harvest->fresh()->stockMovements()->latest()->first();
-        $this->assertEquals($initialAvailable - $quantity, $stockAfterApprove->available_qty);
-        $this->assertEquals(0, $stockAfterApprove->reserved_qty);
-        $this->assertEquals($quantity, $stockAfterApprove->sold_qty);
+        $stockAfterSent = $this->harvest->fresh()->stockMovements()->latest()->first();
+        $this->assertEquals($initialAvailable - $quantity, $stockAfterSent->available_qty);
+        $this->assertEquals(0, $stockAfterSent->reserved_qty);
+        $this->assertEquals($quantity, $stockAfterSent->sold_qty);
 
-        // Step 3: Cancel invoice
+        // Step 3: Revert to draft (sent → draft reverts sales to reservations)
+        $invoice->update(['status' => 'draft']);
+
+        $stockAfterRevert = $this->harvest->fresh()->stockMovements()->latest()->first();
+        $this->assertEquals($initialAvailable - $quantity, $stockAfterRevert->available_qty);
+        $this->assertEquals($quantity, $stockAfterRevert->reserved_qty);
+        $this->assertEquals(0, $stockAfterRevert->sold_qty);
+
+        // Step 4: Cancel draft (releases reservation)
         $invoice->update(['status' => 'cancelled']);
 
-        // Verify: Stock fully restored
         $finalStock = $this->harvest->fresh()->stockMovements()->latest()->first();
         $this->assertEquals($initialAvailable, $finalStock->available_qty);
         $this->assertEquals(0, $finalStock->reserved_qty);
@@ -89,14 +96,16 @@ class StockManagementIntegrationTest extends TestCase
         // Verify container state
         $container = Container::find($this->harvest->container_id);
         $this->assertNotNull($container, 'Container should exist');
-        $containerState = ContainerCurrentState::where('container_id', $container->id)->first();
+        $containerState = ContainerCurrentState::where('container_id', $container->id)
+            ->where('harvest_id', $this->harvest->id)
+            ->first();
         $this->assertNotNull($containerState, 'ContainerCurrentState should exist');
         $this->assertEquals($initialAvailable, $containerState->available_qty);
         $this->assertEquals(0, $containerState->reserved_qty);
         $this->assertEquals(0, $containerState->sold_qty);
     }
 
-    public function stock_accuracy_after_multiple_operations()
+    public function test_stock_accuracy_after_multiple_operations()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
         $initialAvailable = $initialStock->available_qty;
@@ -135,8 +144,8 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($initialAvailable - $totalReserved, $stockAfterReservations->available_qty);
         $this->assertEquals($totalReserved, $stockAfterReservations->reserved_qty);
 
-        // Approve first invoice
-        $invoices[0]->update(['status' => 'approved']);
+        // Send first invoice (converts reservation to sale)
+        $invoices[0]->update(['status' => 'sent']);
 
         $stockAfterFirstApproval = $this->harvest->fresh()->stockMovements()->latest()->first();
         $this->assertEquals($quantities[0], $stockAfterFirstApproval->sold_qty);
@@ -159,7 +168,7 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($initialAvailable - $quantities[0], $finalStock->available_qty);
     }
 
-    public function modifying_quantities_maintains_stock_integrity()
+    public function test_modifying_quantities_maintains_stock_integrity()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
         $initialAvailable = $initialStock->available_qty;
@@ -195,15 +204,15 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals($initialAvailable - 180, $stockAfterModifications->available_qty);
         $this->assertEquals(180, $stockAfterModifications->reserved_qty);
 
-        // Approve invoice
-        $invoice->update(['status' => 'approved']);
+        // Send invoice (converts reservations to sales)
+        $invoice->update(['status' => 'sent']);
 
         $stockAfterApproval = $this->harvest->fresh()->stockMovements()->latest()->first();
         $this->assertEquals($initialAvailable - 180, $stockAfterApproval->available_qty);
         $this->assertEquals(0, $stockAfterApproval->reserved_qty);
         $this->assertEquals(180, $stockAfterApproval->sold_qty);
 
-        // Modify quantity in approved invoice
+        // Modify quantity in sent invoice
         $item->update(['quantity' => 150]); // -30 from sold
 
         $finalStock = $this->harvest->fresh()->stockMovements()->latest()->first();
@@ -211,7 +220,7 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(150, $finalStock->sold_qty);
     }
 
-    public function preventing_overselling_maintains_data_integrity()
+    public function test_preventing_overselling_maintains_data_integrity()
     {
         $initialStock = $this->harvest->stockMovements()->latest()->first();
         $availableQty = $initialStock->available_qty;
@@ -280,49 +289,60 @@ class StockManagementIntegrationTest extends TestCase
         $this->assertEquals(50, $stockAfterCancel->available_qty);
     }
 
-    public function stock_movements_create_complete_audit_trail()
+    public function test_stock_movements_create_complete_audit_trail()
     {
+        // Flujo completo: draft(initial+reserve) → sent(sale) → draft(reserve) → cancel(unreserve).
+        // Cancelar desde sent está prohibido; se debe revertir a draft primero.
+
         $invoice = Invoice::factory()->draft()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'client_id' => $this->client->id,
         ]);
 
-        $item = InvoiceItem::create([
-            'invoice_id' => $invoice->id,
-            'harvest_id' => $this->harvest->id,
-            'name' => 'Uva',
-            'quantity' => 100,
-            'unit_price' => 1.0,
+        InvoiceItem::create([
+            'invoice_id'          => $invoice->id,
+            'harvest_id'          => $this->harvest->id,
+            'name'                => 'Uva',
+            'quantity'            => 100,
+            'unit_price'          => 1.0,
             'discount_percentage' => 0,
-            'discount_amount' => 0,
-            'tax_base' => 100,
-            'tax_amount' => 0,
-            'subtotal' => 100,
-            'total' => 100,
-            'concept_type' => 'harvest',
+            'discount_amount'     => 0,
+            'tax_base'            => 100,
+            'tax_amount'          => 0,
+            'subtotal'            => 100,
+            'total'               => 100,
+            'concept_type'        => 'harvest',
         ]);
 
         // Initial + Reserve
         $this->assertEquals(2, $this->harvest->stockMovements()->count());
 
-        $invoice->update(['status' => 'approved']);
+        $invoice->update(['status' => 'sent']);
         // + Sale
         $this->assertEquals(3, $this->harvest->stockMovements()->count());
 
-        $invoice->update(['status' => 'cancelled']);
-        // + Return
+        // Sent → draft (revert sale to reservation)
+        $invoice->update(['status' => 'draft']);
+        // + Reserve (revert)
         $this->assertEquals(4, $this->harvest->stockMovements()->count());
+
+        // Draft → cancelled (release reservation)
+        $invoice->update(['status' => 'cancelled']);
+        // + Unreserve
+        $this->assertEquals(5, $this->harvest->stockMovements()->count());
 
         // Verify all movements have proper types
         $movements = $this->harvest->stockMovements()->orderBy('id')->get();
-        $this->assertEquals('initial', $movements[0]->movement_type);
-        $this->assertEquals('reserve', $movements[1]->movement_type);
-        $this->assertEquals('sale', $movements[2]->movement_type);
-        $this->assertEquals('return', $movements[3]->movement_type);
+        $this->assertEquals('initial',  $movements[0]->movement_type);
+        $this->assertEquals('reserve',  $movements[1]->movement_type);
+        $this->assertEquals('sale',     $movements[2]->movement_type);
+        $this->assertEquals('reserve',  $movements[3]->movement_type); // revert
+        $this->assertEquals('unreserve', $movements[4]->movement_type);
 
-        // All movements should reference the invoice
-        foreach ($movements->skip(1) as $movement) {
-            $this->assertEquals($invoice->invoice_number, $movement->reference_number);
-        }
+        // Refresh invoice to get the generated invoice_number
+        $invoice->refresh();
+
+        // The sale movement (created when draft→sent) references the invoice number.
+        $this->assertEquals($invoice->invoice_number, $movements[2]->reference_number);
     }
 }

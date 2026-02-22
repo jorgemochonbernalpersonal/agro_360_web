@@ -4,6 +4,22 @@
         description="Detalles de la factura"
     >
         <x-slot:actions>
+            <flux:button
+                href="{{ route('viticulturist.invoices.delivery-note-pdf', $invoice->id) }}"
+                target="_blank"
+                variant="ghost"
+                icon="document"
+            >
+                Albarán PDF
+            </flux:button>
+            <flux:button
+                href="{{ route('viticulturist.invoices.pdf', $invoice->id) }}"
+                target="_blank"
+                variant="ghost"
+                icon="arrow-down-tray"
+            >
+                Factura PDF
+            </flux:button>
             <flux:button href="{{ route('viticulturist.invoices.edit', $invoice->id) }}" variant="primary" icon="pencil-square">
                 Editar
             </flux:button>

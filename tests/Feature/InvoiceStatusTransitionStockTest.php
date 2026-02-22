@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class InvoiceStatusTransitionStockTest extends TestCase
 {
     use RefreshDatabase;
+    use \Tests\Traits\CreatesTestHarvest;
 
     protected User $user;
     protected Client $client;
@@ -24,17 +25,15 @@ class InvoiceStatusTransitionStockTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
         $this->client = Client::factory()->create(['user_id' => $this->user->id]);
-        $this->harvest = Harvest::factory()->withAvailableStock()->create([
-            'activity' => fn() => ['viticulturist_id' => $this->user->id]
-        ]);
-        
+        $this->harvest = $this->createHarvestWithStock($this->user);
+
         $this->actingAs($this->user);
     }
 
-    public function changing_draft_to_sent_converts_reservations_to_sales()
+    public function test_changing_draft_to_sent_converts_reservations_to_sales()
     {
         // Arrange - Create draft invoice with items
         $invoice = Invoice::factory()->draft()->create([
@@ -79,41 +78,42 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals($quantity, $containerState->sold_qty);
     }
 
-    public function changing_draft_to_approved_converts_reservations_to_sales()
+    public function test_changing_draft_to_sent_also_sets_invoice_number()
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([
-            'user_id' => $this->user->id,
-            'client_id' => $this->client->id,
+            'user_id'    => $this->user->id,
+            'client_id'  => $this->client->id,
+            'invoice_number' => null,
         ]);
 
         $quantity = 150;
         InvoiceItem::create([
-            'invoice_id' => $invoice->id,
-            'harvest_id' => $this->harvest->id,
-            'name' => 'Uva',
-            'quantity' => $quantity,
-            'unit_price' => 1.5,
+            'invoice_id'          => $invoice->id,
+            'harvest_id'          => $this->harvest->id,
+            'name'                => 'Uva',
+            'quantity'            => $quantity,
+            'unit_price'          => 1.5,
             'discount_percentage' => 0,
-            'discount_amount' => 0,
-            'tax_base' => 225,
-            'tax_amount' => 0,
-            'subtotal' => 225,
-            'total' => 225,
-            'concept_type' => 'harvest',
+            'discount_amount'     => 0,
+            'tax_base'            => 225,
+            'tax_amount'          => 0,
+            'subtotal'            => 225,
+            'total'               => 225,
+            'concept_type'        => 'harvest',
         ]);
 
         // Act
-        $invoice->update(['status' => 'approved']);
+        $invoice->update(['status' => 'sent']);
 
-        // Assert
+        // Assert - stock is converted to sale
         $latestStock = $this->harvest->stockMovements()->latest()->first();
         $this->assertEquals('sale', $latestStock->movement_type);
         $this->assertEquals($quantity, $latestStock->sold_qty);
         $this->assertEquals(0, $latestStock->reserved_qty);
     }
 
-    public function changing_sent_back_to_draft_converts_sales_to_reservations()
+    public function test_changing_sent_back_to_draft_converts_sales_to_reservations()
     {
         // Arrange - Create sent invoice
         $invoice = Invoice::factory()->sent()->create([
@@ -150,7 +150,7 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->sold_qty);
     }
 
-    public function cancelling_draft_invoice_releases_all_stock()
+    public function test_cancelling_draft_invoice_releases_all_stock()
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([
@@ -188,43 +188,29 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->reserved_qty);
     }
 
-    public function cancelling_sent_invoice_releases_sold_stock()
+    public function test_cancelling_sent_invoice_is_forbidden()
     {
-        // Arrange
+        // Una factura ya enviada NO puede cancelarse directamente (requiere rectificativa).
         $invoice = Invoice::factory()->sent()->create([
-            'user_id' => $this->user->id,
-            'client_id' => $this->client->id,
+            'user_id'        => $this->user->id,
+            'client_id'      => $this->client->id,
+            'invoice_number' => 'FAC-2026-0099',
         ]);
 
-        $quantity = 300;
-        InvoiceItem::create([
-            'invoice_id' => $invoice->id,
-            'harvest_id' => $this->harvest->id,
-            'name' => 'Uva',
-            'quantity' => $quantity,
-            'unit_price' => 2.5,
-            'discount_percentage' => 0,
-            'discount_amount' => 0,
-            'tax_base' => 750,
-            'tax_amount' => 0,
-            'subtotal' => 750,
-            'total' => 750,
-            'concept_type' => 'harvest',
-        ]);
+        $stockBefore = $this->harvest->stockMovements()->latest()->first();
 
-        $initialStock = $this->harvest->stockMovements()->first();
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageMatches('/rectificativa/i');
 
-        // Act - Cancel invoice
         $invoice->update(['status' => 'cancelled']);
 
-        // Assert - Sold stock returned to available
-        $latestStock = $this->harvest->stockMovements()->latest()->first();
-        $this->assertEquals('return', $latestStock->movement_type);
-        $this->assertEquals($initialStock->available_qty, $latestStock->available_qty);
-        $this->assertEquals(0, $latestStock->sold_qty);
+        // El stock no debe cambiar
+        $stockAfter = $this->harvest->stockMovements()->latest()->first();
+        $this->assertEquals($stockBefore->available_qty, $stockAfter->available_qty);
+        $this->assertEquals($stockBefore->sold_qty, $stockAfter->sold_qty);
     }
 
-    public function deleting_invoice_releases_all_stock()
+    public function test_deleting_invoice_releases_all_stock()
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([
@@ -260,7 +246,7 @@ class InvoiceStatusTransitionStockTest extends TestCase
         $this->assertEquals(0, $latestStock->sold_qty);
     }
 
-    public function multiple_items_transition_correctly()
+    public function test_multiple_items_transition_correctly()
     {
         // Arrange - Create draft invoice with multiple harvest items
         $invoice = Invoice::factory()->draft()->create([
@@ -268,9 +254,7 @@ class InvoiceStatusTransitionStockTest extends TestCase
             'client_id' => $this->client->id,
         ]);
 
-        $harvest2 = Harvest::factory()->withAvailableStock()->create([
-            'activity' => fn() => ['viticulturist_id' => $this->user->id]
-        ]);
+        $harvest2 = $this->createHarvestWithStock($this->user);
 
         $quantity1 = 100;
         $quantity2 = 150;
@@ -305,8 +289,8 @@ class InvoiceStatusTransitionStockTest extends TestCase
             'concept_type' => 'harvest',
         ]);
 
-        // Act - Approve invoice
-        $invoice->update(['status' => 'approved']);
+        // Act - Send invoice (converts reservations to sales)
+        $invoice->update(['status' => 'sent']);
 
         // Assert - Both harvests transitioned
         $stock1 = $this->harvest->stockMovements()->latest()->first();

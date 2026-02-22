@@ -23,7 +23,7 @@ class Create extends Component
     public $items = [];
     public $observations = '';
     public $observations_invoice = '';
-    public $delivery_note_code = ''; // Código de albarán (editable)
+    public $delivery_note_code = ''; // Código de albarán (auto-generado, editable)
     public $delivery_note_code_auto = ''; // Código generado automáticamente
     public $delivery_note_code_modified = false; // Flag para saber si el usuario lo modificó
 
@@ -52,11 +52,11 @@ class Create extends Component
         }
         
         $this->loadData();
-        
-        // Generar código de albarán automáticamente
+
+        // Vista previa de códigos (sin modificar contadores en BD)
         $user = Auth::user();
         $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
-        $this->delivery_note_code_auto = $settings->generateDeliveryNoteCode();
+        $this->delivery_note_code_auto = $settings->getDeliveryNotePreview();
         $this->delivery_note_code = $this->delivery_note_code_auto;
         
         // Si hay una cosecha requerida, añadirla automáticamente después de cargar datos
@@ -71,27 +71,48 @@ class Create extends Component
     {
         $user = Auth::user();
         $this->availableClients = Client::forUser($user->id)->active()->get();
-        $this->availableTaxes = Tax::active()->get();
+
+        // Cargar solo los impuestos habilitados por el usuario, ordenados por preferencia
+        $this->availableTaxes = $user->taxes()->orderByPivot('order')->get();
+
+        // Fallback: si el usuario no ha configurado sus impuestos aún, mostrar todos
+        if ($this->availableTaxes->isEmpty()) {
+            $this->availableTaxes = Tax::active()->orderBy('rate')->get();
+        }
+
         $this->loadHarvests();
     }
 
     public function loadHarvests()
     {
         $user = Auth::user();
-        
-        $query = Harvest::whereHas('activity', function($q) use ($user) {
+
+        $harvests = Harvest::whereHas('activity', function ($q) use ($user) {
             $q->where('viticulturist_id', $user->id);
         })
-        ->with(['activity.plot', 'plotPlanting.grapeVariety', 'activity.campaign'])
-        ->whereDoesntHave('invoiceItems'); // Solo cosechas sin facturar
+        ->with(['activity.plot', 'plotPlanting.grapeVariety', 'activity.campaign', 'container'])
+        ->when($this->selectedCampaign, function ($q) {
+            $q->whereHas('activity', fn ($q) => $q->where('campaign_id', $this->selectedCampaign));
+        })
+        ->where('total_weight', '>', 0)
+        ->orderBy('harvest_start_date', 'desc')
+        ->get();
 
-        if ($this->selectedCampaign) {
-            $query->whereHas('activity', function($q) {
-                $q->where('campaign_id', $this->selectedCampaign);
-            });
-        }
+        // Añadir stock disponible real a cada cosecha (una query por cosecha — lista pequeña)
+        $this->availableHarvests = $harvests
+            ->map(function ($harvest) {
+                $latestStock = \App\Models\HarvestStock::where('harvest_id', $harvest->id)
+                    ->latest('id')
+                    ->first();
 
-        $this->availableHarvests = $query->orderBy('harvest_start_date', 'desc')->get();
+                $harvest->available_qty_computed = $latestStock
+                    ? (float) $latestStock->available_qty
+                    : (float) $harvest->total_weight;
+
+                return $harvest;
+            })
+            ->filter(fn ($h) => $h->available_qty_computed > 0)
+            ->values();
     }
 
     public function updatedSelectedCampaign()
@@ -114,55 +135,51 @@ class Create extends Component
             return;
         }
 
-        // Verificar que la cosecha no esté ya en los items locales
+        // Verificar que la cosecha no esté ya en los items locales (esta factura)
         foreach ($this->items as $item) {
             if (isset($item['harvest_id']) && $item['harvest_id'] == $harvest->id) {
                 $this->toastError('Esta cosecha ya está en la factura actual.');
                 return;
             }
         }
-        
-        // VALIDACIÓN CRÍTICA: Verificar que la cosecha no esté ya facturada en DB
-        $alreadyInvoiced = \App\Models\InvoiceItem::where('harvest_id', $harvest->id)
-            ->whereHas('invoice', function($q) {
-                $q->where('status', '!=', 'cancelled') // Excluir facturas canceladas
-                  ->where('user_id', auth()->id()); // Solo verificar facturas del mismo usuario
-            })
-            ->exists();
-        
-        if ($alreadyInvoiced) {
-            $this->toastError('Esta cosecha ya está facturada en otra factura válida. No puedes facturar la misma cosecha dos veces.');
+
+        // Stock disponible real (permite ventas parciales de la misma cosecha)
+        $latestStock = \App\Models\HarvestStock::where('harvest_id', $harvest->id)
+            ->latest('id')
+            ->first();
+
+        $availableQty = $latestStock
+            ? (float) $latestStock->available_qty
+            : (float) $harvest->total_weight;
+
+        if ($availableQty <= 0) {
+            $this->toastError('Esta cosecha no tiene stock disponible para facturar.');
             return;
         }
 
-        // Obtener el impuesto por defecto del usuario si existe
-        $defaultTax = null;
+        // Impuesto por defecto del usuario
         $user = Auth::user();
-        $userDefaultTax = $user->defaultTax()->first();
-        if ($userDefaultTax) {
-            $defaultTax = $userDefaultTax;
-        } else {
-            // Si no hay impuesto por defecto, usar el primero disponible o el IVA general
-            $defaultTax = $this->availableTaxes->where('code', 'IVA')->where('rate', 21)->first() 
-                        ?? $this->availableTaxes->first();
-        }
+        $defaultTax = $user->defaultTax()->first()
+            ?? $this->availableTaxes->where('code', 'IVA')->where('rate', 21)->first()
+            ?? $this->availableTaxes->first();
 
-        // Crear item con datos de la cosecha
         $grapeVarietyName = $harvest->plotPlanting->grapeVariety->name ?? 'Uva';
-        $plotName = $harvest->activity->plot->name ?? '';
-        $itemName = $grapeVarietyName . ($plotName ? ' - ' . $plotName : '');
+        $plotName         = $harvest->activity->plot->name ?? '';
+        $itemName         = $grapeVarietyName . ($plotName ? ' - ' . $plotName : '');
 
         $this->items[] = [
-            'harvest_id' => $harvest->id,
-            'name' => $itemName,
-            'description' => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') . 
-                           ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
-            'sku' => 'HARV-' . $harvest->id,
-            'quantity' => $harvest->total_weight,
-            'unit_price' => $harvest->price_per_kg ?? 0,
+            'harvest_id'          => $harvest->id,
+            'name'                => $itemName,
+            'description'         => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') .
+                                     ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
+            'sku'                 => 'HARV-' . $harvest->id,
+            'quantity'            => $availableQty,      // Stock disponible real, no total_weight
+            'available_qty'       => $availableQty,      // Para mostrar el máximo en UI
+            'total_weight'        => (float) $harvest->total_weight,
+            'unit_price'          => $harvest->price_per_kg ?? 0,
             'discount_percentage' => 0,
-            'tax_id' => $defaultTax ? $defaultTax->id : null,
-            'concept_type' => 'harvest',
+            'tax_id'              => $defaultTax ? $defaultTax->id : null,
+            'concept_type'        => 'harvest',
         ];
 
         $this->selectedHarvestId = '';
@@ -311,13 +328,15 @@ class Create extends Component
             DB::transaction(function () use ($user) {
                 // Obtener settings de invoicing
                 $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
-                
+
                 // Generar código de albarán atómicamente (previene race conditions)
-                $deliveryNoteCode = $this->delivery_note_code_modified 
-                    ? $this->delivery_note_code 
+                $deliveryNoteCode = $this->delivery_note_code_modified
+                    ? $this->delivery_note_code
                     : $settings->generateAndIncrementDeliveryNoteCode();
-                
-                // NO generamos invoice_number aquí, solo cuando se aprueba la factura (en el observer)
+
+                // Generar número de factura atómicamente desde el inicio (draft)
+                // Ambos códigos son secuenciales desde la creación
+                $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
 
                 // Calcular totales
                 $subtotal = 0;
@@ -340,13 +359,13 @@ class Create extends Component
 
                 $totalAmount = $subtotal + $taxAmount;
 
-                // Crear factura (sin invoice_number, se asignará cuando se apruebe)
+                // Crear factura con número asignado desde el inicio (como el albarán)
                 $invoice = Invoice::create([
                     'user_id' => $user->id,
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
-                    'order_date' => $this->invoice_date, // Fecha de pedido
-                    // invoice_number se asignará cuando se apruebe la factura (en InvoiceObserver)
+                    'order_date' => $this->invoice_date,
+                    'invoice_number' => $invoiceNumber,
                     'delivery_note_code' => $deliveryNoteCode,
                     'invoice_date' => $this->invoice_date,
                     'delivery_note_date' => $this->delivery_note_date ?: now(), // Usar fecha del formulario
@@ -399,9 +418,10 @@ class Create extends Component
                     'created',
                     'Factura creada',
                     [
-                        'client_id' => $this->client_id,
-                        'total_amount' => $totalAmount,
-                        'items_count' => count($this->items),
+                        'client_id'          => $this->client_id,
+                        'total_amount'       => $totalAmount,
+                        'items_count'        => count($this->items),
+                        'invoice_number'     => $invoiceNumber,
                         'delivery_note_code' => $deliveryNoteCode,
                     ]
                 );

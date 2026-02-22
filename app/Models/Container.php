@@ -61,11 +61,20 @@ class Container extends Model
     }
 
     /**
-     * Estado actual del contenedor
+     * Todos los estados activos del contenedor (uno por cosecha).
+     */
+    public function currentStates(): HasMany
+    {
+        return $this->hasMany(ContainerCurrentState::class);
+    }
+
+    /**
+     * Estado más reciente del contenedor (para compatibilidad con vistas legacy).
+     * Para multi-cosecha usa currentStates().
      */
     public function currentState(): HasOne
     {
-        return $this->hasOne(ContainerCurrentState::class);
+        return $this->hasOne(ContainerCurrentState::class)->latestOfMany();
     }
 
     /**
@@ -85,17 +94,11 @@ class Container extends Model
     }
 
     /**
-     * Obtener la cosecha actual del contenedor (helper method)
-     * Nota: No es una relación Eloquent, es un método helper
+     * Obtener la cosecha más reciente del contenedor.
+     * Para todos los contenidos usa currentStates().
      */
     public function getCurrentHarvest(): ?Harvest
     {
-        // Primero intentar obtener desde currentState
-        if ($this->relationLoaded('currentState') && $this->currentState && $this->currentState->harvest_id) {
-            return $this->currentState->harvest;
-        }
-
-        // Si no, obtener la primera cosecha asociada
         return $this->harvests()->latest()->first();
     }
 

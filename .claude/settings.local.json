@@ -9,7 +9,11 @@
       "Bash(# Final check - no remaining old references grep -rn \"\"digital-notebook\\\\.containers\"\" /c/Users/jorge/Desktop/agro365/resources/views/ /c/Users/jorge/Desktop/agro365/app/)",
       "Bash(xargs cat:*)",
       "Bash(xxd:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(grep:*)",
+      "Bash(find C:\\\\Users\\\\jorge\\\\Desktop\\\\vinai2 \\(1\\)\\\\vinai2:*)",
+      "Bash(find C:\\\\Users\\\\jorge\\\\Desktop\\\\vinai2 \\(1\\)\\\\vinai2\\\\database\\\\migrations:*)",
+      "Bash(find:*)"
     ]
   }
 }

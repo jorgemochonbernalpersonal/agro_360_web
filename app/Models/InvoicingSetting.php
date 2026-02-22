@@ -13,21 +13,25 @@ class InvoicingSetting extends Model
         'invoice_padding',
         'invoice_counter',
         'invoice_year_reset',
+        'invoice_last_reset_year',
         'delivery_note_prefix',
         'delivery_note_padding',
         'delivery_note_counter',
         'delivery_note_year_reset',
+        'delivery_note_last_reset_year',
         'last_reset_year',
     ];
 
     protected $casts = [
-        'invoice_padding' => 'integer',
-        'invoice_counter' => 'integer',
-        'invoice_year_reset' => 'boolean',
-        'delivery_note_padding' => 'integer',
-        'delivery_note_counter' => 'integer',
-        'delivery_note_year_reset' => 'boolean',
-        'last_reset_year' => 'integer',
+        'invoice_padding'               => 'integer',
+        'invoice_counter'               => 'integer',
+        'invoice_year_reset'            => 'boolean',
+        'invoice_last_reset_year'       => 'integer',
+        'delivery_note_padding'         => 'integer',
+        'delivery_note_counter'         => 'integer',
+        'delivery_note_year_reset'      => 'boolean',
+        'delivery_note_last_reset_year' => 'integer',
+        'last_reset_year'               => 'integer',
     ];
 
     /**
@@ -94,8 +98,9 @@ class InvoicingSetting extends Model
     public function resetInvoiceCounter(): void
     {
         $this->update([
-            'invoice_counter' => 1,
-            'last_reset_year' => now()->year
+            'invoice_counter'         => 1,
+            'invoice_last_reset_year' => now()->year,
+            'last_reset_year'         => now()->year,
         ]);
     }
 
@@ -105,8 +110,9 @@ class InvoicingSetting extends Model
     public function resetDeliveryNoteCounter(): void
     {
         $this->update([
-            'delivery_note_counter' => 1,
-            'last_reset_year' => now()->year
+            'delivery_note_counter'         => 1,
+            'delivery_note_last_reset_year' => now()->year,
+            'last_reset_year'               => now()->year,
         ]);
     }
     
@@ -151,32 +157,40 @@ class InvoicingSetting extends Model
     }
 
     /**
-     * Verificar si necesita reseteo por año
+     * Verificar si necesita reseteo por año.
+     * Cada tipo usa su propio campo para evitar que el reseteo de uno
+     * bloquee el reseteo del otro.
      */
     protected function checkYearReset(string $type): void
     {
         $currentYear = now()->year;
-        $shouldReset = $type === 'invoice' ? $this->invoice_year_reset : $this->delivery_note_year_reset;
-        
-        if ($shouldReset && $this->last_reset_year != $currentYear) {
-            if ($type === 'invoice') {
+
+        if ($type === 'invoice') {
+            $shouldReset  = $this->invoice_year_reset;
+            $lastResetYear = $this->invoice_last_reset_year ?? $this->last_reset_year;
+            if ($shouldReset && $lastResetYear != $currentYear) {
                 $this->resetInvoiceCounter();
-            } else {
+            }
+        } else {
+            $shouldReset  = $this->delivery_note_year_reset;
+            $lastResetYear = $this->delivery_note_last_reset_year ?? $this->last_reset_year;
+            if ($shouldReset && $lastResetYear != $currentYear) {
                 $this->resetDeliveryNoteCounter();
             }
         }
     }
 
     /**
-     * Reemplazar variables en el prefijo
+     * Reemplazar variables en el prefijo.
+     * Soporta: {YEAR} (4 dígitos), {YY} (2 dígitos), {MONTH}, {DAY}
      */
     protected function replaceVariables(string $prefix): string
     {
         $now = now();
-        
+
         return str_replace(
-            ['{YEAR}', '{MONTH}', '{DAY}'],
-            [$now->format('Y'), $now->format('m'), $now->format('d')],
+            ['{YEAR}', '{YY}', '{MONTH}', '{DAY}'],
+            [$now->format('Y'), $now->format('y'), $now->format('m'), $now->format('d')],
             $prefix
         );
     }
@@ -205,16 +219,18 @@ class InvoicingSetting extends Model
     public static function createDefaultForUser(int $userId): self
     {
         return self::create([
-            'user_id' => $userId,
-            'invoice_prefix' => 'FAC-' . date('Y') . '-',
-            'invoice_padding' => 4,
-            'invoice_counter' => 1,
-            'invoice_year_reset' => true,
-            'delivery_note_prefix' => 'ALB-' . date('Y') . '-',
-            'delivery_note_padding' => 4,
-            'delivery_note_counter' => 1,
-            'delivery_note_year_reset' => true,
-            'last_reset_year' => date('Y'),
+            'user_id'                       => $userId,
+            'invoice_prefix'                => 'FAC-{YEAR}-',
+            'invoice_padding'               => 4,
+            'invoice_counter'               => 1,
+            'invoice_year_reset'            => true,
+            'invoice_last_reset_year'       => (int) date('Y'),
+            'delivery_note_prefix'          => 'ALB-{YEAR}-',
+            'delivery_note_padding'         => 4,
+            'delivery_note_counter'         => 1,
+            'delivery_note_year_reset'      => true,
+            'delivery_note_last_reset_year' => (int) date('Y'),
+            'last_reset_year'               => (int) date('Y'),
         ]);
     }
 
