@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Precios Agro365 | Viticultor €9/mes · Bodega · Denominación de Origen</title>
-    <meta name="description" content="Precios claros para cada rol. Plan Viticultor desde €9/mes (6 meses gratis). Plan Bodega según viticultores conectados. Plan DO por bodegas adscritas. Sin sorpresas.">
+    <title>Precios Agro365 | Viticultor y Bodega €9/mes · Denominación de Origen</title>
+    <meta name="description" content="Precios claros para cada rol. Plan Viticultor y Bodega desde €9/mes (6 meses gratis). Denominación de Origen: contacta con nosotros. Sin sorpresas.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/precios') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -15,21 +15,21 @@
     <!-- Schema.org Pricing -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
+        "@@context": "https://schema.org",
+        "@@type": "SoftwareApplication",
         "name": "Agro365",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web, iOS, Android",
         "offers": [
             {
-                "@type": "Offer",
+                "@@type": "Offer",
                 "name": "Plan Viticultor Mensual",
                 "price": "9.00",
                 "priceCurrency": "EUR",
                 "description": "Cuaderno de campo digital, SIGPAC, informes PAC, app móvil"
             },
             {
-                "@type": "Offer",
+                "@@type": "Offer",
                 "name": "Plan Viticultor Anual",
                 "price": "90.00",
                 "priceCurrency": "EUR",
@@ -42,31 +42,31 @@
     <!-- FAQ Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "¿El viticultor paga si su bodega ya está en Agro365?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "No. Si un viticultor accede solo a través de su bodega, la bodega cubre su acceso. Solo paga si quiere su cuenta independiente con todas las funciones."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "¿Cuánto cuesta el plan Viticultor?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "€9/mes o €90/año. Durante la fase Beta, los primeros 50 viticultores obtienen 6 meses gratis y 25% de descuento permanente."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "¿Qué precio tiene el plan para Bodegas?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "El precio de la bodega varía según el número de viticultores conectados: €49/mes hasta 10, €99/mes hasta 30, €199/mes hasta 75."
+                    "@@type": "Answer",
+                    "text": "El plan Bodega cuesta €9/mes, igual que el plan Viticultor. Incluye gestión de vendimia, trazabilidad, facturación agrícola y panel de viticultores."
                 }
             }
         ]
@@ -199,48 +199,20 @@
                         <div class="mb-6">
                             <div class="text-4xl mb-2">🍷</div>
                             <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Bodega</h2>
-                            <p class="text-zinc-500 text-sm mt-1">Precio por viticultores conectados · Demo gratuita · Onboarding incluido</p>
+                            <p class="text-zinc-500 text-sm mt-1">Precio único · Demo gratuita · Onboarding incluido</p>
                         </div>
 
-                        <div class="mb-6">
-                            <div class="p-4 bg-red-50 rounded-xl border border-red-100 mb-3">
-                                <p class="text-xs font-bold text-red-800 uppercase tracking-wide mb-3">Tramos de precio</p>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between items-center text-sm">
-                                        <div>
-                                            <span class="font-semibold text-zinc-700">Starter</span>
-                                            <span class="text-zinc-400 text-xs ml-1">hasta 10 viticultores</span>
-                                        </div>
-                                        <span class="font-bold text-red-700">€49/mes</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <div>
-                                            <span class="font-semibold text-zinc-700">Growth</span>
-                                            <span class="text-zinc-400 text-xs ml-1">hasta 30</span>
-                                        </div>
-                                        <span class="font-bold text-red-700">€99/mes</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <div>
-                                            <span class="font-semibold text-zinc-700">Pro</span>
-                                            <span class="text-zinc-400 text-xs ml-1">hasta 75</span>
-                                        </div>
-                                        <span class="font-bold text-red-700">€199/mes</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <div>
-                                            <span class="font-semibold text-zinc-700">Scale</span>
-                                            <span class="text-zinc-400 text-xs ml-1">hasta 150</span>
-                                        </div>
-                                        <span class="font-bold text-red-700">€349/mes</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm border-t border-red-100 pt-2 mt-1">
-                                        <span class="font-semibold text-zinc-700">Enterprise (+150)</span>
-                                        <span class="font-bold text-red-700">A medida</span>
-                                    </div>
-                                </div>
+                        <div class="mb-6 p-4 bg-red-50 rounded-xl border border-red-100">
+                            <div class="inline-block px-3 py-1 bg-red-500 text-white rounded-lg font-bold text-sm mb-3">
+                                6 MESES GRATIS
                             </div>
-                            <p class="text-xs text-zinc-500">🎁 Oferta lanzamiento: 2 meses gratis + onboarding incluido (val. €200) + migración gratuita</p>
+                            <div class="flex items-end gap-1.5 mb-1">
+                                <span class="text-zinc-500">Después:</span>
+                                <span class="text-4xl font-bold text-red-700">€9</span>
+                                <span class="text-zinc-500 mb-1">/mes</span>
+                            </div>
+                            <p class="text-sm text-zinc-600">o <strong>€90/año</strong> — equivale a <strong>€7,50/mes</strong></p>
+                            <p class="text-xs text-red-600 font-semibold mt-1.5">🎁 Oferta lanzamiento: onboarding incluido + migración gratuita</p>
                         </div>
 
                         <ul class="space-y-3 mb-8 text-sm">
@@ -265,10 +237,10 @@
                             @endforeach
                         </ul>
 
-                        <a href="mailto:info@agro365.es?subject=Demo%20Bodega%20Agro365" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-red-500 text-red-700 hover:bg-red-500 hover:text-white transition-all duration-300 font-bold text-lg">
-                            Solicitar Demo →
+                        <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-bold text-lg">
+                            Comenzar Gratis →
                         </a>
-                        <p class="text-center text-xs text-zinc-400 mt-3">Te contactamos en menos de 24h</p>
+                        <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida · Cancela cuando quieras</p>
                     </div>
 
                     <!-- DO -->
@@ -276,41 +248,15 @@
                         <div class="mb-6">
                             <div class="text-4xl mb-2">🏛️</div>
                             <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Denominación de Origen</h2>
-                            <p class="text-zinc-500 text-sm mt-1">Precio por bodegas adscritas · Contrato anual · Account manager</p>
+                            <p class="text-zinc-500 text-sm mt-1">Solución a medida · Contrato anual · Account manager dedicado</p>
                         </div>
 
-                        <div class="mb-6">
-                            <div class="p-4 bg-amber-50 rounded-xl border border-amber-100 mb-3">
-                                <p class="text-xs font-bold text-amber-800 uppercase tracking-wide mb-3">Tramos de precio</p>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between items-center text-sm">
-                                        <div>
-                                            <span class="font-semibold text-zinc-700">DO Pequeña</span>
-                                            <span class="text-zinc-400 text-xs ml-1">hasta 20 bodegas</span>
-                                        </div>
-                                        <span class="font-bold text-amber-700">€1.200/año</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <div>
-                                            <span class="font-semibold text-zinc-700">DO Mediana</span>
-                                            <span class="text-zinc-400 text-xs ml-1">hasta 50</span>
-                                        </div>
-                                        <span class="font-bold text-amber-700">€2.400/año</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <div>
-                                            <span class="font-semibold text-zinc-700">DO Grande</span>
-                                            <span class="text-zinc-400 text-xs ml-1">hasta 150</span>
-                                        </div>
-                                        <span class="font-bold text-amber-700">€4.800/año</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm border-t border-amber-100 pt-2 mt-1">
-                                        <span class="font-semibold text-zinc-700">DO Premium (+150)</span>
-                                        <span class="font-bold text-amber-700">A medida</span>
-                                    </div>
-                                </div>
+                        <div class="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+                            <div class="text-center py-4">
+                                <div class="text-5xl mb-3">🤝</div>
+                                <p class="text-lg font-bold text-amber-800 mb-2">Precio a medida</p>
+                                <p class="text-sm text-zinc-600">Cada DO tiene su dimensión, sus bodegas y sus necesidades. Cuéntanos el tuyo y te preparamos una propuesta sin compromiso.</p>
                             </div>
-                            <p class="text-xs text-zinc-500">🎁 Primeras 5 DOs: 30% de descuento el primer año + implementación y formación gratuita</p>
                         </div>
 
                         <ul class="space-y-3 mb-8 text-sm">
@@ -365,33 +311,32 @@
                     <table class="w-full text-sm bg-white">
                         <thead>
                             <tr class="bg-zinc-50 border-b border-zinc-200">
-                                <th class="text-left px-6 py-4 font-semibold text-zinc-600 w-1/3">Funcionalidad</th>
+                                <th class="text-left px-6 py-4 font-semibold text-zinc-600 w-2/5">Funcionalidad</th>
                                 <th class="text-center px-4 py-4 font-bold text-[var(--color-agro-green-dark)]">🌿 Viticultor<br><span class="font-normal text-xs text-zinc-400">€9/mes</span></th>
-                                <th class="text-center px-4 py-4 font-bold text-red-700">🍷 Bodega Starter<br><span class="font-normal text-xs text-zinc-400">€49/mes</span></th>
-                                <th class="text-center px-4 py-4 font-bold text-red-800">🍷 Bodega Pro<br><span class="font-normal text-xs text-zinc-400">€199/mes</span></th>
-                                <th class="text-center px-4 py-4 font-bold text-amber-700">🏛️ DO Mediana<br><span class="font-normal text-xs text-zinc-400">€200/mes*</span></th>
+                                <th class="text-center px-4 py-4 font-bold text-red-700">🍷 Bodega<br><span class="font-normal text-xs text-zinc-400">€9/mes</span></th>
+                                <th class="text-center px-4 py-4 font-bold text-amber-700">🏛️ DO<br><span class="font-normal text-xs text-zinc-400">Consultar</span></th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
                             @php
                             $rows = [
-                                ['Cuaderno de campo digital', '✅', '✅', '✅', '✅'],
-                                ['Gestión SIGPAC', '✅', '✅', '✅', '✅'],
-                                ['Informes oficiales PAC', '✅', '✅', '✅', '✅'],
-                                ['Teledetección NDVI', '✅', '✅', '✅', '✅'],
-                                ['App móvil offline', '✅', '✅', '✅', '✅'],
-                                ['Panel de viticultores', '❌', 'hasta 10', 'hasta 75', 'Todos'],
-                                ['Gestión de vendimia', '❌', '✅', '✅', '✅'],
-                                ['Trazabilidad bodega', '❌', '✅', '✅', '✅'],
-                                ['Facturación agrícola', '❌', '✅', '✅', '✅'],
-                                ['Comparativa rendimientos', '❌', '✅', '✅', '✅'],
-                                ['Panel supervisión DO', '❌', '❌', '❌', '✅'],
-                                ['Alertas de incumplimiento', '❌', '❌', '❌', '✅'],
-                                ['Informes consolidados', '❌', 'Bodega', 'Bodega', 'DO completa'],
-                                ['API integración', '❌', '❌', '❌', '✅'],
-                                ['Account manager', '❌', '❌', '❌', '✅'],
-                                ['Soporte', 'Email 48h', 'Prioritario 24h', 'Prioritario 24h', 'Teléfono directo'],
-                                ['Onboarding', 'Self-service', '✅ incluido', '✅ incluido', '✅ + formación'],
+                                ['Cuaderno de campo digital', '✅', '✅', '✅'],
+                                ['Gestión SIGPAC', '✅', '✅', '✅'],
+                                ['Informes oficiales PAC', '✅', '✅', '✅'],
+                                ['Teledetección NDVI', '✅', '✅', '✅'],
+                                ['App móvil offline', '✅', '✅', '✅'],
+                                ['Panel de viticultores', '❌', '✅', '✅'],
+                                ['Gestión de vendimia', '❌', '✅', '✅'],
+                                ['Trazabilidad bodega', '❌', '✅', '✅'],
+                                ['Facturación agrícola', '❌', '✅', '✅'],
+                                ['Comparativa rendimientos', '❌', '✅', '✅'],
+                                ['Panel supervisión DO', '❌', '❌', '✅'],
+                                ['Alertas de incumplimiento', '❌', '❌', '✅'],
+                                ['Informes consolidados', '❌', 'Bodega', 'DO completa'],
+                                ['API integración', '❌', '❌', '✅'],
+                                ['Account manager', '❌', '❌', '✅'],
+                                ['Soporte', 'Email 48h', 'Prioritario 24h', 'Teléfono directo'],
+                                ['Onboarding', 'Self-service', '✅ incluido', '✅ + formación'],
                             ];
                             @endphp
                             @foreach($rows as $i => $row)
@@ -400,13 +345,11 @@
                                 <td class="px-4 py-3 text-center text-zinc-600">{{ $row[1] }}</td>
                                 <td class="px-4 py-3 text-center text-zinc-600">{{ $row[2] }}</td>
                                 <td class="px-4 py-3 text-center text-zinc-600">{{ $row[3] }}</td>
-                                <td class="px-4 py-3 text-center text-zinc-600">{{ $row[4] }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                <p class="text-xs text-zinc-400 text-center mt-3">* €2.400/año = equivalente a €200/mes</p>
             </div>
         </section>
 
@@ -420,8 +363,8 @@
                     @php
                     $faqs = [
                         ['¿El viticultor paga si su bodega ya está en Agro365?', 'No. Si un viticultor accede solo a través de su bodega (sin cuenta propia independiente), la bodega cubre su acceso. Solo paga si quiere su cuenta independiente con todas las funciones.'],
-                        ['¿Qué pasa si una bodega supera el límite de viticultores de su plan?', 'Te avisamos con antelación y te ofrecemos la opción de subir de plan. Nunca bloqueamos el acceso de golpe.'],
-                        ['¿Las DOs pueden negociar precios para toda su denominación?', 'Sí. Para DOs grandes o que traen a todas sus bodegas de golpe, ofrecemos condiciones especiales. Escríbenos a info@agro365.es.'],
+                        ['¿El precio de la Bodega incluye todos los viticultores conectados?', 'Sí. Con €9/mes la bodega puede gestionar a todos sus viticultores. Los viticultores que acceden solo a través de su bodega no pagan nada aparte.'],
+                        ['¿Cómo se calcula el precio para una Denominación de Origen?', 'Cada DO tiene dimensiones y necesidades diferentes. Contáctanos y te preparamos una propuesta personalizada sin compromiso.'],
                         ['¿Hay descuento para cooperativas?', 'Las cooperativas con más de 100 socios viticultores tienen condiciones especiales equivalentes al plan Bodega Pro. Contáctanos.'],
                         ['¿Se puede cambiar de plan en cualquier momento?', 'Sí, siempre hacia arriba. Los cambios a plan inferior se aplican al siguiente período de facturación.'],
                         ['¿Qué pasa con mis datos si cancelo?', 'Tus datos son siempre tuyos. Puedes exportarlos en formato estándar en cualquier momento antes o después de cancelar. Nunca retenemos información.'],
@@ -457,8 +400,8 @@
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
                         🌿 Empezar como Viticultor — Gratis
                     </a>
-                    <a href="mailto:info@agro365.es?subject=Demo%20Bodega" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white text-white hover:bg-white/10 transition-all font-semibold text-lg">
-                        🍷 Solicitar Demo para Bodega
+                    <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white text-white hover:bg-white/10 transition-all font-semibold text-lg">
+                        🏛️ Contactar para Denominación de Origen
                     </a>
                 </div>
             </div>

@@ -418,11 +418,7 @@
                 
                 <!-- Nav links + Auth -->
                 <div class="flex items-center gap-6">
-                    <div class="hidden md:flex items-center gap-5 text-sm font-medium">
-                        <a href="{{ content_route('content.viticultores') }}" class="text-zinc-600 hover:text-[var(--color-agro-green)] transition-colors">Viticultores</a>
-                        <a href="{{ content_route('content.bodegas') }}" class="text-zinc-600 hover:text-[var(--color-agro-green)] transition-colors">Bodegas</a>
-                        <a href="{{ url('/precios') }}" class="text-zinc-600 hover:text-[var(--color-agro-green)] transition-colors">Precios</a>
-                    </div>
+
                     <a href="{{ route('login') }}" rel="nofollow" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] font-semibold transition-colors duration-300 text-sm">
                         Iniciar Sesión
                     </a>
@@ -1185,19 +1181,19 @@
                     <div class="mb-5">
                         <div class="text-3xl mb-2">🍷</div>
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Bodega</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Según viticultores conectados · Demo incluida</p>
+                        <p class="text-zinc-500 text-sm mt-1">Precio único · Onboarding incluido</p>
                     </div>
                     <div class="mb-6">
-                        <div class="py-4 px-4 bg-red-50 rounded-xl border border-red-100 mb-3">
-                            <p class="text-sm font-semibold text-red-800 mb-2">Precio adaptado a tu tamaño:</p>
-                            <div class="space-y-1 text-xs text-zinc-600">
-                                <div class="flex justify-between"><span>Hasta 10 viticultores</span><span class="font-semibold">€49/mes</span></div>
-                                <div class="flex justify-between"><span>Hasta 30 viticultores</span><span class="font-semibold">€99/mes</span></div>
-                                <div class="flex justify-between"><span>Hasta 75 viticultores</span><span class="font-semibold">€199/mes</span></div>
-                                <div class="flex justify-between"><span>+75 viticultores</span><span class="font-semibold">A medida</span></div>
-                            </div>
+                        <div class="inline-block px-3 py-1.5 bg-red-500 text-white rounded-lg font-bold text-sm mb-3">
+                            6 MESES GRATIS
                         </div>
-                        <p class="text-xs text-zinc-500">🎁 Oferta lanzamiento: 2 meses gratis + onboarding incluido</p>
+                        <div class="flex items-end gap-1.5 mb-1">
+                            <span class="text-zinc-500 text-base">Después:</span>
+                            <span class="text-4xl font-bold text-red-700">€9</span>
+                            <span class="text-zinc-500 mb-1">/mes</span>
+                        </div>
+                        <p class="text-sm text-zinc-500">o <strong>€90/año</strong> (equivale a €7,50/mes)</p>
+                        <p class="text-xs text-red-600 font-semibold mt-1">🎁 Onboarding incluido + migración gratuita</p>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
                         @foreach(['Todo del plan Viticultor', 'Panel de viticultores en tiempo real', 'Gestión completa de vendimia', 'Trazabilidad desde cepa hasta botella', 'Facturación agrícola integrada', 'Comparativa rendimientos real vs estimado', 'Soporte prioritario (24h)', 'Onboarding personalizado incluido'] as $feature)
@@ -1209,10 +1205,10 @@
                         </li>
                         @endforeach
                     </ul>
-                    <a href="mailto:info@agro365.es?subject=Demo%20Bodega" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-red-400 text-red-700 hover:bg-red-500 hover:text-white transition-all duration-300 font-semibold">
-                        Solicitar Demo
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-semibold">
+                        Comenzar Gratis
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">Te contactamos en menos de 24h</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
                 </div>
 
                 <!-- DO -->
@@ -1220,19 +1216,16 @@
                     <div class="mb-5">
                         <div class="text-3xl mb-2">🏛️</div>
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Denominación de Origen</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Precio enterprise · Contrato anual</p>
+                        <p class="text-zinc-500 text-sm mt-1">Solución a medida · Contrato anual</p>
                     </div>
                     <div class="mb-6">
-                        <div class="py-4 px-4 bg-amber-50 rounded-xl border border-amber-100 mb-3">
-                            <p class="text-sm font-semibold text-amber-800 mb-2">Precio por bodegas adscritas:</p>
-                            <div class="space-y-1 text-xs text-zinc-600">
-                                <div class="flex justify-between"><span>Hasta 20 bodegas</span><span class="font-semibold">€1.200/año</span></div>
-                                <div class="flex justify-between"><span>Hasta 50 bodegas</span><span class="font-semibold">€2.400/año</span></div>
-                                <div class="flex justify-between"><span>Hasta 150 bodegas</span><span class="font-semibold">€4.800/año</span></div>
-                                <div class="flex justify-between"><span>+150 bodegas</span><span class="font-semibold">A medida</span></div>
+                        <div class="py-4 px-4 bg-amber-50 rounded-xl border border-amber-100">
+                            <div class="text-center py-2">
+                                <div class="text-4xl mb-2">🤝</div>
+                                <p class="text-base font-bold text-amber-800 mb-1">Precio a medida</p>
+                                <p class="text-xs text-zinc-600">Cada DO tiene su dimensión y sus necesidades. Cuéntanos la tuya.</p>
                             </div>
                         </div>
-                        <p class="text-xs text-zinc-500">🎁 Primeras 5 DOs: 30% de descuento el primer año</p>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
                         @foreach(['Todo del plan Bodega', 'Alta y gestión de bodegas adscritas', 'Panel de supervisión centralizado', 'Alertas automáticas de incumplimiento', 'Informes consolidados por denominación', 'Firma electrónica SHA-256', 'API para integración con sistemas actuales', 'Account manager dedicado', 'SLA 99,9% uptime garantizado'] as $feature)
@@ -1244,10 +1237,10 @@
                         </li>
                         @endforeach
                     </ul>
-                    <a href="mailto:info@agro365.es?subject=Consulta%20DO" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-amber-400 text-amber-800 hover:bg-amber-500 hover:text-white transition-all duration-300 font-semibold">
-                        Contactar con Ventas
+                    <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-amber-400 text-amber-800 hover:bg-amber-500 hover:text-white transition-all duration-300 font-semibold">
+                        Contactar
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">Solución a medida para tu DO</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">Propuesta sin compromiso en 24h</p>
                 </div>
             </div>
 
