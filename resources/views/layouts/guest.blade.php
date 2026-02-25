@@ -23,7 +23,7 @@
 <body class="bg-agro-50 min-h-screen">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGTPTZSQ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-    <main class="min-h-screen" id="main-content">
+    <main class="min-h-screen flex items-center justify-center py-8 px-4" id="main-content">
         {{ $slot }}
     </main>
 
