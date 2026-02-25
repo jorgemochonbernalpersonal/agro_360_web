@@ -9,7 +9,27 @@
       "Bash(# Final check - no remaining old references grep -rn \"\"digital-notebook\\\\.containers\"\" /c/Users/jorge/Desktop/agro365/resources/views/ /c/Users/jorge/Desktop/agro365/app/)",
       "Bash(xargs cat:*)",
       "Bash(xxd:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(grep:*)",
+      "Bash(find C:\\\\Users\\\\jorge\\\\Desktop\\\\vinai2 \\(1\\)\\\\vinai2:*)",
+      "Bash(find C:\\\\Users\\\\jorge\\\\Desktop\\\\vinai2 \\(1\\)\\\\vinai2\\\\database\\\\migrations:*)",
+      "Bash(find:*)",
+      "Bash(php -l /c/Users/jorge/Desktop/agro365/storage/framework/views/1ada6cc2cd2ff183489ace382513571d.php 2>&1 && php -l /c/Users/jorge/Desktop/agro365/storage/framework/views/f1817878604b4072595a78216d7005e4.php 2>&1)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(wc:*)",
+      "Bash(php:*)",
+      "Bash(echo no units table found:*)",
+      "Bash(echo EXISTS: $f:*)",
+      "Bash(mysql:*)",
+      "Bash(where herd:*)",
+      "Bash(start:*)",
+      "Bash(powershell:*)",
+      "Bash(grep \"version\":*)",
+      "Bash(grep ^versions\\\\|^name\\\\| version:*)",
+      "Bash(cd /c/Users/jorge/Desktop/agro365 && cat composer.lock | python3 -c \"import sys,json; lock=json.load\\(sys.stdin\\); pkgs=[p for p in lock['packages'] if p['name']=='livewire/livewire']; print\\(pkgs[0]['version'] if pkgs else 'not found'\\)\" 2>/dev/null)",
+      "Bash(python3:*)",
+      "Bash(node:*)"
     ]
   }
 }

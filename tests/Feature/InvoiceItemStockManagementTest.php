@@ -33,7 +33,7 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->actingAs($this->user);
     }
 
-    public function creating_draft_invoice_item_reserves_stock()
+    public function test_creating_draft_invoice_item_reserves_stock()
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([
@@ -77,10 +77,10 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($quantity, $containerState->reserved_qty);
     }
 
-    public function creating_approved_invoice_item_marks_as_sold()
+    public function test_creating_sent_invoice_item_marks_as_sold()
     {
         // Arrange
-        $invoice = Invoice::factory()->approved()->create([
+        $invoice = Invoice::factory()->sent()->create([
             'user_id' => $this->user->id,
             'client_id' => $this->client->id,
         ]);
@@ -120,7 +120,7 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($quantity, $containerState->sold_qty);
     }
 
-    public function updating_quantity_in_draft_adjusts_reservation()
+    public function test_updating_quantity_in_draft_adjusts_reservation()
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([
@@ -154,7 +154,7 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockAfterCreate->available_qty - 100, $latestStock->available_qty);
     }
 
-    public function updating_quantity_in_sent_invoice_adjusts_sale()
+    public function test_updating_quantity_in_sent_invoice_adjusts_sale()
     {
         // Arrange
         $invoice = Invoice::factory()->sent()->create([
@@ -188,7 +188,7 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockAfterCreate->available_qty + 50, $latestStock->available_qty);
     }
 
-    public function deleting_draft_item_unreserves_stock()
+    public function test_deleting_draft_item_unreserves_stock()
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([
@@ -224,7 +224,7 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockBeforeDelete->reserved_qty - $quantity, $latestStock->reserved_qty);
     }
 
-    public function deleting_sent_item_returns_stock()
+    public function test_deleting_sent_item_returns_stock()
     {
         // Arrange
         $invoice = Invoice::factory()->sent()->create([
@@ -260,7 +260,7 @@ class InvoiceItemStockManagementTest extends TestCase
         $this->assertEquals($stockBeforeDelete->sold_qty - $quantity, $latestStock->sold_qty);
     }
 
-    public function container_state_updates_correctly_on_all_operations()
+    public function test_container_state_updates_correctly_on_all_operations()
     {
         // Arrange
         $invoice = Invoice::factory()->draft()->create([

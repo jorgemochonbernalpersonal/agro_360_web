@@ -33,6 +33,14 @@ class Plot extends Model
         'municipality_id',
         'ndvi_alert_threshold',
         'alert_email_enabled',
+        // Campos P3
+        'site_name',
+        'valley',
+        'code_parcel',
+        'soil_type',
+        'orientation',
+        'maximum_yield_kg_ha',
+        'degree_day_base',
     ];
 
     protected $casts = [
@@ -44,6 +52,8 @@ class Plot extends Model
         'is_locked' => 'boolean',
         'locked_at' => 'datetime',
         'alert_email_enabled' => 'boolean',
+        'maximum_yield_kg_ha' => 'decimal:2',
+        'degree_day_base' => 'decimal:1',
     ];
 
     /**
@@ -95,14 +105,6 @@ class Plot extends Model
     }
 
     /**
-     * Códigos SIGPAC (relación antigua via plot_sigpac_code)
-     */
-    public function sigpacCodesOld(): BelongsToMany
-    {
-        return $this->belongsToMany(SigpacCode::class, 'plot_sigpac_code', 'plot_id', 'sigpac_code_id');
-    }
-
-    /**
      * Códigos SIGPAC (nueva estructura - many-to-many con geometrías)
      */
     public function sigpacCodes(): BelongsToMany
@@ -137,27 +139,11 @@ class Plot extends Model
 
 
     /**
-     * Coordenadas multiparte SIGPAC (estructura antigua)
-     */
-    public function multipartCoordinates(): HasMany
-    {
-        return $this->hasMany(MultipartPlotSigpac::class, 'plot_id');
-    }
-
-    /**
      * Actividades agrícolas de la parcela
      */
     public function agriculturalActivities(): HasMany
     {
         return $this->hasMany(AgriculturalActivity::class, 'plot_id');
-    }
-
-    /**
-     * Alias para facilitar acceso a actividades
-     */
-    public function activities(): HasMany
-    {
-        return $this->agriculturalActivities();
     }
 
     /**

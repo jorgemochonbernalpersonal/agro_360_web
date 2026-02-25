@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
     <!-- SEO Meta Tags -->
-    <title>Agro365 | Software de Gestión Agrícola y Cuaderno Digital 2027</title>
-    <meta name="description" content="La plataforma líder en gestión agrícola para viticultores y bodegas. Cuaderno de campo digital obligatorio 2027, gestión SIGPAC, teledetección NDVI y facturación. ¡Prueba 6 meses gratis!">
+    <title>Agro365 | Cuaderno de Campo Digital Obligatorio 2027 · Software Viticultura y Bodegas</title>
+    <meta name="description" content="Cuaderno de campo digital obligatorio desde 2027. Software de gestión para viticultores independientes, bodegas y Denominaciones de Origen. Cumplimiento PAC, SIGPAC y trazabilidad completa. Prueba gratis 6 meses.">
     <meta name="keywords" content="software gestión agrícola, cuaderno digital campo, software viñedos España, SIGPAC, gestión parcelas agrícolas, app viticultores, software bodega, cuaderno campo digital, gestión viticultura, software agricultura, control parcelas, normativa PAC, cuaderno campo 2027, digitalización agrícola, trazabilidad viñedos, gestión vendimia, facturación agrícola, informes oficiales agricultura, firma electrónica agrícola, gestión cosechas, control fitosanitarios, software para viticultores, app agricultura, cuaderno digital viticultores, software agricultura España, gestión agrícola digital, app campo, software viñedos, digitalización campo, agricultura 4.0, viticultura digital, aplicación agrícola, software viticultura, gestión viñedos, app gestión agrícola, software agrícola móvil, cuaderno campo digital viticultores, software viticultores profesional, aplicación campo digital, app SIGPAC, software agrícola viticultura">
     <meta name="author" content="Agro365">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -19,7 +19,6 @@
     <meta name="rating" content="general">
     
     <!-- Canonical URL -->
-    <meta name="canonical" href="{{ url('/') }}">
     <link rel="canonical" href="{{ url('/') }}">
     
     <!-- Hreflang for Spain -->
@@ -40,8 +39,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="Agro365 - Gestión Agrícola Profesional para Viñedos">
-    <meta property="og:description" content="Digitaliza tu cuaderno de campo, gestiona parcelas SIGPAC y controla todas las actividades de tu viñedo. Prueba gratis 6 meses.">
+    <meta property="og:title" content="Agro365 | Cuaderno de Campo Digital Obligatorio 2027">
+    <meta property="og:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. Cuaderno digital obligatorio 2027, gestión SIGPAC y trazabilidad completa.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -53,8 +52,8 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/') }}">
-    <meta name="twitter:title" content="Agro365 - Software de Gestión Agrícola para Viñedos">
-    <meta name="twitter:description" content="Cuaderno digital, SIGPAC, control de parcelas. 6 meses gratis para beta testers.">
+    <meta name="twitter:title" content="Agro365 | Cuaderno de Campo Digital Obligatorio 2027">
+    <meta name="twitter:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. 6 meses gratis para beta testers.">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- PWA Manifest -->
@@ -93,7 +92,7 @@
                     'name' => 'Plan Mensual',
                     'price' => '9.00',
                     'priceCurrency' => 'EUR',
-                    'priceValidUntil' => '2025-12-31',
+                    'priceValidUntil' => '2026-12-31',
                     'availability' => 'https://schema.org/InStock',
                     'description' => 'Plan mensual de Agro365 con 6 meses gratis para beta testers'
                 ],
@@ -102,12 +101,12 @@
                     'name' => 'Plan Anual',
                     'price' => '90.00',
                     'priceCurrency' => 'EUR',
-                    'priceValidUntil' => '2025-12-31',
+                    'priceValidUntil' => '2026-12-31',
                     'availability' => 'https://schema.org/InStock',
                     'description' => 'Plan anual de Agro365 con 6 meses gratis para beta testers'
                 ]
             ],
-            'description' => 'Software de gestión agrícola profesional para viticultores y bodegas con cuaderno de campo digital, SIGPAC e integración completa',
+            'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027.',
             'operatingSystem' => ['Web', 'iOS', 'Android'],
             'releaseNotes' => 'Versión Beta - En desarrollo activo',
             'screenshot' => asset('images/dashboard-preview.png'),
@@ -417,13 +416,14 @@
                     >
                 </a>
                 
-                <!-- Auth Links -->
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('login') }}" rel="nofollow" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] font-semibold transition-colors duration-300">
+                <!-- Nav links + Auth -->
+                <div class="flex items-center gap-6">
+
+                    <a href="{{ route('login') }}" rel="nofollow" class="text-[var(--color-agro-green-dark)] hover:text-[var(--color-agro-green)] font-semibold transition-colors duration-300 text-sm">
                         Iniciar Sesión
                     </a>
-                    <a href="{{ route('register') }}" rel="nofollow" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
-                        Comenzar Gratis
+                    <a href="{{ route('register') }}" rel="nofollow" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-sm">
+                        Comenzar Gratis →
                     </a>
                 </div>
             </div>
@@ -436,43 +436,81 @@
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <!-- Hero Content -->
                 <div class="space-y-8 animate-fade-in">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/30">
-                        <span class="w-2 h-2 rounded-full bg-[var(--color-agro-green-light)] animate-pulse"></span>
-                        <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">🎉 6 meses GRATIS + 25% OFF de por vida (primeros 50)</span>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/30">
+                            <span class="w-2 h-2 rounded-full bg-[var(--color-agro-green-light)] animate-pulse"></span>
+                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">🎉 6 meses GRATIS + 25% OFF de por vida (primeros 50)</span>
+                        </div>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-300">
+                            <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-sm font-semibold text-amber-800">⚡ Obligatorio en <span id="days-counter">...</span> días</span>
+                        </div>
                     </div>
+                    <script>
+                    (function() {
+                        var deadline = new Date('2027-01-01T00:00:00');
+                        var el = document.getElementById('days-counter');
+                        if (el) {
+                            var diff = Math.ceil((deadline - new Date()) / 86400000);
+                            el.textContent = diff > 0 ? diff : 0;
+                        }
+                    })();
+                    </script>
                     
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
-                        Software Profesional de Viticultura y Bodegas
+                        Cuaderno de Campo Digital Obligatorio 2027
+                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">— y mucho más</span>
                     </h1>
-                    
+
                     <p class="text-xl text-gray-600 leading-relaxed">
-                        <strong><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027, <strong><a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">gestión de parcelas SIGPAC</a></strong>, control de actividades agrícolas, <strong>informes oficiales con firma electrónica</strong>, facturación de cosechas y cumplimiento normativo. Todo en una plataforma completa diseñada para <strong><a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores profesionales</a></strong> en España.
+                        La plataforma que conecta <strong>viticultores</strong>, <strong>bodegas</strong> y <strong>Denominaciones de Origen</strong>.
+                        Cumple con la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">PAC</a>,
+                        gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>
+                        y lleva la trazabilidad completa desde el viñedo hasta la bodega.
                     </p>
                     
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                            Comenzar Gratis
-                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- 3 CTAs por rol -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base">
+                            <span>🌿</span> Soy Viticultor
+                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </a>
-                        <a href="#features" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-lg">
-                            Ver Características del Software Agrícola
+                        <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-base">
+                            <span>🍷</span> Soy Bodega
+                        </a>
+                        <a href="#ecosistema" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[var(--color-agro-green-light)]/60 text-[var(--color-agro-green-dark)] hover:border-[var(--color-agro-green-dark)] transition-all duration-300 font-semibold text-base">
+                            <span>🏛️</span> Soy DO
                         </a>
                     </div>
-                    
-                    <div class="flex items-center gap-6 pt-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
+
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-700 font-medium">Sin tarjeta requerida</span>
+                            <span class="text-gray-600 text-sm font-medium">6 meses gratis</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-700 font-medium">Configuración en 5 minutos</span>
+                            <span class="text-gray-600 text-sm font-medium">Sin tarjeta</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-600 text-sm font-medium">Configuración en 5 minutos</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-amber-700 text-sm font-semibold">Obligatorio desde enero 2027</span>
                         </div>
                     </div>
                 </div>
@@ -517,6 +555,164 @@
                         <div class="absolute -top-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] opacity-20 animate-pulse blur-xl"></div>
                         <div class="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-yellow)] to-[var(--color-agro-brown)] opacity-20 animate-pulse blur-xl" style="animation-delay: 1s;"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosistema Conectado -->
+    <section id="ecosistema" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 space-y-4">
+                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
+                    Una sola plataforma. Tres roles. Todo conectado.
+                </h2>
+                <p class="text-xl text-zinc-600 max-w-3xl mx-auto">
+                    Agro365 es la única plataforma española que conecta toda la cadena del vino en un ecosistema compartido.
+                    Cada actor ve solo lo que le corresponde. Los datos fluyen solos.
+                    <strong>Sin Excel. Sin papel. Sin duplicidades.</strong>
+                </p>
+            </div>
+
+            <!-- Diagrama visual del ecosistema -->
+            <div class="flex justify-center mb-16">
+                <div class="relative max-w-2xl w-full">
+                    <!-- DO en la cima -->
+                    <div class="flex justify-center mb-6">
+                        <div class="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-6 text-center w-72 shadow-md">
+                            <div class="text-3xl mb-2">🏛️</div>
+                            <div class="font-bold text-amber-900 text-lg">Denominación de Origen</div>
+                            <div class="text-amber-700 text-sm mt-1">Supervisa bodegas y cumplimiento normativo</div>
+                        </div>
+                    </div>
+                    <!-- Línea DO → Bodegas -->
+                    <div class="flex justify-center mb-1">
+                        <div class="w-px h-8 bg-zinc-300"></div>
+                    </div>
+                    <div class="flex justify-center gap-2 mb-1">
+                        <div class="flex-1 max-w-[200px] h-px bg-zinc-300 self-center"></div>
+                        <div class="w-px h-0 self-center"></div>
+                        <div class="flex-1 max-w-[200px] h-px bg-zinc-300 self-center"></div>
+                    </div>
+                    <!-- Bodegas -->
+                    <div class="flex justify-center gap-6 mb-1">
+                        <div class="flex flex-col items-center">
+                            <div class="w-px h-6 bg-zinc-300"></div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-px h-6 bg-zinc-300"></div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center gap-6 mb-6">
+                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-44 shadow-md">
+                            <div class="text-2xl mb-1">🍷</div>
+                            <div class="font-bold text-red-900">Bodega</div>
+                            <div class="text-red-700 text-xs mt-1">Gestión propia</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-44 shadow-md">
+                            <div class="text-2xl mb-1">🍷</div>
+                            <div class="font-bold text-red-900">Bodega</div>
+                            <div class="text-red-700 text-xs mt-1">Gestión propia</div>
+                        </div>
+                    </div>
+                    <!-- Líneas Bodegas → Viticultores -->
+                    <div class="flex justify-center gap-6 mb-1">
+                        <div class="flex gap-3 justify-center w-44">
+                            <div class="w-px h-6 bg-zinc-300"></div>
+                            <div class="w-px h-6 bg-zinc-300"></div>
+                        </div>
+                        <div class="flex gap-3 justify-center w-44">
+                            <div class="w-px h-6 bg-zinc-300"></div>
+                            <div class="w-px h-6 bg-zinc-300"></div>
+                        </div>
+                    </div>
+                    <!-- Viticultores -->
+                    <div class="flex justify-center gap-3 flex-wrap">
+                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
+                            <div class="text-xl mb-1">🌿</div>
+                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
+                            <div class="text-xl mb-1">🌿</div>
+                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
+                            <div class="text-xl mb-1">🌿</div>
+                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-[var(--color-agro-green-bg)] to-green-100 border-2 border-[var(--color-agro-green-light)]/60 rounded-xl p-3 text-center w-28 shadow-sm">
+                            <div class="text-xl mb-1">🌿</div>
+                            <div class="font-semibold text-[var(--color-agro-green-dark)] text-sm">Viticultor</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-3 text-center w-28 shadow-sm">
+                            <div class="text-xl mb-1">🌿</div>
+                            <div class="font-semibold text-blue-700 text-xs">Viticultor independiente</div>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-zinc-400 mt-3">El viticultor independiente no necesita bodega ni DO para empezar</p>
+                </div>
+            </div>
+
+            <!-- Tres cards de rol -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Viticultor -->
+                <div class="glass-card rounded-2xl p-8 border-2 border-[var(--color-agro-green-light)]/30 hover:border-[var(--color-agro-green-light)] hover-lift transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-[var(--color-agro-green-bg)] flex items-center justify-center mb-5 text-3xl">
+                        🌿
+                    </div>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Viticultor</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Tu cuaderno, tus datos, siempre tuyos</p>
+                    <p class="text-zinc-600 text-sm mb-5">
+                        Registra tratamientos, riegos y labores desde el móvil. Trabaja de forma independiente
+                        o comparte tu cuaderno con una o varias bodegas. Aunque cambies de bodega,
+                        <strong>tus datos siguen siendo tuyos</strong>.
+                    </p>
+                    <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
+                        Empezar gratis
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Bodega -->
+                <div class="glass-card rounded-2xl p-8 border-2 border-red-200/50 hover:border-red-300 hover-lift transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center mb-5 text-3xl">
+                        🍷
+                    </div>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Bodega</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Trazabilidad completa desde la cepa</p>
+                    <p class="text-zinc-600 text-sm mb-5">
+                        Conecta con tus viticultores y recibe sus cuadernos en tiempo real. Gestiona vendimia,
+                        producciones y facturación. <strong>Tus viticultores no están obligados a pagar su propio plan</strong>
+                        para que puedas verlos.
+                    </p>
+                    <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center gap-1.5 text-red-600 font-semibold text-sm hover:underline">
+                        Saber más sobre Bodegas
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- DO -->
+                <div class="glass-card rounded-2xl p-8 border-2 border-amber-200/50 hover:border-amber-300 hover-lift transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center mb-5 text-3xl">
+                        🏛️
+                    </div>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Denominación de Origen</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Control total de tu ecosistema</p>
+                    <p class="text-zinc-600 text-sm mb-5">
+                        Registra tus bodegas adscritas y supervisa su actividad y cumplimiento normativo
+                        desde un panel centralizado. <strong>Las bodegas no están obligadas a usar todas las funciones</strong>,
+                        pero la visibilidad es inmediata cuando lo hacen.
+                    </p>
+                    <a href="#precios" class="inline-flex items-center gap-1.5 text-amber-700 font-semibold text-sm hover:underline">
+                        Contactar con Ventas
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
@@ -872,10 +1068,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">
-                    ¿Por qué elegir Agro365 para tu Viñedo?
+                    ¿Por qué elegir Agro365?
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Miles de <strong><a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong> en España confían en nuestro <strong><a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">software agrícola profesional</a></strong> para gestionar sus explotaciones. Cumplimiento normativo, <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno digital</a> SIGPAC y control total de parcelas.
+                    Diseñado para <strong><a href="{{ content_route('content.viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores</a></strong>,
+                    <strong><a href="{{ content_route('content.bodegas') }}" class="text-[var(--color-agro-green)] hover:underline">bodegas</a></strong>
+                    y Denominaciones de Origen en España. Cumplimiento normativo PAC,
+                    <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a>
+                    obligatorio 2027 y trazabilidad completa desde el viñedo hasta la botella.
                 </p>
             </div>
             
@@ -917,165 +1117,252 @@
     </section>
 
     <!-- Pricing Section -->
-    <section class="py-20">
+    <section id="precios" class="py-20 bg-zinc-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 space-y-4">
-                <div class="space-y-3">
-                    <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white shadow-lg">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="text-base font-bold">6 MESES GRATIS para todos los beta testers</span>
-                    </div>
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 border border-amber-300 ml-4">
-                        <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <span class="text-sm font-semibold text-amber-800">+ Primeros 50 usuarios: 25% de descuento de por vida</span>
-                    </div>
+                <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white shadow-lg">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span class="text-sm font-bold">Oferta Beta: primeros 50 viticultores → 6 meses gratis + 25% OFF permanente</span>
                 </div>
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Comienza Gratis Hoy
+                    Empieza gratis. Paga solo cuando crezcas.
                 </h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Empieza con 6 meses completamente gratis. Si eres de los primeros 50, también obtienes 25% OFF permanente.
+                <p class="text-xl text-zinc-600 max-w-2xl mx-auto">
+                    Precio claro para cada rol. Sin sorpresas.
                 </p>
             </div>
-            
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- Monthly Plan -->
-                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)] transition-all duration-300">
-                    <div class="mb-6">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-2">Plan Mensual</h3>
-                        <p class="text-gray-600">Pago mes a mes, cancela cuando quieras</p>
-                    </div>
-                    
-                    <div class="mb-8">
-                        <div class="inline-block px-4 py-2 bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white rounded-lg font-bold text-lg mb-4">
-                            6 MESES GRATIS
-                        </div>
-                        
-                        <div class="flex items-end gap-2 mb-2">
-                            <span class="text-2xl text-gray-500">Después:</span>
-                            <span class="text-5xl font-bold text-[var(--color-agro-green-dark)]">€9</span>
-                            <span class="text-gray-500 mb-2">/mes</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-gray-400 line-through">€12/mes</span>
-                            <span class="px-3 py-1 rounded-full bg-[var(--color-agro-yellow-light)] text-[var(--color-agro-brown)] text-sm font-semibold">
-                                25% OFF
-                            </span>
-                        </div>
-                        <p class="text-sm font-semibold text-[var(--color-agro-green)] mt-2">⚡ Solo para los primeros 50 usuarios</p>
-                        <p class="text-xs text-gray-500 mt-1">Descuento bloqueado de por vida</p>
-                    </div>
-                    
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-700">Parcelas ilimitadas</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-700">Cuaderno de campo digital</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-700">Integración SIGPAC</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-700">Soporte por email</span>
-                        </li>
-                    </ul>
-                    
-                    <a href="{{ route('register') }}" rel="nofollow" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-lg">
-                        Empezar Ahora
-                    </a>
-                </div>
-                
-                <!-- Yearly Plan (Recommended) -->
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+                <!-- Viticultor -->
                 <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-[var(--color-agro-green)] relative overflow-hidden transition-all duration-300 shadow-xl">
-                    <!-- Recommended Badge -->
                     <div class="absolute top-0 right-0">
-                        <div class="bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white px-6 py-2 rounded-bl-2xl font-semibold">
-                            Recomendado
+                        <div class="bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white px-5 py-1.5 rounded-bl-2xl font-semibold text-sm">
+                            Más popular
                         </div>
                     </div>
-                    
-                    <div class="mb-6 pt-8">
-                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-2">Plan Anual</h3>
-                        <p class="text-gray-600">Ahorra €18 al año (2 meses gratis)</p>
+                    <div class="mb-5 pt-6">
+                        <div class="text-3xl mb-2">🌿</div>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Viticultor</h3>
+                        <p class="text-zinc-500 text-sm mt-1">Decisión individual · Sin llamadas</p>
                     </div>
-                    
-                    <div class="mb-8">
-                        <div class="inline-block px-4 py-2 bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white rounded-lg font-bold text-lg mb-4">
+                    <div class="mb-6">
+                        <div class="inline-block px-3 py-1.5 bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white rounded-lg font-bold text-sm mb-3">
                             6 MESES GRATIS
                         </div>
-                        
-                        <div class="flex items-end gap-2 mb-2">
-                            <span class="text-2xl text-gray-500">Después:</span>
-                            <span class="text-5xl font-bold text-[var(--color-agro-green-dark)]">€90</span>
-                            <span class="text-gray-500 mb-2">/año</span>
+                        <div class="flex items-end gap-1.5 mb-1">
+                            <span class="text-zinc-500 text-base">Después:</span>
+                            <span class="text-4xl font-bold text-[var(--color-agro-green-dark)]">€9</span>
+                            <span class="text-zinc-500 mb-1">/mes</span>
                         </div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-gray-400 line-through">€120/año</span>
-                            <span class="px-3 py-1 rounded-full bg-[var(--color-agro-yellow-light)] text-[var(--color-agro-brown)] text-sm font-semibold">
-                                25% OFF
-                            </span>
-                        </div>
-                        <p class="text-sm font-semibold text-[var(--color-agro-green)]">Equivale a €7.50/mes</p>
-                        <p class="text-sm font-semibold text-[var(--color-agro-green)] mt-1">⚡ Solo para los primeros 50 usuarios</p>
-                        <p class="text-xs text-gray-500 mt-1">Descuento bloqueado de por vida</p>
+                        <p class="text-sm text-zinc-500">o <strong>€90/año</strong> (equivale a €7,50/mes)</p>
+                        <p class="text-xs font-semibold text-[var(--color-agro-green)] mt-1">⚡ Primeros 50: 25% OFF permanente → €6,75/mes</p>
                     </div>
-                    
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <ul class="space-y-3 mb-8 text-sm">
+                        @foreach(['Parcelas ilimitadas', 'Cuaderno de campo digital (oblig. 2027)', 'Gestión SIGPAC completa', 'Informes oficiales con firma SHA-256', 'Dashboard cumplimiento PAC', 'Teledetección NDVI satelital', 'App móvil (funciona sin conexión)', 'Conexión a 1 bodega incluida', 'Soporte por email'] as $feature)
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-700 font-semibold">Todo del plan mensual</span>
+                            <span class="text-zinc-700">{{ $feature }}</span>
                         </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-700 font-semibold">Ahorra €12 al año</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-700">Soporte prioritario</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-700">Nuevas funciones primero</span>
-                        </li>
+                        @endforeach
                     </ul>
-                    
-                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                        Empezar Ahora
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg font-semibold">
+                        Comenzar Gratis
                     </a>
+                    <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
+                </div>
+
+                <!-- Bodega -->
+                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-red-200 hover:border-red-400 transition-all duration-300">
+                    <div class="mb-5">
+                        <div class="text-3xl mb-2">🍷</div>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Bodega</h3>
+                        <p class="text-zinc-500 text-sm mt-1">Precio único · Onboarding incluido</p>
+                    </div>
+                    <div class="mb-6">
+                        <div class="inline-block px-3 py-1.5 bg-red-500 text-white rounded-lg font-bold text-sm mb-3">
+                            6 MESES GRATIS
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1">
+                            <span class="text-zinc-500 text-base">Después:</span>
+                            <span class="text-4xl font-bold text-red-700">€9</span>
+                            <span class="text-zinc-500 mb-1">/mes</span>
+                        </div>
+                        <p class="text-sm text-zinc-500">o <strong>€90/año</strong> (equivale a €7,50/mes)</p>
+                        <p class="text-xs text-red-600 font-semibold mt-1">🎁 Onboarding incluido + migración gratuita</p>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm">
+                        @foreach(['Todo del plan Viticultor', 'Panel de viticultores en tiempo real', 'Gestión completa de vendimia', 'Trazabilidad desde cepa hasta botella', 'Facturación agrícola integrada', 'Comparativa rendimientos real vs estimado', 'Soporte prioritario (24h)', 'Onboarding personalizado incluido'] as $feature)
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-zinc-700">{{ $feature }}</span>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-semibold">
+                        Comenzar Gratis
+                    </a>
+                    <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
+                </div>
+
+                <!-- DO -->
+                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-amber-200 hover:border-amber-400 transition-all duration-300">
+                    <div class="mb-5">
+                        <div class="text-3xl mb-2">🏛️</div>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Denominación de Origen</h3>
+                        <p class="text-zinc-500 text-sm mt-1">Solución a medida · Contrato anual</p>
+                    </div>
+                    <div class="mb-6">
+                        <div class="py-4 px-4 bg-amber-50 rounded-xl border border-amber-100">
+                            <div class="text-center py-2">
+                                <div class="text-4xl mb-2">🤝</div>
+                                <p class="text-base font-bold text-amber-800 mb-1">Precio a medida</p>
+                                <p class="text-xs text-zinc-600">Cada DO tiene su dimensión y sus necesidades. Cuéntanos la tuya.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm">
+                        @foreach(['Todo del plan Bodega', 'Alta y gestión de bodegas adscritas', 'Panel de supervisión centralizado', 'Alertas automáticas de incumplimiento', 'Informes consolidados por denominación', 'Firma electrónica SHA-256', 'API para integración con sistemas actuales', 'Account manager dedicado', 'SLA 99,9% uptime garantizado'] as $feature)
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-zinc-700">{{ $feature }}</span>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <a href="mailto:info@agro365.es?subject=Consulta%20Denominaci%C3%B3n%20de%20Origen" class="block w-full text-center px-6 py-4 rounded-xl border-2 border-amber-400 text-amber-800 hover:bg-amber-500 hover:text-white transition-all duration-300 font-semibold">
+                        Contactar
+                    </a>
+                    <p class="text-center text-xs text-zinc-400 mt-3">Propuesta sin compromiso en 24h</p>
                 </div>
             </div>
-            
-            <p class="text-center text-gray-500 mt-8 text-lg">
-                🎁 <span class="font-semibold text-gray-700">6 meses completamente gratis, sin tarjeta requerida.</span> Cancela en cualquier momento.
+
+            <!-- Nota importante sobre viticultores en bodegas -->
+            <div class="mt-10 max-w-3xl mx-auto text-center p-5 bg-[var(--color-agro-green-bg)] rounded-2xl border border-[var(--color-agro-green-light)]/30">
+                <p class="text-zinc-700 text-sm">
+                    <strong>Nota para bodegas:</strong> los viticultores que conectas <strong>no pagan plan propio</strong> para que puedas ver sus datos.
+                    La bodega cubre su acceso. Solo pagan si quieren su cuenta independiente completa.
+                    Esto elimina la fricción de adopción.
+                </p>
+            </div>
+
+            <p class="text-center text-zinc-500 mt-6 text-sm">
+                ¿Tienes dudas? <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green)] hover:underline font-semibold">Escríbenos</a> — respondemos en menos de 24h.
             </p>
         </div>
     </section>
 
+
+    <!-- FAQ Section (Schema markup para rich snippets en Google) -->
+    <section class="py-20 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">
+                    Preguntas frecuentes
+                </h2>
+                <p class="text-zinc-500 mt-3">Las dudas más habituales antes de empezar</p>
+            </div>
+            <div class="space-y-3" itemscope itemtype="https://schema.org/FAQPage">
+                @php
+                $faqs = [
+                    [
+                        '¿El cuaderno de campo digital es realmente obligatorio desde 2027?',
+                        'Sí. El Reglamento de Ejecución (UE) 2022/1441 establece la obligatoriedad del cuaderno de campo digital para todos los agricultores profesionales en España a partir de enero de 2027. Agro365 cumple con todos los requisitos técnicos y legales de esta normativa.',
+                    ],
+                    [
+                        '¿Cuánto cuesta Agro365 para un viticultor?',
+                        '€9/mes o €90/año (equivale a €7,50/mes). Durante la fase Beta, los primeros 50 viticultores obtienen 6 meses completamente gratis y un 25% de descuento permanente (€6,75/mes). No se requiere tarjeta de crédito para empezar.',
+                    ],
+                    [
+                        '¿Puedo ser viticultor independiente y al mismo tiempo pertenecer a una bodega?',
+                        'Sí. En Agro365 puedes gestionar tu cuaderno de campo de forma completamente independiente y compartirlo con una o varias bodegas simultáneamente. Tus datos son siempre tuyos: si te desconectas de una bodega, tu histórico permanece intacto.',
+                    ],
+                    [
+                        '¿Los viticultores de mi bodega tienen que pagar su propio plan?',
+                        'No. Los viticultores que conectas a tu bodega no pagan plan propio para que puedas ver sus datos. La bodega cubre su acceso básico. Solo pagan si quieren su cuenta independiente completa con todas las funciones (€9/mes).',
+                    ],
+                    [
+                        '¿Los informes que genera Agro365 son válidos para inspecciones PAC?',
+                        'Sí. Los informes se generan con firma electrónica SHA-256 y código QR de verificación, cumpliendo con los requisitos de las inspecciones PAC y con la normativa de cuaderno de campo digital 2027.',
+                    ],
+                    [
+                        '¿Funciona sin conexión a internet en el campo?',
+                        'Sí. La app móvil permite registrar actividades sin conexión. Los datos se sincronizan automáticamente cuando recuperas cobertura.',
+                    ],
+                    [
+                        '¿Cuánto tiempo lleva configurar Agro365?',
+                        'Para un viticultor, menos de 5 minutos: creas tu cuenta, importas tus parcelas SIGPAC y empiezas a registrar. Para una bodega o DO, ofrecemos onboarding personalizado incluido en el plan.',
+                    ],
+                    [
+                        '¿Qué pasa con mis datos si cancelo la suscripción?',
+                        'Tus datos son siempre tuyos. Puedes exportarlos en formato estándar en cualquier momento antes o después de cancelar. Nunca retenemos información.',
+                    ],
+                ];
+                @endphp
+
+                @foreach($faqs as $faq)
+                <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question"
+                     class="border border-zinc-200 rounded-xl overflow-hidden group">
+                    <details>
+                        <summary class="flex items-center justify-between px-6 py-4 cursor-pointer bg-white hover:bg-zinc-50 transition-colors font-semibold text-zinc-800 text-sm list-none" itemprop="name">
+                            {{ $faq[0] }}
+                            <svg class="w-5 h-5 text-zinc-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </summary>
+                        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"
+                             class="px-6 py-4 bg-zinc-50 text-sm text-zinc-600 border-t border-zinc-100">
+                            <span itemprop="text">{{ $faq[1] }}</span>
+                        </div>
+                    </details>
+                </div>
+                @endforeach
+            </div>
+            <p class="text-center text-sm text-zinc-400 mt-8">
+                ¿Más dudas? <a href="{{ route('faqs') }}" class="text-[var(--color-agro-green)] hover:underline font-medium">Ver todas las preguntas frecuentes →</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-20 bg-gradient-to-br from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 text-white text-sm font-semibold mb-6">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                </svg>
+                Obligatorio desde enero 2027
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">
+                La normativa no espera.<br>Tu viñedo tampoco.
+            </h2>
+            <p class="text-green-100 text-xl mb-10 max-w-2xl mx-auto">
+                El cuaderno de campo digital es obligatorio desde 2027.
+                Agro365 está listo hoy. Y los primeros 50 tienen 6 meses gratis.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
+                    🌿 Empezar como Viticultor — Gratis
+                </a>
+                <a href="mailto:info@agro365.es?subject=Demo%20Bodega" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
+                    🍷 Solicitar Demo para Bodega
+                </a>
+                <a href="mailto:info@agro365.es?subject=Consulta%20DO" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white/90 hover:bg-white/10 transition-all font-semibold text-lg">
+                    🏛️ Contactar — DO
+                </a>
+            </div>
+            <p class="text-green-200/70 text-sm mt-8">
+                Sin tarjeta requerida · Configuración en 5 minutos · Soporte en español
+            </p>
+        </div>
+    </section>
 
     @include('partials.footer-seo')
 
@@ -1092,11 +1379,6 @@
             "price": "0",
             "priceCurrency": "EUR",
             "description": "6 meses gratis para beta testers"
-        },
-        "aggregateRating": {
-            "@@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "ratingCount": "150"
         },
         "provider": {
             "@@type": "Organization",

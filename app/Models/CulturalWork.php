@@ -10,6 +10,8 @@ class CulturalWork extends Model
     protected $fillable = [
         'activity_id',
         'work_type',
+        'pruning_type',
+        'productive_buds_per_hectare',
         'hours_worked',
         'workers_count',
         'description',
@@ -17,6 +19,7 @@ class CulturalWork extends Model
 
     protected $casts = [
         'hours_worked' => 'decimal:2',
+        'productive_buds_per_hectare' => 'integer',
     ];
 
     /**

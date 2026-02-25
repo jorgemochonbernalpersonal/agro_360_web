@@ -12,7 +12,7 @@
                     wire:click="impersonate"
                     wire:confirm="¿Estás seguro de que quieres entrar como {{ $user->name }}? Podrás volver a tu sesión de admin en cualquier momento."
                     variant="primary"
-                    icon="arrow-right-on-rectangle"
+                    icon="arrow-right-end-on-rectangle"
                 >
                     Entrar como usuario
                 </flux:button>

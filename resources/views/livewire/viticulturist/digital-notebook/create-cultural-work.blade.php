@@ -87,6 +87,26 @@
                         <flux:input wire:model="workers_count" type="number" min="1" id="workers_count" placeholder="0" :error="$errors->first('workers_count')" />
                     </div>
                 </div>
+                @if($work_type === 'poda')
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div>
+                        <flux:label for="pruning_type">Tipo de Poda</flux:label>
+                        <flux:select wire:model="pruning_type" id="pruning_type" :error="$errors->first('pruning_type')">
+                            <option value="">Selecciona un tipo</option>
+                            <option value="guyot">Guyot</option>
+                            <option value="doble_guyot">Doble Guyot</option>
+                            <option value="vaso">Vaso</option>
+                            <option value="cordon">Cordón</option>
+                            <option value="other">Otro</option>
+                        </flux:select>
+                    </div>
+                    <div>
+                        <flux:label for="productive_buds_per_hectare">Yemas Productivas / ha</flux:label>
+                        <flux:input wire:model="productive_buds_per_hectare" type="number" min="0" id="productive_buds_per_hectare" placeholder="Ej: 40000" :error="$errors->first('productive_buds_per_hectare')" />
+                        <p class="text-xs text-zinc-500 mt-1">Yemas productivas resultantes de la poda</p>
+                    </div>
+                </div>
+                @endif
                 <div class="mt-6">
                     <flux:label for="hours_worked">Horas Trabajadas</flux:label>
                     <flux:input wire:model="hours_worked" type="number" step="0.5" min="0" id="hours_worked" placeholder="0.0" :error="$errors->first('hours_worked')" />

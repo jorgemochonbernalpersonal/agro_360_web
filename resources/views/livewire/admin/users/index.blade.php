@@ -159,7 +159,7 @@
                                         <flux:button
                                             variant="ghost"
                                             size="sm"
-                                            icon="arrow-right-on-rectangle"
+                                            icon="arrow-right-end-on-rectangle"
                                             wire:click="impersonate({{ $user->id }})"
                                             wire:confirm="¿Entrar como {{ $user->name }}? Podrás volver a tu sesión de admin en cualquier momento."
                                             tooltip="Entrar como este usuario"

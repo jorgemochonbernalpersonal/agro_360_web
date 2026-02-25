@@ -119,15 +119,12 @@
             wire:loading.class="opacity-60 pointer-events-none"
             wire:target="switchTab, search, status, year, clearFilters"
         >
+            @php
+                $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+            @endphp
             @foreach($plantings as $i => $planting)
-                @php
-                    $varColor = $planting->grapeVariety?->color ?? null;
-                    $iconBg    = 'bg-zinc-100';
-                    $iconColor = 'text-zinc-500';
-                    $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                    $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                    $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
-                @endphp
 
                 <x-agro.card
                     wire:key="planting-{{ $planting->id }}"
@@ -137,8 +134,8 @@
                     <x-slot:header>
                         <div class="flex items-center gap-3">
                             {{-- Icono variedad --}}
-                            <div class="w-9 h-9 {{ $iconBg }} rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="scissors" class="size-4 {{ $iconColor }}" />
+                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
+                                <flux:icon icon="scissors" class="size-4 text-zinc-500" />
                             </div>
 
                             {{-- Nombre + parcela --}}
@@ -226,6 +223,16 @@
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
                                 @endcan
+                                <a href="{{ route('viticulturist.phenology.index', ['filter_planting_id' => $planting->id]) }}"
+                                   class="{{ $btnBase }}"
+                                   title="Ver fenología">
+                                    <flux:icon icon="sun" class="size-4" />
+                                </a>
+                                <a href="{{ route('viticulturist.phenology.create', ['planting_id' => $planting->id]) }}"
+                                   class="{{ $btnBase }}"
+                                   title="Registrar estadio fenológico">
+                                    <flux:icon icon="plus-circle" class="size-4" />
+                                </a>
                             </div>
 
                             {{-- Right: toggle activo --}}

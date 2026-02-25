@@ -4,15 +4,13 @@ namespace App\Livewire\Plots;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AutonomousCommunity;
-use App\Models\MultipartPlotSigpac;
 use App\Models\Municipality;
 use App\Models\Plot;
-use App\Models\PlotGeometry;
 use App\Models\Province;
 use App\Models\SigpacCode;
+use App\Services\SigpacGeometryService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -82,7 +80,6 @@ class Index extends Component
                 'description',
                 'area',
                 'active',
-                // `winery_id` eliminado: la propiedad se deduce por viticultor
                 'viticulturist_id',
                 'autonomous_community_id',
                 'province_id',
@@ -91,7 +88,6 @@ class Index extends Component
                 'updated_at',
             ])
             ->with([
-                // 'winery:id,name', // relación ya no tiene columna física en plots
                 'viticulturist:id,name',
                 'autonomousCommunity:id,name',
                 'province:id,name',
@@ -299,11 +295,9 @@ class Index extends Component
             return;
         }
 
-        // Si sigpacCodeId es null, generar mapas para todos los códigos SIGPAC de la parcela
         if ($sigpacCodeId === null) {
             $sigpacCodes = $plot->sigpacCodes;
         } else {
-            $sigpacCode = SigpacCode::findOrFail($sigpacCodeId);
             $sigpacCodes = $plot->sigpacCodes->where('id', $sigpacCodeId);
         }
 
@@ -312,6 +306,7 @@ class Index extends Component
             return;
         }
 
+        $service = app(SigpacGeometryService::class);
         $successCount = 0;
         $errorCount = 0;
         $errors = [];
@@ -321,7 +316,7 @@ class Index extends Component
 
             foreach ($sigpacCodes as $sigpacCode) {
                 try {
-                    $wkt = $this->fetchCoordinatesFromSigpacApi($sigpacCode);
+                    $wkt = $service->fetchWkt($sigpacCode);
 
                     if (!$wkt) {
                         $errorCount++;
@@ -335,31 +330,7 @@ class Index extends Component
                         continue;
                     }
 
-                    // Insertar geometría directamente con ST_GeomFromText
-                    DB::statement(
-                        'INSERT INTO plot_geometry (coordinates, centroid, created_at, updated_at) 
-                         VALUES (ST_GeomFromText(?, 4326), ST_Centroid(ST_GeomFromText(?, 4326)), ?, ?)',
-                        [$wkt, $wkt, now(), now()]
-                    );
-                    
-                    $geometryId = DB::getPdo()->lastInsertId();
-
-                    $mps = MultipartPlotSigpac::where('plot_id', $plotId)
-                        ->where('sigpac_code_id', $sigpacCode->id)
-                        ->first();
-
-                    if ($mps) {
-                        $mps->plot_geometry_id = $geometryId;
-                        $mps->updated_at = now();
-                        $mps->save();
-                    } else {
-                        MultipartPlotSigpac::create([
-                            'plot_id' => $plotId,
-                            'sigpac_code_id' => $sigpacCode->id,
-                            'plot_geometry_id' => $geometryId,
-                        ]);
-                    }
-
+                    $service->upsertGeometry($plotId, $sigpacCode, $wkt);
                     $successCount++;
                 } catch (\Exception $e) {
                     $errorCount++;
@@ -379,7 +350,6 @@ class Index extends Component
                     ? 'Mapa generado correctamente para 1 código SIGPAC.'
                     : "Mapas generados correctamente para {$successCount} códigos SIGPAC.";
                 $this->toastSuccess($message);
-                // Forzar recarga de la vista
                 $this->dispatch('$refresh');
             }
 
@@ -398,50 +368,6 @@ class Index extends Component
         }
     }
 
-    private function fetchCoordinatesFromSigpacApi(SigpacCode $sigpacCode): ?string
-    {
-        try {
-            $url = sprintf(
-                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
-                $sigpacCode->code_province,
-                $sigpacCode->code_municipality,
-                $sigpacCode->code_aggregate ?? '0',
-                $sigpacCode->code_zone,
-                $sigpacCode->code_polygon,
-                $sigpacCode->code_plot,
-                $sigpacCode->code_enclosure
-            );
-
-            $httpClient = Http::timeout(10);
-            if (app()->environment('local')) {
-                $httpClient = $httpClient->withoutVerifying();
-            }
-
-            $response = $httpClient->get($url);
-
-            if ($response->status() !== 200) {
-                return null;
-            }
-
-            $data = $response->json();
-
-            if (!is_array($data) || empty($data) || !isset($data[0]['wkt'])) {
-                return null;
-            }
-
-            return $data[0]['wkt'];
-        } catch (\Exception $e) {
-            Log::warning('Error fetching SIGPAC coordinates', [
-                'sigpac_code_id' => $sigpacCode->id,
-                'error' => $e->getMessage(),
-            ]);
-            return null;
-        }
-    }
-
-    /**
-     * Generar todos los mapas para el municipio seleccionado
-     */
     public function generateAllMapsForMunicipality()
     {
         if (!$this->filterMunicipality) {
@@ -450,15 +376,15 @@ class Index extends Component
         }
 
         $user = Auth::user();
+        $service = app(SigpacGeometryService::class);
 
-        // ✅ OPTIMIZACIÓN: Obtener parcelas sin geometría usando subconsulta en lugar de filter
         $plotsWithoutGeometry = Plot::forUser($user)
             ->where('municipality_id', $this->filterMunicipality)
             ->whereHas('sigpacCodes')
             ->whereDoesntHave('multiplePlotSigpacs', function($q) {
                 $q->whereNotNull('plot_geometry_id');
             })
-            ->with(['sigpacCodes']) // ✅ Eager loading para evitar N+1
+            ->with(['sigpacCodes'])
             ->get();
 
         if ($plotsWithoutGeometry->isEmpty()) {
@@ -481,7 +407,7 @@ class Index extends Component
 
                 foreach ($sigpacCodes as $sigpacCode) {
                     try {
-                        $wkt = $this->fetchCoordinatesFromSigpacApi($sigpacCode);
+                        $wkt = $service->fetchWkt($sigpacCode);
 
                         if (!$wkt) {
                             $errorCount++;
@@ -493,35 +419,7 @@ class Index extends Component
                             continue;
                         }
 
-                        $geometryId = DB::table('plot_geometry')->insertGetId([
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-
-                        DB::statement(
-                            'UPDATE plot_geometry SET 
-                                coordinates = ST_GeomFromText(?, 4326),
-                                centroid = ST_Centroid(ST_GeomFromText(?, 4326))
-                            WHERE id = ?',
-                            [$wkt, $wkt, $geometryId]
-                        );
-
-                        $mps = MultipartPlotSigpac::where('plot_id', $plot->id)
-                            ->where('sigpac_code_id', $sigpacCode->id)
-                            ->first();
-
-                        if ($mps) {
-                            $mps->plot_geometry_id = $geometryId;
-                            $mps->updated_at = now();
-                            $mps->save();
-                        } else {
-                            MultipartPlotSigpac::create([
-                                'plot_id' => $plot->id,
-                                'sigpac_code_id' => $sigpacCode->id,
-                                'plot_geometry_id' => $geometryId,
-                            ]);
-                        }
-
+                        $service->upsertGeometry($plot->id, $sigpacCode, $wkt);
                         $successCount++;
                     } catch (\Exception $e) {
                         $errorCount++;

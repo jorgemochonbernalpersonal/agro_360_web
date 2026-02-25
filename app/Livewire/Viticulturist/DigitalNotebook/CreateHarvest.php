@@ -55,6 +55,14 @@ class CreateHarvest extends Component
     public $vehicle_plate = '';
     public $buyer_name = '';
     
+    // Estado sanitario detallado (opcional)
+    public $harvest_ticket_number = '';
+    public $sanitary_state_grapes = '';
+    public $sanitary_state_agraces = '';
+    public $sanitary_state_botrytis = '';
+    public $sanitary_state_oidium = '';
+    public $sanitary_state_mildew = '';
+
     // Económico (opcional)
     public $price_per_kg = '';
     public $total_value = '';
@@ -354,6 +362,14 @@ class CreateHarvest extends Component
             'color_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'aroma_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'health_status' => 'nullable|in:sano,daño_leve,daño_moderado,daño_grave',
+
+            // Estado sanitario detallado
+            'harvest_ticket_number'   => 'nullable|string|max:50',
+            'sanitary_state_grapes'   => 'nullable|numeric|min:0|max:100',
+            'sanitary_state_agraces'  => 'nullable|numeric|min:0|max:100',
+            'sanitary_state_botrytis' => 'nullable|numeric|min:0|max:100',
+            'sanitary_state_oidium'   => 'nullable|numeric|min:0|max:100',
+            'sanitary_state_mildew'   => 'nullable|numeric|min:0|max:100',
             
             'destination_type' => 'required|in:winery,direct_sale,cooperative,self_consumption,other',
             'destination' => 'nullable|string|max:255',
@@ -484,6 +500,12 @@ class CreateHarvest extends Component
                     'color_rating' => $this->color_rating ?: null,
                     'aroma_rating' => $this->aroma_rating ?: null,
                     'health_status' => $this->health_status ?: null,
+                    'harvest_ticket_number'   => $this->harvest_ticket_number ?: null,
+                    'sanitary_state_grapes'   => $this->sanitary_state_grapes ?: null,
+                    'sanitary_state_agraces'  => $this->sanitary_state_agraces ?: null,
+                    'sanitary_state_botrytis' => $this->sanitary_state_botrytis ?: null,
+                    'sanitary_state_oidium'   => $this->sanitary_state_oidium ?: null,
+                    'sanitary_state_mildew'   => $this->sanitary_state_mildew ?: null,
                     'destination_type' => $this->destination_type ?: null,
                     'destination' => $this->destination,
                     'transport_document_number' => $this->transport_document_number,

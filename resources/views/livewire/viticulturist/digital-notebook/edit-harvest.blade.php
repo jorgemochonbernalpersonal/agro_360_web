@@ -426,6 +426,46 @@
             </div>
         </x-agro.form-section>
 
+        {{-- Estado Sanitario Detallado --}}
+        <x-agro.form-section title="Estado Sanitario Detallado (Opcional)" color="rose">
+            <flux:callout variant="info" icon="information-circle">
+                Porcentaje de uvas afectadas por cada patología. Obligatorio para trazabilidad PAC avanzada.
+            </flux:callout>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                <flux:field>
+                    <flux:label>Nº Ticket Vendimia</flux:label>
+                    <flux:input wire:model="harvest_ticket_number" type="text" placeholder="Ej: TK-2026-001" />
+                    <flux:description>Albarán o ticket de pesada en bodega</flux:description>
+                    <flux:error name="harvest_ticket_number" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>% Uvas sanas</flux:label>
+                    <flux:input wire:model="sanitary_state_grapes" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:error name="sanitary_state_grapes" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>% Agraces</flux:label>
+                    <flux:input wire:model="sanitary_state_agraces" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:error name="sanitary_state_agraces" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>% Botrytis</flux:label>
+                    <flux:input wire:model="sanitary_state_botrytis" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:error name="sanitary_state_botrytis" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>% Oídio</flux:label>
+                    <flux:input wire:model="sanitary_state_oidium" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:error name="sanitary_state_oidium" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>% Mildiu</flux:label>
+                    <flux:input wire:model="sanitary_state_mildew" type="number" step="0.01" min="0" max="100" placeholder="0–100" />
+                    <flux:error name="sanitary_state_mildew" />
+                </flux:field>
+            </div>
+        </x-agro.form-section>
+
         <x-agro.form-section title="Destino y Valor Económico" color="green">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <flux:field>

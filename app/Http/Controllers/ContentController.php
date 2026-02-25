@@ -22,6 +22,9 @@ class ContentController extends Controller
         'app-agricultura' => 'content.app-agricultura',
         'cuaderno-digital-viticultores' => 'content.cuaderno-digital-viticultores',
 
+        // Pricing page
+        'precios' => 'content.precios',
+
         // Páginas comerciales (alta prioridad SEO)
         'software-gestion-agricola' => 'content.software-gestion-agricola',
         'software-viticultura' => 'content.software-viticultura',

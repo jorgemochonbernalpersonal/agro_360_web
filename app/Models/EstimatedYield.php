@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\PlotPlanting;
 
 class EstimatedYield extends Model
 {
@@ -21,6 +22,18 @@ class EstimatedYield extends Model
         'actual_total_yield',
         'variance_percentage',
         'notes',
+        // Muestreo de campo
+        'thumbs_per_vine',
+        'bunches_per_plant',
+        'bunch_weight_grams',
+        'total_plants_sampled',
+        'sampling_area_pct',
+        'health_percentage',
+        'potential_alcohol',
+        'vintage',
+        'auto_calculated_yield',
+        // Multi-ronda
+        'estimation_round',
     ];
 
     protected $casts = [
@@ -31,6 +44,15 @@ class EstimatedYield extends Model
         'actual_yield_per_hectare' => 'decimal:3',
         'actual_total_yield' => 'decimal:3',
         'variance_percentage' => 'decimal:2',
+        'thumbs_per_vine' => 'integer',
+        'bunches_per_plant' => 'decimal:2',
+        'bunch_weight_grams' => 'decimal:2',
+        'total_plants_sampled' => 'integer',
+        'sampling_area_pct' => 'decimal:2',
+        'health_percentage' => 'decimal:2',
+        'potential_alcohol' => 'decimal:2',
+        'auto_calculated_yield' => 'decimal:2',
+        'estimation_round' => 'integer',
     ];
 
     /**
@@ -58,11 +80,36 @@ class EstimatedYield extends Model
     }
 
     /**
-     * Calcular diferencia porcentual automáticamente
+     * Etiquetas de ronda de estimación
+     */
+    public const ROUNDS = [
+        1 => 'Pre-envero',
+        2 => 'Envero',
+        3 => 'Pre-vendimia',
+        4 => 'Revisión final',
+    ];
+
+    /**
+     * Calcular diferencia porcentual y rendimiento automático desde muestreo
      */
     protected static function booted()
     {
         static::saving(function ($yield) {
+            // Auto-calcular desde datos de muestreo
+            if ($yield->bunches_per_plant && $yield->bunch_weight_grams) {
+                $planting = $yield->plotPlanting ?? PlotPlanting::find($yield->plot_planting_id);
+                if ($planting && $planting->vine_count > 0) {
+                    $factor = $yield->health_percentage ? ($yield->health_percentage / 100) : 1;
+                    $yield->auto_calculated_yield = round(
+                        ($yield->bunches_per_plant * $yield->bunch_weight_grams / 1000)
+                        * $planting->vine_count
+                        * $factor,
+                        2
+                    );
+                }
+            }
+
+            // Calcular varianza estimado vs real
             if ($yield->estimated_total_yield && $yield->actual_total_yield) {
                 if ($yield->estimated_total_yield > 0) {
                     $variance = (($yield->actual_total_yield - $yield->estimated_total_yield) / $yield->estimated_total_yield) * 100;
@@ -70,6 +117,14 @@ class EstimatedYield extends Model
                 }
             }
         });
+    }
+
+    /**
+     * Nombre de la ronda actual
+     */
+    public function getRoundLabelAttribute(): string
+    {
+        return self::ROUNDS[$this->estimation_round] ?? "Ronda {$this->estimation_round}";
     }
 
     /**

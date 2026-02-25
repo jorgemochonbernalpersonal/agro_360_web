@@ -4,7 +4,7 @@
     $user = auth()->user();
 
     $activeSections = [];
-    foreach(['operations', 'plots_analysis', 'resources', 'billing', 'clients', 'system'] as $section) {
+    foreach(['operations', 'plots_analysis', 'compliance', 'resources', 'billing', 'clients', 'system'] as $section) {
         if (isset($menu[$section])) {
             foreach ($menu[$section] as $item) {
                 if ($item['active'] ?? false) { $activeSections[] = $section; break; }
@@ -15,6 +15,7 @@
     $sections = [
         'operations'    => 'Operaciones',
         'plots_analysis'=> 'Parcelas y Análisis',
+        'compliance'    => 'Registro Oficial',
         'resources'     => 'Recursos',
         'billing'       => 'Facturación',
         'clients'       => 'Clientes',

@@ -10,6 +10,7 @@ use App\Models\Municipality;
 use App\Models\Plot;
 use App\Models\Province;
 use App\Models\SigpacUse;
+use App\Models\ViticulturistSetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -31,6 +32,14 @@ class Create extends Component
     public $sigpac_use = [];
     public $ndvi_alert_threshold = 0.30;
     public $alert_email_enabled = false;
+    public $tenure_regime = 'propiedad';
+    public $site_name = '';
+    public $valley = '';
+    public $code_parcel = '';
+    public $soil_type = '';
+    public $orientation = '';
+    public $maximum_yield_kg_ha = '';
+    public $degree_day_base = '';
 
     public function mount()
     {
@@ -38,16 +47,21 @@ class Create extends Component
             abort(403);
         }
 
-        // (winery_id removed) no auto-assign here
-
         // Auto-asignar viticultor si es viticulturist
         // Si es viticultor y no puede seleccionar otros viticultores, se auto-asigna
         if (Auth::user()->isViticulturist()) {
             if (!$this->canSelectViticulturist()) {
-                // Si NO puede seleccionar viticultores (no tiene viticultores creados), se auto-asigna
                 $this->viticulturist_id = Auth::id();
             }
-            // Si puede seleccionar, el campo queda vacío para que elija (pero es requerido)
+
+            // Pre-rellenar parámetros agronómicos desde configuración del viticultor
+            $settings = ViticulturistSetting::forUser(Auth::id());
+            if ($settings?->default_limit_kg_per_ha) {
+                $this->maximum_yield_kg_ha = $settings->default_limit_kg_per_ha;
+            }
+            if ($settings?->degree_day_base) {
+                $this->degree_day_base = $settings->degree_day_base;
+            }
         }
     }
 
@@ -60,9 +74,15 @@ class Create extends Component
             'active' => 'boolean',
             'ndvi_alert_threshold' => 'required|numeric|min:0|max:1',
             'alert_email_enabled' => 'boolean',
+            'tenure_regime' => 'required|string|in:propiedad,arrendamiento,aparceria,cesion_uso,otros',
+            'site_name' => 'nullable|string|max:255',
+            'valley' => 'nullable|string|max:255',
+            'code_parcel' => 'nullable|string|max:50',
+            'soil_type' => 'nullable|string|in:arenoso,arcilloso,limoso,franco,franco-arenoso,franco-arcilloso,franco-limoso,pedregoso',
+            'orientation' => 'nullable|string|in:N,NE,E,SE,S,SO,O,NO',
+            'maximum_yield_kg_ha' => 'nullable|numeric|min:0',
+            'degree_day_base' => 'nullable|numeric|min:0|max:30',
         ];
-
-        // Validar solo si el campo es visible (winery_id removed)
 
         // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
         if (in_array(Auth::user()->role, ['admin', 'supervisor', 'winery', 'viticulturist'])) {
@@ -110,9 +130,15 @@ class Create extends Component
                 'active' => $this->active,
                 'ndvi_alert_threshold' => $this->ndvi_alert_threshold,
                 'alert_email_enabled' => $this->alert_email_enabled,
+                'tenure_regime' => $this->tenure_regime,
+                'site_name' => $this->site_name ?: null,
+                'valley' => $this->valley ?: null,
+                'code_parcel' => $this->code_parcel ?: null,
+                'soil_type' => $this->soil_type ?: null,
+                'orientation' => $this->orientation ?: null,
+                'maximum_yield_kg_ha' => $this->maximum_yield_kg_ha ?: null,
+                'degree_day_base' => $this->degree_day_base ?: null,
             ];
-
-            // No asignar `winery_id` — columna eliminada, la pista de pertenencia es `viticulturist_id`.
 
             if ($this->canSelectViticulturist() && $this->viticulturist_id) {
                 $user = Auth::user();
@@ -169,9 +195,7 @@ class Create extends Component
                 'exception' => $e
             ]);
 
-            // Mostrar el mensaje de error real en la UI temporalmente para depuración
-            // Nota: esto debe revertirse en producción una vez esté resuelto.
-            $this->addError('general', $e->getMessage());
+            $this->toastError('Error inesperado al crear la parcela. Por favor, inténtalo de nuevo.');
 
             return;
         }
@@ -187,7 +211,7 @@ class Create extends Component
                 ->get(),
 
             // ✅ OPTIMIZACIÓN: Solo campos necesarios para selects
-            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
+            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name', 'code'])
                 ->orderBy('name')
                 ->get(),
             'provinces' => $this->autonomous_community_id

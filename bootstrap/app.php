@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Defensa contra bots
         $middleware->append(\App\Http\Middleware\BotDefense::class);
         
+        $middleware->validateCsrfTokens(except: [
+            '/logout',
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'require.password.change' => \App\Http\Middleware\RequirePasswordChange::class,

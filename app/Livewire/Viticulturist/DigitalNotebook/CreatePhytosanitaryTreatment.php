@@ -48,6 +48,18 @@ class CreatePhytosanitaryTreatment extends Component
     public $applicator_ropo_number = '';
     public $reentry_period_days = '';
     public $spray_volume = '';
+    public $water_volume_liters_ha = '';
+
+    // Asesoramiento técnico
+    public $under_advisory = false;
+    public $advisory_action_date = '';
+
+    // Flags IPM — Gestión Integrada de Plagas
+    public $prior_non_chemical_methods = false;
+    public $plague_monitoring = false;
+    public $manual_mechanical_control = false;
+    public $biological_control = false;
+    public $cultural_preventions = false;
 
     public function mount()
     {
@@ -115,7 +127,7 @@ class CreatePhytosanitaryTreatment extends Component
             'application_method' => 'nullable|string|max:50',
             'pest_id' => 'nullable|exists:pests,id',
             'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'crew_member_id' => 'nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
@@ -123,10 +135,19 @@ class CreatePhytosanitaryTreatment extends Component
             'humidity' => 'nullable|numeric|min:0|max:100',
             'notes' => 'nullable|string',
             // Campos PAC obligatorios (RD 1311/2012)
-            'treatment_justification' => 'required|string|min:10|max:500',
-            'applicator_ropo_number' => 'required|string|max:50',
-            'reentry_period_days' => 'required|integer|min:0|max:365',
-            'spray_volume' => 'required|numeric|min:0.01|max:10000',
+            'treatment_justification'    => 'required|string|min:10|max:500',
+            'applicator_ropo_number'     => 'required|string|max:50',
+            'reentry_period_days'        => 'required|integer|min:0|max:365',
+            'spray_volume'               => 'required|numeric|min:0.01|max:10000',
+            'water_volume_liters_ha'     => 'nullable|numeric|min:0|max:10000',
+            // Asesoramiento e IPM
+            'under_advisory'             => 'boolean',
+            'advisory_action_date'       => 'nullable|date|required_if:under_advisory,true',
+            'prior_non_chemical_methods' => 'boolean',
+            'plague_monitoring'          => 'boolean',
+            'manual_mechanical_control'  => 'boolean',
+            'biological_control'         => 'boolean',
+            'cultural_preventions'       => 'boolean',
         ];
     }
 
@@ -230,10 +251,19 @@ class CreatePhytosanitaryTreatment extends Component
                     'wind_speed' => $this->wind_speed ?: null,
                     'humidity' => $this->humidity ?: null,
                     // Campos PAC obligatorios
-                    'treatment_justification' => $this->treatment_justification,
-                    'applicator_ropo_number' => $this->applicator_ropo_number ?: null,
-                    'reentry_period_days' => $this->reentry_period_days,
-                    'spray_volume' => $this->spray_volume,
+                    'treatment_justification'    => $this->treatment_justification,
+                    'applicator_ropo_number'     => $this->applicator_ropo_number ?: null,
+                    'reentry_period_days'        => $this->reentry_period_days,
+                    'spray_volume'               => $this->spray_volume,
+                    'water_volume_liters_ha'     => $this->water_volume_liters_ha ?: null,
+                    // Asesoramiento e IPM
+                    'under_advisory'             => (bool) $this->under_advisory,
+                    'advisory_action_date'       => $this->advisory_action_date ?: null,
+                    'prior_non_chemical_methods' => (bool) $this->prior_non_chemical_methods,
+                    'plague_monitoring'          => (bool) $this->plague_monitoring,
+                    'manual_mechanical_control'  => (bool) $this->manual_mechanical_control,
+                    'biological_control'         => (bool) $this->biological_control,
+                    'cultural_preventions'       => (bool) $this->cultural_preventions,
                 ]);
             });
 

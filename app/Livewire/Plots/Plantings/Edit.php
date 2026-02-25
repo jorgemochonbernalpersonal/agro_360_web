@@ -101,6 +101,11 @@ class Edit extends Component
     {
         $this->validate();
 
+        if (empty($this->vine_count) && empty($this->density)) {
+            $this->addError('vine_count', 'Debe indicar el número de cepas o la densidad de plantación.');
+            return;
+        }
+
         $this->planting->update([
             'name' => $this->name ?: null,
             'grape_variety_id' => $this->grape_variety_id ?: null,
@@ -138,5 +143,3 @@ class Edit extends Component
         ])->layout('layouts.app');
     }
 }
-
-

@@ -15,7 +15,7 @@
                     </span>
                 </div>
                 <p class="text-white/70 mb-4 text-sm">
-                    Software de gestión agrícola profesional para viticultores en España.
+                    Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España.
                 </p>
                 <div class="flex items-center gap-2 text-white/60 text-sm mb-2">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -60,10 +60,10 @@
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ content_route('content.viticultores') }}" class="hover:text-white transition-colors">Viticultores</a></li>
                     <li><a href="{{ content_route('content.bodegas') }}" class="hover:text-white transition-colors">Bodegas</a></li>
+                    <li><a href="#ecosistema" class="hover:text-white transition-colors">Denominaciones de Origen</a></li>
                     <li><a href="{{ content_route('content.cooperativas') }}" class="hover:text-white transition-colors">Cooperativas</a></li>
                     <li><a href="{{ content_route('content.ingenieros-agronomos') }}" class="hover:text-white transition-colors">Ingenieros Agrónomos</a></li>
                     <li><a href="{{ content_route('content.app-agricultura') }}" class="hover:text-white transition-colors">Apps para el Campo</a></li>
-                    <li><a href="{{ content_route('content.software-gestion-agricola') }}" class="hover:text-white transition-colors">Gestión Agrícola</a></li>
                 </ul>
             </div>
             
@@ -95,6 +95,7 @@
                 
                 <h4 class="font-semibold text-lg mb-4 mt-6">Recursos</h4>
                 <ul class="space-y-2 text-white/70 text-sm mb-6">
+                    <li><a href="{{ url('/precios') }}" class="hover:text-white transition-colors">Precios</a></li>
                     <li><a href="{{ route('faqs') }}" class="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
                     <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog Agro365</a></li>
                     <li><a href="{{ content_route('content.normativa-pac') }}" class="hover:text-white transition-colors">Normativa PAC</a></li>
@@ -122,14 +123,14 @@
                     @endif
                 </p>
                 <p class="text-white/50">
-                    Software gestión agrícola para viticultores profesionales · Versión Beta
+                    Software para viticultores, bodegas y Denominaciones de Origen · Versión Beta
                 </p>
             </div>
             
             <!-- SEO Keywords Footer -->
             <div class="mt-6 pt-6 border-t border-white/10">
                 <p class="text-white/40 text-xs text-center leading-relaxed">
-                    <strong class="text-white/50">Agro365</strong> - Software de gestión agrícola profesional · Cuaderno de campo digital obligatorio 2027 · Gestión de parcelas SIGPAC · Informes oficiales con firma electrónica · Dashboard de cumplimiento PAC · Control de vendimia y cosechas · Facturación integrada · Gestión de productos fitosanitarios · Trazabilidad completa · Software para viticultores en España · Cumplimiento normativo PAC · Digitalización agrícola
+                    <strong class="text-white/50">Agro365</strong> — Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España · Cuaderno de campo digital obligatorio 2027 · Gestión de parcelas SIGPAC · Informes oficiales con firma electrónica · Dashboard de cumplimiento PAC · Trazabilidad vitivinícola completa · Gestión de vendimia y cosechas · Facturación agrícola integrada · Supervisión normativa para Denominaciones de Origen · Digitalización agrícola
                 </p>
             </div>
         </div>
@@ -144,7 +145,7 @@
     "name": "Agro365",
     "url": "{{ url('/') }}",
     "logo": "{{ asset('images/logo.png') }}",
-    "description": "Plataforma de gestión agrícola profesional para viticultores y bodegas",
+    "description": "Plataforma de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España. Cuaderno de campo digital obligatorio 2027.",
     "foundingDate": "2024",
     "contactPoint": {
         "@@type": "ContactPoint",

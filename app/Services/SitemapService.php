@@ -46,6 +46,14 @@ class SitemapService
                 'changefreq' => 'monthly',
                 'priority' => '0.9',
             ],
+
+            // Página de precios
+            [
+                'loc' => $this->getAbsoluteUrl('precios'),
+                'lastmod' => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority' => '0.9',
+            ],
             
             // Páginas comerciales clave (alta prioridad SEO - según análisis profesional)
             [

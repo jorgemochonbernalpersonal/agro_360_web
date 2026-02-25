@@ -12,6 +12,14 @@
         </x-slot:actions>
     </x-agro.page-header>
 
+    @if($isViticulturist)
+        <x-agro.tabs
+            :tabs="['info' => 'Información', 'entorno' => 'Entorno (RD 1311/2012)']"
+            :active="$currentTab"
+        />
+    @endif
+
+    @if($currentTab === 'info')
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Informacion Principal -->
         <div class="lg:col-span-2 space-y-6">
@@ -45,6 +53,36 @@
                             <x-agro.status-badge :active="$plot->active" />
                         </div>
                     </div>
+
+                    @if($plot->tenure_regime)
+                        @php
+                            $tenureLabels = [
+                                'propiedad'    => 'Propiedad',
+                                'arrendamiento'=> 'Arrendamiento',
+                                'aparceria'    => 'Aparcería',
+                                'cesion_uso'   => 'Cesión de uso',
+                                'otros'        => 'Otros',
+                            ];
+                        @endphp
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Régimen de Tenencia</label>
+                            <p class="text-zinc-900">{{ $tenureLabels[$plot->tenure_regime] ?? $plot->tenure_regime }}</p>
+                        </div>
+                    @endif
+
+                    @if($plot->soil_type)
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Tipo de Suelo</label>
+                            <p class="text-zinc-900 capitalize">{{ str_replace('-', ' ', $plot->soil_type) }}</p>
+                        </div>
+                    @endif
+
+                    @if($plot->orientation)
+                        <div>
+                            <label class="text-sm font-semibold text-zinc-500">Orientación</label>
+                            <p class="text-zinc-900">{{ $plot->orientation }}</p>
+                        </div>
+                    @endif
 
                     @if($plot->description)
                         <div class="md:col-span-2">
@@ -389,6 +427,165 @@
             </x-agro.card>
         </div>
     </div>
+    @elseif($currentTab === 'entorno')
+
+    {{-- TAB: ENTORNO RD 1311/2012 --}}
+    @if(!$activeCampaign)
+        <flux:callout variant="warning" icon="exclamation-triangle">
+            <flux:callout.heading>Sin campaña activa</flux:callout.heading>
+            <flux:callout.text>Necesitas tener una campaña activa para registrar el entorno de la parcela.</flux:callout.text>
+        </flux:callout>
+    @else
+        <div class="max-w-3xl space-y-6">
+
+            {{-- Cabecera campaña --}}
+            <div class="flex items-center gap-2">
+                <flux:badge color="green" icon="calendar">
+                    Campaña {{ $activeCampaign->year }} — {{ $activeCampaign->name }}
+                </flux:badge>
+                @if($env_id)
+                    <flux:badge color="blue" icon="check-circle" size="sm">Datos guardados</flux:badge>
+                @endif
+            </div>
+
+            {{-- Captaciones de Agua --}}
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-blue-50">
+                            <flux:icon icon="beaker" class="size-4 text-blue-600" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">Captaciones de Agua</span>
+                    </div>
+                </x-slot:header>
+
+                <div class="space-y-4">
+                    <flux:field>
+                        <flux:label>¿Existe una captación de agua cercana?</flux:label>
+                        <div class="flex items-center gap-3 mt-1">
+                            <flux:switch wire:model.live="env_water_intake_nearby" />
+                            <span class="text-sm text-zinc-600">
+                                {{ $env_water_intake_nearby ? 'Sí, existe captación de agua cercana' : 'No' }}
+                            </span>
+                        </div>
+                    </flux:field>
+
+                    @if($env_water_intake_nearby)
+                        <flux:field>
+                            <flux:label>Distancia a la captación (metros)</flux:label>
+                            <flux:input wire:model="env_water_intake_distance_m" type="number" min="0" step="0.01" placeholder="Ej: 50" />
+                            <flux:error name="env_water_intake_distance_m" />
+                        </flux:field>
+                    @endif
+                </div>
+            </x-agro.card>
+
+            {{-- Zonas Protegidas --}}
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-yellow-50">
+                            <flux:icon icon="shield-exclamation" class="size-4 text-yellow-600" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">Zonas Protegidas</span>
+                    </div>
+                </x-slot:header>
+
+                <div class="space-y-4">
+                    <flux:field>
+                        <flux:label>Zona protegida total (ZEP, LIC, ZEC, ZEPA…)</flux:label>
+                        <div class="flex items-center gap-3 mt-1">
+                            <flux:switch wire:model.live="env_protected_zone_total" />
+                            <span class="text-sm text-zinc-600">
+                                {{ $env_protected_zone_total ? 'Sí, zona protegida total' : 'No' }}
+                            </span>
+                        </div>
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Zona protegida parcial / tampón</flux:label>
+                        <div class="flex items-center gap-3 mt-1">
+                            <flux:switch wire:model.live="env_protected_zone_partial" />
+                            <span class="text-sm text-zinc-600">
+                                {{ $env_protected_zone_partial ? 'Sí, zona protegida parcial' : 'No' }}
+                            </span>
+                        </div>
+                    </flux:field>
+
+                    @if($env_protected_zone_total || $env_protected_zone_partial)
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <flux:field>
+                                <flux:label>Tipo de zona de protección</flux:label>
+                                <flux:input wire:model="env_protection_zone_type" placeholder="Ej: ZEC, LIC, ZEPA..." maxlength="100" />
+                                <flux:error name="env_protection_zone_type" />
+                            </flux:field>
+                            <flux:field>
+                                <flux:label>Zona tampón (metros)</flux:label>
+                                <flux:input wire:model="env_buffer_zone_m" type="number" min="0" step="0.01" placeholder="Ej: 10" />
+                                <flux:error name="env_buffer_zone_m" />
+                            </flux:field>
+                        </div>
+                    @endif
+                </div>
+            </x-agro.card>
+
+            {{-- Características del Terreno --}}
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-agro-50">
+                            <flux:icon icon="chart-bar" class="size-4 text-agro-600" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">Características del Terreno</span>
+                    </div>
+                </x-slot:header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <flux:field>
+                        <flux:label>Pendiente (%)</flux:label>
+                        <flux:input wire:model="env_slope_pct" type="number" min="0" max="100" step="0.01" placeholder="Ej: 15" />
+                        <flux:error name="env_slope_pct" />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Riesgo de erosión</flux:label>
+                        <div class="flex items-center gap-3 mt-2">
+                            <flux:switch wire:model="env_erosion_risk" />
+                            <span class="text-sm text-zinc-600">
+                                {{ $env_erosion_risk ? 'Sí, riesgo de erosión' : 'No' }}
+                            </span>
+                        </div>
+                    </flux:field>
+                </div>
+            </x-agro.card>
+
+            {{-- Notas --}}
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-zinc-50">
+                            <flux:icon icon="document-text" class="size-4 text-zinc-500" />
+                        </div>
+                        <span class="font-semibold text-zinc-900 text-sm">Notas</span>
+                    </div>
+                </x-slot:header>
+
+                <flux:field>
+                    <flux:textarea wire:model="env_notes" rows="3" placeholder="Observaciones sobre el entorno de la parcela..." />
+                    <flux:error name="env_notes" />
+                </flux:field>
+            </x-agro.card>
+
+            {{-- Guardar --}}
+            <div class="flex justify-end">
+                <flux:button wire:click="saveEnvironment" variant="primary" icon="check">
+                    Guardar entorno
+                </flux:button>
+            </div>
+
+        </div>
+    @endif
+    @endif
 </div>
 
 @push('scripts')

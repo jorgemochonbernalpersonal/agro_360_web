@@ -39,11 +39,23 @@ class Harvest extends Model
         'edit_notes',
         'status',
         'notes',
+        // Estado sanitario detallado
+        'harvest_ticket_number',
+        'sanitary_state_grapes',
+        'sanitary_state_agraces',
+        'sanitary_state_botrytis',
+        'sanitary_state_oidium',
+        'sanitary_state_mildew',
     ];
 
     protected $casts = [
         'harvest_start_date' => 'date',
         'harvest_end_date' => 'date',
+        'sanitary_state_grapes' => 'decimal:2',
+        'sanitary_state_agraces' => 'decimal:2',
+        'sanitary_state_botrytis' => 'decimal:2',
+        'sanitary_state_oidium' => 'decimal:2',
+        'sanitary_state_mildew' => 'decimal:2',
         'total_weight' => 'decimal:3',
         'yield_per_hectare' => 'decimal:3',
         'baume_degree' => 'decimal:3',

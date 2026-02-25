@@ -340,6 +340,45 @@
                             Litros totales de caldo aplicados
                         </p>
                     </div>
+
+                    {{-- Volumen de Caldo por Hectárea --}}
+                    <div>
+                        <flux:label for="water_volume_liters_ha">
+                            Caldo por Hectárea (L/ha)
+                        </flux:label>
+                        <flux:input
+                            wire:model="water_volume_liters_ha"
+                            type="number"
+                            id="water_volume_liters_ha"
+                            placeholder="Ej: 200.00"
+                            min="0"
+                            step="0.01"
+                            :error="$errors->first('water_volume_liters_ha')"
+                        />
+                        <p class="mt-1 text-xs text-zinc-500">
+                            Litros de agua por hectárea tratada
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Asesoramiento técnico --}}
+                <div class="mt-6 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <flux:checkbox wire:model.live="under_advisory" id="under_advisory" />
+                        <flux:label for="under_advisory" class="cursor-pointer">
+                            Tratamiento bajo asesoramiento técnico cualificado
+                            <span class="text-xs text-zinc-500 block">Obligatorio en Producción Integrada (RD 1311/2012 Art. 14)</span>
+                        </flux:label>
+                    </div>
+                    @if($under_advisory)
+                        <div class="ml-7">
+                            <flux:field>
+                                <flux:label for="advisory_action_date" required>Fecha de recomendación del asesor</flux:label>
+                                <flux:input wire:model="advisory_action_date" type="date" id="advisory_action_date" />
+                                <flux:error name="advisory_action_date" />
+                            </flux:field>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Info box PAC --}}
@@ -357,6 +396,55 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </x-agro.form-section>
+
+        {{-- Sección IPM — Gestión Integrada de Plagas --}}
+        <x-agro.form-section title="Gestión Integrada de Plagas (IPM)" color="green">
+            <flux:callout variant="info" icon="information-circle">
+                <strong>RD 1311/2012 — Art. 14:</strong> Documenta los métodos alternativos y preventivos aplicados antes del tratamiento químico. Obligatorio para Producción Integrada y certificaciones ecológicas.
+            </flux:callout>
+
+            <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label class="flex items-start gap-3 p-3 border border-zinc-200 rounded-lg cursor-pointer hover:bg-zinc-50 transition-colors">
+                    <flux:checkbox wire:model="plague_monitoring" id="plague_monitoring" class="mt-0.5" />
+                    <div>
+                        <span class="text-sm font-medium text-zinc-800">Seguimiento y monitoreo de la plaga</span>
+                        <p class="text-xs text-zinc-500 mt-0.5">Trampas, conteos, umbrales de acción</p>
+                    </div>
+                </label>
+
+                <label class="flex items-start gap-3 p-3 border border-zinc-200 rounded-lg cursor-pointer hover:bg-zinc-50 transition-colors">
+                    <flux:checkbox wire:model="prior_non_chemical_methods" id="prior_non_chemical_methods" class="mt-0.5" />
+                    <div>
+                        <span class="text-sm font-medium text-zinc-800">Métodos no químicos previos</span>
+                        <p class="text-xs text-zinc-500 mt-0.5">Se intentaron alternativas antes del químico</p>
+                    </div>
+                </label>
+
+                <label class="flex items-start gap-3 p-3 border border-zinc-200 rounded-lg cursor-pointer hover:bg-zinc-50 transition-colors">
+                    <flux:checkbox wire:model="manual_mechanical_control" id="manual_mechanical_control" class="mt-0.5" />
+                    <div>
+                        <span class="text-sm font-medium text-zinc-800">Control manual o mecánico</span>
+                        <p class="text-xs text-zinc-500 mt-0.5">Retirada manual, trituración, labores mecánicas</p>
+                    </div>
+                </label>
+
+                <label class="flex items-start gap-3 p-3 border border-zinc-200 rounded-lg cursor-pointer hover:bg-zinc-50 transition-colors">
+                    <flux:checkbox wire:model="biological_control" id="biological_control" class="mt-0.5" />
+                    <div>
+                        <span class="text-sm font-medium text-zinc-800">Control biológico</span>
+                        <p class="text-xs text-zinc-500 mt-0.5">Depredadores naturales, hongos entomopatógenos, etc.</p>
+                    </div>
+                </label>
+
+                <label class="flex items-start gap-3 p-3 border border-zinc-200 rounded-lg cursor-pointer hover:bg-zinc-50 transition-colors md:col-span-2">
+                    <flux:checkbox wire:model="cultural_preventions" id="cultural_preventions" class="mt-0.5" />
+                    <div>
+                        <span class="text-sm font-medium text-zinc-800">Medidas culturales preventivas</span>
+                        <p class="text-xs text-zinc-500 mt-0.5">Poda de saneamiento, eliminación de focos, aireación del cultivo, cubierta vegetal</p>
+                    </div>
+                </label>
             </div>
         </x-agro.form-section>
 
