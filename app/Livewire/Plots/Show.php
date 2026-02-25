@@ -4,13 +4,12 @@ namespace App\Livewire\Plots;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
-use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use App\Models\PlotEnvironment;
 use App\Models\SigpacCode;
+use App\Services\SigpacGeometryService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -132,25 +131,25 @@ class Show extends Component
     {
         $plotId = $plotId ?? $this->plot->id;
         $plot = Plot::findOrFail($plotId);
-        
+
         if (!Auth::user()->can('update', $plot)) {
             $this->toastError('No tienes permiso para modificar esta parcela.');
             return;
         }
 
-        // Si se especifica un código SIGPAC, generar solo para ese
         if ($sigpacCodeId) {
             $sigpacCode = SigpacCode::findOrFail($sigpacCodeId);
             $sigpacCodes = collect([$sigpacCode]);
         } else {
             $sigpacCodes = $plot->sigpacCodes;
         }
-        
+
         if ($sigpacCodes->isEmpty()) {
             $this->toastError('Esta parcela no tiene códigos SIGPAC asociados.');
             return;
         }
 
+        $service = app(SigpacGeometryService::class);
         $successCount = 0;
         $errorCount = 0;
         $errors = [];
@@ -160,8 +159,8 @@ class Show extends Component
 
             foreach ($sigpacCodes as $sigpacCode) {
                 try {
-                    $wkt = $this->fetchCoordinatesFromSigpacApi($sigpacCode);
-                    
+                    $wkt = $service->fetchWkt($sigpacCode);
+
                     if (!$wkt) {
                         $errorCount++;
                         $errors[] = "No se pudieron obtener coordenadas para el código {$sigpacCode->code}";
@@ -174,35 +173,7 @@ class Show extends Component
                         continue;
                     }
 
-                    $geometryId = DB::table('plot_geometry')->insertGetId([
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-
-                    DB::statement(
-                        'UPDATE plot_geometry SET 
-                            coordinates = ST_GeomFromText(?, 4326),
-                            centroid = ST_Centroid(ST_GeomFromText(?, 4326))
-                        WHERE id = ?',
-                        [$wkt, $wkt, $geometryId]
-                    );
-
-                    $mps = MultipartPlotSigpac::where('plot_id', $plotId)
-                        ->where('sigpac_code_id', $sigpacCode->id)
-                        ->first();
-
-                    if ($mps) {
-                        $mps->plot_geometry_id = $geometryId;
-                        $mps->updated_at = now();
-                        $mps->save();
-                    } else {
-                        MultipartPlotSigpac::create([
-                            'plot_id' => $plotId,
-                            'sigpac_code_id' => $sigpacCode->id,
-                            'plot_geometry_id' => $geometryId,
-                        ]);
-                    }
-
+                    $service->upsertGeometry($plotId, $sigpacCode, $wkt);
                     $successCount++;
                 } catch (\Exception $e) {
                     $errorCount++;
@@ -222,7 +193,6 @@ class Show extends Component
                     ? 'Mapa generado correctamente para 1 código SIGPAC.'
                     : "Mapas generados correctamente para {$successCount} códigos SIGPAC.";
                 $this->toastSuccess($message);
-                // Recargar el plot para mostrar los cambios
                 $this->plot->refresh();
                 $this->plot->load([
                     'viticulturist',
@@ -247,47 +217,6 @@ class Show extends Component
                 'error' => $e->getMessage(),
             ]);
             $this->toastError('Error al generar los mapas. Por favor, intenta de nuevo.');
-        }
-    }
-
-    private function fetchCoordinatesFromSigpacApi(SigpacCode $sigpacCode): ?string
-    {
-        try {
-            $url = sprintf(
-                'https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/%s/%s/%s/%s/%s/%s/%s.json',
-                $sigpacCode->code_province,
-                $sigpacCode->code_municipality,
-                $sigpacCode->code_aggregate ?? '0',
-                $sigpacCode->code_zone,
-                $sigpacCode->code_polygon,
-                $sigpacCode->code_plot,
-                $sigpacCode->code_enclosure
-            );
-
-            $httpClient = Http::timeout(10);
-            if (app()->environment('local')) {
-                $httpClient = $httpClient->withoutVerifying();
-            }
-            
-            $response = $httpClient->get($url);
-            
-            if ($response->status() !== 200) {
-                return null;
-            }
-
-            $data = $response->json();
-            
-            if (!is_array($data) || empty($data) || !isset($data[0]['wkt'])) {
-                return null;
-            }
-
-            return $data[0]['wkt'];
-        } catch (\Exception $e) {
-            Log::warning('Error fetching SIGPAC coordinates', [
-                'sigpac_code_id' => $sigpacCode->id,
-                'error' => $e->getMessage(),
-            ]);
-            return null;
         }
     }
 

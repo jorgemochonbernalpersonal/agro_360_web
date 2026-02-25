@@ -195,9 +195,7 @@ class Create extends Component
                 'exception' => $e
             ]);
 
-            // Mostrar el mensaje de error real en la UI temporalmente para depuración
-            // Nota: esto debe revertirse en producción una vez esté resuelto.
-            $this->addError('general', $e->getMessage());
+            $this->toastError('Error inesperado al crear la parcela. Por favor, inténtalo de nuevo.');
 
             return;
         }
@@ -213,7 +211,7 @@ class Create extends Component
                 ->get(),
 
             // ✅ OPTIMIZACIÓN: Solo campos necesarios para selects
-            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
+            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name', 'code'])
                 ->orderBy('name')
                 ->get(),
             'provinces' => $this->autonomous_community_id

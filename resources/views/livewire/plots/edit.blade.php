@@ -71,17 +71,19 @@
                     <flux:error name="province_id" />
                 </flux:field>
 
-                <flux:field>
-                    <flux:label for="municipality_id">Municipio *</flux:label>
-                    <flux:select wire:model.live="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
-                        :disabled="!$province_id">
-                        <option value="">Seleccionar...</option>
-                        @foreach ($municipalities as $municipality)
-                            <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="municipality_id" />
-                </flux:field>
+                <div wire:key="municipality-wrapper-{{ $province_id }}">
+                    <flux:field>
+                        <flux:label for="municipality_id">Municipio *</flux:label>
+                        <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
+                            :disabled="!$province_id">
+                            <option value="">Seleccionar...</option>
+                            @foreach ($municipalities as $municipality)
+                                <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
+                            @endforeach
+                        </flux:select>
+                        <flux:error name="municipality_id" />
+                    </flux:field>
+                </div>
             </div>
         </x-agro.form-section>
 

@@ -122,5 +122,3 @@ class Create extends Component
         ])->layout('layouts.app');
     }
 }
-
-

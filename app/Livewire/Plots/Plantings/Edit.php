@@ -143,5 +143,3 @@ class Edit extends Component
         ])->layout('layouts.app');
     }
 }
-
-
