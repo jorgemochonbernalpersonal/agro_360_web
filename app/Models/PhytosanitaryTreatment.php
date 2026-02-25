@@ -23,16 +23,34 @@ class PhytosanitaryTreatment extends Model
         'applicator_ropo_number',
         'reentry_period_days',
         'spray_volume',
+        // Caldo y asesoramiento
+        'water_volume_liters_ha',
+        'under_advisory',
+        'advisory_action_date',
+        // Flags IPM — Gestión Integrada de Plagas (RD 1311/2012)
+        'prior_non_chemical_methods',
+        'plague_monitoring',
+        'manual_mechanical_control',
+        'biological_control',
+        'cultural_preventions',
     ];
 
     protected $casts = [
-        'dose_per_hectare' => 'decimal:3',
-        'total_dose' => 'decimal:3',
-        'area_treated' => 'decimal:3',
-        'wind_speed' => 'decimal:2',
-        'humidity' => 'decimal:2',
-        'spray_volume' => 'decimal:2',
-        'reentry_period_days' => 'integer',
+        'dose_per_hectare'           => 'decimal:3',
+        'total_dose'                 => 'decimal:3',
+        'area_treated'               => 'decimal:3',
+        'wind_speed'                 => 'decimal:2',
+        'humidity'                   => 'decimal:2',
+        'spray_volume'               => 'decimal:2',
+        'water_volume_liters_ha'     => 'decimal:2',
+        'reentry_period_days'        => 'integer',
+        'advisory_action_date'       => 'date',
+        'under_advisory'             => 'boolean',
+        'prior_non_chemical_methods' => 'boolean',
+        'plague_monitoring'          => 'boolean',
+        'manual_mechanical_control'  => 'boolean',
+        'biological_control'         => 'boolean',
+        'cultural_preventions'       => 'boolean',
     ];
 
     /**

@@ -117,7 +117,7 @@ class CreateObservation extends Component
             'action_taken' => 'nullable|string',
             'phenological_stage' => 'required|string|max:50',
             'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'crew_member_id' => 'nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',

@@ -162,7 +162,7 @@ class EditFertilization extends Component
             'area_applied' => 'required|numeric|min:0.01',
             'phenological_stage' => 'required|string|max:50',
             'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'crew_member_id' => 'nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\TrainingSystem;
 
 class PlotPlanting extends Model
@@ -21,7 +22,6 @@ class PlotPlanting extends Model
         'row_spacing',
         'vine_spacing',
         'rootstock',
-        'training_system',
         'training_system_id',
         'irrigated',
         'status',
@@ -55,6 +55,14 @@ class PlotPlanting extends Model
     public function plot(): BelongsTo
     {
         return $this->belongsTo(Plot::class);
+    }
+
+    /**
+     * Observaciones fenológicas de la plantación
+     */
+    public function phenologyObservations(): HasMany
+    {
+        return $this->hasMany(PhenologyObservation::class);
     }
 
     /**
@@ -325,7 +333,7 @@ class PlotPlanting extends Model
      */
     public function needsReplanting(): bool
     {
-        return $this->age > 35 || $this->status === 'declining';
+        return $this->age > 35 || $this->status === 'replanting';
     }
 
     /**
@@ -345,20 +353,4 @@ class PlotPlanting extends Model
         };
     }
 
-    /**
-     * Scope: Filtrar por etapa de ciclo de vida
-     */
-    public function scopeByLifeCycleStage($query, string $stage)
-    {
-        $currentYear = now()->year;
-        
-        return match($stage) {
-            'joven' => $query->where('planting_year', '>', $currentYear - 3),
-            'desarrollo' => $query->whereBetween('planting_year', [$currentYear - 8, $currentYear - 3]),
-            'productiva' => $query->whereBetween('planting_year', [$currentYear - 25, $currentYear - 8]),
-            'madura' => $query->whereBetween('planting_year', [$currentYear - 40, $currentYear - 25]),
-            'vieja' => $query->where('planting_year', '<=', $currentYear - 40),
-            default => $query,
-        };
-    }
 }

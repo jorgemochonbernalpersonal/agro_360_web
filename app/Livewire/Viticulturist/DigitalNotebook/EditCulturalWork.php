@@ -41,6 +41,8 @@ class EditCulturalWork extends Component
     public $temperature = '';
     public $notes = '';
     public $campaign_id = '';
+    public $pruning_type = '';
+    public $productive_buds_per_hectare = '';
 
     public function mount(AgriculturalActivity $activity)
     {
@@ -86,6 +88,8 @@ class EditCulturalWork extends Component
         $this->hours_worked = $this->culturalWork->hours_worked;
         $this->workers_count = $this->culturalWork->workers_count;
         $this->description = $this->culturalWork->description;
+        $this->pruning_type = $this->culturalWork->pruning_type ?? '';
+        $this->productive_buds_per_hectare = $this->culturalWork->productive_buds_per_hectare ?? '';
         
         if ($this->plot_id) {
             $this->availablePlantings = PlotPlanting::where('plot_id', $this->plot_id)
@@ -140,11 +144,13 @@ class EditCulturalWork extends Component
             'description' => 'required|string|min:10',
             'phenological_stage' => 'required|string|max:50',
             'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'crew_member_id' => 'nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            'pruning_type' => 'nullable|string|max:50',
+            'productive_buds_per_hectare' => 'nullable|integer|min:0',
         ];
     }
 
@@ -210,6 +216,8 @@ class EditCulturalWork extends Component
                     'hours_worked' => $this->hours_worked ?: null,
                     'workers_count' => $this->workers_count ?: null,
                     'description' => $this->description,
+                    'pruning_type' => $this->work_type === 'poda' ? ($this->pruning_type ?: null) : null,
+                    'productive_buds_per_hectare' => $this->work_type === 'poda' ? ($this->productive_buds_per_hectare ?: null) : null,
                 ]);
             });
 

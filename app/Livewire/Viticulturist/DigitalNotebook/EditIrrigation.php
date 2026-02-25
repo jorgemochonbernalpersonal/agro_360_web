@@ -152,7 +152,7 @@ class EditIrrigation extends Component
             'water_concession' => 'required|string|max:100',
             'flow_rate' => 'required|numeric|min:0|max:100000',
             'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'crew_member_id' => 'nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',

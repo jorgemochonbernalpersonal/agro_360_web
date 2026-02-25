@@ -18,6 +18,15 @@ class Campaign extends Model
         'end_date',
         'active',
         'description',
+        // Validaciones
+        'mid_validation_signed',
+        'mid_validation_date',
+        'mid_validation_user_id',
+        'final_validation_signed',
+        'final_validation_date',
+        'final_validation_user_id',
+        'locked_at',
+        'pdf_path',
     ];
 
     protected $casts = [
@@ -25,6 +34,11 @@ class Campaign extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'active' => 'boolean',
+        'mid_validation_signed' => 'boolean',
+        'mid_validation_date' => 'datetime',
+        'final_validation_signed' => 'boolean',
+        'final_validation_date' => 'datetime',
+        'locked_at' => 'datetime',
     ];
 
     /**

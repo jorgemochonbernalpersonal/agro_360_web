@@ -39,6 +39,8 @@ class CreateCulturalWork extends Component
     public $temperature = '';
     public $notes = '';
     public $campaign_id = '';
+    public $pruning_type = '';
+    public $productive_buds_per_hectare = '';
 
     public function mount()
     {
@@ -110,6 +112,8 @@ class CreateCulturalWork extends Component
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            'pruning_type' => 'nullable|string|max:50',
+            'productive_buds_per_hectare' => 'nullable|integer|min:0',
         ];
     }
 
@@ -184,6 +188,8 @@ class CreateCulturalWork extends Component
                     'hours_worked' => $this->hours_worked ?: null,
                     'workers_count' => $this->workers_count ?: null,
                     'description' => $this->description,
+                    'pruning_type' => $this->work_type === 'poda' ? ($this->pruning_type ?: null) : null,
+                    'productive_buds_per_hectare' => $this->work_type === 'poda' ? ($this->productive_buds_per_hectare ?: null) : null,
                 ]);
             });
 

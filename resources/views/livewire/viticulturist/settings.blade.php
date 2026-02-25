@@ -7,7 +7,7 @@
     <x-agro.card :padding="false">
         <div class="px-6 py-5">
             <x-agro.tabs
-                :tabs="['taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'signature' => 'Firma Digital']"
+                :tabs="['taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'fieldbook' => 'Cuaderno de Campo', 'signature' => 'Firma Digital']"
                 :active="$currentTab"
                 wireMethod="switchTab"
             />
@@ -208,6 +208,113 @@
                             wire:target="saveInvoicing"
                         >
                             Guardar Configuración
+                        </flux:button>
+                    </div>
+                </form>
+            @endif
+
+            {{-- FIELDBOOK TAB --}}
+            @if($currentTab === 'fieldbook')
+                <form wire:submit="saveFieldbook" class="space-y-6">
+
+                    <x-agro.card>
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <flux:icon icon="beaker" class="size-5 text-agro-600" />
+                                <div>
+                                    <p class="font-bold text-zinc-900">Valores por defecto de parcelas</p>
+                                    <p class="text-sm text-zinc-500">Se aplican al crear nuevas plantaciones si no se especifica un valor</p>
+                                </div>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <flux:field>
+                                <flux:label>Límite kg/ha por defecto</flux:label>
+                                <flux:input wire:model="default_limit_kg_per_ha" type="number" step="0.01" min="0" placeholder="Ej: 8000" />
+                                <flux:description>Rendimiento máximo para nuevas plantaciones (kg/ha)</flux:description>
+                                <flux:error name="default_limit_kg_per_ha" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label>Temperatura base grados-día (°C)</flux:label>
+                                <flux:input wire:model="degree_day_base" type="number" step="0.1" min="0" max="30" placeholder="10.0" />
+                                <flux:description>Base para calcular grados-día acumulados (Tbase). Estándar viña: 10 °C</flux:description>
+                                <flux:error name="degree_day_base" />
+                            </flux:field>
+                        </div>
+                    </x-agro.card>
+
+                    <x-agro.card>
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <flux:icon icon="hashtag" class="size-5 text-blue-600" />
+                                <div>
+                                    <p class="font-bold text-zinc-900">Prefijos de numeración del cuaderno</p>
+                                    <p class="text-sm text-zinc-500">Solo mayúsculas, números, guión y guión bajo</p>
+                                </div>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <flux:field>
+                                <flux:label>Prefijo actividades</flux:label>
+                                <flux:input wire:model="document_prefix_activity" type="text" placeholder="ACT" maxlength="20" class="uppercase" />
+                                <flux:description>Ej: ACT → ACT-2025-001</flux:description>
+                                <flux:error name="document_prefix_activity" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label>Prefijo vendimias</flux:label>
+                                <flux:input wire:model="document_prefix_harvest" type="text" placeholder="VND" maxlength="20" class="uppercase" />
+                                <flux:description>Ej: VND → VND-2025-001</flux:description>
+                                <flux:error name="document_prefix_harvest" />
+                            </flux:field>
+                        </div>
+                    </x-agro.card>
+
+                    <x-agro.card>
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <flux:icon icon="document-text" class="size-5 text-zinc-600" />
+                                <div>
+                                    <p class="font-bold text-zinc-900">Texto legal del cuaderno (PDF)</p>
+                                    <p class="text-sm text-zinc-500">Aparece al pie de cada PDF generado del cuaderno de campo</p>
+                                </div>
+                            </div>
+                        </x-slot:header>
+
+                        <flux:field>
+                            <flux:label>Texto legal</flux:label>
+                            <flux:textarea wire:model="legal_text_fieldbook" rows="4"
+                                placeholder="Ej: El presente cuaderno de campo ha sido generado por [Nombre], NIF [00000000A], conforme al RD 1337/2021..." />
+                            <flux:description>Máx. 2000 caracteres. Deja vacío para no incluir pie legal.</flux:description>
+                            <flux:error name="legal_text_fieldbook" />
+                        </flux:field>
+                    </x-agro.card>
+
+                    <x-agro.card>
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <flux:icon icon="bell" class="size-5 text-amber-600" />
+                                <div>
+                                    <p class="font-bold text-zinc-900">Notificaciones</p>
+                                    <p class="text-sm text-zinc-500">Alertas por email relacionadas con el cuaderno</p>
+                                </div>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="space-y-3">
+                            <flux:checkbox wire:model="notify_harvest_alerts"
+                                label="Alertas de vendimia (inicio campaña, límites de rendimiento, etc.)" />
+                            <flux:checkbox wire:model="notify_activity_alerts"
+                                label="Alertas de actividades (próximas labores, periodos de carencia, etc.)" />
+                        </div>
+                    </x-agro.card>
+
+                    <div class="flex justify-end">
+                        <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="saveFieldbook">
+                            Guardar Configuración del Cuaderno
                         </flux:button>
                     </div>
                 </form>

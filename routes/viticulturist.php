@@ -83,6 +83,83 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             });
         });
 
+        // Fenología
+        Route::prefix('phenology')->name('phenology.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Phenology\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Phenology\Create::class)->name('create');
+            Route::get('/{observation}/edit', \App\Livewire\Viticulturist\Phenology\Edit::class)->name('edit');
+        });
+
+        // Aplicadores fitosanitarios (ROPO)
+        Route::prefix('field-applicators')->name('field-applicators.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\FieldApplicators\Index::class)->name('index');
+        });
+
+        // Equipos de aplicación (ITB/ITEA)
+        Route::prefix('field-equipment')->name('field-equipment.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\FieldEquipment\Index::class)->name('index');
+        });
+
+        // Cosecha Comercializada
+        Route::prefix('marketed-harvests')->name('marketed-harvests.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\MarketedHarvests\Index::class)->name('index');
+        });
+
+        // Análisis de Residuos Fitosanitarios
+        Route::prefix('residue-analyses')->name('residue-analyses.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\ResidueAnalyses\Index::class)->name('index');
+        });
+
+        // Gestión de Residuos Agrícolas
+        Route::prefix('residue-managements')->name('residue-managements.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\ResidueManagements\Index::class)->name('index');
+        });
+
+        // Asesores Técnicos
+        Route::prefix('advisory-memberships')->name('advisory-memberships.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\AdvisoryMemberships\Index::class)->name('index');
+        });
+
+        // Documentos de Campaña
+        Route::prefix('campaign-documents')->name('campaign-documents.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\CampaignDocuments\Index::class)->name('index');
+        });
+
+        // Firma y Cierre de Campaña
+        Route::prefix('campaign-sign')->name('campaign-sign.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\CampaignSign\Index::class)->name('index');
+        });
+
+        // Almacén de Insumos
+        Route::prefix('supplies')->name('supplies.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Supplies\Index::class)->name('index');
+        });
+
+        // Consumo Energético / Huella de carbono
+        Route::prefix('energy-usages')->name('energy-usages.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\EnergyUsages\Index::class)->name('index');
+        });
+
+        // Autorizaciones Comerciales (DO, eco, plantación)
+        Route::prefix('commercial-authorizations')->name('commercial-authorizations.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\CommercialAuthorizations\Index::class)->name('index');
+        });
+
+        // Explotación Agraria (SIEX/REA + DGC)
+        Route::prefix('exploitations')->name('exploitations.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Exploitations\Index::class)->name('index');
+        });
+
+        // Exportaciones CUE / SIEX
+        Route::prefix('cue-exports')->name('cue-exports.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\CueExports\Index::class)->name('index');
+        });
+
+        // Entorno de Parcelas (zonas protegidas, captaciones)
+        Route::prefix('plot-environments')->name('plot-environments.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PlotEnvironments\Index::class)->name('index');
+        });
+
         // Contenedores
         Route::prefix('containers')->name('containers.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Containers\Index::class)->name('index');

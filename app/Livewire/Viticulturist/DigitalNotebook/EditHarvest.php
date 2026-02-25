@@ -82,6 +82,14 @@ class EditHarvest extends Component
     public $withdrawalAcknowledged = false;
     public $withdrawalReason = '';
 
+    // Estado sanitario detallado
+    public $harvest_ticket_number = '';
+    public $sanitary_state_grapes = '';
+    public $sanitary_state_agraces = '';
+    public $sanitary_state_botrytis = '';
+    public $sanitary_state_oidium = '';
+    public $sanitary_state_mildew = '';
+
     // Notas de edición
     public $edit_notes = '';
 
@@ -151,6 +159,13 @@ class EditHarvest extends Component
         $this->buyer_name = $this->harvest->buyer_name ?? '';
         $this->price_per_kg = $this->harvest->price_per_kg ?? '';
         $this->total_value = $this->harvest->total_value ?? '';
+        $this->harvest_ticket_number = $this->harvest->harvest_ticket_number ?? '';
+        $this->sanitary_state_grapes = $this->harvest->sanitary_state_grapes ?? '';
+        $this->sanitary_state_agraces = $this->harvest->sanitary_state_agraces ?? '';
+        $this->sanitary_state_botrytis = $this->harvest->sanitary_state_botrytis ?? '';
+        $this->sanitary_state_oidium = $this->harvest->sanitary_state_oidium ?? '';
+        $this->sanitary_state_mildew = $this->harvest->sanitary_state_mildew ?? '';
+        $this->edit_notes = $this->harvest->edit_notes ?? '';
 
         // Cargar plantaciones disponibles
         $this->updatedPlotId($this->plot_id);
@@ -423,9 +438,16 @@ class EditHarvest extends Component
             
             'price_per_kg' => 'nullable|numeric|min:0',
             'total_value' => 'nullable|numeric|min:0',
-            
+
+            'harvest_ticket_number'  => 'nullable|string|max:50',
+            'sanitary_state_grapes'  => 'nullable|numeric|min:0|max:100',
+            'sanitary_state_agraces' => 'nullable|numeric|min:0|max:100',
+            'sanitary_state_botrytis'=> 'nullable|numeric|min:0|max:100',
+            'sanitary_state_oidium'  => 'nullable|numeric|min:0|max:100',
+            'sanitary_state_mildew'  => 'nullable|numeric|min:0|max:100',
+
             'crew_id' => 'nullable|exists:crews,id',
-            'crew_member_id' => 'nullable|exists:crew_members,id',
+            'crew_member_id' => 'nullable|exists:users,id',
             'machinery_id' => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
@@ -543,6 +565,12 @@ class EditHarvest extends Component
                     'buyer_name' => $this->buyer_name,
                     'price_per_kg' => $this->price_per_kg ?: null,
                     'total_value' => $this->total_value ?: null,
+                    'harvest_ticket_number'  => $this->harvest_ticket_number ?: null,
+                    'sanitary_state_grapes'  => $this->sanitary_state_grapes !== '' ? $this->sanitary_state_grapes : null,
+                    'sanitary_state_agraces' => $this->sanitary_state_agraces !== '' ? $this->sanitary_state_agraces : null,
+                    'sanitary_state_botrytis'=> $this->sanitary_state_botrytis !== '' ? $this->sanitary_state_botrytis : null,
+                    'sanitary_state_oidium'  => $this->sanitary_state_oidium !== '' ? $this->sanitary_state_oidium : null,
+                    'sanitary_state_mildew'  => $this->sanitary_state_mildew !== '' ? $this->sanitary_state_mildew : null,
                     'edited_at' => now(),
                     'edited_by' => $user->id,
                     'edit_notes' => $this->edit_notes ?: null,

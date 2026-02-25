@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Plots\Plantings;
 
-use App\Livewire\Concerns\WithRoleBasedFields;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\Plot;
@@ -13,7 +12,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithRoleBasedFields, WithToastNotifications;
+    use WithToastNotifications;
 
     public Plot $plot;
 
@@ -32,6 +31,13 @@ class Create extends Component
     public $irrigated = false;
     public $status = 'active';
     public $notes = '';
+
+    // Campos PAC
+    public $planting_authorization = '';
+    public $authorization_date = '';
+    public $right_type = '';
+    public $uprooting_date = '';
+    public $designation_of_origin = '';
 
     public function mount(Plot $plot): void
     {
@@ -60,12 +66,23 @@ class Create extends Component
             'irrigated' => 'boolean',
             'status' => 'required|in:active,removed,experimental,replanting',
             'notes' => 'nullable|string',
+            // Campos PAC
+            'planting_authorization' => 'nullable|string|max:255',
+            'authorization_date' => 'nullable|date',
+            'right_type' => 'nullable|in:nueva,replantacion,conversion,transferencia',
+            'uprooting_date' => 'nullable|date',
+            'designation_of_origin' => 'nullable|string|max:255',
         ];
     }
 
     public function save()
     {
         $this->validate();
+
+        if (empty($this->vine_count) && empty($this->density)) {
+            $this->addError('vine_count', 'Debe indicar el número de cepas o la densidad de plantación.');
+            return;
+        }
 
         PlotPlanting::create([
             'plot_id' => $this->plot->id,
@@ -84,6 +101,12 @@ class Create extends Component
             'irrigated' => (bool) $this->irrigated,
             'status' => $this->status,
             'notes' => $this->notes ?: null,
+            // Campos PAC
+            'planting_authorization' => $this->planting_authorization ?: null,
+            'authorization_date' => $this->authorization_date ?: null,
+            'right_type' => $this->right_type ?: null,
+            'uprooting_date' => $this->uprooting_date ?: null,
+            'designation_of_origin' => $this->designation_of_origin ?: null,
         ]);
 
         $this->toastSuccess('Plantación creada correctamente.');

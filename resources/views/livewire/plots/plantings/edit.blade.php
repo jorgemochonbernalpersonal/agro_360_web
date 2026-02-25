@@ -1,4 +1,5 @@
-﻿<x-agro.form-card
+﻿<div>
+<x-agro.form-card
     :title="'Editar Plantacion en ' . $planting->plot->name"
     description="Actualiza los datos de una plantacion de variedad de uva en esta parcela"
     :back-url="route('plots.plantings.index')"
@@ -211,3 +212,4 @@
         <x-agro.form-actions :cancel-url="route('plots.plantings.index')" submit-label="Actualizar Plantacion" />
     </form>
 </x-agro.form-card>
+</div>

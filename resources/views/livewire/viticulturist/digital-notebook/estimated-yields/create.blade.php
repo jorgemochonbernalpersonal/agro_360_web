@@ -4,22 +4,22 @@
 
 <x-agro.form-card
     title="Crear Rendimiento Estimado"
-    description="Registra una estimación de rendimiento para una plantación y campaña"
+    description="Registra una estimaciï¿½n de rendimiento para una plantaciï¿½n y campaï¿½a"
     :icon="$icon"
     icon-color="from-agro-500 to-agro-700"
     :back-url="route('viticulturist.digital-notebook.estimated-yields.index')"
 >
     <form wire:submit="save" class="space-y-8">
         
-        {{-- Filtros para seleccionar plantación --}}
-        <x-agro.form-section title="Seleccionar Plantación" color="green">
+        {{-- Filtros para seleccionar plantaciï¿½n --}}
+        <x-agro.form-section title="Seleccionar Plantaciï¿½n" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label required>Campaña</flux:label>
+                    <flux:label required>Campaï¿½a</flux:label>
                     <flux:select wire:model.live="campaign_id" id="campaign_id" required>
-                        <option value="">Selecciona una campaña</option>
+                        <option value="">Selecciona una campaï¿½a</option>
                         @foreach($campaigns as $campaign)
-                            <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
+                            <option value="{{ $campaign->id }}">Campaï¿½a {{ $campaign->year }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="campaign_id" />
@@ -41,9 +41,9 @@
 
             <div class="mt-6">
                 <flux:field>
-                    <flux:label required>Plantación</flux:label>
+                    <flux:label required>Plantaciï¿½n</flux:label>
                     <flux:select wire:model.live="plot_planting_id" id="plot_planting_id" required>
-                        <option value="">Selecciona una plantación</option>
+                        <option value="">Selecciona una plantaciï¿½n</option>
                         @foreach($plantings as $planting)
                             <option value="{{ $planting->id }}">
                                 {{ $planting->plot->name ?? 'Sin parcela' }} -
@@ -61,38 +61,42 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-section title="Rendimiento Estimado" color="green">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <x-agro.form-section title="Ronda y MÃ©todo de EstimaciÃ³n" color="green">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <flux:field>
-                    <flux:label required>Rendimiento por Hectárea (kg/ha)</flux:label>
-                    <flux:input wire:model.live="estimated_yield_per_hectare" type="number" step="0.001" min="0.01" id="estimated_yield_per_hectare" placeholder="0.00" required />
-                    <flux:error name="estimated_yield_per_hectare" />
+                    <flux:label required>Ronda</flux:label>
+                    <flux:select wire:model="estimation_round" id="estimation_round" required>
+                        <option value="1">1 â€” Pre-envero</option>
+                        <option value="2">2 â€” Envero</option>
+                        <option value="3">3 â€” Pre-vendimia</option>
+                        <option value="4">4 â€” RevisiÃ³n final</option>
+                    </flux:select>
+                    <flux:description>Una estimaciÃ³n por ronda y plantaciÃ³n</flux:description>
+                    <flux:error name="estimation_round" />
                 </flux:field>
 
-                @if($estimated_total_yield)
-                    <flux:field>
-                        <flux:label>Rendimiento Total Estimado (kg)</flux:label>
-                        <flux:input wire:model="estimated_total_yield" type="number" step="0.001" id="estimated_total_yield" readonly class="bg-zinc-100" />
-                        <flux:description>Calculado automáticamente según el área plantada</flux:description>
-                    </flux:field>
-                @endif
+                <flux:field>
+                    <flux:label required>MÃ©todo</flux:label>
+                    <flux:select wire:model="estimation_method" id="estimation_method" required>
+                        <option value="visual">Visual</option>
+                        <option value="sampling">Muestreo de campo</option>
+                        <option value="historical">HistÃ³rico</option>
+                        <option value="satellite">Satelital</option>
+                        <option value="other">Otro</option>
+                    </flux:select>
+                    <flux:error name="estimation_method" />
+                </flux:field>
 
                 <flux:field>
-                    <flux:label required>Fecha de Estimación</flux:label>
+                    <flux:label required>Fecha de EstimaciÃ³n</flux:label>
                     <flux:input wire:model="estimation_date" type="date" id="estimation_date" required />
                     <flux:error name="estimation_date" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label required>Método de Estimación</flux:label>
-                    <flux:select wire:model="estimation_method" id="estimation_method" required>
-                        <option value="visual">Visual</option>
-                        <option value="sampling">Muestreo</option>
-                        <option value="historical">Histórico</option>
-                        <option value="satellite">Satelital</option>
-                        <option value="other">Otro</option>
-                    </flux:select>
-                    <flux:error name="estimation_method" />
+                    <flux:label>AÃ±ada</flux:label>
+                    <flux:input wire:model="vintage" type="number" min="1900" max="2100" id="vintage" placeholder="{{ date('Y') }}" />
+                    <flux:error name="vintage" />
                 </flux:field>
 
                 <flux:field>
@@ -107,15 +111,115 @@
             </div>
         </x-agro.form-section>
 
+        {{-- Muestreo de campo --}}
+        <x-agro.form-section title="Muestreo de Campo" color="amber">
+            <flux:callout variant="info" icon="information-circle">
+                Rellena estos datos si has realizado un muestreo fÃ­sico en el viÃ±edo. El rendimiento se calcularÃ¡ automÃ¡ticamente como: <strong>racimos/planta Ã— peso/racimo Ã— nÂº cepas Ã— % salud</strong>.
+            </flux:callout>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+                <flux:field>
+                    <flux:label>Yemas/cepa (poda)</flux:label>
+                    <flux:input wire:model="thumbs_per_vine" type="number" min="0" max="100" id="thumbs_per_vine" placeholder="0" />
+                    <flux:description>Yemas dejadas en poda</flux:description>
+                    <flux:error name="thumbs_per_vine" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Racimos/planta</flux:label>
+                    <flux:input wire:model.live="bunches_per_plant" type="number" step="0.1" min="0" id="bunches_per_plant" placeholder="0.0" />
+                    <flux:description>Media de racimos contados</flux:description>
+                    <flux:error name="bunches_per_plant" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Peso del racimo (g)</flux:label>
+                    <flux:input wire:model.live="bunch_weight_grams" type="number" step="0.1" min="0" id="bunch_weight_grams" placeholder="0.0" />
+                    <flux:description>Peso medio en gramos</flux:description>
+                    <flux:error name="bunch_weight_grams" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>% Racimos sanos</flux:label>
+                    <flux:input wire:model.live="health_percentage" type="number" step="0.1" min="0" max="100" id="health_percentage" placeholder="100" />
+                    <flux:description>0â€“100%</flux:description>
+                    <flux:error name="health_percentage" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Plantas muestreadas</flux:label>
+                    <flux:input wire:model="total_plants_sampled" type="number" min="1" id="total_plants_sampled" placeholder="0" />
+                    <flux:error name="total_plants_sampled" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>% Superficie muestreada</flux:label>
+                    <flux:input wire:model="sampling_area_pct" type="number" step="0.1" min="0" max="100" id="sampling_area_pct" placeholder="0.0" />
+                    <flux:error name="sampling_area_pct" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Alcohol probable (%)</flux:label>
+                    <flux:input wire:model="potential_alcohol" type="number" step="0.1" min="0" max="25" id="potential_alcohol" placeholder="0.0" />
+                    <flux:error name="potential_alcohol" />
+                </flux:field>
+            </div>
+
+            @if($auto_calculated_yield)
+                <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <flux:icon icon="calculator" class="w-5 h-5 text-amber-600" />
+                        <div>
+                            <p class="text-sm font-medium text-amber-800">Rendimiento calculado desde muestreo</p>
+                            <p class="text-2xl font-bold text-amber-700">{{ number_format($auto_calculated_yield, 0, ',', '.') }} kg</p>
+                            <p class="text-xs text-amber-600">racimos/planta Ã— peso Ã— nÂº cepas Ã— % salud</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </x-agro.form-section>
+
+        {{-- Rendimiento estimado manual --}}
+        <x-agro.form-section title="Rendimiento Estimado" color="green">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <flux:field>
+                    <flux:label required>Rendimiento por HectÃ¡rea (kg/ha)</flux:label>
+                    <flux:input wire:model.live="estimated_yield_per_hectare" type="number" step="0.001" min="0.01" id="estimated_yield_per_hectare" placeholder="0.00" required />
+                    @if($auto_calculated_yield && $plot_planting_id)
+                        @php
+                            $planting = $plantings->find($plot_planting_id);
+                            $suggestedKgHa = $planting && $planting->area_planted > 0
+                                ? round($auto_calculated_yield / $planting->area_planted, 0)
+                                : null;
+                        @endphp
+                        @if($suggestedKgHa)
+                            <flux:description class="text-amber-600">
+                                Muestreo sugiere: {{ number_format($suggestedKgHa, 0, ',', '.') }} kg/ha
+                            </flux:description>
+                        @endif
+                    @endif
+                    <flux:error name="estimated_yield_per_hectare" />
+                </flux:field>
+
+                @if($estimated_total_yield)
+                    <flux:field>
+                        <flux:label>Rendimiento Total Estimado (kg)</flux:label>
+                        <flux:input wire:model="estimated_total_yield" type="number" step="0.001" id="estimated_total_yield" readonly class="bg-zinc-100" />
+                        <flux:description>Calculado automÃ¡ticamente segÃºn el Ã¡rea plantada</flux:description>
+                    </flux:field>
+                @endif
+            </div>
+        </x-agro.form-section>
+
         <x-agro.form-section title="Notas Adicionales" color="green">
             <flux:field>
                 <flux:label>Notas</flux:label>
-                <flux:textarea wire:model="notes" id="notes" rows="4" placeholder="Observaciones sobre la estimación, condiciones del viñedo, etc..." />
+                <flux:textarea wire:model="notes" id="notes" rows="4" placeholder="Observaciones sobre la estimaciÃ³n, condiciones del viÃ±edo, etc..." />
                 <flux:error name="notes" />
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Guardar Estimación" />
+        <x-agro.form-actions :back-url="route('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Guardar Estimaciï¿½n" />
     </form>
 </x-agro.form-card>
 

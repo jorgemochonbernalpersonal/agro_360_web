@@ -3,9 +3,10 @@
 namespace App\Livewire\Plots;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Campaign;
 use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
-use App\Models\PlotGeometry;
+use App\Models\PlotEnvironment;
 use App\Models\SigpacCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,22 @@ class Show extends Component
     use WithToastNotifications;
 
     public Plot $plot;
+
+    // Tab
+    public string $currentTab = 'info';
+
+    // Entorno de parcela (por campaña activa)
+    public ?int $env_id = null;
+    public string $env_campaign_id = '';
+    public bool $env_water_intake_nearby = false;
+    public string $env_water_intake_distance_m = '';
+    public bool $env_protected_zone_total = false;
+    public bool $env_protected_zone_partial = false;
+    public string $env_protection_zone_type = '';
+    public string $env_buffer_zone_m = '';
+    public string $env_slope_pct = '';
+    public bool $env_erosion_risk = false;
+    public string $env_notes = '';
 
     public function mount(Plot $plot)
     {
@@ -32,10 +49,83 @@ class Show extends Component
             'municipality',
             'sigpacUses',
             'sigpacCodes',
-            'multipartCoordinates.sigpacCode',
             'multiplePlotSigpacs.sigpacCode',
             'multiplePlotSigpacs.plotGeometry',
         ]);
+
+        if (Auth::user()->isViticulturist()) {
+            $this->loadEnvironment();
+        }
+    }
+
+    public function switchTab(string $tab): void
+    {
+        $this->currentTab = $tab;
+    }
+
+    private function loadEnvironment(): void
+    {
+        $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
+        if (!$campaign) {
+            return;
+        }
+
+        $this->env_campaign_id = $campaign->id;
+
+        $env = PlotEnvironment::where('viticulturist_id', Auth::id())
+            ->where('plot_id', $this->plot->id)
+            ->where('campaign_id', $campaign->id)
+            ->first();
+
+        if ($env) {
+            $this->env_id                      = $env->id;
+            $this->env_water_intake_nearby      = (bool) $env->water_intake_nearby;
+            $this->env_water_intake_distance_m  = $env->water_intake_distance_m ?? '';
+            $this->env_protected_zone_total     = (bool) $env->protected_zone_total;
+            $this->env_protected_zone_partial   = (bool) $env->protected_zone_partial;
+            $this->env_protection_zone_type     = $env->protection_zone_type ?? '';
+            $this->env_buffer_zone_m            = $env->buffer_zone_m ?? '';
+            $this->env_slope_pct                = $env->slope_pct ?? '';
+            $this->env_erosion_risk             = (bool) $env->erosion_risk;
+            $this->env_notes                    = $env->notes ?? '';
+        }
+    }
+
+    public function saveEnvironment(): void
+    {
+        if (!Auth::user()->isViticulturist()) {
+            return;
+        }
+
+        $this->validate([
+            'env_water_intake_distance_m' => 'nullable|numeric|min:0',
+            'env_protection_zone_type'    => 'nullable|string|max:100',
+            'env_buffer_zone_m'           => 'nullable|numeric|min:0',
+            'env_slope_pct'               => 'nullable|numeric|min:0|max:100',
+            'env_notes'                   => 'nullable|string',
+        ]);
+
+        $env = PlotEnvironment::updateOrCreate(
+            [
+                'campaign_id' => $this->env_campaign_id,
+                'plot_id'     => $this->plot->id,
+            ],
+            [
+                'viticulturist_id'        => Auth::id(),
+                'water_intake_nearby'     => $this->env_water_intake_nearby,
+                'water_intake_distance_m' => $this->env_water_intake_distance_m ?: null,
+                'protected_zone_total'    => $this->env_protected_zone_total,
+                'protected_zone_partial'  => $this->env_protected_zone_partial,
+                'protection_zone_type'    => $this->env_protection_zone_type ?: null,
+                'buffer_zone_m'           => $this->env_buffer_zone_m ?: null,
+                'slope_pct'               => $this->env_slope_pct ?: null,
+                'erosion_risk'            => $this->env_erosion_risk,
+                'notes'                   => $this->env_notes ?: null,
+            ]
+        );
+
+        $this->env_id = $env->id;
+        $this->toastSuccess('Entorno de parcela guardado correctamente.');
     }
 
     public function generateMap($plotId = null, $sigpacCodeId = null)
@@ -141,7 +231,6 @@ class Show extends Component
                     'municipality',
                     'sigpacUses',
                     'sigpacCodes',
-                    'multipartCoordinates.sigpacCode',
                     'multiplePlotSigpacs.sigpacCode',
                     'multiplePlotSigpacs.plotGeometry',
                 ]);
@@ -204,9 +293,15 @@ class Show extends Component
 
     public function render()
     {
-        return view('livewire.plots.show')->layout('layouts.app', [
-            'title' => $this->plot->name . ' - Parcela - Agro365',
-            'description' => 'Detalles de la parcela ' . $this->plot->name . '. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',
-        ]);
+        $isViticulturist = Auth::user()->isViticulturist();
+        $activeCampaign = $isViticulturist
+            ? Campaign::getOrCreateActiveForYear(Auth::id())
+            : null;
+
+        return view('livewire.plots.show', compact('isViticulturist', 'activeCampaign'))
+            ->layout('layouts.app', [
+                'title' => $this->plot->name . ' - Parcela - Agro365',
+                'description' => 'Detalles de la parcela ' . $this->plot->name . '. Información completa, códigos SIGPAC, ubicación y plantaciones asociadas.',
+            ]);
     }
 }

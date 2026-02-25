@@ -32,6 +32,14 @@ class Edit extends Component
     public $sigpac_use = [];
     public $ndvi_alert_threshold = 0.30;
     public $alert_email_enabled = false;
+    public $tenure_regime = 'propiedad';
+    public $site_name = '';
+    public $valley = '';
+    public $code_parcel = '';
+    public $soil_type = '';
+    public $orientation = '';
+    public $maximum_yield_kg_ha = '';
+    public $degree_day_base = '';
 
     public function mount(Plot $plot)
     {
@@ -57,6 +65,14 @@ class Edit extends Component
         $this->sigpac_use = $plot->sigpacUses->pluck('id')->toArray();
         $this->ndvi_alert_threshold = $plot->ndvi_alert_threshold;
         $this->alert_email_enabled = $plot->alert_email_enabled;
+        $this->tenure_regime = $plot->tenure_regime ?? 'propiedad';
+        $this->site_name = $plot->site_name ?? '';
+        $this->valley = $plot->valley ?? '';
+        $this->code_parcel = $plot->code_parcel ?? '';
+        $this->soil_type = $plot->soil_type ?? '';
+        $this->orientation = $plot->orientation ?? '';
+        $this->maximum_yield_kg_ha = $plot->maximum_yield_kg_ha ?? '';
+        $this->degree_day_base = $plot->degree_day_base ?? '';
     }
 
     protected function rules(): array
@@ -68,9 +84,15 @@ class Edit extends Component
             'active' => 'boolean',
             'ndvi_alert_threshold' => 'required|numeric|min:0|max:1',
             'alert_email_enabled' => 'boolean',
+            'tenure_regime' => 'required|string|in:propiedad,arrendamiento,aparceria,cesion_uso,otros',
+            'site_name' => 'nullable|string|max:255',
+            'valley' => 'nullable|string|max:255',
+            'code_parcel' => 'nullable|string|max:50',
+            'soil_type' => 'nullable|string|in:arenoso,arcilloso,limoso,franco,franco-arenoso,franco-arcilloso,franco-limoso,pedregoso',
+            'orientation' => 'nullable|string|in:N,NE,E,SE,S,SO,O,NO',
+            'maximum_yield_kg_ha' => 'nullable|numeric|min:0',
+            'degree_day_base' => 'nullable|numeric|min:0|max:30',
         ];
-
-        // `winery_id` removed: do not validate here.
 
         // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
         if (in_array(Auth::user()->role, ['admin', 'supervisor', 'winery', 'viticulturist'])) {
@@ -135,9 +157,15 @@ class Edit extends Component
                 'active' => $this->active,
                 'ndvi_alert_threshold' => $this->ndvi_alert_threshold,
                 'alert_email_enabled' => $this->alert_email_enabled,
+                'tenure_regime' => $this->tenure_regime,
+                'site_name' => $this->site_name ?: null,
+                'valley' => $this->valley ?: null,
+                'code_parcel' => $this->code_parcel ?: null,
+                'soil_type' => $this->soil_type ?: null,
+                'orientation' => $this->orientation ?: null,
+                'maximum_yield_kg_ha' => $this->maximum_yield_kg_ha ?: null,
+                'degree_day_base' => $this->degree_day_base ?: null,
             ];
-
-            // `winery_id` removed: plots now tracked by `viticulturist_id`.
 
             if ($this->canSelectViticulturist() && $this->viticulturist_id) {
                 // Validar que el viticultor fue creado por el usuario

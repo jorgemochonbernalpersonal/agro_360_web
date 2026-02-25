@@ -14,7 +14,17 @@
       "Bash(find C:\\\\Users\\\\jorge\\\\Desktop\\\\vinai2 \\(1\\)\\\\vinai2:*)",
       "Bash(find C:\\\\Users\\\\jorge\\\\Desktop\\\\vinai2 \\(1\\)\\\\vinai2\\\\database\\\\migrations:*)",
       "Bash(find:*)",
-      "Bash(php -l /c/Users/jorge/Desktop/agro365/storage/framework/views/1ada6cc2cd2ff183489ace382513571d.php 2>&1 && php -l /c/Users/jorge/Desktop/agro365/storage/framework/views/f1817878604b4072595a78216d7005e4.php 2>&1)"
+      "Bash(php -l /c/Users/jorge/Desktop/agro365/storage/framework/views/1ada6cc2cd2ff183489ace382513571d.php 2>&1 && php -l /c/Users/jorge/Desktop/agro365/storage/framework/views/f1817878604b4072595a78216d7005e4.php 2>&1)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(wc:*)",
+      "Bash(php:*)",
+      "Bash(echo no units table found:*)",
+      "Bash(echo EXISTS: $f:*)",
+      "Bash(mysql:*)",
+      "Bash(where herd:*)",
+      "Bash(start:*)",
+      "Bash(powershell:*)"
     ]
   }
 }

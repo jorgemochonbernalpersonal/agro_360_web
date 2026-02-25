@@ -1,4 +1,5 @@
-﻿<x-agro.form-card
+﻿<div>
+<x-agro.form-card
     :title="'Nueva Plantacion en ' . $plot->name"
     description="Registra una plantacion de variedad de uva en esta parcela"
     :back-url="route('plots.show', $plot)"
@@ -184,6 +185,7 @@
                         <option value="nueva">Nueva Plantacion</option>
                         <option value="replantacion">Replantacion</option>
                         <option value="conversion">Conversion</option>
+                        <option value="transferencia">Transferencia</option>
                     </flux:select>
                     <flux:error name="right_type" />
                 </flux:field>
@@ -212,3 +214,4 @@
         <x-agro.form-actions :cancel-url="route('plots.show', $plot)" submit-label="Guardar Plantacion" />
     </form>
 </x-agro.form-card>
+</div>

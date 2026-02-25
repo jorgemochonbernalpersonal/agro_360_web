@@ -12,6 +12,19 @@ class AgriculturalActivity extends Model
 {
     use HasFactory;
 
+    // Tipos de actividad disponibles
+    const ACTIVITY_TYPES = [
+        'phytosanitary' => 'Tratamiento fitosanitario',
+        'fertilization' => 'Fertilización',
+        'irrigation'    => 'Riego',
+        'cultural'      => 'Labor cultural',
+        'observation'   => 'Observación',
+        'harvest'       => 'Cosecha',
+        'pruning'       => 'Poda',
+        'phenology'     => 'Observación fenológica',
+        'post_harvest'  => 'Tratamiento post-vendimia',
+    ];
+
     protected $fillable = [
         'plot_id',
         'plot_planting_id',
