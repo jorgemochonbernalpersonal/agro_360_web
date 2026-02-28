@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Tax;
 use App\Models\Harvest;
 use App\Models\Campaign;
+use App\Models\MarketedHarvest;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,7 @@ class Create extends Component
     public $fromHarvestRoute = false; // Indica si viene desde la ruta de facturar cosecha
     public $requiredHarvestId = null; // ID de cosecha requerida si viene desde harvest route
     public $harvestAdded = false; // Flag para evitar añadir la cosecha múltiples veces
+    public ?int $marketedHarvestId = null; // ID de MarketedHarvest a vincular tras guardar
 
     public function mount()
     {
@@ -49,6 +51,12 @@ class Create extends Component
         // Si viene con harvest_id, cargarlo automáticamente
         if ($harvestId && $this->fromHarvestRoute) {
             $this->requiredHarvestId = $harvestId;
+        }
+
+        // Vincular con MarketedHarvest si viene el parámetro
+        $marketedHarvestId = request()->query('marketed_harvest_id');
+        if ($marketedHarvestId) {
+            $this->marketedHarvestId = (int) $marketedHarvestId;
         }
         
         $this->loadData();
@@ -425,6 +433,13 @@ class Create extends Component
                         'delivery_note_code' => $deliveryNoteCode,
                     ]
                 );
+
+                // Vincular con Cosecha Comercializada si procede
+                if ($this->marketedHarvestId) {
+                    MarketedHarvest::where('viticulturist_id', $user->id)
+                        ->where('id', $this->marketedHarvestId)
+                        ->update(['invoice_id' => $invoice->id]);
+                }
             });
 
             $this->toastSuccess('Factura creada exitosamente.');

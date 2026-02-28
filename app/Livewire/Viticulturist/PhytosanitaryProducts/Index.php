@@ -47,7 +47,7 @@ class Index extends Component
 
     public function toggleActive($productId): void
     {
-        $product = PhytosanitaryProduct::findOrFail($productId);
+        $product = PhytosanitaryProduct::where('user_id', Auth::id())->findOrFail($productId);
 
         $newActive = ! $product->active;
         $product->update(['active' => $newActive]);
@@ -67,7 +67,7 @@ class Index extends Component
 
     public function render()
     {
-        $query = PhytosanitaryProduct::query()->orderBy('name');
+        $query = PhytosanitaryProduct::forUser(Auth::id())->orderBy('name');
 
         if ($this->currentTab === 'active') {
             $query->where('active', true);
@@ -91,13 +91,14 @@ class Index extends Component
 
         $products = $query->paginate(12);
 
-        $types = PhytosanitaryProduct::select('type')
+        $types = PhytosanitaryProduct::forUser(Auth::id())
+            ->select('type')
             ->whereNotNull('type')
             ->distinct()
             ->orderBy('type')
             ->pluck('type');
 
-        $base  = PhytosanitaryProduct::query();
+        $base  = PhytosanitaryProduct::forUser(Auth::id());
         $stats = [
             'active'   => (clone $base)->where('active', true)->count(),
             'inactive' => (clone $base)->where('active', false)->count(),

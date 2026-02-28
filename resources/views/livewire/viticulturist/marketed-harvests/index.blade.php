@@ -34,7 +34,7 @@
                 description="Registra las entregas de uva a bodega, cooperativa o venta directa."
             />
         @else
-            <x-agro.data-table :headers="['Fecha', 'Cosecha', 'Destino', 'Cantidad (kg)', 'Precio/kg', 'Valor Total', 'Acciones']">
+            <x-agro.data-table :headers="['Fecha', 'Cosecha', 'Destino', 'Cantidad (kg)', 'Precio/kg', 'Valor Total', 'Factura', 'Acciones']">
                 @foreach($entries as $entry)
                     <x-agro.table-row>
                         <x-agro.table-cell>{{ $entry->delivery_date->format('d/m/Y') }}</x-agro.table-cell>
@@ -48,6 +48,25 @@
                         <x-agro.table-cell>{{ number_format($entry->quantity_kg, 0, ',', '.') }} kg</x-agro.table-cell>
                         <x-agro.table-cell>{{ $entry->price_per_kg ? number_format($entry->price_per_kg, 4, ',', '.') . ' €' : '-' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $entry->total_value ? number_format($entry->total_value, 2, ',', '.') . ' €' : '-' }}</x-agro.table-cell>
+                        <x-agro.table-cell>
+                            @if($entry->destination_type === 'third_party')
+                                @if($entry->invoice_id)
+                                    <a href="{{ route('viticulturist.invoices.show', $entry->invoice_id) }}"
+                                       class="text-agro-400 hover:text-agro-300 text-xs font-medium flex items-center gap-1">
+                                        <flux:icon icon="document-check" class="size-4" />
+                                        Ver factura
+                                    </a>
+                                @else
+                                    <flux:button size="xs" variant="ghost" icon="document-plus"
+                                                 wire:click="generateInvoice({{ $entry->id }})"
+                                                 wire:confirm="¿Generar factura para esta entrega?">
+                                        Generar
+                                    </flux:button>
+                                @endif
+                            @else
+                                <span class="text-zinc-500 text-xs">—</span>
+                            @endif
+                        </x-agro.table-cell>
                         <x-agro.table-cell align="right">
                             <div class="flex items-center justify-end gap-2">
                                 <flux:button size="sm" variant="ghost" icon="pencil" wire:click="openEdit({{ $entry->id }})">Editar</flux:button>

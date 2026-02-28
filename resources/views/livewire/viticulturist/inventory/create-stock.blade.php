@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Stock"
     description="Añade productos fitosanitarios a tu inventario"
-    :back-url="route('viticulturist.inventory.index')"
+    :back-url="route('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Producto" color="green">
@@ -59,12 +59,19 @@
                 <flux:field>
                     <flux:label>Unidad</flux:label>
                     <flux:select wire:model="unit" id="unit">
-                        <option value="L">Litros (L)</option>
-                        <option value="kg">Kilogramos (kg)</option>
-                        <option value="unidades">Unidades</option>
+                        @foreach($units as $unit)
+                            <option value="{{ $unit->symbol }}">{{ $unit->name }} ({{ $unit->symbol }})</option>
+                        @endforeach
                     </flux:select>
                     <flux:error name="unit" />
                 </flux:field>
+                <flux:field>
+                    <flux:label>Stock Mínimo (Alerta)</flux:label>
+                    <flux:input wire:model="minimum_stock" type="number" id="minimum_stock" step="0.001" min="0" placeholder="0.000" />
+                    <flux:description>Alerta cuando el stock sea menor a este valor</flux:description>
+                    <flux:error name="minimum_stock" />
+                </flux:field>
+
                 <flux:field>
                     <flux:label>Precio por Unidad (€)</flux:label>
                     <flux:input wire:model="unit_price" type="number" id="unit_price" step="0.01" min="0" placeholder="0.00" />
@@ -95,6 +102,6 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('viticulturist.inventory.index')" submit-label="Guardar Stock" />
+        <x-agro.form-actions :back-url="route('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])" submit-label="Guardar Stock" />
     </form>
 </x-agro.form-card>

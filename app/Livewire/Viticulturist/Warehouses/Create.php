@@ -42,7 +42,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Almacén creado exitosamente.');
-        return redirect()->route('viticulturist.warehouses.index');
+        return redirect()->route('viticulturist.almacen.index', ['tab' => 'almacenes']);
     }
 
     public function render()

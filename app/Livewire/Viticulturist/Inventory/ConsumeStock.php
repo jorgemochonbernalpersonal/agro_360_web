@@ -47,10 +47,13 @@ class ConsumeStock extends Component
     {
         $this->validate();
 
-        // Verificar stock disponible
-        $available = $this->stock->getAvailableQuantity();
-        if ($this->quantity > $available) {
-            $this->toastError("Stock insuficiente. Disponible: {$available} {$this->stock->unit}");
+        // Para dar de baja producto caducado usamos la cantidad total, no la disponible (que es 0)
+        $limit = $this->reason === 'expired'
+            ? (float) $this->stock->quantity
+            : $this->stock->getAvailableQuantity();
+
+        if ($this->quantity > $limit) {
+            $this->toastError("Cantidad superior a la existente: {$limit} {$this->stock->unit}");
             return;
         }
 
@@ -72,13 +75,18 @@ class ConsumeStock extends Component
         $this->stock->consume($this->quantity, null, $note);
 
         $this->toastSuccess('Consumo registrado correctamente');
-        return redirect()->route('viticulturist.inventory.index');
+        return redirect()->route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']);
     }
 
     public function render()
     {
+        $maxQuantity = $this->reason === 'expired'
+            ? (float) $this->stock->quantity
+            : $this->stock->getAvailableQuantity();
+
         return view('livewire.viticulturist.inventory.consume-stock', [
             'availableQuantity' => $this->stock->getAvailableQuantity(),
+            'maxQuantity'       => $maxQuantity,
         ])->layout('layouts.app', [
             'title' => 'Registrar Consumo - Agro365',
         ]);

@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PhytosanitaryProduct extends Model
 {
     protected $fillable = [
+        'user_id',
         'name',
         'active_ingredient',
         'registration_number',
@@ -25,6 +27,16 @@ class PhytosanitaryProduct extends Model
         'registration_expiry_date' => 'date',
         'active' => 'boolean',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scopeForUser($query, int $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
 
     /**
      * Validación de número de registro MAPA

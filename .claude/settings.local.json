@@ -29,7 +29,8 @@
       "Bash(grep ^versions\\\\|^name\\\\| version:*)",
       "Bash(cd /c/Users/jorge/Desktop/agro365 && cat composer.lock | python3 -c \"import sys,json; lock=json.load\\(sys.stdin\\); pkgs=[p for p in lock['packages'] if p['name']=='livewire/livewire']; print\\(pkgs[0]['version'] if pkgs else 'not found'\\)\" 2>/dev/null)",
       "Bash(python3:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(xargs basename:*)"
     ]
   }
 }

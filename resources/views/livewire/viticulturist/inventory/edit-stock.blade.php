@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header title="Editar Stock" description="Modifica los datos del registro de stock">
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.inventory.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Cancelar
             </flux:button>
         </x-slot:actions>
@@ -19,30 +19,31 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
+                    <flux:label required>Unidad</flux:label>
+                    <flux:select wire:model="unit" id="unit">
+                        @foreach($units as $unit)
+                            <option value="{{ $unit->symbol }}">{{ $unit->name }} ({{ $unit->symbol }})</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="unit" />
+                </flux:field>
+
+                <flux:field>
                     <flux:label required>Cantidad Actual</flux:label>
-                    <div class="flex gap-2">
-                        <flux:input wire:model="quantity" type="number" step="0.001" id="quantity" class="flex-1" required />
-                        <span class="px-3 py-2 bg-zinc-100 rounded-lg text-zinc-700 font-medium text-sm self-center">{{ $unit }}</span>
-                    </div>
+                    <flux:input wire:model="quantity" type="number" step="0.001" id="quantity" required />
                     <flux:error name="quantity" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Stock Mínimo (Alerta)</flux:label>
-                    <div class="flex gap-2">
-                        <flux:input wire:model="minimum_stock" type="number" step="0.001" id="minimum_stock" class="flex-1" />
-                        <span class="px-3 py-2 bg-zinc-100 rounded-lg text-zinc-700 font-medium text-sm self-center">{{ $unit }}</span>
-                    </div>
+                    <flux:input wire:model="minimum_stock" type="number" step="0.001" id="minimum_stock" />
                     <flux:description>Se mostrará alerta cuando el stock sea menor a este valor</flux:description>
                     <flux:error name="minimum_stock" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Precio Unitario</flux:label>
-                    <div class="flex gap-2">
-                        <flux:input wire:model="unit_price" type="number" step="0.01" id="unit_price" class="flex-1" />
-                        <span class="px-3 py-2 bg-zinc-100 rounded-lg text-zinc-700 font-medium text-sm self-center">€/{{ $unit }}</span>
-                    </div>
+                    <flux:label>Precio Unitario (€)</flux:label>
+                    <flux:input wire:model="unit_price" type="number" step="0.01" id="unit_price" />
                     <flux:error name="unit_price" />
                 </flux:field>
 
@@ -70,6 +71,12 @@
                 </flux:field>
 
                 <flux:field>
+                    <flux:label>Número de Factura</flux:label>
+                    <flux:input wire:model="invoice_number" type="text" id="invoice_number" placeholder="Nº factura o albarán" />
+                    <flux:error name="invoice_number" />
+                </flux:field>
+
+                <flux:field>
                     <flux:label>Fecha de Fabricación</flux:label>
                     <flux:input wire:model="manufacturing_date" type="date" id="manufacturing_date" />
                     <flux:error name="manufacturing_date" />
@@ -88,7 +95,7 @@
                 <flux:error name="notes" />
             </flux:field>
 
-            <x-agro.form-actions :back-url="route('viticulturist.inventory.index')" submit-label="Guardar Cambios" />
+            <x-agro.form-actions :back-url="route('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])" submit-label="Guardar Cambios" />
         </form>
     </x-agro.form-card>
 </div>

@@ -52,6 +52,7 @@ class Create extends Component
         try {
             DB::transaction(function () {
                 PhytosanitaryProduct::create([
+                    'user_id' => Auth::id(),
                     'name' => $this->name,
                     'active_ingredient' => $this->active_ingredient ?: null,
                     'registration_number' => $this->registration_number,

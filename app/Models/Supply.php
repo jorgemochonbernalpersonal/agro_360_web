@@ -12,27 +12,15 @@ class Supply extends Model
     use HasFactory;
 
     const SUPPLY_TYPES = [
-        'phytosanitary' => 'Fitosanitario',
         'fertilizer'    => 'Fertilizante / Abono',
         'seed'          => 'Semilla / Planta',
         'postharvest'   => 'Post-cosecha',
         'other'         => 'Otro',
     ];
 
-    // Factores de emisión CO₂ por tipo de energía (referencia)
-    const CO2_FACTORS = [
-        'diesel'      => 2.640, // kg CO₂/L
-        'gasoline'    => 2.392,
-        'electricity' => 0.250, // kg CO₂/kWh (mix español)
-        'lpg'         => 1.512,
-        'natural_gas' => 2.020,
-        'water_pump'  => 0.250,
-        'other'       => 0.000,
-    ];
-
     protected $fillable = [
         'viticulturist_id',
-        'phytosanitary_product_id',
+        'warehouse_id',
         'name',
         'commercial_name',
         'registration_number',
@@ -42,13 +30,6 @@ class Supply extends Model
         'current_stock',
         'min_stock_alert',
         'expiry_date',
-        'nutrient_n',
-        'nutrient_p2o5',
-        'nutrient_k2o',
-        'nutrient_cao',
-        'nutrient_mgo',
-        'nutrient_so3',
-        'organic_matter',
         'notes',
         'active',
     ];
@@ -58,13 +39,6 @@ class Supply extends Model
         'current_stock'   => 'decimal:3',
         'min_stock_alert' => 'decimal:3',
         'expiry_date'     => 'date',
-        'nutrient_n'      => 'decimal:2',
-        'nutrient_p2o5'   => 'decimal:2',
-        'nutrient_k2o'    => 'decimal:2',
-        'nutrient_cao'    => 'decimal:2',
-        'nutrient_mgo'    => 'decimal:2',
-        'nutrient_so3'    => 'decimal:2',
-        'organic_matter'  => 'decimal:2',
         'active'          => 'boolean',
     ];
 
@@ -73,9 +47,9 @@ class Supply extends Model
         return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
-    public function phytosanitaryProduct(): BelongsTo
+    public function warehouse(): BelongsTo
     {
-        return $this->belongsTo(PhytosanitaryProduct::class);
+        return $this->belongsTo(Warehouse::class);
     }
 
     public function purchases(): HasMany
@@ -94,9 +68,14 @@ class Supply extends Model
         return $this->current_stock <= $this->min_stock_alert;
     }
 
+    public function isExpired(): bool
+    {
+        return $this->expiry_date && $this->expiry_date->isPast();
+    }
+
     public function isExpiringSoon(int $days = 30): bool
     {
-        if (!$this->expiry_date) return false;
+        if (!$this->expiry_date || $this->expiry_date->isPast()) return false;
         return $this->expiry_date->lte(now()->addDays($days));
     }
 

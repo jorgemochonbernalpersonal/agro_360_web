@@ -95,7 +95,7 @@ class PacComplianceDashboard extends Component
     
     protected function calculateProductMetrics()
     {
-        $products = PhytosanitaryProduct::all();
+        $products = PhytosanitaryProduct::forUser(Auth::id())->get();
         $this->totalProducts = $products->count();
         
         // Productos con registro válido

@@ -120,6 +120,17 @@ class Index extends Component
         $this->resetForm();
     }
 
+    public function generateInvoice(int $id): void
+    {
+        $entry = MarketedHarvest::where('viticulturist_id', Auth::id())->findOrFail($id);
+
+        $this->redirect(
+            route('viticulturist.invoices.create') .
+            '?harvest_id=' . $entry->harvest_id .
+            '&marketed_harvest_id=' . $entry->id
+        );
+    }
+
     public function delete(int $id)
     {
         MarketedHarvest::where('viticulturist_id', Auth::id())->findOrFail($id)->delete();
@@ -164,7 +175,7 @@ class Index extends Component
     {
         $user = Auth::user();
 
-        $query = MarketedHarvest::with(['harvest.plotPlanting.plot', 'harvest.plotPlanting.grape'])
+        $query = MarketedHarvest::with(['harvest.plotPlanting.plot', 'harvest.plotPlanting.grape', 'invoice'])
             ->where('viticulturist_id', $user->id)
             ->active();
 

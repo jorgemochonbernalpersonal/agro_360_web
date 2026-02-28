@@ -85,12 +85,6 @@ class NavigationHelper
                     'route' => 'viticulturist.official-reports.index',
                     'active' => request()->routeIs('viticulturist.official-reports.*'),
                 ],
-                [
-                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>',
-                    'label' => 'Cosecha Comercializada',
-                    'route' => 'viticulturist.marketed-harvests.index',
-                    'active' => request()->routeIs('viticulturist.marketed-harvests.*'),
-                ],
             ];
 
             // GRUPO: PARCELAS Y ANÁLISIS
@@ -201,21 +195,9 @@ class NavigationHelper
                 ],
                 [
                     'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>',
-                    'label' => 'Almacenes',
-                    'route' => 'viticulturist.warehouses.index',
-                    'active' => request()->routeIs('viticulturist.warehouses.*'),
-                ],
-                [
-                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>',
-                    'label' => 'Inventario',
-                    'route' => 'viticulturist.inventory.index',
-                    'active' => request()->routeIs('viticulturist.inventory.*'),
-                ],
-                [
-                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>',
-                    'label' => 'Insumos / Almacén',
-                    'route' => 'viticulturist.supplies.index',
-                    'active' => request()->routeIs('viticulturist.supplies.*'),
+                    'label' => 'Almacén de Insumos',
+                    'route' => 'viticulturist.almacen.index',
+                    'active' => request()->routeIs('viticulturist.almacen.*'),
                 ],
                 [
                     'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',
@@ -232,6 +214,12 @@ class NavigationHelper
                     'label' => 'Facturas',
                     'route' => 'viticulturist.invoices.index',
                     'active' => request()->routeIs('viticulturist.invoices.*'),
+                ],
+                [
+                    'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>',
+                    'label' => 'Cosecha Comercializada',
+                    'route' => 'viticulturist.marketed-harvests.index',
+                    'active' => request()->routeIs('viticulturist.marketed-harvests.*'),
                 ],
                 [
                     'icon_svg' => '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',

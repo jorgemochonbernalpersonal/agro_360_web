@@ -291,7 +291,7 @@ class CreatePhytosanitaryTreatment extends Component
             ->orderBy('name')
             ->get();
 
-        $products = PhytosanitaryProduct::orderBy('name')->get();
+        $products = PhytosanitaryProduct::forUser($user->id)->orderBy('name')->get();
 
         $pests = \App\Models\Pest::active()->orderBy('name')->get();
 

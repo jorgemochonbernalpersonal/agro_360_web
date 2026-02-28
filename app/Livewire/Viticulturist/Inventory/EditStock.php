@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist\Inventory;
 
 use App\Models\ProductStock;
 use App\Models\PhytosanitaryProduct;
+use App\Models\Unit;
 use App\Models\Warehouse;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
@@ -25,12 +26,15 @@ class EditStock extends Component
     public $unit;
     public $unit_price;
     public $supplier;
+    public $invoice_number;
     public $notes;
 
     protected $rules = [
         'quantity' => 'required|numeric|min:0',
         'minimum_stock' => 'nullable|numeric|min:0',
+        'unit' => 'required|exists:units,symbol',
         'unit_price' => 'nullable|numeric|min:0',
+        'invoice_number' => 'nullable|string|max:100',
         'expiry_date' => 'nullable|date|after:today',
         'warehouse_id' => 'nullable|exists:warehouses,id',
     ];
@@ -67,6 +71,7 @@ class EditStock extends Component
         $this->unit = $this->stock->unit;
         $this->unit_price = $this->stock->unit_price;
         $this->supplier = $this->stock->supplier;
+        $this->invoice_number = $this->stock->invoice_number;
         $this->notes = $this->stock->notes;
     }
 
@@ -93,8 +98,10 @@ class EditStock extends Component
             'manufacturing_date' => $this->manufacturing_date,
             'quantity' => $this->quantity,
             'minimum_stock' => $this->minimum_stock,
+            'unit' => $this->unit,
             'unit_price' => $this->unit_price,
             'supplier' => $this->supplier,
+            'invoice_number' => $this->invoice_number ?: null,
             'notes' => $this->notes,
         ]);
 
@@ -103,7 +110,7 @@ class EditStock extends Component
             $quantityChange = $this->quantity - $quantityBefore;
             $this->stock->movements()->create([
                 'user_id' => Auth::id(),
-                'movement_type' => 'adjustment',
+                'movement_type' => $quantityChange >= 0 ? 'adjustment_in' : 'adjustment_out',
                 'quantity_change' => $quantityChange,
                 'quantity_before' => $quantityBefore,
                 'quantity_after' => $this->quantity,
@@ -112,13 +119,14 @@ class EditStock extends Component
         }
 
         $this->toastSuccess('Stock actualizado correctamente');
-        return redirect()->route('viticulturist.inventory.index');
+        return redirect()->route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']);
     }
 
     public function render()
     {
         return view('livewire.viticulturist.inventory.edit-stock', [
             'product' => PhytosanitaryProduct::find($this->product_id),
+            'units' => Unit::active()->orderBy('category')->orderBy('name')->get(),
             'warehouses' => Warehouse::where('user_id', Auth::id())
                 ->where('active', true)
                 ->get(),

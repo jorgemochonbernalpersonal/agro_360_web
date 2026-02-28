@@ -5,7 +5,7 @@
         :description="'Movimientos de stock para: ' . $stock->product->name"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.inventory.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -63,8 +63,9 @@
                 <x-agro.table-cell class="text-zinc-500 text-sm">{{ $movement->created_at->format('d/m/Y H:i') }}</x-agro.table-cell>
                 <x-agro.table-cell>
                     <x-agro.status-badge
-                        :status="$movement->isInbound() ? 'active' : 'expired'"
+                        :status="$movement->isInbound()"
                         :label="$movement->getMovementDescription()"
+                        :type="$movement->isInbound() ? 'default' : 'danger'"
                     />
                 </x-agro.table-cell>
                 <x-agro.table-cell>

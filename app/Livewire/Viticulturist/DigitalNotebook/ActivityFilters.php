@@ -44,7 +44,8 @@ class ActivityFilters extends Component
 
         // Obtener productos fitosanitarios si es necesario
         $products = $this->activityType === 'phytosanitary'
-            ? PhytosanitaryProduct::select(['id', 'name'])
+            ? PhytosanitaryProduct::forUser(Auth::id())
+                ->select(['id', 'name'])
                 ->where('active', true)
                 ->orderBy('name')
                 ->get()

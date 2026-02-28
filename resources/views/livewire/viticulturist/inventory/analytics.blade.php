@@ -5,7 +5,7 @@
         description="Estadísticas y proyecciones de consumo de productos fitosanitarios"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.inventory.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Volver al Inventario
             </flux:button>
         </x-slot:actions>
@@ -56,11 +56,11 @@
                     <x-agro.table-cell class="text-zinc-700">{{ $projection['estimated_empty_date']->format('d/m/Y') }}</x-agro.table-cell>
                     <x-agro.table-cell>
                         @if($projection['status'] === 'critical')
-                            <x-agro.status-badge status="expired" label="Crítico" />
+                            <x-agro.status-badge :status="false" label="Crítico" type="danger" />
                         @elseif($projection['status'] === 'warning')
-                            <x-agro.status-badge status="warning" label="Advertencia" />
+                            <x-agro.status-badge :status="false" label="Advertencia" type="warning" />
                         @else
-                            <x-agro.status-badge status="active" label="OK" />
+                            <x-agro.status-badge :status="true" label="OK" />
                         @endif
                     </x-agro.table-cell>
                 </x-agro.table-row>
@@ -92,12 +92,6 @@
         </x-agro.card>
     @endif
 
-    {{-- Exportar --}}
-    <div class="flex justify-end">
-        <flux:button href="{{ route('viticulturist.inventory.export') }}" variant="primary" icon="arrow-down-tray">
-            Exportar a Excel
-        </flux:button>
-    </div>
 </div>
 
 @push('scripts')

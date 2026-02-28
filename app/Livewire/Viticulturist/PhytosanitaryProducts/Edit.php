@@ -30,6 +30,10 @@ class Edit extends Component
             abort(403, 'No tienes permiso para editar productos fitosanitarios.');
         }
 
+        if ($product->user_id !== Auth::id()) {
+            abort(403);
+        }
+
         $this->product = $product;
 
         $this->name = $product->name;

@@ -130,9 +130,20 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/', \App\Livewire\Viticulturist\CampaignSign\Index::class)->name('index');
         });
 
-        // Almacén de Insumos
-        Route::prefix('supplies')->name('supplies.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\Supplies\Index::class)->name('index');
+        // Almacén de Insumos (unificado: Fitosanitarios + Otros Insumos + Almacenes)
+        Route::prefix('almacen')->name('almacen.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Almacen\Index::class)->name('index');
+            Route::get('/stock/analytics', \App\Livewire\Viticulturist\Inventory\Analytics::class)->name('stock.analytics');
+            Route::get('/stock/export', function () {
+                $export = new \App\Exports\InventoryExport(auth()->id());
+                return \Maatwebsite\Excel\Facades\Excel::download($export, 'inventario_' . now()->format('Y-m-d') . '.xlsx');
+            })->name('stock.export');
+            Route::get('/stock/create', \App\Livewire\Viticulturist\Inventory\CreateStock::class)->name('stock.create');
+            Route::get('/stock/{stock}/edit', \App\Livewire\Viticulturist\Inventory\EditStock::class)->name('stock.edit');
+            Route::get('/stock/{stock}/consume', \App\Livewire\Viticulturist\Inventory\ConsumeStock::class)->name('stock.consume');
+            Route::get('/stock/{stock}/movements', \App\Livewire\Viticulturist\Inventory\Movements::class)->name('stock.movements');
+            Route::get('/warehouses/create', \App\Livewire\Viticulturist\Warehouses\Create::class)->name('warehouses.create');
+            Route::get('/warehouses/{warehouse}/edit', \App\Livewire\Viticulturist\Warehouses\Edit::class)->name('warehouses.edit');
         });
 
         // Consumo Energético / Huella de carbono
@@ -244,28 +255,6 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/{product}/edit', PhytosanitaryProductsEdit::class)->name('edit');
         });
 
-        // Gestión de Inventario de Productos Fitosanitarios
-        Route::prefix('inventory')->name('inventory.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\Inventory\Index::class)->name('index');
-            Route::get('/analytics', \App\Livewire\Viticulturist\Inventory\Analytics::class)->name('analytics');
-            Route::get('/create', \App\Livewire\Viticulturist\Inventory\CreateStock::class)->name('create');
-            Route::get('/{stock}/edit', \App\Livewire\Viticulturist\Inventory\EditStock::class)->name('edit');
-            Route::get('/{stock}/consume', \App\Livewire\Viticulturist\Inventory\ConsumeStock::class)->name('consume');
-            Route::get('/{stock}/movements', \App\Livewire\Viticulturist\Inventory\Movements::class)->name('movements');
-            
-            // Exportación
-            Route::get('/export', function() {
-                $export = new \App\Exports\InventoryExport(auth()->id());
-                return \Maatwebsite\Excel\Facades\Excel::download($export, 'inventario_' . now()->format('Y-m-d') . '.xlsx');
-            })->name('export');
-        });
-
-        // Gestión de Almacenes
-        Route::prefix('warehouses')->name('warehouses.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\Warehouses\Index::class)->name('index');
-            Route::get('/create', \App\Livewire\Viticulturist\Warehouses\Create::class)->name('create');
-            Route::get('/{warehouse}/edit', \App\Livewire\Viticulturist\Warehouses\Edit::class)->name('edit');
-        });
 
         Route::get('/calendar', Calendar::class)->name('calendar');
 

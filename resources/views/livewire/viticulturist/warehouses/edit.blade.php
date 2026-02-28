@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Almacen"
     description="Modifica la informacion del almacen"
-    :back-url="route('viticulturist.warehouses.index')"
+    :back-url="route('viticulturist.almacen.index', ['tab' => 'almacenes'])"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Informacion del Almacen">
@@ -54,7 +54,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.warehouses.index')"
+            :cancel-url="route('viticulturist.almacen.index', ['tab' => 'almacenes'])"
             submit-label="Guardar Cambios"
         />
     </form>

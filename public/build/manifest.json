@@ -1,22 +1,22 @@
 {
-  "_vendor-C46gxqTc.js": {
-    "file": "js/vendor-C46gxqTc.js",
+  "_vendor-CIGW-MKW.css": {
+    "file": "css/vendor-CIGW-MKW.css",
+    "src": "_vendor-CIGW-MKW.css"
+  },
+  "_vendor-Dl5p-nEC.js": {
+    "file": "js/vendor-Dl5p-nEC.js",
     "name": "vendor",
     "isDynamicEntry": true,
     "css": [
       "css/vendor-CIGW-MKW.css"
     ]
   },
-  "_vendor-CIGW-MKW.css": {
-    "file": "css/vendor-CIGW-MKW.css",
-    "src": "_vendor-CIGW-MKW.css"
-  },
   "_vendor-axios-B5K7MVzt.js": {
     "file": "js/vendor-axios-B5K7MVzt.js",
     "name": "vendor-axios"
   },
   "resources/css/app.css": {
-    "file": "css/app-BiBwsrI7.css",
+    "file": "css/app-DqKeeNhH.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -25,7 +25,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "js/app-C3M8SzXt.js",
+    "file": "js/app-QGrlHZbo.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -33,8 +33,8 @@
       "_vendor-axios-B5K7MVzt.js"
     ],
     "dynamicImports": [
-      "_vendor-C46gxqTc.js",
-      "_vendor-C46gxqTc.js"
+      "_vendor-Dl5p-nEC.js",
+      "_vendor-Dl5p-nEC.js"
     ]
   }
 }

@@ -4,7 +4,7 @@
         description="Registra consumo de stock sin tratamiento asociado"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.inventory.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Cancelar
             </flux:button>
         </x-slot:actions>
@@ -23,9 +23,11 @@
                 @endif
             </div>
             <div class="text-right">
-                <p class="text-xs text-zinc-500 uppercase tracking-wide font-medium">Stock Disponible</p>
-                <p class="text-2xl font-bold text-agro-600 mt-1">
-                    {{ number_format($availableQuantity, 3) }} {{ $stock->unit }}
+                <p class="text-xs text-zinc-500 uppercase tracking-wide font-medium">
+                    {{ $reason === 'expired' ? 'Cantidad Caducada' : 'Stock Disponible' }}
+                </p>
+                <p class="text-2xl font-bold {{ $reason === 'expired' ? 'text-red-600' : 'text-agro-600' }} mt-1">
+                    {{ number_format($maxQuantity, 3) }} {{ $stock->unit }}
                 </p>
             </div>
         </div>
@@ -39,12 +41,12 @@
                         type="number"
                         step="0.001"
                         id="quantity"
-                        max="{{ $availableQuantity }}"
+                        max="{{ $maxQuantity }}"
                         required
                     />
                     <span class="px-3 py-2 bg-zinc-100 rounded-lg text-zinc-700 font-medium text-sm self-center">{{ $stock->unit }}</span>
                 </div>
-                <flux:description>Máximo disponible: {{ number_format($availableQuantity, 3) }} {{ $stock->unit }}</flux:description>
+                <flux:description>Máximo: {{ number_format($maxQuantity, 3) }} {{ $stock->unit }}</flux:description>
                 <flux:error name="quantity" />
             </flux:field>
 
@@ -81,8 +83,8 @@
                         <div>
                             <p class="text-sm font-semibold text-orange-900">Confirma la operación</p>
                             <p class="text-sm text-orange-700 mt-1">
-                                Se descontarán <strong>{{ number_format($quantity, 3) }} {{ $stock->unit }}</strong> del stock.
-                                Stock restante: <strong>{{ number_format($availableQuantity - $quantity, 3) }} {{ $stock->unit }}</strong>
+                                Se darán de baja <strong>{{ number_format($quantity, 3) }} {{ $stock->unit }}</strong>.
+                                Stock resultante: <strong>{{ number_format(max(0, $maxQuantity - $quantity), 3) }} {{ $stock->unit }}</strong>
                             </p>
                         </div>
                     </div>
@@ -90,11 +92,11 @@
             @endif
 
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100">
-                <flux:button href="{{ route('viticulturist.inventory.index') }}" variant="ghost">Cancelar</flux:button>
+                <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost">Cancelar</flux:button>
                 <flux:button
                     type="submit"
                     variant="primary"
-                    :disabled="$quantity <= 0 || $quantity > $availableQuantity"
+                    :disabled="$quantity <= 0 || $quantity > $maxQuantity"
                 >
                     Registrar Consumo
                 </flux:button>

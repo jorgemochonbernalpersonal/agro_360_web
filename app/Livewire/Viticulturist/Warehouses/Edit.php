@@ -55,7 +55,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Almacén actualizado exitosamente.');
-        return redirect()->route('viticulturist.warehouses.index');
+        return redirect()->route('viticulturist.almacen.index', ['tab' => 'almacenes']);
     }
 
     public function render()

@@ -160,7 +160,8 @@ class DigitalNotebook extends Component
 
         // Productos fitosanitarios (solo si el filtro de tipo es phytosanitary)
         $products = $this->activityType === 'phytosanitary'
-            ? PhytosanitaryProduct::select(['id', 'name'])
+            ? PhytosanitaryProduct::forUser($user->id)
+                ->select(['id', 'name'])
                 ->where('active', true)
                 ->orderBy('name')
                 ->get()

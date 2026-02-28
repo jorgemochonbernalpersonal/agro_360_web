@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Invoice;
 
 class MarketedHarvest extends Model
 {
@@ -32,6 +33,7 @@ class MarketedHarvest extends Model
         'total_value',
         'notes',
         'active',
+        'invoice_id',
     ];
 
     protected $casts = [
@@ -55,6 +57,11 @@ class MarketedHarvest extends Model
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 
     public function getDestinationTypeLabelAttribute(): string
