@@ -130,8 +130,9 @@
                 <flux:field>
                     <flux:label>Unidad</flux:label>
                     <flux:select wire:model="quantity_unit">
-                        <option value="kg">kg</option>
-                        <option value="t">Toneladas (t)</option>
+                        @foreach($units as $unit)
+                            <option value="{{ $unit->symbol }}">{{ $unit->name }} ({{ $unit->symbol }})</option>
+                        @endforeach
                     </flux:select>
                     <flux:error name="quantity_unit" />
                 </flux:field>

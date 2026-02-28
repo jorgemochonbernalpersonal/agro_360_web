@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\ResidueManagement;
+use App\Models\Unit;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -119,7 +120,7 @@ class Index extends Component
             'practice_type'      => 'required|in:' . implode(',', array_keys(ResidueManagement::PRACTICE_TYPES)),
             'material_type'      => 'required|in:' . implode(',', array_keys(ResidueManagement::MATERIAL_TYPES)),
             'estimated_quantity' => 'nullable|numeric|min:0',
-            'quantity_unit'      => 'nullable|in:kg,t',
+            'quantity_unit'      => 'nullable|exists:units,symbol',
             'justification'      => 'nullable|string',
             'notes'              => 'nullable|string',
         ];
@@ -176,6 +177,7 @@ class Index extends Component
             'plantings'     => $plantings,
             'practiceTypes' => ResidueManagement::PRACTICE_TYPES,
             'materialTypes' => ResidueManagement::MATERIAL_TYPES,
+            'units'         => Unit::active()->where('category', 'weight')->orderBy('name')->get(),
         ]);
     }
 }
