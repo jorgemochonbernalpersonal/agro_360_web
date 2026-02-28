@@ -142,6 +142,8 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/stock/{stock}/edit', \App\Livewire\Viticulturist\Inventory\EditStock::class)->name('stock.edit');
             Route::get('/stock/{stock}/consume', \App\Livewire\Viticulturist\Inventory\ConsumeStock::class)->name('stock.consume');
             Route::get('/stock/{stock}/movements', \App\Livewire\Viticulturist\Inventory\Movements::class)->name('stock.movements');
+            Route::get('/supplies/create', \App\Livewire\Viticulturist\Supplies\Create::class)->name('supplies.create');
+            Route::get('/supplies/{supply}/edit', \App\Livewire\Viticulturist\Supplies\Edit::class)->name('supplies.edit');
             Route::get('/warehouses/create', \App\Livewire\Viticulturist\Warehouses\Create::class)->name('warehouses.create');
             Route::get('/warehouses/{warehouse}/edit', \App\Livewire\Viticulturist\Warehouses\Edit::class)->name('warehouses.edit');
         });

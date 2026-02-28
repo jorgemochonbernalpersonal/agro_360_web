@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Viticulturist\Warehouses;
 
-use App\Models\Warehouse;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Warehouse;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,58 +11,55 @@ class Edit extends Component
 {
     use WithToastNotifications;
 
-    public $warehouseId;
-    public $name = '';
-    public $location = '';
-    public $description = '';
-    public $active = true;
+    public Warehouse $warehouse;
 
-    public function mount($warehouse)
+    public string $name        = '';
+    public string $location    = '';
+    public string $description = '';
+    public bool   $active      = true;
+
+    public function mount(Warehouse $warehouse): void
     {
-        if (!Auth::user()->isViticulturist()) {
+        if ($warehouse->user_id !== Auth::id()) {
             abort(403);
         }
 
-        $warehouseModel = Warehouse::where('user_id', Auth::id())
-            ->findOrFail($warehouse);
-
-        $this->warehouseId = $warehouseModel->id;
-        $this->name = $warehouseModel->name;
-        $this->location = $warehouseModel->location ?? '';
-        $this->description = $warehouseModel->description ?? '';
-        $this->active = $warehouseModel->active;
+        $this->warehouse   = $warehouse;
+        $this->name        = $warehouse->name;
+        $this->location    = $warehouse->location ?? '';
+        $this->description = $warehouse->description ?? '';
+        $this->active      = $warehouse->active;
     }
 
-    public function save()
+    protected function rules(): array
     {
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'nullable|string|max:255',
+        return [
+            'name'        => 'required|string|max:255',
+            'location'    => 'nullable|string|max:255',
             'description' => 'nullable|string',
-        ], [
-            'name.required' => 'El nombre del almacén es obligatorio',
-            'name.max' => 'El nombre no puede exceder 255 caracteres',
-        ]);
+            'active'      => 'boolean',
+        ];
+    }
 
-        $warehouse = Warehouse::where('user_id', Auth::id())
-            ->findOrFail($this->warehouseId);
+    public function save(): mixed
+    {
+        $this->validate();
 
-        $warehouse->update([
-            'name' => $this->name,
-            'location' => $this->location ?: null,
+        $this->warehouse->update([
+            'name'        => $this->name,
+            'location'    => $this->location ?: null,
             'description' => $this->description ?: null,
-            'active' => $this->active,
+            'active'      => $this->active,
         ]);
 
-        $this->toastSuccess('Almacén actualizado exitosamente.');
+        $this->toastSuccess('Almacén actualizado correctamente.');
+
         return redirect()->route('viticulturist.almacen.index', ['tab' => 'almacenes']);
     }
 
     public function render()
     {
         return view('livewire.viticulturist.warehouses.edit')
-            ->layout('layouts.app', [
-                'title' => 'Editar Almacén - Agro365',
-            ]);
+            ->layout('layouts.app', ['title' => 'Editar Almacén - Agro365']);
     }
 }

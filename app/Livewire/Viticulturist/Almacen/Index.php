@@ -38,20 +38,6 @@ class Index extends Component
     public string $sup_type   = '';
     public bool   $sup_low    = false;
 
-    // Supply form
-    public ?int    $editingId  = null;
-    public string  $name       = '';
-    public string  $commercial_name      = '';
-    public string  $registration_number  = '';
-    public string  $supply_type          = 'fertilizer';
-    public string  $unit_of_measurement  = 'L';
-    public mixed   $initial_stock        = 0;
-    public mixed   $current_stock        = 0;
-    public string  $min_stock_alert      = '';
-    public string  $expiry_date          = '';
-    public string  $notes                = '';
-    public ?int    $sup_warehouse_id     = null;
-
     // Purchase form
     public ?int   $purchaseSupplyId   = null;
     public string $purchaseSupplyName = '';
@@ -177,65 +163,6 @@ class Index extends Component
 
     // ── Insumos methods ───────────────────────────────────────
 
-    public function openCreate(): void
-    {
-        $this->resetSupplyForm();
-        $this->dispatch('open-modal', 'supply-form');
-    }
-
-    public function openEdit(int $id): void
-    {
-        $supply = Supply::where('viticulturist_id', Auth::id())->findOrFail($id);
-        $this->editingId            = $id;
-        $this->name                 = $supply->name;
-        $this->commercial_name      = $supply->commercial_name ?? '';
-        $this->registration_number  = $supply->registration_number ?? '';
-        $this->supply_type          = $supply->supply_type;
-        $this->unit_of_measurement  = $supply->unit_of_measurement;
-        $this->initial_stock        = $supply->initial_stock;
-        $this->current_stock        = $supply->current_stock;
-        $this->min_stock_alert      = $supply->min_stock_alert ?? '';
-        $this->expiry_date          = $supply->expiry_date?->format('Y-m-d') ?? '';
-        $this->notes                = $supply->notes ?? '';
-        $this->sup_warehouse_id     = $supply->warehouse_id;
-        $this->dispatch('open-modal', 'supply-form');
-    }
-
-    public function saveSupply(): void
-    {
-        $this->validate($this->supplyRules());
-        $user = Auth::user();
-
-        $data = [
-            'viticulturist_id'    => $user->id,
-            'warehouse_id'        => $this->sup_warehouse_id ?: null,
-            'name'                => $this->name,
-            'commercial_name'     => $this->commercial_name ?: null,
-            'registration_number' => $this->registration_number ?: null,
-            'supply_type'         => $this->supply_type,
-            'unit_of_measurement' => $this->unit_of_measurement,
-            'initial_stock'       => $this->initial_stock ?: 0,
-            'current_stock'       => $this->current_stock ?: 0,
-            'min_stock_alert'     => $this->min_stock_alert ?: null,
-            'expiry_date'         => $this->expiry_date ?: null,
-            'notes'               => $this->notes ?: null,
-            'active'              => true,
-        ];
-
-        if ($this->editingId) {
-            unset($data['initial_stock']); // no se modifica tras el registro inicial
-            Supply::where('viticulturist_id', $user->id)->findOrFail($this->editingId)->update($data);
-            $this->toastSuccess('Insumo actualizado.');
-        } else {
-            $data['current_stock'] = $data['initial_stock']; // al crear, stock actual = stock inicial
-            Supply::create($data);
-            $this->toastSuccess('Insumo registrado en el almacén.');
-        }
-
-        $this->dispatch('close-modal', 'supply-form');
-        $this->resetSupplyForm();
-    }
-
     public function deactivateSupply(int $id): void
     {
         Supply::where('viticulturist_id', Auth::id())->findOrFail($id)->update(['active' => false]);
@@ -249,7 +176,7 @@ class Index extends Component
         $this->purchaseSupplyName    = $supply->name;
         $this->p_unit_of_measurement = $supply->unit_of_measurement;
         $this->resetPurchaseForm();
-        $this->dispatch('open-modal', 'supply-purchase');
+        $this->js("window.dispatchEvent(new CustomEvent('open-modal', { detail: 'supply-purchase' }))");
     }
 
     public function updatedPQuantity(mixed $v): void
@@ -285,21 +212,8 @@ class Index extends Component
         ]);
 
         $this->toastSuccess('Compra registrada. Stock actualizado.');
-        $this->dispatch('close-modal', 'supply-purchase');
+        $this->js("window.dispatchEvent(new CustomEvent('close-modal', { detail: 'supply-purchase' }))");
         $this->resetPurchaseForm();
-    }
-
-    protected function supplyRules(): array
-    {
-        return [
-            'name'                => 'required|string|max:255',
-            'supply_type'         => 'required|in:' . implode(',', array_keys(Supply::SUPPLY_TYPES)),
-            'unit_of_measurement' => 'required|exists:units,symbol',
-            'initial_stock'       => 'nullable|numeric|min:0',
-            'current_stock'       => 'nullable|numeric|min:0',
-            'min_stock_alert'     => 'nullable|numeric|min:0',
-            'expiry_date'         => 'nullable|date',
-        ];
     }
 
     protected function purchaseRules(): array
@@ -312,23 +226,6 @@ class Index extends Component
             'p_total_cost'          => 'nullable|numeric|min:0',
             'p_supplier_name'       => 'nullable|string|max:255',
         ];
-    }
-
-    protected function resetSupplyForm(): void
-    {
-        $this->editingId           = null;
-        $this->sup_warehouse_id    = null;
-        $this->name                = '';
-        $this->commercial_name     = '';
-        $this->registration_number = '';
-        $this->supply_type         = 'fertilizer';
-        $this->unit_of_measurement = 'L';
-        $this->initial_stock       = 0;
-        $this->current_stock       = 0;
-        $this->min_stock_alert     = '';
-        $this->expiry_date         = '';
-        $this->notes               = '';
-        $this->resetValidation();
     }
 
     protected function resetPurchaseForm(): void
@@ -427,10 +324,9 @@ class Index extends Component
         }
 
         // Siempre disponibles (necesarios para los modales de insumos fuera del @elseif)
-        $viewData['supplyTypes']      = Supply::SUPPLY_TYPES;
-        $viewData['campaigns']        = Campaign::forViticulturist($user->id)->orderByDesc('year')->get();
-        $viewData['supWarehouses']    = Warehouse::select(['id', 'name'])->where('user_id', $user->id)->where('active', true)->get();
-        $viewData['units']            = Unit::active()->orderBy('category')->orderBy('name')->get();
+        $viewData['supplyTypes'] = Supply::SUPPLY_TYPES;
+        $viewData['campaigns']   = Campaign::forViticulturist($user->id)->orderByDesc('year')->get();
+        $viewData['units']       = Unit::active()->orderBy('category')->orderBy('name')->get();
 
         return view('livewire.viticulturist.almacen.index', $viewData)
             ->layout('layouts.app', ['title' => 'Almacén de Insumos - Agro365']);

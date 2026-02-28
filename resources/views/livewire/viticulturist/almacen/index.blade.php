@@ -332,7 +332,7 @@
 
                 <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-                <flux:button variant="primary" icon="plus" wire:click="openCreate">Nuevo Insumo</flux:button>
+                <flux:button href="{{ route('viticulturist.almacen.supplies.create') }}" variant="primary" icon="plus">Nuevo Insumo</flux:button>
             </div>
 
             {{-- Active filter chips --}}
@@ -380,7 +380,7 @@
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button wire:click="openCreate" variant="primary" icon="plus">Nuevo Insumo</flux:button>
+                        <flux:button href="{{ route('viticulturist.almacen.supplies.create') }}" variant="primary" icon="plus">Nuevo Insumo</flux:button>
                     </x-slot:action>
                 @endif
             </x-agro.empty-state>
@@ -460,9 +460,9 @@
                                 <button wire:click="openPurchase({{ $supply->id }})" class="{{ $btnBase }}" title="Registrar compra">
                                     <flux:icon icon="shopping-cart" class="size-4" />
                                 </button>
-                                <button wire:click="openEdit({{ $supply->id }})" class="{{ $btnBase }}" title="Editar">
+                                <a href="{{ route('viticulturist.almacen.supplies.edit', $supply) }}" class="{{ $btnBase }}" title="Editar">
                                     <flux:icon icon="pencil-square" class="size-4" />
-                                </button>
+                                </a>
                                 <button
                                     wire:click="deactivateSupply({{ $supply->id }})"
                                     wire:confirm="¿Archivar este insumo?"
@@ -650,104 +650,6 @@
         @endif
 
     @endif
-
-    {{-- =====================================================
-         MODALES DE INSUMOS (fuera de @elseif para que flux:modal
-         wire:model no sea re-inicializado por Idiomorph al cambiar tab)
-    ====================================================== --}}
-
-    {{-- Modal Insumo (crear / editar) --}}
-    <x-agro.modal name="supply-form" maxWidth="2xl">
-        <div class="p-6 space-y-6">
-            <h2 class="text-lg font-semibold text-zinc-900">{{ $editingId ? 'Editar Insumo' : 'Nuevo Insumo' }}</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:field class="md:col-span-2">
-                    <flux:label required>Nombre del producto</flux:label>
-                    <flux:input wire:model="name" type="text" placeholder="Nombre en el almacén" />
-                    <flux:error name="name" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Nombre comercial</flux:label>
-                    <flux:input wire:model="commercial_name" type="text" placeholder="Nombre del fabricante" />
-                    <flux:error name="commercial_name" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Nº Registro MAPA</flux:label>
-                    <flux:input wire:model="registration_number" type="text" placeholder="ES-00000" />
-                    <flux:error name="registration_number" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label required>Tipo de insumo</flux:label>
-                    <flux:select wire:model="supply_type">
-                        @foreach($supplyTypes as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="supply_type" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Almacén</flux:label>
-                    <flux:select wire:model="sup_warehouse_id">
-                        <option value="">Sin almacén</option>
-                        @foreach($supWarehouses as $wh)
-                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="sup_warehouse_id" />
-                </flux:field>
-                <flux:field>
-                    <flux:label required>Unidad de medida</flux:label>
-                    <flux:select wire:model="unit_of_measurement">
-                        @foreach($units as $u)
-                            <option value="{{ $u->symbol }}">{{ $u->name }} ({{ $u->symbol }})</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="unit_of_measurement" />
-                </flux:field>
-
-                @if($editingId)
-                    <flux:field>
-                        <flux:label>Stock actual</flux:label>
-                        <flux:input wire:model="current_stock" type="number" step="0.001" min="0" placeholder="0.000" />
-                        <flux:description>Usa "Registrar compra" para aumentar el stock</flux:description>
-                        <flux:error name="current_stock" />
-                    </flux:field>
-                @else
-                    <flux:field>
-                        <flux:label>Stock inicial</flux:label>
-                        <flux:input wire:model="initial_stock" type="number" step="0.001" min="0" placeholder="0.000" />
-                        <flux:description>Cantidad disponible al registrar el insumo</flux:description>
-                        <flux:error name="initial_stock" />
-                    </flux:field>
-                @endif
-
-                <flux:field>
-                    <flux:label>Alerta stock mínimo</flux:label>
-                    <flux:input wire:model="min_stock_alert" type="number" step="0.001" min="0" placeholder="0.000" />
-                    <flux:description>Aviso cuando el stock baje de este valor</flux:description>
-                    <flux:error name="min_stock_alert" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Fecha caducidad</flux:label>
-                    <flux:input wire:model="expiry_date" type="date" />
-                    <flux:error name="expiry_date" />
-                </flux:field>
-
-                <flux:field class="md:col-span-2">
-                    <flux:label>Notas</flux:label>
-                    <flux:textarea wire:model="notes" rows="2" />
-                    <flux:error name="notes" />
-                </flux:field>
-            </div>
-
-            <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
-                <flux:button variant="ghost" x-on:click="$dispatch('close-modal', 'supply-form')">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="saveSupply">{{ $editingId ? 'Actualizar' : 'Añadir al Almacén' }}</flux:button>
-            </div>
-        </div>
-    </x-agro.modal>
 
     {{-- Modal Filtros Insumos --}}
     <x-agro.modal name="almacen-sup-filters" maxWidth="sm">

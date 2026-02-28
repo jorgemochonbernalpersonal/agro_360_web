@@ -1,42 +1,27 @@
 <x-agro.form-card
-    title="Crear Almacen"
-    description="Registra un nuevo almacen o ubicacion para organizar tus productos fitosanitarios"
+    title="New Warehouse"
+    description="Register a new warehouse or storage location"
     :back-url="route('viticulturist.almacen.index', ['tab' => 'almacenes'])"
 >
-    <form wire:submit="save" class="space-y-8">
-        <x-agro.form-section title="Informacion del Almacen">
+    <form wire:submit="save" class="space-y-6">
+
+        <x-agro.form-section title="Warehouse Information">
             <div class="grid grid-cols-1 gap-6">
                 <flux:field>
-                    <flux:label>Nombre del Almacen *</flux:label>
-                    <flux:input
-                        wire:model="name"
-                        type="text"
-                        id="name"
-                        placeholder="Ej: Almacen Principal, Cobertizo Norte..."
-                        required
-                    />
+                    <flux:label required>Name</flux:label>
+                    <flux:input wire:model="name" type="text" placeholder="e.g. Main Warehouse, North Shed..." required />
                     <flux:error name="name" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Ubicacion</flux:label>
-                    <flux:input
-                        wire:model="location"
-                        type="text"
-                        id="location"
-                        placeholder="Ej: Edificio A, Planta Baja, Sala 3..."
-                    />
+                    <flux:label>Location</flux:label>
+                    <flux:input wire:model="location" type="text" placeholder="e.g. Building A, Ground Floor, Room 3..." />
                     <flux:error name="location" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Descripcion</flux:label>
-                    <flux:textarea
-                        wire:model="description"
-                        id="description"
-                        rows="3"
-                        placeholder="Informacion adicional sobre este almacen..."
-                    />
+                    <flux:label>Description</flux:label>
+                    <flux:textarea wire:model="description" rows="3" placeholder="Additional information about this warehouse..." />
                     <flux:error name="description" />
                 </flux:field>
             </div>
@@ -44,7 +29,7 @@
 
         <x-agro.form-actions
             :cancel-url="route('viticulturist.almacen.index', ['tab' => 'almacenes'])"
-            submit-label="Crear Almacen"
+            submit-label="Create Warehouse"
         />
     </form>
 </x-agro.form-card>
