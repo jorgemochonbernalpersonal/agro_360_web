@@ -11,7 +11,11 @@
         data-cy="sidebar-nav-{{ strtolower(str_replace(' ', '-', $item['label'])) }}"
     >
         <span class="flex-shrink-0 w-5 flex items-center justify-center {{ $item['active'] ? 'text-white' : 'text-white/50 group-hover:text-white/80' }} transition-colors duration-200">
-            {!! $item['icon_svg'] ?? $item['icon'] !!}
+            @if(isset($item['icon']))
+                <flux:icon icon="{{ $item['icon'] }}" class="w-5 h-5" />
+            @else
+                {!! $item['icon_svg'] !!}
+            @endif
         </span>
         <span class="font-medium text-sm flex-1 sidebar-text whitespace-nowrap overflow-hidden leading-tight">{{ $item['label'] }}</span>
         @if(isset($item['badge']) && $item['badge'] > 0)
