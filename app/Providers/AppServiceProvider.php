@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\HtmlString;
 use App\Models\Plot;
@@ -47,6 +48,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Redirigir usuarios autenticados al dashboard de su rol
+        // cuando intenten acceder a rutas de invitado (login, register)
+        RedirectIfAuthenticated::redirectUsing(function ($request) {
+            $user = auth()->user();
+            if ($user->isAdmin()) return route('admin.dashboard');
+            if ($user->isSupervisor()) return route('supervisor.dashboard');
+            if ($user->isWinery()) return route('winery.dashboard');
+            return route('viticulturist.dashboard');
+        });
+
         // Registrar macros personalizados
         (new \App\Macros\CollectionMacros())->register();
         \App\Macros\StringMacros::register();
