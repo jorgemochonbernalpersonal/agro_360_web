@@ -27,7 +27,6 @@ class DatabaseSeeder extends Seeder
             MachineryTypeSeeder::class,         // Tipos de maquinaria base
             TrainingSystemSeeder::class,        // Sistemas de conducción base
             TaxSeeder::class,                   // Impuestos (IVA, IGIC)
-            UnitSeeder::class,                  // Unidades de medida
         ]);
         
         $this->command->info('✅ Seeders completados.');
