@@ -93,31 +93,43 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         // Aplicadores fitosanitarios (ROPO)
         Route::prefix('field-applicators')->name('field-applicators.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\FieldApplicators\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\FieldApplicators\Create::class)->name('create');
+            Route::get('/{fieldApplicator}/edit', \App\Livewire\Viticulturist\FieldApplicators\Edit::class)->name('edit');
         });
 
         // Equipos de aplicación (ITB/ITEA)
         Route::prefix('field-equipment')->name('field-equipment.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\FieldEquipment\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\FieldEquipment\Create::class)->name('create');
+            Route::get('/{fieldEquipment}/edit', \App\Livewire\Viticulturist\FieldEquipment\Edit::class)->name('edit');
         });
 
         // Cosecha Comercializada
         Route::prefix('marketed-harvests')->name('marketed-harvests.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\MarketedHarvests\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\MarketedHarvests\Create::class)->name('create');
+            Route::get('/{marketedHarvest}/edit', \App\Livewire\Viticulturist\MarketedHarvests\Edit::class)->name('edit');
         });
 
         // Análisis de Residuos Fitosanitarios
         Route::prefix('residue-analyses')->name('residue-analyses.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\ResidueAnalyses\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\ResidueAnalyses\Create::class)->name('create');
+            Route::get('/{residueAnalysis}/edit', \App\Livewire\Viticulturist\ResidueAnalyses\Edit::class)->name('edit');
         });
 
         // Gestión de Residuos Agrícolas
         Route::prefix('residue-managements')->name('residue-managements.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\ResidueManagements\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\ResidueManagements\Create::class)->name('create');
+            Route::get('/{residueManagement}/edit', \App\Livewire\Viticulturist\ResidueManagements\Edit::class)->name('edit');
         });
 
         // Asesores Técnicos
         Route::prefix('advisory-memberships')->name('advisory-memberships.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\AdvisoryMemberships\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\AdvisoryMemberships\Create::class)->name('create');
+            Route::get('/{advisoryMembership}/edit', \App\Livewire\Viticulturist\AdvisoryMemberships\Edit::class)->name('edit');
         });
 
         // Documentos de Campaña
@@ -151,26 +163,36 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         // Consumo Energético / Huella de carbono
         Route::prefix('energy-usages')->name('energy-usages.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\EnergyUsages\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\EnergyUsages\Create::class)->name('create');
+            Route::get('/{energyUsage}/edit', \App\Livewire\Viticulturist\EnergyUsages\Edit::class)->name('edit');
         });
 
         // Autorizaciones Comerciales (DO, eco, plantación)
         Route::prefix('commercial-authorizations')->name('commercial-authorizations.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\CommercialAuthorizations\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\CommercialAuthorizations\Create::class)->name('create');
+            Route::get('/{commercialAuthorization}/edit', \App\Livewire\Viticulturist\CommercialAuthorizations\Edit::class)->name('edit');
         });
 
         // Explotación Agraria (SIEX/REA + DGC)
         Route::prefix('exploitations')->name('exploitations.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Exploitations\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Exploitations\Create::class)->name('create');
+            Route::get('/{exploitation}/edit', \App\Livewire\Viticulturist\Exploitations\Edit::class)->name('edit');
         });
 
         // Exportaciones CUE / SIEX
         Route::prefix('cue-exports')->name('cue-exports.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\CueExports\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\CueExports\Create::class)->name('create');
+            Route::get('/{cueExport}/edit', \App\Livewire\Viticulturist\CueExports\Edit::class)->name('edit');
         });
 
         // Entorno de Parcelas (zonas protegidas, captaciones)
         Route::prefix('plot-environments')->name('plot-environments.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\PlotEnvironments\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PlotEnvironments\Create::class)->name('create');
+            Route::get('/{plotEnvironment}/edit', \App\Livewire\Viticulturist\PlotEnvironments\Edit::class)->name('edit');
         });
 
         // Contenedores

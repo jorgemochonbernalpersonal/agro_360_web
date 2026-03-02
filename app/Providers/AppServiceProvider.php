@@ -2,23 +2,35 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\HtmlString;
-use App\Models\Plot;
-use App\Models\Campaign;
 use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
 use App\Models\Crew;
+use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Machinery;
-use App\Policies\PlotPolicy;
-use App\Policies\CampaignPolicy;
+use App\Models\PhytosanitaryTreatment;
+use App\Models\Plot;
+use App\Models\PlotPlanting;
+use App\Observers\AgriculturalActivityObserver;
+use App\Observers\CampaignObserver;
+use App\Observers\HarvestObserver;
+use App\Observers\InvoiceItemObserver;
+use App\Observers\InvoiceObserver;
+use App\Observers\PhytosanitaryTreatmentObserver;
+use App\Observers\PlotObserver;
+use App\Observers\PlotPlantingObserver;
 use App\Policies\AgriculturalActivityPolicy;
+use App\Policies\CampaignPolicy;
 use App\Policies\CrewPolicy;
 use App\Policies\MachineryPolicy;
+use App\Policies\PlotPolicy;
+use App\Services\ContainerStockService;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,71 +40,31 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Plot::class => PlotPolicy::class,
-        Campaign::class => CampaignPolicy::class,
+        Plot::class               => PlotPolicy::class,
+        Campaign::class           => CampaignPolicy::class,
         AgriculturalActivity::class => AgriculturalActivityPolicy::class,
-        Crew::class => CrewPolicy::class,
-        Machinery::class => MachineryPolicy::class,
+        Crew::class               => CrewPolicy::class,
+        Machinery::class          => MachineryPolicy::class,
     ];
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        $this->app->singleton(\App\Services\ContainerStockService::class);
+        $this->app->singleton(ContainerStockService::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        // Redirigir usuarios autenticados al dashboard de su rol
-        // cuando intenten acceder a rutas de invitado (login, register)
-        RedirectIfAuthenticated::redirectUsing(function ($request) {
-            $user = auth()->user();
-            if ($user->isAdmin()) return route('admin.dashboard');
-            if ($user->isSupervisor()) return route('supervisor.dashboard');
-            if ($user->isWinery()) return route('winery.dashboard');
-            return route('viticulturist.dashboard');
-        });
-
-        // Registrar macros personalizados
-        (new \App\Macros\CollectionMacros())->register();
+        (new \App\Macros\CollectionMacros)->register();
         \App\Macros\StringMacros::register();
 
-        // Forzar HTTPS solo en producción (no en local)
-        if (app()->environment('production')) {
+        if ($this->app->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
-        } elseif (app()->environment('local')) {
-            // Asegurar HTTP en local
-            \Illuminate\Support\Facades\URL::forceScheme('http');
         }
 
-        // Personalizar email de verificación de Laravel para Agro365
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
-            // Solo forzar HTTPS en producción
-            if (app()->environment('production')) {
-                $url = str_replace('http://', 'https://', $url);
-            }
-            
-            // Generar URL absoluta para la imagen
-            $logoUrl = url('images/logo.png');
-            
-            // Solo forzar HTTPS en producción
-            if (app()->environment('production')) {
-                $logoUrl = str_replace('http://', 'https://', $logoUrl);
-            }
-            
             return (new MailMessage)
                 ->subject('Verifica tu cuenta en Agro365')
-                ->line(new HtmlString(
-                    '<div style="text-align:center; margin-bottom: 16px;">
-                        <img src="'.$logoUrl.'" alt="Agro365"
-                             style="max-width: 160px; height: auto;">
-                     </div>'
-                ))
+                ->line(new HtmlString($this->logoHtml()))
                 ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
                 ->line('Gracias por registrarte en Agro365, tu cuaderno de campo digital para viticultores.')
                 ->line('Para activar tu cuenta y empezar a utilizar la plataforma, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:')
@@ -103,45 +75,22 @@ class AppServiceProvider extends ServiceProvider
                 ->salutation("Saludos,\nEl equipo de Agro365");
         });
 
-        // Personalizar email de reset de contraseña de Laravel para Agro365
         ResetPassword::toMailUsing(function ($notifiable, string $token) {
             $email = $notifiable->getEmailForPasswordReset();
-            
-            // Generar URL de reset con el token
-            // Construir URL con token en la ruta y email como query parameter
-            $url = route('password.reset', ['token' => $token]) . '?email=' . urlencode($email);
-            
-            // En producción, forzar HTTPS
-            if (app()->environment('production')) {
-                $url = str_replace('http://', 'https://', $url);
-            }
-            
-            // Log solo en desarrollo para debugging
-            if (app()->environment('local')) {
+            $url   = route('password.reset', ['token' => $token]) . '?email=' . urlencode($email);
+
+            if ($this->app->environment('local')) {
                 \Log::info('Password reset URL generated', [
-                    'email' => $email,
+                    'email'        => $email,
                     'token_length' => strlen($token),
-                    'url' => $url,
-                    'environment' => app()->environment(),
+                    'url'          => $url,
+                    'environment'  => $this->app->environment(),
                 ]);
             }
-            
-            // Generar URL absoluta para la imagen
-            $logoUrl = url('images/logo.png');
-            
-            // Solo forzar HTTPS en producción
-            if (app()->environment('production')) {
-                $logoUrl = str_replace('http://', 'https://', $logoUrl);
-            }
-            
+
             return (new MailMessage)
                 ->subject('Restablece tu contraseña en Agro365')
-                ->line(new HtmlString(
-                    '<div style="text-align:center; margin-bottom: 16px;">
-                        <img src="'.$logoUrl.'" alt="Agro365"
-                             style="max-width: 160px; height: auto;">
-                     </div>'
-                ))
+                ->line(new HtmlString($this->logoHtml()))
                 ->greeting('Hola ' . ($notifiable->name ?: '') . ',')
                 ->line('Has solicitado restablecer tu contraseña en Agro365.')
                 ->line('Haz clic en el siguiente botón para crear una nueva contraseña:')
@@ -152,18 +101,22 @@ class AppServiceProvider extends ServiceProvider
                 ->salutation("Saludos,\nEl equipo de Agro365");
         });
 
-        // Registrar observers para stock tracking
-        \App\Models\Harvest::observe(\App\Observers\HarvestObserver::class);
-        \App\Models\Invoice::observe(\App\Observers\InvoiceObserver::class);
-        \App\Models\InvoiceItem::observe(\App\Observers\InvoiceItemObserver::class);
-        
-        // Registrar observer para auditoría de actividades        // Observers
-        \App\Models\AgriculturalActivity::observe(\App\Observers\AgriculturalActivityObserver::class);
-        \App\Models\Plot::observe(\App\Observers\PlotObserver::class);
-        \App\Models\PlotPlanting::observe(\App\Observers\PlotPlantingObserver::class);
-        \App\Models\Campaign::observe(\App\Observers\CampaignObserver::class);
-        
-        // Registrar observer para descontar stock de productos fitosanitarios
-        \App\Models\PhytosanitaryTreatment::observe(\App\Observers\PhytosanitaryTreatmentObserver::class);
+        // Observers
+        Harvest::observe(HarvestObserver::class);
+        Invoice::observe(InvoiceObserver::class);
+        InvoiceItem::observe(InvoiceItemObserver::class);
+        AgriculturalActivity::observe(AgriculturalActivityObserver::class);
+        Plot::observe(PlotObserver::class);
+        PlotPlanting::observe(PlotPlantingObserver::class);
+        Campaign::observe(CampaignObserver::class);
+        PhytosanitaryTreatment::observe(PhytosanitaryTreatmentObserver::class);
+    }
+
+    private function logoHtml(): string
+    {
+        return '<div style="text-align:center; margin-bottom: 16px;">
+                    <img src="' . url('images/logo.png') . '" alt="Agro365"
+                         style="max-width: 160px; height: auto;">
+                </div>';
     }
 }

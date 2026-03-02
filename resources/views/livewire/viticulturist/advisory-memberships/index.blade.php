@@ -5,7 +5,9 @@
         icon="user-group"
     >
         <x-slot:actions>
-            <flux:button variant="primary" icon="plus" wire:click="openCreate">Nuevo Asesor</flux:button>
+            <flux:button href="{{ route('viticulturist.advisory-memberships.create') }}" variant="primary" icon="plus">
+                Nuevo Asesor
+            </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -28,7 +30,13 @@
                 icon="user-group"
                 title="Sin asesores registrados"
                 description="Añade tus asesores técnicos y fitosanitarios para cumplir con la normativa de producción integrada."
-            />
+            >
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.advisory-memberships.create') }}" variant="primary" icon="plus">
+                        Nuevo Asesor
+                    </flux:button>
+                </x-slot:action>
+            </x-agro.empty-state>
         @else
             <x-agro.data-table :headers="['Asesor', 'Nº Colegiado', 'Especialidad', 'Empresa', 'Contacto', 'Campaña', 'Acciones']">
                 @foreach($entries as $entry)
@@ -43,7 +51,10 @@
                         <x-agro.table-cell>{{ $entry->company_name ?? '-' }}</x-agro.table-cell>
                         <x-agro.table-cell>
                             @if($entry->phone)
-                                <span class="text-sm block">📞 {{ $entry->phone }}</span>
+                                <span class="text-sm block flex items-center gap-1">
+                                    <flux:icon icon="phone" class="size-3 text-zinc-400" />
+                                    {{ $entry->phone }}
+                                </span>
                             @endif
                             @if($entry->email)
                                 <span class="text-sm block text-zinc-500">{{ $entry->email }}</span>
@@ -51,82 +62,28 @@
                         </x-agro.table-cell>
                         <x-agro.table-cell>{{ $entry->campaign?->name ?? 'Permanente' }}</x-agro.table-cell>
                         <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-2">
-                                <flux:button size="sm" variant="ghost" icon="pencil" wire:click="openEdit({{ $entry->id }})">Editar</flux:button>
-                                <flux:button size="sm" variant="ghost" icon="user-minus" wire:click="deactivate({{ $entry->id }})" wire:confirm="¿Desactivar este asesor?">Desactivar</flux:button>
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{{ route('viticulturist.advisory-memberships.edit', $entry) }}"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                                   title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                <button
+                                    wire:click="deactivate({{ $entry->id }})"
+                                    wire:confirm="¿Desactivar este asesor?"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                                    title="Desactivar">
+                                    <flux:icon icon="user-minus" class="size-4" />
+                                </button>
                             </div>
                         </x-agro.table-cell>
                     </x-agro.table-row>
                 @endforeach
             </x-agro.data-table>
-            <div class="mt-4">{{ $entries->links() }}</div>
+            @if($entries->hasPages())
+                <div class="mt-4">{{ $entries->links() }}</div>
+            @endif
         @endif
     </x-agro.card>
 
-    <flux:modal wire:model="showModal" class="max-w-xl">
-        <div class="p-6 space-y-6">
-            <h2 class="text-lg font-semibold text-zinc-900">
-                {{ $editingId ? 'Editar Asesor' : 'Nuevo Asesor Técnico' }}
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:field class="md:col-span-2">
-                    <flux:label required>Nombre del asesor</flux:label>
-                    <flux:input wire:model="advisor_name" type="text" placeholder="Nombre completo" />
-                    <flux:error name="advisor_name" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label required>Nº Colegiado / Licencia</flux:label>
-                    <flux:input wire:model="license_number" type="text" placeholder="Nº colegiado" />
-                    <flux:error name="license_number" />
-                </flux:field>
-                <flux:field>
-                    <flux:label required>Especialidad</flux:label>
-                    <flux:select wire:model="specialty">
-                        @foreach($specialties as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="specialty" />
-                </flux:field>
-
-                <flux:field class="md:col-span-2">
-                    <flux:label>Empresa / Asesoría</flux:label>
-                    <flux:input wire:model="company_name" type="text" placeholder="Nombre de la empresa" />
-                    <flux:error name="company_name" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label>Teléfono</flux:label>
-                    <flux:input wire:model="phone" type="tel" placeholder="+34 000 000 000" />
-                    <flux:error name="phone" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Email</flux:label>
-                    <flux:input wire:model="email" type="email" placeholder="asesor@ejemplo.com" />
-                    <flux:error name="email" />
-                </flux:field>
-
-                <flux:field class="md:col-span-2">
-                    <flux:label>Vincular a campaña específica</flux:label>
-                    <flux:select wire:model="campaign_id">
-                        <option value="">Permanente (todas las campañas)</option>
-                        @foreach($campaigns as $c)
-                            <option value="{{ $c->id }}">{{ $c->name }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:description>Deja vacío si el asesor trabaja de forma permanente</flux:description>
-                    <flux:error name="campaign_id" />
-                </flux:field>
-            </div>
-
-            <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
-                <flux:button variant="ghost" wire:click="$set('showModal', false)">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="save">
-                    {{ $editingId ? 'Actualizar' : 'Registrar Asesor' }}
-                </flux:button>
-            </div>
-        </div>
-    </flux:modal>
 </div>

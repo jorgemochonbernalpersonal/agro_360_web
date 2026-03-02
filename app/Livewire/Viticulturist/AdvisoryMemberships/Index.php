@@ -2,135 +2,46 @@
 
 namespace App\Livewire\Viticulturist\AdvisoryMemberships;
 
+use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\AdvisoryMembership;
-use App\Models\Campaign;
-use App\Livewire\Concerns\WithToastNotifications;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
+use Illuminate\Database\Eloquent\Builder;
 
-#[Layout('layouts.app')]
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithToastNotifications;
+    public string $filterSpecialty = '';
 
-    // Filters
-    public $filterSpecialty = '';
+    public function updatingFilterSpecialty(): void { $this->resetPage(); }
 
-    // Form
-    public bool $showModal = false;
-    public ?int $editingId = null;
-
-    public $campaign_id = '';
-    public $advisor_name = '';
-    public $license_number = '';
-    public $specialty = 'phytosanitary';
-    public $company_name = '';
-    public $phone = '';
-    public $email = '';
-
-    public function openCreate()
+    protected function filterDefaults(): array
     {
-        $this->resetForm();
-        $this->showModal = true;
+        return ['filterSpecialty' => ''];
     }
 
-    public function openEdit(int $id)
+    public function deactivate(int $id): void
     {
-        $entry = AdvisoryMembership::where('viticulturist_id', Auth::id())->findOrFail($id);
-        $this->editingId = $id;
-        $this->campaign_id = $entry->campaign_id ?? '';
-        $this->advisor_name = $entry->advisor_name;
-        $this->license_number = $entry->license_number;
-        $this->specialty = $entry->specialty;
-        $this->company_name = $entry->company_name ?? '';
-        $this->phone = $entry->phone ?? '';
-        $this->email = $entry->email ?? '';
-        $this->showModal = true;
-    }
-
-    public function save()
-    {
-        $this->validate($this->rules());
-        $user = Auth::user();
-
-        $data = [
-            'viticulturist_id' => $user->id,
-            'campaign_id'      => $this->campaign_id ?: null,
-            'advisor_name'     => $this->advisor_name,
-            'license_number'   => $this->license_number,
-            'specialty'        => $this->specialty,
-            'company_name'     => $this->company_name ?: null,
-            'phone'            => $this->phone ?: null,
-            'email'            => $this->email ?: null,
-            'active'           => true,
-        ];
-
-        if ($this->editingId) {
-            AdvisoryMembership::where('viticulturist_id', $user->id)
-                ->findOrFail($this->editingId)
-                ->update($data);
-            $this->toastSuccess('Asesor actualizado correctamente.');
-        } else {
-            AdvisoryMembership::create($data);
-            $this->toastSuccess('Asesor registrado correctamente.');
-        }
-
-        $this->showModal = false;
-        $this->resetForm();
-    }
-
-    public function deactivate(int $id)
-    {
-        AdvisoryMembership::where('viticulturist_id', Auth::id())
-            ->findOrFail($id)
-            ->update(['active' => false]);
+        $this->findOwned(AdvisoryMembership::class, $id)->update(['active' => false]);
         $this->toastSuccess('Asesor desactivado.');
     }
 
-    protected function rules(): array
+    protected function baseQuery(): Builder
     {
-        return [
-            'campaign_id'    => 'nullable|exists:campaigns,id',
-            'advisor_name'   => 'required|string|max:255',
-            'license_number' => 'required|string|max:50',
-            'specialty'      => 'required|in:' . implode(',', array_keys(AdvisoryMembership::SPECIALTIES)),
-            'company_name'   => 'nullable|string|max:255',
-            'phone'          => 'nullable|string|max:20',
-            'email'          => 'nullable|email|max:100',
-        ];
+        return AdvisoryMembership::where('viticulturist_id', $this->viticulturistId())->active();
     }
 
-    protected function resetForm()
+    protected function applyFilters(Builder $query): void
     {
-        $this->editingId = null;
-        $this->campaign_id = '';
-        $this->advisor_name = '';
-        $this->license_number = '';
-        $this->specialty = 'phytosanitary';
-        $this->company_name = '';
-        $this->phone = '';
-        $this->email = '';
-        $this->resetValidation();
-    }
-
-    public function render()
-    {
-        $user = Auth::user();
-
-        $query = AdvisoryMembership::where('viticulturist_id', $user->id)->active();
-
         if ($this->filterSpecialty) {
             $query->where('specialty', $this->filterSpecialty);
         }
+    }
 
-        $entries = $query->orderBy('advisor_name')->paginate(20);
-        $campaigns = Campaign::forViticulturist($user->id)->orderByDesc('year')->get();
+    protected function defaultOrderBy(): array { return ['advisor_name', 'asc']; }
 
-        return view('livewire.viticulturist.advisory-memberships.index', [
+    protected function viewData(mixed $entries): array
+    {
+        return [
             'entries'     => $entries,
-            'campaigns'   => $campaigns,
             'specialties' => AdvisoryMembership::SPECIALTIES,
-        ]);
+        ];
     }
 }

@@ -2,182 +2,64 @@
 
 namespace App\Livewire\Viticulturist\ResidueManagements;
 
+use App\Livewire\Viticulturist\AbstractIndex;
 use App\Models\Campaign;
-use App\Models\Plot;
-use App\Models\PlotPlanting;
 use App\Models\ResidueManagement;
-use App\Models\Unit;
-use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 
-#[Layout('layouts.app')]
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithToastNotifications;
+    public string $filterCampaign = '';
+    public string $filterPractice = '';
 
-    // Filters
-    public $filterCampaign = '';
-    public $filterPractice = '';
-
-    // Form
-    public bool $showModal = false;
-    public ?int $editingId = null;
-
-    public $campaign_id = '';
-    public $plot_id = '';
-    public $plot_planting_id = '';
-    public $date = '';
-    public $practice_type = '';
-    public $material_type = '';
-    public $estimated_quantity = '';
-    public $quantity_unit = 'kg';
-    public $justification = '';
-    public $notes = '';
-
-    public function mount()
+    public function mount(): void
     {
-        $user = Auth::user();
-        $campaign = Campaign::getOrCreateActiveForYear($user->id);
-        $this->filterCampaign = $campaign?->id ?? '';
-        $this->campaign_id = $campaign?->id ?? '';
-        $this->date = now()->format('Y-m-d');
+        $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
+        $this->filterCampaign = (string) ($campaign?->id ?? '');
     }
 
-    public function openCreate()
+    public function updatingFilterCampaign(): void { $this->resetPage(); }
+    public function updatingFilterPractice(): void { $this->resetPage(); }
+
+    protected function filterDefaults(): array
     {
-        $this->resetForm();
-        $this->showModal = true;
+        return ['filterCampaign' => '', 'filterPractice' => ''];
     }
 
-    public function openEdit(int $id)
+    public function deactivate(int $id): void
     {
-        $entry = ResidueManagement::where('viticulturist_id', Auth::id())->findOrFail($id);
-        $this->editingId = $id;
-        $this->campaign_id = $entry->campaign_id;
-        $this->plot_id = $entry->plot_id ?? '';
-        $this->plot_planting_id = $entry->plot_planting_id ?? '';
-        $this->date = $entry->date->format('Y-m-d');
-        $this->practice_type = $entry->practice_type;
-        $this->material_type = $entry->material_type;
-        $this->estimated_quantity = $entry->estimated_quantity ?? '';
-        $this->quantity_unit = $entry->quantity_unit ?? 'kg';
-        $this->justification = $entry->justification ?? '';
-        $this->notes = $entry->notes ?? '';
-        $this->showModal = true;
-    }
-
-    public function save()
-    {
-        $this->validate($this->rules());
-        $user = Auth::user();
-
-        $data = [
-            'campaign_id'        => $this->campaign_id,
-            'plot_id'            => $this->plot_id ?: null,
-            'plot_planting_id'   => $this->plot_planting_id ?: null,
-            'viticulturist_id'   => $user->id,
-            'date'               => $this->date,
-            'practice_type'      => $this->practice_type,
-            'material_type'      => $this->material_type,
-            'estimated_quantity' => $this->estimated_quantity ?: null,
-            'quantity_unit'      => $this->quantity_unit ?: null,
-            'justification'      => $this->justification ?: null,
-            'notes'              => $this->notes ?: null,
-            'active'             => true,
-        ];
-
-        if ($this->editingId) {
-            ResidueManagement::where('viticulturist_id', $user->id)
-                ->findOrFail($this->editingId)
-                ->update($data);
-            $this->toastSuccess('Gestión de residuos actualizada.');
-        } else {
-            ResidueManagement::create($data);
-            $this->toastSuccess('Gestión de residuos registrada.');
-        }
-
-        $this->showModal = false;
-        $this->resetForm();
-    }
-
-    public function deactivate(int $id)
-    {
-        ResidueManagement::where('viticulturist_id', Auth::id())
-            ->findOrFail($id)
-            ->update(['active' => false]);
+        $this->findOwned(ResidueManagement::class, $id)->update(['active' => false]);
         $this->toastSuccess('Registro archivado.');
     }
 
-    protected function rules(): array
+    protected function baseQuery(): Builder
     {
-        $rules = [
-            'campaign_id'        => 'required|exists:campaigns,id',
-            'plot_id'            => 'nullable|exists:plots,id',
-            'plot_planting_id'   => 'nullable|exists:plot_plantings,id',
-            'date'               => 'required|date',
-            'practice_type'      => 'required|in:' . implode(',', array_keys(ResidueManagement::PRACTICE_TYPES)),
-            'material_type'      => 'required|in:' . implode(',', array_keys(ResidueManagement::MATERIAL_TYPES)),
-            'estimated_quantity' => 'nullable|numeric|min:0',
-            'quantity_unit'      => 'nullable|exists:units,symbol',
-            'justification'      => 'nullable|string',
-            'notes'              => 'nullable|string',
-        ];
-
-        if ($this->practice_type === 'burning') {
-            $rules['justification'] = 'required|string|min:20';
-        }
-
-        return $rules;
-    }
-
-    protected function resetForm()
-    {
-        $this->editingId = null;
-        $this->plot_id = '';
-        $this->plot_planting_id = '';
-        $this->date = now()->format('Y-m-d');
-        $this->practice_type = '';
-        $this->material_type = '';
-        $this->estimated_quantity = '';
-        $this->quantity_unit = 'kg';
-        $this->justification = '';
-        $this->notes = '';
-        $this->resetValidation();
-    }
-
-    public function render()
-    {
-        $user = Auth::user();
-
-        $query = ResidueManagement::with(['plot', 'plotPlanting.grape'])
-            ->where('viticulturist_id', $user->id)
+        return ResidueManagement::with(['plot', 'plotPlanting.grape'])
+            ->where('viticulturist_id', $this->viticulturistId())
             ->active();
+    }
 
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->filterCampaign) {
             $query->where('campaign_id', $this->filterCampaign);
         }
         if ($this->filterPractice) {
             $query->where('practice_type', $this->filterPractice);
         }
+    }
 
-        $entries = $query->orderByDesc('date')->paginate(15);
-        $campaigns = Campaign::forViticulturist($user->id)->orderByDesc('year')->get();
-        $plots = Plot::where('viticulturist_id', $user->id)->active()->get();
-        $plantings = PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $user->id))
-            ->with(['plot', 'grape'])
-            ->active()
-            ->get();
+    protected function defaultOrderBy(): array { return ['date', 'desc']; }
 
-        return view('livewire.viticulturist.residue-managements.index', [
+    protected function perPage(): int { return 15; }
+
+    protected function viewData(mixed $entries): array
+    {
+        return [
             'entries'       => $entries,
-            'campaigns'     => $campaigns,
-            'plots'         => $plots,
-            'plantings'     => $plantings,
+            'campaigns'     => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
             'practiceTypes' => ResidueManagement::PRACTICE_TYPES,
-            'materialTypes' => ResidueManagement::MATERIAL_TYPES,
-            'units'         => Unit::active()->where('category', 'weight')->orderBy('name')->get(),
-        ]);
+        ];
     }
 }

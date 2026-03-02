@@ -5,7 +5,9 @@
         icon="beaker"
     >
         <x-slot:actions>
-            <flux:button variant="primary" icon="plus" wire:click="openCreate">Nuevo Análisis</flux:button>
+            <flux:button href="{{ route('viticulturist.residue-analyses.create') }}" variant="primary" icon="plus">
+                Nuevo Análisis
+            </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -18,9 +20,12 @@
         </x-agro.filter-select>
         <x-agro.filter-select wire:model.live="filterCompliant" label="Resultado">
             <option value="">Todos</option>
-            <option value="1">✅ Conforme</option>
-            <option value="0">❌ No conforme</option>
+            <option value="1">Conforme</option>
+            <option value="0">No conforme</option>
         </x-agro.filter-select>
+        @if($filterCampaign || $filterCompliant !== '')
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+        @endif
     </x-agro.filter-bar>
 
     <x-agro.card>
@@ -29,7 +34,13 @@
                 icon="beaker"
                 title="Sin análisis registrados"
                 description="Registra los análisis de residuos de laboratorio para verificar el cumplimiento de los LMR."
-            />
+            >
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.residue-analyses.create') }}" variant="primary" icon="plus">
+                        Nuevo Análisis
+                    </flux:button>
+                </x-slot:action>
+            </x-agro.empty-state>
         @else
             <x-agro.data-table :headers="['Fecha', 'Laboratorio', 'Plantación', 'Muestra', 'Resultado', 'Acciones']">
                 @foreach($entries as $entry)
@@ -55,97 +66,28 @@
                             @endif
                         </x-agro.table-cell>
                         <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-2">
-                                <flux:button size="sm" variant="ghost" icon="pencil" wire:click="openEdit({{ $entry->id }})">Editar</flux:button>
-                                <flux:button size="sm" variant="ghost" icon="archive-box" wire:click="deactivate({{ $entry->id }})" wire:confirm="¿Archivar este análisis?">Archivar</flux:button>
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{{ route('viticulturist.residue-analyses.edit', $entry) }}"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                                   title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                <button
+                                    wire:click="deactivate({{ $entry->id }})"
+                                    wire:confirm="¿Archivar este análisis?"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                                    title="Archivar">
+                                    <flux:icon icon="archive-box" class="size-4" />
+                                </button>
                             </div>
                         </x-agro.table-cell>
                     </x-agro.table-row>
                 @endforeach
             </x-agro.data-table>
-            <div class="mt-4">{{ $entries->links() }}</div>
+            @if($entries->hasPages())
+                <div class="mt-4">{{ $entries->links() }}</div>
+            @endif
         @endif
     </x-agro.card>
 
-    <flux:modal wire:model="showModal" class="max-w-2xl">
-        <div class="p-6 space-y-6">
-            <h2 class="text-lg font-semibold text-zinc-900">
-                {{ $editingId ? 'Editar Análisis' : 'Nuevo Análisis de Residuos' }}
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:field>
-                    <flux:label required>Campaña</flux:label>
-                    <flux:select wire:model="campaign_id">
-                        <option value="">Seleccionar...</option>
-                        @foreach($campaigns as $c)
-                            <option value="{{ $c->id }}">{{ $c->name }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="campaign_id" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Plantación (opcional)</flux:label>
-                    <flux:select wire:model="plot_planting_id">
-                        <option value="">Global campaña</option>
-                        @foreach($plantings as $p)
-                            <option value="{{ $p->id }}">{{ $p->plot->name }} — {{ $p->grape->name ?? '' }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="plot_planting_id" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label required>Fecha del análisis</flux:label>
-                    <flux:input wire:model="analysis_date" type="date" />
-                    <flux:error name="analysis_date" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Fecha de toma de muestra</flux:label>
-                    <flux:input wire:model="sample_date" type="date" />
-                    <flux:error name="sample_date" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label required>Laboratorio</flux:label>
-                    <flux:input wire:model="laboratory_name" type="text" placeholder="Nombre del laboratorio" />
-                    <flux:error name="laboratory_name" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Acreditación ENAC</flux:label>
-                    <flux:input wire:model="laboratory_accreditation" type="text" placeholder="Nº acreditación" />
-                    <flux:error name="laboratory_accreditation" />
-                </flux:field>
-
-                <flux:field>
-                    <flux:label>Tipo de muestra</flux:label>
-                    <flux:input wire:model="sample_type" type="text" placeholder="Ej: uva, mosto, vino" />
-                    <flux:error name="sample_type" />
-                </flux:field>
-                <flux:field>
-                    <flux:label>Ruta certificado PDF</flux:label>
-                    <flux:input wire:model="certificate_file" type="text" placeholder="Ruta o URL del certificado" />
-                    <flux:error name="certificate_file" />
-                </flux:field>
-
-                <flux:field class="md:col-span-2">
-                    <flux:checkbox wire:model="overall_compliant" label="✅ Todos los resultados cumplen los LMR" />
-                    <flux:error name="overall_compliant" />
-                </flux:field>
-
-                <flux:field class="md:col-span-2">
-                    <flux:label>Notas</flux:label>
-                    <flux:textarea wire:model="notes" rows="2" />
-                    <flux:error name="notes" />
-                </flux:field>
-            </div>
-
-            <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
-                <flux:button variant="ghost" wire:click="$set('showModal', false)">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="save">
-                    {{ $editingId ? 'Actualizar' : 'Registrar Análisis' }}
-                </flux:button>
-            </div>
-        </div>
-    </flux:modal>
 </div>

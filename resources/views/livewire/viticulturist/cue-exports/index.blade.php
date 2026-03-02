@@ -5,7 +5,9 @@
         icon="arrow-up-tray"
     >
         <x-slot:actions>
-            <flux:button variant="primary" icon="plus" wire:click="openCreate">Nueva Exportación</flux:button>
+            <flux:button href="{{ route('viticulturist.cue-exports.create') }}" variant="primary" icon="plus">
+                Nueva Exportación
+            </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
@@ -20,18 +22,24 @@
             title="Sin explotaciones registradas"
             description="Antes de crear una exportación CUE, debes registrar al menos una explotación agraria en el módulo Explotación SIEX/REA."
         >
-            <x-slot:actions>
+            <x-slot:action>
                 <flux:button variant="primary" :href="route('viticulturist.exploitations.index')" wire:navigate>
                     Ir a Explotaciones
                 </flux:button>
-            </x-slot:actions>
+            </x-slot:action>
         </x-agro.empty-state>
     @elseif($exports->isEmpty())
         <x-agro.empty-state
             icon="arrow-up-tray"
             title="Sin exportaciones registradas"
             description="Crea tu primera exportación CUE para registrar el historial de envíos al MAPA."
-        />
+        >
+            <x-slot:action>
+                <flux:button href="{{ route('viticulturist.cue-exports.create') }}" variant="primary" icon="plus">
+                    Nueva Exportación
+                </flux:button>
+            </x-slot:action>
+        </x-agro.empty-state>
     @else
         {{-- Tabla de exportaciones --}}
         <x-agro.card>
@@ -86,26 +94,33 @@
                                 <td class="py-3 px-4 text-right">
                                     <div class="flex items-center justify-end gap-1">
                                         @if($export->status === 'draft')
-                                            <flux:button size="xs" variant="ghost" icon="pencil"
-                                                wire:click="openEdit({{ $export->id }})">
-                                                Editar
-                                            </flux:button>
-                                            <flux:button size="xs" variant="ghost" icon="check-circle"
+                                            <a href="{{ route('viticulturist.cue-exports.edit', $export) }}"
+                                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                                               title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                            <button
                                                 wire:click="markAsGenerated({{ $export->id }})"
-                                                wire:confirm="¿Marcar esta exportación como generada?">
-                                                Generado
-                                            </flux:button>
-                                            <flux:button size="xs" variant="ghost" icon="trash"
+                                                wire:confirm="¿Marcar esta exportación como generada?"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                                title="Marcar como generado">
+                                                <flux:icon icon="check-circle" class="size-4" />
+                                            </button>
+                                            <button
                                                 wire:click="delete({{ $export->id }})"
-                                                wire:confirm="¿Eliminar esta exportación? Esta acción no se puede deshacer.">
-                                                Eliminar
-                                            </flux:button>
+                                                wire:confirm="¿Eliminar esta exportación? Esta acción no se puede deshacer."
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                                title="Eliminar">
+                                                <flux:icon icon="trash" class="size-4" />
+                                            </button>
                                         @elseif($export->status === 'generated')
-                                            <flux:button size="xs" variant="ghost" icon="paper-airplane"
+                                            <button
                                                 wire:click="markAsSent({{ $export->id }})"
-                                                wire:confirm="¿Marcar esta exportación como enviada al MAPA?">
-                                                Marcar Enviado
-                                            </flux:button>
+                                                wire:confirm="¿Marcar esta exportación como enviada al MAPA?"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors"
+                                                title="Marcar como enviado">
+                                                <flux:icon icon="paper-airplane" class="size-4" />
+                                            </button>
                                         @endif
                                     </div>
                                 </td>
@@ -116,80 +131,23 @@
             </div>
         </x-agro.card>
 
+        {{-- Paginación --}}
+        @if($exports->hasPages())
+            <div class="px-4 py-3 border-t border-zinc-100">
+                {{ $exports->links() }}
+            </div>
+        @endif
+
         {{-- Resumen por estado --}}
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             @foreach(\App\Models\CueExport::STATUSES as $key => $label)
-                @php $count = $exports->where('status', $key)->count(); @endphp
                 <x-agro.stat-card
                     :label="$label"
-                    :value="$count"
+                    :value="$statusCounts[$key] ?? 0"
                     :color="\App\Models\CueExport::STATUS_COLORS[$key]"
                 />
             @endforeach
         </div>
     @endif
 
-    {{-- Modal nueva/editar exportación --}}
-    <flux:modal wire:model="showModal" class="max-w-lg">
-        <div class="p-6 space-y-5">
-            <h2 class="text-lg font-semibold text-zinc-900">
-                {{ $editingId ? 'Editar Exportación CUE' : 'Nueva Exportación CUE' }}
-            </h2>
-
-            <flux:field>
-                <flux:label required>Explotación</flux:label>
-                <flux:select wire:model="exploitation_id">
-                    <option value="">Seleccionar explotación...</option>
-                    @foreach($exploitations as $exp)
-                        <option value="{{ $exp->id }}">
-                            {{ $exp->exploitation_name }}
-                            @if($exp->rea_code) (REA: {{ $exp->rea_code }}) @endif
-                        </option>
-                    @endforeach
-                </flux:select>
-                <flux:error name="exploitation_id" />
-            </flux:field>
-
-            <div class="grid grid-cols-2 gap-4">
-                <flux:field>
-                    <flux:label required>Año de campaña</flux:label>
-                    <flux:input wire:model.live="campaign_year" type="number" min="2000" :max="date('Y') + 1" placeholder="{{ date('Y') }}" />
-                    <flux:error name="campaign_year" />
-                </flux:field>
-                <flux:field>
-                    <flux:label required>Tipo de período</flux:label>
-                    <flux:select wire:model.live="period_type">
-                        <option value="annual">Anual</option>
-                        <option value="quarterly">Trimestral</option>
-                    </flux:select>
-                    <flux:error name="period_type" />
-                </flux:field>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <flux:field>
-                    <flux:label required>Fecha de inicio</flux:label>
-                    <flux:input wire:model="from_date" type="date" />
-                    <flux:error name="from_date" />
-                </flux:field>
-                <flux:field>
-                    <flux:label required>Fecha de fin</flux:label>
-                    <flux:input wire:model="to_date" type="date" />
-                    <flux:error name="to_date" />
-                </flux:field>
-            </div>
-
-            <flux:callout variant="warning" icon="exclamation-triangle" class="text-sm">
-                La integración directa con el sistema SIEX del MAPA está en desarrollo.
-                Por ahora puedes registrar el historial de envíos manualmente.
-            </flux:callout>
-
-            <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
-                <flux:button variant="ghost" wire:click="$set('showModal', false)">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="save">
-                    {{ $editingId ? 'Actualizar' : 'Crear Exportación' }}
-                </flux:button>
-            </div>
-        </div>
-    </flux:modal>
 </div>
