@@ -10,6 +10,8 @@ class ResidueManagement extends Model
 {
     use HasFactory;
 
+    protected $table = 'residue_managements';
+
     const PRACTICE_TYPES = [
         'incorporation' => 'Triturado e incorporación al suelo',
         'removal'       => 'Retirada de la explotación',
