@@ -60,7 +60,11 @@ RedirectMatch 403 /database
     </IfModule>
 
     RewriteEngine On
-    
+
+    # Redirigir agro365.eu → agro365.es (dominio canónico)
+    RewriteCond %{HTTP_HOST} ^(www\.)?agro365\.eu$ [NC]
+    RewriteRule ^(.*)$ https://agro365.es/$1 [R=301,L]
+
     # Permitir acceso directo a archivos estáticos en /build antes de otras reglas
     RewriteCond %{REQUEST_URI} ^/build/
     RewriteCond %{REQUEST_FILENAME} -f

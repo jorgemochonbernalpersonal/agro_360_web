@@ -35,7 +35,9 @@
                         <flux:button href="{{ route('viticulturist.digital-notebook.irrigation.create') }}" variant="primary" size="sm" class="!bg-cyan-600 hover:!bg-cyan-700">+ Riego</flux:button>
                         <flux:button href="{{ route('viticulturist.digital-notebook.cultural.create') }}" variant="primary" size="sm" class="!bg-purple-600 hover:!bg-purple-700">+ Labor</flux:button>
                         <flux:button href="{{ route('viticulturist.digital-notebook.observation.create') }}" variant="primary" size="sm" class="!bg-amber-600 hover:!bg-amber-700">+ Observación</flux:button>
-                        <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" variant="primary" size="sm" class="!bg-purple-600 hover:!bg-purple-700">Cosecha</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" variant="primary" size="sm" class="!bg-purple-600 hover:!bg-purple-700">+ Cosecha</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.pruning.create') }}" variant="primary" size="sm" class="!bg-lime-600 hover:!bg-lime-700">+ Poda</flux:button>
+                        <flux:button href="{{ route('viticulturist.digital-notebook.post-harvest.create') }}" variant="primary" size="sm" class="!bg-indigo-600 hover:!bg-indigo-700">+ Post-vendimia</flux:button>
                     </div>
                 </div>
             @endcan
@@ -109,7 +111,7 @@
                 </span>
             @endif
             @if($activityType)
-                @php $typeLabels = ['phytosanitary' => 'Tratamiento', 'fertilization' => 'Fertilización', 'irrigation' => 'Riego', 'cultural' => 'Labor', 'observation' => 'Observación', 'harvest' => 'Cosecha']; @endphp
+                @php $typeLabels = ['phytosanitary' => 'Tratamiento', 'fertilization' => 'Fertilización', 'irrigation' => 'Riego', 'cultural' => 'Labor', 'observation' => 'Observación', 'harvest' => 'Cosecha', 'pruning' => 'Poda', 'post_harvest' => 'Post-vendimia']; @endphp
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
                     {{ $typeLabels[$activityType] ?? $activityType }}
                     <button wire:click="$set('activityType', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
@@ -142,12 +144,14 @@
             @foreach($activities as $i => $activity)
                 @php
                     $typeConfig = [
-                        'phytosanitary' => ['label' => 'Tratamiento',   'color' => 'red',    'bg' => 'bg-red-50',    'icon_color' => 'text-red-600',    'badge' => 'red',    'icon' => 'shield-exclamation'],
-                        'fertilization' => ['label' => 'Fertilización', 'color' => 'blue',   'bg' => 'bg-blue-50',   'icon_color' => 'text-blue-600',   'badge' => 'blue',   'icon' => 'beaker'],
-                        'irrigation'    => ['label' => 'Riego',         'color' => 'cyan',   'bg' => 'bg-cyan-50',   'icon_color' => 'text-cyan-600',   'badge' => 'cyan',   'icon' => 'cloud'],
-                        'cultural'      => ['label' => 'Labor',         'color' => 'yellow', 'bg' => 'bg-amber-50',  'icon_color' => 'text-amber-600',  'badge' => 'yellow', 'icon' => 'wrench-screwdriver'],
-                        'observation'   => ['label' => 'Observación',   'color' => null,     'bg' => 'bg-zinc-100',  'icon_color' => 'text-zinc-500',   'badge' => null,     'icon' => 'eye'],
-                        'harvest'       => ['label' => 'Cosecha',       'color' => 'purple', 'bg' => 'bg-purple-50', 'icon_color' => 'text-purple-600', 'badge' => 'purple', 'icon' => 'scissors'],
+                        'phytosanitary' => ['label' => 'Tratamiento',    'color' => 'red',    'bg' => 'bg-red-50',     'icon_color' => 'text-red-600',    'badge' => 'red',    'icon' => 'shield-exclamation'],
+                        'fertilization' => ['label' => 'Fertilización',  'color' => 'blue',   'bg' => 'bg-blue-50',    'icon_color' => 'text-blue-600',   'badge' => 'blue',   'icon' => 'beaker'],
+                        'irrigation'    => ['label' => 'Riego',          'color' => 'cyan',   'bg' => 'bg-cyan-50',    'icon_color' => 'text-cyan-600',   'badge' => 'cyan',   'icon' => 'cloud'],
+                        'cultural'      => ['label' => 'Labor',          'color' => 'yellow', 'bg' => 'bg-amber-50',   'icon_color' => 'text-amber-600',  'badge' => 'yellow', 'icon' => 'wrench-screwdriver'],
+                        'observation'   => ['label' => 'Observación',    'color' => null,     'bg' => 'bg-zinc-100',   'icon_color' => 'text-zinc-500',   'badge' => null,     'icon' => 'eye'],
+                        'harvest'       => ['label' => 'Cosecha',        'color' => 'purple', 'bg' => 'bg-purple-50',  'icon_color' => 'text-purple-600', 'badge' => 'purple', 'icon' => 'scissors'],
+                        'pruning'       => ['label' => 'Poda',           'color' => 'lime',   'bg' => 'bg-lime-50',    'icon_color' => 'text-lime-600',   'badge' => 'lime',   'icon' => 'scissors'],
+                        'post_harvest'  => ['label' => 'Post-vendimia',  'color' => 'indigo', 'bg' => 'bg-indigo-50',  'icon_color' => 'text-indigo-600', 'badge' => 'indigo', 'icon' => 'beaker'],
                     ];
                     $tc = $typeConfig[$activity->activity_type] ?? ['label' => ucfirst($activity->activity_type), 'color' => null, 'bg' => 'bg-zinc-100', 'icon_color' => 'text-zinc-500', 'badge' => null, 'icon' => 'document'];
 
@@ -217,6 +221,15 @@
                             @if($activity->irrigation->water_volume)
                                 <p class="text-xs text-zinc-500">Volumen: {{ number_format($activity->irrigation->water_volume, 2) }} L</p>
                             @endif
+                        @elseif($activity->activity_type === 'pruning' && $activity->culturalWork)
+                            @php $pruningLabels = ['guyot' => 'Guyot', 'doble_guyot' => 'Doble Guyot', 'vaso' => 'Vaso', 'cordon' => 'Cordón', 'other' => 'Otro']; @endphp
+                            <p class="text-xs font-semibold text-lime-700">{{ $pruningLabels[$activity->culturalWork->pruning_type] ?? 'Poda' }}</p>
+                            @if($activity->culturalWork->productive_buds_per_hectare)
+                                <p class="text-xs text-zinc-500">{{ number_format($activity->culturalWork->productive_buds_per_hectare) }} yemas/ha</p>
+                            @endif
+                            @if($activity->culturalWork->hours_worked)
+                                <p class="text-xs text-zinc-500">Duración: {{ number_format($activity->culturalWork->hours_worked, 1) }} h</p>
+                            @endif
                         @elseif($activity->culturalWork)
                             <p class="text-xs font-semibold text-zinc-700">{{ $activity->culturalWork->work_type ?: 'Labor cultural' }}</p>
                             @if($activity->culturalWork->hours_worked)
@@ -226,6 +239,14 @@
                             <p class="text-xs font-semibold text-zinc-700">{{ $activity->observation->observation_type ?: 'Observación' }}</p>
                             @if($activity->observation->severity)
                                 <p class="text-xs text-zinc-500">Severidad: {{ ucfirst($activity->observation->severity) }}</p>
+                            @endif
+                        @elseif($activity->postHarvestTreatment)
+                            <p class="text-xs font-semibold text-indigo-700">{{ $activity->postHarvestTreatment->application_type_label }}</p>
+                            @if($activity->postHarvestTreatment->treated_area_ha)
+                                <p class="text-xs text-zinc-500">Superficie: {{ number_format($activity->postHarvestTreatment->treated_area_ha, 2) }} ha</p>
+                            @endif
+                            @if($activity->postHarvestTreatment->product)
+                                <p class="text-xs text-zinc-500">{{ $activity->postHarvestTreatment->product->name }}</p>
                             @endif
                         @elseif($activity->harvest)
                             <p class="text-xs font-semibold text-purple-700">Vendimia</p>
@@ -285,6 +306,14 @@
                                             </a>
                                         @elseif($activity->activity_type === 'observation')
                                             <a href="{{ route('viticulturist.digital-notebook.observation.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @elseif($activity->activity_type === 'pruning')
+                                            <a href="{{ route('viticulturist.digital-notebook.pruning.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
+                                                <flux:icon icon="pencil-square" class="size-4" />
+                                            </a>
+                                        @elseif($activity->activity_type === 'post_harvest')
+                                            <a href="{{ route('viticulturist.digital-notebook.post-harvest.edit', $activity->id) }}" class="{{ $btnBase }}" title="Editar">
                                                 <flux:icon icon="pencil-square" class="size-4" />
                                             </a>
                                         @endif
@@ -361,6 +390,8 @@
                     <option value="cultural">Labores Culturales</option>
                     <option value="observation">Observaciones</option>
                     <option value="harvest">Cosechas / Vendimias</option>
+                    <option value="pruning">Podas</option>
+                    <option value="post_harvest">Tratamientos Post-Vendimia</option>
                 </select>
             </div>
             @if($activityType === 'phytosanitary' && $products->count() > 0)

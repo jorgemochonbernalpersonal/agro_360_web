@@ -66,24 +66,11 @@ class NavigationHelper
                     'icon' => 'pencil-square',
                     'label' => 'Cuaderno Digital',
                     'route' => 'viticulturist.digital-notebook',
-                    'active' => request()->routeIs('viticulturist.digital-notebook*') || request()->routeIs('viticulturist.phytosanitary-products.*'),
+                    'active' => request()->routeIs('viticulturist.digital-notebook*'),
                     'submenu' => [
                         ['label' => 'Actividades', 'route' => 'viticulturist.digital-notebook', 'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*')],
                         ['label' => 'Rendimientos', 'route' => 'viticulturist.digital-notebook.estimated-yields.index', 'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')],
-                        ['label' => 'Fitosanitarios', 'route' => 'viticulturist.phytosanitary-products.index', 'active' => request()->routeIs('viticulturist.phytosanitary-products.*')],
                     ],
-                ],
-                [
-                    'icon' => 'chart-bar',
-                    'label' => 'Cumplimiento PAC',
-                    'route' => 'viticulturist.pac-compliance',
-                    'active' => request()->routeIs('viticulturist.pac-compliance'),
-                ],
-                [
-                    'icon' => 'document',
-                    'label' => 'Informes Oficiales',
-                    'route' => 'viticulturist.official-reports.index',
-                    'active' => request()->routeIs('viticulturist.official-reports.*'),
                 ],
             ];
 
@@ -171,6 +158,18 @@ class NavigationHelper
                     'route' => 'viticulturist.cue-exports.index',
                     'active' => request()->routeIs('viticulturist.cue-exports.*'),
                 ],
+                [
+                    'icon' => 'chart-bar',
+                    'label' => 'Cumplimiento PAC',
+                    'route' => 'viticulturist.pac-compliance',
+                    'active' => request()->routeIs('viticulturist.pac-compliance'),
+                ],
+                [
+                    'icon' => 'document',
+                    'label' => 'Informes Oficiales',
+                    'route' => 'viticulturist.official-reports.index',
+                    'active' => request()->routeIs('viticulturist.official-reports.*'),
+                ],
             ];
 
             // GRUPO: RECURSOS
@@ -198,6 +197,12 @@ class NavigationHelper
                     'label' => 'Almacén de Insumos',
                     'route' => 'viticulturist.almacen.index',
                     'active' => request()->routeIs('viticulturist.almacen.*'),
+                ],
+                [
+                    'icon' => 'beaker',
+                    'label' => 'Productos Fitosanitarios',
+                    'route' => 'viticulturist.phytosanitary-products.index',
+                    'active' => request()->routeIs('viticulturist.phytosanitary-products.*'),
                 ],
                 [
                     'icon' => 'bolt',

@@ -1,0 +1,178 @@
+<x-agro.form-card
+    title="Registrar Tratamiento Post-Vendimia"
+    description="Tratamientos aplicados después de la cosecha (cobre, azufre, sellado de heridas...)"
+    :back-url="route('viticulturist.digital-notebook')"
+>
+    <form wire:submit="save" class="space-y-8">
+        <x-agro.form-section title="Información Básica">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <flux:label for="plot_id" required>Parcela</flux:label>
+                    <flux:select wire:model.live="plot_id" id="plot_id" required>
+                        <option value="">Selecciona una parcela</option>
+                        @foreach($plots as $plot)
+                            <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="plot_id" />
+                </div>
+                @if($plot_id)
+                    <div>
+                        <flux:label for="plot_planting_id">Plantación</flux:label>
+                        <flux:select wire:model="plot_planting_id" id="plot_planting_id">
+                            <option value="">-- Selecciona una plantación --</option>
+                            @foreach($availablePlantings as $planting)
+                                <option value="{{ $planting->id }}">
+                                    {{ $planting->name }}@if($planting->grapeVariety) - {{ $planting->grapeVariety->name }}@endif
+                                </option>
+                            @endforeach
+                        </flux:select>
+                        <flux:error name="plot_planting_id" />
+                    </div>
+                @endif
+                <div>
+                    <flux:label for="activity_date" required>Fecha del tratamiento</flux:label>
+                    <flux:input wire:model="activity_date" type="date" id="activity_date" required />
+                    <flux:error name="activity_date" />
+                </div>
+                <div>
+                    <flux:label for="phenological_stage" required>Estadio Fenológico</flux:label>
+                    <flux:select wire:model="phenological_stage" id="phenological_stage" required>
+                        <option value="">Selecciona un estadio</option>
+                        <option value="Caída de hoja">Caída de hoja</option>
+                        <option value="Reposo invernal">Reposo invernal</option>
+                        <option value="Vendimia">Post-vendimia / Vendimia</option>
+                    </flux:select>
+                    <flux:error name="phenological_stage" />
+                </div>
+            </div>
+        </x-agro.form-section>
+
+        <x-agro.form-section title="Datos del Tratamiento">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <flux:label for="application_type" required>Tipo de Aplicación</flux:label>
+                    <flux:select wire:model="application_type" id="application_type" required>
+                        <option value="">Selecciona un tipo</option>
+                        @foreach($applicationTypes as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="application_type" />
+                </div>
+                <div>
+                    <flux:label for="product_id">Producto Fitosanitario</flux:label>
+                    <flux:select wire:model="product_id" id="product_id">
+                        <option value="">Sin producto específico</option>
+                        @foreach($products as $product)
+                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="product_id" />
+                </div>
+                <div>
+                    <flux:label for="treated_area_ha" required>Superficie Tratada (ha)</flux:label>
+                    <flux:input wire:model="treated_area_ha" type="number" step="0.001" min="0.001" id="treated_area_ha" placeholder="0.000" required />
+                    <flux:error name="treated_area_ha" />
+                </div>
+                <div>
+                    <flux:label for="water_volume_liters">Volumen de Caldo (L)</flux:label>
+                    <flux:input wire:model="water_volume_liters" type="number" step="0.1" min="0" id="water_volume_liters" placeholder="0.0" />
+                    <flux:error name="water_volume_liters" />
+                </div>
+                <div>
+                    <flux:label for="dose_per_hectare">Dosis / ha</flux:label>
+                    <flux:input wire:model="dose_per_hectare" type="number" step="0.001" min="0" id="dose_per_hectare" placeholder="0.000" />
+                    <flux:error name="dose_per_hectare" />
+                </div>
+                <div>
+                    <flux:label for="dose_unit">Unidad de Dosis</flux:label>
+                    <flux:select wire:model="dose_unit" id="dose_unit">
+                        <option value="kg/ha">kg/ha</option>
+                        <option value="L/ha">L/ha</option>
+                        <option value="g/ha">g/ha</option>
+                        <option value="mL/ha">mL/ha</option>
+                    </flux:select>
+                </div>
+            </div>
+        </x-agro.form-section>
+
+        <x-agro.form-section title="Personal y Maquinaria">
+            <div class="mb-6">
+                <flux:label class="mb-3 block font-semibold text-zinc-700">¿Quién realizó el tratamiento?</flux:label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'crew' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="radio" wire:model.live="workType" value="crew" class="w-5 h-5 text-agro-500 focus:ring-agro-500" />
+                            <div class="flex-1">
+                                <span class="font-semibold text-zinc-900">Equipo completo</span>
+                            </div>
+                        </label>
+                        @if($workType === 'crew')
+                            <div class="mt-4">
+                                <flux:label for="crew_id" class="text-sm" required>Selecciona el equipo</flux:label>
+                                <flux:select wire:model="crew_id" id="crew_id" class="mt-1">
+                                    <option value="">Selecciona un equipo</option>
+                                    @foreach($crews as $crew)
+                                        <option value="{{ $crew->id }}">{{ $crew->name }}</option>
+                                    @endforeach
+                                </flux:select>
+                                <flux:error name="crew_id" />
+                            </div>
+                        @endif
+                    </div>
+                    <div class="border-2 rounded-lg p-4 transition-all {{ $workType === 'individual' ? 'border-agro-500 bg-agro-50' : 'border-zinc-200 hover:border-zinc-300' }}">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="radio" wire:model.live="workType" value="individual" class="w-5 h-5 text-agro-500 focus:ring-agro-500" />
+                            <div class="flex-1">
+                                <span class="font-semibold text-zinc-900">Viticultor individual</span>
+                            </div>
+                        </label>
+                        @if($workType === 'individual')
+                            <div class="mt-4">
+                                <flux:label for="crew_member_id" class="text-sm" required>Selecciona el viticultor</flux:label>
+                                <flux:select wire:model="crew_member_id" id="crew_member_id" class="mt-1">
+                                    <option value="">Selecciona un viticultor</option>
+                                    @foreach($allViticulturists as $v)
+                                        <option value="{{ $v->id }}">{{ $v->name }}@if($v->id === auth()->id()) (Yo)@endif</option>
+                                    @endforeach
+                                </flux:select>
+                                <flux:error name="crew_member_id" />
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                @error('workType') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <flux:label for="machinery_id">Maquinaria</flux:label>
+                <flux:select wire:model="machinery_id" id="machinery_id">
+                    <option value="">Sin maquinaria asignada</option>
+                    @foreach($machinery as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->type }})</option>
+                    @endforeach
+                </flux:select>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div>
+                    <flux:label for="weather_conditions">Condiciones Meteorológicas</flux:label>
+                    <flux:input wire:model="weather_conditions" type="text" id="weather_conditions" placeholder="Ej: Soleado, nublado" />
+                </div>
+                <div>
+                    <flux:label for="temperature">Temperatura (°C)</flux:label>
+                    <flux:input wire:model="temperature" type="number" step="0.1" id="temperature" placeholder="20.0" />
+                </div>
+            </div>
+            <div class="mt-6">
+                <flux:label for="notes">Notas</flux:label>
+                <flux:textarea wire:model="notes" id="notes" rows="3" placeholder="Observaciones adicionales..." />
+            </div>
+        </x-agro.form-section>
+
+        <x-agro.form-actions
+            :cancel-url="route('viticulturist.digital-notebook')"
+            submit-label="Registrar Tratamiento"
+        />
+    </form>
+</x-agro.form-card>

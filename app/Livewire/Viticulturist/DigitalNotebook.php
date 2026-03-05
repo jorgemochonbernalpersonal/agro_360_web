@@ -33,12 +33,13 @@ class DigitalNotebook extends Component
     public $selectedActivityId = null;
 
     protected $queryString = [
-        'selectedPlot'  => ['except' => ''],
-        'activityType'  => ['except' => ''],
-        'search'        => ['except' => ''],
-        'dateFrom'      => ['except' => ''],
-        'dateTo'        => ['except' => ''],
-        'productFilter' => ['except' => ''],
+        'selectedCampaign' => ['except' => ''],
+        'selectedPlot'     => ['except' => ''],
+        'activityType'     => ['except' => ''],
+        'search'           => ['except' => ''],
+        'dateFrom'         => ['except' => ''],
+        'dateTo'           => ['except' => ''],
+        'productFilter'    => ['except' => ''],
     ];
 
     public function mount()
@@ -47,14 +48,27 @@ class DigitalNotebook extends Component
             abort(403, 'No tienes permiso para ver actividades agrícolas.');
         }
 
-        $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
-
-        if (!$campaign) {
-            $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return redirect()->route('viticulturist.campaign.index');
+        // Si viene selectedCampaign por queryString, verificar que pertenece al usuario
+        if ($this->selectedCampaign) {
+            $valid = Campaign::forViticulturist(Auth::id())
+                ->where('id', $this->selectedCampaign)
+                ->exists();
+            if (!$valid) {
+                $this->selectedCampaign = null;
+            }
         }
 
-        $this->selectedCampaign = $campaign->id;
+        // Si no hay campaña seleccionada (o era inválida), usar la activa
+        if (!$this->selectedCampaign) {
+            $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
+
+            if (!$campaign) {
+                $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
+                return redirect()->route('viticulturist.campaign.index');
+            }
+
+            $this->selectedCampaign = $campaign->id;
+        }
     }
 
     public function updatedSelectedCampaign(): void

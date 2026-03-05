@@ -18,7 +18,9 @@ class AgriculturalActivityRepository
         int $perPage = 10
     ): LengthAwarePaginator {
         $query = AgriculturalActivity::forViticulturist($user->id)
-            ->with(['plot', 'plotPlanting.grapeVariety', 'crew', 'crewMember.viticulturist', 'campaign'])
+            ->with(['plot', 'plotPlanting.grapeVariety', 'crew', 'crewMember.viticulturist', 'campaign',
+                    'phytosanitaryTreatment.product', 'fertilization', 'irrigation', 'culturalWork',
+                    'observation', 'harvest', 'postHarvestTreatment.product'])
             ->orderBy('activity_date', 'desc');
 
         // Aplicar filtros

@@ -5,6 +5,27 @@
         icon="shield-check"
     />
 
+    {{-- Selector de campaña --}}
+    @if($campaigns->count() > 1)
+        <x-agro.card>
+            <flux:field>
+                <flux:label>Campaña a firmar</flux:label>
+                <flux:select wire:model.live="selectedCampaignId">
+                    @foreach($campaigns as $c)
+                        <option value="{{ $c->id }}">
+                            {{ $c->name }}
+                            @if($c->locked_at) (Cerrada)
+                            @elseif($c->final_validation_signed) (Firma final)
+                            @elseif($c->mid_validation_signed) (Intermedia firmada)
+                            @elseif($c->active) (Activa)
+                            @endif
+                        </option>
+                    @endforeach
+                </flux:select>
+            </flux:field>
+        </x-agro.card>
+    @endif
+
     @if(!$campaign)
         <flux:callout variant="warning" icon="exclamation-triangle">
             No se ha encontrado ninguna campaña activa. Crea o activa una campaña antes de proceder.
@@ -64,7 +85,9 @@
                             @endif
                         </div>
                     </div>
-                    <flux:icon icon="chevron-down" class="w-5 h-5 text-zinc-400 transition-transform" :class="{ 'rotate-180': open }" />
+                    <span class="w-5 h-5 text-zinc-400 transition-transform inline-flex" :class="{ 'rotate-180': open }">
+                        <flux:icon icon="chevron-down" />
+                    </span>
                 </button>
 
                 <div x-show="open" x-transition class="mt-4 pt-4 border-t border-zinc-100">
@@ -134,7 +157,9 @@
                             @endif
                         </div>
                     </div>
-                    <flux:icon icon="chevron-down" class="w-5 h-5 text-zinc-400 transition-transform" :class="{ 'rotate-180': open }" />
+                    <span class="w-5 h-5 text-zinc-400 transition-transform inline-flex" :class="{ 'rotate-180': open }">
+                        <flux:icon icon="chevron-down" />
+                    </span>
                 </button>
 
                 <div x-show="open" x-transition class="mt-4 pt-4 border-t border-zinc-100">

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\CrewMember;
+use App\Models\PostHarvestTreatment;
 
 class AgriculturalActivity extends Model
 {
@@ -145,6 +146,14 @@ class AgriculturalActivity extends Model
     public function harvest(): HasOne
     {
         return $this->hasOne(Harvest::class, 'activity_id');
+    }
+
+    /**
+     * Tratamiento post-vendimia (si activity_type es 'post_harvest')
+     */
+    public function postHarvestTreatment(): HasOne
+    {
+        return $this->hasOne(PostHarvestTreatment::class, 'activity_id');
     }
 
     /**

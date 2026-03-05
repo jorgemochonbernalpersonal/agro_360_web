@@ -37,6 +37,9 @@ class Show extends Component
             'activities as observation_count' => function($query) {
                 $query->ofType('observation');
             },
+            'activities as harvest_count' => function($query) {
+                $query->ofType('harvest');
+            },
         ]);
     }
 

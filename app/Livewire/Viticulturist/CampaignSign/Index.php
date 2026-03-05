@@ -14,13 +14,39 @@ class Index extends Component
     use WithToastNotifications;
 
     public ?Campaign $campaign = null;
+    public $selectedCampaignId = null;
     public bool $confirmMid = false;
     public bool $confirmFinal = false;
+
+    protected $queryString = [
+        'selectedCampaignId' => ['except' => ''],
+    ];
 
     public function mount()
     {
         $user = Auth::user();
-        $this->campaign = Campaign::getOrCreateActiveForYear($user->id);
+
+        // Si viene por queryString, verificar ownership
+        if ($this->selectedCampaignId) {
+            $this->campaign = Campaign::forViticulturist($user->id)
+                ->find($this->selectedCampaignId);
+        }
+
+        // Si no hay campaña válida, usar la activa
+        if (!$this->campaign) {
+            $this->campaign = Campaign::getOrCreateActiveForYear($user->id);
+            $this->selectedCampaignId = $this->campaign?->id;
+        }
+    }
+
+    public function updatedSelectedCampaignId(): void
+    {
+        $this->campaign = Campaign::forViticulturist(Auth::id())
+            ->find($this->selectedCampaignId);
+
+        $this->confirmMid   = false;
+        $this->confirmFinal = false;
+        $this->resetValidation();
     }
 
     public function signMidValidation()
@@ -77,6 +103,12 @@ class Index extends Component
 
     public function render()
     {
-        return view('livewire.viticulturist.campaign-sign.index');
+        $campaigns = Campaign::forViticulturist(Auth::id())
+            ->orderByDesc('year')
+            ->get();
+
+        return view('livewire.viticulturist.campaign-sign.index', [
+            'campaigns' => $campaigns,
+        ]);
     }
 }

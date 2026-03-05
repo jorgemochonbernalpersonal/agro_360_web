@@ -12,9 +12,10 @@ use App\Livewire\Viticulturist\DigitalNotebook\ShowHarvest;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateIrrigation;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateObservation;
 use App\Livewire\Viticulturist\DigitalNotebook\CreatePhytosanitaryTreatment;
-use App\Livewire\Viticulturist\DigitalNotebook\Containers\Index as ContainersIndex;
-use App\Livewire\Viticulturist\DigitalNotebook\Containers\Create as ContainersCreate;
-use App\Livewire\Viticulturist\DigitalNotebook\Containers\Edit as ContainersEdit;
+use App\Livewire\Viticulturist\DigitalNotebook\CreatePruning;
+use App\Livewire\Viticulturist\DigitalNotebook\EditPruning;
+use App\Livewire\Viticulturist\DigitalNotebook\CreatePostHarvest;
+use App\Livewire\Viticulturist\DigitalNotebook\EditPostHarvest;
 use App\Livewire\Viticulturist\Machinery\Create as MachineryCreate;
 use App\Livewire\Viticulturist\Machinery\Edit as MachineryEdit;
 use App\Livewire\Viticulturist\Machinery\Index as MachineryIndex;
@@ -75,6 +76,14 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
             Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');
             
+            // Poda
+            Route::get('/pruning/create', CreatePruning::class)->name('pruning.create');
+            Route::get('/pruning/{activity}/edit', EditPruning::class)->name('pruning.edit');
+
+            // Tratamiento Post-Vendimia
+            Route::get('/post-harvest/create', CreatePostHarvest::class)->name('post-harvest.create');
+            Route::get('/post-harvest/{activity}/edit', EditPostHarvest::class)->name('post-harvest.edit');
+
             // Rendimientos Estimados
             Route::prefix('estimated-yields')->name('estimated-yields.')->group(function () {
                 Route::get('/', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Index::class)->name('index');
@@ -135,6 +144,18 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         // Documentos de Campaña
         Route::prefix('campaign-documents')->name('campaign-documents.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\CampaignDocuments\Index::class)->name('index');
+            Route::get('/{document}/download', function (\App\Models\CampaignDocument $document) {
+                if ($document->viticulturist_id !== auth()->id()) {
+                    abort(403, 'No tienes permiso para descargar este documento.');
+                }
+                if (!$document->file_path || !\Storage::disk('private')->exists($document->file_path)) {
+                    abort(404, 'El archivo no existe.');
+                }
+                return \Storage::disk('private')->download(
+                    $document->file_path,
+                    $document->original_filename ?? basename($document->file_path)
+                );
+            })->name('download');
         });
 
         // Firma y Cierre de Campaña
@@ -307,7 +328,7 @@ Route::middleware(['role:viticulturist', 'check.beta'])
 
         // Informes Oficiales
         Route::get('/official-reports', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('official-reports.index');
-        Route::get('/official-reports/crear', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('official-reports.create');
+        Route::get('/official-reports/create', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('official-reports.create');
         Route::get('/official-reports/{report}/download', function (\App\Models\OfficialReport $report) {
             // Verificar permisos
             if ($report->user_id !== auth()->id()) {

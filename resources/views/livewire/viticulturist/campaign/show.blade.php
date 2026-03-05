@@ -1,16 +1,4 @@
 ﻿<div class="space-y-6 animate-fade-in">
-    <!-- Mensajes Flash -->
-    @if(session('message'))
-        <flux:callout variant="success">
-            {{ session('message') }}
-        </flux:callout>
-    @endif
-
-    @if(session('error'))
-        <flux:callout variant="danger">
-            {{ session('error') }}
-        </flux:callout>
-    @endif
 
     <!-- Header -->
     <x-agro.page-header
@@ -37,13 +25,14 @@
     </x-agro.page-header>
 
     <!-- Estadísticas -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" data-cy="campaign-statistics">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4" data-cy="campaign-statistics">
         <x-agro.stat-card label="Total"           :value="$campaign->activities_count"    icon="clipboard-document-list" color="agro"   />
         <x-agro.stat-card label="Tratamientos"    :value="$campaign->phytosanitary_count" icon="beaker"                  color="red"    />
         <x-agro.stat-card label="Fertilizaciones" :value="$campaign->fertilization_count" icon="sparkles"                color="blue"   />
         <x-agro.stat-card label="Riegos"          :value="$campaign->irrigation_count"    icon="cloud"                   color="purple" />
         <x-agro.stat-card label="Labores"         :value="$campaign->cultural_count"      icon="wrench-screwdriver"      color="orange" />
         <x-agro.stat-card label="Observaciones"   :value="$campaign->observation_count"   icon="eye"                     color="yellow" />
+        <x-agro.stat-card label="Cosechas"        :value="$campaign->harvest_count"       icon="archive-box"             color="green"  />
     </div>
 
     <!-- Información de la Campaña -->
@@ -160,6 +149,7 @@
                             'fertilization' => ['Fertilización', 'blue'],
                             'irrigation'    => ['Riego', 'purple'],
                             'cultural'      => ['Labor', 'orange'],
+                            'harvest'       => ['Cosecha', 'green'],
                             default         => ['Observación', null],
                         };
                     @endphp

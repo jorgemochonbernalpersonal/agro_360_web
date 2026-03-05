@@ -49,6 +49,9 @@
                         <x-agro.table-cell>{{ $entry->created_at->format('d/m/Y') }}</x-agro.table-cell>
                         <x-agro.table-cell align="right">
                             <div class="flex items-center justify-end gap-2">
+                                @if($entry->file_path)
+                                    <flux:button size="sm" variant="ghost" icon="arrow-down-tray" href="{{ route('viticulturist.campaign-documents.download', $entry) }}">Descargar</flux:button>
+                                @endif
                                 <flux:button size="sm" variant="ghost" icon="pencil" wire:click="openEdit({{ $entry->id }})">Editar</flux:button>
                                 <flux:button size="sm" variant="ghost" icon="trash" wire:click="delete({{ $entry->id }})" wire:confirm="¿Eliminar este documento? Esta acción no se puede deshacer.">Eliminar</flux:button>
                             </div>
