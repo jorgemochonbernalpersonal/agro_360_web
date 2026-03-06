@@ -20,8 +20,10 @@ class VerifyEmailNotification extends VerifyEmail
 
         $features = $isWinery
             ? [
-                '✅ Gestionar campañas de vendimia y recepciones',
+                '✅ Gestionar campañas de vendimia y recepciones de uva',
                 '✅ Administrar tus viticultores asociados',
+                '✅ Consultar parcelas y datos SIGPAC de tus viticultores',
+                '✅ Teledetección y mapa de viñedos asociados',
                 '✅ Control de lotes de vino y contenedores',
                 '✅ Facturación de compra de uva y venta de vino',
                 '✅ Acceso al cuaderno de campo de tus viticultores',
