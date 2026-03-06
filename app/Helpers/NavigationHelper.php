@@ -333,7 +333,19 @@ class NavigationHelper
                     'icon'   => 'map',
                     'label'  => 'Parcelas',
                     'route'  => 'winery.plots.index',
-                    'active' => request()->routeIs('winery.plots*'),
+                    'active' => request()->routeIs('winery.plots*') && !request()->routeIs('plots.plantings.*'),
+                ],
+                [
+                    'icon'   => 'book-open',
+                    'label'  => 'Plantaciones',
+                    'route'  => 'plots.plantings.index',
+                    'active' => request()->routeIs('plots.plantings.*'),
+                ],
+                [
+                    'icon'   => 'map-pin',
+                    'label'  => 'SIGPAC',
+                    'route'  => 'sigpac.codes',
+                    'active' => request()->routeIs('sigpac.*'),
                 ],
                 [
                     'icon'   => 'globe-europe-africa',
