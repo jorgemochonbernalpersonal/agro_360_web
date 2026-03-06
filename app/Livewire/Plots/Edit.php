@@ -3,8 +3,14 @@
 namespace App\Livewire\Plots;
 
 use App\Models\Plot;
-use App\Models\SigpacUse;
 use App\Models\AutonomousCommunity;
+use App\Models\SoilType;
+use App\Models\IrrigationType;
+use App\Models\Topography;
+use App\Models\PropertyType;
+use App\Models\Valley;
+use App\Models\Site;
+use App\Models\TrainingSystem;
 use App\Models\Province;
 use App\Models\Municipality;
 use App\Livewire\Concerns\WithRoleBasedFields;
@@ -29,17 +35,30 @@ class Edit extends Component
     public $autonomous_community_id = '';
     public $province_id = '';
     public $municipality_id = '';
-    public $sigpac_use = [];
-    public $ndvi_alert_threshold = 0.30;
-    public $alert_email_enabled = false;
     public $tenure_regime = 'propiedad';
-    public $site_name = '';
-    public $valley = '';
     public $code_parcel = '';
-    public $soil_type = '';
     public $orientation = '';
     public $maximum_yield_kg_ha = '';
     public $degree_day_base = '';
+    public $limit_kg = '';
+    public $cadastral_area = '';
+    public $unit_of_measurement = 'kg';
+    public $plantation_year = '';
+    public $is_organic = false;
+    // Lookup FKs
+    public $soil_type_id = '';
+    public $irrigation_type_id = '';
+    public $topography_id = '';
+    public $property_type_id = '';
+    public $valley_id = '';
+    public $site_id = '';
+    public $training_system_id = '';
+    public $owner_id = '';
+    // Nuevos campos simples
+    public $enclosure = '';
+    public $planting_pattern = '';
+    public $slope = '';
+    public $number_of_vines = '';
 
     public function mount(Plot $plot)
     {
@@ -48,7 +67,6 @@ class Edit extends Component
         }
 
         $this->plot = $plot->load([
-            'sigpacUses',
             'autonomousCommunity',
             'province',
             'municipality',
@@ -62,17 +80,28 @@ class Edit extends Component
         $this->autonomous_community_id = $plot->autonomous_community_id;
         $this->province_id = $plot->province_id;
         $this->municipality_id = $plot->municipality_id;
-        $this->sigpac_use = $plot->sigpacUses->pluck('id')->toArray();
-        $this->ndvi_alert_threshold = $plot->ndvi_alert_threshold;
-        $this->alert_email_enabled = $plot->alert_email_enabled;
         $this->tenure_regime = $plot->tenure_regime ?? 'propiedad';
-        $this->site_name = $plot->site_name ?? '';
-        $this->valley = $plot->valley ?? '';
         $this->code_parcel = $plot->code_parcel ?? '';
-        $this->soil_type = $plot->soil_type ?? '';
         $this->orientation = $plot->orientation ?? '';
         $this->maximum_yield_kg_ha = $plot->maximum_yield_kg_ha ?? '';
         $this->degree_day_base = $plot->degree_day_base ?? '';
+        $this->limit_kg = $plot->limit_kg ?? '';
+        $this->cadastral_area = $plot->cadastral_area ?? '';
+        $this->unit_of_measurement = $plot->unit_of_measurement ?? 'kg';
+        $this->plantation_year = $plot->plantation_year ?? '';
+        $this->is_organic = $plot->is_organic ?? false;
+        $this->soil_type_id = $plot->soil_type_id ?? '';
+        $this->irrigation_type_id = $plot->irrigation_type_id ?? '';
+        $this->topography_id = $plot->topography_id ?? '';
+        $this->property_type_id = $plot->property_type_id ?? '';
+        $this->valley_id = $plot->valley_id ?? '';
+        $this->site_id = $plot->site_id ?? '';
+        $this->training_system_id = $plot->training_system_id ?? '';
+        $this->owner_id = $plot->owner_id ?? '';
+        $this->enclosure = $plot->enclosure ?? '';
+        $this->planting_pattern = $plot->planting_pattern ?? '';
+        $this->slope = $plot->slope ?? '';
+        $this->number_of_vines = $plot->number_of_vines ?? '';
     }
 
     protected function rules(): array
@@ -82,16 +111,28 @@ class Edit extends Component
             'description' => 'nullable|string',
             'area' => 'nullable|numeric|min:0',
             'active' => 'boolean',
-            'ndvi_alert_threshold' => 'required|numeric|min:0|max:1',
-            'alert_email_enabled' => 'boolean',
-            'tenure_regime' => 'required|string|in:propiedad,arrendamiento,aparceria,cesion_uso,otros',
-            'site_name' => 'nullable|string|max:255',
-            'valley' => 'nullable|string|max:255',
+            'tenure_regime' => 'nullable|string|in:propiedad,arrendamiento,aparceria,cesion_uso,otros',
             'code_parcel' => 'nullable|string|max:50',
-            'soil_type' => 'nullable|string|in:arenoso,arcilloso,limoso,franco,franco-arenoso,franco-arcilloso,franco-limoso,pedregoso',
             'orientation' => 'nullable|string|in:N,NE,E,SE,S,SO,O,NO',
             'maximum_yield_kg_ha' => 'nullable|numeric|min:0',
             'degree_day_base' => 'nullable|numeric|min:0|max:30',
+            'limit_kg' => 'nullable|numeric|min:0',
+            'cadastral_area' => 'nullable|numeric|min:0',
+            'unit_of_measurement' => 'nullable|string|in:kg,t',
+            'plantation_year' => 'nullable|integer|min:1800|max:' . date('Y'),
+            'is_organic' => 'boolean',
+            'soil_type_id' => 'nullable|exists:soil_types,id',
+            'irrigation_type_id' => 'nullable|exists:irrigation_types,id',
+            'topography_id' => 'nullable|exists:topographies,id',
+            'property_type_id' => 'nullable|exists:property_types,id',
+            'valley_id' => 'nullable|exists:valleys,id',
+            'site_id' => 'nullable|exists:sites,id',
+            'training_system_id' => 'nullable|exists:training_systems,id',
+            'owner_id' => 'nullable|exists:users,id',
+            'enclosure' => 'nullable|string|max:100',
+            'planting_pattern' => 'nullable|string|max:50',
+            'slope' => 'nullable|numeric|min:0|max:100',
+            'number_of_vines' => 'nullable|integer|min:0',
         ];
 
         // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
@@ -103,11 +144,6 @@ class Edit extends Component
             $rules['autonomous_community_id'] = 'required|exists:autonomous_communities,id';
             $rules['province_id'] = 'required|exists:provinces,id';
             $rules['municipality_id'] = 'required|exists:municipalities,id';
-        }
-
-        if ($this->canSelectSigpac()) {
-            $rules['sigpac_use'] = 'required|array|min:1';
-            $rules['sigpac_use.*'] = 'exists:sigpac_use,id';
         }
 
         return $rules;
@@ -155,16 +191,28 @@ class Edit extends Component
                 'description' => $this->description,
                 'area' => $this->area ?: null,
                 'active' => $this->active,
-                'ndvi_alert_threshold' => $this->ndvi_alert_threshold,
-                'alert_email_enabled' => $this->alert_email_enabled,
                 'tenure_regime' => $this->tenure_regime,
-                'site_name' => $this->site_name ?: null,
-                'valley' => $this->valley ?: null,
                 'code_parcel' => $this->code_parcel ?: null,
-                'soil_type' => $this->soil_type ?: null,
                 'orientation' => $this->orientation ?: null,
                 'maximum_yield_kg_ha' => $this->maximum_yield_kg_ha ?: null,
                 'degree_day_base' => $this->degree_day_base ?: null,
+                'limit_kg' => $this->limit_kg ?: null,
+                'cadastral_area' => $this->cadastral_area ?: null,
+                'unit_of_measurement' => $this->unit_of_measurement ?: null,
+                'plantation_year' => $this->plantation_year ?: null,
+                'is_organic' => $this->is_organic,
+                'soil_type_id' => $this->soil_type_id ?: null,
+                'irrigation_type_id' => $this->irrigation_type_id ?: null,
+                'topography_id' => $this->topography_id ?: null,
+                'property_type_id' => $this->property_type_id ?: null,
+                'valley_id' => $this->valley_id ?: null,
+                'site_id' => $this->site_id ?: null,
+                'training_system_id' => $this->training_system_id ?: null,
+                'owner_id' => $this->owner_id ?: null,
+                'enclosure' => $this->enclosure ?: null,
+                'planting_pattern' => $this->planting_pattern ?: null,
+                'slope' => $this->slope ?: null,
+                'number_of_vines' => $this->number_of_vines ?: null,
             ];
 
             if ($this->canSelectViticulturist() && $this->viticulturist_id) {
@@ -201,11 +249,6 @@ class Edit extends Component
 
             $this->plot->update($data);
 
-            // Sincronizar relaciones many-to-many
-            if ($this->canSelectSigpac() && !empty($this->sigpac_use)) {
-                $this->plot->sigpacUses()->sync($this->sigpac_use);
-            }
-
             DB::commit();
 
             $this->toastSuccess('Parcela actualizada correctamente.');
@@ -229,11 +272,13 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.plots.edit', [
-            // ✅ OPTIMIZACIÓN: Solo campos necesarios para select
-            'sigpacUses' => SigpacUse::select(['id', 'code', 'description'])
-                ->orderBy('code')
-                ->get(),
-            // ✅ OPTIMIZACIÓN: Solo campos necesarios para selects
+            'soilTypes' => SoilType::where('active', true)->orderBy('name')->get(),
+            'irrigationTypes' => IrrigationType::where('active', true)->orderBy('name')->get(),
+            'topographies' => Topography::where('active', true)->orderBy('name')->get(),
+            'propertyTypes' => PropertyType::where('active', true)->orderBy('name')->get(),
+            'valleys' => Valley::where('active', true)->orderBy('name')->get(),
+            'sites' => Site::where('is_archived', false)->orderBy('name')->get(),
+            'trainingSystems' => TrainingSystem::where('active', true)->orderBy('name')->get(),
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
                 ->orderBy('name')
                 ->get(),

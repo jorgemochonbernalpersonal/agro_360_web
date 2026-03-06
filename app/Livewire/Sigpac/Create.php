@@ -5,6 +5,7 @@ namespace App\Livewire\Sigpac;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Plot;
 use App\Models\SigpacCode;
+use App\Models\SigpacUse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -16,6 +17,7 @@ class Create extends Component
     use WithToastNotifications;
 
     public $plot_id = '';
+    public $sigpac_use = [];
     public $sigpacCodes = [];  // Array para múltiples códigos con campos individuales
 
     public function mount()
@@ -33,12 +35,15 @@ class Create extends Component
         if ($this->plot_id) {
             $this->updatedPlotId($this->plot_id);
         }
+
     }
 
     protected function rules(): array
     {
         $rules = [
             'plot_id' => 'required|exists:plots,id',
+            'sigpac_use' => 'nullable|array',
+            'sigpac_use.*' => 'exists:sigpac_use,id',
             'sigpacCodes' => 'required|array|min:1',
         ];
 
@@ -154,6 +159,10 @@ class Create extends Component
     public function updatedPlotId($value)
     {
         if ($value) {
+            // Cargar los usos SIGPAC actuales de la parcela
+            $plotForUses = Plot::with('sigpacUses')->find($value);
+            $this->sigpac_use = $plotForUses?->sigpacUses->pluck('id')->toArray() ?? [];
+
             // Cargar la parcela con sus relaciones
             $plot = Plot::with(['autonomousCommunity', 'province', 'municipality'])
                 ->find($value);
@@ -336,6 +345,11 @@ class Create extends Component
                 $createdCodes[] = $sigpacCode;
             }
 
+            // Sincronizar usos SIGPAC con la parcela
+            if (!empty($this->sigpac_use)) {
+                $plot->sigpacUses()->sync($this->sigpac_use);
+            }
+
             DB::commit();
 
             $count = count($createdCodes);
@@ -361,6 +375,7 @@ class Create extends Component
 
         return view('livewire.sigpac.create', [
             'plots' => $plots,
+            'sigpacUses' => SigpacUse::select(['id', 'code', 'description'])->orderBy('code')->get(),
         ]);
     }
 }

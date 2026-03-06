@@ -4,6 +4,7 @@ namespace App\Livewire\Sigpac;
 
 use App\Models\SigpacCode;
 use App\Models\Plot;
+use App\Models\SigpacUse;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -17,16 +18,18 @@ class Edit extends Component
 
     public SigpacCode $sigpacCode;
     public $plot_id = '';
+    public $sigpac_use = [];
     public $sigpacCodes = []; // Array para un solo código (estructura igual a Create)
 
     public function mount(SigpacCode $code)
     {
-        $this->sigpacCode = $code;
-        
+        $this->sigpacCode = $code->load(['plots.sigpacUses']);
+
         // Obtener la parcela asociada (primera parcela)
         $firstPlot = $code->plots->first();
         if ($firstPlot) {
             $this->plot_id = $firstPlot->id;
+            $this->sigpac_use = $firstPlot->sigpacUses->pluck('id')->toArray();
         }
         
         // Inicializar el array con el código existente
@@ -46,6 +49,8 @@ class Edit extends Component
     {
         $rules = [
             'plot_id' => 'required|exists:plots,id',
+            'sigpac_use' => 'nullable|array',
+            'sigpac_use.*' => 'exists:sigpac_use,id',
             'sigpacCodes' => 'required|array|min:1',
         ];
 
@@ -89,6 +94,9 @@ class Edit extends Component
     public function updatedPlotId($value)
     {
         if ($value) {
+            $plotForUses = Plot::with('sigpacUses')->find($value);
+            $this->sigpac_use = $plotForUses?->sigpacUses->pluck('id')->toArray() ?? [];
+
             // Cargar la parcela con sus relaciones
             $plot = Plot::with(['autonomousCommunity', 'province', 'municipality'])
                 ->find($value);
@@ -210,6 +218,9 @@ class Edit extends Component
                 'code_enclosure' => $sigpacData['code_enclosure'],
             ]);
             
+            // Sincronizar usos SIGPAC con la parcela
+            $plot->sigpacUses()->sync($this->sigpac_use ?? []);
+
             // Actualizar la asociación con la parcela si cambió
             if ($this->sigpacCode->plots->first()?->id !== $plot->id) {
                 // Desasociar de la parcela anterior
@@ -236,6 +247,7 @@ class Edit extends Component
 
         return view('livewire.sigpac.edit', [
             'plots' => $plots,
+            'sigpacUses' => SigpacUse::select(['id', 'code', 'description'])->orderBy('code')->get(),
         ]);
     }
 }

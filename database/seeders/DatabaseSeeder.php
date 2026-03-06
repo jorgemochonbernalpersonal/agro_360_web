@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             GrapeVarietySeeder::class,          // Variedades de uva base
             MachineryTypeSeeder::class,         // Tipos de maquinaria base
             TrainingSystemSeeder::class,        // Sistemas de conducción base
+            PlotCatalogSeeder::class,           // Catálogos territoriales: suelos, riegos, topografías, propiedades, valles
             TaxSeeder::class,                   // Impuestos (IVA, IGIC)
         ]);
         

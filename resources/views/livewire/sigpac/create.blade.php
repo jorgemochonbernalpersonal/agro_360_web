@@ -47,6 +47,20 @@
                 </flux:field>
             </x-agro.form-section>
 
+            <!-- Usos SIGPAC de la parcela -->
+            <x-agro.form-section title="Usos SIGPAC">
+                <flux:field>
+                    <flux:label for="sigpac_use">Usos de la Parcela</flux:label>
+                    <flux:select wire:model="sigpac_use" id="sigpac_use" multiple size="5">
+                        @foreach ($sigpacUses as $use)
+                            <option value="{{ $use->id }}">{{ $use->code }} - {{ $use->description }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:description>Mantén pulsado Ctrl (o Cmd en Mac) para seleccionar varios usos.</flux:description>
+                    <flux:error name="sigpac_use" />
+                </flux:field>
+            </x-agro.form-section>
+
             <!-- Códigos SIGPAC dinámicos con cajitas por campo -->
             <div class="space-y-6">
                 <div class="flex items-center justify-between">

@@ -17,30 +17,53 @@ class Plot extends Model
     protected $fillable = [
         'name',
         'description',
+        // Identificación
         'viticulturist_id',
+        'owner_id',
+        // Superficies
         'area',
+        'cadastral_area',
         'pac_eligible_area',
         'non_eligible_area',
         'eligibility_coefficient',
+        // Ubicación
+        'autonomous_community_id',
+        'province_id',
+        'municipality_id',
+        'site_id',
+        'valley_id',
+        // Catastro / identificación
+        'code_parcel',
+        'enclosure',
+        // Tipo de suelo y topografía
+        'soil_type_id',
+        'irrigation_type_id',
+        'topography_id',
+        'orientation',
+        'slope',
+        // Régimen y tipo de propiedad
         'tenure_regime',
+        'property_type_id',
+        // Plantación
+        'plantation_year',
+        'training_system_id',
+        'planting_pattern',
+        'number_of_vines',
+        'is_organic',
+        // Vendimia
+        'limit_kg',
+        'unit_of_measurement',
+        'maximum_yield_kg_ha',
+        'degree_day_base',
+        // Estado
         'active',
         'is_locked',
         'locked_at',
         'locked_by',
         'lock_reason',
-        'autonomous_community_id',
-        'province_id',
-        'municipality_id',
+        // Alertas
         'ndvi_alert_threshold',
         'alert_email_enabled',
-        // Campos P3
-        'site_name',
-        'valley',
-        'code_parcel',
-        'soil_type',
-        'orientation',
-        'maximum_yield_kg_ha',
-        'degree_day_base',
     ];
 
     protected $casts = [
@@ -54,6 +77,12 @@ class Plot extends Model
         'alert_email_enabled' => 'boolean',
         'maximum_yield_kg_ha' => 'decimal:2',
         'degree_day_base' => 'decimal:1',
+        'limit_kg' => 'decimal:2',
+        'cadastral_area' => 'decimal:4',
+        'plantation_year' => 'integer',
+        'is_organic' => 'boolean',
+        'slope' => 'decimal:2',
+        'number_of_vines' => 'integer',
     ];
 
     /**
@@ -70,6 +99,46 @@ class Plot extends Model
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function soilType(): BelongsTo
+    {
+        return $this->belongsTo(SoilType::class);
+    }
+
+    public function irrigationType(): BelongsTo
+    {
+        return $this->belongsTo(IrrigationType::class);
+    }
+
+    public function topography(): BelongsTo
+    {
+        return $this->belongsTo(Topography::class);
+    }
+
+    public function propertyType(): BelongsTo
+    {
+        return $this->belongsTo(PropertyType::class);
+    }
+
+    public function valleyZone(): BelongsTo
+    {
+        return $this->belongsTo(Valley::class, 'valley_id');
+    }
+
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class);
+    }
+
+    public function trainingSystem(): BelongsTo
+    {
+        return $this->belongsTo(TrainingSystem::class);
     }
 
     /**

@@ -101,6 +101,12 @@ class NavigationHelper
                     'active' => request()->routeIs('remote-sensing.*'),
                 ],
                 [
+                    'icon' => 'globe-europe-africa',
+                    'label' => 'Gestión Territorial',
+                    'route' => 'plots.territory',
+                    'active' => request()->routeIs('plots.territory'),
+                ],
+                [
                     'icon' => 'bug-ant',
                     'label' => 'Gestión de Plagas',
                     'route' => 'viticulturist.pest-management.index',
@@ -328,6 +334,12 @@ class NavigationHelper
                     'label'  => 'Parcelas',
                     'route'  => 'winery.plots.index',
                     'active' => request()->routeIs('winery.plots*'),
+                ],
+                [
+                    'icon'   => 'globe-europe-africa',
+                    'label'  => 'Gestión Territorial',
+                    'route'  => 'plots.territory',
+                    'active' => request()->routeIs('plots.territory'),
                 ],
                 [
                     'icon'   => 'globe-alt',
