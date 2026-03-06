@@ -1,11 +1,7 @@
-@php
-    $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>';
-@endphp
-
 <x-agro.form-card
     title="Crear Rendimiento Estimado"
     description="Registra una estimaci�n de rendimiento para una plantaci�n y campa�a"
-    :icon="$icon"
+    icon="chart-bar"
     icon-color="from-agro-500 to-agro-700"
     :back-url="route('viticulturist.digital-notebook.estimated-yields.index')"
 >
@@ -166,16 +162,13 @@
             </div>
 
             @if($auto_calculated_yield)
-                <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <flux:icon icon="calculator" class="w-5 h-5 text-amber-600" />
-                        <div>
-                            <p class="text-sm font-medium text-amber-800">Rendimiento calculado desde muestreo</p>
-                            <p class="text-2xl font-bold text-amber-700">{{ number_format($auto_calculated_yield, 0, ',', '.') }} kg</p>
-                            <p class="text-xs text-amber-600">racimos/planta × peso × nº cepas × % salud</p>
-                        </div>
-                    </div>
-                </div>
+                <flux:callout variant="info" icon="calculator" class="mt-4">
+                    <flux:callout.heading>Rendimiento calculado desde muestreo</flux:callout.heading>
+                    <flux:callout.text>
+                        <span class="text-2xl font-bold">{{ number_format($auto_calculated_yield, 0, ',', '.') }} kg</span>
+                        · racimos/planta × peso × nº cepas × % salud
+                    </flux:callout.text>
+                </flux:callout>
             @endif
         </x-agro.form-section>
 

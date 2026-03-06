@@ -416,15 +416,13 @@
                         </div>
 
                         @if($harvestLimitInfo['exceeds'])
-                            <div class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-700">
-                                <flux:icon icon="exclamation-triangle" class="size-4 flex-shrink-0 mt-0.5" />
-                                <span>El total cosechado excede el límite de la plantación</span>
-                            </div>
+                            <flux:callout variant="danger" icon="exclamation-triangle">
+                                <flux:callout.text>El total cosechado excede el límite de la plantación.</flux:callout.text>
+                            </flux:callout>
                         @elseif($harvestLimitInfo['percentage'] > 80)
-                            <div class="flex items-start gap-2 bg-orange-50 border border-orange-200 rounded-lg p-3 text-xs text-orange-700">
-                                <flux:icon icon="exclamation-circle" class="size-4 flex-shrink-0 mt-0.5" />
-                                <span>Se ha utilizado más del 80% del límite</span>
-                            </div>
+                            <flux:callout variant="warning" icon="exclamation-circle">
+                                <flux:callout.text>Se ha utilizado más del 80% del límite.</flux:callout.text>
+                            </flux:callout>
                         @endif
                     </div>
                 </x-agro.card>

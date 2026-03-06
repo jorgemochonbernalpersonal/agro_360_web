@@ -40,7 +40,7 @@ class Create extends AbstractCreate
     {
         $user = User::create([
             'name'      => $this->name,
-            'email'     => $this->email ?: null,
+            'email'     => $this->email ?: ('viticultores.' . Str::uuid() . '@noemail.agro365.es'),
             'dni'       => $this->dni ?: null,
             'role'      => 'viticulturist',
             'can_login' => false,

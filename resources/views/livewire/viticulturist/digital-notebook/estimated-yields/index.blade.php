@@ -22,15 +22,11 @@
 
     <div class="flex items-center gap-3">
 
-        <div class="flex-1 relative">
-            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
-            </div>
-            <input
+        <div class="flex-1">
+            <flux:input
                 wire:model.live.debounce.300ms="search"
-                type="text"
                 placeholder="Buscar por parcela, variedad, notas..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+                icon="magnifying-glass"
             />
         </div>
 
@@ -223,25 +219,23 @@
         </div>
 
         <div class="px-6 py-5 space-y-4">
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
-                <select wire:model.live="selectedCampaign"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+            <flux:field>
+                <flux:label>Campaña</flux:label>
+                <flux:select wire:model.live="selectedCampaign">
                     <option value="">Todas las campañas</option>
                     @foreach($campaigns as $campaign)
                         <option value="{{ $campaign->id }}">{{ $campaign->name }} ({{ $campaign->year }})</option>
                     @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
-                <select wire:model.live="filterStatus"
-                        class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
+                </flux:select>
+            </flux:field>
+            <flux:field>
+                <flux:label>Estado</flux:label>
+                <flux:select wire:model.live="filterStatus">
                     <option value="">Todos los estados</option>
                     <option value="draft">Borrador</option>
                     <option value="confirmed">Confirmada</option>
-                </select>
-            </div>
+                </flux:select>
+            </flux:field>
         </div>
 
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">

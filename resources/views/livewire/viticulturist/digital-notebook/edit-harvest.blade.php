@@ -1,106 +1,94 @@
-@php
-    $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>';
-@endphp
-
 <x-agro.form-card
     title="Editar Cosecha"
     description="Modifica la información de la cosecha (vendimia)"
-    :icon="$icon"
+    icon="archive-box-arrow-down"
     icon-color="from-agro-500 to-agro-700"
     :back-url="route('viticulturist.digital-notebook.harvest.show', $harvest->id)"
 >
     @if($harvest->wasEdited())
-        <div class="mb-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
-            <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                <div>
-                    <h4 class="text-sm font-semibold text-amber-900">Esta cosecha fue editada anteriormente</h4>
-                    <p class="text-xs text-amber-800 mt-1">
-                        Editada el {{ $harvest->edited_at->format('d/m/Y H:i') }}
-                        @if($harvest->editor)
-                            por {{ $harvest->editor->name }}
-                        @endif
-                    </p>
-                    @if($harvest->edit_notes)
-                        <p class="text-xs text-amber-700 mt-2 italic">Motivo: {{ $harvest->edit_notes }}</p>
-                    @endif
-                </div>
-            </div>
-        </div>
+        <flux:callout variant="warning" icon="pencil-square" class="mb-6">
+            <flux:callout.heading>Esta cosecha fue editada anteriormente</flux:callout.heading>
+            <flux:callout.text>
+                Editada el {{ $harvest->edited_at->format('d/m/Y H:i') }}
+                @if($harvest->editor) por {{ $harvest->editor->name }} @endif
+                @if($harvest->edit_notes) · Motivo: {{ $harvest->edit_notes }} @endif
+            </flux:callout.text>
+        </flux:callout>
     @endif
 
     <form wire:submit="update" class="space-y-8">
         
         {{-- Alerta de Plazo de Seguridad --}}
         @if($hasActiveWithdrawal)
-            <div class="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-lg">
-                <div class="flex items-start gap-4">
-                    <svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-bold text-red-900 mb-2">⚠️ ADVERTENCIA: Plazo de Seguridad Activo</h3>
-                        <p class="text-sm text-red-800 mb-4">
-                            Esta parcela tiene tratamientos fitosanitarios con plazo de seguridad activo. 
-                            <strong>No se recomienda cosechar hasta que finalicen los plazos</strong>.
-                        </p>
-                        
-                        <div class="bg-white rounded-lg p-4 mb-4">
-                            <h4 class="font-semibold text-red-900 mb-3">Tratamientos activos:</h4>
-                            <div class="space-y-2">
-                                @foreach($activeWithdrawalTreatments as $treatment)
-                                    <div class="flex items-start gap-2 text-sm">
-                                        <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <div>
-                                            <p class="font-semibold text-zinc-900">{{ $treatment['product_name'] }}</p>
-                                            <p class="text-zinc-600">
-                                                Aplicado: {{ $treatment['application_date'] }} | 
-                                                Plazo: {{ $treatment['withdrawal_days'] }} días | 
-                                                <span class="font-semibold text-red-700">Seguro desde: {{ $treatment['safe_date'] }}</span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+            <flux:callout variant="danger" icon="exclamation-triangle">
+                <flux:callout.heading>ADVERTENCIA: Plazo de Seguridad Activo</flux:callout.heading>
+                <flux:callout.text>
+                    Esta parcela tiene tratamientos fitosanitarios con plazo de seguridad activo.
+                    <strong>No se recomienda cosechar hasta que finalicen los plazos</strong>.
+                </flux:callout.text>
+            </flux:callout>
 
-                        <div class="bg-amber-50 border border-amber-300 rounded-lg p-4 mb-4">
-                            <p class="text-sm text-amber-900 mb-3">
-                                <strong>Si decides cosechar de todos modos</strong>, debes confirmar que entiendes los riesgos y proporcionar un motivo:
-                            </p>
-                            
-                            <div class="mb-3">
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input 
-                                        type="checkbox" 
-                                        wire:model="withdrawalAcknowledged"
-                                        class="w-5 h-5 text-red-600 focus:ring-red-500 border-red-300 rounded"
-                                    />
-                                    <span class="text-sm font-semibold text-zinc-900">
-                                        Entiendo los riesgos y asumo la responsabilidad de cosechar con plazo de seguridad activo
-                                    </span>
-                                </label>
-                                @error('withdrawalAcknowledged')
-                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            @if($withdrawalAcknowledged)
-                                <flux:field>
-                                    <flux:label required>Motivo de la cosecha anticipada</flux:label>
-                                    <flux:textarea wire:model="withdrawalReason" id="withdrawalReason" rows="3" placeholder="Ej: Emergencia por previsión de granizo, daños por helada que requieren cosecha urgente, etc. (mínimo 20 caracteres)" />
-                                    <flux:description>Este motivo quedará registrado en el sistema.</flux:description>
-                                    <flux:error name="withdrawalReason" />
-                                </flux:field>
-                            @endif
+            <x-agro.card class="mt-4">
+                <x-slot:header>
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
+                            <flux:icon icon="beaker" class="size-4 text-red-600" />
                         </div>
+                        <h3 class="font-semibold text-zinc-900">Tratamientos activos</h3>
                     </div>
+                </x-slot:header>
+
+                <div class="space-y-2">
+                    @foreach($activeWithdrawalTreatments as $treatment)
+                        <div class="flex items-start gap-3 text-sm">
+                            <flux:icon icon="x-circle" class="size-4 text-red-500 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <p class="font-semibold text-zinc-900">{{ $treatment['product_name'] }}</p>
+                                <p class="text-zinc-600">
+                                    Aplicado: {{ $treatment['application_date'] }} |
+                                    Plazo: {{ $treatment['withdrawal_days'] }} días |
+                                    <span class="font-semibold text-red-700">Seguro desde: {{ $treatment['safe_date'] }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            </div>
+
+                <div class="mt-4">
+                    <flux:callout variant="warning">
+                        <flux:callout.text>
+                            <strong>Si decides cosechar de todos modos</strong>, debes confirmar que entiendes los riesgos y proporcionar un motivo.
+                        </flux:callout.text>
+                    </flux:callout>
+
+                    <div class="mt-3">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                wire:model="withdrawalAcknowledged"
+                                class="w-5 h-5 text-red-600 focus:ring-red-500 border-red-300 rounded"
+                            />
+                            <span class="text-sm font-semibold text-zinc-900">
+                                Entiendo los riesgos y asumo la responsabilidad de cosechar con plazo de seguridad activo
+                            </span>
+                        </label>
+                        @error('withdrawalAcknowledged')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    @if($withdrawalAcknowledged)
+                        <div class="mt-3">
+                            <flux:field>
+                                <flux:label required>Motivo de la cosecha anticipada</flux:label>
+                                <flux:textarea wire:model="withdrawalReason" id="withdrawalReason" rows="3" placeholder="Ej: Emergencia por previsión de granizo, daños por helada que requieren cosecha urgente, etc. (mínimo 20 caracteres)" />
+                                <flux:description>Este motivo quedará registrado en el sistema.</flux:description>
+                                <flux:error name="withdrawalReason" />
+                            </flux:field>
+                        </div>
+                    @endif
+                </div>
+            </x-agro.card>
         @endif
 
         <x-agro.form-section title="Información Básica" color="green">
@@ -159,25 +147,23 @@
                     @endif
                     <flux:error name="container_id" />
                 @if($container_id && $container_id != $original_container_id)
-                    <div class="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p class="text-sm text-amber-900">
-                            ⚠️ <strong>Cambio de contenedor:</strong> Asegúrate de que el contenedor tenga capacidad suficiente para el peso de la cosecha.
-                        </p>
-                    </div>
+                    <flux:callout variant="warning" icon="arrow-path" class="mt-2">
+                        <flux:callout.text>
+                            <strong>Cambio de contenedor:</strong> Asegúrate de que el contenedor tenga capacidad suficiente para el peso de la cosecha.
+                        </flux:callout.text>
+                    </flux:callout>
                 @endif
                 @if($container_id)
                     @php
                         $selectedContainer = $availableContainers->firstWhere('id', $container_id);
                     @endphp
                     @if($selectedContainer)
-                        <div class="mt-2 p-3 bg-blue-50 rounded-lg">
-                            <p class="text-sm text-blue-900">
+                        <flux:callout variant="info" icon="archive-box" class="mt-2">
+                            <flux:callout.text>
                                 <strong>Capacidad disponible:</strong> {{ number_format($selectedContainer->getAvailableCapacity(), 2) }} / {{ number_format($selectedContainer->capacity, 2) }} kg
-                            </p>
-                            <p class="text-xs text-blue-700 mt-1">
-                                Ocupación actual: {{ number_format($selectedContainer->getOccupancyPercentage(), 1) }}%
-                            </p>
-                        </div>
+                                · Ocupación actual: {{ number_format($selectedContainer->getOccupancyPercentage(), 1) }}%
+                            </flux:callout.text>
+                        </flux:callout>
                     @endif
                 @endif
             </div>
@@ -203,17 +189,20 @@
 
         {{-- Panel de Control: Límite y Rendimiento Estimado --}}
         @if($selectedPlanting && ($harvestLimitInfo || $estimatedYield))
-            <x-agro.form-section title="📊 Control de Cosecha" color="blue">
+            <x-agro.form-section title="Control de Cosecha" color="blue">
                 <div class="space-y-4">
                     {{-- Límite de Plantación --}}
                     @if($harvestLimitInfo)
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                            <h4 class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Límite de Plantación
-                            </h4>
+                        <x-agro.card>
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+                                        <flux:icon icon="check-circle" class="size-4 text-blue-600" />
+                                    </div>
+                                    <h3 class="font-semibold text-zinc-900">Límite de Plantación</h3>
+                                </div>
+                            </x-slot:header>
+
                             <div class="grid grid-cols-2 {{ $total_weight && $total_weight > 0 ? 'md:grid-cols-4' : 'md:grid-cols-3' }} gap-4 text-sm">
                                 <div>
                                     <p class="text-xs text-zinc-600">Límite máximo</p>
@@ -242,8 +231,9 @@
                                     </div>
                                 @endif
                             </div>
+
                             @if($total_weight && $total_weight > 0)
-                                <div class="mt-3 pt-3 border-t border-blue-200">
+                                <div class="mt-3 pt-3 border-t border-zinc-100">
                                     <div class="flex items-center justify-between">
                                         <span class="text-xs text-zinc-600">Disponible restante</span>
                                         <span class="font-bold {{ ($harvestLimitInfo['new_remaining'] ?? $harvestLimitInfo['remaining']) < 0 ? 'text-red-600' : 'text-green-600' }}">
@@ -252,30 +242,29 @@
                                         </span>
                                     </div>
                                     @if($harvestLimitInfo['exceeds'] ?? false)
-                                        <div class="mt-2 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-sm font-semibold">
-                                            ⚠️ Esta cosecha excede el límite de la plantación
-                                        </div>
+                                        <flux:callout variant="danger" icon="exclamation-triangle" class="mt-2">
+                                            <flux:callout.text>Esta cosecha excede el límite de la plantación.</flux:callout.text>
+                                        </flux:callout>
                                     @endif
                                 </div>
                             @else
-                                <div class="mt-3 pt-3 border-t border-blue-200">
-                                    <p class="text-xs text-zinc-500 italic">
-                                        💡 Ingresa el peso de la cosecha para ver el análisis del límite
-                                    </p>
-                                </div>
+                                <p class="text-xs text-zinc-400 italic mt-3">Ingresa el peso de la cosecha para ver el análisis del límite.</p>
                             @endif
-                        </div>
+                        </x-agro.card>
                     @endif
 
                     {{-- Rendimiento Estimado --}}
                     @if($estimatedYield)
-                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
-                            <h4 class="text-sm font-bold text-amber-900 mb-3 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                                </svg>
-                                Rendimiento Estimado
-                            </h4>
+                        <x-agro.card>
+                            <x-slot:header>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
+                                        <flux:icon icon="chart-bar" class="size-4 text-amber-600" />
+                                    </div>
+                                    <h3 class="font-semibold text-zinc-900">Rendimiento Estimado</h3>
+                                </div>
+                            </x-slot:header>
+
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                                 <div>
                                     <p class="text-xs text-zinc-600">Estimado</p>
@@ -297,8 +286,9 @@
                                     </p>
                                 </div>
                             </div>
+
                             @if($total_weight && $total_weight > 0 && $yieldVarianceInfo)
-                                <div class="mt-3 pt-3 border-t border-amber-200">
+                                <div class="mt-3 pt-3 border-t border-zinc-100">
                                     <div class="flex items-center justify-between">
                                         <span class="text-xs text-zinc-600">Total después</span>
                                         <span class="font-bold text-zinc-900">{{ number_format($yieldVarianceInfo['actual'], 2) }} kg</span>
@@ -313,23 +303,19 @@
                                         </span>
                                     </div>
                                     @if($yieldVarianceInfo['is_over_yield'])
-                                        <div class="mt-2 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded text-xs font-semibold">
-                                            ✓ Sobrerendimiento: La cosecha supera la estimación
-                                        </div>
+                                        <flux:callout variant="success" icon="check-circle" class="mt-2">
+                                            <flux:callout.text>Sobrerendimiento: La cosecha supera la estimación.</flux:callout.text>
+                                        </flux:callout>
                                     @elseif($yieldVarianceInfo['is_under_yield'])
-                                        <div class="mt-2 bg-orange-100 border border-orange-400 text-orange-700 px-3 py-2 rounded text-xs font-semibold">
-                                            ⚠️ Subrendimiento: La cosecha está por debajo de la estimación
-                                        </div>
+                                        <flux:callout variant="warning" icon="exclamation-triangle" class="mt-2">
+                                            <flux:callout.text>Subrendimiento: La cosecha está por debajo de la estimación.</flux:callout.text>
+                                        </flux:callout>
                                     @endif
                                 </div>
                             @elseif(!$total_weight || $total_weight == 0)
-                                <div class="mt-3 pt-3 border-t border-amber-200">
-                                    <p class="text-xs text-zinc-500 italic">
-                                        💡 Ingresa el peso de la cosecha para comparar con la estimación
-                                    </p>
-                                </div>
+                                <p class="text-xs text-zinc-400 italic mt-3">Ingresa el peso de la cosecha para comparar con la estimación.</p>
                             @endif
-                        </div>
+                        </x-agro.card>
                     @endif
                 </div>
             </x-agro.form-section>
@@ -351,20 +337,13 @@
         </x-agro.form-section>
 
         {{-- Calidad de la Uva (Opcional pero Recomendado) --}}
-        <x-agro.form-section title="📊 Calidad de la Uva (Recomendado)" color="amber">
-            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg">
-                <div class="flex items-start gap-3">
-                    <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                    </svg>
-                    <div>
-                        <h4 class="text-sm font-semibold text-amber-900">💡 Tip Profesional</h4>
-                        <p class="text-xs text-amber-800 mt-1">
-                            Registrar la calidad te permite comparar entre campañas, negociar mejores precios y obtener certificaciones Premium.
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <x-agro.form-section title="Calidad de la Uva (Recomendado)" color="amber">
+            <flux:callout variant="info" icon="light-bulb" class="mb-6">
+                <flux:callout.heading>Tip Profesional</flux:callout.heading>
+                <flux:callout.text>
+                    Registrar la calidad te permite comparar entre campañas, negociar mejores precios y obtener certificaciones Premium.
+                </flux:callout.text>
+            </flux:callout>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <flux:field>
@@ -601,9 +580,9 @@
         </x-agro.form-section>
 
         <x-agro.form-section title="Notas de Edición" color="amber">
-            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4 rounded-r-lg">
-                <p class="text-sm text-amber-800">Si estás realizando cambios importantes, explica el motivo de la edición.</p>
-            </div>
+            <flux:callout variant="info" icon="information-circle" class="mb-4">
+                <flux:callout.text>Si estás realizando cambios importantes, explica el motivo de la edición.</flux:callout.text>
+            </flux:callout>
             <flux:field>
                 <flux:label>Motivo de la edición (opcional pero recomendado)</flux:label>
                 <flux:textarea wire:model="edit_notes" id="edit_notes" rows="3" placeholder="Ej: Corrección de peso, actualización de calidad, cambio de destino..." />
