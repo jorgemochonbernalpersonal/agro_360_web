@@ -10,26 +10,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-3 gap-4">
-        <x-agro.stat-card
-            label="Kg recibidos"
-            :value="number_format($stats['total_kg'], 0) . ' kg'"
-            icon="scale"
-        />
-        <x-agro.stat-card
-            label="Entradas"
-            :value="$stats['total_entries']"
-            icon="clipboard-document-list"
-        />
-        <x-agro.stat-card
-            label="Baumé medio"
-            :value="$stats['avg_baume'] > 0 ? $stats['avg_baume'] . ' °Bé' : '—'"
-            icon="beaker"
-        />
-    </div>
-
-    {{-- Filtros --}}
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"

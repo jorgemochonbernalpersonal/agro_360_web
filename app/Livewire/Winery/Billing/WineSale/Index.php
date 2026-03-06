@@ -309,19 +309,7 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $statsBase = Invoice::where('user_id', $this->wineryId())->where('invoice_type', 'wine_sale');
-        $stats = [
-            'total'     => (clone $statsBase)->count(),
-            'pending'   => (clone $statsBase)->where('payment_status', 'unpaid')->count(),
-            'paid'      => (clone $statsBase)->where('payment_status', 'paid')->count(),
-            'delivered' => (clone $statsBase)->where('delivery_status', 'delivered')->count(),
-            'amount'    => (float) (clone $statsBase)->sum('total_amount'),
-        ];
-
-        return [
-            'invoices' => $entries,
-            'stats'    => $stats,
-        ];
+        return ['invoices' => $entries];
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

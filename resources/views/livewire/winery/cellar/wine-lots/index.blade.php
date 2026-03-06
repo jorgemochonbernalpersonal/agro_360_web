@@ -7,15 +7,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <x-agro.stat-card label="Lotes activos"  :value="$stats['total']"                             icon="beaker" />
-        <x-agro.stat-card label="Cantidad total" :value="number_format($stats['total_quantity'], 0)"  icon="archive-box" />
-        <x-agro.stat-card label="Disponible"     :value="number_format($stats['total_available'], 0)" icon="check-circle" color="green" />
-        <x-agro.stat-card label="Reservado"      :value="number_format($stats['total_reserved'], 0)"  icon="clock"        color="orange" />
-        <x-agro.stat-card label="Vendido"        :value="number_format($stats['total_sold'], 0)"       icon="shopping-cart" color="blue" />
-    </div>
-
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"

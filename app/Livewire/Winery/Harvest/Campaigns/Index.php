@@ -83,23 +83,15 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $wineryId = $this->wineryId();
-
-        $years = Campaign::forViticulturist($wineryId)
+        $years = Campaign::forViticulturist($this->wineryId())
             ->select('year')
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year');
 
-        $stats = [
-            'active' => Campaign::forViticulturist($wineryId)->active()->count(),
-            'total'  => Campaign::forViticulturist($wineryId)->count(),
-        ];
-
         return [
             'campaigns' => $entries,
             'years'     => $years,
-            'stats'     => $stats,
         ];
     }
 }

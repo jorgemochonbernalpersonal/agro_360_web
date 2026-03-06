@@ -90,19 +90,6 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $statsBase = WineLot::where('user_id', $this->wineryId())->where('archived', false);
-
-        $stats = [
-            'total'           => (clone $statsBase)->count(),
-            'total_quantity'  => (float) (clone $statsBase)->sum('quantity'),
-            'total_available' => (float) (clone $statsBase)->sum('available_quantity'),
-            'total_reserved'  => (float) (clone $statsBase)->sum('reserved_quantity'),
-            'total_sold'      => (float) (clone $statsBase)->sum('sold_quantity'),
-        ];
-
-        return [
-            'lots'  => $entries,
-            'stats' => $stats,
-        ];
+        return ['lots' => $entries];
     }
 }

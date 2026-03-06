@@ -89,28 +89,9 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $wineryId         = $this->wineryId();
-        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)->pluck('viticulturist_id');
-        $campaignIds      = Campaign::forViticulturist($wineryId)->pluck('id');
+        $wineryId = $this->wineryId();
 
         $campaigns = Campaign::forViticulturist($wineryId)->orderBy('year', 'desc')->get();
-
-        $statsBase = Harvest::whereHas('activity', function (Builder $q) use ($viticulturistIds, $campaignIds) {
-            $q->whereIn('viticulturist_id', $viticulturistIds)
-              ->whereIn('campaign_id', $campaignIds);
-        });
-
-        if ($this->campaignFilter) {
-            $statsBase->whereHas('activity', fn(Builder $q) =>
-                $q->where('campaign_id', $this->campaignFilter)
-            );
-        }
-
-        $stats = [
-            'total_kg'      => (float) $statsBase->sum('total_weight'),
-            'total_entries' => $statsBase->count(),
-            'avg_baume'     => round((float) $statsBase->whereNotNull('baume_degree')->avg('baume_degree'), 2),
-        ];
 
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
             ->with('viticulturist:id,name')
@@ -121,7 +102,6 @@ class Index extends AbstractIndex
             'receptions'           => $entries,
             'campaigns'            => $campaigns,
             'linkedViticulturists' => $linkedViticulturists,
-            'stats'                => $stats,
         ];
     }
 }

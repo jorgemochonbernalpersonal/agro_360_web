@@ -110,27 +110,16 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $wineryId = $this->wineryId();
-
-        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
+        $viticulturistIds = WineryViticulturist::where('winery_id', $this->wineryId())
             ->where('source', 'own')
             ->pluck('viticulturist_id');
 
         $viticulturists = User::whereIn('id', $viticulturistIds)
             ->orderBy('name')->get(['id', 'name']);
 
-        $statsBase = Invoice::where('user_id', $wineryId)->where('invoice_type', 'grape_purchase');
-        $stats = [
-            'total'   => (clone $statsBase)->count(),
-            'pending' => (clone $statsBase)->where('payment_status', 'unpaid')->count(),
-            'paid'    => (clone $statsBase)->where('payment_status', 'paid')->count(),
-            'amount'  => (float) (clone $statsBase)->sum('total_amount'),
-        ];
-
         return [
             'invoices'       => $entries,
             'viticulturists' => $viticulturists,
-            'stats'          => $stats,
         ];
     }
 

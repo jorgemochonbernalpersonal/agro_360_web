@@ -94,27 +94,13 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $wineryId  = $this->wineryId();
         $types     = ContainerType::orderBy('name')->get();
         $typesById = $types->keyBy('id');
-
-        $statsBase     = Container::where('user_id', $wineryId)->where('archived', false);
-        $totalCapacity = (float) $statsBase->sum('capacity');
-        $totalUsed     = (float) $statsBase->sum('used_capacity');
-
-        $stats = [
-            'total'           => $statsBase->count(),
-            'total_capacity'  => $totalCapacity,
-            'total_used'      => $totalUsed,
-            'total_available' => max(0, $totalCapacity - $totalUsed),
-            'fill_percent'    => $totalCapacity > 0 ? round($totalUsed / $totalCapacity * 100, 1) : 0,
-        ];
 
         return [
             'containers' => $entries,
             'types'      => $types,
             'typesById'  => $typesById,
-            'stats'      => $stats,
         ];
     }
 }

@@ -7,14 +7,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <x-agro.stat-card label="Total liquidaciones" :value="$stats['total']"                             icon="document-text" />
-        <x-agro.stat-card label="Pendientes de pago"  :value="$stats['pending']"                          icon="clock"         color="orange" />
-        <x-agro.stat-card label="Pagadas"              :value="$stats['paid']"                             icon="check-circle"  color="green" />
-        <x-agro.stat-card label="Importe total"        :value="number_format($stats['amount'], 2) . ' €'"  icon="banknotes"     color="blue" />
-    </div>
-
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"

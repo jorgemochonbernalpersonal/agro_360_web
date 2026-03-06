@@ -10,40 +10,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <x-agro.stat-card label="Contenedores activos" :value="$stats['total']" icon="cube" />
-        <x-agro.stat-card
-            label="Capacidad total"
-            :value="number_format($stats['total_capacity'], 0) . ' kg'"
-            icon="archive-box"
-        />
-        <x-agro.stat-card
-            label="En uso"
-            :value="number_format($stats['total_used'], 0) . ' kg'"
-            icon="arrow-trending-up"
-        />
-        <x-agro.stat-card
-            label="Disponible"
-            :value="number_format($stats['total_available'], 0) . ' kg'"
-            icon="arrow-trending-down"
-        />
-    </div>
-
-    {{-- Ocupación global --}}
-    @if($stats['total'] > 0)
-        <x-agro.card>
-            <x-agro.progress-bar
-                label="Ocupación global de bodega"
-                :percentage="$stats['fill_percent']"
-                :currentValue="$stats['total_used']"
-                :maxValue="$stats['total_capacity']"
-                unit="kg"
-            />
-        </x-agro.card>
-    @endif
-
-    {{-- Filtros --}}
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"

@@ -11,7 +11,7 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-<x-agro.filter-bar>
+    <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
             placeholder="Buscar campaña..."
