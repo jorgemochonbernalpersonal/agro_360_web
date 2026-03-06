@@ -144,6 +144,7 @@
         </x-agro.form-section>
 
         {{-- Autorizacion de Plantacion PAC --}}
+        @if(!auth()->user()->isWinery())
         <x-agro.form-section title="Autorizacion de Plantacion PAC">
             <flux:callout variant="info" icon="information-circle">
                 <flux:callout.heading>Autorizacion de Plantacion</flux:callout.heading>
@@ -201,6 +202,7 @@
                 </flux:field>
             </div>
         </x-agro.form-section>
+        @endif
 
         <x-agro.form-actions :cancel-url="route('plots.plantings.index')" submit-label="Actualizar Plantacion" />
     </form>
