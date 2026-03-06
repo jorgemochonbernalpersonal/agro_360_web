@@ -7,7 +7,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class VerifyEmailNotification extends VerifyEmail
 {
-    public function toMail(object $notifiable): MailMessage
+    public function toMail($notifiable)
     {
         $verificationUrl = $this->verificationUrl($notifiable);
 
