@@ -66,23 +66,6 @@
         </div>
     </div>
 
-    {{-- Distribución por Régimen de Tenencia --}}
-    <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-zinc-900 mb-4">📊 Distribución por Régimen de Tenencia</h3>
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            @foreach(['propiedad' => 'Propiedad', 'arrendamiento' => 'Arrendamiento', 'aparceria' => 'Aparcería', 'cesion' => 'Cesión', 'usufructo' => 'Usufructo'] as $key => $label)
-                @php
-                    $stats = $tenureStats->get($key, ['count' => 0, 'surface' => 0]);
-                @endphp
-                <div class="border rounded-lg p-4">
-                    <p class="text-sm font-medium text-zinc-600">{{ $label }}</p>
-                    <p class="text-2xl font-bold text-zinc-900 mt-1">{{ $stats['count'] }}</p>
-                    <p class="text-xs text-zinc-500 mt-1">{{ round($stats['surface'], 2) }} ha</p>
-                </div>
-            @endforeach
-        </div>
-    </div>
-
     {{-- Alertas de Cumplimiento --}}
     @if($totalAlerts > 0)
         <div class="bg-white rounded-lg shadow p-6">

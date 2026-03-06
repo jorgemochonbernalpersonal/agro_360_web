@@ -22,25 +22,16 @@ class PlotsDashboard extends Component
                 'pac_eligible_area',
                 'non_eligible_area',
                 'eligibility_coefficient',
-                'tenure_regime',
                 'active',
                 'is_locked',
             ])
             ->get();
-        
+
         // Métricas de superficie (optimizado: cálculos en memoria)
         $totalSurface = $plots->sum('area');
         $eligibleSurface = $plots->sum('pac_eligible_area') ?: $totalSurface;
         $nonEligibleSurface = $plots->sum('non_eligible_area');
         $eligibilityPercentage = $totalSurface > 0 ? ($eligibleSurface / $totalSurface) * 100 : 0;
-        
-        // Métricas por régimen de tenencia
-        $tenureStats = $plots->groupBy('tenure_regime')->map(function ($group) {
-            return [
-                'count' => $group->count(),
-                'surface' => $group->sum('area'),
-            ];
-        });
         
         // ✅ OPTIMIZACIÓN: Validar en batch para reducir overhead
         $alerts = [];
@@ -78,14 +69,6 @@ class PlotsDashboard extends Component
                 }
             }
             
-            // Alerta de régimen de tenencia
-            if (!$plot->tenure_regime || $plot->tenure_regime === '') {
-                $alerts[] = [
-                    'type' => 'error',
-                    'plot' => $plot->name,
-                    'message' => 'Falta régimen de tenencia (obligatorio PAC)',
-                ];
-            }
         }
         
         return view('livewire.viticulturist.plots-dashboard', [
@@ -96,7 +79,6 @@ class PlotsDashboard extends Component
             'eligibleSurface' => round($eligibleSurface, 2),
             'nonEligibleSurface' => round($nonEligibleSurface, 2),
             'eligibilityPercentage' => round($eligibilityPercentage, 1),
-            'tenureStats' => $tenureStats,
             'alerts' => collect($alerts)->take(10), // Mostrar solo las 10 primeras
             'totalAlerts' => count($alerts),
         ]);
