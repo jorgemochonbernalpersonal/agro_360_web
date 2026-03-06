@@ -4,11 +4,11 @@
         :back-url="route('winery.invoices.wine-sale.index')">
 
         @if ($isLocked)
-            <x-agro.alert type="warning">
+            <flux:callout variant="warning" icon="exclamation-triangle">
                 Esta factura no se puede editar porque
                 @if ($invoice->status === 'cancelled') está cancelada.
                 @else está marcada como entregada. @endif
-            </x-agro.alert>
+            </flux:callout>
         @else
 
         <form wire:submit.prevent="save" class="space-y-8">

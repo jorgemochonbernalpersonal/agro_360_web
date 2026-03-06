@@ -5,11 +5,11 @@
         :back-url="route('winery.invoices.grape-purchase.index')">
 
         @if ($isLocked)
-            <x-agro.alert type="warning">
+            <flux:callout variant="warning" icon="exclamation-triangle">
                 Esta liquidación no se puede editar porque
                 @if ($invoice->status === 'cancelled') está cancelada.
                 @else ya está pagada. @endif
-            </x-agro.alert>
+            </flux:callout>
         @else
 
         <form wire:submit.prevent="save" class="space-y-8">
