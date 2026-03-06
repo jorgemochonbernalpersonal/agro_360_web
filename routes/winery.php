@@ -87,5 +87,5 @@ Route::middleware(['role:winery'])
         Route::get('/documents', $stub)->name('documents.index');
 
         // ── Configuración ─────────────────────────────────────────────
-        Route::get('/settings', $stub)->name('settings');
+        Route::get('/settings', \App\Livewire\Winery\Settings::class)->name('settings');
     });

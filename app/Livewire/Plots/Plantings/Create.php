@@ -50,7 +50,7 @@ class Create extends Component
 
     public function updatedAreaPlanted(): void
     {
-        if (!Auth::user()->isViticulturist() || !$this->area_planted) {
+        if (!$this->area_planted) {
             return;
         }
 
