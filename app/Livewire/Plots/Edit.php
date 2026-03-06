@@ -40,9 +40,7 @@ class Edit extends Component
     public $orientation_id = '';
     public $maximum_yield_kg_ha = '';
     public $degree_day_base = '';
-    public $limit_kg = '';
     public $cadastral_area = '';
-    public $unit_of_measurement = 'kg';
     public $plantation_year = '';
     public $is_organic = false;
     // Lookup FKs
@@ -84,9 +82,7 @@ class Edit extends Component
         $this->orientation_id = $plot->orientation_id ?? '';
         $this->maximum_yield_kg_ha = $plot->maximum_yield_kg_ha ?? '';
         $this->degree_day_base = $plot->degree_day_base ?? '';
-        $this->limit_kg = $plot->limit_kg ?? '';
         $this->cadastral_area = $plot->cadastral_area ?? '';
-        $this->unit_of_measurement = $plot->unit_of_measurement ?? 'kg';
         $this->plantation_year = $plot->plantation_year ?? '';
         $this->is_organic = $plot->is_organic ?? false;
         $this->soil_type_id = $plot->soil_type_id ?? '';
@@ -114,9 +110,7 @@ class Edit extends Component
             'orientation_id' => 'nullable|exists:orientations,id',
             'maximum_yield_kg_ha' => 'nullable|numeric|min:0',
             'degree_day_base' => 'nullable|numeric|min:0|max:30',
-            'limit_kg' => 'nullable|numeric|min:0',
             'cadastral_area' => 'nullable|numeric|min:0',
-            'unit_of_measurement' => 'nullable|string|in:kg,t',
             'plantation_year' => 'nullable|integer|min:1800|max:' . date('Y'),
             'is_organic' => 'boolean',
             'soil_type_id' => 'nullable|exists:soil_types,id',
@@ -193,9 +187,7 @@ class Edit extends Component
                 'orientation_id' => $this->orientation_id ?: null,
                 'maximum_yield_kg_ha' => $this->maximum_yield_kg_ha ?: null,
                 'degree_day_base' => $this->degree_day_base ?: null,
-                'limit_kg' => $this->limit_kg ?: null,
                 'cadastral_area' => $this->cadastral_area ?: null,
-                'unit_of_measurement' => $this->unit_of_measurement ?: null,
                 'plantation_year' => $this->plantation_year ?: null,
                 'is_organic' => $this->is_organic,
                 'soil_type_id' => $this->soil_type_id ?: null,

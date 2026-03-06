@@ -19,7 +19,7 @@ class ViticulturistSetting extends Model
     ];
 
     protected $casts = [
-        'default_limit_kg_per_ha'  => 'decimal:2',
+        'default_limit_kg_per_ha'  => 'decimal:3',
         'degree_day_base'          => 'decimal:1',
         'notify_harvest_alerts'    => 'boolean',
         'notify_activity_alerts'   => 'boolean',

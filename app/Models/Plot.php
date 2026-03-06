@@ -50,8 +50,6 @@ class Plot extends Model
         'number_of_vines',
         'is_organic',
         // Vendimia
-        'limit_kg',
-        'unit_of_measurement',
         'maximum_yield_kg_ha',
         'degree_day_base',
         // Estado
@@ -74,9 +72,8 @@ class Plot extends Model
         'is_locked' => 'boolean',
         'locked_at' => 'datetime',
         'alert_email_enabled' => 'boolean',
-        'maximum_yield_kg_ha' => 'decimal:2',
+        'maximum_yield_kg_ha' => 'decimal:3',
         'degree_day_base' => 'decimal:1',
-        'limit_kg' => 'decimal:2',
         'cadastral_area' => 'decimal:4',
         'plantation_year' => 'integer',
         'is_organic' => 'boolean',

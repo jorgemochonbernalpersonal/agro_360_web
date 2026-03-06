@@ -20,7 +20,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Variedad de uva -->
                 <flux:field>
-                    <flux:label for="grape_variety_id">Variedad de uva</flux:label>
+                    <flux:label for="grape_variety_id">Variedad de uva *</flux:label>
                     <flux:select wire:model="grape_variety_id" id="grape_variety_id">
                         <option value="">Seleccionar...</option>
                         @foreach ($grapeVarieties as $variety)
@@ -35,28 +35,26 @@
                 <!-- Superficie plantada -->
                 <flux:field>
                     <flux:label for="area_planted">Superficie plantada (ha) *</flux:label>
-                    <flux:input wire:model="area_planted" type="number" step="0.001" id="area_planted" required />
+                    <flux:input wire:model.live="area_planted" type="number" step="0.001" id="area_planted" required />
                     <flux:error name="area_planted" />
                 </flux:field>
             </div>
 
+            @if(!auth()->user()->isWinery())
             <!-- Limite de cosecha -->
             <div class="mt-6">
-                <flux:callout variant="info" icon="information-circle">
-                    <flux:callout.heading>Limite de Cosecha (Opcional)</flux:callout.heading>
-                    <flux:callout.text>
-                        Establece un limite maximo de cosecha para esta plantacion. Util para controlar cuotas, restricciones legales o planificacion comercial.
-                    </flux:callout.text>
-                </flux:callout>
-                <div class="mt-4">
-                    <flux:field>
-                        <flux:label for="harvest_limit_kg">Limite maximo de cosecha (kg)</flux:label>
-                        <flux:input wire:model="harvest_limit_kg" type="number" step="0.001" id="harvest_limit_kg" placeholder="Ej: 10000" />
-                        <flux:error name="harvest_limit_kg" />
-                    </flux:field>
-                    <p class="mt-1 text-xs text-zinc-500">Deja vacio si no hay limite establecido</p>
-                </div>
+                <flux:field>
+                    <flux:label for="harvest_limit_kg">Limite maximo de cosecha (kg)</flux:label>
+                    <flux:input wire:model="harvest_limit_kg" type="number" step="0.001" id="harvest_limit_kg" placeholder="Ej: 10000" />
+                    <flux:error name="harvest_limit_kg" />
+                    @if($plot->maximum_yield_kg_ha)
+                        <flux:description>Auto-calculado desde {{ number_format($plot->maximum_yield_kg_ha, 0) }} kg/ha de la parcela. Puedes ajustarlo manualmente.</flux:description>
+                    @else
+                        <flux:description>Deja vacio si no hay limite establecido</flux:description>
+                    @endif
+                </flux:field>
             </div>
+            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <!-- Ano plantacion -->
@@ -68,7 +66,7 @@
 
                 <!-- Riego -->
                 <div class="flex items-center mt-6 md:mt-0">
-                    <flux:checkbox wire:model="irrigated" id="irrigated" label="Con riego" />
+                    <flux:checkbox wire:model.live="irrigated" id="irrigated" label="Con riego" />
                     @error('irrigated')
                         <flux:error name="irrigated" />
                     @enderror

@@ -211,20 +211,6 @@
                         <flux:input wire:model="plantation_year" type="number" min="1800" max="{{ date('Y') }}" id="plantation_year" placeholder="Ej: 1985" />
                         <flux:error name="plantation_year" />
                     </flux:field>
-                    <flux:field>
-                        <flux:label for="limit_kg">Límite de kg por Campaña</flux:label>
-                        <flux:input wire:model="limit_kg" type="number" step="0.01" min="0" id="limit_kg" placeholder="Ej: 5000" />
-                        <flux:description>Cupo máximo de uva admitido por DO o acuerdo con bodega</flux:description>
-                        <flux:error name="limit_kg" />
-                    </flux:field>
-                    <flux:field>
-                        <flux:label for="unit_of_measurement">Unidad del Límite</flux:label>
-                        <flux:select wire:model="unit_of_measurement" id="unit_of_measurement">
-                            <option value="kg">Kilogramos (kg)</option>
-                            <option value="t">Toneladas (t)</option>
-                        </flux:select>
-                        <flux:error name="unit_of_measurement" />
-                    </flux:field>
                     <div class="flex items-center mt-2">
                         <flux:checkbox wire:model="is_organic" id="is_organic" label="Producción Ecológica" description="La parcela está bajo un programa de agricultura ecológica certificada." />
                     </div>
