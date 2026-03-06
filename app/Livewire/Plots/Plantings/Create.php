@@ -7,6 +7,7 @@ use App\Models\GrapeVariety;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\TrainingSystem;
+use App\Models\ViticulturistSetting;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -49,8 +50,13 @@ class Create extends Component
 
     public function updatedAreaPlanted(): void
     {
-        if (Auth::user()->isViticulturist() && $this->area_planted && $this->plot->maximum_yield_kg_ha) {
-            $this->harvest_limit_kg = round((float) $this->plot->maximum_yield_kg_ha * (float) $this->area_planted, 3);
+        if (!Auth::user()->isViticulturist() || !$this->area_planted) {
+            return;
+        }
+
+        $settings = ViticulturistSetting::forUser(Auth::id());
+        if ($settings?->default_limit_kg_per_ha) {
+            $this->harvest_limit_kg = round((float) $settings->default_limit_kg_per_ha * (float) $this->area_planted, 3);
         }
     }
 

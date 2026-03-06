@@ -217,11 +217,6 @@
         <x-agro.form-section title="Parametros Agronomicos">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
-                    <flux:label for="maximum_yield_kg_ha">Rendimiento Maximo Historico (kg/ha)</flux:label>
-                    <flux:input wire:model="maximum_yield_kg_ha" type="number" step="0.01" min="0" id="maximum_yield_kg_ha" placeholder="Ej: 8000" />
-                    <flux:error name="maximum_yield_kg_ha" />
-                </flux:field>
-                <flux:field>
                     <flux:label for="degree_day_base">Temperatura Base Grados-Dia (°C)</flux:label>
                     <flux:input wire:model="degree_day_base" type="number" step="0.1" min="0" max="30" id="degree_day_base" placeholder="10.0" />
                     <flux:description>Por defecto 10 °C (estandar viticola)</flux:description>

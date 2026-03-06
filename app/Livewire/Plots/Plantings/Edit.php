@@ -70,9 +70,6 @@ class Edit extends Component
 
     public function updatedAreaPlanted(): void
     {
-        if (Auth::user()->isViticulturist() && $this->area_planted && $this->planting->plot->maximum_yield_kg_ha) {
-            $this->harvest_limit_kg = round((float) $this->planting->plot->maximum_yield_kg_ha * (float) $this->area_planted, 3);
-        }
     }
 
     protected function rules(): array

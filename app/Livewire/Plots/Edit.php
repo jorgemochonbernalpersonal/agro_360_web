@@ -38,7 +38,6 @@ class Edit extends Component
     public $municipality_id = '';
     public $code_parcel = '';
     public $orientation_id = '';
-    public $maximum_yield_kg_ha = '';
     public $degree_day_base = '';
     public $cadastral_area = '';
     public $plantation_year = '';
@@ -80,7 +79,6 @@ class Edit extends Component
         $this->municipality_id = $plot->municipality_id;
         $this->code_parcel = $plot->code_parcel ?? '';
         $this->orientation_id = $plot->orientation_id ?? '';
-        $this->maximum_yield_kg_ha = $plot->maximum_yield_kg_ha ?? '';
         $this->degree_day_base = $plot->degree_day_base ?? '';
         $this->cadastral_area = $plot->cadastral_area ?? '';
         $this->plantation_year = $plot->plantation_year ?? '';
@@ -108,7 +106,6 @@ class Edit extends Component
             'active' => 'boolean',
             'code_parcel' => 'nullable|string|max:50',
             'orientation_id' => 'nullable|exists:orientations,id',
-            'maximum_yield_kg_ha' => 'nullable|numeric|min:0',
             'degree_day_base' => 'nullable|numeric|min:0|max:30',
             'cadastral_area' => 'nullable|numeric|min:0',
             'plantation_year' => 'nullable|integer|min:1800|max:' . date('Y'),
@@ -185,7 +182,6 @@ class Edit extends Component
                 'active' => $this->active,
                 'code_parcel' => $this->code_parcel ?: null,
                 'orientation_id' => $this->orientation_id ?: null,
-                'maximum_yield_kg_ha' => $this->maximum_yield_kg_ha ?: null,
                 'degree_day_base' => $this->degree_day_base ?: null,
                 'cadastral_area' => $this->cadastral_area ?: null,
                 'plantation_year' => $this->plantation_year ?: null,

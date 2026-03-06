@@ -47,11 +47,7 @@
                     <flux:label for="harvest_limit_kg">Limite maximo de cosecha (kg)</flux:label>
                     <flux:input wire:model="harvest_limit_kg" type="number" step="0.001" id="harvest_limit_kg" placeholder="Ej: 10000" />
                     <flux:error name="harvest_limit_kg" />
-                    @if($planting->plot->maximum_yield_kg_ha)
-                        <flux:description>Auto-calculado desde {{ number_format($planting->plot->maximum_yield_kg_ha, 0) }} kg/ha de la parcela. Puedes ajustarlo manualmente.</flux:description>
-                    @else
-                        <flux:description>Deja vacio si no hay limite establecido</flux:description>
-                    @endif
+                    <flux:description>Deja vacío si no hay límite establecido</flux:description>
                 </flux:field>
             </div>
             @endif
