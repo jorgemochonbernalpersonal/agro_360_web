@@ -55,7 +55,7 @@
 
                     <flux:field>
                         <flux:label for="price_per_unit">Precio por unidad (€)</flux:label>
-                        <flux:input wire:model="price_per_unit" type="number" step="0.0001" min="0" id="price_per_unit" />
+                        <flux:input wire:model="price_per_unit" type="number" step="0.001" min="0" id="price_per_unit" />
                         <flux:error name="price_per_unit" />
                     </flux:field>
                 </div>

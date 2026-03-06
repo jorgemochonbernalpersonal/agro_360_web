@@ -79,7 +79,7 @@
                             <div class="col-span-4 md:col-span-2">
                                 <flux:field>
                                     <flux:label>Precio/ud (€) *</flux:label>
-                                    <flux:input wire:model="lines.{{ $i }}.unit_price" type="number" step="0.0001" min="0" />
+                                    <flux:input wire:model="lines.{{ $i }}.unit_price" type="number" step="0.001" min="0" />
                                     <flux:error name="lines.{{ $i }}.unit_price" />
                                 </flux:field>
                             </div>

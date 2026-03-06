@@ -191,7 +191,7 @@
             @endif
 
             <!-- SIGPAC -->
-            @if($plot->sigpacUses->count() > 0 || $plot->sigpacCodes->count() > 0)
+            @if($plot->sigpacUses->count() > 0 || $plot->sigpacCodes->count() > 0 || auth()->user()->can('update', $plot))
                 <x-agro.card>
                     <x-slot:header>
                         <div class="flex items-center justify-between w-full">

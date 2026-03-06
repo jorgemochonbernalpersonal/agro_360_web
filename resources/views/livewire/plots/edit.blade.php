@@ -198,7 +198,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
                     <flux:label for="cadastral_area">Superficie Catastral (ha)</flux:label>
-                    <flux:input wire:model="cadastral_area" type="number" step="0.0001" min="0" id="cadastral_area" placeholder="0.0000" />
+                    <flux:input wire:model="cadastral_area" type="number" step="0.001" min="0" id="cadastral_area" placeholder="0.000" />
                     <flux:description>Superficie según el catastro (puede diferir del área agrícola)</flux:description>
                     <flux:error name="cadastral_area" />
                 </flux:field>

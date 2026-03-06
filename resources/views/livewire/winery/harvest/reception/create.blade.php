@@ -139,7 +139,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <flux:field>
                         <flux:label>Precio / kg (€)</flux:label>
-                        <flux:input wire:model="price_per_kg" type="number" step="0.0001" min="0" placeholder="0.0000" />
+                        <flux:input wire:model="price_per_kg" type="number" step="0.001" min="0" placeholder="0.000" />
                         <flux:error name="price_per_kg" />
                     </flux:field>
 

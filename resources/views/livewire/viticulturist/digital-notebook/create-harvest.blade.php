@@ -466,7 +466,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <flux:field>
                     <flux:label>Precio por Kilogramo (€/kg)</flux:label>
-                    <flux:input wire:model.live="price_per_kg" type="number" step="0.0001" min="0" id="price_per_kg" placeholder="0.0000" />
+                    <flux:input wire:model.live="price_per_kg" type="number" step="0.001" min="0" id="price_per_kg" placeholder="0.000" />
                     <flux:error name="price_per_kg" />
                 </flux:field>
                 <flux:field>
