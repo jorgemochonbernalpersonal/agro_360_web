@@ -3,8 +3,10 @@
 namespace App\Livewire\Settings;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\AutonomousCommunity;
 use App\Models\IrrigationType;
 use App\Models\Municipality;
+use App\Models\Province;
 use App\Models\PropertyType;
 use App\Models\Site;
 use App\Models\SoilType;
@@ -26,7 +28,8 @@ class TerritorialManagement extends Component
     public string $tab = 'sites';
 
     // --- Parajes ---
-    public string $municipalitySearch = '';
+    public string $selectedCommunityId = '';
+    public string $selectedProvinceId = '';
     public string $selectedMunicipalityId = '';
     public string $newSiteName = '';
     public int $editingSiteId = 0;
@@ -40,6 +43,26 @@ class TerritorialManagement extends Component
     public int $editingId = 0;
     public string $editingName = '';
     public string $editingDescription = '';
+
+    // ── Cascada ubicación ────────────────────────────────────────────────────
+
+    public function updatedSelectedCommunityId(): void
+    {
+        $this->selectedProvinceId    = '';
+        $this->selectedMunicipalityId = '';
+        $this->editingSiteId          = 0;
+    }
+
+    public function updatedSelectedProvinceId(): void
+    {
+        $this->selectedMunicipalityId = '';
+        $this->editingSiteId          = 0;
+    }
+
+    public function updatedSelectedMunicipalityId(): void
+    {
+        $this->editingSiteId = 0;
+    }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -244,16 +267,28 @@ class TerritorialManagement extends Component
 
     public function render()
     {
+        $communities    = collect();
+        $provinces      = collect();
         $municipalities = collect();
         $sites          = collect();
         $hiddenIds      = [];
 
         if ($this->tab === 'sites') {
-            $municipalities = Municipality::select(['id', 'name', 'province_id'])
-                ->when($this->municipalitySearch, fn($q) => $q->where('name', 'like', '%' . $this->municipalitySearch . '%'))
-                ->orderBy('name')
-                ->limit(100)
-                ->get();
+            $communities = AutonomousCommunity::select(['id', 'name'])->orderBy('name')->get();
+
+            if ($this->selectedCommunityId) {
+                $provinces = Province::select(['id', 'name'])
+                    ->where('autonomous_community_id', $this->selectedCommunityId)
+                    ->orderBy('name')
+                    ->get();
+            }
+
+            if ($this->selectedProvinceId) {
+                $municipalities = Municipality::select(['id', 'name'])
+                    ->where('province_id', $this->selectedProvinceId)
+                    ->orderBy('name')
+                    ->get();
+            }
 
             if ($this->selectedMunicipalityId) {
                 $hiddenIds = $this->hiddenIds('sites');
@@ -284,6 +319,8 @@ class TerritorialManagement extends Component
         }
 
         return view('livewire.settings.territorial-management', [
+            'communities'    => $communities,
+            'provinces'      => $provinces,
             'municipalities' => $municipalities,
             'sites'          => $sites,
             'catalogItems'   => $catalogItems,

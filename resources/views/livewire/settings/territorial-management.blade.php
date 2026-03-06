@@ -34,41 +34,49 @@
     @if ($tab === 'sites')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            {{-- Panel izquierdo: seleccionar municipio --}}
+            {{-- Panel izquierdo: selección en cascada --}}
             <x-agro.card>
                 <x-slot:header>
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-agro-50 flex items-center justify-center">
                             <flux:icon icon="map-pin" class="size-4 text-agro-600" />
                         </div>
-                        <h3 class="font-semibold text-zinc-900">Municipios</h3>
+                        <h3 class="font-semibold text-zinc-900">Seleccionar ubicación</h3>
                     </div>
                 </x-slot:header>
 
-                <flux:field>
-                    <flux:input
-                        wire:model.live.debounce.300ms="municipalitySearch"
-                        placeholder="Buscar municipio..."
-                        icon="magnifying-glass"
-                    />
-                </flux:field>
+                <div class="space-y-3">
+                    <flux:field>
+                        <flux:label>Comunidad Autónoma</flux:label>
+                        <flux:select wire:model.live="selectedCommunityId">
+                            <option value="">Seleccionar...</option>
+                            @foreach ($communities as $community)
+                                <option value="{{ $community->id }}">{{ $community->name }}</option>
+                            @endforeach
+                        </flux:select>
+                    </flux:field>
 
-                <div class="mt-3 space-y-1 max-h-80 overflow-y-auto">
-                    @forelse ($municipalities as $mun)
-                        <button
-                            wire:click="$set('selectedMunicipalityId', '{{ $mun->id }}')"
-                            class="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors
-                                {{ $selectedMunicipalityId == $mun->id
-                                    ? 'bg-agro-50 text-agro-700 font-medium'
-                                    : 'text-zinc-700 hover:bg-zinc-50' }}"
-                        >
-                            {{ $mun->name }}
-                        </button>
-                    @empty
-                        <p class="text-sm text-zinc-400 px-3 py-4 text-center">
-                            {{ $municipalitySearch ? 'Sin resultados' : 'Escribe para buscar un municipio' }}
-                        </p>
-                    @endforelse
+                    <flux:field>
+                        <flux:label>Provincia</flux:label>
+                        <flux:select wire:model.live="selectedProvinceId" :disabled="!$selectedCommunityId">
+                            <option value="">Seleccionar...</option>
+                            @foreach ($provinces as $province)
+                                <option value="{{ $province->id }}">{{ $province->name }}</option>
+                            @endforeach
+                        </flux:select>
+                    </flux:field>
+
+                    <div wire:key="mun-wrapper-{{ $selectedProvinceId }}">
+                        <flux:field>
+                            <flux:label>Municipio</flux:label>
+                            <flux:select wire:model.live="selectedMunicipalityId" :disabled="!$selectedProvinceId">
+                                <option value="">Seleccionar...</option>
+                                @foreach ($municipalities as $mun)
+                                    <option value="{{ $mun->id }}">{{ $mun->name }}</option>
+                                @endforeach
+                            </flux:select>
+                        </flux:field>
+                    </div>
                 </div>
             </x-agro.card>
 
@@ -82,6 +90,8 @@
                         <h3 class="font-semibold text-zinc-900">
                             @if ($selectedMunicipalityId)
                                 Parajes de {{ $municipalities->firstWhere('id', $selectedMunicipalityId)?->name ?? '…' }}
+                            @elseif ($selectedProvinceId)
+                                Parajes — selecciona municipio
                             @else
                                 Parajes
                             @endif
@@ -157,7 +167,7 @@
                 @else
                     <div class="flex flex-col items-center justify-center py-12 text-zinc-400">
                         <flux:icon icon="map-pin" class="size-10 mb-3 opacity-30" />
-                        <p class="text-sm">Selecciona un municipio para ver y gestionar sus parajes</p>
+                        <p class="text-sm">Selecciona comunidad → provincia → municipio</p>
                     </div>
                 @endif
             </x-agro.card>
