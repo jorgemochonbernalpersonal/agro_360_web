@@ -2,11 +2,11 @@
 
     <x-agro.page-header
         title="Campañas de Vendimia"
-        description="Organiza tus recepciones de uva por campaña anual"
+        description="Las campañas se crean automáticamente al registrar una recepción de uva"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.campaigns.create') }}" variant="primary" icon="plus">
-                Nueva Campaña
+            <flux:button href="{{ route('winery.grape-reception.create') }}" variant="primary" icon="plus">
+                Nueva Recepción
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
