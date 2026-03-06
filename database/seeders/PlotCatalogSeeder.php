@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\IrrigationType;
+use App\Models\Orientation;
 use App\Models\PropertyType;
 use App\Models\SoilType;
 use App\Models\Topography;
@@ -114,6 +115,22 @@ class PlotCatalogSeeder extends Seeder
             Valley::firstOrCreate(['code' => $data['code']], array_merge($data, ['active' => true]));
         }
 
-        $this->command->info('PlotCatalogSeeder completado: suelos, riegos, topografías, propiedades y valles/zonas.');
+        // ── Orientaciones ─────────────────────────────────────────────────────
+        $orientations = [
+            ['name' => 'Norte',     'abbreviation' => 'N'],
+            ['name' => 'Noreste',   'abbreviation' => 'NE'],
+            ['name' => 'Este',      'abbreviation' => 'E'],
+            ['name' => 'Sureste',   'abbreviation' => 'SE'],
+            ['name' => 'Sur',       'abbreviation' => 'S'],
+            ['name' => 'Suroeste',  'abbreviation' => 'SO'],
+            ['name' => 'Oeste',     'abbreviation' => 'O'],
+            ['name' => 'Noroeste',  'abbreviation' => 'NO'],
+        ];
+
+        foreach ($orientations as $data) {
+            Orientation::firstOrCreate(['abbreviation' => $data['abbreviation']], array_merge($data, ['active' => true]));
+        }
+
+        $this->command->info('PlotCatalogSeeder completado: suelos, riegos, topografías, propiedades, valles/zonas y orientaciones.');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Livewire\Plots;
 
 use App\Models\Plot;
 use App\Models\AutonomousCommunity;
+use App\Models\Orientation;
 use App\Models\SoilType;
 use App\Models\IrrigationType;
 use App\Models\Topography;
@@ -35,9 +36,8 @@ class Edit extends Component
     public $autonomous_community_id = '';
     public $province_id = '';
     public $municipality_id = '';
-    public $tenure_regime = 'propiedad';
     public $code_parcel = '';
-    public $orientation = '';
+    public $orientation_id = '';
     public $maximum_yield_kg_ha = '';
     public $degree_day_base = '';
     public $limit_kg = '';
@@ -80,9 +80,8 @@ class Edit extends Component
         $this->autonomous_community_id = $plot->autonomous_community_id;
         $this->province_id = $plot->province_id;
         $this->municipality_id = $plot->municipality_id;
-        $this->tenure_regime = $plot->tenure_regime ?? 'propiedad';
         $this->code_parcel = $plot->code_parcel ?? '';
-        $this->orientation = $plot->orientation ?? '';
+        $this->orientation_id = $plot->orientation_id ?? '';
         $this->maximum_yield_kg_ha = $plot->maximum_yield_kg_ha ?? '';
         $this->degree_day_base = $plot->degree_day_base ?? '';
         $this->limit_kg = $plot->limit_kg ?? '';
@@ -111,9 +110,8 @@ class Edit extends Component
             'description' => 'nullable|string',
             'area' => 'nullable|numeric|min:0',
             'active' => 'boolean',
-            'tenure_regime' => 'nullable|string|in:propiedad,arrendamiento,aparceria,cesion_uso,otros',
             'code_parcel' => 'nullable|string|max:50',
-            'orientation' => 'nullable|string|in:N,NE,E,SE,S,SO,O,NO',
+            'orientation_id' => 'nullable|exists:orientations,id',
             'maximum_yield_kg_ha' => 'nullable|numeric|min:0',
             'degree_day_base' => 'nullable|numeric|min:0|max:30',
             'limit_kg' => 'nullable|numeric|min:0',
@@ -191,9 +189,8 @@ class Edit extends Component
                 'description' => $this->description,
                 'area' => $this->area ?: null,
                 'active' => $this->active,
-                'tenure_regime' => $this->tenure_regime,
                 'code_parcel' => $this->code_parcel ?: null,
-                'orientation' => $this->orientation ?: null,
+                'orientation_id' => $this->orientation_id ?: null,
                 'maximum_yield_kg_ha' => $this->maximum_yield_kg_ha ?: null,
                 'degree_day_base' => $this->degree_day_base ?: null,
                 'limit_kg' => $this->limit_kg ?: null,
@@ -272,6 +269,7 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.plots.edit', [
+            'orientations' => Orientation::where('active', true)->get(),
             'soilTypes' => SoilType::where('active', true)->orderBy('name')->get(),
             'irrigationTypes' => IrrigationType::where('active', true)->orderBy('name')->get(),
             'topographies' => Topography::where('active', true)->orderBy('name')->get(),

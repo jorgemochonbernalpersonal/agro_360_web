@@ -39,10 +39,9 @@ class Plot extends Model
         'soil_type_id',
         'irrigation_type_id',
         'topography_id',
-        'orientation',
+        'orientation_id',
         'slope',
-        // Régimen y tipo de propiedad
-        'tenure_regime',
+        // Tipo de propiedad
         'property_type_id',
         // Plantación
         'plantation_year',
@@ -119,6 +118,11 @@ class Plot extends Model
     public function topography(): BelongsTo
     {
         return $this->belongsTo(Topography::class);
+    }
+
+    public function orientation(): BelongsTo
+    {
+        return $this->belongsTo(Orientation::class);
     }
 
     public function propertyType(): BelongsTo
