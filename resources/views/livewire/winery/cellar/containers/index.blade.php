@@ -131,41 +131,38 @@
 
                     <x-agro.table-cell>
                         <div class="flex items-center justify-end gap-1">
-                            <flux:button
-                                href="{{ route('winery.containers.edit', $container) }}"
-                                variant="ghost"
-                                size="xs"
-                                icon="pencil"
-                                title="Editar"
-                            />
+                            <a href="{{ route('winery.containers.edit', $container) }}" title="Editar">
+                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                    <flux:icon icon="pencil" class="size-4" />
+                                </button>
+                            </a>
                             @if($container->archived)
-                                <flux:button
+                                <button
                                     wire:click="unarchive({{ $container->id }})"
-                                    variant="ghost"
-                                    size="xs"
-                                    icon="arrow-path"
                                     title="Reactivar"
-                                />
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                                >
+                                    <flux:icon icon="arrow-path" class="size-4" />
+                                </button>
                             @else
-                                <flux:button
+                                <button
                                     wire:click="archive({{ $container->id }})"
                                     wire:confirm="¿Archivar este contenedor?"
-                                    variant="ghost"
-                                    size="xs"
-                                    icon="archive-box-arrow-down"
                                     title="Archivar"
-                                />
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                                >
+                                    <flux:icon icon="archive-box-arrow-down" class="size-4" />
+                                </button>
                             @endif
                             @if($container->harvests_count === 0)
-                                <flux:button
+                                <button
                                     wire:click="delete({{ $container->id }})"
                                     wire:confirm="¿Eliminar este contenedor permanentemente?"
-                                    variant="ghost"
-                                    size="xs"
-                                    icon="trash"
-                                    class="text-red-500 hover:text-red-700"
                                     title="Eliminar"
-                                />
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                >
+                                    <flux:icon icon="trash" class="size-4" />
+                                </button>
                             @endif
                         </div>
                     </x-agro.table-cell>

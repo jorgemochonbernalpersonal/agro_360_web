@@ -54,19 +54,19 @@
                 <flux:select wire:model="role" required>
                     @if(auth()->check())
                         @foreach($this->getAllowedRoles(auth()->user()) as $allowedRole)
-                            @if($allowedRole !== 'winery')
-                                <flux:select.option value="{{ $allowedRole }}">
-                                    {{ match($allowedRole) {
-                                        'admin'         => 'Administrador',
-                                        'supervisor'    => 'Supervisor',
-                                        'viticulturist' => 'Viticultor',
-                                        default         => ucfirst($allowedRole),
-                                    } }}
-                                </flux:select.option>
-                            @endif
+                            <flux:select.option value="{{ $allowedRole }}">
+                                {{ match($allowedRole) {
+                                    'admin'         => 'Administrador',
+                                    'supervisor'    => 'Supervisor',
+                                    'winery'        => 'Bodega',
+                                    'viticulturist' => 'Viticultor',
+                                    default         => ucfirst($allowedRole),
+                                } }}
+                            </flux:select.option>
                         @endforeach
                     @else
                         <flux:select.option value="viticulturist">Viticultor</flux:select.option>
+                        <flux:select.option value="winery">Bodega</flux:select.option>
                     @endif
                 </flux:select>
                 <flux:error name="role" />

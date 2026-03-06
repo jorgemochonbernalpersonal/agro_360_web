@@ -10,7 +10,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Estado actual --}}
     @if($container->used_capacity > 0)
         <x-agro.card>
             <div class="space-y-2">
@@ -25,17 +24,8 @@
         </x-agro.card>
     @endif
 
-    <x-agro.card>
-        <x-slot:header>
-            <div class="flex items-center gap-2">
-                <div class="p-1.5 rounded-lg bg-agro-50">
-                    <flux:icon icon="cube" class="size-4 text-agro-600" />
-                </div>
-                <span class="font-semibold text-zinc-900 text-sm">Datos del Contenedor</span>
-            </div>
-        </x-slot:header>
-
-        <form wire:submit="save" class="space-y-5">
+    <form wire:submit="save" class="space-y-8">
+        <x-agro.form-section title="Datos del Contenedor">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <flux:field>
                     <flux:label>Nombre</flux:label>
@@ -53,9 +43,7 @@
                     </flux:select>
                     <flux:error name="type_id" />
                 </flux:field>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <flux:field>
                     <flux:label>Capacidad (kg)</flux:label>
                     <flux:input wire:model="capacity" type="number" step="0.01" min="0.01" placeholder="Ej: 5000" />
@@ -72,9 +60,7 @@
                     <flux:input wire:model="serial_number" placeholder="Opcional" />
                     <flux:error name="serial_number" />
                 </flux:field>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <flux:field>
                     <flux:label>Fecha de compra</flux:label>
                     <flux:input wire:model="purchase_date" type="date" />
@@ -86,22 +72,18 @@
                     <flux:input wire:model="supplier_name" placeholder="Nombre del proveedor (opcional)" />
                     <flux:error name="supplier_name" />
                 </flux:field>
-            </div>
 
-            <flux:field>
-                <flux:label>Descripción / Notas</flux:label>
-                <flux:textarea wire:model="description" rows="3" placeholder="Observaciones sobre este contenedor..." />
-                <flux:error name="description" />
-            </flux:field>
-
-            <div class="pt-2 flex justify-end gap-3">
-                <flux:button href="{{ route('winery.containers.index') }}" variant="ghost">
-                    Cancelar
-                </flux:button>
-                <flux:button type="submit" variant="primary" icon="check">
-                    Guardar Cambios
-                </flux:button>
+                <flux:field class="md:col-span-2">
+                    <flux:label>Descripción / Notas</flux:label>
+                    <flux:textarea wire:model="description" rows="3" placeholder="Observaciones sobre este contenedor..." />
+                    <flux:error name="description" />
+                </flux:field>
             </div>
-        </form>
-    </x-agro.card>
+        </x-agro.form-section>
+
+        <x-agro.form-actions
+            :cancel-url="route('winery.containers.index')"
+            submit-label="Guardar Cambios"
+        />
+    </form>
 </div>

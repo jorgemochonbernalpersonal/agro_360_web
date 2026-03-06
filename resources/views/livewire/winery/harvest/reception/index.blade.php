@@ -4,10 +4,7 @@
         description="Registro de entradas de uva por viticultor, parcela y variedad"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.campaigns.index') }}" variant="ghost" icon="calendar">
-                Campañas
-            </flux:button>
-            <flux:button href="{{ route('winery.grape-reception.create') }}" variant="primary" icon="plus">
+<flux:button href="{{ route('winery.grape-reception.create') }}" variant="primary" icon="plus">
                 Nueva Recepción
             </flux:button>
         </x-slot:actions>
@@ -38,11 +35,11 @@
             wire:model.live.debounce.300ms="search"
             placeholder="Buscar viticultor, variedad, parcela o ticket..."
         />
-        <flux:select wire:model.live="campaignFilter" size="sm" class="w-44">
-            <flux:select.option value="">Todas las campañas</flux:select.option>
+        <flux:select wire:model.live="campaignFilter" size="sm" class="w-32">
+            <flux:select.option value="">Todas las añadas</flux:select.option>
             @foreach($campaigns as $c)
                 <flux:select.option value="{{ $c->id }}">
-                    {{ $c->name }} {{ $c->active ? '(activa)' : '' }}
+                    {{ $c->year }} {{ $c->active ? '(activa)' : '' }}
                 </flux:select.option>
             @endforeach
         </flux:select>
@@ -61,7 +58,7 @@
 
     {{-- Tabla --}}
     <x-agro.data-table
-        :headers="['Fecha', 'Viticultor', 'Parcela / Variedad', 'Kg', 'Calidad', 'Ticket', 'Contenedor', 'Acciones']"
+        :headers="['Añada', 'Fecha', 'Viticultor', 'Parcela / Variedad', 'Kg', 'Calidad', 'Ticket', 'Contenedor', 'Acciones']"
         empty-message="No hay recepciones registradas"
         empty-description="Registra la primera entrada de uva para esta campaña"
     >
@@ -74,6 +71,12 @@
                     $vitic    = $reception->activity?->viticulturist;
                 @endphp
                 <x-agro.table-row>
+                    <x-agro.table-cell>
+                        <span class="font-bold text-agro-700">
+                            {{ $reception->activity?->campaign?->year ?? '—' }}
+                        </span>
+                    </x-agro.table-cell>
+
                     <x-agro.table-cell>
                         <span class="text-sm text-zinc-700">
                             {{ $reception->harvest_start_date?->format('d/m/Y') ?? '—' }}
@@ -121,13 +124,12 @@
 
                     <x-agro.table-cell>
                         <div class="flex items-center justify-end gap-1">
-                            <flux:button
-                                href="{{ route('winery.grape-reception.assign', $reception) }}"
-                                variant="ghost"
-                                size="xs"
-                                icon="cube"
-                                title="{{ $reception->container_id ? 'Reasignar contenedor' : 'Asignar a contenedor' }}"
-                            />
+                            <a href="{{ route('winery.grape-reception.assign', $reception) }}"
+                               title="{{ $reception->container_id ? 'Reasignar contenedor' : 'Asignar a contenedor' }}">
+                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                    <flux:icon icon="cube" class="size-4" />
+                                </button>
+                            </a>
                         </div>
                     </x-agro.table-cell>
                 </x-agro.table-row>

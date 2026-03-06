@@ -25,9 +25,9 @@ Route::middleware(['role:winery'])
         Route::get('/plots', \App\Livewire\Plots\Index::class)->name('plots.index');
         Route::get('/plots/{plot}', \App\Livewire\Plots\Show::class)->name('plots.show');
 
-        // ── Campañas de vendimia ──────────────────────────────────────
-        Route::get('/campaigns', \App\Livewire\Winery\Harvest\Campaigns\Index::class)->name('campaigns.index');
-        Route::get('/campaigns/create', \App\Livewire\Winery\Harvest\Campaigns\Create::class)->name('campaigns.create');
+        // ── Campañas (gestionadas automáticamente por añada) ──────────
+        Route::get('/campaigns', fn() => redirect()->route('winery.grape-reception.index'))->name('campaigns.index');
+        Route::get('/campaigns/create', fn() => redirect()->route('winery.grape-reception.index'))->name('campaigns.create');
 
         // ── Recepción de uva ──────────────────────────────────────────
         Route::get('/grape-reception', \App\Livewire\Winery\Harvest\Reception\Index::class)->name('grape-reception.index');

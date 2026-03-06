@@ -98,28 +98,25 @@
         </div>
 
         @if($isOwn && !$viticulturist->can_login)
-            <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
-                <flux:icon icon="information-circle" class="size-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                <p class="text-xs text-amber-700">
+            <div class="mt-4">
+                <flux:callout variant="warning" icon="information-circle">
                     Viticultor sin acceso al sistema. Puedes gestionar sus datos y parcelas desde aquí.
                     Si quieres que acceda a su propio panel, invítale desde el listado de viticultores.
-                </p>
+                </flux:callout>
             </div>
         @elseif($isOwn && $viticulturist->can_login)
-            <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
-                <flux:icon icon="information-circle" class="size-4 text-blue-500 flex-shrink-0 mt-0.5" />
-                <p class="text-xs text-blue-700">
+            <div class="mt-4">
+                <flux:callout variant="info" icon="information-circle">
                     Este viticultor también gestiona sus datos desde su propio panel.
                     Ambos trabajáis sobre los mismos datos de parcelas y plantaciones.
                     El cuaderno de campo es privado — necesita autorización explícita para compartirlo.
-                </p>
+                </flux:callout>
             </div>
         @elseif($relation->source === 'supervisor')
-            <div class="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg flex items-start gap-2">
-                <flux:icon icon="information-circle" class="size-4 text-purple-500 flex-shrink-0 mt-0.5" />
-                <p class="text-xs text-purple-700">
+            <div class="mt-4">
+                <flux:callout variant="info" icon="information-circle">
                     Este viticultor fue asignado por tu Denominación de Origen. Solo puedes visualizar sus datos.
-                </p>
+                </flux:callout>
             </div>
         @endif
     </x-agro.card>
@@ -164,48 +161,42 @@
 
                         {{-- Plantaciones de la parcela --}}
                         @if($plot->plantings->isNotEmpty())
-                            <table class="w-full text-sm">
-                                <thead class="bg-white border-b border-zinc-100">
-                                    <tr>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 uppercase">Variedad</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 uppercase">Ha plantadas</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 uppercase">Año</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 uppercase">Límite kg/ha</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 uppercase">Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-zinc-100">
-                                    @foreach($plot->plantings as $planting)
-                                        <tr class="hover:bg-zinc-50">
-                                            <td class="px-4 py-2 font-medium text-zinc-900">
+                            <x-agro.data-table
+                                :headers="['Variedad', 'Ha plantadas', 'Año', 'Límite kg/ha', 'Estado']"
+                                empty-message="Sin plantaciones"
+                            >
+                                @foreach($plot->plantings as $planting)
+                                    <x-agro.table-row>
+                                        <x-agro.table-cell>
+                                            <span class="font-medium text-zinc-900">
                                                 {{ $planting->grapeVariety?->name ?? $planting->name ?? '—' }}
-                                            </td>
-                                            <td class="px-4 py-2 text-zinc-600">
-                                                {{ $planting->area_planted ? number_format($planting->area_planted, 2) . ' ha' : '—' }}
-                                            </td>
-                                            <td class="px-4 py-2 text-zinc-600">
-                                                {{ $planting->planting_year ?? '—' }}
-                                            </td>
-                                            <td class="px-4 py-2 text-zinc-600">
-                                                {{ $planting->harvest_limit_kg ? number_format($planting->harvest_limit_kg, 0) . ' kg' : '—' }}
-                                            </td>
-                                            <td class="px-4 py-2">
-                                                <flux:badge
-                                                    :color="$planting->status === 'active' ? 'green' : 'zinc'"
-                                                    size="sm"
-                                                >
-                                                    {{ match($planting->status) {
-                                                        'active'     => 'Activa',
-                                                        'replanting' => 'Replantación',
-                                                        'uprooted'   => 'Arrancada',
-                                                        default      => $planting->status ?? '—',
-                                                    } }}
-                                                </flux:badge>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                            </span>
+                                        </x-agro.table-cell>
+                                        <x-agro.table-cell>
+                                            {{ $planting->area_planted ? number_format($planting->area_planted, 2) . ' ha' : '—' }}
+                                        </x-agro.table-cell>
+                                        <x-agro.table-cell>
+                                            {{ $planting->planting_year ?? '—' }}
+                                        </x-agro.table-cell>
+                                        <x-agro.table-cell>
+                                            {{ $planting->harvest_limit_kg ? number_format($planting->harvest_limit_kg, 0) . ' kg' : '—' }}
+                                        </x-agro.table-cell>
+                                        <x-agro.table-cell>
+                                            <flux:badge
+                                                :color="$planting->status === 'active' ? 'green' : 'zinc'"
+                                                size="sm"
+                                            >
+                                                {{ match($planting->status) {
+                                                    'active'     => 'Activa',
+                                                    'replanting' => 'Replantación',
+                                                    'uprooted'   => 'Arrancada',
+                                                    default      => $planting->status ?? '—',
+                                                } }}
+                                            </flux:badge>
+                                        </x-agro.table-cell>
+                                    </x-agro.table-row>
+                                @endforeach
+                            </x-agro.data-table>
                         @else
                             <p class="px-4 py-3 text-sm text-zinc-400">Sin plantaciones registradas.</p>
                         @endif

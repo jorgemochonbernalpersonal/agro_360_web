@@ -50,34 +50,30 @@
         </div>
 
         @if($harvest->container_id)
-            <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <p class="text-xs text-amber-700 font-medium">
+            <div class="mt-4">
+                <flux:callout variant="warning" icon="information-circle">
                     Esta recepción ya está asignada al contenedor <strong>{{ $harvest->container?->name }}</strong>.
                     Puedes reasignarla seleccionando otro contenedor.
-                </p>
+                </flux:callout>
             </div>
         @endif
     </x-agro.card>
 
     {{-- Selector de contenedor --}}
-    <form wire:submit="save" class="space-y-6">
-        <x-agro.card>
-            <x-slot:header>
-                <div class="flex items-center gap-2">
-                    <div class="p-1.5 rounded-lg bg-agro-50">
-                        <flux:icon icon="cube" class="size-4 text-agro-600" />
-                    </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Seleccionar Contenedor</span>
-                </div>
-            </x-slot:header>
-
+    <form wire:submit="save" class="space-y-8">
+        <x-agro.form-section title="Seleccionar Contenedor">
             @if($availableContainers->isEmpty())
-                <div class="text-center py-6">
-                    <p class="text-sm text-zinc-500 mb-2">No tienes contenedores activos.</p>
-                    <flux:button href="{{ route('winery.containers.create') }}" variant="ghost" size="sm" icon="plus">
-                        Crear contenedor
-                    </flux:button>
-                </div>
+                <x-agro.empty-state
+                    icon="cube"
+                    title="Sin contenedores activos"
+                    description="Crea un contenedor antes de asignar recepciones."
+                >
+                    <x-slot:action>
+                        <flux:button href="{{ route('winery.containers.create') }}" variant="ghost" size="sm" icon="plus">
+                            Crear contenedor
+                        </flux:button>
+                    </x-slot:action>
+                </x-agro.empty-state>
             @else
                 <flux:field>
                     <flux:label>Contenedor destino</flux:label>
@@ -105,7 +101,6 @@
                     <flux:error name="container_id" />
                 </flux:field>
 
-                {{-- Vista previa del contenedor seleccionado --}}
                 @if($container_id)
                     @php
                         $selected = $availableContainers->firstWhere('id', (int) $container_id);
@@ -138,15 +133,11 @@
                     @endif
                 @endif
             @endif
-        </x-agro.card>
+        </x-agro.form-section>
 
-        <div class="flex justify-end gap-3">
-            <flux:button href="{{ route('winery.grape-reception.index') }}" variant="ghost">
-                Cancelar
-            </flux:button>
-            <flux:button type="submit" variant="primary" icon="check" :disabled="$availableContainers->isEmpty()">
-                Asignar Contenedor
-            </flux:button>
-        </div>
+        <x-agro.form-actions
+            :cancel-url="route('winery.grape-reception.index')"
+            submit-label="Asignar Contenedor"
+        />
     </form>
 </div>

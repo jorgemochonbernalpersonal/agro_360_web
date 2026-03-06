@@ -92,8 +92,8 @@ class Index extends Component
             ->pluck('year');
 
         $stats = [
-            'active'   => Campaign::forViticulturist(Auth::id())->active()->count(),
-            'total'    => Campaign::forViticulturist(Auth::id())->count(),
+            'active' => Campaign::forViticulturist(Auth::id())->active()->count(),
+            'total'  => Campaign::forViticulturist(Auth::id())->count(),
         ];
 
         return view('livewire.winery.harvest.campaigns.index', [

@@ -18,12 +18,12 @@ class Create extends Component
     use WithToastNotifications;
 
     // Step 1: Context
-    public string $campaign_id      = '';
     public string $viticulturist_id = '';
     public string $plot_id          = '';
     public string $plot_planting_id = '';
 
     // Step 2: Reception data
+    public int    $vintage_year               = 0;
     public string $harvest_start_date         = '';
     public string $harvest_ticket_number      = '';
     public string $total_weight               = '';
@@ -62,13 +62,8 @@ class Create extends Component
 
     public function mount(): void
     {
-        $wineryId = Auth::id();
-
-        // Auto-select active campaign if only one
-        $campaign = Campaign::forViticulturist($wineryId)->active()->first();
-        if ($campaign) {
-            $this->campaign_id = (string) $campaign->id;
-        }
+        $this->harvest_start_date = now()->toDateString();
+        $this->vintage_year       = now()->year;
     }
 
     public function updatedViticulturistId(): void
@@ -130,7 +125,15 @@ class Create extends Component
 
     public function updatedHarvestStartDate(): void
     {
-        // Re-calculate limit if vintage year changes
+        if ($this->selectedPlanting) {
+            $this->totalHarvestedInCampaign = $this->selectedPlanting
+                ->getTotalActualYieldForVintage($this->harvestVintage());
+            $this->updateLimitInfo();
+        }
+    }
+
+    public function updatedVintageYear(): void
+    {
         if ($this->selectedPlanting) {
             $this->totalHarvestedInCampaign = $this->selectedPlanting
                 ->getTotalActualYieldForVintage($this->harvestVintage());
@@ -140,7 +143,7 @@ class Create extends Component
 
     protected function loadPlantingState(): void
     {
-        if (!$this->plot_planting_id || !$this->campaign_id) {
+        if (!$this->plot_planting_id) {
             $this->resetPlantingState();
             return;
         }
@@ -188,21 +191,9 @@ class Create extends Component
         ];
     }
 
-    /**
-     * Año de vendimia: del harvest_start_date si está definido, sino del año de la campaña.
-     */
     protected function harvestVintage(): int
     {
-        if ($this->harvest_start_date) {
-            return (int) \Carbon\Carbon::parse($this->harvest_start_date)->year;
-        }
-
-        if ($this->campaign_id) {
-            $campaign = Campaign::find($this->campaign_id);
-            if ($campaign) return $campaign->year;
-        }
-
-        return now()->year;
+        return $this->vintage_year ?: now()->year;
     }
 
     protected function resetPlantingState(): void
@@ -215,10 +206,10 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'campaign_id'                => ['required', 'exists:campaigns,id'],
             'viticulturist_id'           => ['required', 'exists:users,id'],
             'plot_id'                    => ['required', 'exists:plots,id'],
             'plot_planting_id'           => ['required', 'exists:plot_plantings,id'],
+            'vintage_year'               => ['required', 'integer', 'min:2000', 'max:' . (now()->year + 1)],
             'harvest_start_date'         => ['required', 'date'],
             'harvest_ticket_number'      => ['nullable', 'string', 'max:50'],
             'total_weight'               => ['required', 'numeric', 'min:0.01'],
@@ -243,8 +234,8 @@ class Create extends Component
     protected function messages(): array
     {
         return [
-            'campaign_id.required'       => 'Selecciona una campaña.',
             'viticulturist_id.required'  => 'Selecciona un viticultor.',
+            'vintage_year.required'      => 'La añada es obligatoria.',
             'plot_id.required'           => 'Selecciona una parcela.',
             'plot_planting_id.required'  => 'Selecciona una plantación.',
             'harvest_start_date.required'=> 'La fecha de recepción es obligatoria.',
@@ -269,8 +260,13 @@ class Create extends Component
             return;
         }
 
-        // Guard: campaign must belong to this winery
-        $campaign = Campaign::forViticulturist($wineryId)->findOrFail($this->campaign_id);
+        // Auto-create/get campaign for the vintage year
+        $campaign = Campaign::getOrCreateActiveForYear($wineryId, $this->vintage_year);
+
+        if (!$campaign) {
+            $this->toastError('No se pudo obtener la campaña. Inténtalo de nuevo.');
+            return;
+        }
 
         // Guard: plot must belong to the viticulturist
         $plot = Plot::where('user_id', $this->viticulturist_id)
@@ -340,10 +336,6 @@ class Create extends Component
     {
         $wineryId = Auth::id();
 
-        $campaigns = Campaign::forViticulturist($wineryId)
-            ->orderBy('year', 'desc')
-            ->get(['id', 'name', 'year', 'active']);
-
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
             ->with('viticulturist:id,name')
             ->get()
@@ -352,8 +344,7 @@ class Create extends Component
             ->values();
 
         return view('livewire.winery.harvest.reception.create', [
-            'campaigns'           => $campaigns,
-            'linkedViticulturists'=> $linkedViticulturists,
+            'linkedViticulturists' => $linkedViticulturists,
         ])->layout('layouts.app');
     }
 }

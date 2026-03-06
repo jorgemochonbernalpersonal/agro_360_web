@@ -10,40 +10,11 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    <form wire:submit="save" class="space-y-6">
+    <form wire:submit="save" class="space-y-8">
 
         {{-- Sección 1: Contexto --}}
-        <x-agro.card>
-            <x-slot:header>
-                <div class="flex items-center gap-2">
-                    <div class="p-1.5 rounded-lg bg-agro-50">
-                        <flux:icon icon="user" class="size-4 text-agro-600" />
-                    </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Viticultor y Parcela</span>
-                </div>
-            </x-slot:header>
-
+        <x-agro.form-section title="Viticultor y Parcela">
             <div class="space-y-5">
-                {{-- Campaña --}}
-                <flux:field>
-                    <flux:label>Campaña</flux:label>
-                    <flux:select wire:model.live="campaign_id">
-                        <flux:select.option value="">Selecciona una campaña...</flux:select.option>
-                        @foreach($campaigns as $campaign)
-                            <flux:select.option value="{{ $campaign->id }}">
-                                {{ $campaign->name }}{{ $campaign->active ? ' (activa)' : '' }}
-                            </flux:select.option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="campaign_id" />
-                    @if($campaigns->isEmpty())
-                        <p class="text-xs text-amber-600 mt-1">
-                            No tienes campañas.
-                            <a href="{{ route('winery.campaigns.create') }}" class="underline font-medium">Crea una campaña primero</a>.
-                        </p>
-                    @endif
-                </flux:field>
-
                 {{-- Viticultor --}}
                 <flux:field>
                     <flux:label>Viticultor</flux:label>
@@ -129,21 +100,23 @@
                     </div>
                 @endif
             </div>
-        </x-agro.card>
+        </x-agro.form-section>
 
         {{-- Sección 2: Datos de la recepción --}}
-        <x-agro.card>
-            <x-slot:header>
-                <div class="flex items-center gap-2">
-                    <div class="p-1.5 rounded-lg bg-agro-50">
-                        <flux:icon icon="scale" class="size-4 text-agro-600" />
-                    </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Datos de la Recepción</span>
-                </div>
-            </x-slot:header>
-
+        <x-agro.form-section title="Datos de la Recepción">
             <div class="space-y-5">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <flux:field>
+                        <flux:label>Añada *</flux:label>
+                        <flux:select wire:model.live="vintage_year">
+                            @for($y = now()->year + 1; $y >= 2000; $y--)
+                                <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
+                            @endfor
+                        </flux:select>
+                        <flux:description>Año de cosecha de la uva recibida.</flux:description>
+                        <flux:error name="vintage_year" />
+                    </flux:field>
+
                     <flux:field>
                         <flux:label>Fecha de recepción</flux:label>
                         <flux:input wire:model="harvest_start_date" type="date" />
@@ -190,20 +163,10 @@
                     <flux:error name="destination_rega_code" />
                 </flux:field>
             </div>
-        </x-agro.card>
+        </x-agro.form-section>
 
         {{-- Sección 3: Calidad --}}
-        <x-agro.card>
-            <x-slot:header>
-                <div class="flex items-center gap-2">
-                    <div class="p-1.5 rounded-lg bg-agro-50">
-                        <flux:icon icon="beaker" class="size-4 text-agro-600" />
-                    </div>
-                    <span class="font-semibold text-zinc-900 text-sm">Parámetros de Calidad</span>
-                    <flux:badge color="zinc" size="sm">Opcional</flux:badge>
-                </div>
-            </x-slot:header>
-
+        <x-agro.form-section title="Parámetros de Calidad" description="Opcional">
             <div class="space-y-5">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
                     <flux:field>
@@ -275,26 +238,21 @@
                     </div>
                 </div>
             </div>
-        </x-agro.card>
+        </x-agro.form-section>
 
         {{-- Notas --}}
-        <x-agro.card>
+        <x-agro.form-section title="Notas">
             <flux:field>
-                <flux:label>Notas (opcional)</flux:label>
+                <flux:label>Observaciones (opcional)</flux:label>
                 <flux:textarea wire:model="notes" rows="3" placeholder="Observaciones sobre esta recepción..." />
                 <flux:error name="notes" />
             </flux:field>
-        </x-agro.card>
+        </x-agro.form-section>
 
-        {{-- Acciones --}}
-        <div class="flex justify-end gap-3">
-            <flux:button href="{{ route('winery.grape-reception.index') }}" variant="ghost">
-                Cancelar
-            </flux:button>
-            <flux:button type="submit" variant="primary" icon="check">
-                Registrar Recepción
-            </flux:button>
-        </div>
+        <x-agro.form-actions
+            :cancel-url="route('winery.grape-reception.index')"
+            submit-label="Registrar Recepción"
+        />
 
     </form>
 </div>

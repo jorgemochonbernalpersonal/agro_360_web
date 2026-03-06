@@ -1,91 +1,113 @@
-<div>
+<div class="space-y-6 animate-fade-in">
     <x-agro.page-header title="Clientes" description="Gestiona los compradores de tu vino">
-        <x-slot name="actions">
+        <x-slot:actions>
             <flux:button href="{{ route('winery.clients.create') }}" wire:navigate variant="primary" icon="plus">
                 Nuevo Cliente
             </flux:button>
-        </x-slot>
+        </x-slot:actions>
     </x-agro.page-header>
 
-    <!-- Filters -->
     <x-agro.filter-bar>
-        <flux:input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre o email..." icon="magnifying-glass" clearable />
-
-        <flux:select wire:model.live="typeFilter" class="w-40">
-            <option value="">Todos</option>
-            <option value="individual">Particular</option>
-            <option value="company">Empresa</option>
+        <x-agro.filter-input
+            wire:model.live.debounce.300ms="search"
+            placeholder="Buscar por nombre o email..."
+        />
+        <flux:select wire:model.live="typeFilter" size="sm" class="w-40">
+            <flux:select.option value="">Todos</flux:select.option>
+            <flux:select.option value="individual">Particular</flux:select.option>
+            <flux:select.option value="company">Empresa</flux:select.option>
         </flux:select>
-
-        <flux:select wire:model.live="statusFilter" class="w-40">
-            <option value="active">Activos</option>
-            <option value="inactive">Inactivos</option>
-            <option value="all">Todos</option>
+        <flux:select wire:model.live="statusFilter" size="sm" class="w-40">
+            <flux:select.option value="active">Activos</flux:select.option>
+            <flux:select.option value="inactive">Inactivos</flux:select.option>
+            <flux:select.option value="all">Todos</flux:select.option>
         </flux:select>
-
         @if ($search || $typeFilter || $statusFilter !== 'active')
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
+                Limpiar
+            </flux:button>
         @endif
     </x-agro.filter-bar>
 
-    <!-- Table -->
-    <x-agro.table>
-        <x-slot name="head">
-            <x-agro.th>Nombre</x-agro.th>
-            <x-agro.th>Tipo</x-agro.th>
-            <x-agro.th>Email</x-agro.th>
-            <x-agro.th>Teléfono</x-agro.th>
-            <x-agro.th>Pago</x-agro.th>
-            <x-agro.th>Estado</x-agro.th>
-            <x-agro.th class="text-right">Acciones</x-agro.th>
-        </x-slot>
+    <x-agro.data-table
+        :headers="['Nombre', 'Tipo', 'Email', 'Teléfono', 'Pago', 'Estado', 'Acciones']"
+        empty-message="No hay clientes registrados"
+        empty-description="Añade el primer cliente para gestionar ventas de vino"
+    >
+        @if ($clients->count() > 0)
+            @foreach ($clients as $client)
+                <x-agro.table-row>
+                    <x-agro.table-cell>
+                        <p class="text-sm font-semibold text-zinc-900">{{ $client->full_name }}</p>
+                        @if ($client->particular_document || $client->company_document)
+                            <p class="text-xs text-zinc-500">{{ $client->particular_document ?? $client->company_document }}</p>
+                        @endif
+                    </x-agro.table-cell>
 
-        @forelse ($clients as $client)
-            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
-                    {{ $client->full_name }}
-                    @if ($client->particular_document || $client->company_document)
-                        <div class="text-xs text-zinc-500">{{ $client->particular_document ?? $client->company_document }}</div>
-                    @endif
-                </td>
-                <td class="px-4 py-3">
-                    <flux:badge variant="outline" size="sm">
-                        {{ $client->client_type === 'company' ? 'Empresa' : 'Particular' }}
-                    </flux:badge>
-                </td>
-                <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400 text-sm">{{ $client->email ?? '—' }}</td>
-                <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400 text-sm">{{ $client->phone ?? '—' }}</td>
-                <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400 text-sm">
-                    @switch($client->payment_method)
-                        @case('cash')     Efectivo @break
-                        @case('transfer') Transferencia @break
-                        @case('check')    Cheque @break
-                        @case('other')    Otro @break
-                        @default          —
-                    @endswitch
-                </td>
-                <td class="px-4 py-3">
-                    @if ($client->active)
-                        <flux:badge color="green" size="sm">Activo</flux:badge>
-                    @else
-                        <flux:badge color="zinc" size="sm">Inactivo</flux:badge>
-                    @endif
-                </td>
-                <td class="px-4 py-3 text-right">
-                    <div class="flex justify-end gap-2">
-                        <flux:button href="{{ route('winery.clients.edit', $client) }}" wire:navigate size="sm" variant="ghost" icon="pencil" />
-                        <flux:button wire:click="toggleActive({{ $client->id }})" size="sm" variant="ghost"
-                            icon="{{ $client->active ? 'eye-slash' : 'eye' }}" title="{{ $client->active ? 'Desactivar' : 'Activar' }}" />
-                        <flux:button wire:click="delete({{ $client->id }})"
-                            wire:confirm="¿Eliminar este cliente? Esta acción no se puede deshacer."
-                            size="sm" variant="ghost" icon="trash" class="text-red-500" />
-                    </div>
-                </td>
-            </tr>
-        @empty
-            <x-agro.empty-row colspan="7" message="No hay clientes registrados." />
-        @endforelse
-    </x-agro.table>
+                    <x-agro.table-cell>
+                        <flux:badge variant="outline" size="sm">
+                            {{ $client->client_type === 'company' ? 'Empresa' : 'Particular' }}
+                        </flux:badge>
+                    </x-agro.table-cell>
 
-    <div class="mt-4">{{ $clients->links() }}</div>
+                    <x-agro.table-cell>
+                        <span class="text-sm text-zinc-600">{{ $client->email ?? '—' }}</span>
+                    </x-agro.table-cell>
+
+                    <x-agro.table-cell>
+                        <span class="text-sm text-zinc-600">{{ $client->phone ?? '—' }}</span>
+                    </x-agro.table-cell>
+
+                    <x-agro.table-cell>
+                        <span class="text-sm text-zinc-600">
+                            @switch($client->payment_method)
+                                @case('cash')     Efectivo @break
+                                @case('transfer') Transferencia @break
+                                @case('check')    Cheque @break
+                                @case('other')    Otro @break
+                                @default          —
+                            @endswitch
+                        </span>
+                    </x-agro.table-cell>
+
+                    <x-agro.table-cell>
+                        @if ($client->active)
+                            <flux:badge color="green" size="sm">Activo</flux:badge>
+                        @else
+                            <flux:badge color="zinc" size="sm">Inactivo</flux:badge>
+                        @endif
+                    </x-agro.table-cell>
+
+                    <x-agro.table-cell>
+                        <div class="flex items-center justify-end gap-1">
+                            <a href="{{ route('winery.clients.edit', $client) }}" wire:navigate title="Editar">
+                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                    <flux:icon icon="pencil" class="size-4" />
+                                </button>
+                            </a>
+                            <button
+                                wire:click="toggleActive({{ $client->id }})"
+                                title="{{ $client->active ? 'Desactivar' : 'Activar' }}"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                            >
+                                <flux:icon icon="{{ $client->active ? 'eye-slash' : 'eye' }}" class="size-4" />
+                            </button>
+                            <button
+                                wire:click="delete({{ $client->id }})"
+                                wire:confirm="¿Eliminar este cliente? Esta acción no se puede deshacer."
+                                title="Eliminar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                            >
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-agro.table-cell>
+                </x-agro.table-row>
+            @endforeach
+
+            <x-slot name="pagination">
+                {{ $clients->links() }}
+            </x-slot>
+        @endif
+    </x-agro.data-table>
 </div>
