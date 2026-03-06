@@ -12,11 +12,11 @@
     // KPIs
     $totalViticulturists = $viticulturistIds->count();
 
-    $totalReceptions = Harvest::whereIn('viticulturist_id', $viticulturistIds)
+    $totalReceptions = Harvest::whereHas('activity', fn($q) => $q->whereIn('viticulturist_id', $viticulturistIds))
         ->whereYear('harvest_start_date', date('Y'))
         ->count();
 
-    $totalKg = Harvest::whereIn('viticulturist_id', $viticulturistIds)
+    $totalKg = Harvest::whereHas('activity', fn($q) => $q->whereIn('viticulturist_id', $viticulturistIds))
         ->whereYear('harvest_start_date', date('Y'))
         ->sum('total_weight') ?? 0;
 
@@ -30,8 +30,8 @@
         ->get();
 
     // Recepciones recientes
-    $recentReceptions = Harvest::whereIn('viticulturist_id', $viticulturistIds)
-        ->with(['viticulturist', 'plotPlanting.grapeVariety'])
+    $recentReceptions = Harvest::whereHas('activity', fn($q) => $q->whereIn('viticulturist_id', $viticulturistIds))
+        ->with(['activity.viticulturist', 'plotPlanting.grapeVariety'])
         ->orderBy('harvest_start_date', 'desc')
         ->take(5)
         ->get();
@@ -166,7 +166,7 @@
                                 <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-sm">🍇</div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-gray-900 truncate">
-                                        {{ $reception->viticulturist->name ?? '—' }}
+                                        {{ $reception->activity->viticulturist->name ?? '—' }}
                                     </p>
                                     <p class="text-xs text-gray-500">
                                         {{ $reception->plotPlanting->grapeVariety->name ?? 'Sin variedad' }}
