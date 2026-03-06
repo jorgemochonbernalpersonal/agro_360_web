@@ -168,16 +168,6 @@
                         </flux:select>
                         <flux:error name="irrigation_type_id" />
                     </flux:field>
-                    <flux:field>
-                        <flux:label for="property_type_id">Tipo de Propiedad</flux:label>
-                        <flux:select wire:model="property_type_id" id="property_type_id">
-                            <option value="">Sin especificar</option>
-                            @foreach ($propertyTypes as $pt)
-                                <option value="{{ $pt->id }}">{{ $pt->name }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="property_type_id" />
-                    </flux:field>
                 </div>
             </x-agro.form-section>
 

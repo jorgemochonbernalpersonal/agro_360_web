@@ -24,15 +24,14 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label for="tenure_regime">Régimen de Tenencia</flux:label>
-                    <flux:select wire:model="tenure_regime" id="tenure_regime">
-                        <option value="propiedad">Propiedad</option>
-                        <option value="arrendamiento">Arrendamiento</option>
-                        <option value="aparceria">Aparcería</option>
-                        <option value="cesion_uso">Cesión de uso</option>
-                        <option value="otros">Otros</option>
+                    <flux:label for="property_type_id">Régimen de Tenencia</flux:label>
+                    <flux:select wire:model="property_type_id" id="property_type_id">
+                        <option value="">Sin especificar</option>
+                        @foreach ($propertyTypes as $pt)
+                            <option value="{{ $pt->id }}">{{ $pt->name }}</option>
+                        @endforeach
                     </flux:select>
-                    <flux:error name="tenure_regime" />
+                    <flux:error name="property_type_id" />
                 </flux:field>
             </div>
 
@@ -141,19 +140,14 @@
                     <flux:error name="topography_id" />
                 </flux:field>
                 <flux:field>
-                    <flux:label for="orientation">Orientación</flux:label>
-                    <flux:select wire:model="orientation" id="orientation">
+                    <flux:label for="orientation_id">Orientación</flux:label>
+                    <flux:select wire:model="orientation_id" id="orientation_id">
                         <option value="">Sin especificar</option>
-                        <option value="N">Norte (N)</option>
-                        <option value="NE">Noreste (NE)</option>
-                        <option value="E">Este (E)</option>
-                        <option value="SE">Sureste (SE)</option>
-                        <option value="S">Sur (S)</option>
-                        <option value="SO">Suroeste (SO)</option>
-                        <option value="O">Oeste (O)</option>
-                        <option value="NO">Noroeste (NO)</option>
+                        @foreach ($orientations as $o)
+                            <option value="{{ $o->id }}">{{ $o->name }} ({{ $o->abbreviation }})</option>
+                        @endforeach
                     </flux:select>
-                    <flux:error name="orientation" />
+                    <flux:error name="orientation_id" />
                 </flux:field>
                 <flux:field>
                     <flux:label for="slope">Pendiente (%)</flux:label>
@@ -169,16 +163,6 @@
                         @endforeach
                     </flux:select>
                     <flux:error name="irrigation_type_id" />
-                </flux:field>
-                <flux:field>
-                    <flux:label for="property_type_id">Tipo de Propiedad</flux:label>
-                    <flux:select wire:model="property_type_id" id="property_type_id">
-                        <option value="">Sin especificar</option>
-                        @foreach ($propertyTypes as $pt)
-                            <option value="{{ $pt->id }}">{{ $pt->name }}</option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="property_type_id" />
                 </flux:field>
             </div>
         </x-agro.form-section>
