@@ -30,46 +30,64 @@
         @endif
     </x-agro.filter-bar>
 
-    <x-agro.data-table
-        :headers="['Nº / Ref.', 'Fecha', 'Viticultor', 'Total', 'Estado', 'Acciones']"
-        empty-message="No hay liquidaciones de vendimia registradas"
-        empty-description="Crea la primera liquidación para pagar a los viticultores"
-    >
-        @if ($invoices->count() > 0)
+    @if ($invoices->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($invoices as $invoice)
-                <x-agro.table-row class="{{ $invoice->status === 'cancelled' ? 'opacity-60' : '' }}">
-                    <x-agro.table-cell>
-                        <p class="font-mono font-medium text-zinc-900">{{ $invoice->invoice_number }}</p>
-                        @if ($invoice->delivery_note_code)
-                            <p class="text-xs text-zinc-400 font-mono">{{ $invoice->delivery_note_code }}</p>
-                        @endif
-                    </x-agro.table-cell>
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col {{ $invoice->status === 'cancelled' ? 'opacity-60' : '' }}"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="gp-invoice-{{ $invoice->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
+                                <flux:icon icon="document-text" class="size-5 text-agro-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-mono font-bold text-zinc-900 truncate">
+                                    {{ $invoice->invoice_number ?? '—' }}
+                                </h3>
+                                @if ($invoice->delivery_note_code)
+                                    <p class="text-xs text-zinc-400 font-mono truncate">{{ $invoice->delivery_note_code }}</p>
+                                @else
+                                    <p class="text-xs text-zinc-400">
+                                        {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}
+                                    </p>
+                                @endif
+                            </div>
+                            @if ($invoice->status === 'cancelled')
+                                <flux:badge color="red" size="sm" class="shrink-0">Cancelada</flux:badge>
+                            @elseif ($invoice->payment_status === 'paid')
+                                <flux:badge color="green" size="sm" class="shrink-0">Pagada</flux:badge>
+                            @else
+                                <flux:badge color="orange" size="sm" class="shrink-0">Pendiente</flux:badge>
+                            @endif
+                        </div>
+                    </x-slot:header>
 
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">
-                            {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}
-                        </span>
-                    </x-agro.table-cell>
+                    <div class="flex-1 space-y-3 text-sm">
+                        <div class="flex items-center gap-2 text-zinc-600">
+                            <flux:icon icon="user" class="size-4 text-zinc-400 shrink-0" />
+                            <span class="truncate font-medium">{{ $invoice->viticulturist?->name ?? '—' }}</span>
+                        </div>
 
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-700">{{ $invoice->viticulturist?->name ?? '—' }}</span>
-                    </x-agro.table-cell>
+                        <div class="flex items-center justify-between">
+                            <span class="text-zinc-400">Fecha</span>
+                            <span class="text-zinc-700">
+                                {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}
+                            </span>
+                        </div>
 
-                    <x-agro.table-cell>
-                        <span class="text-sm font-medium text-zinc-900">{{ number_format($invoice->total_amount, 2) }} €</span>
-                    </x-agro.table-cell>
+                        <div class="flex items-center justify-between">
+                            <span class="text-zinc-400">Importe</span>
+                            <span class="text-lg font-bold text-zinc-900">
+                                {{ number_format($invoice->total_amount, 2) }} €
+                            </span>
+                        </div>
+                    </div>
 
-                    <x-agro.table-cell>
-                        @if ($invoice->status === 'cancelled')
-                            <flux:badge color="red" size="sm">Cancelada</flux:badge>
-                        @elseif ($invoice->payment_status === 'paid')
-                            <flux:badge color="green" size="sm">Pagada</flux:badge>
-                        @else
-                            <flux:badge color="orange" size="sm">Pendiente</flux:badge>
-                        @endif
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
+                    <x-slot:footer>
                         <div class="flex items-center justify-end gap-1 flex-wrap">
                             @if ($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
                                 <a href="{{ route('winery.invoices.grape-purchase.edit', $invoice->id) }}" wire:navigate title="Editar">
@@ -80,7 +98,7 @@
                             @endif
 
                             @if ($invoice->delivery_note_code)
-                                <a href="{{ route('winery.invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar liquidación PDF">
+                                <a href="{{ route('winery.invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Liquidación PDF">
                                     <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                         <flux:icon icon="document-arrow-down" class="size-4" />
                                     </button>
@@ -88,7 +106,7 @@
                             @endif
 
                             @if ($invoice->invoice_number)
-                                <a href="{{ route('winery.invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank" title="Descargar factura PDF">
+                                <a href="{{ route('winery.invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank" title="Factura PDF">
                                     <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                         <flux:icon icon="document-text" class="size-4" />
                                     </button>
@@ -112,9 +130,9 @@
                                     wire:click="markPaid({{ $invoice->id }})"
                                     wire:confirm="¿Marcar esta liquidación como pagada?"
                                     title="Marcar como pagada"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors"
                                 >
-                                    <flux:icon icon="check" class="size-4" />
+                                    <flux:icon icon="check-circle" class="size-4" />
                                 </button>
                                 <button
                                     wire:click="cancel({{ $invoice->id }})"
@@ -126,13 +144,25 @@
                                 </button>
                             @endif
                         </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
+                    </x-slot:footer>
+                </x-agro.card>
             @endforeach
+        </div>
 
-            <x-slot name="pagination">
-                {{ $invoices->links() }}
-            </x-slot>
-        @endif
-    </x-agro.data-table>
+        <div class="mt-2">
+            {{ $invoices->links() }}
+        </div>
+    @else
+        <x-agro.empty-state
+            icon="document-text"
+            title="No hay liquidaciones de vendimia registradas"
+            description="Crea la primera liquidación para pagar a los viticultores"
+        >
+            <x-slot:action>
+                <flux:button href="{{ route('winery.invoices.grape-purchase.create') }}" wire:navigate variant="primary" icon="plus">
+                    Nueva Liquidación
+                </flux:button>
+            </x-slot:action>
+        </x-agro.empty-state>
+    @endif
 </div>
