@@ -8,6 +8,7 @@ use App\Services\SecurityLogger;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
@@ -120,15 +121,42 @@ class Index extends Component
     public function toggleBeta($userId)
     {
         $user = User::findOrFail($userId);
-        
-        $user->is_beta_user = !$user->is_beta_user;
-        if (!$user->is_beta_user) {
+
+        $enabling = !$user->is_beta_user;
+
+        $user->is_beta_user = $enabling;
+        if ($enabling) {
+            $user->beta_ends_at      = \Carbon\Carbon::parse('2026-06-30 23:59:59');
+            $user->beta_access_granted = true;
+        } else {
             $user->beta_ends_at = null;
         }
         $user->save();
 
-        $status = $user->is_beta_user ? 'con acceso beta' : 'sin acceso beta';
-        $this->toastSuccess("Usuario {$status}.");
+        // When enabling beta for a winery, cascade to its linked viticultors
+        $cascadeCount = 0;
+        if ($enabling && $user->role === 'winery') {
+            $viticulturistIds = DB::table('winery_viticulturist')
+                ->where('winery_id', $user->id)
+                ->pluck('viticulturist_id');
+
+            if ($viticulturistIds->isNotEmpty()) {
+                $cascadeCount = User::whereIn('id', $viticulturistIds)
+                    ->where('is_beta_user', false)
+                    ->update([
+                        'is_beta_user'         => true,
+                        'beta_ends_at'         => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
+                        'beta_access_granted'  => true,
+                    ]);
+            }
+        }
+
+        $status  = $enabling ? 'con acceso beta' : 'sin acceso beta';
+        $message = "Usuario {$status}.";
+        if ($cascadeCount > 0) {
+            $message .= " Beta activada también para {$cascadeCount} viticultor(es) vinculados.";
+        }
+        $this->toastSuccess($message);
     }
 
     public function render()

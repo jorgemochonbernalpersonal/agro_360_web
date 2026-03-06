@@ -160,6 +160,18 @@ class PlotPlanting extends Model
     }
 
     /**
+     * Obtener el rendimiento real total para una añada concreta (cualquier campaña).
+     * Cuenta tanto cosechas de viticultor como de bodega.
+     */
+    public function getTotalActualYieldForVintage(int $year): float
+    {
+        return $this->harvests()
+            ->where('vintage', $year)
+            ->where('status', 'active')
+            ->sum('total_weight');
+    }
+
+    /**
      * Obtener el rendimiento real total de una campaña específica
      */
     public function getTotalActualYieldForCampaign(int $campaignId): float
@@ -326,6 +338,36 @@ class PlotPlanting extends Model
         if ($age < 25) return 'productiva';
         if ($age < 40) return 'madura';
         return 'vieja';
+    }
+
+    /**
+     * Límite de cosecha efectivo según edad de la plantación (como vinai2).
+     *
+     * Factor de producción por edad:
+     *   < 3 años  → 0%   (plantación no productiva)
+     *   3 años    → 33%
+     *   4 años    → 75%
+     *   ≥ 5 años  → 100%
+     *
+     * Si no hay planting_year o harvest_limit_kg, devuelve null (sin límite definido).
+     */
+    public function effectiveHarvestLimitKg(int $harvestYear = null): ?float
+    {
+        if (!$this->hasHarvestLimit() || !$this->planting_year) {
+            return $this->harvest_limit_kg ? (float) $this->harvest_limit_kg : null;
+        }
+
+        $year = $harvestYear ?? now()->year;
+        $age  = $year - $this->planting_year;
+
+        $factor = match(true) {
+            $age < 3    => 0.0,
+            $age === 3  => 0.33,
+            $age === 4  => 0.75,
+            default     => 1.0,
+        };
+
+        return round((float) $this->harvest_limit_kg * $factor, 2);
     }
 
     /**

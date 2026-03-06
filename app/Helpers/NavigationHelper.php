@@ -262,6 +262,154 @@ class NavigationHelper
             ];
         }
 
+        if ($role === 'winery') {
+            // ── MAIN ─────────────────────────────────────────────────
+            $menu['main'][] = [
+                'icon'   => 'home',
+                'label'  => 'Dashboard',
+                'route'  => 'winery.dashboard',
+                'active' => request()->routeIs('winery.dashboard'),
+            ];
+            $menu['main'][] = [
+                'icon'   => 'clipboard-document-list',
+                'label'  => 'Campañas de Vendimia',
+                'route'  => 'winery.campaigns.index',
+                'active' => request()->routeIs('winery.campaigns*'),
+            ];
+
+            // ── VENDIMIA ─────────────────────────────────────────────
+            $menu['harvest'] = [
+                [
+                    'icon'   => 'archive-box-arrow-down',
+                    'label'  => 'Recepción de Uva',
+                    'route'  => 'winery.grape-reception.index',
+                    'active' => request()->routeIs('winery.grape-reception*'),
+                ],
+            ];
+
+            // ── BODEGA ───────────────────────────────────────────────
+            $menu['cellar'] = [
+                [
+                    'icon'   => 'beaker',
+                    'label'  => 'Contenedores',
+                    'route'  => 'winery.containers.index',
+                    'active' => request()->routeIs('winery.containers*'),
+                ],
+                [
+                    'icon'   => 'arrows-right-left',
+                    'label'  => 'Elaboración de Vino',
+                    'route'  => 'winery.wine-process.index',
+                    'active' => request()->routeIs('winery.wine-process*'),
+                ],
+                [
+                    'icon'   => 'magnifying-glass',
+                    'label'  => 'Análisis de Lab.',
+                    'route'  => 'winery.wine-analysis.index',
+                    'active' => request()->routeIs('winery.wine-analysis*'),
+                ],
+                [
+                    'icon'   => 'archive-box',
+                    'label'  => 'Lotes de Vino',
+                    'route'  => 'winery.wine-lots.index',
+                    'active' => request()->routeIs('winery.wine-lots*'),
+                ],
+            ];
+
+            // ── VITICULTORES ─────────────────────────────────────────
+            $menu['viticulturists'] = [
+                [
+                    'icon'   => 'user-group',
+                    'label'  => 'Mis Viticultores',
+                    'route'  => 'winery.viticulturists.index',
+                    'active' => request()->routeIs('winery.viticulturists*'),
+                ],
+                [
+                    'icon'   => 'map',
+                    'label'  => 'Parcelas',
+                    'route'  => 'winery.plots.index',
+                    'active' => request()->routeIs('winery.plots*'),
+                ],
+                [
+                    'icon'   => 'globe-alt',
+                    'label'  => 'Teledetección',
+                    'route'  => 'remote-sensing.dashboard',
+                    'active' => request()->routeIs('remote-sensing.*'),
+                ],
+            ];
+
+            // ── RECURSOS ─────────────────────────────────────────────
+            $menu['resources'] = [
+                [
+                    'icon'   => 'building-storefront',
+                    'label'  => 'Inventario Insumos',
+                    'route'  => 'winery.inventory.index',
+                    'active' => request()->routeIs('winery.inventory*'),
+                ],
+                [
+                    'icon'   => 'truck',
+                    'label'  => 'Proveedores',
+                    'route'  => 'winery.suppliers.index',
+                    'active' => request()->routeIs('winery.suppliers*'),
+                ],
+            ];
+
+            // ── FACTURACIÓN ──────────────────────────────────────────
+            $menu['billing'] = [
+                [
+                    'icon'   => 'arrow-down-tray',
+                    'label'  => 'Compra de Uva',
+                    'route'  => 'winery.invoices.grape-purchase.index',
+                    'active' => request()->routeIs('winery.invoices.grape-purchase*'),
+                ],
+                [
+                    'icon'   => 'arrow-up-tray',
+                    'label'  => 'Venta de Vino',
+                    'route'  => 'winery.invoices.wine-sale.index',
+                    'active' => request()->routeIs('winery.invoices.wine-sale*'),
+                ],
+            ];
+
+            // ── CLIENTES ─────────────────────────────────────────────
+            $menu['clients'] = [
+                [
+                    'icon'   => 'users',
+                    'label'  => 'Clientes',
+                    'route'  => 'winery.clients.index',
+                    'active' => request()->routeIs('winery.clients*'),
+                ],
+            ];
+
+            // ── REGISTRO OFICIAL ─────────────────────────────────────
+            $menu['compliance'] = [
+                [
+                    'icon'   => 'document-chart-bar',
+                    'label'  => 'SILICIE',
+                    'route'  => 'winery.silicie.dashboard',
+                    'active' => request()->routeIs('winery.silicie*'),
+                    'submenu' => [
+                        ['label' => 'Panel', 'route' => 'winery.silicie.dashboard', 'active' => request()->routeIs('winery.silicie.dashboard')],
+                        ['label' => 'Movimientos', 'route' => 'winery.silicie.movements.index', 'active' => request()->routeIs('winery.silicie.movements*')],
+                    ],
+                ],
+                [
+                    'icon'   => 'folder-open',
+                    'label'  => 'Documentos Bodega',
+                    'route'  => 'winery.documents.index',
+                    'active' => request()->routeIs('winery.documents*'),
+                ],
+            ];
+
+            // ── SISTEMA ──────────────────────────────────────────────
+            $menu['system'] = [
+                [
+                    'icon'   => 'cog-6-tooth',
+                    'label'  => 'Configuración',
+                    'route'  => 'winery.settings',
+                    'active' => request()->routeIs('winery.settings'),
+                ],
+            ];
+        }
+
         if ($role === 'admin') {
             $menu['main'][] = [
                 'icon' => 'user-group',

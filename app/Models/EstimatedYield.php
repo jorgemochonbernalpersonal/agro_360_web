@@ -128,25 +128,27 @@ class EstimatedYield extends Model
     }
 
     /**
-     * Actualizar rendimiento real basado en las cosechas de la campaña
+     * Actualizar rendimiento real basado en TODAS las cosechas de la añada (vintage).
+     * Cuenta tanto cosechas de viticultor como de bodega para la misma plantación.
      */
     public function updateActualYield(): void
     {
-        $harvests = Harvest::whereHas('activity', function($q) {
-            $q->where('campaign_id', $this->campaign_id);
-        })
-        ->where('plot_planting_id', $this->plot_planting_id)
-        ->where('status', 'active')
-        ->get();
+        // Usar vintage si está definido, sino deducirlo del año de la campaña
+        $vintage = $this->vintage ?? $this->campaign?->year ?? now()->year;
 
-        $totalWeight = $harvests->sum('total_weight');
+        $totalWeight = Harvest::where('plot_planting_id', $this->plot_planting_id)
+            ->where('vintage', $vintage)
+            ->where('status', 'active')
+            ->sum('total_weight');
+
         $planting = $this->plotPlanting;
+        if (!$planting) return;
 
-        if ($planting && $planting->area_planted > 0) {
-            $this->actual_total_yield = round($totalWeight, 3);
-            $this->actual_yield_per_hectare = round($totalWeight / $planting->area_planted, 3);
-            $this->save();
-        }
+        $this->actual_total_yield = round((float) $totalWeight, 3);
+        $this->actual_yield_per_hectare = $planting->area_planted > 0
+            ? round((float) $totalWeight / (float) $planting->area_planted, 3)
+            : 0;
+        $this->save();
     }
 
     /**

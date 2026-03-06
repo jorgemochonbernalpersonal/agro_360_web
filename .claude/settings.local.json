@@ -31,7 +31,19 @@
       "Bash(python3:*)",
       "Bash(node:*)",
       "Bash(xargs basename:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Read(//c/Users/dispo/Desktop/personal/vinai2/vinai2 \\(1\\)/vinai2/**)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker ps:*)",
+      "Bash(netstat:*)",
+      "Bash(tasklist:*)",
+      "Bash(docker exec:*)",
+      "Bash(ls /c/php*)",
+      "Read(//c//**)",
+      "Bash(/c/php/php.exe:*)",
+      "Bash(composer install:*)",
+      "Bash(mkdir:*)",
+      "Bash(cmd.exe:*)"
     ]
   }
 }

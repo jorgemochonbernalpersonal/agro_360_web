@@ -130,9 +130,14 @@
                                 <flux:icon icon="document-text" class="size-4 text-zinc-500" />
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
-                                    {{ $invoice->invoice_number ?? 'Sin número' }}
-                                </p>
+                                <div class="flex items-center gap-1.5">
+                                    <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
+                                        {{ $invoice->invoice_number ?? 'Sin número' }}
+                                    </p>
+                                    @if($invoice->corrective)
+                                        <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded shrink-0" title="Factura rectificativa">R/</span>
+                                    @endif
+                                </div>
                                 @if($invoice->delivery_note_code)
                                     <p class="text-xs text-zinc-400 leading-tight mt-0.5">Albarán: {{ $invoice->delivery_note_code }}</p>
                                 @endif
@@ -172,15 +177,96 @@
                     </div>
 
                     <x-slot:footer>
-                        <div class="flex items-center justify-between">
-                            <flux:badge :color="$deliveryColor" size="sm">{{ $deliveryLabel }}</flux:badge>
-                            <div class="flex items-center gap-1">
-                                <a href="{{ route('viticulturist.invoices.show', $invoice->id) }}" class="{{ $btnBase }}" title="Ver factura">
+                        <div class="flex items-center justify-between gap-2">
+                            <flux:badge :color="$deliveryColor" size="sm" class="shrink-0">{{ $deliveryLabel }}</flux:badge>
+                            <div class="flex items-center gap-1 flex-wrap justify-end">
+
+                                {{-- Ver --}}
+                                <a href="{{ route('viticulturist.invoices.show', $invoice->id) }}"
+                                   class="{{ $btnBase }}" title="Ver factura">
                                     <flux:icon icon="eye" class="size-4" />
                                 </a>
-                                <a href="{{ route('viticulturist.invoices.edit', $invoice->id) }}" class="{{ $btnBase }}" title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
+
+                                {{-- Editar (no canceladas ni entregadas) --}}
+                                @if($invoice->isEditable())
+                                    <a href="{{ route('viticulturist.invoices.edit', $invoice->id) }}"
+                                       class="{{ $btnBase }}" title="Editar">
+                                        <flux:icon icon="pencil-square" class="size-4" />
+                                    </a>
+                                @endif
+
+                                {{-- PDF Albarán --}}
+                                @if($invoice->delivery_note_code)
+                                    <a href="{{ route('viticulturist.invoices.delivery-note-pdf', $invoice->id) }}"
+                                       class="{{ $btnBase }}" title="Descargar albarán PDF" target="_blank">
+                                        <flux:icon icon="document-arrow-down" class="size-4" />
+                                    </a>
+                                @endif
+
+                                {{-- PDF Factura --}}
+                                @if($invoice->invoice_number)
+                                    <a href="{{ route('viticulturist.invoices.pdf', $invoice->id) }}"
+                                       class="{{ $btnBase }}" title="Descargar factura PDF" target="_blank">
+                                        <flux:icon icon="document-text" class="size-4" />
+                                    </a>
+                                @endif
+
+                                {{-- Emitir (solo draft) --}}
+                                @if($invoice->status === 'draft')
+                                    <button wire:click="openEmitirModal({{ $invoice->id }})"
+                                            class="{{ $btnBase }} text-agro-500 hover:text-agro-700 hover:bg-agro-50"
+                                            title="Emitir factura">
+                                        <flux:icon icon="paper-airplane" class="size-4" />
+                                    </button>
+                                @endif
+
+                                {{-- Marcar pagada --}}
+                                @if($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
+                                    <button wire:click="markPaid({{ $invoice->id }})"
+                                            wire:confirm="¿Marcar esta factura como pagada?"
+                                            class="{{ $btnBase }} text-green-500 hover:text-green-700 hover:bg-green-50"
+                                            title="Marcar como pagada">
+                                        <flux:icon icon="banknotes" class="size-4" />
+                                    </button>
+                                @endif
+
+                                {{-- Enviar por email (emitidas con email) --}}
+                                @if($invoice->status === 'sent' && ($invoice->billing_email ?: $invoice->client?->email))
+                                    <button wire:click="sendEmail({{ $invoice->id }})"
+                                            wire:loading.attr="disabled"
+                                            wire:target="sendEmail({{ $invoice->id }})"
+                                            class="{{ $btnBase }} text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                                            title="Enviar por email">
+                                        <flux:icon icon="envelope" class="size-4" />
+                                    </button>
+                                @endif
+
+                                {{-- Rectificativa (facturas emitidas sin rectificativa previa) --}}
+                                @if($invoice->status === 'sent' && !$invoice->corrective && $invoice->correctives_count === 0)
+                                    <button wire:click="openCorrectiveModal({{ $invoice->id }})"
+                                            class="{{ $btnBase }} text-orange-400 hover:text-orange-600 hover:bg-orange-50"
+                                            title="Crear factura rectificativa">
+                                        <flux:icon icon="arrow-uturn-left" class="size-4" />
+                                    </button>
+                                @endif
+
+                                {{-- Badge rectificativa (si ya tiene una) --}}
+                                @if($invoice->correctives_count > 0)
+                                    <span class="text-[10px] font-medium text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded" title="Tiene rectificativa">
+                                        RECT
+                                    </span>
+                                @endif
+
+                                {{-- Cancelar (solo draft) --}}
+                                @if($invoice->status === 'draft')
+                                    <button wire:click="cancel({{ $invoice->id }})"
+                                            wire:confirm="¿Cancelar esta factura? El stock quedará liberado."
+                                            class="{{ $btnBase }} text-red-400 hover:text-red-600 hover:bg-red-50"
+                                            title="Cancelar factura">
+                                        <flux:icon icon="x-circle" class="size-4" />
+                                    </button>
+                                @endif
+
                             </div>
                         </div>
                     </x-slot:footer>
@@ -210,6 +296,129 @@
                 </x-slot:action>
             @endif
         </x-agro.empty-state>
+    @endif
+
+    {{-- Modal Emitir Factura --}}
+    @if($emitirModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+             x-data x-on:keydown.escape.window="$wire.closeEmitirModal()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm" @click.stop>
+                <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                            <flux:icon icon="paper-airplane" class="size-4 text-agro-600" />
+                        </div>
+                        <h3 class="text-base font-semibold text-zinc-900">Emitir Factura</h3>
+                    </div>
+                    <flux:button wire:click="closeEmitirModal" variant="ghost" size="sm" icon="x-mark" />
+                </div>
+
+                <div class="px-6 py-5 space-y-4">
+                    <p class="text-sm text-zinc-500">
+                        Se generará un número de factura secuencial y la factura quedará emitida formalmente.
+                    </p>
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Fecha de factura <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            wire:model="emitirDate"
+                            type="date"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent"
+                        />
+                        @error('emitirDate')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex items-center justify-end gap-3">
+                    <flux:button wire:click="closeEmitirModal" variant="ghost" size="sm">
+                        Cancelar
+                    </flux:button>
+                    <flux:button
+                        wire:click="confirmEmitir"
+                        wire:loading.attr="disabled"
+                        variant="primary"
+                        size="sm"
+                        icon="paper-airplane"
+                    >
+                        <span wire:loading.remove wire:target="confirmEmitir">Emitir Factura</span>
+                        <span wire:loading wire:target="confirmEmitir">Emitiendo...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Modal Rectificativa --}}
+    @if($correctiveModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+             x-data x-on:keydown.escape.window="$wire.closeCorrectiveModal()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm" @click.stop>
+                <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <flux:icon icon="arrow-uturn-left" class="size-4 text-orange-600" />
+                        </div>
+                        <h3 class="text-base font-semibold text-zinc-900">Crear Rectificativa</h3>
+                    </div>
+                    <flux:button wire:click="closeCorrectiveModal" variant="ghost" size="sm" icon="x-mark" />
+                </div>
+
+                <div class="px-6 py-5 space-y-4">
+                    <p class="text-sm text-zinc-500">
+                        Se creará una factura rectificativa con importes negativos. El stock de cosecha quedará restaurado como disponible.
+                    </p>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Fecha de la rectificativa <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            wire:model="correctiveDate"
+                            type="date"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                        />
+                        @error('correctiveDate')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Motivo <span class="text-zinc-400 font-normal">(opcional)</span>
+                        </label>
+                        <textarea
+                            wire:model="correctiveReason"
+                            rows="2"
+                            placeholder="Error en precio, devolución, etc."
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent resize-none"
+                        ></textarea>
+                        @error('correctiveReason')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex items-center justify-end gap-3">
+                    <flux:button wire:click="closeCorrectiveModal" variant="ghost" size="sm">
+                        Cancelar
+                    </flux:button>
+                    <flux:button
+                        wire:click="confirmCorrective"
+                        wire:loading.attr="disabled"
+                        variant="primary"
+                        size="sm"
+                        icon="arrow-uturn-left"
+                        class="bg-orange-600 hover:bg-orange-700 focus:ring-orange-500"
+                    >
+                        <span wire:loading.remove wire:target="confirmCorrective">Emitir Rectificativa</span>
+                        <span wire:loading wire:target="confirmCorrective">Generando...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </div>
     @endif
 
     {{-- Modal Filtros --}}

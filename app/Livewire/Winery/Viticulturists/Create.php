@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Livewire\Winery\Viticulturists;
+
+use App\Livewire\Winery\AbstractCreate;
+use App\Models\User;
+use App\Models\WineryViticulturist;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+class Create extends AbstractCreate
+{
+    public string $name  = '';
+    public string $dni   = '';
+    public string $email = '';
+    public string $phone = '';
+    public string $notes = '';
+
+    protected function rules(): array
+    {
+        return [
+            'name'  => ['required', 'string', 'max:255'],
+            'dni'   => ['nullable', 'string', 'max:20', 'unique:users,dni'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.required'  => 'El nombre es obligatorio.',
+            'dni.unique'     => 'Ya existe un usuario con este DNI.',
+            'email.unique'   => 'Ya existe un usuario con este email.',
+        ];
+    }
+
+    protected function performCreate(): void
+    {
+        $user = User::create([
+            'name'      => $this->name,
+            'email'     => $this->email ?: null,
+            'dni'       => $this->dni ?: null,
+            'role'      => 'viticulturist',
+            'can_login' => false,
+            'password'  => Hash::make(Str::random(40)),
+        ]);
+
+        if ($this->phone) {
+            $user->profile()->create(['phone' => $this->phone]);
+        }
+
+        WineryViticulturist::create([
+            'winery_id'        => $this->wineryId(),
+            'viticulturist_id' => $user->id,
+            'source'           => WineryViticulturist::SOURCE_OWN,
+            'assigned_by'      => $this->wineryId(),
+        ]);
+
+        // Inherit beta from winery if active
+        $winery = User::find($this->wineryId());
+        if ($winery?->isBetaUser() && !$winery->betaExpired() && !$user->is_beta_user) {
+            $user->grantBetaAccess();
+        }
+    }
+
+    protected function successMessage(): string
+    {
+        return 'Viticultor creado correctamente.';
+    }
+
+    protected function indexRoute(): string
+    {
+        return 'winery.viticulturists.index';
+    }
+}

@@ -1,0 +1,253 @@
+<?php
+
+namespace App\Livewire\Winery\Billing\GrapePurchase;
+
+use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Harvest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\User;
+use App\Models\WineryViticulturist;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Livewire\Component;
+
+class Create extends Component
+{
+    use WithToastNotifications;
+
+    public string $viticulturist_id = '';
+    public string $invoice_date     = '';
+    public string $observations     = '';
+    public string $payment_type     = '';
+
+    // Selected harvest rows
+    public array $lines = [];
+
+    public function mount(): void
+    {
+        $this->invoice_date = now()->toDateString();
+    }
+
+    public function updatedViticulturistId(): void
+    {
+        $this->lines = [];
+    }
+
+    public function toggleHarvest(int $harvestId): void
+    {
+        $existing = array_search($harvestId, array_column($this->lines, 'harvest_id'));
+
+        if ($existing !== false) {
+            array_splice($this->lines, $existing, 1);
+            $this->lines = array_values($this->lines);
+            return;
+        }
+
+        $harvest = Harvest::find($harvestId);
+        if (!$harvest) return;
+
+        $this->lines[] = [
+            'harvest_id'  => $harvestId,
+            'quantity'    => (string) ($harvest->net_weight ?? $harvest->gross_weight ?? 0),
+            'unit_price'  => '',
+            'tax_rate'    => '0',
+            'description' => '',
+        ];
+    }
+
+    public function removeLine(int $index): void
+    {
+        array_splice($this->lines, $index, 1);
+        $this->lines = array_values($this->lines);
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'viticulturist_id'    => 'required|exists:users,id',
+            'invoice_date'        => 'required|date',
+            'payment_type'        => 'nullable|in:cash,transfer,check,other',
+            'observations'        => 'nullable|string',
+            'lines'               => 'required|array|min:1',
+            'lines.*.harvest_id'  => 'required|exists:harvests,id',
+            'lines.*.quantity'    => 'required|numeric|min:0.001',
+            'lines.*.unit_price'  => 'required|numeric|min:0',
+            'lines.*.tax_rate'    => 'required|numeric|min:0|max:100',
+            'lines.*.description' => 'nullable|string|max:255',
+        ];
+    }
+
+    public function save()
+    {
+        $this->validate();
+
+        // Guard: viticulturist must belong to this winery
+        $belongs = WineryViticulturist::where('winery_id', Auth::id())
+            ->where('viticulturist_id', $this->viticulturist_id)
+            ->where('source', 'own')
+            ->exists();
+
+        if (!$belongs) {
+            $this->addError('viticulturist_id', 'El viticultor no pertenece a tu bodega.');
+            return;
+        }
+
+        $viticulturist = User::findOrFail($this->viticulturist_id);
+
+        try {
+            DB::beginTransaction();
+
+            // ── Atomic sequential numbering ───────────────────────────────────────────
+            DB::table('users')->where('id', Auth::id())->lockForUpdate()->first();
+            DB::table('users')->where('id', Auth::id())->increment('grape_purchase_seq');
+            $seq  = DB::table('users')->where('id', Auth::id())->value('grape_purchase_seq');
+            $year = now()->year;
+
+            $number   = 'GP-' . $year . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
+            $noteCode = 'LIQ-' . $year . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
+
+            // ── Calculate totals ──────────────────────────────────────────────────────
+            $subtotal  = 0;
+            $taxAmount = 0;
+
+            foreach ($this->lines as $line) {
+                $lineSubtotal  = (float) $line['quantity'] * (float) $line['unit_price'];
+                $lineTax       = $lineSubtotal * ((float) $line['tax_rate'] / 100);
+                $subtotal     += $lineSubtotal;
+                $taxAmount    += $lineTax;
+            }
+
+            $total = $subtotal + $taxAmount;
+
+            // ── Create invoice ────────────────────────────────────────────────────────
+            $invoice = Invoice::create([
+                'user_id'               => Auth::id(),
+                'invoice_type'          => 'grape_purchase',
+                'viticulturist_id'      => $viticulturist->id,
+                'invoice_number'        => $number,
+                'delivery_note_code'    => $noteCode,
+                'invoice_date'          => $this->invoice_date,
+                'billing_first_name'    => $viticulturist->name,
+                'billing_email'         => $viticulturist->email,
+                'subtotal'              => round($subtotal, 3),
+                'tax_base'              => round($subtotal, 3),
+                'tax_amount'            => round($taxAmount, 3),
+                'total_amount'          => round($total, 3),
+                'status'                => 'draft',
+                'payment_status'        => 'unpaid',
+                'payment_type'          => $this->payment_type ?: null,
+                'observations'          => $this->observations ?: null,
+            ]);
+
+            // ── Create items — guard against double-invoicing per harvest ─────────────
+            foreach ($this->lines as $line) {
+                $harvest = Harvest::lockForUpdate()->find($line['harvest_id']);
+
+                // Ownership guard: harvest must belong to the selected viticulturist
+                // AND to a campaign owned by this winery (prevents injecting foreign harvests)
+                if (!$harvest || (string) $harvest->viticulturist_id !== (string) $this->viticulturist_id) {
+                    throw new \RuntimeException(
+                        "La recepción #{$line['harvest_id']} no pertenece al viticultor seleccionado."
+                    );
+                }
+
+                $campaignBelongsToWinery = \App\Models\Campaign::where('id', $harvest->campaign_id)
+                    ->where('winery_id', Auth::id())
+                    ->exists();
+
+                if (!$campaignBelongsToWinery) {
+                    throw new \RuntimeException(
+                        "La recepción #{$harvest->id} no pertenece a una campaña de esta bodega."
+                    );
+                }
+
+                // Double-guard: harvest must not be included in any active (non-cancelled) invoice
+                if ($harvest->invoiceItems()
+                        ->where('concept_type', 'harvest')
+                        ->whereHas('invoice', fn($q) => $q->where('status', '!=', 'cancelled'))
+                        ->exists()) {
+                    throw new \RuntimeException(
+                        "La recepción #{$harvest->id} ya está incluida en otra liquidación activa."
+                    );
+                }
+
+                $qty           = (float) $line['quantity'];
+                $unitPrice     = (float) $line['unit_price'];
+                $taxRate       = (float) $line['tax_rate'];
+                $subtotalLine  = round($qty * $unitPrice, 3);
+                $taxAmountLine = round($subtotalLine * ($taxRate / 100), 3);
+
+                $description = $line['description'] ?: (
+                    $harvest
+                        ? "Vendimia #{$harvest->id} - {$harvest->variety}"
+                        : "Vendimia #{$line['harvest_id']}"
+                );
+
+                InvoiceItem::create([
+                    'invoice_id'   => $invoice->id,
+                    'harvest_id'   => $harvest?->id,
+                    'concept_type' => 'harvest',
+                    'name'         => $description,
+                    'description'  => $line['description'] ?: null,
+                    'quantity'     => $qty,
+                    'unit_price'   => $unitPrice,
+                    'tax_rate'     => $taxRate,
+                    'subtotal'     => $subtotalLine,
+                    'tax_base'     => $subtotalLine,
+                    'tax_amount'   => $taxAmountLine,
+                    'total'        => $subtotalLine + $taxAmountLine,
+                ]);
+            }
+
+            DB::commit();
+
+            $this->toastSuccess("Liquidación {$number} creada — Ref.: {$noteCode}");
+            return $this->redirect(route('winery.invoices.grape-purchase.index'), navigate: true);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al crear liquidación de vendimia: ' . $e->getMessage(), [
+                'user_id'   => Auth::id(),
+                'exception' => $e,
+            ]);
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al crear la liquidación. Inténtalo de nuevo.');
+        }
+    }
+
+    public function render()
+    {
+        $wineryId = Auth::id();
+
+        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
+            ->where('source', 'own')
+            ->pluck('viticulturist_id');
+
+        $viticulturists = User::whereIn('id', $viticulturistIds)->orderBy('name')->get(['id', 'name']);
+
+        $availableHarvests = collect();
+        $selectedHarvestIds = array_column($this->lines, 'harvest_id');
+
+        if ($this->viticulturist_id) {
+            $availableHarvests = Harvest::where('viticulturist_id', $this->viticulturist_id)
+                ->whereIn('campaign_id', function ($q) use ($wineryId) {
+                    $q->select('id')->from('campaigns')->where('winery_id', $wineryId);
+                })
+                // Exclude harvests already included in an active (non-cancelled) invoice
+                ->whereDoesntHave('invoiceItems', function ($q) {
+                    $q->where('concept_type', 'harvest')
+                      ->whereHas('invoice', fn($q2) => $q2->where('status', '!=', 'cancelled'));
+                })
+                ->with('plot:id,name')
+                ->orderByDesc('harvest_date')
+                ->get(['id', 'harvest_date', 'variety', 'net_weight', 'gross_weight', 'plot_id', 'viticulturist_id', 'campaign_id']);
+        }
+
+        return view('livewire.winery.billing.grape-purchase.create', [
+            'viticulturists'     => $viticulturists,
+            'availableHarvests'  => $availableHarvests,
+            'selectedHarvestIds' => $selectedHarvestIds,
+        ])->layout('layouts.app');
+    }
+}

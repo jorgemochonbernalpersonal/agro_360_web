@@ -8,6 +8,7 @@ use App\Models\Tax;
 use App\Models\Harvest;
 use App\Models\Campaign;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Services\HarvestStockService;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -310,18 +311,13 @@ class Edit extends Component
 
         try {
             DB::transaction(function () {
-                $updateData = [
-                    'status'       => 'sent',
-                    'invoice_date' => $this->invoice_date_modal,
-                ];
+                $settings = \App\Models\InvoicingSetting::getOrCreateForUser(Auth::user()->id);
 
-                // Fallback para albaranes antiguos sin número de factura
-                if (! $this->invoice->invoice_number) {
-                    $settings = \App\Models\InvoicingSetting::getOrCreateForUser(Auth::user()->id);
-                    $updateData['invoice_number'] = $settings->generateAndIncrementInvoiceCode();
-                }
-
-                $this->invoice->update($updateData);
+                $this->invoice->update([
+                    'status'         => 'sent',
+                    'invoice_date'   => $this->invoice_date_modal,
+                    'invoice_number' => $settings->generateAndIncrementInvoiceCode(),
+                ]);
             });
 
             $this->toastSuccess('Factura emitida correctamente.');
@@ -504,39 +500,58 @@ class Edit extends Component
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
 
+                // Unreserve all existing harvest items before deletion
+                // (reads from DB while items still exist; delivery_status not yet changed)
+                $existingHarvestItems = $this->invoice->items()
+                    ->where('concept_type', 'harvest')
+                    ->whereNotNull('harvest_id')
+                    ->get();
+                HarvestStockService::unreserveItems($existingHarvestItems, $this->invoice);
+
                 // Eliminar items existentes
                 $this->invoice->items()->delete();
 
-                // Crear nuevos items
-                foreach ($this->items as $itemData) {
-                    $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
-                    $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
-                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-                    
-                    $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
-                    $taxRate = $tax ? $tax->rate : 0;
-                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-                    $itemTotal = $itemSubtotalAfterDiscount + $itemTax;
+                // Crear nuevos items y mover stock según el nuevo delivery_status.
+                // InvoiceItemObserver se deshabilita para evitar doble movimiento:
+                // el bulk-delete anterior no disparó Observer.deleting (masa), pero
+                // items()->create() sí dispararía Observer.created (ContainerStockService).
+                // HarvestStockService::moveOnItemSave es la fuente de verdad aquí.
+                $newDeliveryStatus = $this->delivery_status;
 
-                    $this->invoice->items()->create([
-                        'harvest_id' => $itemData['harvest_id'] ?? null,
-                        'name' => $itemData['name'],
-                        'description' => $itemData['description'] ?? null,
-                        'sku' => $itemData['sku'] ?? null,
-                        'quantity' => $itemData['quantity'],
-                        'unit_price' => $itemData['unit_price'],
-                        'discount_percentage' => $itemData['discount_percentage'],
-                        'discount_amount' => $itemDiscount,
-                        'tax_id' => $itemData['tax_id'] ?: null,
-                        'tax_name' => $tax ? $tax->name : null,
-                        'tax_rate' => $taxRate,
-                        'tax_base' => $itemSubtotalAfterDiscount,
-                        'tax_amount' => $itemTax,
-                        'subtotal' => $itemSubtotalAfterDiscount,
-                        'total' => $itemTotal,
-                        'concept_type' => $itemData['concept_type'] ?? 'other',
-                    ]);
-                }
+                \App\Models\InvoiceItem::withoutObservers(function () use ($newDeliveryStatus) {
+                    foreach ($this->items as $itemData) {
+                        $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
+                        $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
+                        $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
+
+                        $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
+                        $taxRate = $tax ? $tax->rate : 0;
+                        $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
+                        $itemTotal = $itemSubtotalAfterDiscount + $itemTax;
+
+                        $newItem = $this->invoice->items()->create([
+                            'harvest_id' => $itemData['harvest_id'] ?? null,
+                            'name' => $itemData['name'],
+                            'description' => $itemData['description'] ?? null,
+                            'sku' => $itemData['sku'] ?? null,
+                            'quantity' => $itemData['quantity'],
+                            'unit_price' => $itemData['unit_price'],
+                            'discount_percentage' => $itemData['discount_percentage'],
+                            'discount_amount' => $itemDiscount,
+                            'tax_id' => $itemData['tax_id'] ?: null,
+                            'tax_name' => $tax ? $tax->name : null,
+                            'tax_rate' => $taxRate,
+                            'tax_base' => $itemSubtotalAfterDiscount,
+                            'tax_amount' => $itemTax,
+                            'subtotal' => $itemSubtotalAfterDiscount,
+                            'total' => $itemTotal,
+                            'concept_type' => $itemData['concept_type'] ?? 'other',
+                        ]);
+
+                        // HarvestStockService es la única fuente de stock en Edit
+                        HarvestStockService::moveOnItemSave($this->invoice, $newItem, $newDeliveryStatus);
+                    }
+                });
                 
                 // Registrar en audit log
                 $this->invoice->logAction(

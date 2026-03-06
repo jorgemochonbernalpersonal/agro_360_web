@@ -64,10 +64,13 @@ class Invoice extends Model
         'delivery_viewed',
         'payment_status_viewed',
         'corrective',
+        'corrected_invoice_id',
         'gift',
         'observations',
         'observations_invoice',
         'invoice_group_id',
+        'invoice_type',
+        'viticulturist_id',
     ];
 
     protected $casts = [
@@ -172,6 +175,48 @@ class Invoice extends Model
     public function isDraft(): bool
     {
         return $this->status === 'draft';
+    }
+
+    /**
+     * Returns false when the invoice is in a terminal state (delivered or cancelled).
+     * Delivered invoices cannot be cancelled; cancelled invoices cannot be re-opened.
+     */
+    public function isEditable(): bool
+    {
+        return $this->status !== 'cancelled'
+            && $this->delivery_status !== 'delivered';
+    }
+
+    /**
+     * La factura original que esta rectificativa corrige
+     */
+    public function correctedInvoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class, 'corrected_invoice_id');
+    }
+
+    /**
+     * Facturas rectificativas emitidas contra esta factura
+     */
+    public function correctives(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'corrected_invoice_id');
+    }
+
+    /**
+     * Stock movement audit log
+     */
+    public function stockMovements(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(InvoiceStockMovement::class)->orderByDesc('created_at');
+    }
+
+    /**
+     * Viticultor destinatario (factura de vendimia)
+     */
+    public function viticulturist(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'viticulturist_id');
     }
 
     /**

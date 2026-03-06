@@ -184,7 +184,8 @@ class Create extends Component
             DB::commit();
 
             $this->toastSuccess('Parcela creada correctamente.');
-            return $this->redirect(route('plots.index'), navigate: true);
+            $indexRoute = Auth::user()->isWinery() ? 'winery.plots.index' : 'plots.index';
+            return $this->redirect(route($indexRoute), navigate: true);
         } catch (\Exception $e) {
             DB::rollBack();
 

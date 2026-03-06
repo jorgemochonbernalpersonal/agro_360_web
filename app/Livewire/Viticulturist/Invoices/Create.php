@@ -332,8 +332,10 @@ class Create extends Component
 
         $user = Auth::user();
 
+        $deliveryNoteCode = null;
+
         try {
-            DB::transaction(function () use ($user) {
+            DB::transaction(function () use ($user, &$deliveryNoteCode) {
                 // Obtener settings de invoicing
                 $settings = \App\Models\InvoicingSetting::getOrCreateForUser($user->id);
 
@@ -342,9 +344,9 @@ class Create extends Component
                     ? $this->delivery_note_code
                     : $settings->generateAndIncrementDeliveryNoteCode();
 
-                // Generar número de factura atómicamente desde el inicio (draft)
-                // Ambos códigos son secuenciales desde la creación
-                $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
+                // El número de factura se asigna al emitir (markAsSent), no al crear el borrador.
+                // Así evitamos huecos en la secuencia por borradores abandonados.
+                $invoiceNumber = null;
 
                 // Calcular totales
                 $subtotal = 0;
@@ -373,7 +375,7 @@ class Create extends Component
                     'client_id' => $this->client_id,
                     'client_address_id' => $this->client_address_id ?: null,
                     'order_date' => $this->invoice_date,
-                    'invoice_number' => $invoiceNumber,
+                    'invoice_number' => null,
                     'delivery_note_code' => $deliveryNoteCode,
                     'invoice_date' => $this->invoice_date,
                     'delivery_note_date' => $this->delivery_note_date ?: now(), // Usar fecha del formulario
@@ -429,10 +431,12 @@ class Create extends Component
                         'client_id'          => $this->client_id,
                         'total_amount'       => $totalAmount,
                         'items_count'        => count($this->items),
-                        'invoice_number'     => $invoiceNumber,
                         'delivery_note_code' => $deliveryNoteCode,
                     ]
                 );
+
+                // NOTE: InvoiceItemObserver.created already called ContainerStockService::reserveStock()
+                // for each item above. Do NOT call HarvestStockService here — would double-reserve.
 
                 // Vincular con Cosecha Comercializada si procede
                 if ($this->marketedHarvestId) {
@@ -442,7 +446,7 @@ class Create extends Component
                 }
             });
 
-            $this->toastSuccess('Factura creada exitosamente.');
+            $this->toastSuccess("Albarán {$deliveryNoteCode} creado. Emítelo para generar el número de factura.");
             return redirect()->route('viticulturist.invoices.index');
         } catch (\Exception $e) {
             $this->toastError('Error al crear la factura: ' . $e->getMessage());

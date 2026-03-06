@@ -53,6 +53,14 @@ class Container extends Model
     }
 
     /**
+     * Tipo de contenedor
+     */
+    public function containerType(): BelongsTo
+    {
+        return $this->belongsTo(ContainerType::class, 'type_id');
+    }
+
+    /**
      * Sala/Bodega donde está ubicado
      */
     public function containerRoom(): BelongsTo

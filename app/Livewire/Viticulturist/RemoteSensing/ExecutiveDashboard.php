@@ -26,8 +26,9 @@ class ExecutiveDashboard extends Component
     public function mount()
     {
         // Eager loading para evitar N+1 queries
-        $this->plots = auth()->user()
-            ->plots()
+        // Plot::forUser handles viticulturist (own plots) and winery (viticultors' plots)
+        $this->plots = Plot::forUser(auth()->user())
+            ->whereHas('plotGeometries')
             ->select('id', 'name', 'area', 'viticulturist_id')
             ->orderBy('name')
             ->get();

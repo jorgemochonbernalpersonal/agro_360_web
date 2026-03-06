@@ -50,6 +50,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     private string $username;
     private string $password;
     private string $baseUrl = 'https://appeears.earthdatacloud.nasa.gov/api';
+    private string $ornlBaseUrl = 'https://modis.ornl.gov/rst/api/v1';
     private bool $useMockData;
     private ?string $token = null;
 
@@ -145,46 +146,36 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         }
 
         try {
-            $token = $this->getAuthToken();
-            if (!$token) {
-                Log::error('NASA Earthdata: Failed to get auth token', [
-                    'plot_id' => $plot->id,
-                    'username' => $this->username,
-                    'env' => config('app.env'),
-                ]);
-                
-                // En producción, mejor retornar null y usar datos existentes
-                if (config('app.env') === 'production') {
-                    return null;
-                }
-                
-                return $this->generateMockData($plot);
-            }
-
-            // Get plot bounding box (usa coordenadas del recinto si se pasan)
+            // Get plot coordinates from geometry centroid (or override)
             $bbox = $this->getPlotBoundingBox($plot, $coordinates);
 
-            // Request NDVI data from MODIS
-            $response = Http::withToken($token)
-                ->timeout(60)
-                ->get("{$this->baseUrl}/bundle/MOD13Q1.061/point", [
-                    'latitude' => $bbox['lat'],
-                    'longitude' => $bbox['lon'],
-                    'startDate' => now()->subDays(16)->format('m-d-Y'),
-                    'endDate' => now()->format('m-d-Y'),
+            // ORNL DAAC MODIS Subset API (synchronous, no auth required)
+            // Endpoint: /MOD13Q1/subset?latitude=&longitude=&startDate=A{YYYYDOY}&endDate=A{YYYYDOY}
+            $startJulian = 'A' . now()->subDays(16)->format('Y') . str_pad(now()->subDays(16)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
+
+            $response = Http::timeout(30)
+                ->get("{$this->ornlBaseUrl}/MOD13Q1/subset", [
+                    'latitude'     => $bbox['lat'],
+                    'longitude'    => $bbox['lon'],
+                    'startDate'    => $startJulian,
+                    'endDate'      => $endJulian,
+                    'kmAboveBelow' => 0,
+                    'kmLeftRight'  => 0,
                 ]);
 
             // Record successful API call
             $this->rateLimitService->recordNasaRequest();
 
             if ($response->successful()) {
-                return $this->parseNasaResponse($response->json());
+                return $this->parseOrnlResponse($response->json());
             }
 
-            Log::warning('NASA Earthdata API request failed', [
+            Log::warning('ORNL DAAC MODIS API request failed', [
                 'status' => $response->status(),
                 'plot_id' => $plot->id,
-                'username' => $this->username,
+                'lat'     => $bbox['lat'],
+                'lon'     => $bbox['lon'],
             ]);
 
             // En producción, retornar null para usar datos existentes
@@ -244,25 +235,40 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     }
 
     /**
-     * Parse NASA API response
+     * Parse ORNL DAAC MODIS Subset API response
+     *
+     * Response format:
+     *   { "header": { "NODATA_value": -3000, ... },
+     *     "subset": [{ "band": "_250m_16_days_NDVI", "data": [3000],
+     *                  "scale": "0.0001", "calendar_date": "2024-01-01" }] }
      */
-    private function parseNasaResponse(array $response): array
+    private function parseOrnlResponse(array $response): array
     {
-        // Extract NDVI from MODIS response
-        // MODIS NDVI is scaled: actual = value * 0.0001
-        $ndviRaw = $response['_250m 16 days NDVI'] ?? null;
-        $ndvi = $ndviRaw ? $ndviRaw * 0.0001 : 0.5;
+        $nodata = $response['header']['NODATA_value'] ?? -3000;
 
-        // Clamp to valid range
-        $ndvi = max(-1, min(1, $ndvi));
+        $ndviSubset = collect($response['subset'] ?? [])
+            ->firstWhere('band', '_250m_16_days_NDVI');
+
+        $rawValue = $ndviSubset['data'][0] ?? null;
+        $scale    = (float) ($ndviSubset['scale'] ?? '0.0001');
+
+        if ($rawValue === null || $rawValue <= $nodata) {
+            $ndvi = 0.5; // fallback when pixel is cloud/nodata
+        } else {
+            $ndvi = $rawValue * $scale;
+        }
+
+        $ndvi = max(-1.0, min(1.0, $ndvi));
+
+        $imageDate = Carbon::parse($ndviSubset['calendar_date'] ?? now());
 
         return [
-            'ndvi_mean' => $ndvi,
-            'ndvi_min' => $ndvi - 0.05,
-            'ndvi_max' => $ndvi + 0.05,
-            'cloud_coverage' => $response['cloud_coverage'] ?? 10,
-            'image_date' => Carbon::parse($response['date'] ?? now()),
-            'image_source' => 'NASA MODIS MOD13Q1',
+            'ndvi_mean'      => round($ndvi, 3),
+            'ndvi_min'       => round($ndvi - 0.03, 3),
+            'ndvi_max'       => round($ndvi + 0.03, 3),
+            'cloud_coverage' => 0,
+            'image_date'     => $imageDate,
+            'image_source'   => 'NASA MODIS MOD13Q1 (ORNL DAAC)',
         ];
     }
 

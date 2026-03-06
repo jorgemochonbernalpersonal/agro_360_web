@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\EstimatedYield;
 use App\Models\Harvest;
 use App\Services\ContainerStockService;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +14,7 @@ class HarvestObserver
     ) {}
 
     /**
-     * Al crear una cosecha: registra stock inicial y actualiza el contenedor.
+     * Al crear una cosecha: registra stock inicial, actualiza contenedor y sincroniza estimaciones.
      */
     public function created(Harvest $harvest): void
     {
@@ -26,6 +27,8 @@ class HarvestObserver
             ]);
             throw $e;
         }
+
+        $this->syncEstimatedYields($harvest);
     }
 
     /**
@@ -56,6 +59,16 @@ class HarvestObserver
     }
 
     /**
+     * Al actualizar una cosecha: si cambia peso o estado, re-sincroniza estimaciones.
+     */
+    public function updated(Harvest $harvest): void
+    {
+        if ($harvest->wasChanged(['total_weight', 'status', 'vintage'])) {
+            $this->syncEstimatedYields($harvest);
+        }
+    }
+
+    /**
      * Al eliminar una cosecha: libera la capacidad del contenedor.
      */
     public function deleting(Harvest $harvest): void
@@ -66,6 +79,38 @@ class HarvestObserver
             Log::error('[HarvestObserver] Error al liberar stock de cosecha eliminada', [
                 'harvest_id' => $harvest->id,
                 'error'      => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Al eliminar (después): re-sincroniza estimaciones con el nuevo total.
+     */
+    public function deleted(Harvest $harvest): void
+    {
+        $this->syncEstimatedYields($harvest);
+    }
+
+    /**
+     * Actualiza el rendimiento real en todas las EstimatedYield que coincidan
+     * con la plantación y añada de esta cosecha.
+     */
+    private function syncEstimatedYields(Harvest $harvest): void
+    {
+        if (!$harvest->plot_planting_id || !$harvest->vintage) {
+            return;
+        }
+
+        try {
+            EstimatedYield::where('plot_planting_id', $harvest->plot_planting_id)
+                ->whereHas('campaign', fn($q) => $q->where('year', $harvest->vintage))
+                ->each(fn(EstimatedYield $ey) => $ey->updateActualYield());
+        } catch (\Exception $e) {
+            Log::warning('[HarvestObserver] Error al sincronizar rendimiento estimado', [
+                'harvest_id'      => $harvest->id,
+                'plot_planting_id'=> $harvest->plot_planting_id,
+                'vintage'         => $harvest->vintage,
+                'error'           => $e->getMessage(),
             ]);
         }
     }

@@ -291,16 +291,27 @@ class CreateHarvest extends Component
         // Cargar rendimiento estimado
         $this->estimatedYield = $this->selectedPlanting->getEstimatedYieldForCampaign($this->campaign_id);
 
-        // Cargar cosechas registradas en la campaña
-        $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalActualYieldForCampaign($this->campaign_id);
+        // Año de vendimia: preferir harvest_start_date, sino campaña
+        $vintage = $this->harvest_start_date
+            ? (int) \Carbon\Carbon::parse($this->harvest_start_date)->year
+            : (Campaign::find($this->campaign_id)?->year ?? now()->year);
 
-        // Cargar información del límite
-        if ($this->selectedPlanting->hasHarvestLimit()) {
+        // Cosechas de la añada (incluye winery + viticulturist)
+        $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalActualYieldForVintage($vintage);
+
+        // Cargar información del límite con factor edad
+        $effectiveLimit = $this->selectedPlanting->effectiveHarvestLimitKg($vintage);
+        if ($effectiveLimit !== null) {
+            $rawLimit = (float) $this->selectedPlanting->harvest_limit_kg;
             $this->harvestLimitInfo = [
-                'limit' => $this->selectedPlanting->harvest_limit_kg,
-                'harvested' => $this->totalHarvestedInCampaign,
-                'remaining' => $this->selectedPlanting->getRemainingHarvestLimitForCampaign($this->campaign_id),
-                'percentage' => $this->selectedPlanting->getHarvestLimitUsagePercentageForCampaign($this->campaign_id),
+                'limit'      => $effectiveLimit,
+                'raw_limit'  => $rawLimit,
+                'age_factor' => $rawLimit > 0 ? round($effectiveLimit / $rawLimit * 100) : 100,
+                'harvested'  => $this->totalHarvestedInCampaign,
+                'remaining'  => max(0, $effectiveLimit - $this->totalHarvestedInCampaign),
+                'percentage' => $effectiveLimit > 0
+                    ? round(($this->totalHarvestedInCampaign / $effectiveLimit) * 100, 1)
+                    : 0,
             ];
         } else {
             $this->harvestLimitInfo = null;
@@ -320,16 +331,17 @@ class CreateHarvest extends Component
         }
 
         $newWeight = (float) ($this->total_weight ?: 0);
-        
+
         // Actualizar información del límite con el nuevo peso
         if ($this->harvestLimitInfo) {
+            $limit    = $this->harvestLimitInfo['limit'];
             $newTotal = $this->totalHarvestedInCampaign + $newWeight;
-            $this->harvestLimitInfo['new_total'] = $newTotal;
-            $this->harvestLimitInfo['new_remaining'] = max(0, round($this->harvestLimitInfo['limit'] - $newTotal, 3));
-            $this->harvestLimitInfo['new_percentage'] = $this->harvestLimitInfo['limit'] > 0 
-                ? round(($newTotal / $this->harvestLimitInfo['limit']) * 100, 3) 
+            $this->harvestLimitInfo['new_total']      = $newTotal;
+            $this->harvestLimitInfo['new_remaining']  = max(0, round($limit - $newTotal, 3));
+            $this->harvestLimitInfo['new_percentage'] = $limit > 0
+                ? round(($newTotal / $limit) * 100, 1)
                 : null;
-            $this->harvestLimitInfo['exceeds'] = $newTotal > $this->harvestLimitInfo['limit'];
+            $this->harvestLimitInfo['exceeds'] = $newTotal > $limit;
         }
 
         // Actualizar varianza de rendimiento

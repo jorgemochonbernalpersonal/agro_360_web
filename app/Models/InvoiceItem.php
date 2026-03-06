@@ -14,6 +14,7 @@ class InvoiceItem extends Model
     protected $fillable = [
         'invoice_id',
         'harvest_id',
+        'wine_lot_id',
         'name',
         'description',
         'sku',
@@ -54,6 +55,14 @@ class InvoiceItem extends Model
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    /**
+     * Lote de vino relacionado (si aplica)
+     */
+    public function wineLot(): BelongsTo
+    {
+        return $this->belongsTo(WineLot::class);
     }
 
     /**

@@ -17,6 +17,7 @@ class Harvest extends Model
         'container_id',
         'harvest_start_date',
         'harvest_end_date',
+        'vintage',
         'total_weight',
         'yield_per_hectare',
         'baume_degree',
@@ -51,6 +52,7 @@ class Harvest extends Model
     protected $casts = [
         'harvest_start_date' => 'date',
         'harvest_end_date' => 'date',
+        'vintage' => 'integer',
         'sanitary_state_grapes' => 'decimal:2',
         'sanitary_state_agraces' => 'decimal:2',
         'sanitary_state_botrytis' => 'decimal:2',
@@ -105,6 +107,11 @@ class Harvest extends Model
     protected static function booted()
     {
         static::saving(function ($harvest) {
+            // Auto-set vintage from harvest_start_date if not provided
+            if (!$harvest->vintage && $harvest->harvest_start_date) {
+                $harvest->vintage = \Carbon\Carbon::parse($harvest->harvest_start_date)->year;
+            }
+
             // Calcular rendimiento por hectárea
             if ($harvest->total_weight && $harvest->plotPlanting) {
                 $planting = $harvest->plotPlanting;

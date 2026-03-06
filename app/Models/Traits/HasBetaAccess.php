@@ -40,15 +40,32 @@ trait HasBetaAccess
     }
 
     /**
-     * Activar acceso beta (hasta 30/06/2026)
+     * Activar acceso beta (hasta 30/06/2026).
+     * Si el usuario es una bodega, cascada beta a sus viticultores vinculados.
      */
     public function grantBetaAccess(): void
     {
         $this->update([
-            'is_beta_user' => true,
-            'beta_ends_at' => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
+            'is_beta_user'        => true,
+            'beta_ends_at'        => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
             'beta_access_granted' => true,
         ]);
+
+        if ($this->role === 'winery') {
+            $viticulturistIds = \Illuminate\Support\Facades\DB::table('winery_viticulturist')
+                ->where('winery_id', $this->id)
+                ->pluck('viticulturist_id');
+
+            if ($viticulturistIds->isNotEmpty()) {
+                \App\Models\User::whereIn('id', $viticulturistIds)
+                    ->where('is_beta_user', false)
+                    ->update([
+                        'is_beta_user'        => true,
+                        'beta_ends_at'        => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
+                        'beta_access_granted' => true,
+                    ]);
+            }
+        }
     }
 
     /**

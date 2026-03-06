@@ -55,7 +55,10 @@ class Index extends Component
             $q->where('viticulturist_id', $user->id);
         })
         ->with(['activity.plot', 'plotPlanting.grapeVariety', 'container'])
-        ->whereDoesntHave('invoiceItems'); // Solo cosechas sin facturar
+        // Only exclude harvests in active (non-cancelled) invoices
+        ->whereDoesntHave('invoiceItems', function ($q) {
+            $q->whereHas('invoice', fn ($q2) => $q2->where('status', '!=', 'cancelled'));
+        });
 
         if ($this->selectedCampaign) {
             $query->whereHas('activity', function($q) {

@@ -4,7 +4,7 @@
     $user = auth()->user();
 
     $activeSections = [];
-    foreach(['operations', 'plots_analysis', 'compliance', 'resources', 'billing', 'clients', 'system'] as $section) {
+    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'viticulturists', 'resources', 'billing', 'clients', 'compliance', 'system'] as $section) {
         if (isset($menu[$section])) {
             foreach ($menu[$section] as $item) {
                 if ($item['active'] ?? false) { $activeSections[] = $section; break; }
@@ -13,13 +13,19 @@
     }
 
     $sections = [
-        'operations'    => 'Operaciones',
-        'plots_analysis'=> 'Parcelas y Análisis',
-        'compliance'    => 'Registro Oficial',
-        'resources'     => 'Recursos',
-        'billing'       => 'Facturación',
-        'clients'       => 'Clientes',
-        'system'        => 'Sistema',
+        // Viticulturist
+        'operations'      => 'Operaciones',
+        'plots_analysis'  => 'Parcelas y Análisis',
+        // Winery
+        'harvest'         => 'Vendimia',
+        'cellar'          => 'Bodega',
+        'viticulturists'  => 'Viticultores',
+        // Shared
+        'resources'       => 'Recursos',
+        'billing'         => 'Facturación',
+        'clients'         => 'Clientes',
+        'compliance'      => 'Registro Oficial',
+        'system'          => 'Sistema',
     ];
 @endphp
 
