@@ -11,7 +11,7 @@ class Topography extends Model
 
     protected $table = 'topographies';
 
-    protected $fillable = ['name', 'description', 'active'];
+    protected $fillable = ['user_id', 'name', 'description', 'active'];
 
     protected $casts = ['active' => 'boolean'];
 

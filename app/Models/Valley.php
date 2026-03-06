@@ -11,7 +11,7 @@ class Valley extends Model
 
     protected $table = 'valleys';
 
-    protected $fillable = ['code', 'name', 'description_valley', 'active'];
+    protected $fillable = ['user_id', 'code', 'name', 'description_valley', 'active'];
 
     protected $casts = ['active' => 'boolean'];
 

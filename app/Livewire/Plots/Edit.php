@@ -6,6 +6,7 @@ use App\Models\Plot;
 use App\Models\AutonomousCommunity;
 use App\Models\Orientation;
 use App\Models\SoilType;
+use Illuminate\Support\Facades\DB;
 use App\Models\IrrigationType;
 use App\Models\Topography;
 use App\Models\PropertyType;
@@ -19,7 +20,6 @@ use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -108,7 +108,7 @@ class Edit extends Component
         $rules = [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'area' => 'nullable|numeric|min:0',
+            'area' => 'required|numeric|min:0.001',
             'active' => 'boolean',
             'code_parcel' => 'nullable|string|max:50',
             'orientation_id' => 'nullable|exists:orientations,id',
@@ -266,17 +266,32 @@ class Edit extends Component
         }
     }
 
+    private function hiddenIds(string $catalogType): array
+    {
+        return DB::table('user_catalog_hidden')
+            ->where('user_id', Auth::id())
+            ->where('catalog_type', $catalogType)
+            ->pluck('item_id')
+            ->all();
+    }
+
+    private function catalogScope($query, string $catalogType)
+    {
+        $hidden = $this->hiddenIds($catalogType);
+        return $query->where(fn($q) => $q->whereNull('user_id')->whereNotIn('id', $hidden)->orWhere('user_id', Auth::id()));
+    }
+
     public function render()
     {
         return view('livewire.plots.edit', [
-            'orientations' => Orientation::where('active', true)->get(),
-            'soilTypes' => SoilType::where('active', true)->orderBy('name')->get(),
-            'irrigationTypes' => IrrigationType::where('active', true)->orderBy('name')->get(),
-            'topographies' => Topography::where('active', true)->orderBy('name')->get(),
-            'propertyTypes' => PropertyType::where('active', true)->orderBy('name')->get(),
-            'valleys' => Valley::where('active', true)->orderBy('name')->get(),
-            'sites' => Site::where('is_archived', false)->orderBy('name')->get(),
-            'trainingSystems' => TrainingSystem::where('active', true)->orderBy('name')->get(),
+            'orientations'   => Orientation::where('active', true)->get(),
+            'soilTypes'      => $this->catalogScope(SoilType::where('active', true), 'soil_types')->orderBy('name')->get(),
+            'irrigationTypes'=> $this->catalogScope(IrrigationType::where('active', true), 'irrigation_types')->orderBy('name')->get(),
+            'topographies'   => $this->catalogScope(Topography::where('active', true), 'topographies')->orderBy('name')->get(),
+            'propertyTypes'  => $this->catalogScope(PropertyType::where('active', true), 'property_types')->orderBy('name')->get(),
+            'valleys'        => $this->catalogScope(Valley::where('active', true), 'valleys')->orderBy('name')->get(),
+            'sites'          => $this->catalogScope(Site::where('is_archived', false), 'sites')->orderBy('name')->get(),
+            'trainingSystems'=> $this->catalogScope(TrainingSystem::where('active', true), 'training_systems')->orderBy('name')->get(),
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
                 ->orderBy('name')
                 ->get(),

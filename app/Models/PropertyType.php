@@ -9,7 +9,7 @@ class PropertyType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'active'];
+    protected $fillable = ['user_id', 'name', 'active'];
 
     protected $casts = ['active' => 'boolean'];
 

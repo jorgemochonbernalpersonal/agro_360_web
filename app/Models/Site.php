@@ -11,7 +11,7 @@ class Site extends Model
 
     protected $table = 'sites';
 
-    protected $fillable = ['name', 'municipality_id', 'is_archived'];
+    protected $fillable = ['user_id', 'name', 'municipality_id', 'is_archived'];
 
     protected $casts = ['is_archived' => 'boolean'];
 

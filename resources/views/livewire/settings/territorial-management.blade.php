@@ -118,6 +118,7 @@
                                     <flux:button wire:click="cancelEditSite" variant="ghost" size="xs">Cancelar</flux:button>
                                 @else
                                     <span class="flex-1 text-sm text-zinc-700">{{ $site->name }}</span>
+                                    @if ($site->user_id)
                                     <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button
                                             wire:click="startEditSite({{ $site->id }}, '{{ addslashes($site->name) }}')"
@@ -135,6 +136,18 @@
                                             <flux:icon icon="trash" class="size-3.5" />
                                         </button>
                                     </div>
+                                    @else
+                                    @php $siteHidden = in_array($site->id, $hiddenIds) @endphp
+                                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            wire:click="toggleSiteVisibility({{ $site->id }})"
+                                            class="inline-flex items-center justify-center w-7 h-7 rounded transition-colors {{ $siteHidden ? 'text-zinc-300 hover:text-zinc-500' : 'text-agro-500 hover:text-agro-700' }}"
+                                            title="{{ $siteHidden ? 'Activar en mis selects' : 'Ocultar de mis selects' }}"
+                                        >
+                                            <flux:icon icon="{{ $siteHidden ? 'eye-slash' : 'eye' }}" class="size-3.5" />
+                                        </button>
+                                    </div>
+                                    @endif
                                 @endif
                             </div>
                         @empty
@@ -243,6 +256,7 @@
                                             <span class="ml-2 text-xs font-mono bg-zinc-100 text-zinc-600 px-1.5 py-0.5 rounded">{{ $item->code }}</span>
                                         @endif
                                     </div>
+                                    @if ($item->user_id)
                                     <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button
                                             wire:click="startEdit({{ $item->id }}, '{{ addslashes($item->name) }}', '{{ addslashes($item->description ?? '') }}')"
@@ -260,6 +274,18 @@
                                             <flux:icon icon="trash" class="size-3.5" />
                                         </button>
                                     </div>
+                                    @else
+                                    @php $itemHidden = in_array($item->id, $hiddenIds) @endphp
+                                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            wire:click="toggleCatalogVisibility('{{ $tab }}', {{ $item->id }})"
+                                            class="inline-flex items-center justify-center w-7 h-7 rounded transition-colors {{ $itemHidden ? 'text-zinc-300 hover:text-zinc-500' : 'text-agro-500 hover:text-agro-700' }}"
+                                            title="{{ $itemHidden ? 'Activar en mis selects' : 'Ocultar de mis selects' }}"
+                                        >
+                                            <flux:icon icon="{{ $itemHidden ? 'eye-slash' : 'eye' }}" class="size-3.5" />
+                                        </button>
+                                    </div>
+                                    @endif
                                 @endif
                             </div>
                         @empty

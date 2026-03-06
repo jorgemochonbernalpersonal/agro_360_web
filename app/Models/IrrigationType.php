@@ -11,7 +11,7 @@ class IrrigationType extends Model
 
     protected $table = 'irrigation_types';
 
-    protected $fillable = ['name', 'description', 'active'];
+    protected $fillable = ['user_id', 'name', 'description', 'active'];
 
     protected $casts = ['active' => 'boolean'];
 

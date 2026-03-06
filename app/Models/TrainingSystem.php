@@ -13,7 +13,9 @@ class TrainingSystem extends Model
     protected $table = 'training_systems';
 
     protected $fillable = [
+        'user_id',
         'name',
+        'description',
         'active',
     ];
 

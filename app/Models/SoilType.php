@@ -9,7 +9,7 @@ class SoilType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'active'];
+    protected $fillable = ['user_id', 'name', 'description', 'active'];
 
     protected $casts = ['active' => 'boolean'];
 

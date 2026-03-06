@@ -18,8 +18,8 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label for="area">Area (hectareas)</flux:label>
-                    <flux:input wire:model="area" type="number" step="0.001" id="area" data-cy="plot-area" />
+                    <flux:label for="area">Área (hectáreas) *</flux:label>
+                    <flux:input wire:model="area" type="number" step="0.001" min="0.001" id="area" data-cy="plot-area" />
                     <flux:error name="area" />
                 </flux:field>
 
