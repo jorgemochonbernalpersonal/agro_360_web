@@ -54,7 +54,7 @@
                 <p class="text-sm text-zinc-500">Nombre</p>
                 <p class="font-semibold text-zinc-900">{{ $viticulturist->name }}</p>
             </div>
-            @if($viticulturist->email)
+            @if($viticulturist->email && !str_starts_with($viticulturist->email, 'viticultores.'))
                 <div>
                     <p class="text-sm text-zinc-500">Email</p>
                     <p class="font-semibold text-zinc-900">{{ $viticulturist->email }}</p>

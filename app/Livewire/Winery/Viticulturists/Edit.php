@@ -17,21 +17,22 @@ class Edit extends AbstractEdit
     public string $phone = '';
     public string $notes = '';
 
-    public function mount(int $viticulturist): void
+    public function mount(User $viticulturist): void
     {
         $wineryId = Auth::id();
 
         $relation = WineryViticulturist::where('winery_id', $wineryId)
-            ->where('viticulturist_id', $viticulturist)
+            ->where('viticulturist_id', $viticulturist->id)
             ->where('source', WineryViticulturist::SOURCE_OWN)
             ->firstOrFail();
 
-        $user = User::findOrFail($relation->viticulturist_id);
+        $user = $viticulturist;
 
         $this->viticulturistId = $user->id;
         $this->name            = $user->name;
         $this->dni             = $user->dni ?? '';
-        $this->email           = $user->email ?? '';
+        $rawEmail              = $user->email ?? '';
+        $this->email           = str_starts_with($rawEmail, 'viticultores.') ? '' : $rawEmail;
         $this->phone           = $user->profile?->phone ?? '';
     }
 
@@ -58,10 +59,19 @@ class Edit extends AbstractEdit
     {
         $user = User::findOrFail($this->viticulturistId);
 
+        $emailValue = $this->email ?: null;
+
+        // If clearing email, keep the existing placeholder (NOT NULL constraint)
+        if ($emailValue === null && str_starts_with($user->email ?? '', 'viticultores.')) {
+            $emailValue = $user->email;
+        } elseif ($emailValue === null) {
+            $emailValue = 'viticultores.' . \Illuminate\Support\Str::uuid() . '@noemail.agro365.es';
+        }
+
         $user->update([
             'name'  => $this->name,
             'dni'   => $this->dni  ?: null,
-            'email' => $this->email ?: null,
+            'email' => $emailValue,
         ]);
 
         if ($this->phone) {

@@ -13,19 +13,19 @@ class Show extends Component
 
     public WineryViticulturist $relation;
 
-    public function mount(int $viticulturist): void
+    public function mount(User $viticulturist): void
     {
         $wineryId = Auth::id();
 
         $this->relation = WineryViticulturist::where('winery_id', $wineryId)
-            ->where('viticulturist_id', $viticulturist)
+            ->where('viticulturist_id', $viticulturist->id)
             ->firstOrFail();
 
-        $this->viticulturist = User::with([
+        $this->viticulturist = $viticulturist->load([
             'plots.municipality',
             'plots.plantings.grapeVariety',
             'profile',
-        ])->findOrFail($viticulturist);
+        ]);
     }
 
     public function render()
