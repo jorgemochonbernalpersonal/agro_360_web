@@ -19,7 +19,6 @@ class Edit extends Component
     public $area_planted = '';
     public $harvest_limit_kg = '';
     public $planting_year = '';
-    public $planting_date = '';
     public $vine_count = '';
     public $density = '';
     public $row_spacing = '';
@@ -51,7 +50,6 @@ class Edit extends Component
         $this->area_planted = $this->planting->area_planted;
         $this->harvest_limit_kg = $this->planting->harvest_limit_kg;
         $this->planting_year = $this->planting->planting_year;
-        $this->planting_date = optional($this->planting->planting_date)->format('Y-m-d');
         $this->vine_count = $this->planting->vine_count;
         $this->density = $this->planting->density;
         $this->row_spacing = $this->planting->row_spacing;
@@ -78,7 +76,6 @@ class Edit extends Component
             'area_planted' => 'required|numeric|min:0.001',
             'harvest_limit_kg' => 'nullable|numeric|min:0',
             'planting_year' => 'nullable|integer|min:1900|max:' . now()->year,
-            'planting_date' => 'nullable|date',
             'vine_count' => 'nullable|integer|min:0',
             'density' => 'nullable|integer|min:0',
             'row_spacing' => 'nullable|numeric|min:0',
@@ -112,7 +109,6 @@ class Edit extends Component
             'area_planted' => $this->area_planted,
             'harvest_limit_kg' => $this->harvest_limit_kg ?: null,
             'planting_year' => $this->planting_year ?: null,
-            'planting_date' => $this->planting_date ?: null,
             'vine_count' => $this->vine_count ?: null,
             'density' => $this->density ?: null,
             'row_spacing' => $this->row_spacing ?: null,

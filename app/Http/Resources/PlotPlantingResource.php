@@ -21,7 +21,7 @@ class PlotPlantingResource extends JsonResource
             'plant_count' => $this->plant_count,
             'plant_spacing' => (float) $this->plant_spacing,
             'row_spacing' => (float) $this->row_spacing,
-            'planting_date' => $this->planting_date?->toDateString(),
+            'planting_year' => $this->planting_year,
             'grape_variety' => $this->whenLoaded('grapeVariety', fn() => [
                 'id' => $this->grapeVariety->id,
                 'name' => $this->grapeVariety->name,

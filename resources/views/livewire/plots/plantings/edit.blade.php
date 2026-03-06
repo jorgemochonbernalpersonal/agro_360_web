@@ -58,19 +58,12 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <!-- Ano plantacion -->
                 <flux:field>
                     <flux:label for="planting_year">Ano de plantacion</flux:label>
                     <flux:input wire:model="planting_year" type="number" id="planting_year" />
                     <flux:error name="planting_year" />
-                </flux:field>
-
-                <!-- Fecha exacta -->
-                <flux:field>
-                    <flux:label for="planting_date">Fecha de plantacion</flux:label>
-                    <flux:input wire:model="planting_date" type="date" id="planting_date" />
-                    <flux:error name="planting_date" />
                 </flux:field>
 
                 <!-- Riego -->

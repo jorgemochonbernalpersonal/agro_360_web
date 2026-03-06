@@ -40,7 +40,6 @@ class PlantingsDashboard extends Component
             'area_planted',
             'status',
             'planting_year', // ✅ FIX: Necesario para accessor 'age' y 'life_cycle_stage'
-            'planting_date',
             'planting_authorization',
         ])
         ->get();

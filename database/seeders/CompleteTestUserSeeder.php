@@ -161,7 +161,6 @@ class CompleteTestUserSeeder extends Seeder
                         [
                             'area_planted' => $plot->area * 0.8,  // 80% del área
                             'planting_year' => 2020,
-                            'planting_date' => '2020-03-15',
                             'vine_count' => rand(2000, 5000),
                             'density' => rand(3000, 4000),
                             'row_spacing' => rand(250, 300) / 100,  // 2.5 a 3 metros

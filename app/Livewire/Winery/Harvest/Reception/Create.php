@@ -76,7 +76,7 @@ class Create extends Component
 
         if (!$this->viticulturist_id) return;
 
-        $this->availablePlots = Plot::where('user_id', $this->viticulturist_id)
+        $this->availablePlots = Plot::where('viticulturist_id', $this->viticulturist_id)
             ->where('active', true)
             ->whereHas('plantings', fn($q) => $q->where('status', 'active'))
             ->orderBy('name')
@@ -269,7 +269,7 @@ class Create extends Component
         }
 
         // Guard: plot must belong to the viticulturist
-        $plot = Plot::where('user_id', $this->viticulturist_id)
+        $plot = Plot::where('viticulturist_id', $this->viticulturist_id)
             ->findOrFail($this->plot_id);
 
         // Guard: planting must belong to the plot
