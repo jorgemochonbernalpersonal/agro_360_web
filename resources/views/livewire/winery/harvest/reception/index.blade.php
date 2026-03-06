@@ -90,13 +90,24 @@
                             </span>
                         </div>
 
+                        {{-- Rendimiento real kg/ha --}}
+                        @if($reception->yield_per_hectare)
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Rendimiento</span>
+                                <span class="text-zinc-700">{{ number_format($reception->yield_per_hectare, 0) }} kg/ha</span>
+                            </div>
+                        @endif
+
                         {{-- Calidad --}}
-                        @if($reception->baume_degree || $reception->brix_degree)
+                        @if($reception->baume_degree || $reception->brix_degree || $reception->potential_alcohol)
                             <div class="flex items-center justify-between">
                                 <span class="text-zinc-400">Calidad</span>
                                 <span class="text-zinc-700">
+                                    @if($reception->potential_alcohol)
+                                        {{ $reception->potential_alcohol }}%
+                                    @endif
                                     @if($reception->baume_degree)
-                                        {{ $reception->baume_degree }} °Bé
+                                        <span class="{{ $reception->potential_alcohol ? 'text-zinc-400' : '' }}">{{ $reception->baume_degree }} °Bé</span>
                                     @endif
                                     @if($reception->brix_degree)
                                         <span class="text-zinc-400">/ {{ $reception->brix_degree }} °Bx</span>

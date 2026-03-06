@@ -47,6 +47,9 @@ class Harvest extends Model
         'sanitary_state_botrytis',
         'sanitary_state_oidium',
         'sanitary_state_mildew',
+        // Campos adicionales de calidad / trazabilidad
+        'potential_alcohol',
+        'harvest_time',
     ];
 
     protected $casts = [
@@ -67,6 +70,7 @@ class Harvest extends Model
         'price_per_kg' => 'decimal:4',
         'total_value' => 'decimal:3',
         'edited_at' => 'datetime',
+        'potential_alcohol' => 'decimal:2',
     ];
 
     /**

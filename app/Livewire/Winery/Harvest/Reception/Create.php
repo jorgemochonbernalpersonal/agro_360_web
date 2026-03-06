@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Harvest\Reception;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
+use App\Models\Container;
 use App\Models\Harvest;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
@@ -30,10 +31,11 @@ class Create extends Component
     public string $price_per_kg               = '';
 
     // Quality
-    public string $baume_degree    = '';
-    public string $brix_degree     = '';
-    public string $acidity_level   = '';
-    public string $ph_level        = '';
+    public string $baume_degree       = '';
+    public string $brix_degree        = '';
+    public string $acidity_level      = '';
+    public string $ph_level           = '';
+    public string $potential_alcohol  = '';
 
     // Sanitary state
     public string $health_status             = '';
@@ -47,6 +49,10 @@ class Create extends Component
     public string $transport_document_number = '';
     public string $destination_rega_code     = '';
     public string $vehicle_plate             = '';
+    public string $harvest_time              = '';
+
+    // Destino bodega
+    public string $container_id = '';
 
     public string $notes = '';
 
@@ -218,6 +224,7 @@ class Create extends Component
             'brix_degree'                => ['nullable', 'numeric', 'min:0', 'max:40'],
             'acidity_level'              => ['nullable', 'numeric', 'min:0', 'max:20'],
             'ph_level'                   => ['nullable', 'numeric', 'min:0', 'max:14'],
+            'potential_alcohol'          => ['nullable', 'numeric', 'min:0', 'max:25'],
             'health_status'              => ['nullable', 'in:sano,daño_leve,daño_moderado,daño_grave'],
             'sanitary_state_grapes'      => ['nullable', 'numeric', 'min:0', 'max:100'],
             'sanitary_state_agraces'     => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -227,6 +234,8 @@ class Create extends Component
             'transport_document_number'  => ['nullable', 'string', 'max:50'],
             'destination_rega_code'      => ['nullable', 'string', 'max:20'],
             'vehicle_plate'              => ['nullable', 'string', 'max:20'],
+            'harvest_time'               => ['nullable', 'date_format:H:i'],
+            'container_id'               => ['nullable', 'exists:containers,id'],
             'notes'                      => ['nullable', 'string'],
         ];
     }
@@ -292,16 +301,26 @@ class Create extends Component
                 $pricePerKg = $this->price_per_kg ? (float) $this->price_per_kg : null;
                 $totalValue = ($weight && $pricePerKg) ? round($weight * $pricePerKg, 3) : null;
 
+                $containerId = $this->container_id ?: null;
+
+                // Guard: container must belong to this winery
+                if ($containerId) {
+                    $container = Container::where('user_id', $wineryId)->find($containerId);
+                    $containerId = $container?->id;
+                }
+
                 Harvest::create([
                     'activity_id'                => $activity->id,
                     'plot_planting_id'           => $planting->id,
-                    'container_id'               => null,
+                    'container_id'               => $containerId,
                     'harvest_start_date'         => $this->harvest_start_date,
+                    'harvest_time'               => $this->harvest_time ?: null,
                     'total_weight'               => $weight,
                     'baume_degree'               => $this->baume_degree ?: null,
                     'brix_degree'                => $this->brix_degree ?: null,
                     'acidity_level'              => $this->acidity_level ?: null,
                     'ph_level'                   => $this->ph_level ?: null,
+                    'potential_alcohol'          => $this->potential_alcohol ?: null,
                     'health_status'              => $this->health_status ?: null,
                     'harvest_ticket_number'      => $this->harvest_ticket_number ?: null,
                     'sanitary_state_grapes'      => $this->sanitary_state_grapes ?: null,
@@ -343,8 +362,14 @@ class Create extends Component
             ->sortBy('name')
             ->values();
 
+        $availableContainers = Container::where('user_id', $wineryId)
+            ->where('archived', false)
+            ->orderBy('name')
+            ->get(['id', 'name', 'capacity', 'used_capacity']);
+
         return view('livewire.winery.harvest.reception.create', [
             'linkedViticulturists' => $linkedViticulturists,
+            'availableContainers'  => $availableContainers,
         ])->layout('layouts.app');
     }
 }

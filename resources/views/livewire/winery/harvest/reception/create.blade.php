@@ -124,6 +124,12 @@
                     </flux:field>
 
                     <flux:field>
+                        <flux:label>Hora de descarga</flux:label>
+                        <flux:input wire:model="harvest_time" type="time" />
+                        <flux:error name="harvest_time" />
+                    </flux:field>
+
+                    <flux:field>
                         <flux:label>Nº de ticket / albarán</flux:label>
                         <flux:input wire:model="harvest_ticket_number" placeholder="Ej: VND-2026-001" />
                         <flux:error name="harvest_ticket_number" />
@@ -156,19 +162,38 @@
                     </flux:field>
                 </div>
 
-                <flux:field>
-                    <flux:label>Código REGA destino</flux:label>
-                    <flux:input wire:model="destination_rega_code" placeholder="Ej: ES010000001234" class="max-w-xs" />
-                    <flux:description>Código REGA de tu bodega como destino de la uva.</flux:description>
-                    <flux:error name="destination_rega_code" />
-                </flux:field>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <flux:field>
+                        <flux:label>Código REGA destino</flux:label>
+                        <flux:input wire:model="destination_rega_code" placeholder="Ej: ES010000001234" />
+                        <flux:description>Código REGA de tu bodega como destino de la uva.</flux:description>
+                        <flux:error name="destination_rega_code" />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Depósito destino</flux:label>
+                        <flux:select wire:model="container_id">
+                            <flux:select.option value="">Sin asignar (asignar después)</flux:select.option>
+                            @foreach($availableContainers as $container)
+                                @php
+                                    $available = max(0, $container->capacity - $container->used_capacity);
+                                @endphp
+                                <flux:select.option value="{{ $container->id }}">
+                                    {{ $container->name }} ({{ number_format($available, 0) }} kg disp.)
+                                </flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:description>Opcional. También puedes asignarlo después desde el listado.</flux:description>
+                        <flux:error name="container_id" />
+                    </flux:field>
+                </div>
             </div>
         </x-agro.form-section>
 
         {{-- Sección 3: Calidad --}}
         <x-agro.form-section title="Parámetros de Calidad" description="Opcional">
             <div class="space-y-5">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-5">
                     <flux:field>
                         <flux:label>Grado Baumé (°Bé)</flux:label>
                         <flux:input wire:model="baume_degree" type="number" step="0.1" min="0" max="20" placeholder="—" />
@@ -179,6 +204,12 @@
                         <flux:label>Brix (°Bx)</flux:label>
                         <flux:input wire:model="brix_degree" type="number" step="0.1" min="0" max="40" placeholder="—" />
                         <flux:error name="brix_degree" />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Alcohol potencial (%)</flux:label>
+                        <flux:input wire:model="potential_alcohol" type="number" step="0.1" min="0" max="25" placeholder="—" />
+                        <flux:error name="potential_alcohol" />
                     </flux:field>
 
                     <flux:field>
