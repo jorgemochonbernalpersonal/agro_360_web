@@ -2,17 +2,13 @@
 
 namespace App\Livewire\Winery\Cellar\Containers;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractIndex;
 use App\Models\Container;
 use App\Models\ContainerType;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications;
-
     public string $search       = '';
     public string $typeFilter   = '';
     public string $statusFilter = 'active';
@@ -27,31 +23,28 @@ class Index extends Component
     public function updatingTypeFilter(): void   { $this->resetPage(); }
     public function updatingStatusFilter(): void { $this->resetPage(); }
 
-    public function clearFilters(): void
+    protected function filterDefaults(): array
     {
-        $this->search       = '';
-        $this->typeFilter   = '';
-        $this->statusFilter = 'active';
-        $this->resetPage();
+        return ['search' => '', 'typeFilter' => '', 'statusFilter' => 'active'];
     }
 
     public function archive(int $containerId): void
     {
-        $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
+        $container = Container::where('user_id', $this->wineryId())->findOrFail($containerId);
         $container->update(['archived' => true]);
         $this->toastSuccess("Contenedor «{$container->name}» archivado.");
     }
 
     public function unarchive(int $containerId): void
     {
-        $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
+        $container = Container::where('user_id', $this->wineryId())->findOrFail($containerId);
         $container->update(['archived' => false]);
         $this->toastSuccess("Contenedor «{$container->name}» reactivado.");
     }
 
     public function delete(int $containerId): void
     {
-        $container = Container::where('user_id', Auth::id())
+        $container = Container::where('user_id', $this->wineryId())
             ->withCount('harvests')
             ->findOrFail($containerId);
 
@@ -64,14 +57,13 @@ class Index extends Component
         $this->toastSuccess('Contenedor eliminado.');
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $wineryId = Auth::id();
+        return Container::where('user_id', $this->wineryId())->withCount('harvests');
+    }
 
-        $query = Container::where('user_id', $wineryId)
-            ->withCount('harvests')
-            ->orderBy('name');
-
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
             $query->where(function ($q) use ($term) {
@@ -89,12 +81,24 @@ class Index extends Component
             'archived' => $query->where('archived', true),
             default    => null,
         };
+    }
 
-        $containers = $query->paginate(15);
-        $types      = ContainerType::orderBy('name')->get();
-        $typesById  = $types->keyBy('id');
+    protected function applyOrderBy(Builder $query): void
+    {
+        $query->orderBy('name');
+    }
 
-        $statsBase = Container::where('user_id', $wineryId)->where('archived', false);
+    protected function defaultOrderBy(): array { return ['name', 'asc']; }
+
+    protected function perPage(): int { return 15; }
+
+    protected function viewData(mixed $entries): array
+    {
+        $wineryId  = $this->wineryId();
+        $types     = ContainerType::orderBy('name')->get();
+        $typesById = $types->keyBy('id');
+
+        $statsBase     = Container::where('user_id', $wineryId)->where('archived', false);
         $totalCapacity = (float) $statsBase->sum('capacity');
         $totalUsed     = (float) $statsBase->sum('used_capacity');
 
@@ -106,11 +110,11 @@ class Index extends Component
             'fill_percent'    => $totalCapacity > 0 ? round($totalUsed / $totalCapacity * 100, 1) : 0,
         ];
 
-        return view('livewire.winery.cellar.containers.index', [
-            'containers' => $containers,
+        return [
+            'containers' => $entries,
             'types'      => $types,
             'typesById'  => $typesById,
             'stats'      => $stats,
-        ])->layout('layouts.app');
+        ];
     }
 }

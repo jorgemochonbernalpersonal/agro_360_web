@@ -2,16 +2,13 @@
 
 namespace App\Livewire\Winery\Clients;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractIndex;
 use App\Models\Client;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications;
-
     public string $search       = '';
     public string $typeFilter   = '';
     public string $statusFilter = 'active';
@@ -26,12 +23,9 @@ class Index extends Component
     public function updatingTypeFilter(): void   { $this->resetPage(); }
     public function updatingStatusFilter(): void { $this->resetPage(); }
 
-    public function clearFilters(): void
+    protected function filterDefaults(): array
     {
-        $this->search       = '';
-        $this->typeFilter   = '';
-        $this->statusFilter = 'active';
-        $this->resetPage();
+        return ['search' => '', 'typeFilter' => '', 'statusFilter' => 'active'];
     }
 
     public function toggleActive(int $clientId): void
@@ -57,10 +51,13 @@ class Index extends Component
         $this->toastSuccess('Cliente eliminado.');
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $query = Client::where('user_id', Auth::id())->orderBy('first_name')->orderBy('company_name');
+        return Client::where('user_id', $this->wineryId());
+    }
 
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
             $query->where(function ($q) use ($term) {
@@ -80,11 +77,19 @@ class Index extends Component
             'inactive' => $query->where('active', false),
             default    => null,
         };
+    }
 
-        $clients = $query->paginate(15);
+    protected function applyOrderBy(Builder $query): void
+    {
+        $query->orderBy('first_name')->orderBy('company_name');
+    }
 
-        return view('livewire.winery.clients.index', [
-            'clients' => $clients,
-        ])->layout('layouts.app');
+    protected function defaultOrderBy(): array { return ['first_name', 'asc']; }
+
+    protected function perPage(): int { return 15; }
+
+    protected function viewData(mixed $entries): array
+    {
+        return ['clients' => $entries];
     }
 }

@@ -2,19 +2,15 @@
 
 namespace App\Livewire\Winery\Cellar\WineLots;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractIndex;
 use App\Models\WineLot;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications;
-
-    public string $search        = '';
-    public string $typeFilter    = '';
-    public string $statusFilter  = 'active';
+    public string $search       = '';
+    public string $typeFilter   = '';
+    public string $statusFilter = 'active';
 
     protected $queryString = [
         'search'       => ['except' => ''],
@@ -26,31 +22,28 @@ class Index extends Component
     public function updatingTypeFilter(): void   { $this->resetPage(); }
     public function updatingStatusFilter(): void { $this->resetPage(); }
 
-    public function clearFilters(): void
+    protected function filterDefaults(): array
     {
-        $this->search       = '';
-        $this->typeFilter   = '';
-        $this->statusFilter = 'active';
-        $this->resetPage();
+        return ['search' => '', 'typeFilter' => '', 'statusFilter' => 'active'];
     }
 
     public function archive(int $id): void
     {
-        $lot = WineLot::where('user_id', Auth::id())->findOrFail($id);
+        $lot = WineLot::where('user_id', $this->wineryId())->findOrFail($id);
         $lot->update(['archived' => true]);
         $this->toastSuccess("Lote «{$lot->name}» archivado.");
     }
 
     public function unarchive(int $id): void
     {
-        $lot = WineLot::where('user_id', Auth::id())->findOrFail($id);
+        $lot = WineLot::where('user_id', $this->wineryId())->findOrFail($id);
         $lot->update(['archived' => false]);
         $this->toastSuccess("Lote «{$lot->name}» reactivado.");
     }
 
     public function delete(int $id): void
     {
-        $lot = WineLot::where('user_id', Auth::id())
+        $lot = WineLot::where('user_id', $this->wineryId())
             ->withCount('invoiceItems')
             ->findOrFail($id);
 
@@ -63,12 +56,13 @@ class Index extends Component
         $this->toastSuccess('Lote de vino eliminado.');
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $wineryId = Auth::id();
+        return WineLot::where('user_id', $this->wineryId());
+    }
 
-        $query = WineLot::where('user_id', $wineryId)->orderByDesc('vintage')->orderBy('name');
-
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
             $query->whereRaw('LOWER(name) LIKE ?', [$term]);
@@ -83,10 +77,20 @@ class Index extends Component
             'archived' => $query->where('archived', true),
             default    => null,
         };
+    }
 
-        $lots = $query->paginate(15);
+    protected function applyOrderBy(Builder $query): void
+    {
+        $query->orderByDesc('vintage')->orderBy('name');
+    }
 
-        $statsBase = WineLot::where('user_id', $wineryId)->where('archived', false);
+    protected function defaultOrderBy(): array { return ['vintage', 'desc']; }
+
+    protected function perPage(): int { return 15; }
+
+    protected function viewData(mixed $entries): array
+    {
+        $statsBase = WineLot::where('user_id', $this->wineryId())->where('archived', false);
 
         $stats = [
             'total'           => (clone $statsBase)->count(),
@@ -96,9 +100,9 @@ class Index extends Component
             'total_sold'      => (float) (clone $statsBase)->sum('sold_quantity'),
         ];
 
-        return view('livewire.winery.cellar.wine-lots.index', [
-            'lots'  => $lots,
+        return [
+            'lots'  => $entries,
             'stats' => $stats,
-        ])->layout('layouts.app');
+        ];
     }
 }

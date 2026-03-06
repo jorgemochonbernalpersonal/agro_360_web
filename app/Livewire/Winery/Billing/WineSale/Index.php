@@ -3,20 +3,19 @@
 namespace App\Livewire\Winery\Billing\WineSale;
 
 use App\Livewire\Concerns\WithInvoiceActions;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractIndex;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
 use App\Services\WineStockService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Livewire\Component;
-use Livewire\WithPagination;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications, WithInvoiceActions;
+    use WithInvoiceActions;
 
     public string $search          = '';
     public string $statusFilter    = '';
@@ -41,20 +40,13 @@ class Index extends Component
     public function updatingPaymentFilter(): void  { $this->resetPage(); }
     public function updatingDeliveryFilter(): void { $this->resetPage(); }
 
-    public function clearFilters(): void
+    protected function filterDefaults(): array
     {
-        $this->search         = '';
-        $this->statusFilter   = '';
-        $this->paymentFilter  = '';
-        $this->deliveryFilter = '';
-        $this->resetPage();
+        return ['search' => '', 'statusFilter' => '', 'paymentFilter' => '', 'deliveryFilter' => ''];
     }
 
     // ── Actions ───────────────────────────────────────────────────────────────
 
-    /**
-     * Mark an invoice as delivered: reserved → sold (vinai2 "sell" action).
-     */
     public function markDelivered(int $invoiceId): void
     {
         $invoice = $this->findInvoice($invoiceId, ['items.wineLot']);
@@ -72,9 +64,7 @@ class Index extends Component
 
         try {
             DB::transaction(function () use ($invoice) {
-                // Move stock: reserved → sold
                 WineStockService::moveForInvoice($invoice, 'deliver');
-
                 $invoice->update(['delivery_status' => 'delivered']);
             });
 
@@ -89,10 +79,6 @@ class Index extends Component
         }
     }
 
-    /**
-     * Cancel an invoice: (reserved | sold) → available, status = cancelled.
-     * Source bucket is determined from current delivery_status (called BEFORE updating it).
-     */
     public function cancel(int $invoiceId): void
     {
         $invoice = $this->findInvoice($invoiceId, ['items.wineLot']);
@@ -110,9 +96,7 @@ class Index extends Component
 
         try {
             DB::transaction(function () use ($invoice) {
-                // Restore stock BEFORE changing delivery_status (service reads it to decide bucket)
                 WineStockService::moveForInvoice($invoice, 'cancel');
-
                 $invoice->update([
                     'status'          => 'cancelled',
                     'delivery_status' => 'cancelled',
@@ -262,7 +246,6 @@ class Index extends Component
                     }
                 });
 
-                // Restore wine stock (reads delivery_status to pick reserved vs sold bucket)
                 WineStockService::moveForInvoice($original, 'cancel');
             });
 
@@ -278,17 +261,18 @@ class Index extends Component
         }
     }
 
-    // ── Render ────────────────────────────────────────────────────────────────
+    // ── Query ─────────────────────────────────────────────────────────────────
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $query = Invoice::where('user_id', Auth::id())
+        return Invoice::where('user_id', $this->wineryId())
             ->where('invoice_type', 'wine_sale')
             ->with('client')
-            ->withCount('correctives')
-            ->orderByDesc('invoice_date')
-            ->orderByDesc('id');
+            ->withCount('correctives');
+    }
 
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
             $query->where(function ($q) use ($term) {
@@ -312,10 +296,20 @@ class Index extends Component
         if ($this->deliveryFilter) {
             $query->where('delivery_status', $this->deliveryFilter);
         }
+    }
 
-        $invoices = $query->paginate(15);
+    protected function applyOrderBy(Builder $query): void
+    {
+        $query->orderByDesc('invoice_date')->orderByDesc('id');
+    }
 
-        $statsBase = Invoice::where('user_id', Auth::id())->where('invoice_type', 'wine_sale');
+    protected function defaultOrderBy(): array { return ['invoice_date', 'desc']; }
+
+    protected function perPage(): int { return 15; }
+
+    protected function viewData(mixed $entries): array
+    {
+        $statsBase = Invoice::where('user_id', $this->wineryId())->where('invoice_type', 'wine_sale');
         $stats = [
             'total'     => (clone $statsBase)->count(),
             'pending'   => (clone $statsBase)->where('payment_status', 'unpaid')->count(),
@@ -324,17 +318,17 @@ class Index extends Component
             'amount'    => (float) (clone $statsBase)->sum('total_amount'),
         ];
 
-        return view('livewire.winery.billing.wine-sale.index', [
-            'invoices' => $invoices,
+        return [
+            'invoices' => $entries,
             'stats'    => $stats,
-        ])->layout('layouts.app');
+        ];
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private function findInvoice(int $id, array $with = []): ?Invoice
     {
-        return Invoice::where('user_id', Auth::id())
+        return Invoice::where('user_id', $this->wineryId())
             ->where('invoice_type', 'wine_sale')
             ->with($with)
             ->find($id);

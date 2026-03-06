@@ -3,16 +3,15 @@
 namespace App\Livewire\Winery\Billing\GrapePurchase;
 
 use App\Livewire\Concerns\WithInvoiceActions;
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractIndex;
 use App\Models\Invoice;
+use App\Models\User;
 use App\Models\WineryViticulturist;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications, WithInvoiceActions;
+    use WithInvoiceActions;
 
     public string $search              = '';
     public string $viticulturistFilter = '';
@@ -28,21 +27,13 @@ class Index extends Component
     public function updatingViticulturistFilter(): void { $this->resetPage(); }
     public function updatingPaymentFilter(): void       { $this->resetPage(); }
 
-    public function clearFilters(): void
+    protected function filterDefaults(): array
     {
-        $this->search              = '';
-        $this->viticulturistFilter = '';
-        $this->paymentFilter       = '';
-        $this->resetPage();
+        return ['search' => '', 'viticulturistFilter' => '', 'paymentFilter' => ''];
     }
 
     // ── Actions ───────────────────────────────────────────────────────────────
 
-    /**
-     * Cancel a grape purchase invoice.
-     * No stock movement needed — just marks invoice as cancelled
-     * so harvests become available for re-invoicing.
-     */
     public function cancel(int $invoiceId): void
     {
         $invoice = $this->findInvoice($invoiceId);
@@ -77,26 +68,25 @@ class Index extends Component
         return "Liquidación enviada a {$email}.";
     }
 
-    // ── Render ────────────────────────────────────────────────────────────────
+    // ── Query ─────────────────────────────────────────────────────────────────
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $wineryId = Auth::id();
-
-        $query = Invoice::where('user_id', $wineryId)
+        return Invoice::where('user_id', $this->wineryId())
             ->where('invoice_type', 'grape_purchase')
-            ->with('viticulturist')
-            ->orderByDesc('invoice_date')
-            ->orderByDesc('id');
+            ->with('viticulturist');
+    }
 
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
             $query->where(function ($q) use ($term) {
                 $q->whereRaw('LOWER(IFNULL(invoice_number,\'\')) LIKE ?', [$term])
                   ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term])
-                  ->orWhereHas('viticulturist', function ($q2) use ($term) {
-                      $q2->whereRaw('LOWER(name) LIKE ?', [$term]);
-                  });
+                  ->orWhereHas('viticulturist', fn($q2) =>
+                      $q2->whereRaw('LOWER(name) LIKE ?', [$term])
+                  );
             });
         }
 
@@ -107,14 +97,26 @@ class Index extends Component
         if ($this->paymentFilter) {
             $query->where('payment_status', $this->paymentFilter);
         }
+    }
 
-        $invoices = $query->paginate(15);
+    protected function applyOrderBy(Builder $query): void
+    {
+        $query->orderByDesc('invoice_date')->orderByDesc('id');
+    }
+
+    protected function defaultOrderBy(): array { return ['invoice_date', 'desc']; }
+
+    protected function perPage(): int { return 15; }
+
+    protected function viewData(mixed $entries): array
+    {
+        $wineryId = $this->wineryId();
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
             ->where('source', 'own')
             ->pluck('viticulturist_id');
 
-        $viticulturists = \App\Models\User::whereIn('id', $viticulturistIds)
+        $viticulturists = User::whereIn('id', $viticulturistIds)
             ->orderBy('name')->get(['id', 'name']);
 
         $statsBase = Invoice::where('user_id', $wineryId)->where('invoice_type', 'grape_purchase');
@@ -125,19 +127,20 @@ class Index extends Component
             'amount'  => (float) (clone $statsBase)->sum('total_amount'),
         ];
 
-        return view('livewire.winery.billing.grape-purchase.index', [
-            'invoices'       => $invoices,
+        return [
+            'invoices'       => $entries,
             'viticulturists' => $viticulturists,
             'stats'          => $stats,
-        ])->layout('layouts.app');
+        ];
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private function findInvoice(int $id): ?Invoice
+    private function findInvoice(int $id, array $with = []): ?Invoice
     {
-        return Invoice::where('user_id', Auth::id())
+        return Invoice::where('user_id', $this->wineryId())
             ->where('invoice_type', 'grape_purchase')
+            ->with($with)
             ->find($id);
     }
 }

@@ -2,17 +2,13 @@
 
 namespace App\Livewire\Winery\Harvest\Campaigns;
 
-use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Winery\AbstractIndex;
 use App\Models\Campaign;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
-use Livewire\WithPagination;
+use Illuminate\Database\Eloquent\Builder;
 
-class Index extends Component
+class Index extends AbstractIndex
 {
-    use WithPagination, WithToastNotifications;
-
-    public string $search = '';
+    public string $search     = '';
     public string $yearFilter = '';
 
     protected $queryString = [
@@ -20,26 +16,17 @@ class Index extends Component
         'yearFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
-    }
+    public function updatingSearch(): void    { $this->resetPage(); }
+    public function updatingYearFilter(): void { $this->resetPage(); }
 
-    public function updatingYearFilter(): void
+    protected function filterDefaults(): array
     {
-        $this->resetPage();
-    }
-
-    public function clearFilters(): void
-    {
-        $this->search     = '';
-        $this->yearFilter = '';
-        $this->resetPage();
+        return ['search' => '', 'yearFilter' => ''];
     }
 
     public function toggleActive(int $campaignId): void
     {
-        $campaign = Campaign::forViticulturist(Auth::id())->findOrFail($campaignId);
+        $campaign = Campaign::forViticulturist($this->wineryId())->findOrFail($campaignId);
 
         if ($campaign->active) {
             $campaign->update(['active' => false]);
@@ -53,7 +40,7 @@ class Index extends Component
     public function delete(int $campaignId): void
     {
         $campaign = Campaign::withCount('activities')
-            ->forViticulturist(Auth::id())
+            ->forViticulturist($this->wineryId())
             ->findOrFail($campaignId);
 
         if ($campaign->activities_count > 0) {
@@ -65,12 +52,13 @@ class Index extends Component
         $this->toastSuccess('Campaña eliminada correctamente.');
     }
 
-    public function render()
+    protected function baseQuery(): Builder
     {
-        $query = Campaign::forViticulturist(Auth::id())
-            ->withCount('activities')
-            ->orderBy('year', 'desc');
+        return Campaign::forViticulturist($this->wineryId())->withCount('activities');
+    }
 
+    protected function applyFilters(Builder $query): void
+    {
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
             $query->where(function ($q) use ($term) {
@@ -82,24 +70,36 @@ class Index extends Component
         if ($this->yearFilter) {
             $query->forYear((int) $this->yearFilter);
         }
+    }
 
-        $campaigns = $query->paginate(15);
+    protected function applyOrderBy(Builder $query): void
+    {
+        $query->orderBy('year', 'desc');
+    }
 
-        $years = Campaign::forViticulturist(Auth::id())
+    protected function defaultOrderBy(): array { return ['year', 'desc']; }
+
+    protected function perPage(): int { return 15; }
+
+    protected function viewData(mixed $entries): array
+    {
+        $wineryId = $this->wineryId();
+
+        $years = Campaign::forViticulturist($wineryId)
             ->select('year')
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year');
 
         $stats = [
-            'active' => Campaign::forViticulturist(Auth::id())->active()->count(),
-            'total'  => Campaign::forViticulturist(Auth::id())->count(),
+            'active' => Campaign::forViticulturist($wineryId)->active()->count(),
+            'total'  => Campaign::forViticulturist($wineryId)->count(),
         ];
 
-        return view('livewire.winery.harvest.campaigns.index', [
-            'campaigns' => $campaigns,
+        return [
+            'campaigns' => $entries,
             'years'     => $years,
             'stats'     => $stats,
-        ])->layout('layouts.app');
+        ];
     }
 }
