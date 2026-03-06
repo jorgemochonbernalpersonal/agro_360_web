@@ -372,7 +372,7 @@
             <livewire:viticulturist.remote-sensing.plot-weather-card :plot="$plot" />
 
             <!-- Coordenadas Multiparte -->
-            @if($plot->multipartCoordinates->count() > 0)
+            @if($plot->multiplePlotSigpacs->count() > 0)
                 <x-agro.card>
                     <x-slot:header>
                         <div class="flex items-center gap-2">
@@ -384,7 +384,7 @@
                     </x-slot:header>
 
                     <div class="space-y-4">
-                        @foreach($plot->multipartCoordinates as $coord)
+                        @foreach($plot->multiplePlotSigpacs as $coord)
                             <div class="p-4 border border-zinc-200 rounded-lg">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="text-sm font-semibold text-zinc-700">Coordenadas #{{ $loop->iteration }}</span>
@@ -394,7 +394,7 @@
                                         </flux:badge>
                                     @endif
                                 </div>
-                                <p class="text-zinc-900 font-mono text-sm whitespace-pre-wrap">{{ $coord->coordinates }}</p>
+                                <p class="text-zinc-900 font-mono text-sm whitespace-pre-wrap">{{ $coord->plotGeometry?->getWktCoordinates() ?? '—' }}</p>
                             </div>
                         @endforeach
                     </div>

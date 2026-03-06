@@ -223,6 +223,7 @@
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
                                 @endcan
+                                @if(auth()->user()->role === 'viticulturist')
                                 <a href="{{ route('viticulturist.phenology.index', ['filter_planting_id' => $planting->id]) }}"
                                    class="{{ $btnBase }}"
                                    title="Ver fenología">
@@ -233,6 +234,7 @@
                                    title="Registrar estadio fenológico">
                                     <flux:icon icon="plus-circle" class="size-4" />
                                 </a>
+                                @endif
                             </div>
 
                             {{-- Right: toggle activo --}}
