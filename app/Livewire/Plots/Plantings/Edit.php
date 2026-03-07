@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\PlotPlanting;
 use App\Models\TrainingSystem;
+use App\Models\ViticulturistSetting;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -70,6 +71,14 @@ class Edit extends Component
 
     public function updatedAreaPlanted(): void
     {
+        if (!$this->area_planted) {
+            return;
+        }
+
+        $settings = ViticulturistSetting::forUser(Auth::id());
+        if ($settings?->default_limit_kg_per_ha) {
+            $this->harvest_limit_kg = round((float) $settings->default_limit_kg_per_ha * (float) $this->area_planted, 3);
+        }
     }
 
     protected function rules(): array

@@ -53,16 +53,16 @@
             @endif
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <!-- Ano plantacion -->
+                <!-- Año de plantación -->
                 <flux:field>
-                    <flux:label for="planting_year">Ano de plantacion</flux:label>
+                    <flux:label for="planting_year">Año de plantación</flux:label>
                     <flux:input wire:model="planting_year" type="number" id="planting_year" />
                     <flux:error name="planting_year" />
                 </flux:field>
 
                 <!-- Riego -->
                 <div class="flex items-center mt-6 md:mt-0">
-                    <flux:checkbox wire:model.live="irrigated" id="irrigated" label="Con riego" />
+                    <flux:checkbox wire:model="irrigated" id="irrigated" label="Con riego" />
                     @error('irrigated')
                         <flux:error name="irrigated" />
                     @enderror
