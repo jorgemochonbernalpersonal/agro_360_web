@@ -8,9 +8,26 @@
                 </flux:callout>
             @enderror
 
-            <!-- 1. Informacion Basica -->
-            <x-agro.form-section title="Informacion Basica">
+            <!-- 1. Datos Principales -->
+            <x-agro.form-section title="Datos Principales">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']))
+                        <div class="md:col-span-2">
+                            <flux:field>
+                                <flux:label for="viticulturist_id">Viticultor Asignado *</flux:label>
+                                <flux:select wire:model="viticulturist_id" id="viticulturist_id" data-cy="plot-viticulturist-id" required>
+                                    <option value="">Seleccionar...</option>
+                                    @forelse ($this->viticulturists as $viticulturist)
+                                        <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) (Yo)@endif</option>
+                                    @empty
+                                        <option value="" disabled>No hay viticultores disponibles</option>
+                                    @endforelse
+                                </flux:select>
+                                <flux:error name="viticulturist_id" />
+                            </flux:field>
+                        </div>
+                    @endif
+
                     <flux:field>
                         <flux:label for="name">Nombre de la Parcela *</flux:label>
                         <flux:input wire:model="name" type="text" id="name" data-cy="plot-name" placeholder="Ej: Parcela Norte" required />
@@ -33,23 +50,23 @@
                         </flux:select>
                         <flux:error name="property_type_id" />
                     </flux:field>
-                </div>
 
-                <div class="mt-6">
-                    <flux:field>
-                        <flux:label for="description">Descripcion</flux:label>
-                        <flux:textarea wire:model="description" id="description" data-cy="plot-description" rows="3"
-                            placeholder="Descripcion de la parcela..." />
-                        <flux:error name="description" />
-                    </flux:field>
+                    <div class="md:col-span-2">
+                        <flux:field>
+                            <flux:label for="description">Descripción</flux:label>
+                            <flux:textarea wire:model="description" id="description" data-cy="plot-description" rows="3"
+                                placeholder="Descripción de la parcela..." />
+                            <flux:error name="description" />
+                        </flux:field>
+                    </div>
                 </div>
             </x-agro.form-section>
 
             <!-- 2. Ubicacion -->
-            <x-agro.form-section title="Ubicacion">
+            <x-agro.form-section title="Ubicación">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <flux:field>
-                        <flux:label for="autonomous_community_id">Comunidad Autonoma *</flux:label>
+                        <flux:label for="autonomous_community_id">Comunidad Autónoma *</flux:label>
                         <flux:select wire:model.live="autonomous_community_id" id="autonomous_community_id" data-cy="plot-autonomous-community-id" required>
                             <option value="">Seleccionar...</option>
                             @foreach ($autonomousCommunities as $community)
@@ -86,12 +103,7 @@
                             <flux:error name="municipality_id" />
                         </flux:field>
                     </div>
-                </div>
-            </x-agro.form-section>
 
-            <!-- 3. Identificacion Catastral -->
-            <x-agro.form-section title="Identificacion Catastral">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
                         <flux:label for="site_id">Paraje</flux:label>
                         <flux:select wire:model="site_id" id="site_id">
@@ -102,8 +114,9 @@
                         </flux:select>
                         <flux:error name="site_id" />
                     </flux:field>
+
                     <flux:field>
-                        <flux:label for="valley_id">Valle / Zona (catálogo)</flux:label>
+                        <flux:label for="valley_id">Valle / Zona</flux:label>
                         <flux:select wire:model="valley_id" id="valley_id">
                             <option value="">Sin especificar</option>
                             @foreach ($valleys as $v)
@@ -112,8 +125,14 @@
                         </flux:select>
                         <flux:error name="valley_id" />
                     </flux:field>
+                </div>
+            </x-agro.form-section>
+
+            <!-- 3. Identificacion Catastral -->
+            <x-agro.form-section title="Identificación Catastral">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="code_parcel">Codigo de Parcela Catastral</flux:label>
+                        <flux:label for="code_parcel">Código de Parcela Catastral</flux:label>
                         <flux:input wire:model="code_parcel" type="text" id="code_parcel" placeholder="Ej: 14-023-A-001-0001" />
                         <flux:error name="code_parcel" />
                     </flux:field>
@@ -122,7 +141,18 @@
                         <flux:input wire:model="enclosure" type="text" id="enclosure" placeholder="Ref. recinto" />
                         <flux:error name="enclosure" />
                     </flux:field>
+                    <flux:field>
+                        <flux:label for="cadastral_area">Superficie Catastral (ha)</flux:label>
+                        <flux:input wire:model="cadastral_area" type="number" step="0.001" min="0" id="cadastral_area" placeholder="0.000" />
+                        <flux:description>Superficie según el catastro (puede diferir del área agrícola)</flux:description>
+                        <flux:error name="cadastral_area" />
+                    </flux:field>
+                </div>
+            </x-agro.form-section>
 
+            <!-- 4. Caracteristicas de la Parcela -->
+            <x-agro.form-section title="Características de la Parcela">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
                         <flux:label for="soil_type_id">Tipo de Suelo</flux:label>
                         <flux:select wire:model="soil_type_id" id="soil_type_id">
@@ -171,9 +201,19 @@
                 </div>
             </x-agro.form-section>
 
-            <!-- 3b. Plantacion -->
-            <x-agro.form-section title="Plantacion">
+            <!-- 5. Plantacion y Cultivo -->
+            <x-agro.form-section title="Plantación y Cultivo">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <flux:field>
+                        <flux:label for="plantation_year">Año de Plantación</flux:label>
+                        <flux:input wire:model="plantation_year" type="number" min="1800" max="{{ date('Y') }}" id="plantation_year" placeholder="Ej: 1985" />
+                        <flux:error name="plantation_year" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label for="number_of_vines">Número de Cepas</flux:label>
+                        <flux:input wire:model="number_of_vines" type="number" min="0" id="number_of_vines" placeholder="Ej: 2500" />
+                        <flux:error name="number_of_vines" />
+                    </flux:field>
                     <flux:field>
                         <flux:label for="training_system_id">Sistema de Conducción</flux:label>
                         <flux:select wire:model="training_system_id" id="training_system_id">
@@ -189,68 +229,23 @@
                         <flux:input wire:model="planting_pattern" type="text" id="planting_pattern" placeholder="Ej: 2.5x1.2 tresbolillo" />
                         <flux:error name="planting_pattern" />
                     </flux:field>
-                    <flux:field>
-                        <flux:label for="number_of_vines">Número de Cepas</flux:label>
-                        <flux:input wire:model="number_of_vines" type="number" min="0" id="number_of_vines" placeholder="Ej: 2500" />
-                        <flux:error name="number_of_vines" />
-                    </flux:field>
-                </div>
-            </x-agro.form-section>
-
-            <!-- 4. Vendimia y Catastro -->
-            <x-agro.form-section title="Vendimia y Catastro">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <flux:field>
-                        <flux:label for="cadastral_area">Superficie Catastral (ha)</flux:label>
-                        <flux:input wire:model="cadastral_area" type="number" step="0.001" min="0" id="cadastral_area" placeholder="0.000" />
-                        <flux:description>Superficie según el catastro (puede diferir del área agrícola)</flux:description>
-                        <flux:error name="cadastral_area" />
-                    </flux:field>
-                    <flux:field>
-                        <flux:label for="plantation_year">Año de Plantación</flux:label>
-                        <flux:input wire:model="plantation_year" type="number" min="1800" max="{{ date('Y') }}" id="plantation_year" placeholder="Ej: 1985" />
-                        <flux:error name="plantation_year" />
-                    </flux:field>
-                    <div class="flex items-center mt-2">
+                    <div class="md:col-span-2 mt-1">
                         <flux:checkbox wire:model="is_organic" id="is_organic" label="Producción Ecológica" description="La parcela está bajo un programa de agricultura ecológica certificada." />
                     </div>
                 </div>
             </x-agro.form-section>
 
-            <!-- 5. Parametros Agronomicos -->
-            <x-agro.form-section title="Parametros Agronomicos">
+            <!-- 6. Avanzado -->
+            <x-agro.form-section title="Avanzado">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="degree_day_base">Temperatura Base Grados-Dia (°C)</flux:label>
+                        <flux:label for="degree_day_base">Temperatura Base Grados-Día (°C)</flux:label>
                         <flux:input wire:model="degree_day_base" type="number" step="0.1" min="0" max="30" id="degree_day_base" placeholder="10.0" />
-                        <flux:description>Por defecto 10 °C (estandar viticola)</flux:description>
+                        <flux:description>Por defecto 10 °C (estándar vitícola)</flux:description>
                         <flux:error name="degree_day_base" />
                     </flux:field>
                 </div>
             </x-agro.form-section>
-
-            <!-- 6. Asignaciones -->
-            @if ($this->canSelectWinery() || $this->canSelectViticulturist() || $this->canSelectSigpac())
-                <x-agro.form-section title="Asignaciones">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']))
-                            <flux:field>
-                                <flux:label for="viticulturist_id">Viticultor Asignado *</flux:label>
-                                <flux:select wire:model="viticulturist_id" id="viticulturist_id" data-cy="plot-viticulturist-id" required>
-                                    <option value="">Seleccionar...</option>
-                                    @forelse ($this->viticulturists as $viticulturist)
-                                        <option value="{{ $viticulturist->id }}">{{ $viticulturist->name }}@if($viticulturist->id === auth()->id()) (Yo)@endif</option>
-                                    @empty
-                                        <option value="" disabled>No hay viticultores disponibles</option>
-                                    @endforelse
-                                </flux:select>
-                                <flux:error name="viticulturist_id" />
-                            </flux:field>
-                        @endif
-
-                    </div>
-                </x-agro.form-section>
-            @endif
 
             <x-agro.form-actions :cancel-url="auth()->user()->isWinery() ? route('winery.plots.index') : route('plots.index')" submit-label="Crear Parcela" />
         </form>
