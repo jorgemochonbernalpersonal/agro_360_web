@@ -49,7 +49,7 @@ class NavigationHelper
                 'active' => request()->routeIs('viticulturist.calendar'),
             ];
 
-            // GRUPO: OPERACIONES
+            // GRUPO: CAMPAÑA Y CUADERNO
             $menu['operations'] = [
                 [
                     'icon' => 'clipboard-document-list',
@@ -73,9 +73,15 @@ class NavigationHelper
                         ['label' => 'Entregas a Bodega', 'route' => 'viticulturist.vendimia.index', 'active' => request()->routeIs('viticulturist.vendimia.*')],
                     ],
                 ],
+                [
+                    'icon' => 'bug-ant',
+                    'label' => 'Gestión de Plagas',
+                    'route' => 'viticulturist.pest-management.index',
+                    'active' => request()->routeIs('viticulturist.pest-management.*'),
+                ],
             ];
 
-            // GRUPO: PARCELAS Y ANÁLISIS
+            // GRUPO: PARCELAS Y TERRITORIO
             $menu['plots_analysis'] = [
                 [
                     'icon' => 'map',
@@ -107,15 +113,9 @@ class NavigationHelper
                     'route' => 'plots.territory',
                     'active' => request()->routeIs('plots.territory'),
                 ],
-                [
-                    'icon' => 'bug-ant',
-                    'label' => 'Gestión de Plagas',
-                    'route' => 'viticulturist.pest-management.index',
-                    'active' => request()->routeIs('viticulturist.pest-management.*'),
-                ],
             ];
 
-            // GRUPO: REGISTRO OFICIAL
+            // GRUPO: NORMATIVA (registros y certificaciones)
             $menu['compliance'] = [
                 [
                     'icon' => 'building-office',
@@ -147,6 +147,16 @@ class NavigationHelper
                     'route' => 'viticulturist.field-equipment.index',
                     'active' => request()->routeIs('viticulturist.field-equipment.*'),
                 ],
+            ];
+
+            // GRUPO: CUADERNO OFICIAL (compliance del cuaderno de campo)
+            $menu['cuaderno_official'] = [
+                [
+                    'icon' => 'chart-bar',
+                    'label' => 'Cumplimiento Cuaderno',
+                    'route' => 'viticulturist.pac-compliance',
+                    'active' => request()->routeIs('viticulturist.pac-compliance'),
+                ],
                 [
                     'icon' => 'clipboard-document-check',
                     'label' => 'Análisis de Residuos',
@@ -166,29 +176,27 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.cue-exports.*'),
                 ],
                 [
-                    'icon' => 'chart-bar',
-                    'label' => 'Cumplimiento Cuaderno',
-                    'route' => 'viticulturist.pac-compliance',
-                    'active' => request()->routeIs('viticulturist.pac-compliance'),
+                    'icon' => 'document',
+                    'label' => 'Informes Oficiales',
+                    'route' => 'viticulturist.official-reports.index',
+                    'active' => request()->routeIs('viticulturist.official-reports.*'),
                 ],
+            ];
+
+            // GRUPO: PAC — Política Agrícola Común
+            $menu['pac'] = [
                 [
                     'icon'   => 'document-check',
                     'label'  => 'PAC — Solicitud Única',
                     'route'  => 'viticulturist.pac.dashboard',
                     'active' => request()->routeIs('viticulturist.pac.*'),
                     'submenu' => [
-                        ['label' => 'Resumen PAC',           'route' => 'viticulturist.pac.dashboard',           'active' => request()->routeIs('viticulturist.pac.dashboard')],
-                        ['label' => 'Superficies Elegibles',  'route' => 'viticulturist.pac.surfaces.index',     'active' => request()->routeIs('viticulturist.pac.surfaces.*')],
-                        ['label' => 'Declaraciones',          'route' => 'viticulturist.pac.declarations.index', 'active' => request()->routeIs('viticulturist.pac.declarations.*')],
-                        ['label' => 'Eco-regímenes',          'route' => 'viticulturist.pac.eco-schemes.index',  'active' => request()->routeIs('viticulturist.pac.eco-schemes.*')],
-                        ['label' => 'Historial de Ayudas',    'route' => 'viticulturist.pac.payments.index',     'active' => request()->routeIs('viticulturist.pac.payments.*')],
+                        ['label' => 'Resumen PAC',          'route' => 'viticulturist.pac.dashboard',           'active' => request()->routeIs('viticulturist.pac.dashboard')],
+                        ['label' => 'Superficies Elegibles', 'route' => 'viticulturist.pac.surfaces.index',     'active' => request()->routeIs('viticulturist.pac.surfaces.*')],
+                        ['label' => 'Declaraciones',         'route' => 'viticulturist.pac.declarations.index', 'active' => request()->routeIs('viticulturist.pac.declarations.*')],
+                        ['label' => 'Eco-regímenes',         'route' => 'viticulturist.pac.eco-schemes.index',  'active' => request()->routeIs('viticulturist.pac.eco-schemes.*')],
+                        ['label' => 'Historial de Ayudas',   'route' => 'viticulturist.pac.payments.index',     'active' => request()->routeIs('viticulturist.pac.payments.*')],
                     ],
-                ],
-                [
-                    'icon' => 'document',
-                    'label' => 'Informes Oficiales',
-                    'route' => 'viticulturist.official-reports.index',
-                    'active' => request()->routeIs('viticulturist.official-reports.*'),
                 ],
             ];
 

@@ -4,7 +4,7 @@
     $user = auth()->user();
 
     $activeSections = [];
-    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'viticulturists', 'resources', 'billing', 'clients', 'compliance', 'system'] as $section) {
+    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'viticulturists', 'resources', 'billing', 'clients', 'compliance', 'cuaderno_official', 'pac', 'system'] as $section) {
         if (isset($menu[$section])) {
             foreach ($menu[$section] as $item) {
                 if ($item['active'] ?? false) { $activeSections[] = $section; break; }
@@ -14,18 +14,22 @@
 
     $sections = [
         // Viticulturist
-        'operations'      => 'Operaciones',
-        'plots_analysis'  => 'Parcelas y Análisis',
+        'operations'        => 'Campaña y Cuaderno',
+        'plots_analysis'    => 'Parcelas y Territorio',
         // Winery
-        'harvest'         => 'Vendimia',
-        'cellar'          => 'Bodega',
-        'viticulturists'  => 'Viticultores',
+        'harvest'           => 'Vendimia',
+        'cellar'            => 'Bodega',
+        'viticulturists'    => 'Viticultores',
         // Shared
-        'resources'       => 'Recursos',
-        'billing'         => 'Facturación',
-        'clients'         => 'Clientes',
-        'compliance'      => 'Registro Oficial',
-        'system'          => 'Sistema',
+        'resources'         => 'Recursos',
+        'billing'           => 'Facturación',
+        'clients'           => 'Clientes',
+        // Viticulturist compliance (split)
+        'compliance'        => 'Normativa',
+        'cuaderno_official' => 'Cuaderno Oficial',
+        'pac'               => 'PAC',
+        // Winery compliance
+        'system'            => 'Sistema',
     ];
 @endphp
 
