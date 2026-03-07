@@ -59,12 +59,11 @@
                 </flux:field>
 
                 <!-- Riego -->
-                <div class="flex items-center mt-6 md:mt-0">
-                    <flux:checkbox wire:model="irrigated" id="irrigated" label="Con riego" />
-                    @error('irrigated')
-                        <flux:error name="irrigated" />
-                    @enderror
-                </div>
+                <flux:field class="mt-6 md:mt-0">
+                    <flux:label>Con riego</flux:label>
+                    <flux:switch wire:model="irrigated" />
+                    <flux:error name="irrigated" />
+                </flux:field>
             </div>
         </x-agro.form-section>
 
