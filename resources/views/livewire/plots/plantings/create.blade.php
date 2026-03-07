@@ -43,10 +43,16 @@
             <!-- Limite de cosecha -->
             <div class="mt-6">
                 <flux:field>
-                    <flux:label for="harvest_limit_kg">Límite máximo de cosecha (kg)</flux:label>
-                    <flux:input wire:model="harvest_limit_kg" type="number" step="0.001" id="harvest_limit_kg" placeholder="Ej: 10000" />
+                    <flux:label for="harvest_limit_kg">Límite de cosecha (kg)</flux:label>
+                    <flux:input wire:model.live="harvest_limit_kg" type="number" step="0.001" id="harvest_limit_kg" placeholder="Sin límite" />
                     <flux:error name="harvest_limit_kg" />
-                    <flux:description>Deja vacío si no hay límite establecido. Se auto-rellena según el kg/ha configurado en ajustes.</flux:description>
+                    @if($harvest_limit_kg && $area_planted)
+                        <flux:description>
+                            {{ number_format($harvest_limit_kg / $area_planted, 0, ',', '.') }} kg/ha × {{ number_format($area_planted, 3, ',', '.') }} ha · Editable manualmente
+                        </flux:description>
+                    @else
+                        <flux:description>Se calcula automáticamente al introducir la superficie si hay kg/ha por defecto en ajustes.</flux:description>
+                    @endif
                 </flux:field>
             </div>
 
@@ -59,11 +65,13 @@
                 </flux:field>
 
                 <!-- Riego -->
-                <flux:field class="mt-6 md:mt-0">
+                <div class="mt-6 md:mt-0">
                     <flux:label>Con riego</flux:label>
-                    <flux:switch wire:model="irrigated" />
-                    <flux:error name="irrigated" />
-                </flux:field>
+                    <div class="flex items-center gap-3 mt-1">
+                        <flux:switch wire:model.live="irrigated" />
+                        <span class="text-sm text-zinc-600">{{ $irrigated ? 'Sí, parcela con riego' : 'No' }}</span>
+                    </div>
+                </div>
             </div>
         </x-agro.form-section>
 
