@@ -53,7 +53,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/') }}">
     <meta name="twitter:title" content="Agro365 | Cuaderno de Campo Digital Obligatorio 2027">
-    <meta name="twitter:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. 6 meses gratis para beta testers.">
+    <meta name="twitter:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. Viticultor básico gratis, completo desde 9€/mes.">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- PWA Manifest -->
@@ -89,21 +89,27 @@
             'offers' => [
                 [
                     '@type' => 'Offer',
-                    'name' => 'Plan Mensual',
+                    'name' => 'Viticultor completo (invitado por bodega)',
                     'price' => '9.00',
                     'priceCurrency' => 'EUR',
-                    'priceValidUntil' => '2026-12-31',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Plan mensual de Agro365 con 6 meses gratis para beta testers'
+                    'description' => 'Plan completo para viticultor invitado: SIGPAC, teledetección, PAC, facturación'
                 ],
                 [
                     '@type' => 'Offer',
-                    'name' => 'Plan Anual',
-                    'price' => '90.00',
+                    'name' => 'Viticultor independiente — Mensual',
+                    'price' => '14.00',
                     'priceCurrency' => 'EUR',
-                    'priceValidUntil' => '2026-12-31',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Plan anual de Agro365 con 6 meses gratis para beta testers'
+                    'description' => 'Plan completo para viticultor independiente sin bodega asociada'
+                ],
+                [
+                    '@type' => 'Offer',
+                    'name' => 'Bodega independiente — Mensual',
+                    'price' => '14.00',
+                    'priceCurrency' => 'EUR',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Gestión completa de bodega sin Denominación de Origen'
                 ]
             ],
             'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027.',
@@ -351,7 +357,7 @@
                 "@@type": "HowToStep",
                 "position": 1,
                 "name": "Regístrate gratis",
-                "text": "Crea tu cuenta en Agro365. No se requiere tarjeta de crédito. Obtendrás 6 meses gratis.",
+                "text": "Crea tu cuenta en Agro365. No se requiere tarjeta de crédito. El uso básico es completamente gratis.",
                 "url": "{{ route('register') }}"
             },
             {
@@ -439,7 +445,7 @@
                     <div class="flex flex-wrap gap-2">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/30">
                             <span class="w-2 h-2 rounded-full bg-[var(--color-agro-green-light)] animate-pulse"></span>
-                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">🎉 6 meses GRATIS + 25% OFF de por vida (primeros 50)</span>
+                            <span class="text-sm font-semibold text-[var(--color-agro-green-dark)]">Viticultor básico gratis · Completo desde 9€/mes</span>
                         </div>
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-300">
                             <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
@@ -492,7 +498,7 @@
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">6 meses gratis</span>
+                            <span class="text-gray-600 text-sm font-medium">Uso básico gratis</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
@@ -1120,17 +1126,11 @@
     <section id="precios" class="py-20 bg-zinc-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 space-y-4">
-                <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white shadow-lg">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                    </svg>
-                    <span class="text-sm font-bold">Oferta Beta: primeros 50 viticultores → 6 meses gratis + 25% OFF permanente</span>
-                </div>
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Empieza gratis. Paga solo cuando crezcas.
+                    Precio justo para cada perfil
                 </h2>
                 <p class="text-xl text-zinc-600 max-w-2xl mx-auto">
-                    Precio claro para cada rol. Sin sorpresas.
+                    Desde gratis para el viticultor básico hasta planes escalados para Denominaciones de Origen. Sin sorpresas.
                 </p>
             </div>
 
@@ -1146,22 +1146,36 @@
                     <div class="mb-5 pt-6">
                         <div class="text-3xl mb-2">🌿</div>
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Viticultor</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Decisión individual · Sin llamadas</p>
+                        <p class="text-zinc-500 text-sm mt-1">Autoservicio · Sin llamadas · Cancela cuando quieras</p>
                     </div>
-                    <div class="mb-6">
-                        <div class="inline-block px-3 py-1.5 bg-gradient-to-r from-[var(--color-agro-green)] to-[var(--color-agro-green-light)] text-white rounded-lg font-bold text-sm mb-3">
-                            6 MESES GRATIS
+                    <div class="mb-6 space-y-2">
+                        <!-- Tier básico gratuito -->
+                        <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-zinc-600">Básico (invitado por bodega)</span>
+                                <span class="text-base font-bold text-zinc-800">Gratis</span>
+                            </div>
+                            <p class="text-xs text-zinc-400 mt-0.5">Cuaderno de campo básico</p>
                         </div>
-                        <div class="flex items-end gap-1.5 mb-1">
-                            <span class="text-zinc-500 text-base">Después:</span>
-                            <span class="text-4xl font-bold text-[var(--color-agro-green-dark)]">€9</span>
-                            <span class="text-zinc-500 mb-1">/mes</span>
+                        <!-- Tier completo invitado -->
+                        <div class="p-3 bg-[var(--color-agro-green-bg)] rounded-xl border border-[var(--color-agro-green-light)]/40">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-[var(--color-agro-green-dark)]">Completo (invitado por bodega)</span>
+                                <span class="text-base font-bold text-[var(--color-agro-green-dark)]">9€/mes</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-0.5">o 85€/año — SIGPAC, PAC, teledetección...</p>
                         </div>
-                        <p class="text-sm text-zinc-500">o <strong>€90/año</strong> (equivale a €7,50/mes)</p>
-                        <p class="text-xs font-semibold text-[var(--color-agro-green)] mt-1">⚡ Primeros 50: 25% OFF permanente → €6,75/mes</p>
+                        <!-- Tier independiente -->
+                        <div class="p-3 bg-[var(--color-agro-green-bg)] rounded-xl border-2 border-[var(--color-agro-green)]">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-[var(--color-agro-green-dark)]">Independiente (sin bodega)</span>
+                                <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">14€/mes</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-0.5">o 130€/año — acceso completo</p>
+                        </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
-                        @foreach(['Parcelas ilimitadas', 'Cuaderno de campo digital (oblig. 2027)', 'Gestión SIGPAC completa', 'Informes oficiales con firma SHA-256', 'Dashboard cumplimiento PAC', 'Teledetección NDVI satelital', 'App móvil (funciona sin conexión)', 'Conexión a 1 bodega incluida', 'Soporte por email'] as $feature)
+                        @foreach(['Cuaderno de campo digital (obligatorio 2027)', 'SIGPAC y gestión de parcelas', 'Teledetección NDVI satelital', 'PAC y normativa vigente', 'Facturación agrícola + Verifactu', 'Vendimias y plantaciones', 'App móvil (funciona sin conexión)', 'Soporte por email (48h)'] as $feature)
                         <li class="flex items-start gap-2.5">
                             <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -1181,22 +1195,28 @@
                     <div class="mb-5">
                         <div class="text-3xl mb-2">🍷</div>
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Bodega</h3>
-                        <p class="text-zinc-500 text-sm mt-1">Precio único · Onboarding incluido</p>
+                        <p class="text-zinc-500 text-sm mt-1">Demo gratuita · Onboarding incluido</p>
                     </div>
-                    <div class="mb-6">
-                        <div class="inline-block px-3 py-1.5 bg-red-500 text-white rounded-lg font-bold text-sm mb-3">
-                            6 MESES GRATIS
+                    <div class="mb-6 space-y-2">
+                        <!-- Bodega en DO -->
+                        <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-zinc-600">Dentro de una Denominación de Origen</span>
+                                <span class="text-base font-bold text-zinc-800">Gratis</span>
+                            </div>
+                            <p class="text-xs text-zinc-400 mt-0.5">Cubierta por el paquete de la DO</p>
                         </div>
-                        <div class="flex items-end gap-1.5 mb-1">
-                            <span class="text-zinc-500 text-base">Después:</span>
-                            <span class="text-4xl font-bold text-red-700">€9</span>
-                            <span class="text-zinc-500 mb-1">/mes</span>
+                        <!-- Bodega independiente -->
+                        <div class="p-3 bg-red-50 rounded-xl border-2 border-red-400">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-red-700">Independiente (sin DO)</span>
+                                <span class="text-xl font-bold text-red-700">14€/mes</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-0.5">o 130€/año · Onboarding incluido + migración gratuita</p>
                         </div>
-                        <p class="text-sm text-zinc-500">o <strong>€90/año</strong> (equivale a €7,50/mes)</p>
-                        <p class="text-xs text-red-600 font-semibold mt-1">🎁 Onboarding incluido + migración gratuita</p>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
-                        @foreach(['Todo del plan Viticultor', 'Panel de viticultores en tiempo real', 'Gestión completa de vendimia', 'Trazabilidad desde cepa hasta botella', 'Facturación agrícola integrada', 'Comparativa rendimientos real vs estimado', 'Soporte prioritario (24h)', 'Onboarding personalizado incluido'] as $feature)
+                        @foreach(['Panel de viticultores en tiempo real', 'Gestión completa de vendimia', 'Trazabilidad desde cepa hasta botella', 'Facturación agrícola integrada', 'Gestión de vinos y elaboración', 'Comparativa rendimientos real vs estimado', 'Soporte prioritario (24h)', 'Onboarding personalizado incluido'] as $feature)
                         <li class="flex items-start gap-2.5">
                             <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -1218,14 +1238,24 @@
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Denominación de Origen</h3>
                         <p class="text-zinc-500 text-sm mt-1">Solución a medida · Contrato anual</p>
                     </div>
-                    <div class="mb-6">
-                        <div class="py-4 px-4 bg-amber-50 rounded-xl border border-amber-100">
-                            <div class="text-center py-2">
-                                <div class="text-4xl mb-2">🤝</div>
-                                <p class="text-base font-bold text-amber-800 mb-1">Precio a medida</p>
-                                <p class="text-xs text-zinc-600">Cada DO tiene su dimensión y sus necesidades. Cuéntanos la tuya.</p>
-                            </div>
-                        </div>
+                    <div class="mb-6 rounded-xl border border-amber-200 overflow-hidden">
+                        <table class="w-full text-xs">
+                            <thead>
+                                <tr class="bg-amber-50 border-b border-amber-200">
+                                    <th class="text-left px-3 py-2 font-semibold text-amber-800">Bodegas</th>
+                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">Mensual</th>
+                                    <th class="text-right px-3 py-2 font-semibold text-amber-800">Anual</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-amber-100 bg-white">
+                                <tr><td class="px-3 py-1.5 text-zinc-700">Hasta 25</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">149€</td><td class="px-3 py-1.5 text-right text-zinc-500">1.400€/año</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">26 – 50</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">249€</td><td class="px-3 py-1.5 text-right text-zinc-500">2.350€/año</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">51 – 75</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">349€</td><td class="px-3 py-1.5 text-right text-zinc-500">3.300€/año</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">76 – 100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800">449€</td><td class="px-3 py-1.5 text-right text-zinc-500">4.250€/año</td></tr>
+                                <tr><td class="px-3 py-1.5 text-zinc-700">+100</td><td class="px-3 py-1.5 text-right font-semibold text-amber-800" colspan="2">A negociar</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="text-xs text-zinc-400 text-center py-2 bg-amber-50 border-t border-amber-100">Bodegas adscritas sin coste adicional</p>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
                         @foreach(['Todo del plan Bodega', 'Alta y gestión de bodegas adscritas', 'Panel de supervisión centralizado', 'Alertas automáticas de incumplimiento', 'Informes consolidados por denominación', 'Firma electrónica SHA-256', 'API para integración con sistemas actuales', 'Account manager dedicado', 'SLA 99,9% uptime garantizado'] as $feature)
@@ -1247,9 +1277,9 @@
             <!-- Nota importante sobre viticultores en bodegas -->
             <div class="mt-10 max-w-3xl mx-auto text-center p-5 bg-[var(--color-agro-green-bg)] rounded-2xl border border-[var(--color-agro-green-light)]/30">
                 <p class="text-zinc-700 text-sm">
-                    <strong>Nota para bodegas:</strong> los viticultores que conectas <strong>no pagan plan propio</strong> para que puedas ver sus datos.
-                    La bodega cubre su acceso. Solo pagan si quieren su cuenta independiente completa.
-                    Esto elimina la fricción de adopción.
+                    <strong>Cómo funciona con viticultores invitados:</strong> la bodega invita a sus proveedores.
+                    El viticultor accede en modo <strong>básico gratis</strong> o activa el <strong>plan completo por 9€/mes</strong>
+                    (SIGPAC, teledetección, PAC, facturación...). La bodega no paga por ello — el viticultor decide.
                 </p>
             </div>
 
@@ -1278,7 +1308,7 @@
                     ],
                     [
                         '¿Cuánto cuesta Agro365 para un viticultor?',
-                        '€9/mes o €90/año (equivale a €7,50/mes). Durante la fase Beta, los primeros 50 viticultores obtienen 6 meses completamente gratis y un 25% de descuento permanente (€6,75/mes). No se requiere tarjeta de crédito para empezar.',
+                        'Depende del perfil. Si tu bodega ya está en Agro365 y te invita, el uso básico (cuaderno de campo) es gratis. Si quieres funciones completas (SIGPAC, teledetección, PAC, facturación...) pagas 9€/mes o 85€/año. Si eres viticultor independiente sin bodega asociada, el plan completo cuesta 14€/mes o 130€/año. No se requiere tarjeta de crédito para empezar.',
                     ],
                     [
                         '¿Puedo ser viticultor independiente y al mismo tiempo pertenecer a una bodega?',
@@ -1286,7 +1316,7 @@
                     ],
                     [
                         '¿Los viticultores de mi bodega tienen que pagar su propio plan?',
-                        'No. Los viticultores que conectas a tu bodega no pagan plan propio para que puedas ver sus datos. La bodega cubre su acceso básico. Solo pagan si quieren su cuenta independiente completa con todas las funciones (€9/mes).',
+                        'No para el uso básico. El viticultor invitado accede al cuaderno de campo gratis. Si quiere funciones avanzadas (SIGPAC, teledetección, PAC, facturación...) paga 9€/mes por su cuenta — la bodega no asume ese coste. Tú como bodega solo pagas tu cuota fija (14€/mes si eres independiente, o gratis si estás dentro de una DO).',
                     ],
                     [
                         '¿Los informes que genera Agro365 son válidos para inspecciones PAC?',
@@ -1345,7 +1375,7 @@
             </h2>
             <p class="text-green-100 text-xl mb-10 max-w-2xl mx-auto">
                 El cuaderno de campo digital es obligatorio desde 2027.
-                Agro365 está listo hoy. Y los primeros 50 tienen 6 meses gratis.
+                Agro365 está listo hoy. El uso básico es gratis — empieza ahora.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
@@ -1374,12 +1404,12 @@
         "name": "Agro365",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web, iOS, Android",
-        "offers": {
-            "@@type": "Offer",
-            "price": "0",
-            "priceCurrency": "EUR",
-            "description": "6 meses gratis para beta testers"
-        },
+        "offers": [
+            {"@@type": "Offer", "name": "Viticultor básico (invitado)", "price": "0", "priceCurrency": "EUR"},
+            {"@@type": "Offer", "name": "Viticultor completo (invitado)", "price": "9.00", "priceCurrency": "EUR"},
+            {"@@type": "Offer", "name": "Viticultor independiente", "price": "14.00", "priceCurrency": "EUR"},
+            {"@@type": "Offer", "name": "Bodega independiente", "price": "14.00", "priceCurrency": "EUR"}
+        ],
         "provider": {
             "@@type": "Organization",
             "name": "Agro365",
