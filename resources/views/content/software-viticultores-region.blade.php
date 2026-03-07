@@ -173,15 +173,18 @@
                 <!-- Cómo ayuda Agro365 -->
                 <div class="mb-12">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-6">Cómo ayuda Agro365 en {{ $region['short'] }}</h2>
+                    @php
+                    $features = [
+                        ['📱', 'Cuaderno de Campo Digital', 'Obligatorio desde 2027. Registra tratamientos, labores y vendimia por parcela SIGPAC. Cumple con el Consejo Regulador y la PAC desde el móvil, sin conexión.'],
+                        ['🗺️', 'Gestión SIGPAC', 'Importa tus parcelas SIGPAC de ' . $region['province'] . '. Visualiza en mapa, calcula superficies y mantén actualizado el registro de la DO.'],
+                        ['🍇', 'Control de Vendimia', 'Registra peso, grado y estado sanitario por parcela. Calcula rendimientos en tiempo real para no superar los límites del Consejo Regulador.'],
+                        ['🌿', 'Fitosanitarios y ROPO', 'Base de datos de productos autorizados. Registro obligatorio de tratamientos con alertas de plazo de seguridad antes de vendimia.'],
+                        ['📄', 'Informes Oficiales', 'Genera informes con firma digital para inspecciones PAC y el Consejo Regulador de ' . $region['short'] . '. Exporta en PDF oficial.'],
+                        ['📊', 'Teledetección NDVI', 'Monitoriza el vigor de tus viñedos con imágenes satelitales. Detecta zonas de estrés hídrico o fitosanitario antes de que sean visibles a simple vista.'],
+                    ];
+                    @endphp
                     <div class="grid md:grid-cols-2 gap-5">
-                        @foreach([
-                            ['📱', 'Cuaderno de Campo Digital', 'Obligatorio desde 2027. Registra tratamientos, labores y vendimia por parcela SIGPAC. Cumple con el Consejo Regulador y la PAC desde el móvil, sin conexión.'],
-                            ['🗺️', 'Gestión SIGPAC', 'Importa tus parcelas SIGPAC de ' . $region['province'] . '. Visualiza en mapa, calcula superficies y mantén actualizado el registro de la DO.'],
-                            ['🍇', 'Control de Vendimia', 'Registra peso, grado y estado sanitario por parcela. Calcula rendimientos en tiempo real para no superar los límites del Consejo Regulador.'],
-                            ['🌿', 'Fitosanitarios y ROPO', 'Base de datos de productos autorizados. Registro obligatorio de tratamientos con alertas de plazo de seguridad antes de vendimia.'],
-                            ['📄', 'Informes Oficiales', 'Genera informes con firma digital para inspecciones PAC y el Consejo Regulador de ' . $region['short'] . '. Exporta en PDF oficial.'],
-                            ['📊', 'Teledetección NDVI', 'Monitoriza el vigor de tus viñedos con imágenes satelitales. Detecta zonas de estrés hídrico o fitosanitario antes de que sean visibles a simple vista.'],
-                        ] as [$icon, $title, $desc])
+                        @foreach($features as [$icon, $title, $desc])
                         <div class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm">
                             <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-2">{{ $icon }} {{ $title }}</h3>
                             <p class="text-zinc-600 text-sm leading-relaxed">{{ $desc }}</p>
@@ -273,38 +276,42 @@
         <section class="py-12 bg-zinc-50">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-xl font-bold text-zinc-700 mb-6">Software para viticultores en otras denominaciones</h2>
+                @php
+                $allRegions = [
+                    ['DOCa Rioja', '/software-viticultores-rioja'],
+                    ['Ribera del Duero', '/software-viticultores-ribera-duero'],
+                    ['DO Rueda', '/software-viticultores-rueda'],
+                    ['DO Penedès', '/software-viticultores-penedes'],
+                    ['DO La Mancha', '/software-viticultores-la-mancha'],
+                    ['DOQ Priorat', '/software-viticultores-priorat'],
+                    ['Rías Baixas', '/software-viticultores-rias-baixas'],
+                    ['DO Toro', '/software-viticultores-toro'],
+                    ['DO Jumilla', '/software-viticultores-jumilla'],
+                    ['DO Jerez', '/software-viticultores-jerez'],
+                    ['DO Cava', '/software-viticultores-cava'],
+                    ['DO Valdepeñas', '/software-viticultores-valdepenas'],
+                    ['DO Navarra', '/software-viticultores-navarra'],
+                    ['DO Somontano', '/software-viticultores-somontano'],
+                    ['DO Utiel-Requena', '/software-viticultores-utiel-requena'],
+                    ['DO Yecla', '/software-viticultores-yecla'],
+                    ['DO Bullas', '/software-viticultores-bullas'],
+                    ['DO Monterrei', '/software-viticultores-monterrei'],
+                    ['DO Bierzo', '/software-viticultores-bierzo'],
+                    ['DO Ribeiro', '/software-viticultores-ribeiro'],
+                    ['DO Cigales', '/software-viticultores-cigales'],
+                    ['DO Calatayud', '/software-viticultores-calatayud'],
+                    ['DO Campo de Borja', '/software-viticultores-campo-de-borja'],
+                    ['DO Cariñena', '/software-viticultores-carinena'],
+                    ['DO Málaga', '/software-viticultores-malaga'],
+                    ['DO Montilla-Moriles', '/software-viticultores-montilla-moriles'],
+                    ['DO Terra Alta', '/software-viticultores-terra-alta'],
+                    ['DO Costers del Segre', '/software-viticultores-costers-del-segre'],
+                ];
+                $currentPath = '/' . $slug;
+                @endphp
                 <div class="flex flex-wrap gap-2">
-                    @foreach([
-                        ['DOCa Rioja', '/software-viticultores-rioja'],
-                        ['Ribera del Duero', '/software-viticultores-ribera-duero'],
-                        ['DO Rueda', '/software-viticultores-rueda'],
-                        ['DO Penedès', '/software-viticultores-penedes'],
-                        ['DO La Mancha', '/software-viticultores-la-mancha'],
-                        ['DOQ Priorat', '/software-viticultores-priorat'],
-                        ['Rías Baixas', '/software-viticultores-rias-baixas'],
-                        ['DO Toro', '/software-viticultores-toro'],
-                        ['DO Jumilla', '/software-viticultores-jumilla'],
-                        ['DO Jerez', '/software-viticultores-jerez'],
-                        ['DO Cava', '/software-viticultores-cava'],
-                        ['DO Valdepeñas', '/software-viticultores-valdepenas'],
-                        ['DO Navarra', '/software-viticultores-navarra'],
-                        ['DO Somontano', '/software-viticultores-somontano'],
-                        ['DO Utiel-Requena', '/software-viticultores-utiel-requena'],
-                        ['DO Yecla', '/software-viticultores-yecla'],
-                        ['DO Bullas', '/software-viticultores-bullas'],
-                        ['DO Monterrei', '/software-viticultores-monterrei'],
-                        ['DO Bierzo', '/software-viticultores-bierzo'],
-                        ['DO Ribeiro', '/software-viticultores-ribeiro'],
-                        ['DO Cigales', '/software-viticultores-cigales'],
-                        ['DO Calatayud', '/software-viticultores-calatayud'],
-                        ['DO Campo de Borja', '/software-viticultores-campo-de-borja'],
-                        ['DO Cariñena', '/software-viticultores-carinena'],
-                        ['DO Málaga', '/software-viticultores-malaga'],
-                        ['DO Montilla-Moriles', '/software-viticultores-montilla-moriles'],
-                        ['DO Terra Alta', '/software-viticultores-terra-alta'],
-                        ['DO Costers del Segre', '/software-viticultores-costers-del-segre'],
-                    ] as [$label, $url])
-                    @if($url !== '/' . $slug)
+                    @foreach($allRegions as [$label, $url])
+                    @if($url !== $currentPath)
                     <a href="{{ url($url) }}" class="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 text-zinc-600 hover:border-[var(--color-agro-green)] hover:text-[var(--color-agro-green)] transition-all text-xs font-medium">
                         {{ $label }}
                     </a>
