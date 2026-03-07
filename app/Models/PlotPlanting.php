@@ -170,6 +170,32 @@ class PlotPlanting extends Model
     }
 
     /**
+     * Total de kg recepcionados por una bodega concreta en una añada.
+     * Solo cuenta registros con winery_id (recepciones de bodega).
+     */
+    public function getTotalWineryReceptionsForVintage(int $year, int $wineryId): float
+    {
+        return $this->harvests()
+            ->where('winery_id', $wineryId)
+            ->where('vintage', $year)
+            ->where('status', 'active')
+            ->sum('total_weight');
+    }
+
+    /**
+     * Total de kg registrados por el viticultor en su cuaderno para una añada.
+     * Solo cuenta registros con activity_id (cuaderno de campo).
+     */
+    public function getTotalViticulturistYieldForVintage(int $year, int $viticulturistId): float
+    {
+        return $this->harvests()
+            ->whereHas('activity', fn($q) => $q->where('viticulturist_id', $viticulturistId))
+            ->where('vintage', $year)
+            ->where('status', 'active')
+            ->sum('total_weight');
+    }
+
+    /**
      * Obtener el rendimiento real total de una campaña específica
      */
     public function getTotalActualYieldForCampaign(int $campaignId): float

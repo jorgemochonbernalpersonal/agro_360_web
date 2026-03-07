@@ -191,6 +191,19 @@
         @if($selectedPlanting && ($harvestLimitInfo || $estimatedYield))
             <x-agro.form-section title="Control de Cosecha" color="blue">
                 <div class="space-y-4">
+
+                    {{-- Recibido por bodega --}}
+                    @if($wineryReceivedKg > 0)
+                        <div class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200 text-sm">
+                            <flux:icon icon="archive-box-arrow-down" class="size-5 text-blue-600 shrink-0" />
+                            <div>
+                                <span class="text-blue-700 font-medium">Recibido por bodega esta añada:</span>
+                                <span class="text-blue-800 font-bold ml-1">{{ number_format($wineryReceivedKg, 0) }} kg</span>
+                            </div>
+                            <a href="{{ route('viticulturist.vendimia.index') }}" wire:navigate class="ml-auto text-xs text-blue-600 hover:underline">Ver detalle →</a>
+                        </div>
+                    @endif
+
                     {{-- Límite de Plantación --}}
                     @if($harvestLimitInfo)
                         <x-agro.card>

@@ -3,11 +3,10 @@
 namespace App\Livewire\Winery\Harvest\Reception;
 
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Models\Campaign;
 use App\Models\Container;
 use App\Models\Harvest;
 use App\Models\PlotPlanting;
-use App\Models\WineryViticulturist;
+use App\Models\WineryYieldForecast;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -68,35 +67,24 @@ class Edit extends Component
     {
         $wineryId = Auth::id();
 
-        // Guard: verify this harvest belongs to this winery
-        $viticulturistIds  = WineryViticulturist::where('winery_id', $wineryId)->pluck('viticulturist_id');
-        $wineryCampaignIds = Campaign::forViticulturist($wineryId)->pluck('id');
-
-        $exists = Harvest::where('id', $harvest->id)
-            ->whereHas('activity', function ($q) use ($viticulturistIds, $wineryCampaignIds) {
-                $q->whereIn('viticulturist_id', $viticulturistIds)
-                  ->whereIn('campaign_id', $wineryCampaignIds);
-            })
-            ->exists();
-
-        abort_unless($exists, 403);
+        // Guard: solo recepciones que pertenecen a esta bodega
+        abort_unless($harvest->winery_id === $wineryId, 403);
 
         $this->harvest = $harvest->load([
             'plotPlanting.grapeVariety',
             'plotPlanting.plot',
-            'activity.viticulturist',
-            'activity.campaign',
+            'batch.viticulturist',
             'container',
         ]);
 
         $planting = $harvest->plotPlanting;
 
-        // Context labels
-        $this->viticulturistName = $harvest->activity?->viticulturist?->name ?? '—';
+        // Context labels (ahora via batch, no via activity)
+        $this->viticulturistName = $harvest->batch?->viticulturist?->name ?? '—';
         $this->plotName          = $planting?->plot?->name ?? '—';
         $this->plantingLabel     = ($planting?->grapeVariety?->name ?? $planting?->name ?? 'Sin variedad')
             . ($planting?->area_planted ? ' — ' . number_format($planting->area_planted, 2) . ' ha' : '');
-        $this->vintageYear       = $harvest->activity?->campaign?->year ?? now()->year;
+        $this->vintageYear       = $harvest->vintage ?? $harvest->batch?->vintage_year ?? now()->year;
 
         // Pre-fill fields
         $this->harvest_start_date    = $harvest->harvest_start_date?->format('Y-m-d') ?? '';
@@ -123,12 +111,12 @@ class Edit extends Component
         $this->disqualified_reason       = $harvest->disqualified_reason ?? '';
         $this->notes                     = $harvest->notes ?? '';
 
-        // Load planting state (excluding this harvest's weight to avoid double-counting)
+        // Panel de límites: contar solo recepciones de ESTA bodega (excluir la propia para no doble-contar)
         $this->selectedPlanting = $planting;
         if ($planting) {
             $this->totalHarvestedInCampaign = max(
                 0,
-                $planting->getTotalActualYieldForVintage($this->vintageYear) - (float) $this->total_weight
+                $planting->getTotalWineryReceptionsForVintage($this->vintageYear, $wineryId) - (float) $this->total_weight
             );
             $this->updateLimitInfo();
         }
@@ -158,16 +146,29 @@ class Edit extends Component
         $newTotal  = $harvested + $adding;
         $rawLimit  = (float) $this->selectedPlanting->harvest_limit_kg;
 
+        $forecast = WineryYieldForecast::where('winery_id', Auth::id())
+            ->where('plot_planting_id', $this->selectedPlanting->id)
+            ->where('vintage_year', $this->vintageYear)
+            ->where('status', 'confirmed')
+            ->first();
+
+        $forecastKg = $forecast ? (float) $forecast->estimated_kg : null;
+        $opLimit    = $forecastKg !== null ? min($forecastKg, $effectiveLimit) : $effectiveLimit;
+
         $this->harvestLimitInfo = [
-            'limit'      => $effectiveLimit,
-            'raw_limit'  => $rawLimit,
-            'age_factor' => $rawLimit > 0 ? round($effectiveLimit / $rawLimit * 100) : 100,
-            'harvested'  => $harvested,
-            'adding'     => $adding,
-            'new_total'  => $newTotal,
-            'remaining'  => max(0, $effectiveLimit - $newTotal),
-            'percentage' => $effectiveLimit > 0 ? round(($newTotal / $effectiveLimit) * 100, 1) : 0,
-            'exceeds'    => $newTotal > $effectiveLimit,
+            'limit'        => $opLimit,
+            'pac_limit'    => $effectiveLimit,
+            'raw_limit'    => $rawLimit,
+            'age_factor'   => $rawLimit > 0 ? round($effectiveLimit / $rawLimit * 100) : 100,
+            'forecast_kg'  => $forecastKg,
+            'has_forecast' => $forecastKg !== null,
+            'harvested'    => $harvested,
+            'adding'       => $adding,
+            'new_total'    => $newTotal,
+            'remaining'    => max(0, $opLimit - $newTotal),
+            'percentage'   => $opLimit > 0 ? round(($newTotal / $opLimit) * 100, 1) : 0,
+            'exceeds'      => $newTotal > $opLimit,
+            'exceeds_pac'  => $newTotal > $effectiveLimit,
         ];
     }
 
@@ -225,6 +226,8 @@ class Edit extends Component
             $containerId = $container?->id;
         }
 
+        $oldWeight = (float) $this->harvest->total_weight;
+
         $this->harvest->update([
             'harvest_start_date'         => $this->harvest_start_date,
             'harvest_time'               => $this->harvest_time ?: null,
@@ -253,6 +256,11 @@ class Edit extends Component
             'edited_at'                  => now(),
             'edited_by'                  => $wineryId,
         ]);
+
+        // Actualizar acumulado del batch si cambió el peso
+        if ($oldWeight !== $weight && $this->harvest->batch_id) {
+            $this->harvest->batch?->recalculateTotal();
+        }
 
         $this->toastSuccess('Recepción actualizada correctamente.');
         redirect()->route('winery.grape-reception.index');

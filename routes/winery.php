@@ -21,13 +21,33 @@ Route::middleware(['role:winery'])
         Route::get('/viticulturists/{viticulturist}', \App\Livewire\Winery\Viticulturists\Show::class)->name('viticulturists.show');
         Route::get('/viticulturists/{viticulturist}/edit', \App\Livewire\Winery\Viticulturists\Edit::class)->name('viticulturists.edit');
 
-        // ── Parcelas (reutiliza Plots\* role-aware) ───────────────────
+        // ── Parcelas (gestión completa de viticultores propios) ───────────
         Route::get('/plots', \App\Livewire\Plots\Index::class)->name('plots.index');
+        Route::get('/plots/create', \App\Livewire\Plots\Create::class)->name('plots.create');
         Route::get('/plots/{plot}', \App\Livewire\Plots\Show::class)->name('plots.show');
+        Route::get('/plots/{plot}/edit', \App\Livewire\Plots\Edit::class)->name('plots.edit');
+
+        // ── Plantaciones de parcelas (gestión por bodega) ─────────────────
+        Route::get('/plots/{plot}/plantings/create', \App\Livewire\Plots\Plantings\Create::class)->name('plots.plantings.create');
+        Route::get('/plots/{plot}/plantings/{planting}/edit', \App\Livewire\Plots\Plantings\Edit::class)->name('plots.plantings.edit');
 
         // ── Campañas (gestionadas automáticamente por añada) ──────────
         Route::get('/campaigns', fn() => redirect()->route('winery.grape-reception.index'))->name('campaigns.index');
         Route::get('/campaigns/create', fn() => redirect()->route('winery.grape-reception.index'))->name('campaigns.create');
+
+        // ── Cuadro de mando vendimia ──────────────────────────────────
+        Route::get('/harvest-summary', \App\Livewire\Winery\Harvest\Summary\Index::class)->name('harvest-summary.index');
+
+        // ── Aforos de viticultores (solo lectura) ─────────────────────
+        Route::get('/vitic-estimates', \App\Livewire\Winery\Harvest\ViticulturistEstimates\Index::class)->name('vitic-estimates.index');
+
+        // ── Actividades de campo (solo lectura) ───────────────────────
+        Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');
+
+        // ── Previsiones de vendimia (aforo bodega) ───────────────────
+        Route::get('/harvest-forecasts', \App\Livewire\Winery\Harvest\Forecasts\Index::class)->name('harvest-forecasts.index');
+        Route::get('/harvest-forecasts/create', \App\Livewire\Winery\Harvest\Forecasts\Create::class)->name('harvest-forecasts.create');
+        Route::get('/harvest-forecasts/{forecast}/edit', \App\Livewire\Winery\Harvest\Forecasts\Edit::class)->name('harvest-forecasts.edit');
 
         // ── Recepción de uva ──────────────────────────────────────────
         Route::get('/grape-reception', \App\Livewire\Winery\Harvest\Reception\Index::class)->name('grape-reception.index');
@@ -42,6 +62,13 @@ Route::middleware(['role:winery'])
         Route::get('/containers', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('containers.index');
         Route::get('/containers/create', \App\Livewire\Winery\Cellar\Containers\Create::class)->name('containers.create');
         Route::get('/containers/{container}/edit', \App\Livewire\Winery\Cellar\Containers\Edit::class)->name('containers.edit');
+        Route::get('/containers/{container}/maintenance', \App\Livewire\Winery\Cellar\Containers\Maintenance\Index::class)->name('containers.maintenance.index');
+        Route::get('/containers/{container}/maintenance/create', \App\Livewire\Winery\Cellar\Containers\Maintenance\Create::class)->name('containers.maintenance.create');
+
+        // ── Uva / mosto / vino externo ────────────────────────────────
+        Route::get('/external-grape', \App\Livewire\Winery\ExternalGrape\Index::class)->name('external-grape.index');
+        Route::get('/external-grape/create', \App\Livewire\Winery\ExternalGrape\Create::class)->name('external-grape.create');
+        Route::get('/external-grape/{grape}/edit', \App\Livewire\Winery\ExternalGrape\Edit::class)->name('external-grape.edit');
 
         // ── Asignación recepción → contenedor ────────────────────────
         Route::get('/grape-reception/{harvest}/assign', \App\Livewire\Winery\Harvest\Reception\Assign::class)->name('grape-reception.assign');

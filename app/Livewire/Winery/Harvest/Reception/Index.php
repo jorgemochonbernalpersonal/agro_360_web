@@ -4,9 +4,8 @@ namespace App\Livewire\Winery\Harvest\Reception;
 
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\Campaign;
+use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
-use App\Models\PlotPlanting;
-use App\Models\WineryViticulturist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,48 +40,43 @@ class Index extends AbstractIndex
 
     public function cancelReception(int $id): void
     {
-        $wineryId         = Auth::id();
-        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)->pluck('viticulturist_id');
-        $campaignIds      = Campaign::forViticulturist($wineryId)->pluck('id');
+        $wineryId = Auth::id();
 
-        $harvest = Harvest::whereHas('activity', fn($q) =>
-            $q->whereIn('viticulturist_id', $viticulturistIds)
-              ->whereIn('campaign_id', $campaignIds)
-        )->findOrFail($id);
+        $harvest = Harvest::where('winery_id', $wineryId)->findOrFail($id);
+        $oldWeight = (float) $harvest->total_weight;
 
         $harvest->update(['status' => 'cancelled']);
+
+        // Recalcular acumulado del batch
+        if ($harvest->batch_id) {
+            $harvest->batch?->recalculateTotal();
+        }
 
         $this->toastSuccess('Recepción anulada correctamente.');
     }
 
     protected function baseQuery(): Builder
     {
-        $wineryId         = $this->wineryId();
-        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)->pluck('viticulturist_id');
-        $campaignIds      = Campaign::forViticulturist($wineryId)->pluck('id');
+        $wineryId = $this->wineryId();
 
         return Harvest::with([
             'plotPlanting.grapeVariety',
             'plotPlanting.plot',
-            'activity.viticulturist',
-            'activity.campaign',
+            'batch.viticulturist',
             'container',
-        ])->whereHas('activity', function (Builder $q) use ($viticulturistIds, $campaignIds) {
-            $q->whereIn('viticulturist_id', $viticulturistIds)
-              ->whereIn('campaign_id', $campaignIds);
-        });
+        ])->where('winery_id', $wineryId);
     }
 
     protected function applyFilters(Builder $query): void
     {
         if ($this->campaignFilter) {
-            $query->whereHas('activity', fn(Builder $q) =>
+            $query->whereHas('batch', fn(Builder $q) =>
                 $q->where('campaign_id', $this->campaignFilter)
             );
         }
 
         if ($this->viticulturistFilter) {
-            $query->whereHas('activity', fn(Builder $q) =>
+            $query->whereHas('batch', fn(Builder $q) =>
                 $q->where('viticulturist_id', $this->viticulturistFilter)
             );
         }
@@ -94,7 +88,7 @@ class Index extends AbstractIndex
         if ($this->search) {
             $term = '%' . mb_strtolower($this->search) . '%';
             $query->where(function (Builder $q) use ($term) {
-                $q->whereHas('activity.viticulturist', fn($q2) =>
+                $q->whereHas('batch.viticulturist', fn($q2) =>
                     $q2->whereRaw('LOWER(name) LIKE ?', [$term])
                 )
                 ->orWhereHas('plotPlanting.grapeVariety', fn($q2) =>
@@ -123,10 +117,12 @@ class Index extends AbstractIndex
 
         $campaigns = Campaign::forViticulturist($wineryId)->orderBy('year', 'desc')->get();
 
-        $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
+        $linkedViticulturists = GrapeReceptionBatch::where('winery_id', $wineryId)
             ->with('viticulturist:id,name')
             ->get()
-            ->pluck('viticulturist');
+            ->pluck('viticulturist')
+            ->unique('id')
+            ->values();
 
         // Stats: apply same scope but without pagination
         $statsQuery = $this->baseQuery();
@@ -135,18 +131,18 @@ class Index extends AbstractIndex
 
         $allForStats = $statsQuery->with([
             'plotPlanting.grapeVariety',
-            'activity.viticulturist',
+            'batch.viticulturist',
         ])->get();
 
         $stats = [
             'total_kg'       => $allForStats->sum(fn($h) => (float) $h->total_weight),
             'total_count'    => $allForStats->count(),
             'disqualified_kg'=> $allForStats->where('disqualified', true)->sum(fn($h) => (float) $h->total_weight),
-            'viticulturists' => $allForStats->map(fn($h) => $h->activity?->viticulturist_id)->unique()->filter()->count(),
+            'viticulturists' => $allForStats->map(fn($h) => $h->batch?->viticulturist_id)->unique()->filter()->count(),
         ];
 
         $byViticulturist = $allForStats
-            ->groupBy(fn($h) => $h->activity?->viticulturist?->name ?? '—')
+            ->groupBy(fn($h) => $h->batch?->viticulturist?->name ?? '—')
             ->map(fn($group) => round($group->sum(fn($h) => (float) $h->total_weight), 0))
             ->sortDesc()
             ->take(10);
@@ -164,9 +160,9 @@ class Index extends AbstractIndex
             $harvestsInCampaign = Harvest::with([
                 'plotPlanting.grapeVariety',
                 'plotPlanting.plot',
-                'activity.viticulturist',
-            ])->whereHas('activity', fn($q) =>
-                $q->whereIn('viticulturist_id', $viticulturistIds)
+                'batch.viticulturist',
+            ])->whereHas('batch', fn($q) =>
+                $q->where('winery_id', $wineryId)
                   ->where('campaign_id', $this->campaignFilter)
             )->where('status', 'active')->get();
 
@@ -182,7 +178,7 @@ class Index extends AbstractIndex
                     $received = $group->sum(fn($h) => (float) $h->total_weight);
                     $pct      = $limit > 0 ? round(($received / $limit) * 100, 1) : null;
                     return [
-                        'viticulturist' => $first->activity?->viticulturist?->name ?? '—',
+                        'viticulturist' => $first->batch?->viticulturist?->name ?? '—',
                         'plot'          => $planting?->plot?->name ?? '—',
                         'variety'       => $planting?->grapeVariety?->name ?? '—',
                         'planting'      => $planting?->name ?? '—',

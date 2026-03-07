@@ -35,6 +35,8 @@ class Edit extends Component
     public $total_plants_sampled = '';
     public $sampling_area_pct = '';
     public $health_percentage = '';
+    public $health_status = '';
+    public bool $other_wineries = false;
     public $potential_alcohol = '';
     public $vintage = '';
     public $auto_calculated_yield = '';
@@ -80,6 +82,8 @@ class Edit extends Component
         $this->total_plants_sampled       = $this->estimatedYield->total_plants_sampled ?? '';
         $this->sampling_area_pct          = $this->estimatedYield->sampling_area_pct ?? '';
         $this->health_percentage          = $this->estimatedYield->health_percentage ?? '';
+        $this->health_status              = $this->estimatedYield->health_status ?? '';
+        $this->other_wineries             = (bool) ($this->estimatedYield->other_wineries ?? false);
         $this->potential_alcohol          = $this->estimatedYield->potential_alcohol ?? '';
         $this->vintage                    = $this->estimatedYield->vintage ?? '';
         $this->auto_calculated_yield      = $this->estimatedYield->auto_calculated_yield ?? '';
@@ -206,6 +210,8 @@ class Edit extends Component
             'total_plants_sampled'        => 'nullable|integer|min:1',
             'sampling_area_pct'           => 'nullable|numeric|min:0|max:100',
             'health_percentage'           => 'nullable|numeric|min:0|max:100',
+            'health_status'               => 'nullable|string|in:excellent,good,botrytis_light,botrytis_moderate,oidium_light,oidium_moderate,mixed,poor',
+            'other_wineries'              => 'boolean',
             'potential_alcohol'           => 'nullable|numeric|min:0|max:25',
             'vintage'                     => 'nullable|integer|min:1900|max:2100',
         ];
@@ -258,6 +264,8 @@ class Edit extends Component
                     'total_plants_sampled'        => $this->total_plants_sampled ?: null,
                     'sampling_area_pct'           => $this->sampling_area_pct ?: null,
                     'health_percentage'           => $this->health_percentage ?: null,
+                    'health_status'               => $this->health_status ?: null,
+                    'other_wineries'              => $this->other_wineries,
                     'potential_alcohol'           => $this->potential_alcohol ?: null,
                     'vintage'                     => $this->vintage ?: null,
                 ]);

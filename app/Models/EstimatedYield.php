@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\GrapeReceptionBatch;
 use App\Models\PlotPlanting;
 
 class EstimatedYield extends Model
@@ -29,6 +30,8 @@ class EstimatedYield extends Model
         'total_plants_sampled',
         'sampling_area_pct',
         'health_percentage',
+        'health_status',
+        'other_wineries',
         'potential_alcohol',
         'vintage',
         'auto_calculated_yield',
@@ -50,6 +53,8 @@ class EstimatedYield extends Model
         'total_plants_sampled' => 'integer',
         'sampling_area_pct' => 'decimal:2',
         'health_percentage' => 'decimal:2',
+        'health_status'     => 'string',
+        'other_wineries'    => 'boolean',
         'potential_alcohol' => 'decimal:2',
         'auto_calculated_yield' => 'decimal:2',
         'estimation_round' => 'integer',
@@ -87,6 +92,17 @@ class EstimatedYield extends Model
         2 => 'Envero',
         3 => 'Pre-vendimia',
         4 => 'Revisión final',
+    ];
+
+    public const HEALTH_STATUSES = [
+        'excellent'         => 'Excelente',
+        'good'              => 'Bueno',
+        'botrytis_light'    => 'Botrytis leve',
+        'botrytis_moderate' => 'Botrytis moderada',
+        'oidium_light'      => 'Oidio leve',
+        'oidium_moderate'   => 'Oidio moderado',
+        'mixed'             => 'Afección mixta',
+        'poor'              => 'Deficiente',
     ];
 
     /**
@@ -136,17 +152,26 @@ class EstimatedYield extends Model
         // Usar vintage si está definido, sino deducirlo del año de la campaña
         $vintage = $this->vintage ?? $this->campaign?->year ?? now()->year;
 
-        $totalWeight = Harvest::where('plot_planting_id', $this->plot_planting_id)
+        // Fuente primaria: registros del cuaderno del viticultor
+        $totalWeight = (float) Harvest::where('plot_planting_id', $this->plot_planting_id)
             ->where('vintage', $vintage)
             ->where('status', 'active')
+            ->whereNotNull('activity_id')
             ->sum('total_weight');
+
+        // Fallback: lote acumulado de bodega si el viticultor no registró en cuaderno
+        if ($totalWeight === 0.0) {
+            $totalWeight = (float) GrapeReceptionBatch::where('plot_planting_id', $this->plot_planting_id)
+                ->where('vintage_year', $vintage)
+                ->sum('total_weight_kg');
+        }
 
         $planting = $this->plotPlanting;
         if (!$planting) return;
 
-        $this->actual_total_yield = round((float) $totalWeight, 3);
+        $this->actual_total_yield = round($totalWeight, 3);
         $this->actual_yield_per_hectare = $planting->area_planted > 0
-            ? round((float) $totalWeight / (float) $planting->area_planted, 3)
+            ? round($totalWeight / (float) $planting->area_planted, 3)
             : 0;
         $this->save();
     }

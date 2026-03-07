@@ -8,6 +8,13 @@
                 Volver
             </flux:button>
             @if($isOwn)
+                <flux:button
+                    href="{{ route('winery.plots.create', ['viticulturist_id' => $viticulturist->id]) }}"
+                    variant="ghost"
+                    icon="map"
+                >
+                    Añadir parcela
+                </flux:button>
                 <flux:button href="{{ route('winery.viticulturists.edit', $viticulturist->id) }}" variant="primary" icon="pencil-square">
                     Editar
                 </flux:button>
@@ -98,18 +105,107 @@
         </div>
 
         @if($isOwn && !$viticulturist->can_login)
-            <div class="mt-4">
-                <flux:callout variant="warning" icon="information-circle">
-                    Viticultor sin acceso al sistema. Puedes gestionar sus datos y parcelas desde aquí.
-                    Si quieres que acceda a su propio panel, invítale desde el listado de viticultores.
-                </flux:callout>
+            <div class="mt-4 space-y-3">
+                {{-- Panel de invitación --}}
+                <div class="p-4 rounded-lg border {{ $viticulturist->invitation_token ? 'bg-amber-50 border-amber-200' : 'bg-zinc-50 border-zinc-200' }}">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <flux:icon
+                                icon="{{ $viticulturist->invitation_token ? 'paper-airplane' : 'envelope' }}"
+                                class="size-5 {{ $viticulturist->invitation_token ? 'text-amber-600' : 'text-zinc-400' }} shrink-0"
+                            />
+                            <div>
+                                @if($viticulturist->invitation_token)
+                                    <p class="text-sm font-medium text-amber-800">Invitación pendiente de aceptar</p>
+                                    <p class="text-xs text-amber-600">
+                                        Enviada el {{ $viticulturist->invitation_sent_at?->format('d/m/Y H:i') ?? '—' }}
+                                        a {{ $hasRealEmail ? $viticulturist->email : '—' }}
+                                        @if($viticulturist->invitation_expires_at)
+                                            · Caduca el {{ $viticulturist->invitation_expires_at->format('d/m/Y') }}
+                                            @if($viticulturist->invitation_expires_at->isPast())
+                                                <span class="text-red-600 font-medium">(Caducada)</span>
+                                            @endif
+                                        @endif
+                                    </p>
+                                @else
+                                    <p class="text-sm font-medium text-zinc-700">Sin acceso al sistema</p>
+                                    <p class="text-xs text-zinc-500">Invítale para que pueda usar el cuaderno de campo digital.</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                            @if($viticulturist->invitation_token)
+                                {{-- Reenviar --}}
+                                <flux:button
+                                    size="sm"
+                                    variant="ghost"
+                                    icon="arrow-path"
+                                    wire:click="$set('showEmailField', true)"
+                                >
+                                    Reenviar
+                                </flux:button>
+                                {{-- Revocar --}}
+                                <flux:button
+                                    size="sm"
+                                    variant="ghost"
+                                    icon="x-mark"
+                                    wire:click="revokeInvitation"
+                                    wire:confirm="¿Revocar la invitación? El enlace actual quedará inválido."
+                                >
+                                    Revocar
+                                </flux:button>
+                            @else
+                                <flux:button
+                                    size="sm"
+                                    variant="primary"
+                                    icon="paper-airplane"
+                                    wire:click="$set('showEmailField', true)"
+                                >
+                                    Enviar invitación
+                                </flux:button>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Formulario inline de email --}}
+                    @if($showEmailField)
+                        <div class="mt-3 pt-3 border-t {{ $viticulturist->invitation_token ? 'border-amber-200' : 'border-zinc-200' }}">
+                            <div class="flex items-end gap-3">
+                                <flux:field class="flex-1">
+                                    <flux:label>Email del viticultor</flux:label>
+                                    <flux:input
+                                        wire:model="inviteEmail"
+                                        type="email"
+                                        placeholder="email@ejemplo.com"
+                                        autofocus
+                                    />
+                                    <flux:error name="inviteEmail" />
+                                </flux:field>
+                                <flux:button
+                                    variant="primary"
+                                    icon="paper-airplane"
+                                    wire:click="sendInvitation"
+                                    wire:loading.attr="disabled"
+                                >
+                                    Enviar
+                                </flux:button>
+                                <flux:button
+                                    variant="ghost"
+                                    wire:click="$set('showEmailField', false)"
+                                >
+                                    Cancelar
+                                </flux:button>
+                            </div>
+                        </div>
+                    @endif
+                </div>
             </div>
         @elseif($isOwn && $viticulturist->can_login)
             <div class="mt-4">
-                <flux:callout variant="info" icon="information-circle">
-                    Este viticultor también gestiona sus datos desde su propio panel.
+                <flux:callout variant="info" icon="check-circle">
+                    Viticultor activo — gestiona sus datos desde su propio panel.
                     Ambos trabajáis sobre los mismos datos de parcelas y plantaciones.
-                    El cuaderno de campo es privado — necesita autorización explícita para compartirlo.
                 </flux:callout>
             </div>
         @elseif($relation->source === 'supervisor')

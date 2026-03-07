@@ -2,7 +2,11 @@
     <x-agro.page-header :title="$plot->name" description="Detalles de la parcela">
         <x-slot:actions>
             @can('update', $plot)
-                <flux:button href="{{ route('plots.edit', $plot) }}" variant="primary" icon="pencil-square">
+                <flux:button
+                    href="{{ auth()->user()->isWinery() ? route('winery.plots.edit', $plot) : route('plots.edit', $plot) }}"
+                    variant="primary"
+                    icon="pencil-square"
+                >
                     Editar
                 </flux:button>
             @endcan

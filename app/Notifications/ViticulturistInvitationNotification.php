@@ -13,7 +13,8 @@ class ViticulturistInvitationNotification extends Notification
     use Queueable;
 
     public function __construct(
-        protected User $creator
+        protected User   $creator,
+        protected string $token,
     ) {}
 
     /**
@@ -31,10 +32,9 @@ class ViticulturistInvitationNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        // Generar URL de registro
-        $registerUrl = route('register', ['email' => $notifiable->email]);
-        
-        // Solo forzar HTTPS en producción
+        // URL de activación con token único
+        $registerUrl = route('auth.claim-account', ['token' => $this->token]);
+
         if (app()->environment('production')) {
             $registerUrl = str_replace('http://', 'https://', $registerUrl);
         }
@@ -56,9 +56,9 @@ class ViticulturistInvitationNotification extends Notification
                  </div>'
             ))
             ->greeting('Hola ' . ($notifiable->name ?: ''))
-            ->line('Has sido invitado a Agro365 por el viticultor ' . $this->creator->name . '.')
-            ->line('Agro365 es el cuaderno de campo digital para gestionar tus parcelas, tratamientos y equipo.')
-            ->line('Para activar tu cuenta y elegir tu contraseña, haz clic en el siguiente botón:')
+            ->line('La bodega **' . $this->creator->name . '** te ha invitado a acceder a Agro365.')
+            ->line('Ya tienes tus parcelas y plantaciones configuradas. Solo necesitas activar tu cuenta para acceder al cuaderno de campo digital.')
+            ->line('El enlace de activación es válido — úsalo para elegir tu contraseña:')
             ->action('Activar mi cuenta', $registerUrl)
             ->line('Si no esperabas esta invitación, puedes ignorar este correo.')
             ->salutation("Saludos,\nAgro365");

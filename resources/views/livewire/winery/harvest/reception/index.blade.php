@@ -199,8 +199,8 @@
                     $planting    = $reception->plotPlanting;
                     $variety     = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
                     $plotName    = $planting?->plot?->name ?? '—';
-                    $vitic       = $reception->activity?->viticulturist;
-                    $year        = $reception->activity?->campaign?->year;
+                    $vitic       = $reception->batch?->viticulturist;
+                    $year        = $reception->batch?->vintage_year;
                     $delay       = min($loop->index * 50, 300);
                     $isCancelled = $reception->status === 'cancelled';
                 @endphp

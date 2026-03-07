@@ -76,6 +76,10 @@ Route::middleware('auth')->get('/password/force-reset', \App\Livewire\Auth\Force
 
 require __DIR__ . '/auth.php';
 
+// Activación de cuenta por invitación de bodega (pública, sin auth)
+Route::middleware('guest')->get('/activar-cuenta/{token}', \App\Livewire\Auth\ClaimAccount::class)
+    ->name('auth.claim-account');
+
 Route::middleware(['auth', 'password.changed'])->group(function () {
     // password.changed debe ejecutarse ANTES de verified
     // Si tiene password_must_reset, redirige a force-reset sin verificar email

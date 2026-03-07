@@ -176,6 +176,24 @@
                     <flux:input wire:model="potential_alcohol" type="number" step="0.1" min="0" max="25" id="potential_alcohol" />
                     <flux:error name="potential_alcohol" />
                 </flux:field>
+
+                <flux:field>
+                    <flux:label>Estado sanitario</flux:label>
+                    <flux:select wire:model="health_status" id="health_status">
+                        <option value="">Sin evaluar</option>
+                        @foreach(\App\Models\EstimatedYield::HEALTH_STATUSES as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="health_status" />
+                </flux:field>
+            </div>
+
+            <div class="mt-4 flex items-center gap-3">
+                <flux:checkbox wire:model="other_wineries" id="other_wineries" />
+                <flux:label for="other_wineries" class="cursor-pointer">
+                    Entrego uva a otras bodegas además de la principal
+                </flux:label>
             </div>
 
             @if($auto_calculated_yield)

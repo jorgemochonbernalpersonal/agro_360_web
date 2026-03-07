@@ -20,7 +20,7 @@ class NavigationHelper
         }
 
         // Cachear el menú por usuario durante 1 hora
-        return Cache::remember('menu_' . $user->id . '_' . request()->path(), 3600, function() use ($user) {
+        return Cache::remember('menu_' . $user->id, 3600, function() use ($user) {
             return static::buildMenu($user);
         });
     }
@@ -66,10 +66,11 @@ class NavigationHelper
                     'icon' => 'pencil-square',
                     'label' => 'Cuaderno Digital',
                     'route' => 'viticulturist.digital-notebook',
-                    'active' => request()->routeIs('viticulturist.digital-notebook*'),
+                    'active' => request()->routeIs('viticulturist.digital-notebook*') || request()->routeIs('viticulturist.vendimia.*'),
                     'submenu' => [
                         ['label' => 'Actividades', 'route' => 'viticulturist.digital-notebook', 'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*')],
                         ['label' => 'Rendimientos', 'route' => 'viticulturist.digital-notebook.estimated-yields.index', 'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')],
+                        ['label' => 'Entregas a Bodega', 'route' => 'viticulturist.vendimia.index', 'active' => request()->routeIs('viticulturist.vendimia.*')],
                     ],
                 ],
             ];
@@ -286,10 +287,34 @@ class NavigationHelper
             // ── VENDIMIA ─────────────────────────────────────────────
             $menu['harvest'] = [
                 [
+                    'icon'   => 'chart-bar',
+                    'label'  => 'Cuadro de Mando',
+                    'route'  => 'winery.harvest-summary.index',
+                    'active' => request()->routeIs('winery.harvest-summary*'),
+                ],
+                [
+                    'icon'   => 'calculator',
+                    'label'  => 'Aforos viticultores',
+                    'route'  => 'winery.vitic-estimates.index',
+                    'active' => request()->routeIs('winery.vitic-estimates*'),
+                ],
+                [
+                    'icon'   => 'clipboard-document-list',
+                    'label'  => 'Previsiones',
+                    'route'  => 'winery.harvest-forecasts.index',
+                    'active' => request()->routeIs('winery.harvest-forecasts*'),
+                ],
+                [
                     'icon'   => 'archive-box-arrow-down',
-                    'label'  => 'Recepción de Uva',
+                    'label'  => 'Recepciones',
                     'route'  => 'winery.grape-reception.index',
                     'active' => request()->routeIs('winery.grape-reception*'),
+                ],
+                [
+                    'icon'   => 'clipboard-document-list',
+                    'label'  => 'Actividades de campo',
+                    'route'  => 'winery.field-activities.index',
+                    'active' => request()->routeIs('winery.field-activities*'),
                 ],
             ];
 
@@ -300,6 +325,12 @@ class NavigationHelper
                     'label'  => 'Contenedores',
                     'route'  => 'winery.containers.index',
                     'active' => request()->routeIs('winery.containers*'),
+                ],
+                [
+                    'icon'   => 'archive-box',
+                    'label'  => 'Uva / Mosto externo',
+                    'route'  => 'winery.external-grape.index',
+                    'active' => request()->routeIs('winery.external-grape*'),
                 ],
                 [
                     'icon'   => 'arrows-right-left',

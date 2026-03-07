@@ -38,6 +38,18 @@
                         'self'          => ['label' => 'Autoregistro', 'color' => 'green'],
                     ];
                     $src = $sourceLabels[$relation->source] ?? ['label' => $relation->source, 'color' => 'zinc'];
+
+                    // Estado de invitación (solo para propios sin acceso)
+                    $inviteStatus = null;
+                    if ($relation->source === 'own' && !$v->can_login) {
+                        if ($v->invitation_token) {
+                            $inviteStatus = ($v->invitation_expires_at && $v->invitation_expires_at->isPast())
+                                ? ['label' => 'Invitación caducada', 'color' => 'red',   'icon' => 'clock']
+                                : ['label' => 'Invitación enviada',  'color' => 'amber', 'icon' => 'paper-airplane'];
+                        } else {
+                            $inviteStatus = ['label' => 'Sin invitar', 'color' => 'zinc', 'icon' => 'envelope'];
+                        }
+                    }
                 @endphp
                 <x-agro.card
                     class="animate-fade-in-up flex flex-col"
@@ -53,7 +65,11 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-bold text-zinc-900 truncate">{{ $v->name }}</h3>
-                                <p class="text-xs text-zinc-500 truncate">{{ $v->email }}</p>
+                                @if($v->email && !str_starts_with($v->email, 'viticultores.'))
+                                    <p class="text-xs text-zinc-500 truncate">{{ $v->email }}</p>
+                                @else
+                                    <p class="text-xs text-zinc-400 italic truncate">Sin email registrado</p>
+                                @endif
                             </div>
                             <flux:badge
                                 :color="$v->can_login ? 'green' : 'zinc'"
@@ -78,6 +94,18 @@
                             <span class="text-zinc-500">Origen</span>
                             <flux:badge :color="$src['color']" size="sm">{{ $src['label'] }}</flux:badge>
                         </div>
+                        @if($inviteStatus)
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-500">Invitación</span>
+                                <flux:badge
+                                    :color="$inviteStatus['color']"
+                                    :icon="$inviteStatus['icon']"
+                                    size="sm"
+                                >
+                                    {{ $inviteStatus['label'] }}
+                                </flux:badge>
+                            </div>
+                        @endif
                     </div>
 
                     <x-slot:footer>

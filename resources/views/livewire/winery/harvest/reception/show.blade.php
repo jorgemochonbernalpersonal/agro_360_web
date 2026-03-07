@@ -50,11 +50,11 @@
                 <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                     <div>
                         <dt class="text-zinc-500">Viticultor</dt>
-                        <dd class="font-medium text-zinc-900">{{ $harvest->activity?->viticulturist?->name ?? '—' }}</dd>
+                        <dd class="font-medium text-zinc-900">{{ $harvest->batch?->viticulturist?->name ?? '—' }}</dd>
                     </div>
                     <div>
                         <dt class="text-zinc-500">Añada</dt>
-                        <dd class="font-medium text-zinc-900">{{ $harvest->activity?->campaign?->year ?? '—' }}</dd>
+                        <dd class="font-medium text-zinc-900">{{ $harvest->batch?->vintage_year ?? '—' }}</dd>
                     </div>
                     <div>
                         <dt class="text-zinc-500">Parcela</dt>

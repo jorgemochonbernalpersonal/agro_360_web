@@ -18,7 +18,10 @@ class Index extends AbstractIndex
     protected function baseQuery(): Builder
     {
         return WineryViticulturist::where('winery_id', $this->wineryId())
-            ->with(['viticulturist' => fn($q) => $q->withCount('plots')->select(['id', 'name', 'email', 'can_login'])]);
+            ->with(['viticulturist' => fn($q) => $q->withCount('plots')->select([
+                'id', 'name', 'email', 'can_login',
+                'invitation_token', 'invitation_sent_at', 'invitation_expires_at',
+            ])]);
     }
 
     protected function applyFilters(Builder $query): void

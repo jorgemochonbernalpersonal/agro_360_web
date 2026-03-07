@@ -92,6 +92,9 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             });
         });
 
+        // Mis Entregas a Bodega (cuadro de vendimia del viticulturist)
+        Route::get('/vendimia', \App\Livewire\Viticulturist\Vendimia\Index::class)->name('vendimia.index');
+
         // Fenología
         Route::prefix('phenology')->name('phenology.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Phenology\Index::class)->name('index');

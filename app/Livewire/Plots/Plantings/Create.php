@@ -123,7 +123,11 @@ class Create extends Component
 
         $this->toastSuccess('Plantación creada correctamente.');
 
-        return $this->redirect(route('plots.plantings.index'), navigate: true);
+        $showRoute = Auth::user()->isWinery()
+            ? route('winery.plots.show', $this->plot->id)
+            : route('plots.show', $this->plot->id);
+
+        return $this->redirect($showRoute, navigate: true);
     }
 
     public function render()

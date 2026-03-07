@@ -68,19 +68,25 @@
                             Control de límite de cosecha
                         </p>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                            <span class="text-zinc-600">Límite base:</span>
+                            <span class="text-zinc-600">Límite PAC base:</span>
                             <span class="font-medium">{{ number_format($info['raw_limit'], 0) }} kg</span>
                             @if($info['age_factor'] < 100)
-                                <span class="text-zinc-600">Factor edad cepa:</span>
+                                <span class="text-zinc-600">Factor edad:</span>
                                 <span class="font-medium text-amber-700">{{ $info['age_factor'] }}%</span>
-                                <span class="text-zinc-600">Límite efectivo:</span>
+                            @endif
+                            <span class="text-zinc-600">Límite PAC efectivo:</span>
+                            <span class="font-medium text-blue-700">{{ number_format($info['pac_limit'], 0) }} kg</span>
+                            @if($info['has_forecast'])
+                                <span class="text-zinc-600">Previsión bodega:</span>
+                                <span class="font-medium text-agro-700">{{ number_format($info['forecast_kg'], 0) }} kg</span>
+                                <span class="text-zinc-600 font-semibold">Límite operativo:</span>
                                 <span class="font-bold text-agro-700">{{ number_format($info['limit'], 0) }} kg</span>
                             @endif
-                            <span class="text-zinc-600">Ya cosechado (añada):</span>
-                            <span class="font-medium">{{ number_format($info['harvested'], 0) }} kg</span>
+                            <span class="text-zinc-600">Ya recibido (añada):</span>
+                            <span class="font-medium">{{ number_format($info['received'], 0) }} kg</span>
                             @if($info['adding'] > 0)
                                 <span class="text-zinc-600">Esta recepción:</span>
-                                <span class="font-medium">{{ number_format($info['adding'], 0) }} kg</span>
+                                <span class="font-medium">+ {{ number_format($info['adding'], 0) }} kg</span>
                                 <span class="text-zinc-600">Total nuevo:</span>
                                 <span class="font-bold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }}">
                                     {{ number_format($info['new_total'], 0) }} kg ({{ $info['percentage'] }}%)
@@ -89,12 +95,17 @@
                         </div>
                         @if($info['age_factor'] < 100)
                             <p class="mt-2 text-xs text-amber-700">
-                                Plantación joven — límite reducido por factor de edad (vinai: 3 años=33%, 4 años=75%, ≥5 años=100%).
+                                Plantación joven — límite PAC reducido por factor de edad (3 años=33%, 4 años=75%, ≥5 años=100%).
                             </p>
                         @endif
                         @if($info['exceeds'])
                             <p class="mt-2 text-xs text-red-700 font-medium">
-                                Esta recepción supera el límite efectivo. Revisa los datos antes de guardar.
+                                ⚠ Esta recepción supera el límite {{ $info['has_forecast'] ? 'de la previsión' : 'PAC' }}. Revisa los datos antes de guardar.
+                            </p>
+                        @endif
+                        @if(!$info['exceeds'] && isset($info['exceeds_pac']) && $info['exceeds_pac'])
+                            <p class="mt-2 text-xs text-orange-600 font-medium">
+                                ⚠ Se supera el límite PAC aunque esté dentro de la previsión. Contacta con el consejo regulador.
                             </p>
                         @endif
                     </div>

@@ -43,7 +43,10 @@
       "Bash(/c/php/php.exe:*)",
       "Bash(composer install:*)",
       "Bash(mkdir:*)",
-      "Bash(cmd.exe:*)"
+      "Bash(cmd.exe:*)",
+      "Bash(dir:*)",
+      "Bash(cmd:*)",
+      "Bash(test:*)"
     ]
   }
 }

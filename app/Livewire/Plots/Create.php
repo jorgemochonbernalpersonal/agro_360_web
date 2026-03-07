@@ -76,6 +76,11 @@ class Create extends Component
                 $this->degree_day_base = $settings->degree_day_base;
             }
         }
+
+        // Si bodega navega desde el perfil de un viticultor, pre-seleccionar ese viticultor
+        if (Auth::user()->isWinery() && request()->filled('viticulturist_id')) {
+            $this->viticulturist_id = request()->query('viticulturist_id');
+        }
     }
 
     protected function rules(): array

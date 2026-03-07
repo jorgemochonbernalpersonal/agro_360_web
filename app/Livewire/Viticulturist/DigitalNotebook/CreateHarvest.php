@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
+use App\Models\GrapeReceptionBatch;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\Harvest;
+use App\Models\PhenologyObservation;
 use App\Models\Container;
 use App\Models\Campaign;
 use App\Models\Crew;
@@ -95,6 +97,7 @@ class CreateHarvest extends Component
     public $totalHarvestedInCampaign = 0;
     public $harvestLimitInfo = null;
     public $yieldVarianceInfo = null;
+    public float $wineryReceivedKg = 0; // kg recibidos por bodegas de esta plantación en la añada
 
     public function mount()
     {
@@ -280,6 +283,7 @@ class CreateHarvest extends Component
             $this->harvestLimitInfo = null;
             $this->yieldVarianceInfo = null;
             $this->totalHarvestedInCampaign = 0;
+            $this->wineryReceivedKg = 0;
             return;
         }
 
@@ -296,8 +300,14 @@ class CreateHarvest extends Component
             ? (int) \Carbon\Carbon::parse($this->harvest_start_date)->year
             : (Campaign::find($this->campaign_id)?->year ?? now()->year);
 
-        // Cosechas de la añada (incluye winery + viticulturist)
-        $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalActualYieldForVintage($vintage);
+        // Solo cosechas del cuaderno del viticultor (excluye recepciones de bodega)
+        $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalViticulturistYieldForVintage($vintage, Auth::id());
+
+        // Total recibido por bodegas de esta plantación en la añada
+        $this->wineryReceivedKg = (float) GrapeReceptionBatch::where('viticulturist_id', Auth::id())
+            ->where('plot_planting_id', $this->selectedPlanting->id)
+            ->where('vintage_year', $vintage)
+            ->sum('total_weight_kg');
 
         // Cargar información del límite con factor edad
         $effectiveLimit = $this->selectedPlanting->effectiveHarvestLimitKg($vintage);
@@ -357,7 +367,7 @@ class CreateHarvest extends Component
         $rules = [
             'plot_id' => 'required|exists:plots,id',
             'plot_planting_id' => 'required|exists:plot_plantings,id',
-            'container_id' => 'required|exists:containers,id',
+            'container_id' => 'nullable|exists:containers,id',
             'campaign_id' => 'required|exists:campaigns,id',
             'activity_date' => 'required|date',
             'harvest_start_date' => 'required|date',
@@ -437,24 +447,25 @@ class CreateHarvest extends Component
         // Validar que la parcela pertenece al viticultor
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
         
-        // Validar que el contenedor existe y tiene capacidad disponible
-        $container = Container::find($this->container_id);
-        if (!$container) {
-            $this->addError('container_id', 'El contenedor seleccionado no existe.');
-            return;
-        }
-        
-        if (!$container->hasAvailableCapacity($this->total_weight)) {
-            $this->addError('container_id', sprintf(
-                'El contenedor no tiene capacidad suficiente. Disponible: %.2f kg, Requerido: %.2f kg',
-                $container->getAvailableCapacity(),
-                $this->total_weight
-            ));
-            return;
+        // Validar contenedor si se seleccionó uno
+        if ($this->container_id) {
+            $container = Container::find($this->container_id);
+            if (!$container) {
+                $this->addError('container_id', 'El contenedor seleccionado no existe.');
+                return;
+            }
+            if (!$container->hasAvailableCapacity($this->total_weight)) {
+                $this->addError('container_id', sprintf(
+                    'El contenedor no tiene capacidad suficiente. Disponible: %.2f kg, Requerido: %.2f kg',
+                    $container->getAvailableCapacity(),
+                    $this->total_weight
+                ));
+                return;
+            }
         }
 
         try {
-            DB::transaction(function () use ($user, $container) {
+            DB::transaction(function () use ($user) {
                 $crewMemberId = null;
                 
                 if ($this->workType === 'individual' && $this->crew_member_id) {
@@ -500,7 +511,7 @@ class CreateHarvest extends Component
                 $harvest = Harvest::create([
                     'activity_id' => $activity->id,
                     'plot_planting_id' => $this->plot_planting_id,
-                    'container_id' => $this->container_id,
+                    'container_id' => $this->container_id ?: null,
                     'harvest_start_date' => $this->harvest_start_date,
                     'harvest_end_date' => $this->harvest_end_date ?: null,
                     'total_weight' => $this->total_weight,
@@ -530,6 +541,22 @@ class CreateHarvest extends Component
                     'notes' => $this->notes,
                 ]);
                 
+                // Registrar evento fenológico de vendimia
+                PhenologyObservation::updateOrCreate(
+                    [
+                        'plot_planting_id' => $this->plot_planting_id,
+                        'campaign_id'      => $activity->campaign_id,
+                        'event'            => 'harvest',
+                    ],
+                    [
+                        'viticulturist_id' => $user->id,
+                        'obs_date'         => $this->harvest_start_date,
+                        'bbch_code'        => 89,
+                        'source'           => 'manual',
+                        'active'           => true,
+                    ]
+                );
+
                 // El HarvestObserver se encarga automáticamente de:
                 // - Incrementar used_capacity del contenedor
                 // - Crear HarvestStock inicial

@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Viticulturist\DigitalNotebook;
 
+use App\Models\GrapeReceptionBatch;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\AgriculturalActivity;
 use App\Models\Harvest;
+use App\Models\PhenologyObservation;
 use App\Models\Container;
 use App\Models\Campaign;
 use App\Models\Crew;
@@ -99,6 +101,7 @@ class EditHarvest extends Component
     public $totalHarvestedInCampaign = 0;
     public $harvestLimitInfo = null;
     public $yieldVarianceInfo = null;
+    public float $wineryReceivedKg = 0;
 
     public function mount($harvest)
     {
@@ -339,6 +342,7 @@ class EditHarvest extends Component
             $this->harvestLimitInfo = null;
             $this->yieldVarianceInfo = null;
             $this->totalHarvestedInCampaign = 0;
+            $this->wineryReceivedKg = 0;
             return;
         }
 
@@ -350,26 +354,36 @@ class EditHarvest extends Component
         // Cargar rendimiento estimado
         $this->estimatedYield = $this->selectedPlanting->getEstimatedYieldForCampaign($this->campaign_id);
 
-        // Cargar cosechas registradas en la campaña (excluyendo la actual si estamos editando)
-        $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalActualYieldForCampaign($this->campaign_id);
+        // Año de vendimia: preferir harvest_start_date, sino campaña
+        $vintage = $this->harvest_start_date
+            ? (int) \Carbon\Carbon::parse($this->harvest_start_date)->year
+            : (Campaign::find($this->campaign_id)?->year ?? now()->year);
+
+        // Solo cosechas del cuaderno del viticultor (excluye recepciones de bodega), excluyendo la actual
+        $this->totalHarvestedInCampaign = $this->selectedPlanting->getTotalViticulturistYieldForVintage($vintage, Auth::id());
+
+        // Total recibido por bodegas de esta plantación en la añada
+        $this->wineryReceivedKg = (float) GrapeReceptionBatch::where('viticulturist_id', Auth::id())
+            ->where('plot_planting_id', $this->selectedPlanting->id)
+            ->where('vintage_year', $vintage)
+            ->sum('total_weight_kg');
         if ($this->harvest && $this->harvest->id) {
-            // Restar el peso de la cosecha actual si estamos editando
-            $this->totalHarvestedInCampaign = max(0, $this->totalHarvestedInCampaign - $this->harvest->total_weight);
+            $this->totalHarvestedInCampaign = max(0, $this->totalHarvestedInCampaign - (float) $this->harvest->total_weight);
         }
 
-        // Cargar información del límite
-        if ($this->selectedPlanting->hasHarvestLimit()) {
-            // Calcular remaining y percentage usando totalHarvestedInCampaign (que ya excluye la cosecha actual)
-            $remaining = max(0, round($this->selectedPlanting->harvest_limit_kg - $this->totalHarvestedInCampaign, 3));
-            $percentage = $this->selectedPlanting->harvest_limit_kg > 0
-                ? round(($this->totalHarvestedInCampaign / $this->selectedPlanting->harvest_limit_kg) * 100, 3)
-                : null;
-
+        // Límite efectivo con factor de edad PAC
+        $effectiveLimit = $this->selectedPlanting->effectiveHarvestLimitKg($vintage);
+        if ($effectiveLimit !== null) {
+            $rawLimit = (float) $this->selectedPlanting->harvest_limit_kg;
             $this->harvestLimitInfo = [
-                'limit' => $this->selectedPlanting->harvest_limit_kg,
-                'harvested' => $this->totalHarvestedInCampaign,
-                'remaining' => $remaining,
-                'percentage' => $percentage,
+                'limit'      => $effectiveLimit,
+                'raw_limit'  => $rawLimit,
+                'age_factor' => $rawLimit > 0 ? round($effectiveLimit / $rawLimit * 100) : 100,
+                'harvested'  => $this->totalHarvestedInCampaign,
+                'remaining'  => max(0, $effectiveLimit - $this->totalHarvestedInCampaign),
+                'percentage' => $effectiveLimit > 0
+                    ? round(($this->totalHarvestedInCampaign / $effectiveLimit) * 100, 1)
+                    : 0,
             ];
         } else {
             $this->harvestLimitInfo = null;
@@ -392,13 +406,14 @@ class EditHarvest extends Component
         
         // Actualizar información del límite con el nuevo peso
         if ($this->harvestLimitInfo) {
+            $limit    = $this->harvestLimitInfo['limit'];
             $newTotal = $this->totalHarvestedInCampaign + $newWeight;
-            $this->harvestLimitInfo['new_total'] = $newTotal;
-            $this->harvestLimitInfo['new_remaining'] = max(0, round($this->harvestLimitInfo['limit'] - $newTotal, 3));
-            $this->harvestLimitInfo['new_percentage'] = $this->harvestLimitInfo['limit'] > 0 
-                ? round(($newTotal / $this->harvestLimitInfo['limit']) * 100, 3) 
+            $this->harvestLimitInfo['new_total']      = $newTotal;
+            $this->harvestLimitInfo['new_remaining']  = max(0, round($limit - $newTotal, 3));
+            $this->harvestLimitInfo['new_percentage'] = $limit > 0
+                ? round(($newTotal / $limit) * 100, 1)
                 : null;
-            $this->harvestLimitInfo['exceeds'] = $newTotal > $this->harvestLimitInfo['limit'];
+            $this->harvestLimitInfo['exceeds'] = $newTotal > $limit;
         }
 
         // Actualizar varianza de rendimiento
@@ -575,6 +590,22 @@ class EditHarvest extends Component
                     'edited_by' => $user->id,
                     'edit_notes' => $this->edit_notes ?: null,
                 ]);
+
+                // Actualizar evento fenológico de vendimia
+                PhenologyObservation::updateOrCreate(
+                    [
+                        'plot_planting_id' => $this->plot_planting_id,
+                        'campaign_id'      => $this->harvest->activity->campaign_id,
+                        'event'            => 'harvest',
+                    ],
+                    [
+                        'viticulturist_id' => $user->id,
+                        'obs_date'         => $this->harvest_start_date,
+                        'bbch_code'        => 89,
+                        'source'           => 'manual',
+                        'active'           => true,
+                    ]
+                );
             });
 
             $this->toastSuccess('Cosecha actualizada correctamente.');

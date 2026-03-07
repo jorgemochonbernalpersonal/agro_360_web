@@ -13,6 +13,8 @@ class Harvest extends Model
 
     protected $fillable = [
         'activity_id',
+        'winery_id',
+        'batch_id',
         'plot_planting_id',
         'container_id',
         'harvest_start_date',
@@ -78,11 +80,43 @@ class Harvest extends Model
     ];
 
     /**
-     * Actividad agrícola base
+     * Actividad agrícola base (solo registros del viticultor; null en recepciones de bodega)
      */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(AgriculturalActivity::class, 'activity_id');
+    }
+
+    /**
+     * Bodega propietaria de la recepción (solo registros de bodega)
+     */
+    public function winery(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'winery_id');
+    }
+
+    /**
+     * Lote acumulador de recepciones de bodega
+     */
+    public function batch(): BelongsTo
+    {
+        return $this->belongsTo(GrapeReceptionBatch::class, 'batch_id');
+    }
+
+    /**
+     * ¿Es una recepción de bodega? (vs. registro del cuaderno del viticultor)
+     */
+    public function isWineryReception(): bool
+    {
+        return $this->winery_id !== null;
+    }
+
+    /**
+     * ¿Es un registro del cuaderno de campo del viticultor?
+     */
+    public function isViticulturistRecord(): bool
+    {
+        return $this->activity_id !== null;
     }
 
     /**

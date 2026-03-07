@@ -15,8 +15,8 @@
         $planting = $harvest->plotPlanting;
         $variety  = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
         $plotName = $planting?->plot?->name ?? '—';
-        $vitic    = $harvest->activity?->viticulturist;
-        $campaign = $harvest->activity?->campaign;
+        $vitic    = $harvest->batch?->viticulturist;
+        $year     = $harvest->batch?->vintage_year;
     @endphp
 
     <x-agro.card>

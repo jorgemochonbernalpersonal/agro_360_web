@@ -2,16 +2,24 @@
 
 namespace App\Livewire\Winery\Viticulturists;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use App\Notifications\ViticulturistInvitationNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Show extends Component
 {
-    public User $viticulturist;
+    use WithToastNotifications;
 
+    public User $viticulturist;
     public WineryViticulturist $relation;
+
+    // Invitación
+    public string $inviteEmail    = '';
+    public bool   $showEmailField = false;
 
     public function mount(User $viticulturist): void
     {
@@ -26,7 +34,75 @@ class Show extends Component
             'plots.plantings.grapeVariety',
             'profile',
         ]);
+
+        // Pre-rellenar email si ya tiene uno real
+        if ($this->hasRealEmail()) {
+            $this->inviteEmail = $this->viticulturist->email;
+        }
     }
+
+    // ── Invitación ───────────────────────────────────────────────────────────
+
+    protected function hasRealEmail(): bool
+    {
+        return $this->viticulturist->email
+            && !str_starts_with($this->viticulturist->email, 'viticultores.');
+    }
+
+    public function sendInvitation(): void
+    {
+        $this->validate([
+            'inviteEmail' => ['required', 'email', 'max:255'],
+        ], [
+            'inviteEmail.required' => 'Introduce el email del viticultor.',
+            'inviteEmail.email'    => 'El email no es válido.',
+        ]);
+
+        // Verificar que el email no está ya en uso por otro usuario
+        $emailTaken = User::where('email', $this->inviteEmail)
+            ->where('id', '!=', $this->viticulturist->id)
+            ->exists();
+
+        if ($emailTaken) {
+            $this->addError('inviteEmail', 'Este email ya está registrado en el sistema.');
+            return;
+        }
+
+        // Generar token único
+        $token = Str::random(64);
+
+        // Actualizar usuario: email real si era fake, token, sent_at, expires_at (7 días)
+        $updates = [
+            'invitation_token'      => $token,
+            'invitation_sent_at'    => now(),
+            'invitation_expires_at' => now()->addDays(7),
+        ];
+
+        if (!$this->hasRealEmail()) {
+            $updates['email'] = $this->inviteEmail;
+        }
+
+        $this->viticulturist->update($updates);
+        $this->viticulturist->refresh();
+
+        // Enviar notificación
+        $this->viticulturist->notify(new ViticulturistInvitationNotification(Auth::user(), $token));
+
+        $this->showEmailField = false;
+        $this->toastSuccess("Invitación enviada a {$this->inviteEmail}.");
+    }
+
+    public function revokeInvitation(): void
+    {
+        $this->viticulturist->update([
+            'invitation_token'      => null,
+            'invitation_expires_at' => null,
+            'invitation_sent_at'    => null,
+        ]);
+        $this->toastSuccess('Invitación revocada.');
+    }
+
+    // ── Render ───────────────────────────────────────────────────────────────
 
     public function render()
     {
@@ -45,6 +121,7 @@ class Show extends Component
             'totalKgLimit'   => $totalKgLimit,
             'relation'       => $this->relation,
             'isOwn'          => $isOwn,
+            'hasRealEmail'   => $this->hasRealEmail(),
         ])->layout('layouts.app');
     }
 }
