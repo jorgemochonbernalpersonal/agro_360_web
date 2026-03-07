@@ -36,6 +36,11 @@ class Create extends Component
 
     public function updatedYear(): void
     {
+        if (PacDeclaration::forViticulturist(Auth::id())->where('year', $this->year)->exists()) {
+            $this->redirectRoute('viticulturist.pac.declarations.index', navigate: true);
+            return;
+        }
+
         $this->loadPlots();
     }
 

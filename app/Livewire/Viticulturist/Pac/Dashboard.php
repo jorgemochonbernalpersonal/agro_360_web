@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Viticulturist\Pac;
 
-use App\Models\Campaign;
 use App\Models\PacDeclaration;
 use App\Models\Plot;
 use Illuminate\Support\Facades\Auth;

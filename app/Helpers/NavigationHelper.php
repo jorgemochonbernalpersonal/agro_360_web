@@ -167,7 +167,7 @@ class NavigationHelper
                 ],
                 [
                     'icon' => 'chart-bar',
-                    'label' => 'Cumplimiento PAC',
+                    'label' => 'Cumplimiento Cuaderno',
                     'route' => 'viticulturist.pac-compliance',
                     'active' => request()->routeIs('viticulturist.pac-compliance'),
                 ],

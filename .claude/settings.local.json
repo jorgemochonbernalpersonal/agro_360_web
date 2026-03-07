@@ -46,7 +46,8 @@
       "Bash(cmd.exe:*)",
       "Bash(dir:*)",
       "Bash(cmd:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(mv:*)"
     ]
   }
 }

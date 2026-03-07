@@ -62,6 +62,9 @@
                                     href="{{ route('viticulturist.pac.declarations.show', $declaration) }}"
                                     wire:navigate />
                                 @if($declaration->isDraft())
+                                    <flux:button size="sm" variant="ghost" icon="pencil"
+                                        href="{{ route('viticulturist.pac.declarations.edit', $declaration) }}"
+                                        wire:navigate />
                                     <flux:button size="sm" variant="ghost" icon="paper-airplane"
                                         wire:click="submit({{ $declaration->id }})"
                                         wire:confirm="¿Presentar esta declaración? Una vez presentada no podrás editarla." />
