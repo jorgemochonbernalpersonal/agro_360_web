@@ -377,6 +377,10 @@ class NavigationHelper
                     'route'  => 'winery.viticulturists.index',
                     'active' => request()->routeIs('winery.viticulturists*'),
                 ],
+            ];
+
+            // ── TERRITORIO ───────────────────────────────────────────
+            $menu['territory'] = [
                 [
                     'icon'   => 'map',
                     'label'  => 'Parcelas',
@@ -425,7 +429,7 @@ class NavigationHelper
                 ],
             ];
 
-            // ── FACTURACIÓN ──────────────────────────────────────────
+            // ── FACTURACIÓN Y CLIENTES ───────────────────────────────
             $menu['billing'] = [
                 [
                     'icon'   => 'arrow-down-tray',
@@ -439,10 +443,6 @@ class NavigationHelper
                     'route'  => 'winery.invoices.wine-sale.index',
                     'active' => request()->routeIs('winery.invoices.wine-sale*'),
                 ],
-            ];
-
-            // ── CLIENTES ─────────────────────────────────────────────
-            $menu['clients'] = [
                 [
                     'icon'   => 'users',
                     'label'  => 'Clientes',
