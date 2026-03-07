@@ -7,7 +7,7 @@
     
     <!-- SEO Meta Tags -->
     <title>Agro365 | Cuaderno de Campo Digital Obligatorio 2027 · Software Viticultura y Bodegas</title>
-    <meta name="description" content="Cuaderno de campo digital obligatorio desde 2027. Software de gestión para viticultores independientes, bodegas y Denominaciones de Origen. Cumplimiento PAC, SIGPAC y trazabilidad completa. Prueba gratis 6 meses.">
+    <meta name="description" content="Cuaderno de campo digital obligatorio desde 2027. Software de gestión para viticultores, bodegas y Denominaciones de Origen. Cumplimiento PAC, SIGPAC y trazabilidad completa. Viticultor básico gratis, completo desde 9€/mes.">
     <meta name="keywords" content="software gestión agrícola, cuaderno digital campo, software viñedos España, SIGPAC, gestión parcelas agrícolas, app viticultores, software bodega, cuaderno campo digital, gestión viticultura, software agricultura, control parcelas, normativa PAC, cuaderno campo 2027, digitalización agrícola, trazabilidad viñedos, gestión vendimia, facturación agrícola, informes oficiales agricultura, firma electrónica agrícola, gestión cosechas, control fitosanitarios, software para viticultores, app agricultura, cuaderno digital viticultores, software agricultura España, gestión agrícola digital, app campo, software viñedos, digitalización campo, agricultura 4.0, viticultura digital, aplicación agrícola, software viticultura, gestión viñedos, app gestión agrícola, software agrícola móvil, cuaderno campo digital viticultores, software viticultores profesional, aplicación campo digital, app SIGPAC, software agrícola viticultura">
     <meta name="author" content="Agro365">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -187,7 +187,7 @@
                 'name' => 'España'
             ],
             'availableLanguage' => 'Spanish',
-            'priceRange' => '€9-€90',
+            'priceRange' => '€0-€14',
             'email' => 'info@agro365.es'
         ];
     @endphp
@@ -451,23 +451,13 @@
                             <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-sm font-semibold text-amber-800">⚡ Obligatorio en <span id="days-counter">...</span> días</span>
+                            <span class="text-sm font-semibold text-amber-800">⚡ Obligatorio en <span id="days-counter">{{ now()->lt('2027-01-01') ? now()->diffInDays('2027-01-01') : 0 }}</span> días</span>
                         </div>
                     </div>
-                    <script>
-                    (function() {
-                        var deadline = new Date('2027-01-01T00:00:00');
-                        var el = document.getElementById('days-counter');
-                        if (el) {
-                            var diff = Math.ceil((deadline - new Date()) / 86400000);
-                            el.textContent = diff > 0 ? diff : 0;
-                        }
-                    })();
-                    </script>
                     
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
-                        Cuaderno de Campo Digital Obligatorio 2027
-                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">— y mucho más</span>
+                        Cuaderno de Campo Digital Obligatorio desde 2027
+                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">Básico 2027 · Completo 2028</span>
                     </h1>
 
                     <p class="text-xl text-gray-600 leading-relaxed">
@@ -516,7 +506,7 @@
                             <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-amber-700 text-sm font-semibold">Obligatorio desde enero 2027</span>
+                            <span class="text-amber-700 text-sm font-semibold">Básico obligatorio 2027 · Completo 2028</span>
                         </div>
                     </div>
                 </div>
@@ -1304,7 +1294,7 @@
                 $faqs = [
                     [
                         '¿El cuaderno de campo digital es realmente obligatorio desde 2027?',
-                        'Sí. El Reglamento de Ejecución (UE) 2022/1441 establece la obligatoriedad del cuaderno de campo digital para todos los agricultores profesionales en España a partir de enero de 2027. Agro365 cumple con todos los requisitos técnicos y legales de esta normativa.',
+                        'Sí, en dos fases. Desde enero de 2027 es obligatorio el registro básico de tratamientos en soporte digital. Desde 2028 entra en vigor el cuaderno completo con todos los campos exigidos por el Reglamento de Ejecución (UE) 2022/1441. Agro365 cubre ambas fases desde hoy.',
                     ],
                     [
                         '¿Cuánto cuesta Agro365 para un viticultor?',
@@ -1368,24 +1358,24 @@
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
                 </svg>
-                Obligatorio desde enero 2027
+                Básico obligatorio 2027 · Completo 2028
             </div>
             <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">
                 La normativa no espera.<br>Tu viñedo tampoco.
             </h2>
             <p class="text-green-100 text-xl mb-10 max-w-2xl mx-auto">
-                El cuaderno de campo digital es obligatorio desde 2027.
-                Agro365 está listo hoy. El uso básico es gratis — empieza ahora.
+                Cuaderno básico obligatorio en 2027, completo en 2028.
+                Viticultor básico gratis · Bodega 14€/mes · DO desde 149€/mes.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
                     🌿 Empezar como Viticultor — Gratis
                 </a>
-                <a href="mailto:info@agro365.es?subject=Demo%20Bodega" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
-                    🍷 Solicitar Demo para Bodega
+                <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
+                    🍷 Empezar Gratis — Bodega
                 </a>
-                <a href="mailto:info@agro365.es?subject=Consulta%20DO" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white/90 hover:bg-white/10 transition-all font-semibold text-lg">
-                    🏛️ Contactar — DO
+                <a href="mailto:info@agro365.es?subject=Demo%20Denominaci%C3%B3n%20de%20Origen" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white/90 hover:bg-white/10 transition-all font-semibold text-lg">
+                    🏛️ Solicitar Demo — DO
                 </a>
             </div>
             <p class="text-green-200/70 text-sm mt-8">
