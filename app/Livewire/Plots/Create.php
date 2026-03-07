@@ -22,6 +22,7 @@ use App\Models\TrainingSystem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
 class Create extends Component
@@ -246,6 +247,24 @@ class Create extends Component
     {
         $hidden = $this->hiddenIds($catalogType);
         return $query->where(fn($q) => $q->whereNull('user_id')->whereNotIn('id', $hidden)->orWhere('user_id', Auth::id()));
+    }
+
+    #[Renderless]
+    public function fetchProvinces(int $communityId): array
+    {
+        return Province::where('autonomous_community_id', $communityId)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->toArray();
+    }
+
+    #[Renderless]
+    public function fetchMunicipalities(int $provinceId): array
+    {
+        return Municipality::where('province_id', $provinceId)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->toArray();
     }
 
     public function render()

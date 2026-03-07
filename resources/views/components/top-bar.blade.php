@@ -34,7 +34,9 @@
 
         {{-- User section --}}
         <div class="flex items-center gap-3">
-            @livewire('notifications')
+            @persist('notifications')
+                @livewire('notifications')
+            @endpersist
 
             <flux:dropdown position="bottom" align="end">
                 <flux:button variant="ghost" class="flex items-center gap-2 !px-2">

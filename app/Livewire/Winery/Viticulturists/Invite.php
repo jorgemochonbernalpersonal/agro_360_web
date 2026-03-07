@@ -81,12 +81,25 @@ class Invite extends Component
             ->where('can_login', true)
             ->findOrFail($userId);
 
-        WineryViticulturist::create([
-            'winery_id'        => $wineryId,
-            'viticulturist_id' => $user->id,
-            'source'           => WineryViticulturist::SOURCE_OWN,
-            'assigned_by'      => $wineryId,
-        ]);
+        // Si existe un registro self-registered sin winery, actualizarlo en vez de duplicar
+        $selfRecord = WineryViticulturist::where('viticulturist_id', $user->id)
+            ->whereNull('winery_id')
+            ->first();
+
+        if ($selfRecord) {
+            $selfRecord->update([
+                'winery_id'   => $wineryId,
+                'source'      => WineryViticulturist::SOURCE_OWN,
+                'assigned_by' => $wineryId,
+            ]);
+        } else {
+            WineryViticulturist::create([
+                'winery_id'        => $wineryId,
+                'viticulturist_id' => $user->id,
+                'source'           => WineryViticulturist::SOURCE_OWN,
+                'assigned_by'      => $wineryId,
+            ]);
+        }
 
         // Inherit beta from winery if active
         $winery = Auth::user();

@@ -18,6 +18,7 @@ use App\Models\Municipality;
 use App\Livewire\Concerns\WithRoleBasedFields;
 use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -173,6 +174,24 @@ class Edit extends Component
         } else {
             $this->municipality_id = '';
         }
+    }
+
+    #[Renderless]
+    public function fetchProvinces(int $communityId): array
+    {
+        return Province::where('autonomous_community_id', $communityId)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->toArray();
+    }
+
+    #[Renderless]
+    public function fetchMunicipalities(int $provinceId): array
+    {
+        return Municipality::where('province_id', $provinceId)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->toArray();
     }
 
     public function update()
