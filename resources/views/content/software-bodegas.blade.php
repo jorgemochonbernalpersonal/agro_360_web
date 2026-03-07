@@ -120,18 +120,60 @@
                         </p>
                     </div>
 
-                    <!-- Funcionalidades -->
-                    <div class="mb-12">
-                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-6">Funcionalidades para la Gestión Vinícola</h2>
-                        <div class="grid md:grid-cols-2 gap-6 not-prose">
-                            @foreach([
-                                ['📥', 'Recepción y Pesaje', 'Registro rápido de entradas de uva por socio o parcela, control de grados baumé y estado sanitario.'],
-                                ['🏭', 'Gestión de Depósitos', 'Control visual de tu parque de depósitos, inventario en tiempo real y movimientos entre envases.'],
-                                ['🔍', 'Trazabilidad de Origen', 'Conoce exactamente de qué parcela procede cada litro de vino. Cumple con los requisitos de los Consejos Reguladores.'],
-                                ['📦', 'Escandallos y Costes', 'Análisis detallado de costes de producción, desde la materia prima hasta los materiales auxiliares.'],
-                                ['📄', 'Informes Oficiales', 'Genera informes AICA, INFOVI y libros de bodega en minutos, no en días. Con firma electrónica.'],
-                                ['💰', 'Facturación Integrada', 'Facturación de uva, vino a granel y productos embotellados. Compatible con Verifactu.'],
-                            ] as [$icon, $title, $desc])
+                    <!-- Vendimia y campo -->
+                    <div class="mb-12 not-prose">
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Desde el campo hasta la cuba</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">Todo empieza en el viñedo. Agro365 conecta el cuaderno de campo de tus viticultores con el sistema de recepción de tu bodega — sin llamadas, sin papel, sin duplicidades.</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            @php $features1 = [
+                                ['📥', 'Recepción y Pesaje', 'Registra entradas de uva por socio o parcela: grados baumé, estado sanitario, remolque, hora de entrada. Ticket de pesaje imprimible desde el momento uno.'],
+                                ['🛰️', 'Teledetección pre-vendimia', 'Accede al NDVI de las parcelas de tus viticultores. Detecta estrés hídrico, plagas y diferencias de vigor semanas antes de la vendimia para planificar la recepción.'],
+                                ['🌿', 'Panel de viticultores proveedores', 'Invita a tus viticultores con un enlace. Ellos llevan su cuaderno de campo gratis y tú ves parcelas, tratamientos y rendimientos estimados en tiempo real.'],
+                                ['📊', 'Histórico de campañas', 'Consulta vendimias anteriores por viticultor, parcela o variedad. Compara rendimientos y calidades año a año.'],
+                            ]; @endphp
+                            @foreach($features1 as [$icon, $title, $desc])
+                            <div class="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm">
+                                <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ $icon }} {{ $title }}</h3>
+                                <p class="text-zinc-600 text-sm leading-relaxed">{{ $desc }}</p>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Bodega y elaboración -->
+                    <div class="mb-12 not-prose">
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Gestión completa de bodega</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">Depósitos, trasiegos, aditivos, mantenimiento de envases y control de residuos. Todo en un solo panel, con trazabilidad lote a lote.</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            @php $features2 = [
+                                ['🏭', 'Depósitos y Envases', 'Control visual de todo tu parque de depósitos: inventario en tiempo real, volumen actual, movimientos entre envases y estado de cada cuba.'],
+                                ['🍷', 'Pipeline de Elaboración', 'Sigue cada vino desde la entrada de uva hasta el embotellado. Operaciones de vinificación, mezclas, clarificaciones y correcciones registradas con fecha y responsable.'],
+                                ['🧪', 'Aditivos y Tratamientos', 'Registra cada adición enológica — sulfuroso, levaduras, clarificantes — con dosis, lote y justificación. Trazabilidad total de insumos en cada depósito.'],
+                                ['🔧', 'Mantenimiento de Envases', 'Lleva el historial de limpiezas, reparaciones y controles de cada depósito o barrica. Programa revisiones y recibe alertas antes de que venzan.'],
+                                ['♻️', 'Gestión de Residuos', 'Control de lías, orujos, tartrato y otros residuos generados en bodega. Cumplimiento de declaraciones medioambientales incluido.'],
+                                ['📦', 'Almacén de Insumos', 'Gestiona el stock de tu bodega: materiales auxiliares, productos enológicos y envases. Control de entradas, consumos y existencias mínimas.'],
+                            ]; @endphp
+                            @foreach($features2 as [$icon, $title, $desc])
+                            <div class="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm">
+                                <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ $icon }} {{ $title }}</h3>
+                                <p class="text-zinc-600 text-sm leading-relaxed">{{ $desc }}</p>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Administración y normativa -->
+                    <div class="mb-12 not-prose">
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">Administración, facturación y cumplimiento</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">La parte que nadie quiere hacer pero que hay que hacer bien. Agro365 la automatiza.</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            @php $features3 = [
+                                ['📄', 'Libros de Bodega e Informes Oficiales', 'Genera los libros de registro obligatorios y las declaraciones AICA e INFOVI automáticamente, con todos los datos ya introducidos en la plataforma.'],
+                                ['💰', 'Facturación y Verifactu', 'Factura uva comprada, vino a granel y productos embotellados. Cumplimiento Verifactu desde el primer día, sin configuración adicional.'],
+                                ['🔍', 'Trazabilidad de Origen', 'Cada botella sabe de qué parcela viene. Consulta en segundos el origen de cualquier lote para etiquetado, auditorías o requerimientos del Consejo Regulador.'],
+                                ['📦', 'Escandallos y Costes', 'Calcula el coste real de cada vino incluyendo materia prima, insumos, horas de elaboración y materiales auxiliares. Información para fijar precios con base real.'],
+                            ]; @endphp
+                            @foreach($features3 as [$icon, $title, $desc])
                             <div class="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm">
                                 <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">{{ $icon }} {{ $title }}</h3>
                                 <p class="text-zinc-600 text-sm leading-relaxed">{{ $desc }}</p>
@@ -151,19 +193,45 @@
                                 <div>
                                     <div class="text-3xl mb-2">📨</div>
                                     <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">Invita con un enlace</h3>
-                                    <p class="text-zinc-600 text-sm">El viticultor se registra en menos de 5 minutos. Sin instalaciones.</p>
+                                    <p class="text-zinc-600 text-sm">El viticultor se registra en menos de 5 minutos. Sin instalaciones, sin contratos por su parte.</p>
                                 </div>
                                 <div>
                                     <div class="text-3xl mb-2">🌿</div>
                                     <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">Ellos acceden gratis</h3>
-                                    <p class="text-zinc-600 text-sm">Cuaderno de campo básico sin coste. Si quieren funciones avanzadas, pagan 9€/mes por su cuenta.</p>
+                                    <p class="text-zinc-600 text-sm">Cuaderno de campo básico sin coste. Si quieren funciones avanzadas, pagan 9€/mes por su cuenta — no es tu problema.</p>
                                 </div>
                                 <div>
                                     <div class="text-3xl mb-2">📊</div>
                                     <h3 class="font-bold text-[var(--color-agro-green-dark)] mb-1">Tú ves todo en tiempo real</h3>
-                                    <p class="text-zinc-600 text-sm">Parcelas, tratamientos, rendimientos estimados y datos de campaña de todos tus proveedores.</p>
+                                    <p class="text-zinc-600 text-sm">Parcelas, tratamientos, rendimientos estimados y datos de campaña de todos tus proveedores, sin pedirles nada por teléfono.</p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Próximamente -->
+                    <div class="mb-12 not-prose">
+                        <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">En desarrollo</h2>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">Agro365 está en beta activa. Estas funcionalidades están en hoja de ruta confirmada para 2025–2026.</p>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            @php $roadmap = [
+                                ['🔬', 'Análisis de laboratorio', 'Registro de analíticas enológicas — acidez, pH, azúcares residuales — vinculadas a cada depósito o lote.'],
+                                ['📱', 'App móvil para bodega', 'Escanea envases, registra movimientos y consulta el stock de tu bodega desde el móvil en planta.'],
+                                ['🏷️', 'Trazabilidad de botella', 'Codificación de lotes de embotellado con trazabilidad hasta la parcela de origen. Ideal para exportación y auditorías.'],
+                                ['🤝', 'Integración con básculas', 'Conexión directa con básculas de pesaje para registro automático de entradas sin introducción manual.'],
+                                ['📤', 'Exportación para DO', 'Formatos de exportación adaptados a los requerimientos específicos de cada Denominación de Origen.'],
+                                ['📈', 'BI y cuadro de mando', 'Dashboard ejecutivo con márgenes por vino, coste por litro, comparativa de campañas y previsión de producción.'],
+                            ]; @endphp
+                            @foreach($roadmap as [$icon, $title, $desc])
+                            <div class="bg-zinc-50 p-5 rounded-xl border border-zinc-200 border-dashed">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xl">{{ $icon }}</span>
+                                    <span class="inline-block px-2 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-700">Próximamente</span>
+                                </div>
+                                <h3 class="font-bold text-zinc-800 mb-1 text-sm">{{ $title }}</h3>
+                                <p class="text-zinc-500 text-xs leading-relaxed">{{ $desc }}</p>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -171,14 +239,14 @@
                     <div class="mb-12">
                         <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Seguridad y Rigor Normativo</h2>
                         <p class="text-zinc-700 leading-relaxed mb-4">
-                            Cumplir con los libros de bodega y las declaraciones obligatorias (AICA, INFOVI) puede ser una tarea tediosa. Agro365 automatiza la recopilación de datos para que generar estos informes sea cuestión de minutos, no de días.
+                            AICA, INFOVI, libros de bodega — Agro365 los genera automáticamente. Lo que antes llevaba días, ahora son minutos.
                         </p>
                         <div class="bg-zinc-50 rounded-xl p-6 border border-zinc-200 not-prose">
-                            <div class="flex items-center gap-4 mb-4">
+                            <div class="flex items-center gap-4">
                                 <div class="text-4xl">⚡</div>
                                 <div>
                                     <p class="font-bold text-zinc-800 text-lg">Optimización de Procesos</p>
-                                    <p class="text-zinc-500 text-sm">Los usuarios de Agro365 reportan una reducción media del 40% en el tiempo dedicado a la gestión administrativa de la trazabilidad.</p>
+                                    <p class="text-zinc-500 text-sm">Los usuarios de Agro365 reportan una significativa reducción en el tiempo dedicado a la gestión administrativa de la trazabilidad.</p>
                                 </div>
                             </div>
                         </div>
@@ -268,15 +336,16 @@
                 <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
                     Lleva tu bodega al siguiente nivel
                 </h2>
-                <p class="text-green-100 text-lg mb-8">
-                    Sin tarjeta de crédito. Onboarding personalizado incluido. Migración de datos gratuita.
+                <p class="text-green-100 text-lg mb-2">
+                    Desde 14€/mes · 3 meses gratis · Sin tarjeta
                 </p>
+                <p class="text-green-200/70 text-sm mb-8">Prueba gratuita de 3 meses para las primeras 50 bodegas. Onboarding personalizado incluido.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
-                        Empezar Gratis — Bodega
+                        Empezar Gratis — 3 meses sin coste
                     </a>
                     <a href="mailto:info@agro365.es?subject=Demo%20Bodega%20Agro365" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
-                        Solicitar Demo
+                        Solicitar Demo personalizada
                     </a>
                 </div>
             </div>
