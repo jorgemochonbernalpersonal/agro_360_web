@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ContainerMaintenance extends Model
 {
@@ -45,6 +46,16 @@ class ContainerMaintenance extends Model
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
+    }
+
+    public function supplies(): HasMany
+    {
+        return $this->hasMany(ContainerMaintenanceSupply::class, 'container_maintenance_id');
+    }
+
+    public function wastes(): HasMany
+    {
+        return $this->hasMany(ContainerMaintenanceWaste::class, 'container_maintenance_id');
     }
 
     public function getTypeLabel(): string

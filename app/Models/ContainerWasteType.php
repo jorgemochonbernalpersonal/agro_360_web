@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ContainerMaterial extends Model
+class ContainerWasteType extends Model
 {
     protected $fillable = ['name', 'description'];
 
-    public function containers(): HasMany
+    public function maintenanceWastes(): HasMany
     {
-        return $this->hasMany(Container::class, 'material_id');
+        return $this->hasMany(ContainerMaintenanceWaste::class);
     }
 }

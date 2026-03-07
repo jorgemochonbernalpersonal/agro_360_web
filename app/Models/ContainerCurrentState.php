@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class ContainerCurrentState extends Model
@@ -46,6 +47,14 @@ class ContainerCurrentState extends Model
     public function harvest(): BelongsTo
     {
         return $this->belongsTo(Harvest::class);
+    }
+
+    /**
+     * Aditivos aplicados mientras este estado estaba activo
+     */
+    public function additiveSupplies(): HasMany
+    {
+        return $this->hasMany(ContainerAdditiveSupply::class, 'container_current_state_id');
     }
 
     /**

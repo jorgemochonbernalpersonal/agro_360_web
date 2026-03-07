@@ -374,9 +374,9 @@ class NavigationHelper
                 ],
                 [
                     'icon'   => 'arrows-right-left',
-                    'label'  => 'Elaboración de Vino',
-                    'route'  => 'winery.wine-process.index',
-                    'active' => request()->routeIs('winery.wine-process*'),
+                    'label'  => 'Vinos',
+                    'route'  => 'winery.wines.index',
+                    'active' => request()->routeIs('winery.wines*'),
                 ],
                 [
                     'icon'   => 'magnifying-glass',
@@ -431,9 +431,9 @@ class NavigationHelper
             $menu['resources'] = [
                 [
                     'icon'   => 'building-storefront',
-                    'label'  => 'Inventario Insumos',
-                    'route'  => 'winery.inventory.index',
-                    'active' => request()->routeIs('winery.inventory*'),
+                    'label'  => 'Insumos de Bodega',
+                    'route'  => 'winery.winery-supplies.index',
+                    'active' => request()->routeIs('winery.winery-supplies*'),
                 ],
                 [
                     'icon'   => 'truck',

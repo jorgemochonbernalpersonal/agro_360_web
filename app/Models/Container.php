@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -31,6 +32,8 @@ class Container extends Model
         'purchase_date',
         'next_maintenance_date',
         'supplier_name',
+        'x_position',
+        'y_position',
         'archived',
     ];
 
@@ -58,6 +61,22 @@ class Container extends Model
     public function containerType(): BelongsTo
     {
         return $this->belongsTo(ContainerType::class, 'type_id');
+    }
+
+    /**
+     * Material del contenedor
+     */
+    public function containerMaterial(): BelongsTo
+    {
+        return $this->belongsTo(ContainerMaterial::class, 'material_id');
+    }
+
+    /**
+     * Unidad de medida
+     */
+    public function unitOfMeasurement(): BelongsTo
+    {
+        return $this->belongsTo(UnitOfMeasurement::class);
     }
 
     /**
@@ -99,6 +118,32 @@ class Container extends Model
     public function harvests(): HasMany
     {
         return $this->hasMany(Harvest::class, 'container_id');
+    }
+
+    /**
+     * Mantenimientos del contenedor
+     */
+    public function maintenances(): HasMany
+    {
+        return $this->hasMany(ContainerMaintenance::class)->orderByDesc('scheduled_date');
+    }
+
+    /**
+     * Aditivos enológicos aplicados al contenido activo
+     */
+    public function additiveSupplies(): HasMany
+    {
+        return $this->hasMany(ContainerAdditiveSupply::class)->orderByDesc('additive_date');
+    }
+
+    /**
+     * Procesos de vinificación en los que participa este contenedor
+     */
+    public function wineProcessDetails(): BelongsToMany
+    {
+        return $this->belongsToMany(WineProcessDetail::class, 'wine_process_detail_containers')
+            ->withPivot(['quantity', 'unit_of_measurement_id'])
+            ->withTimestamps();
     }
 
     /**

@@ -1,6 +1,6 @@
 <x-agro.form-card
-    title="Nuevo Mantenimiento"
-    description="Registra o programa un mantenimiento para {{ $container->name }}."
+    title="Editar Mantenimiento"
+    description="{{ $container->name }} — modifica los datos del mantenimiento."
     icon="wrench-screwdriver"
     icon-color="from-zinc-500 to-zinc-700"
     :back-url="route('winery.containers.maintenance.index', $container)"
@@ -21,7 +21,7 @@
 
                 <flux:field class="md:col-span-2">
                     <flux:label required>Nombre / descripción breve</flux:label>
-                    <flux:input wire:model="maintenance_name" type="text" required placeholder="ej. Limpieza de vendimia 2026" />
+                    <flux:input wire:model="maintenance_name" type="text" required />
                     <flux:error name="maintenance_name" />
                 </flux:field>
             </div>
@@ -38,14 +38,12 @@
                 <flux:field>
                     <flux:label>Fecha de realización</flux:label>
                     <flux:input wire:model="performed_date" type="date" />
-                    <flux:description>Dejar vacío si aún no se ha realizado</flux:description>
                     <flux:error name="performed_date" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Próximo mantenimiento</flux:label>
                     <flux:input wire:model="next_maintenance_date" type="date" />
-                    <flux:description>Se actualizará en el contenedor al completar</flux:description>
                     <flux:error name="next_maintenance_date" />
                 </flux:field>
 
@@ -61,13 +59,13 @@
 
                 <flux:field>
                     <flux:label>Coste (€)</flux:label>
-                    <flux:input wire:model="cost" type="number" step="0.01" min="0" placeholder="0.00" />
+                    <flux:input wire:model="cost" type="number" step="0.01" min="0" />
                     <flux:error name="cost" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Realizado por</flux:label>
-                    <flux:input wire:model="performed_by" type="text" placeholder="Nombre del técnico o empresa" />
+                    <flux:input wire:model="performed_by" type="text" />
                     <flux:error name="performed_by" />
                 </flux:field>
             </div>
@@ -76,15 +74,13 @@
         <x-agro.form-section title="Notas" color="green">
             <flux:field>
                 <flux:label>Observaciones</flux:label>
-                <flux:textarea wire:model="notes" rows="3" placeholder="Detalles del mantenimiento..." />
+                <flux:textarea wire:model="notes" rows="3" />
                 <flux:error name="notes" />
             </flux:field>
         </x-agro.form-section>
 
-        {{-- Insumos usados --}}
+        {{-- Insumos --}}
         <x-agro.form-section title="Insumos utilizados" color="blue">
-            <flux:description class="mb-4">Productos usados durante este mantenimiento (SO₂, agua, detergentes...).</flux:description>
-
             @foreach($supplies as $i => $row)
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end mb-3 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg">
                     <flux:field class="md:col-span-2">
@@ -92,7 +88,7 @@
                         <flux:select wire:model="supplies.{{ $i }}.winery_supply_id">
                             <option value="">Seleccionar catálogo...</option>
                             @foreach($supplies as $s)
-                                @if(!is_array($s))
+                                @if(is_object($s))
                                     <option value="{{ $s->id }}">{{ $s->name }}</option>
                                 @endif
                             @endforeach
@@ -100,7 +96,7 @@
                     </flux:field>
                     <flux:field>
                         <flux:label>Nombre libre</flux:label>
-                        <flux:input wire:model="supplies.{{ $i }}.supply_name" type="text" placeholder="O escribe el nombre" />
+                        <flux:input wire:model="supplies.{{ $i }}.supply_name" type="text" />
                     </flux:field>
                     <flux:field>
                         <flux:label>Cantidad</flux:label>
@@ -121,16 +117,13 @@
                     </div>
                 </div>
             @endforeach
-
             <flux:button type="button" variant="ghost" icon="plus" size="sm" wire:click="addSupply">
                 Añadir insumo
             </flux:button>
         </x-agro.form-section>
 
-        {{-- Residuos generados --}}
+        {{-- Residuos --}}
         <x-agro.form-section title="Residuos generados" color="yellow">
-            <flux:description class="mb-4">Lías, orujos, aguas sucias u otros residuos generados.</flux:description>
-
             @foreach($wastes as $i => $row)
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end mb-3 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg">
                     <flux:field>
@@ -153,19 +146,18 @@
                     <div class="flex gap-2 items-end">
                         <flux:field class="flex-1">
                             <flux:label>Método eliminación</flux:label>
-                            <flux:input wire:model="wastes.{{ $i }}.disposal_method" type="text" placeholder="Gestor, compost..." />
+                            <flux:input wire:model="wastes.{{ $i }}.disposal_method" type="text" />
                         </flux:field>
                         <flux:button type="button" variant="ghost" icon="trash" size="sm"
                             wire:click="removeWaste({{ $i }})" />
                     </div>
                 </div>
             @endforeach
-
             <flux:button type="button" variant="ghost" icon="plus" size="sm" wire:click="addWaste">
                 Añadir residuo
             </flux:button>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.containers.maintenance.index', $container)" submit-label="Guardar mantenimiento" />
+        <x-agro.form-actions :back-url="route('winery.containers.maintenance.index', $container)" submit-label="Actualizar mantenimiento" />
     </form>
 </x-agro.form-card>

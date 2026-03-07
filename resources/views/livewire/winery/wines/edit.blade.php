@@ -1,0 +1,118 @@
+<x-agro.form-card
+    title="Editar Vino — {{ $wine->name }}"
+    description="Modifica los datos del vino y consulta su historial de operaciones."
+    icon="beaker"
+    icon-color="from-purple-500 to-purple-700"
+    :back-url="route('winery.wines.index')"
+>
+    <form wire:submit="save" class="space-y-8">
+        <x-agro.form-section title="Identificación" color="purple">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <flux:field class="md:col-span-2">
+                    <flux:label required>Nombre del vino</flux:label>
+                    <flux:input wire:model="name" type="text" required />
+                    <flux:error name="name" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Código interno</flux:label>
+                    <flux:input wire:model="internal_code" type="text" />
+                    <flux:error name="internal_code" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label required>Tipo de vino</flux:label>
+                    <flux:select wire:model="wine_type" required>
+                        @foreach($types as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="wine_type" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Añada</flux:label>
+                    <flux:input wire:model="vintage" type="number" min="1900" max="{{ date('Y') + 1 }}" />
+                    <flux:error name="vintage" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label required>Estado</flux:label>
+                    <flux:select wire:model="status" required>
+                        @foreach($statuses as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="status" />
+                </flux:field>
+
+                <flux:field class="md:col-span-2">
+                    <flux:label>Variedad / Coupage</flux:label>
+                    <flux:input wire:model="variety" type="text" />
+                    <flux:error name="variety" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Volumen (litros)</flux:label>
+                    <flux:input wire:model="volume_liters" type="number" step="0.001" min="0" />
+                    <flux:error name="volume_liters" />
+                </flux:field>
+            </div>
+        </x-agro.form-section>
+
+        <x-agro.form-section title="Notas" color="green">
+            <flux:field>
+                <flux:label>Observaciones</flux:label>
+                <flux:textarea wire:model="notes" rows="3" />
+                <flux:error name="notes" />
+            </flux:field>
+        </x-agro.form-section>
+
+        <x-agro.form-actions :back-url="route('winery.wines.index')" submit-label="Actualizar vino">
+            <x-slot:extra>
+                <flux:button variant="ghost" icon="plus"
+                    href="{{ route('winery.wines.process.create', $wine) }}" wire:navigate>
+                    Añadir operación
+                </flux:button>
+            </x-slot:extra>
+        </x-agro.form-actions>
+    </form>
+
+    {{-- Historial de operaciones --}}
+    @php $processes = $wine->processDetails()->with(['container', 'unitOfMeasurement'])->get(); @endphp
+    @if($processes->count())
+        <div class="mt-10 border-t border-zinc-200 dark:border-zinc-700 pt-6">
+            <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4">Historial de operaciones</h3>
+            <div class="space-y-3">
+                @foreach($processes as $p)
+                    <div class="flex items-start gap-4 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
+                        <div class="text-xs text-zinc-500 w-24 shrink-0 pt-0.5">
+                            {{ $p->start_date->format('d/m/Y') }}
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-sm text-zinc-900 dark:text-zinc-100">
+                                {{ $p->process_type_label }}
+                            </div>
+                            @if($p->container)
+                                <div class="text-xs text-zinc-500">{{ $p->container->name }}</div>
+                            @endif
+                            @if($p->observations)
+                                <div class="text-xs text-zinc-400 mt-1">{{ $p->observations }}</div>
+                            @endif
+                        </div>
+                        @if($p->quantity)
+                            <div class="text-xs text-zinc-600 dark:text-zinc-400 shrink-0">
+                                {{ number_format($p->quantity, 0) }} {{ $p->unitOfMeasurement?->symbol }}
+                            </div>
+                        @endif
+                        @if($p->end_date)
+                            <div class="text-xs text-green-600 shrink-0">✓ {{ $p->end_date->format('d/m/Y') }}</div>
+                        @else
+                            <div class="text-xs text-blue-500 shrink-0">En curso</div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+</x-agro.form-card>
