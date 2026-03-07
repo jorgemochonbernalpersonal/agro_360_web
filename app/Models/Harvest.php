@@ -50,6 +50,9 @@ class Harvest extends Model
         // Campos adicionales de calidad / trazabilidad
         'potential_alcohol',
         'harvest_time',
+        // Descarte
+        'disqualified',
+        'disqualified_reason',
     ];
 
     protected $casts = [
@@ -71,6 +74,7 @@ class Harvest extends Model
         'total_value' => 'decimal:3',
         'edited_at' => 'datetime',
         'potential_alcohol' => 'decimal:2',
+        'disqualified' => 'boolean',
     ];
 
     /**

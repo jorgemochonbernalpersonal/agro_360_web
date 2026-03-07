@@ -32,6 +32,11 @@ Route::middleware(['role:winery'])
         // ── Recepción de uva ──────────────────────────────────────────
         Route::get('/grape-reception', \App\Livewire\Winery\Harvest\Reception\Index::class)->name('grape-reception.index');
         Route::get('/grape-reception/create', \App\Livewire\Winery\Harvest\Reception\Create::class)->name('grape-reception.create');
+        Route::get('/grape-reception/export/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdf'])->name('grape-reception.export-pdf');
+        Route::get('/grape-reception/export/excel', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportExcel'])->name('grape-reception.export-excel');
+        Route::get('/grape-reception/{harvest}', \App\Livewire\Winery\Harvest\Reception\Show::class)->name('grape-reception.show');
+        Route::get('/grape-reception/{harvest}/edit', \App\Livewire\Winery\Harvest\Reception\Edit::class)->name('grape-reception.edit');
+        Route::get('/grape-reception/{harvest}/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdfSingle'])->name('grape-reception.export-pdf-single');
 
         // ── Contenedores de bodega ────────────────────────────────────
         Route::get('/containers', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('containers.index');

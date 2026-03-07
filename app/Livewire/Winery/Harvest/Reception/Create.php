@@ -54,6 +54,10 @@ class Create extends Component
     // Destino bodega
     public string $container_id = '';
 
+    // Descarte
+    public bool   $disqualified         = false;
+    public string $disqualified_reason  = '';
+
     public string $notes = '';
 
     // Computed / dynamic
@@ -236,6 +240,8 @@ class Create extends Component
             'vehicle_plate'              => ['nullable', 'string', 'max:20'],
             'harvest_time'               => ['nullable', 'date_format:H:i'],
             'container_id'               => ['nullable', 'exists:containers,id'],
+            'disqualified'               => ['boolean'],
+            'disqualified_reason'        => ['nullable', 'string', 'max:500'],
             'notes'                      => ['nullable', 'string'],
         ];
     }
@@ -335,6 +341,8 @@ class Create extends Component
                     'price_per_kg'               => $pricePerKg,
                     'total_value'                => $totalValue,
                     'status'                     => 'active',
+                    'disqualified'               => $this->disqualified,
+                    'disqualified_reason'        => ($this->disqualified && $this->disqualified_reason) ? $this->disqualified_reason : null,
                     'notes'                      => $this->notes ?: null,
                 ]);
             });

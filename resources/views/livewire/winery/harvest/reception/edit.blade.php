@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Nueva Recepción de Uva"
-        description="Registra la entrada de uva: viticultor, parcela, variedad y datos de calidad"
+        title="Editar Recepción de Uva"
+        description="Modifica los datos de la recepción registrada"
     >
         <x-slot:actions>
             <flux:button href="{{ route('winery.grape-reception.index') }}" variant="ghost" icon="arrow-left">
@@ -12,109 +12,66 @@
 
     <form wire:submit="save" class="space-y-8">
 
-        {{-- Sección 1: Contexto --}}
+        {{-- Contexto (solo lectura) --}}
         <x-agro.form-section title="Viticultor y Parcela">
-            <div class="space-y-5">
-                {{-- Viticultor --}}
-                <flux:field>
-                    <flux:label>Viticultor</flux:label>
-                    <flux:select wire:model.live="viticulturist_id">
-                        <flux:select.option value="">Selecciona un viticultor...</flux:select.option>
-                        @foreach($linkedViticulturists as $v)
-                            <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="viticulturist_id" />
-                </flux:field>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+                    <p class="text-xs text-zinc-500 mb-1">Viticultor</p>
+                    <p class="font-medium text-zinc-900">{{ $viticulturistName }}</p>
+                </div>
+                <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+                    <p class="text-xs text-zinc-500 mb-1">Parcela</p>
+                    <p class="font-medium text-zinc-900">{{ $plotName }}</p>
+                </div>
+                <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+                    <p class="text-xs text-zinc-500 mb-1">Plantación / Variedad</p>
+                    <p class="font-medium text-zinc-900">{{ $plantingLabel }}</p>
+                </div>
+            </div>
 
-                {{-- Parcela (carga al seleccionar viticultor) --}}
-                @if($viticulturist_id)
-                    <flux:field>
-                        <flux:label>Parcela</flux:label>
-                        <flux:select wire:model.live="plot_id">
-                            <flux:select.option value="">Selecciona una parcela...</flux:select.option>
-                            @foreach($availablePlots as $plot)
-                                <flux:select.option value="{{ $plot['id'] }}">{{ $plot['name'] }}</flux:select.option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="plot_id" />
-                        @if(empty($availablePlots))
-                            <flux:description class="text-amber-600">
-                                Este viticultor no tiene parcelas con plantaciones activas.
-                            </flux:description>
-                        @endif
-                    </flux:field>
-                @endif
-
-                {{-- Plantación (carga al seleccionar parcela) --}}
-                @if($plot_id)
-                    <flux:field>
-                        <flux:label>Plantación (variedad)</flux:label>
-                        <flux:select wire:model.live="plot_planting_id">
-                            <flux:select.option value="">Selecciona una plantación...</flux:select.option>
-                            @foreach($availablePlantings as $planting)
-                                <flux:select.option value="{{ $planting['id'] }}">{{ $planting['label'] }}</flux:select.option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="plot_planting_id" />
-                    </flux:field>
-                @endif
-
-                {{-- Control de límite de cosecha --}}
-                @if($harvestLimitInfo)
-                    @php $info = $harvestLimitInfo; @endphp
-                    <div class="p-3 rounded-lg border {{ $info['exceeds'] ? 'bg-red-50 border-red-200' : 'bg-agro-50 border-agro-200' }}">
-                        <p class="text-xs font-semibold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }} mb-2">
-                            Control de límite de cosecha
-                        </p>
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                            <span class="text-zinc-600">Límite base:</span>
-                            <span class="font-medium">{{ number_format($info['raw_limit'], 0) }} kg</span>
-                            @if($info['age_factor'] < 100)
-                                <span class="text-zinc-600">Factor edad cepa:</span>
-                                <span class="font-medium text-amber-700">{{ $info['age_factor'] }}%</span>
-                                <span class="text-zinc-600">Límite efectivo:</span>
-                                <span class="font-bold text-agro-700">{{ number_format($info['limit'], 0) }} kg</span>
-                            @endif
-                            <span class="text-zinc-600">Ya cosechado (añada):</span>
-                            <span class="font-medium">{{ number_format($info['harvested'], 0) }} kg</span>
-                            @if($info['adding'] > 0)
-                                <span class="text-zinc-600">Esta recepción:</span>
-                                <span class="font-medium">{{ number_format($info['adding'], 0) }} kg</span>
-                                <span class="text-zinc-600">Total nuevo:</span>
-                                <span class="font-bold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }}">
-                                    {{ number_format($info['new_total'], 0) }} kg ({{ $info['percentage'] }}%)
-                                </span>
-                            @endif
-                        </div>
+            {{-- Control de límite de cosecha --}}
+            @if($harvestLimitInfo)
+                @php $info = $harvestLimitInfo; @endphp
+                <div class="p-3 rounded-lg border {{ $info['exceeds'] ? 'bg-red-50 border-red-200' : 'bg-agro-50 border-agro-200' }}">
+                    <p class="text-xs font-semibold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }} mb-2">
+                        Control de límite de cosecha
+                    </p>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                        <span class="text-zinc-600">Límite base:</span>
+                        <span class="font-medium">{{ number_format($info['raw_limit'], 0) }} kg</span>
                         @if($info['age_factor'] < 100)
-                            <p class="mt-2 text-xs text-amber-700">
-                                Plantación joven — límite reducido por factor de edad (vinai: 3 años=33%, 4 años=75%, ≥5 años=100%).
-                            </p>
+                            <span class="text-zinc-600">Factor edad cepa:</span>
+                            <span class="font-medium text-amber-700">{{ $info['age_factor'] }}%</span>
+                            <span class="text-zinc-600">Límite efectivo:</span>
+                            <span class="font-bold text-agro-700">{{ number_format($info['limit'], 0) }} kg</span>
                         @endif
-                        @if($info['exceeds'])
-                            <p class="mt-2 text-xs text-red-700 font-medium">
-                                Esta recepción supera el límite efectivo. Revisa los datos antes de guardar.
-                            </p>
+                        <span class="text-zinc-600">Resto de recepciones (añada):</span>
+                        <span class="font-medium">{{ number_format($info['harvested'], 0) }} kg</span>
+                        @if($info['adding'] > 0)
+                            <span class="text-zinc-600">Esta recepción:</span>
+                            <span class="font-medium">{{ number_format($info['adding'], 0) }} kg</span>
+                            <span class="text-zinc-600">Total:</span>
+                            <span class="font-bold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }}">
+                                {{ number_format($info['new_total'], 0) }} kg ({{ $info['percentage'] }}%)
+                            </span>
                         @endif
                     </div>
-                @endif
-            </div>
+                    @if($info['exceeds'])
+                        <p class="mt-2 text-xs text-red-700 font-medium">
+                            Esta recepción supera el límite efectivo. Revisa los datos antes de guardar.
+                        </p>
+                    @endif
+                </div>
+            @endif
         </x-agro.form-section>
 
-        {{-- Sección 2: Datos de la recepción --}}
+        {{-- Datos de la recepción --}}
         <x-agro.form-section title="Datos de la Recepción">
             <div class="space-y-5">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <flux:field>
-                        <flux:label>Añada *</flux:label>
-                        <flux:select wire:model.live="vintage_year">
-                            @for($y = now()->year + 1; $y >= 2000; $y--)
-                                <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
-                            @endfor
-                        </flux:select>
-                        <flux:description>Año de cosecha de la uva recibida.</flux:description>
-                        <flux:error name="vintage_year" />
+                        <flux:label>Añada</flux:label>
+                        <flux:input value="{{ $vintageYear }}" disabled />
                     </flux:field>
 
                     <flux:field>
@@ -173,24 +130,25 @@
                     <flux:field>
                         <flux:label>Depósito destino</flux:label>
                         <flux:select wire:model="container_id">
-                            <flux:select.option value="">Sin asignar (asignar después)</flux:select.option>
+                            <flux:select.option value="">Sin asignar</flux:select.option>
                             @foreach($availableContainers as $container)
                                 @php
-                                    $available = max(0, $container->capacity - $container->used_capacity);
+                                    $isCurrent  = $container->id == $harvest->container_id;
+                                    $available  = max(0, $container->capacity - $container->used_capacity);
+                                    $freeForThis = $isCurrent ? $available + (float) $harvest->total_weight : $available;
                                 @endphp
                                 <flux:select.option value="{{ $container->id }}">
-                                    {{ $container->name }} ({{ number_format($available, 0) }} kg disp.)
+                                    {{ $container->name }} ({{ number_format($freeForThis, 0) }} kg disp.)
                                 </flux:select.option>
                             @endforeach
                         </flux:select>
-                        <flux:description>Opcional. También puedes asignarlo después desde el listado.</flux:description>
                         <flux:error name="container_id" />
                     </flux:field>
                 </div>
             </div>
         </x-agro.form-section>
 
-        {{-- Sección 3: Calidad --}}
+        {{-- Calidad --}}
         <x-agro.form-section title="Parámetros de Calidad" description="Opcional">
             <div class="space-y-5">
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-5">
@@ -237,7 +195,6 @@
                     <flux:error name="health_status" />
                 </flux:field>
 
-                {{-- Estado sanitario detallado --}}
                 <div>
                     <p class="text-sm font-medium text-zinc-700 mb-3">Estado sanitario detallado (%)</p>
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -271,7 +228,7 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Sección 4: Descarte --}}
+        {{-- Descarte --}}
         <x-agro.form-section title="Descarte">
             <div class="space-y-4">
                 <flux:field>
@@ -300,7 +257,7 @@
 
         <x-agro.form-actions
             :cancel-url="route('winery.grape-reception.index')"
-            submit-label="Registrar Recepción"
+            submit-label="Guardar Cambios"
         />
 
     </form>
