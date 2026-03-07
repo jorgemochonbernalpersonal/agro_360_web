@@ -40,17 +40,15 @@
                 </flux:field>
             </div>
 
-            @if(!auth()->user()->isWinery())
             <!-- Limite de cosecha -->
             <div class="mt-6">
                 <flux:field>
-                    <flux:label for="harvest_limit_kg">Limite maximo de cosecha (kg)</flux:label>
+                    <flux:label for="harvest_limit_kg">Límite máximo de cosecha (kg)</flux:label>
                     <flux:input wire:model="harvest_limit_kg" type="number" step="0.001" id="harvest_limit_kg" placeholder="Ej: 10000" />
                     <flux:error name="harvest_limit_kg" />
-                    <flux:description>Deja vacío si no hay límite establecido</flux:description>
+                    <flux:description>Deja vacío si no hay límite establecido. Se auto-rellena según el kg/ha configurado en ajustes.</flux:description>
                 </flux:field>
             </div>
-            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <!-- Año de plantación -->
