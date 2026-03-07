@@ -210,7 +210,7 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.pac.declarations.*'),
                 ],
                 [
-                    'icon'   => 'leaf',
+                    'icon'   => 'sparkles',
                     'label'  => 'Eco-regímenes',
                     'route'  => 'viticulturist.pac.eco-schemes.index',
                     'active' => request()->routeIs('viticulturist.pac.eco-schemes.*'),
