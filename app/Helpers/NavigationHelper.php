@@ -170,6 +170,12 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.residue-managements.*'),
                 ],
                 [
+                    'icon' => 'bolt',
+                    'label' => 'Consumo Energético',
+                    'route' => 'viticulturist.energy-usages.index',
+                    'active' => request()->routeIs('viticulturist.energy-usages.*'),
+                ],
+                [
                     'icon' => 'arrow-up-tray',
                     'label' => 'Exportaciones CUE',
                     'route' => 'viticulturist.cue-exports.index',
@@ -232,15 +238,9 @@ class NavigationHelper
                     'route' => 'viticulturist.phytosanitary-products.index',
                     'active' => request()->routeIs('viticulturist.phytosanitary-products.*'),
                 ],
-                [
-                    'icon' => 'bolt',
-                    'label' => 'Consumo Energético',
-                    'route' => 'viticulturist.energy-usages.index',
-                    'active' => request()->routeIs('viticulturist.energy-usages.*'),
-                ],
             ];
 
-            // GRUPO: FACTURACIÓN
+            // GRUPO: FACTURACIÓN Y CLIENTES
             $menu['billing'] = [
                 [
                     'icon' => 'calculator',
@@ -255,20 +255,16 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.marketed-harvests.*'),
                 ],
                 [
-                    'icon' => 'presentation-chart-bar',
-                    'label' => 'Estadísticas Financieras',
-                    'route' => 'viticulturist.financial-stats',
-                    'active' => request()->routeIs('viticulturist.financial-stats'),
-                ],
-            ];
-
-            // GRUPO: CLIENTES
-            $menu['clients'] = [
-                [
                     'icon' => 'users',
                     'label' => 'Clientes',
                     'route' => 'viticulturist.clients.index',
                     'active' => request()->routeIs('viticulturist.clients.*'),
+                ],
+                [
+                    'icon' => 'presentation-chart-bar',
+                    'label' => 'Estadísticas Financieras',
+                    'route' => 'viticulturist.financial-stats',
+                    'active' => request()->routeIs('viticulturist.financial-stats'),
                 ],
             ];
 

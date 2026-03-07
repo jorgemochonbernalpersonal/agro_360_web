@@ -22,7 +22,7 @@
         'viticulturists'    => 'Viticultores',
         // Shared
         'resources'         => 'Recursos',
-        'billing'           => 'Facturación',
+        'billing'           => 'Facturación y Clientes',
         'clients'           => 'Clientes',
         // Viticulturist compliance (split)
         'compliance'        => 'Normativa',
