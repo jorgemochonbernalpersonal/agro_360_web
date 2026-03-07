@@ -147,6 +147,18 @@
                         <flux:description>Superficie según el catastro (puede diferir del área agrícola)</flux:description>
                         <flux:error name="cadastral_area" />
                     </flux:field>
+                    <flux:field>
+                        <flux:label for="pac_eligible_area">Superficie Admisible PAC (ha)</flux:label>
+                        <flux:input wire:model="pac_eligible_area" type="number" step="0.001" min="0" id="pac_eligible_area" placeholder="0.000" />
+                        <flux:description>Superficie reconocida como elegible para ayudas PAC (FEGA)</flux:description>
+                        <flux:error name="pac_eligible_area" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label for="non_eligible_area">Superficie No Admisible (ha)</flux:label>
+                        <flux:input wire:model="non_eligible_area" type="number" step="0.001" min="0" id="non_eligible_area" placeholder="0.000" />
+                        <flux:description>Caminos, construcciones, linderos excluidos de la PAC</flux:description>
+                        <flux:error name="non_eligible_area" />
+                    </flux:field>
                 </div>
             </x-agro.form-section>
 

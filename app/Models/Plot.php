@@ -81,6 +81,18 @@ class Plot extends Model
         'number_of_vines' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::saving(function (Plot $plot) {
+            if ($plot->area > 0 && $plot->pac_eligible_area !== null) {
+                $plot->eligibility_coefficient = round(
+                    (float) $plot->pac_eligible_area / (float) $plot->area,
+                    4
+                );
+            }
+        });
+    }
+
     /**
      * Usar Query Builder personalizado
      */

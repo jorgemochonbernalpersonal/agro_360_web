@@ -172,6 +172,19 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.pac-compliance'),
                 ],
                 [
+                    'icon'   => 'document-check',
+                    'label'  => 'PAC — Solicitud Única',
+                    'route'  => 'viticulturist.pac.dashboard',
+                    'active' => request()->routeIs('viticulturist.pac.*'),
+                    'submenu' => [
+                        ['label' => 'Resumen PAC',           'route' => 'viticulturist.pac.dashboard',           'active' => request()->routeIs('viticulturist.pac.dashboard')],
+                        ['label' => 'Superficies Elegibles',  'route' => 'viticulturist.pac.surfaces.index',     'active' => request()->routeIs('viticulturist.pac.surfaces.*')],
+                        ['label' => 'Declaraciones',          'route' => 'viticulturist.pac.declarations.index', 'active' => request()->routeIs('viticulturist.pac.declarations.*')],
+                        ['label' => 'Eco-regímenes',          'route' => 'viticulturist.pac.eco-schemes.index',  'active' => request()->routeIs('viticulturist.pac.eco-schemes.*')],
+                        ['label' => 'Historial de Ayudas',    'route' => 'viticulturist.pac.payments.index',     'active' => request()->routeIs('viticulturist.pac.payments.*')],
+                    ],
+                ],
+                [
                     'icon' => 'document',
                     'label' => 'Informes Oficiales',
                     'route' => 'viticulturist.official-reports.index',

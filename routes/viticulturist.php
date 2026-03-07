@@ -42,8 +42,23 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         // Estadísticas Financieras
         Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
         
-        // Dashboard de Cumplimiento PAC
+        // Dashboard de Cumplimiento PAC (cuaderno)
         Route::get('/pac-compliance', \App\Livewire\Viticulturist\PacComplianceDashboard::class)->name('pac-compliance');
+
+        // Módulo PAC — Solicitud Única y superficies
+        Route::prefix('pac')->name('pac.')->group(function () {
+            Route::get('/dashboard', \App\Livewire\Viticulturist\Pac\Dashboard::class)->name('dashboard');
+            Route::get('/superficies', \App\Livewire\Viticulturist\Pac\Surfaces\Index::class)->name('surfaces.index');
+            Route::get('/eco-regimenes', \App\Livewire\Viticulturist\Pac\EcoSchemes\Index::class)->name('eco-schemes.index');
+            Route::get('/ayudas', \App\Livewire\Viticulturist\Pac\Payments\Index::class)->name('payments.index');
+            Route::prefix('declaraciones')->name('declarations.')->group(function () {
+                Route::get('/', \App\Livewire\Viticulturist\Pac\Declarations\Index::class)->name('index');
+                Route::get('/nueva', \App\Livewire\Viticulturist\Pac\Declarations\Create::class)->name('create');
+                Route::get('/{declaration}/editar', \App\Livewire\Viticulturist\Pac\Declarations\Edit::class)->name('edit');
+                Route::get('/{declaration}/pdf', [\App\Http\Controllers\Viticulturist\PacDeclarationPdfController::class, 'download'])->name('pdf');
+                Route::get('/{declaration}', \App\Livewire\Viticulturist\Pac\Declarations\Show::class)->name('show');
+            });
+        });
         
         // Gestión de Plagas y Enfermedades
         Route::prefix('pest-management')->name('pest-management.')->group(function () {

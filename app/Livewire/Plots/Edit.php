@@ -56,6 +56,9 @@ class Edit extends Component
     public $planting_pattern = '';
     public $slope = '';
     public $number_of_vines = '';
+    // PAC
+    public $pac_eligible_area = '';
+    public $non_eligible_area = '';
 
     public function mount(Plot $plot)
     {
@@ -95,6 +98,8 @@ class Edit extends Component
         $this->planting_pattern = $plot->planting_pattern ?? '';
         $this->slope = $plot->slope ?? '';
         $this->number_of_vines = $plot->number_of_vines ?? '';
+        $this->pac_eligible_area = $plot->pac_eligible_area ?? '';
+        $this->non_eligible_area = $plot->non_eligible_area ?? '';
     }
 
     protected function rules(): array
@@ -122,6 +127,8 @@ class Edit extends Component
             'planting_pattern' => 'nullable|string|max:50',
             'slope' => 'nullable|numeric|min:0|max:100',
             'number_of_vines' => 'nullable|integer|min:0',
+            'pac_eligible_area' => 'nullable|numeric|min:0',
+            'non_eligible_area' => 'nullable|numeric|min:0',
         ];
 
         // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
@@ -198,6 +205,8 @@ class Edit extends Component
                 'planting_pattern' => $this->planting_pattern ?: null,
                 'slope' => $this->slope ?: null,
                 'number_of_vines' => $this->number_of_vines ?: null,
+                'pac_eligible_area' => $this->pac_eligible_area ?: null,
+                'non_eligible_area' => $this->non_eligible_area ?: null,
             ];
 
             if ($this->canSelectViticulturist() && $this->viticulturist_id) {
