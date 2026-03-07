@@ -192,17 +192,34 @@ class NavigationHelper
             // GRUPO: PAC — Política Agrícola Común
             $menu['pac'] = [
                 [
-                    'icon'   => 'document-check',
-                    'label'  => 'PAC — Solicitud Única',
+                    'icon'   => 'chart-pie',
+                    'label'  => 'Resumen PAC',
                     'route'  => 'viticulturist.pac.dashboard',
-                    'active' => request()->routeIs('viticulturist.pac.*'),
-                    'submenu' => [
-                        ['label' => 'Resumen PAC',          'route' => 'viticulturist.pac.dashboard',           'active' => request()->routeIs('viticulturist.pac.dashboard')],
-                        ['label' => 'Superficies Elegibles', 'route' => 'viticulturist.pac.surfaces.index',     'active' => request()->routeIs('viticulturist.pac.surfaces.*')],
-                        ['label' => 'Declaraciones',         'route' => 'viticulturist.pac.declarations.index', 'active' => request()->routeIs('viticulturist.pac.declarations.*')],
-                        ['label' => 'Eco-regímenes',         'route' => 'viticulturist.pac.eco-schemes.index',  'active' => request()->routeIs('viticulturist.pac.eco-schemes.*')],
-                        ['label' => 'Historial de Ayudas',   'route' => 'viticulturist.pac.payments.index',     'active' => request()->routeIs('viticulturist.pac.payments.*')],
-                    ],
+                    'active' => request()->routeIs('viticulturist.pac.dashboard'),
+                ],
+                [
+                    'icon'   => 'check-circle',
+                    'label'  => 'Superficies Elegibles',
+                    'route'  => 'viticulturist.pac.surfaces.index',
+                    'active' => request()->routeIs('viticulturist.pac.surfaces.*'),
+                ],
+                [
+                    'icon'   => 'document-text',
+                    'label'  => 'Declaraciones',
+                    'route'  => 'viticulturist.pac.declarations.index',
+                    'active' => request()->routeIs('viticulturist.pac.declarations.*'),
+                ],
+                [
+                    'icon'   => 'leaf',
+                    'label'  => 'Eco-regímenes',
+                    'route'  => 'viticulturist.pac.eco-schemes.index',
+                    'active' => request()->routeIs('viticulturist.pac.eco-schemes.*'),
+                ],
+                [
+                    'icon'   => 'banknotes',
+                    'label'  => 'Historial de Ayudas',
+                    'route'  => 'viticulturist.pac.payments.index',
+                    'active' => request()->routeIs('viticulturist.pac.payments.*'),
                 ],
             ];
 
@@ -300,6 +317,12 @@ class NavigationHelper
                 'route'  => 'winery.campaigns.index',
                 'active' => request()->routeIs('winery.campaigns*'),
             ];
+            $menu['main'][] = [
+                'icon'   => 'user-group',
+                'label'  => 'Mis Viticultores',
+                'route'  => 'winery.viticulturists.index',
+                'active' => request()->routeIs('winery.viticulturists*'),
+            ];
 
             // ── VENDIMIA ─────────────────────────────────────────────
             $menu['harvest'] = [
@@ -369,15 +392,6 @@ class NavigationHelper
                 ],
             ];
 
-            // ── VITICULTORES ─────────────────────────────────────────
-            $menu['viticulturists'] = [
-                [
-                    'icon'   => 'user-group',
-                    'label'  => 'Mis Viticultores',
-                    'route'  => 'winery.viticulturists.index',
-                    'active' => request()->routeIs('winery.viticulturists*'),
-                ],
-            ];
 
             // ── TERRITORIO ───────────────────────────────────────────
             $menu['territory'] = [

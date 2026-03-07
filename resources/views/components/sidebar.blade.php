@@ -4,7 +4,7 @@
     $user = auth()->user();
 
     $activeSections = [];
-    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'viticulturists', 'territory', 'resources', 'billing', 'clients', 'compliance', 'cuaderno_official', 'pac', 'system'] as $section) {
+    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'territory', 'resources', 'billing', 'clients', 'compliance', 'cuaderno_official', 'pac', 'system'] as $section) {
         if (isset($menu[$section])) {
             foreach ($menu[$section] as $item) {
                 if ($item['active'] ?? false) { $activeSections[] = $section; break; }
@@ -19,7 +19,6 @@
         // Winery
         'harvest'           => 'Vendimia',
         'cellar'            => 'Bodega',
-        'viticulturists'    => 'Viticultores',
         'territory'         => 'Territorio',
         // Shared
         'resources'         => 'Recursos',
