@@ -394,21 +394,14 @@
                         <tbody class="divide-y divide-zinc-100">
                             @php
                             $rows = [
-                                ['Cuaderno de campo basico',     '✅', '✅', '✅', '✅', '—'],
-                                ['SIGPAC y parcelas',            '❌', '✅', '✅', '✅', '—'],
-                                ['Teledeteccion satelital',      '❌', '✅', '✅', '✅', '—'],
-                                ['PAC y normativa',              '❌', '✅', '✅', '—',  '—'],
-                                ['Facturacion + Verifactu',      '❌', '✅', '✅', '✅', '—'],
-                                ['Vendimias y procesos',         '❌', '✅', '✅', '✅', '—'],
-                                ['Plantaciones y cultivos',      '❌', '✅', '✅', '✅', '—'],
-                                ['Gestion de vinos',             '❌', '❌', '—',  '✅', '—'],
-                                ['Supervision red completa',     '❌', '❌', '❌', '❌', '✅'],
-                                ['Informes agregados DO',        '❌', '❌', '❌', '❌', '✅'],
-                                ['Trazabilidad denominacion',    '❌', '❌', '❌', '❌', '✅'],
-                                ['API integracion',              '❌', '❌', '❌', '❌', '✅'],
-                                ['Account manager',              '❌', '❌', '❌', '❌', '✅'],
-                                ['Soporte',                      'Email', 'Email 48h', 'Email 48h', 'Prioritario 24h', 'Telefono directo'],
-                                ['Onboarding',                   'Self-service', 'Self-service', 'Self-service', 'Incluido', 'Incluido + formacion'],
+                                ['Cuaderno de campo basico', '✅', '✅', '✅', '✅', '—'],
+                                ['SIGPAC y parcelas',        '✅', '✅', '✅', '✅', '—'],
+                                ['Plantaciones y cultivos',  '✅', '✅', '✅', '✅', '—'],
+                                ['Teledeteccion satelital',  '❌', '✅', '✅', '✅', '—'],
+                                ['PAC y normativa',          '❌', '✅', '✅', '—',  '—'],
+                                ['Facturacion + Verifactu',  '❌', '✅', '✅', '✅', '—'],
+                                ['Vendimias y procesos',     '❌', '✅', '✅', '✅', '—'],
+                                ['Gestion de vinos',         '❌', '❌', '❌', '✅', '—'],
                             ];
                             @endphp
                             @foreach($rows as $i => $row)
