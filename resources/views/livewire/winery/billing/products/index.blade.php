@@ -38,7 +38,7 @@
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
             <flux:button href="{{ route('winery.invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
-                Nuevo Albarán
+                Nueva Factura
             </flux:button>
 
         </div>
@@ -266,7 +266,7 @@
             title="No hay facturas de productos"
             :description="$search || $filterStatus || $filterPaymentStatus || $filterDeliveryStatus
                 ? 'Ninguna factura coincide con los filtros aplicados.'
-                : 'Crea tu primer albarán para empezar a gestionar la venta de productos.'"
+                : 'Crea tu primera factura para empezar a gestionar la venta de productos.'"
         >
             @if($search || $filterStatus || $filterPaymentStatus || $filterDeliveryStatus)
                 <x-slot:action>
@@ -275,7 +275,7 @@
             @else
                 <x-slot:action>
                     <flux:button href="{{ route('winery.invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
-                        Nuevo Albarán
+                        Nueva Factura
                     </flux:button>
                 </x-slot:action>
             @endif
