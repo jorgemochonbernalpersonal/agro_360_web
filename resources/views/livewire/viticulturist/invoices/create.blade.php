@@ -43,6 +43,19 @@
                         </flux:field>
                     @endif
                 </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <flux:field>
+                        <flux:label>Forma de pago</flux:label>
+                        <flux:select wire:model="payment_type" id="payment_type">
+                            <option value="">Sin especificar</option>
+                            <option value="cash">Efectivo</option>
+                            <option value="transfer">Transferencia</option>
+                            <option value="check">Cheque</option>
+                            <option value="other">Otro</option>
+                        </flux:select>
+                    </flux:field>
+                </div>
             </x-agro.form-section>
 
             {{-- Albarán y Fechas --}}

@@ -24,6 +24,7 @@ class Create extends Component
     public $items = [];
     public $observations = '';
     public $observations_invoice = '';
+    public $payment_type = '';
     public $delivery_note_code = ''; // Código de albarán (auto-generado, editable)
     public $delivery_note_code_auto = ''; // Código generado automáticamente
     public $delivery_note_code_modified = false; // Flag para saber si el usuario lo modificó
@@ -288,6 +289,7 @@ class Create extends Component
             'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
             'items.*.tax_id' => 'nullable|exists:taxes,id',
             'items.*.concept_type' => 'nullable|in:harvest,service,product,other',
+            'payment_type' => 'nullable|in:cash,transfer,check,other',
             'observations' => 'nullable|string',
             'observations_invoice' => 'nullable|string',
             'delivery_note_code' => 'required|string|max:255',
@@ -388,6 +390,7 @@ class Create extends Component
                     'status' => 'draft',
                     'delivery_status' => 'pending', // Estado inicial de entrega
                     'payment_status' => 'unpaid', // Estado inicial de pago
+                    'payment_type'   => $this->payment_type ?: null,
                     'observations' => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
