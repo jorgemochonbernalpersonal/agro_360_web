@@ -195,9 +195,9 @@
                             @foreach ($wineLots as $lot)
                                 <option value="{{ $lot->id }}">
                                     {{ $lot->name }}
-                                    @if ($lot->vintage) ({{ $lot->vintage }}) @endif
+                                    {{ $lot->vintage ? "({$lot->vintage})" : '' }}
                                     – Disp: {{ number_format($lot->available_quantity, 0) }} {{ $lot->unit ?? 'ud' }}
-                                    @if ($lot->price_per_unit) ({{ number_format($lot->price_per_unit, 2) }} €/ud) @endif
+                                    {{ $lot->price_per_unit ? '(' . number_format($lot->price_per_unit, 2) . ' €/ud)' : '' }}
                                 </option>
                             @endforeach
                         </flux:select>
@@ -278,7 +278,7 @@
                                         @if ($isWineItem && $availableQty !== null && !$locked)
                                             @php $exceedsStock = $qty > $availableQty; @endphp
                                             <p class="mt-1 text-xs {{ $exceedsStock ? 'text-red-600 font-semibold' : 'text-zinc-500' }}">
-                                                Disp: {{ number_format($availableQty, 0) }} ud@if ($exceedsStock) — ¡Supera el stock!@endif
+                                                Disp: {{ number_format($availableQty, 0) }} ud{{ $exceedsStock ? ' — ¡Supera el stock!' : '' }}
                                             </p>
                                         @endif
                                     </flux:field>
