@@ -196,9 +196,9 @@
 
                                 @if($invoice->status !== 'cancelled')
                                     <button wire:click="duplicate({{ $invoice->id }})"
-                                            wire:confirm="¿Duplicar este albarán? Se creará uno nuevo en borrador con los mismos productos y cantidades."
+                                            wire:confirm="¿Duplicar esta factura? Se creará una nueva en borrador con los mismos productos y cantidades."
                                             class="{{ $btnBase }} text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
-                                            title="Duplicar albarán">
+                                            title="Duplicar factura">
                                         <flux:icon icon="document-duplicate" class="size-4" />
                                     </button>
                                 @endif
@@ -232,16 +232,7 @@
                                     </button>
                                 @endif
 
-                                @if($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
-                                    <button wire:click="markPaid({{ $invoice->id }})"
-                                            wire:confirm="¿Marcar esta factura como cobrada?"
-                                            class="{{ $btnBase }} text-green-500 hover:text-green-700 hover:bg-green-50"
-                                            title="Marcar como cobrada">
-                                        <flux:icon icon="banknotes" class="size-4" />
-                                    </button>
-                                @endif
-
-                                @if($invoice->status === 'sent' && ($invoice->billing_email ?: $invoice->client?->email))
+@if($invoice->status === 'sent' && ($invoice->billing_email ?: $invoice->client?->email))
                                     <button wire:click="sendEmail({{ $invoice->id }})"
                                             wire:loading.attr="disabled" wire:target="sendEmail({{ $invoice->id }})"
                                             class="{{ $btnBase }} text-blue-500 hover:text-blue-700 hover:bg-blue-50"
@@ -262,14 +253,6 @@
                                     <span class="text-[10px] font-medium text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">RECT</span>
                                 @endif
 
-                                @if($invoice->status === 'draft')
-                                    <button wire:click="cancel({{ $invoice->id }})"
-                                            wire:confirm="¿Cancelar este albarán? El stock quedará liberado."
-                                            class="{{ $btnBase }} text-red-400 hover:text-red-600 hover:bg-red-50"
-                                            title="Cancelar">
-                                        <flux:icon icon="x-circle" class="size-4" />
-                                    </button>
-                                @endif
 
                             </div>
                         </div>

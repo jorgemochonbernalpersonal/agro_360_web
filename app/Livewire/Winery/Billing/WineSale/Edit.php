@@ -26,9 +26,15 @@ class Edit extends Component
     public string $delivery_note_date = '';
     public string $observations         = '';
     public string $observations_invoice = '';
-    public string $payment_type       = '';
+    public string $payment_type        = '';
     public string $payment_status     = '';
+    public string $payment_date       = '';
+    public string $delivery_status    = '';
     public bool   $is_gift            = false;
+
+    // ── Delivery status modal ────────────────────────────────────────────────
+    public bool   $showDeliveryModal     = false;
+    public string $pendingDeliveryStatus = '';
 
     public array $items = [];
 
@@ -55,9 +61,12 @@ class Edit extends Component
             ? $this->invoice->delivery_note_date->format('Y-m-d') : '';
         $this->observations         = $this->invoice->observations ?? '';
         $this->observations_invoice = $this->invoice->observations_invoice ?? '';
-        $this->payment_type       = $this->invoice->payment_type ?? '';
-        $this->payment_status     = $this->invoice->payment_status ?? 'unpaid';
-        $this->is_gift            = (bool) $this->invoice->gift;
+        $this->payment_type     = $this->invoice->payment_type ?? '';
+        $this->payment_status   = $this->invoice->payment_status ?? 'unpaid';
+        $this->payment_date     = $this->invoice->payment_date
+            ? $this->invoice->payment_date->format('Y-m-d') : '';
+        $this->delivery_status  = $this->invoice->delivery_status ?? 'pending';
+        $this->is_gift          = (bool) $this->invoice->gift;
 
         $user = Auth::user();
         $this->availableTaxes = $user->taxes()->orderByPivot('order')->get();
@@ -87,6 +96,7 @@ class Edit extends Component
     public function getIsLockedProperty(): bool
     {
         return $this->invoice->delivery_status === 'delivered'
+            || $this->invoice->delivery_status === 'cancelled'
             || $this->invoice->status === 'cancelled';
     }
 
@@ -207,6 +217,98 @@ class Edit extends Component
         $this->resetValidation();
     }
 
+    // ── Payment status (quick action, outside main form) ─────────────────────
+
+    public function updatePaymentStatus(): void
+    {
+        $this->validate([
+            'payment_status' => 'required|in:unpaid,partial,paid',
+            'payment_type'   => 'nullable|in:cash,transfer,check,other',
+            'payment_date'   => 'nullable|date',
+        ]);
+
+        if ($this->invoice->status === 'cancelled') {
+            $this->toastError('No se puede modificar una factura cancelada.');
+            return;
+        }
+
+        $this->invoice->update([
+            'payment_status' => $this->payment_status,
+            'payment_type'   => $this->payment_type ?: null,
+            'payment_date'   => $this->payment_status === 'paid' && $this->payment_date
+                ? $this->payment_date
+                : null,
+        ]);
+
+        $this->invoice->refresh();
+        $this->toastSuccess('Estado de cobro actualizado.');
+    }
+
+    // ── Delivery status ───────────────────────────────────────────────────────
+
+    public function openDeliveryModal(string $newStatus): void
+    {
+        if (!in_array($newStatus, ['delivered', 'cancelled'])) return;
+
+        if ($this->isLocked) {
+            $this->toastError('Esta factura no se puede modificar.');
+            return;
+        }
+
+        $this->pendingDeliveryStatus = $newStatus;
+        $this->showDeliveryModal     = true;
+    }
+
+    public function closeDeliveryModal(): void
+    {
+        $this->showDeliveryModal     = false;
+        $this->pendingDeliveryStatus = '';
+    }
+
+    public function confirmDeliveryStatus(): void
+    {
+        if ($this->isLocked) {
+            $this->closeDeliveryModal();
+            return;
+        }
+
+        $newStatus = $this->pendingDeliveryStatus;
+
+        if (!in_array($newStatus, ['delivered', 'cancelled'])) {
+            $this->closeDeliveryModal();
+            return;
+        }
+
+        try {
+            DB::transaction(function () use ($newStatus) {
+                $this->invoice->load('items.wineLot');
+
+                // Only move stock for non-corrective invoices
+                if (!$this->invoice->corrective) {
+                    $action = $newStatus === 'delivered' ? 'deliver' : 'cancel';
+                    WineStockService::moveForInvoice($this->invoice, $action);
+                }
+
+                $this->invoice->update(['delivery_status' => $newStatus]);
+            });
+
+            $this->invoice->refresh();
+            $this->delivery_status = $this->invoice->delivery_status;
+
+            $label = $newStatus === 'delivered' ? 'entregada' : 'cancelada';
+            $this->toastSuccess("Factura marcada como {$label}.");
+
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar estado de entrega: ' . $e->getMessage(), [
+                'invoice_id' => $this->invoice->id,
+                'user_id'    => Auth::id(),
+            ]);
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al actualizar el estado de entrega.');
+        }
+
+        $this->closeDeliveryModal();
+    }
+
     public function markAsSent(): void
     {
         $this->validate(
@@ -250,13 +352,6 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        if ($this->isLocked) {
-            return [
-                'payment_status' => 'required|in:unpaid,partial,paid',
-                'payment_type'   => 'nullable|in:cash,transfer,check,other',
-            ];
-        }
-
         return [
             'client_id'                   => 'required|exists:clients,id',
             'invoice_date'                => 'required|date',
@@ -295,12 +390,8 @@ class Edit extends Component
         $this->validate();
 
         if ($this->isLocked) {
-            $this->invoice->update([
-                'payment_status' => $this->payment_status,
-                'payment_type'   => $this->payment_type ?: null,
-            ]);
-            $this->toastSuccess('Estado de cobro actualizado.');
-            return $this->redirect(route('winery.invoices.products.index'), navigate: true);
+            $this->toastError('Esta factura no se puede modificar.');
+            return;
         }
 
         $client   = Client::where('user_id', Auth::id())->findOrFail($this->client_id);
