@@ -81,12 +81,6 @@ class SitemapService
                 'priority' => '0.9',
             ],
             [
-                'loc' => $this->getAbsoluteUrl('sigpac'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
                 'loc' => $this->getAbsoluteUrl('trazabilidad-agricola'),
                 'lastmod' => now()->toIso8601String(),
                 'changefreq' => 'weekly',
@@ -344,7 +338,28 @@ class SitemapService
                 'changefreq' => 'monthly',
                 'priority' => '0.8',
             ],
-            
+
+            // Páginas regionales por DO — vista dinámica compartida
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-jerez'),            'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-cava'),             'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-valdepenas'),       'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-navarra'),          'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-somontano'),        'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-utiel-requena'),    'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-yecla'),            'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-bullas'),           'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-monterrei'),        'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-bierzo'),           'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-ribeiro'),          'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-cigales'),          'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-calatayud'),        'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-campo-de-borja'),   'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-carinena'),         'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-malaga'),           'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-montilla-moriles'), 'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-terra-alta'),       'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $this->getAbsoluteUrl('software-viticultores-costers-del-segre'),'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+
             // Páginas legales
             [
                 'loc' => $this->getAbsoluteUrl('privacidad'),

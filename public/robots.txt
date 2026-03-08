@@ -5,17 +5,6 @@
 User-agent: *
 Allow: /
 
-# ✅ SEO: Permitir explícitamente contenido público importante
-Allow: /blog
-Allow: /faqs
-Allow: /que-es-sigpac
-Allow: /software-para-viticultores
-Allow: /cuaderno-digital-viticultores
-Allow: /normativa-pac
-Allow: /digitalizar-viñedo
-Allow: /comparativa-software-agricola
-Allow: /app-agricultura
-
 # Bloquear áreas privadas (requieren autenticación)
 Disallow: /admin/
 Disallow: /viticulturist/

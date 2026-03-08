@@ -72,7 +72,7 @@
                 <h4 class="font-semibold text-lg mb-4">Sectores</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
                     <li><a href="{{ content_route('content.viticultores') }}" class="hover:text-white transition-colors">Viticultores</a></li>
-                    <li><a href="{{ content_route('content.bodegas') }}" class="hover:text-white transition-colors">Bodegas</a></li>
+                    <li><a href="{{ content_route('content.software-bodegas') }}" class="hover:text-white transition-colors">Bodegas</a></li>
                     <li><a href="#ecosistema" class="hover:text-white transition-colors">Denominaciones de Origen</a></li>
                     <li><a href="{{ content_route('content.cooperativas') }}" class="hover:text-white transition-colors">Cooperativas</a></li>
                     <li><a href="{{ content_route('content.ingenieros-agronomos') }}" class="hover:text-white transition-colors">Ingenieros Agrónomos</a></li>
@@ -143,7 +143,7 @@
             <!-- SEO Keywords Footer -->
             <div class="mt-6 pt-6 border-t border-white/10">
                 <p class="text-white/40 text-xs text-center leading-relaxed">
-                    <strong class="text-white/50">Agro365</strong> — Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España · Cuaderno de campo digital obligatorio 2027 · Gestión de parcelas SIGPAC · Informes oficiales con firma electrónica · Dashboard de cumplimiento PAC · Trazabilidad vitivinícola completa · Gestión de vendimia y cosechas · Facturación agrícola integrada · Supervisión normativa para Denominaciones de Origen · Digitalización agrícola
+                    <strong class="text-white/50">Agro365</strong> — Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen en España · Cuaderno de campo digital obligatorio 2027 · Gestión de parcelas SIGPAC · Teledetección NDVI para viñedos · Facturación Verifactu integrada · Informes oficiales con firma electrónica SHA-256 · Dashboard de cumplimiento PAC · Trazabilidad vitivinícola completa del viñedo a la botella · Gestión de vendimia y contenedores · Libros de bodega, AICA e INFOVI · Denominaciones de Origen · Digitalización agrícola España
                 </p>
             </div>
         </div>
