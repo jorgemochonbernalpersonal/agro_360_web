@@ -13,24 +13,77 @@ class WineLot extends Model
         'name',
         'vintage',
         'wine_type',
+        'aging_type',
+        'agingtime',
+        'alcohol',
         'quantity',
         'unit',
         'available_quantity',
         'reserved_quantity',
         'sold_quantity',
         'price_per_unit',
+        'cost_price',
         'notes',
         'archived',
+        // Analíticos
+        'residual_sugar',
+        'total_acidity',
+        'volatile_acidity',
+        'ph',
+        // Formato / comercial
+        'ean',
+        'bottle_format',
+        'units_per_case',
+        // Winemaking
+        'winemaker',
+        'harvest_method',
+        'fermentation_vessel',
+        'oak_type',
+        'oak_months',
+        // Viñedo
+        'vine_age',
+        'altitude',
+        'soil_type',
+        // Certificaciones
+        'is_vegan',
+        'is_biodynamic',
+        // Marketing
+        'awards_notes',
+        'production_quantity',
+        'bottling_date',
+        'release_date',
     ];
 
     protected $casts = [
         'vintage'            => 'integer',
+        'agingtime'          => 'integer',
+        'alcohol'            => 'decimal:2',
         'quantity'           => 'decimal:3',
         'available_quantity' => 'decimal:3',
         'reserved_quantity'  => 'decimal:3',
         'sold_quantity'      => 'decimal:3',
         'price_per_unit'     => 'decimal:4',
+        'cost_price'         => 'decimal:4',
         'archived'           => 'boolean',
+        // Analíticos
+        'residual_sugar'     => 'decimal:2',
+        'total_acidity'      => 'decimal:2',
+        'volatile_acidity'   => 'decimal:2',
+        'ph'                 => 'decimal:2',
+        // Formato
+        'units_per_case'     => 'integer',
+        // Winemaking
+        'oak_months'         => 'integer',
+        // Viñedo
+        'vine_age'           => 'integer',
+        'altitude'           => 'integer',
+        // Certificaciones
+        'is_vegan'           => 'boolean',
+        'is_biodynamic'      => 'boolean',
+        // Marketing
+        'production_quantity'=> 'integer',
+        'bottling_date'      => 'date',
+        'release_date'       => 'date',
     ];
 
     public function user(): BelongsTo
