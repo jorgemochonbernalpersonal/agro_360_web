@@ -456,7 +456,7 @@ class Index extends AbstractIndex
         $user = Auth::user();
         $taxes = $user->taxes()->orderByPivot('order')->get();
         if ($taxes->isEmpty()) {
-            $taxes = Tax::where('is_active', true)->orderBy('rate')->get();
+            $taxes = Tax::active()->orderBy('rate')->get();
         }
         $default = $user->defaultTax()->first() ?? $taxes->first();
         $this->quickTaxId = (string) ($default?->id ?? '');
@@ -535,7 +535,7 @@ class Index extends AbstractIndex
         $client   = Client::where('user_id', Auth::id())->findOrFail($this->quickClientId);
         $taxes    = Auth::user()->taxes()->get()->keyBy('id');
         if ($taxes->isEmpty()) {
-            $taxes = Tax::where('is_active', true)->get()->keyBy('id');
+            $taxes = Tax::active()->get()->keyBy('id');
         }
 
         $qty      = (float) $this->quickQty;
