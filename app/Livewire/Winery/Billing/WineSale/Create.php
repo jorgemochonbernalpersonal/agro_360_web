@@ -23,7 +23,8 @@ class Create extends Component
     public string $client_address_id  = '';
     public string $invoice_date       = '';
     public string $delivery_note_date = '';
-    public string $observations       = '';
+    public string $observations          = '';
+    public string $observations_invoice  = '';
     public string $payment_type       = '';
     public string $delivery_note_code = '';
 
@@ -149,6 +150,7 @@ class Create extends Component
             'delivery_note_code'           => 'required|string|max:255',
             'payment_type'                 => 'nullable|in:cash,transfer,check,other',
             'observations'                 => 'nullable|string',
+            'observations_invoice'         => 'nullable|string',
             'items'                        => 'required|array|min:1',
             'items.*.name'                 => 'required|string|max:255',
             'items.*.wine_lot_id'          => 'nullable|exists:wine_lots,id',
@@ -238,6 +240,7 @@ class Create extends Component
                 'tax_amount'           => round($taxAmount, 3),
                 'total_amount'         => round($total, 3),
                 'observations'         => $this->observations ?: null,
+                'observations_invoice' => $this->observations_invoice ?: null,
             ]);
 
             // Crear líneas

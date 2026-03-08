@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
-        title="Nuevo Albarán"
-        description="Crea un nuevo albarán de venta"
+        title="Nueva Factura"
+        description="Crea una nueva factura de venta"
     >
         <x-slot:actions>
             <flux:button href="{{ route('viticulturist.invoices.index') }}" variant="outline" icon="arrow-left">

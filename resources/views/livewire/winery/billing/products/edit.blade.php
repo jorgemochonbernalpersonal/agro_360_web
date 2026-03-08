@@ -308,13 +308,22 @@
 
             {{-- Observaciones --}}
             <x-agro.form-section title="Observaciones">
-                <flux:field>
-                    <flux:label>Observaciones</flux:label>
-                    <flux:textarea wire:model="observations" rows="3"
-                        placeholder="Notas que aparecerán en el albarán y la factura..."
-                        :disabled="$invoice->status === 'cancelled'" />
-                    <flux:error name="observations" />
-                </flux:field>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <flux:field>
+                        <flux:label>Observaciones internas</flux:label>
+                        <flux:textarea wire:model="observations" rows="3"
+                            placeholder="Notas internas (no aparecen en el documento)..."
+                            :disabled="$invoice->status === 'cancelled'" />
+                        <flux:error name="observations" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Observaciones en documento</flux:label>
+                        <flux:textarea wire:model="observations_invoice" rows="3"
+                            placeholder="Texto que aparecerá en el albarán y la factura..."
+                            :disabled="$invoice->status === 'cancelled'" />
+                        <flux:error name="observations_invoice" />
+                    </flux:field>
+                </div>
             </x-agro.form-section>
 
             {{-- Acciones --}}

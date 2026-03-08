@@ -24,7 +24,8 @@ class Edit extends Component
     public string $client_id          = '';
     public string $invoice_date       = '';
     public string $delivery_note_date = '';
-    public string $observations       = '';
+    public string $observations         = '';
+    public string $observations_invoice = '';
     public string $payment_type       = '';
     public string $payment_status     = '';
 
@@ -51,7 +52,8 @@ class Edit extends Component
             ? $this->invoice->invoice_date->format('Y-m-d') : '';
         $this->delivery_note_date = $this->invoice->delivery_note_date
             ? $this->invoice->delivery_note_date->format('Y-m-d') : '';
-        $this->observations       = $this->invoice->observations ?? '';
+        $this->observations         = $this->invoice->observations ?? '';
+        $this->observations_invoice = $this->invoice->observations_invoice ?? '';
         $this->payment_type       = $this->invoice->payment_type ?? '';
         $this->payment_status     = $this->invoice->payment_status ?? 'unpaid';
 
@@ -260,6 +262,7 @@ class Edit extends Component
             'payment_type'                => 'nullable|in:cash,transfer,check,other',
             'payment_status'              => 'required|in:unpaid,partial,paid',
             'observations'                => 'nullable|string',
+            'observations_invoice'        => 'nullable|string',
             'items'                       => 'required|array|min:1',
             'items.*.name'                => 'required|string|max:255',
             'items.*.wine_lot_id'         => 'nullable|exists:wine_lots,id',
@@ -348,6 +351,7 @@ class Edit extends Component
                     'payment_status'       => $this->payment_status,
                     'payment_type'         => $this->payment_type ?: null,
                     'observations'         => $this->observations ?: null,
+                    'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
 
                 // 5. Crear líneas nuevas + mover stock
