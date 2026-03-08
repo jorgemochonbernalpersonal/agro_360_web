@@ -11,42 +11,35 @@
             <a href="{{ route('winery.grape-reception.export-excel', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}">
                 <flux:button variant="ghost" icon="table-cells" size="sm">Excel</flux:button>
             </a>
-            <flux:button href="{{ route('winery.grape-reception.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ route('winery.grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Recepción
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Filtros --}}
-    <x-agro.filter-bar>
+    <x-agro.filter-bar :active-count="collect([$campaignFilter, $viticulturistFilter, $disqualifiedFilter, $search])->filter()->count()">
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
             placeholder="Buscar viticultor, variedad, parcela o ticket..."
         />
-        <flux:select wire:model.live="campaignFilter" size="sm" class="w-36">
-            <flux:select.option value="">Todas las añadas</flux:select.option>
+        <x-agro.filter-select wire:model.live="campaignFilter" label="Añada">
+            <option value="">Todas las añadas</option>
             @foreach($campaigns as $c)
-                <flux:select.option value="{{ $c->id }}">
-                    {{ $c->year }}{{ $c->active ? ' (activa)' : '' }}
-                </flux:select.option>
+                <option value="{{ $c->id }}">{{ $c->year }}{{ $c->active ? ' (activa)' : '' }}</option>
             @endforeach
-        </flux:select>
-        <flux:select wire:model.live="viticulturistFilter" size="sm" class="w-44">
-            <flux:select.option value="">Todos los viticultores</flux:select.option>
+        </x-agro.filter-select>
+        <x-agro.filter-select wire:model.live="viticulturistFilter" label="Viticultor">
+            <option value="">Todos los viticultores</option>
             @foreach($linkedViticulturists as $v)
-                <flux:select.option value="{{ $v->id }}">{{ $v->name }}</flux:select.option>
+                <option value="{{ $v->id }}">{{ $v->name }}</option>
             @endforeach
-        </flux:select>
-        <flux:select wire:model.live="disqualifiedFilter" size="sm" class="w-40">
-            <flux:select.option value="">Todas</flux:select.option>
-            <flux:select.option value="0">Solo válidas</flux:select.option>
-            <flux:select.option value="1">Solo descartadas</flux:select.option>
-        </flux:select>
-        @if($search || $campaignFilter || $viticulturistFilter || $disqualifiedFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
-        @endif
+        </x-agro.filter-select>
+        <x-agro.filter-select wire:model.live="disqualifiedFilter" label="Estado">
+            <option value="">Todas</option>
+            <option value="0">Solo válidas</option>
+            <option value="1">Solo descartadas</option>
+        </x-agro.filter-select>
     </x-agro.filter-bar>
 
     @if($receptions->count() > 0)
@@ -163,30 +156,24 @@
                         <div class="flex justify-between items-center">
                             <div>
                                 @if(!$isCancelled)
-                                    <button
+                                    <flux:button size="sm" variant="ghost" icon="x-circle"
+                                        class="text-zinc-400 hover:text-red-600"
                                         wire:click="cancelReception({{ $reception->id }})"
                                         wire:confirm="¿Anular esta recepción? Esta acción no se puede deshacer."
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                                         title="Anular recepción"
-                                    >
-                                        <flux:icon icon="x-circle" class="size-4" />
-                                    </button>
+                                    />
                                 @endif
                             </div>
                             <div class="flex gap-1">
-                                <a href="{{ route('winery.grape-reception.show', $reception) }}"
-                                   title="Ver detalle">
-                                    <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                        <flux:icon icon="eye" class="size-4" />
-                                    </button>
-                                </a>
+                                <flux:button size="sm" variant="ghost" icon="eye"
+                                    href="{{ route('winery.grape-reception.show', $reception) }}"
+                                    wire:navigate title="Ver detalle"
+                                />
                                 @if(!$isCancelled)
-                                    <a href="{{ route('winery.grape-reception.edit', $reception) }}"
-                                       title="Editar recepción">
-                                        <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                            <flux:icon icon="pencil-square" class="size-4" />
-                                        </button>
-                                    </a>
+                                    <flux:button size="sm" variant="ghost" icon="pencil-square"
+                                        href="{{ route('winery.grape-reception.edit', $reception) }}"
+                                        wire:navigate title="Editar recepción"
+                                    />
                                 @endif
                             </div>
                         </div>
@@ -195,9 +182,7 @@
             @endforeach
         </div>
 
-        <div class="mt-2">
-            {{ $receptions->links() }}
-        </div>
+        <x-agro.pagination :paginator="$receptions" />
     @else
         <x-agro.empty-state
             icon="scale"
@@ -205,7 +190,7 @@
             description="Registra la primera entrada de uva para esta campaña"
         >
             <x-slot:action>
-                <flux:button href="{{ route('winery.grape-reception.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ route('winery.grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
                     Nueva Recepción
                 </flux:button>
             </x-slot:action>

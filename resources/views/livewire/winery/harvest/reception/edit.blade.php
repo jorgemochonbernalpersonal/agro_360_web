@@ -1,16 +1,10 @@
-<div class="space-y-6 animate-fade-in">
-    <x-agro.page-header
+<div>
+    <x-agro.form-card
         title="Editar Recepción de Uva"
         description="Modifica los datos de la recepción registrada"
+        :back-url="route('winery.grape-reception.index')"
     >
-        <x-slot:actions>
-            <flux:button href="{{ route('winery.grape-reception.index') }}" variant="ghost" icon="arrow-left">
-                Volver
-            </flux:button>
-        </x-slot:actions>
-    </x-agro.page-header>
-
-    <form wire:submit="save" class="space-y-8">
+        <form wire:submit.prevent="save" class="space-y-8">
 
         {{-- Sección 1: Datos esenciales --}}
         <x-agro.form-section title="Datos Esenciales">
@@ -283,5 +277,6 @@
             submit-label="Guardar Cambios"
         />
 
-    </form>
+        </form>
+    </x-agro.form-card>
 </div>

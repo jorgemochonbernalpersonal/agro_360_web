@@ -5,28 +5,23 @@
         description="Las campañas se crean automáticamente al registrar una recepción de uva"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.grape-reception.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ route('winery.grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Recepción
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
-    <x-agro.filter-bar>
+    <x-agro.filter-bar :active-count="collect([$search, $yearFilter])->filter()->count()">
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
             placeholder="Buscar campaña..."
         />
-        <flux:select wire:model.live="yearFilter" size="sm" class="w-32">
-            <flux:select.option value="">Todos los años</flux:select.option>
+        <x-agro.filter-select wire:model.live="yearFilter" label="Año">
+            <option value="">Todos los años</option>
             @foreach($years as $year)
-                <flux:select.option value="{{ $year }}">{{ $year }}</flux:select.option>
+                <option value="{{ $year }}">{{ $year }}</option>
             @endforeach
-        </flux:select>
-        @if($search || $yearFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
-        @endif
+        </x-agro.filter-select>
     </x-agro.filter-bar>
 
     <x-agro.card>
@@ -67,6 +62,7 @@
 
                         <x-agro.table-cell>
                             <a href="{{ route('winery.grape-reception.index', ['campaignFilter' => $campaign->id]) }}"
+                               wire:navigate
                                class="text-sm text-agro-700 hover:underline">
                                 {{ $campaign->activities_count }}
                                 {{ Str::plural('recepción', $campaign->activities_count) }}
@@ -81,22 +77,18 @@
 
                         <x-agro.table-cell align="right">
                             <div class="flex items-center justify-end gap-1">
-                                <button
+                                <flux:button size="sm" variant="ghost"
+                                    :icon="$campaign->active ? 'lock-closed' : 'lock-open'"
                                     wire:click="toggleActive({{ $campaign->id }})"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-700 hover:bg-agro-50 transition-colors"
                                     title="{{ $campaign->active ? 'Cerrar campaña' : 'Activar campaña' }}"
-                                >
-                                    <flux:icon :icon="$campaign->active ? 'lock-closed' : 'lock-open'" class="size-4" />
-                                </button>
+                                />
                                 @if($campaign->activities_count === 0)
-                                    <button
+                                    <flux:button size="sm" variant="ghost" icon="trash"
+                                        class="text-red-500"
                                         wire:click="delete({{ $campaign->id }})"
                                         wire:confirm="¿Eliminar esta campaña?"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                                         title="Eliminar campaña"
-                                    >
-                                        <flux:icon icon="trash" class="size-4" />
-                                    </button>
+                                    />
                                 @endif
                             </div>
                         </x-agro.table-cell>
