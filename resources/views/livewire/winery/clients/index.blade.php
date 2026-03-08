@@ -178,14 +178,6 @@
                                 >
                                     <flux:icon icon="{{ $client->active ? 'no-symbol' : 'check-circle' }}" class="size-4" />
                                 </button>
-                                <button
-                                    wire:click="delete({{ $client->id }})"
-                                    wire:confirm="¿Eliminar este cliente? Esta acción no se puede deshacer."
-                                    class="{{ $btnDanger }}"
-                                    title="Eliminar"
-                                >
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
                             </div>
                         </div>
                     </x-slot:footer>

@@ -53,21 +53,6 @@ class Index extends Component
         }
     }
 
-    public function delete(int $clientId): void
-    {
-        $client = Client::where('user_id', Auth::id())
-            ->withCount('invoices')
-            ->findOrFail($clientId);
-
-        if ($client->invoices_count > 0) {
-            $this->toastError('No se puede eliminar un cliente con facturas asociadas.');
-            return;
-        }
-
-        $client->delete();
-        $this->toastSuccess('Cliente eliminado.');
-    }
-
     public function render()
     {
         $userId = Auth::id();
