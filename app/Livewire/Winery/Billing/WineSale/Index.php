@@ -4,9 +4,12 @@ namespace App\Livewire\Winery\Billing\WineSale;
 
 use App\Livewire\Concerns\WithInvoiceActions;
 use App\Livewire\Winery\AbstractIndex;
+use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
+use App\Models\Tax;
+use App\Models\WineLot;
 use App\Services\WineStockService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +35,24 @@ class Index extends AbstractIndex
     public ?int   $correctiveId     = null;
     public string $correctiveDate   = '';
     public string $correctiveReason = '';
+
+    // Quick invoice modal
+    public bool   $quickModal              = false;
+    public string $quickClientId           = '';
+    public string $quickClientAddressId    = '';
+    public string $quickLotId              = '';
+    public string $quickConceptName        = '';
+    public string $quickQty                = '';
+    public string $quickPrice              = '';
+    public string $quickTaxId              = '';
+    public string $quickPaymentType        = '';
+    public array  $quickAvailableAddresses = [];
+    public float  $quickAvailableQty       = 0;
+
+    // Export modal
+    public bool   $exportModal    = false;
+    public string $exportDateFrom = '';
+    public string $exportDateTo   = '';
 
     protected $queryString = [
         'search'               => ['except' => ''],
@@ -347,6 +368,277 @@ class Index extends AbstractIndex
             ]);
             $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al generar la rectificativa.');
         }
+    }
+
+    // ── Duplicar ──────────────────────────────────────────────────────────────
+
+    public function duplicate(int $invoiceId): void
+    {
+        $original = $this->findInvoice($invoiceId, ['items.wineLot']);
+        if (!$original) return;
+
+        try {
+            DB::transaction(function () use ($original) {
+                $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
+                $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
+
+                $newInvoice = Invoice::create([
+                    'user_id'                  => Auth::id(),
+                    'client_id'                => $original->client_id,
+                    'client_address_id'        => $original->client_address_id,
+                    'invoice_type'             => 'wine_sale',
+                    'delivery_note_code'       => $noteCode,
+                    'delivery_note_date'       => now()->toDateString(),
+                    'invoice_date'             => now()->toDateString(),
+                    'delivery_status'          => 'pending',
+                    'status'                   => 'draft',
+                    'payment_status'           => 'unpaid',
+                    'payment_type'             => $original->payment_type,
+                    'billing_first_name'       => $original->billing_first_name,
+                    'billing_last_name'        => $original->billing_last_name,
+                    'billing_company_name'     => $original->billing_company_name,
+                    'billing_email'            => $original->billing_email,
+                    'billing_phone'            => $original->billing_phone,
+                    'gift'                     => $original->gift,
+                    'subtotal'                 => $original->subtotal,
+                    'discount_amount'          => $original->discount_amount,
+                    'tax_base'                 => $original->tax_base,
+                    'tax_amount'               => $original->tax_amount,
+                    'total_amount'             => $original->total_amount,
+                    'observations'             => $original->observations,
+                    'observations_invoice'     => $original->observations_invoice,
+                ]);
+
+                foreach ($original->items as $item) {
+                    $lot = $item->wine_lot_id
+                        ? WineLot::where('user_id', Auth::id())->lockForUpdate()->find($item->wine_lot_id)
+                        : null;
+
+                    $createdItem = InvoiceItem::create([
+                        'invoice_id'          => $newInvoice->id,
+                        'wine_lot_id'         => $lot?->id,
+                        'concept_type'        => $item->concept_type,
+                        'name'                => $item->name,
+                        'description'         => $item->description,
+                        'sku'                 => $item->sku,
+                        'quantity'            => $item->quantity,
+                        'unit_price'          => $item->unit_price,
+                        'discount_percentage' => $item->discount_percentage,
+                        'discount_amount'     => $item->discount_amount,
+                        'tax_id'              => $item->tax_id,
+                        'tax_name'            => $item->tax_name,
+                        'tax_rate'            => $item->tax_rate,
+                        'subtotal'            => $item->subtotal,
+                        'tax_base'            => $item->tax_base,
+                        'tax_amount'          => $item->tax_amount,
+                        'total'               => $item->total,
+                    ]);
+
+                    if ($lot) {
+                        WineStockService::moveOnCreate($newInvoice, $createdItem, $lot, (float) $item->quantity);
+                    }
+                }
+            });
+
+            $this->toastSuccess('Albarán duplicado correctamente.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al duplicar factura: ' . $e->getMessage(), ['invoice_id' => $invoiceId]);
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al duplicar el albarán.');
+        }
+    }
+
+    // ── Factura rápida ────────────────────────────────────────────────────────
+
+    public function openQuickModal(): void
+    {
+        $this->resetQuickModal();
+        $user = Auth::user();
+        $taxes = $user->taxes()->orderByPivot('order')->get();
+        if ($taxes->isEmpty()) {
+            $taxes = Tax::where('is_active', true)->orderBy('rate')->get();
+        }
+        $default = $user->defaultTax()->first() ?? $taxes->first();
+        $this->quickTaxId = (string) ($default?->id ?? '');
+        $this->quickModal = true;
+    }
+
+    public function closeQuickModal(): void
+    {
+        $this->quickModal = false;
+        $this->resetQuickModal();
+        $this->resetValidation();
+    }
+
+    private function resetQuickModal(): void
+    {
+        $this->quickClientId           = '';
+        $this->quickClientAddressId    = '';
+        $this->quickLotId              = '';
+        $this->quickConceptName        = '';
+        $this->quickQty                = '';
+        $this->quickPrice              = '';
+        $this->quickTaxId              = '';
+        $this->quickPaymentType        = '';
+        $this->quickAvailableAddresses = [];
+        $this->quickAvailableQty       = 0;
+    }
+
+    public function updatedQuickClientId(string $value): void
+    {
+        if ($value) {
+            $client = Client::with('addresses')->find($value);
+            $this->quickAvailableAddresses = $client?->addresses ?? collect();
+            $primary = $client?->addresses->firstWhere('is_default', true) ?? $client?->addresses->first();
+            $this->quickClientAddressId = $primary ? (string) $primary->id : '';
+        } else {
+            $this->quickAvailableAddresses = [];
+            $this->quickClientAddressId = '';
+        }
+    }
+
+    public function updatedQuickLotId(string $value): void
+    {
+        if ($value) {
+            $lot = WineLot::where('user_id', Auth::id())->find($value);
+            if ($lot) {
+                $this->quickConceptName  = $lot->name . ($lot->vintage ? " ({$lot->vintage})" : '');
+                $this->quickPrice        = (string) ($lot->price_per_unit ?? 0);
+                $this->quickAvailableQty = (float) $lot->available_quantity;
+            }
+        }
+    }
+
+    public function confirmQuick(): void
+    {
+        $this->validate(
+            [
+                'quickClientId'        => 'required|exists:clients,id',
+                'quickClientAddressId' => 'required|exists:client_addresses,id',
+                'quickLotId'           => 'required|exists:wine_lots,id',
+                'quickConceptName'     => 'required|string|max:255',
+                'quickQty'             => 'required|numeric|min:0.001',
+                'quickPrice'           => 'required|numeric|min:0',
+                'quickTaxId'           => 'nullable|exists:taxes,id',
+                'quickPaymentType'     => 'nullable|in:cash,transfer,check,other',
+            ],
+            [
+                'quickClientId.required'        => 'Selecciona un cliente.',
+                'quickClientAddressId.required' => 'Selecciona una dirección.',
+                'quickLotId.required'           => 'Selecciona un lote de vino.',
+                'quickConceptName.required'     => 'El concepto es obligatorio.',
+                'quickQty.required'             => 'La cantidad es obligatoria.',
+                'quickPrice.required'           => 'El precio es obligatorio.',
+            ]
+        );
+
+        $client   = Client::where('user_id', Auth::id())->findOrFail($this->quickClientId);
+        $taxes    = Auth::user()->taxes()->get()->keyBy('id');
+        if ($taxes->isEmpty()) {
+            $taxes = Tax::where('is_active', true)->get()->keyBy('id');
+        }
+
+        $qty      = (float) $this->quickQty;
+        $price    = (float) $this->quickPrice;
+        $tax      = $this->quickTaxId ? ($taxes[$this->quickTaxId] ?? null) : null;
+        $taxRate  = $tax ? (float) $tax->rate : 0;
+        $subtotal = round($qty * $price, 3);
+        $taxAmt   = round($subtotal * ($taxRate / 100), 3);
+        $total    = $subtotal + $taxAmt;
+
+        try {
+            DB::transaction(function () use ($client, $tax, $qty, $price, $taxRate, $subtotal, $taxAmt, $total) {
+                $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
+                $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
+
+                $invoice = Invoice::create([
+                    'user_id'              => Auth::id(),
+                    'client_id'            => $client->id,
+                    'client_address_id'    => $this->quickClientAddressId ?: null,
+                    'invoice_type'         => 'wine_sale',
+                    'delivery_note_code'   => $noteCode,
+                    'delivery_note_date'   => now()->toDateString(),
+                    'invoice_date'         => now()->toDateString(),
+                    'delivery_status'      => 'pending',
+                    'status'               => 'draft',
+                    'payment_status'       => 'unpaid',
+                    'payment_type'         => $this->quickPaymentType ?: null,
+                    'billing_first_name'   => $client->first_name,
+                    'billing_last_name'    => $client->last_name,
+                    'billing_company_name' => $client->company_name,
+                    'billing_email'        => $client->email,
+                    'billing_phone'        => $client->phone,
+                    'subtotal'             => $subtotal,
+                    'discount_amount'      => 0,
+                    'tax_base'             => $subtotal,
+                    'tax_amount'           => $taxAmt,
+                    'total_amount'         => $total,
+                ]);
+
+                $lot         = WineLot::where('user_id', Auth::id())->lockForUpdate()->findOrFail($this->quickLotId);
+                $createdItem = InvoiceItem::create([
+                    'invoice_id'          => $invoice->id,
+                    'wine_lot_id'         => $lot->id,
+                    'concept_type'        => 'wine',
+                    'name'                => $this->quickConceptName,
+                    'quantity'            => $qty,
+                    'unit_price'          => $price,
+                    'discount_percentage' => 0,
+                    'discount_amount'     => 0,
+                    'tax_id'              => $tax?->id,
+                    'tax_name'            => $tax?->name,
+                    'tax_rate'            => $taxRate,
+                    'subtotal'            => $subtotal,
+                    'tax_base'            => $subtotal,
+                    'tax_amount'          => $taxAmt,
+                    'total'               => $total,
+                ]);
+
+                WineStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
+            });
+
+            $this->closeQuickModal();
+            $this->toastSuccess('Albarán rápido creado correctamente.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al crear albarán rápido: ' . $e->getMessage(), ['user_id' => Auth::id()]);
+            $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al crear el albarán.');
+        }
+    }
+
+    // ── Exportar ──────────────────────────────────────────────────────────────
+
+    public function openExportModal(): void
+    {
+        $this->exportDateFrom = now()->startOfMonth()->toDateString();
+        $this->exportDateTo   = now()->toDateString();
+        $this->exportModal    = true;
+    }
+
+    public function closeExportModal(): void
+    {
+        $this->exportModal = false;
+        $this->resetValidation();
+    }
+
+    public function export()
+    {
+        $this->validate(
+            [
+                'exportDateFrom' => 'required|date',
+                'exportDateTo'   => 'required|date|after_or_equal:exportDateFrom',
+            ],
+            [
+                'exportDateTo.after_or_equal' => 'La fecha final no puede ser anterior a la inicial.',
+            ]
+        );
+
+        $this->closeExportModal();
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\WineSaleInvoiceExport(Auth::id(), $this->exportDateFrom, $this->exportDateTo),
+            'facturas_venta_' . $this->exportDateFrom . '_' . $this->exportDateTo . '.xlsx'
+        );
     }
 
     // ── Query ─────────────────────────────────────────────────────────────────

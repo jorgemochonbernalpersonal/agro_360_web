@@ -27,6 +27,7 @@ class Create extends Component
     public string $observations_invoice  = '';
     public string $payment_type       = '';
     public string $delivery_note_code = '';
+    public bool   $is_gift            = false;
 
     public array $items = [];
 
@@ -216,6 +217,8 @@ class Create extends Component
             $taxBase = $subtotal - $discountAmount;
             $total   = $taxBase + $taxAmount;
 
+            $multiplyGift = $this->is_gift ? 0 : 1;
+
             // Crear factura en borrador (sin número de factura)
             $invoice = Invoice::create([
                 'user_id'              => Auth::id(),
@@ -229,16 +232,17 @@ class Create extends Component
                 'status'               => 'draft',
                 'payment_status'       => 'unpaid',
                 'payment_type'         => $this->payment_type ?: null,
+                'gift'                 => $this->is_gift,
                 'billing_first_name'   => $client->first_name,
                 'billing_last_name'    => $client->last_name,
                 'billing_company_name' => $client->company_name,
                 'billing_email'        => $client->email,
                 'billing_phone'        => $client->phone,
-                'subtotal'             => round($subtotal, 3),
-                'discount_amount'      => round($discountAmount, 3),
-                'tax_base'             => round($taxBase, 3),
-                'tax_amount'           => round($taxAmount, 3),
-                'total_amount'         => round($total, 3),
+                'subtotal'             => round($subtotal * $multiplyGift, 3),
+                'discount_amount'      => round($discountAmount * $multiplyGift, 3),
+                'tax_base'             => round($taxBase * $multiplyGift, 3),
+                'tax_amount'           => round($taxAmount * $multiplyGift, 3),
+                'total_amount'         => round($total * $multiplyGift, 3),
                 'observations'         => $this->observations ?: null,
                 'observations_invoice' => $this->observations_invoice ?: null,
             ]);
@@ -269,14 +273,14 @@ class Create extends Component
                     'quantity'            => $qty,
                     'unit_price'          => $unitPrice,
                     'discount_percentage' => $discPct,
-                    'discount_amount'     => $lineDiscount,
+                    'discount_amount'     => $lineDiscount * $multiplyGift,
                     'tax_id'              => $tax?->id,
                     'tax_name'            => $tax?->name,
                     'tax_rate'            => $taxRate,
-                    'subtotal'            => $lineSubtotal,
-                    'tax_base'            => $lineBase,
-                    'tax_amount'          => $taxAmountLine,
-                    'total'               => $lineBase + $taxAmountLine,
+                    'subtotal'            => $lineSubtotal * $multiplyGift,
+                    'tax_base'            => $lineBase * $multiplyGift,
+                    'tax_amount'          => $taxAmountLine * $multiplyGift,
+                    'total'               => ($lineBase + $taxAmountLine) * $multiplyGift,
                 ]);
 
                 if ($lot) {

@@ -35,7 +35,17 @@
                 @endif
             </button>
 
+            <button wire:click="openExportModal"
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
+                <flux:icon icon="arrow-down-tray" class="size-4 text-zinc-500" />
+                Exportar
+            </button>
+
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
+            <flux:button wire:click="openQuickModal" variant="outline" icon="bolt">
+                Rápida
+            </flux:button>
 
             <flux:button href="{{ route('winery.invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Factura
@@ -133,6 +143,9 @@
                                     @if($invoice->corrective)
                                         <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded shrink-0">R/</span>
                                     @endif
+                                    @if($invoice->gift)
+                                        <span class="text-[10px] font-bold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded shrink-0">REGALO</span>
+                                    @endif
                                 </div>
                                 @if($invoice->delivery_note_code)
                                     <p class="text-xs text-zinc-400 font-mono leading-tight mt-0.5">Alb: {{ $invoice->delivery_note_code }}</p>
@@ -179,6 +192,15 @@
                                        class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
+                                @endif
+
+                                @if($invoice->status !== 'cancelled')
+                                    <button wire:click="duplicate({{ $invoice->id }})"
+                                            wire:confirm="¿Duplicar este albarán? Se creará uno nuevo en borrador con los mismos productos y cantidades."
+                                            class="{{ $btnBase }} text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
+                                            title="Duplicar albarán">
+                                        <flux:icon icon="document-duplicate" class="size-4" />
+                                    </button>
                                 @endif
 
                                 @if($invoice->delivery_note_code)
@@ -354,6 +376,156 @@
                     <flux:button wire:click="confirmCorrective" wire:loading.attr="disabled" variant="primary" size="sm" icon="arrow-uturn-left">
                         <span wire:loading.remove wire:target="confirmCorrective">Emitir Rectificativa</span>
                         <span wire:loading wire:target="confirmCorrective">Generando...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Modal: Factura Rápida --}}
+    @if($quickModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+             x-data x-on:keydown.escape.window="$wire.closeQuickModal()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg" @click.stop>
+                <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <flux:icon icon="bolt" class="size-4 text-blue-600" />
+                        </div>
+                        <h3 class="text-base font-semibold text-zinc-900">Albarán Rápido</h3>
+                    </div>
+                    <flux:button wire:click="closeQuickModal" variant="ghost" size="sm" icon="x-mark" />
+                </div>
+                <div class="px-6 py-5 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Cliente <span class="text-red-500">*</span></label>
+                            <select wire:model.live="quickClientId"
+                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
+                                <option value="">Selecciona cliente</option>
+                                @foreach(\App\Models\Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->get() as $c)
+                                    <option value="{{ $c->id }}">{{ $c->full_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('quickClientId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Dirección <span class="text-red-500">*</span></label>
+                            <select wire:model="quickClientAddressId"
+                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
+                                <option value="">Selecciona dirección</option>
+                                @foreach($quickAvailableAddresses as $addr)
+                                    <option value="{{ $addr->id }}">{{ $addr->full_address ?? $addr->address ?? '' }}</option>
+                                @endforeach
+                            </select>
+                            @error('quickClientAddressId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Producto <span class="text-red-500">*</span></label>
+                        <select wire:model.live="quickLotId"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
+                            <option value="">Selecciona lote con stock</option>
+                            @foreach(\App\Models\WineLot::where('user_id', Auth::id())->where('archived', false)->where('available_quantity', '>', 0)->orderByDesc('vintage')->orderBy('name')->get() as $wl)
+                                <option value="{{ $wl->id }}">{{ $wl->name }}@if($wl->vintage) ({{ $wl->vintage }})@endif – {{ number_format($wl->available_quantity, 0) }} {{ $wl->unit }}</option>
+                            @endforeach
+                        </select>
+                        @error('quickLotId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Concepto <span class="text-red-500">*</span></label>
+                        <input wire:model="quickConceptName" type="text" placeholder="Nombre del producto"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
+                        @error('quickConceptName') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Cantidad <span class="text-red-500">*</span></label>
+                            <input wire:model="quickQty" type="number" step="0.001" min="0.001"
+                                @if($quickAvailableQty > 0) max="{{ $quickAvailableQty }}" @endif
+                                placeholder="0.000"
+                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
+                            @if($quickAvailableQty > 0)
+                                <p class="mt-1 text-xs text-zinc-400">Disponible: {{ number_format($quickAvailableQty, 0) }}</p>
+                            @endif
+                            @error('quickQty') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Precio/ud (€) <span class="text-red-500">*</span></label>
+                            <input wire:model="quickPrice" type="number" step="0.0001" min="0" placeholder="0.0000"
+                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
+                            @error('quickPrice') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Impuesto</label>
+                            <select wire:model="quickTaxId"
+                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
+                                <option value="">Sin impuesto</option>
+                                @foreach(\App\Models\Tax::where('is_active', true)->orderBy('rate')->get() as $t)
+                                    <option value="{{ $t->id }}">{{ $t->name }} ({{ number_format($t->rate, 2) }}%)</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Forma de pago</label>
+                            <select wire:model="quickPaymentType"
+                                class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
+                                <option value="">Sin especificar</option>
+                                <option value="cash">Efectivo</option>
+                                <option value="transfer">Transferencia</option>
+                                <option value="check">Cheque</option>
+                                <option value="other">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex justify-end gap-3">
+                    <flux:button wire:click="closeQuickModal" variant="ghost" size="sm">Cancelar</flux:button>
+                    <flux:button wire:click="confirmQuick" wire:loading.attr="disabled" variant="primary" size="sm" icon="bolt">
+                        <span wire:loading.remove wire:target="confirmQuick">Crear Albarán</span>
+                        <span wire:loading wire:target="confirmQuick">Creando...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Modal: Exportar --}}
+    @if($exportModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+             x-data x-on:keydown.escape.window="$wire.closeExportModal()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm" @click.stop>
+                <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                            <flux:icon icon="arrow-down-tray" class="size-4 text-green-600" />
+                        </div>
+                        <h3 class="text-base font-semibold text-zinc-900">Exportar Facturas</h3>
+                    </div>
+                    <flux:button wire:click="closeExportModal" variant="ghost" size="sm" icon="x-mark" />
+                </div>
+                <div class="px-6 py-5 space-y-4">
+                    <p class="text-sm text-zinc-500">Exporta a Excel las facturas emitidas en el rango de fechas seleccionado.</p>
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Desde <span class="text-red-500">*</span></label>
+                        <input wire:model="exportDateFrom" type="date"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
+                        @error('exportDateFrom') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Hasta <span class="text-red-500">*</span></label>
+                        <input wire:model="exportDateTo" type="date"
+                            class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400" />
+                        @error('exportDateTo') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl flex justify-end gap-3">
+                    <flux:button wire:click="closeExportModal" variant="ghost" size="sm">Cancelar</flux:button>
+                    <flux:button wire:click="export" wire:loading.attr="disabled" variant="primary" size="sm" icon="arrow-down-tray">
+                        <span wire:loading.remove wire:target="export">Descargar Excel</span>
+                        <span wire:loading wire:target="export">Generando...</span>
                     </flux:button>
                 </div>
             </div>

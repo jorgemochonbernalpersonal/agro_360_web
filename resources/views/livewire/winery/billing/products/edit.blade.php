@@ -104,6 +104,13 @@
                             <option value="other">Otro</option>
                         </flux:select>
                     </flux:field>
+
+                    <flux:field class="md:col-span-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <flux:checkbox wire:model.live="is_gift" id="is_gift" :disabled="$isLocked" />
+                            <span class="text-sm font-medium text-zinc-700">Factura regalo <span class="text-xs text-zinc-400">(importes = 0, stock se deduce igualmente)</span></span>
+                        </label>
+                    </flux:field>
                 </div>
             </x-agro.form-section>
 

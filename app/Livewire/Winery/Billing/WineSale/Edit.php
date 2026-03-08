@@ -28,6 +28,7 @@ class Edit extends Component
     public string $observations_invoice = '';
     public string $payment_type       = '';
     public string $payment_status     = '';
+    public bool   $is_gift            = false;
 
     public array $items = [];
 
@@ -56,6 +57,7 @@ class Edit extends Component
         $this->observations_invoice = $this->invoice->observations_invoice ?? '';
         $this->payment_type       = $this->invoice->payment_type ?? '';
         $this->payment_status     = $this->invoice->payment_status ?? 'unpaid';
+        $this->is_gift            = (bool) $this->invoice->gift;
 
         $user = Auth::user();
         $this->availableTaxes = $user->taxes()->orderByPivot('order')->get();
@@ -72,7 +74,7 @@ class Edit extends Component
             'description'         => $item->description ?? '',
             'sku'                 => $item->sku ?? '',
             'quantity'            => (string) $item->quantity,
-            'available_qty'       => $item->wineLot ? (float) $item->wineLot->available_quantity : null,
+            'available_qty'       => $item->wineLot ? (float) $item->wineLot->available_quantity + (float) $item->quantity : null,
             'unit_price'          => (string) $item->unit_price,
             'tax_id'              => (string) ($item->tax_id ?? $this->defaultTaxId),
             'discount_percentage' => (string) ($item->discount_percentage ?? 0),
@@ -333,6 +335,8 @@ class Edit extends Component
                 $taxBase = $subtotal - $discountAmount;
                 $total   = $taxBase + $taxAmount;
 
+                $multiplyGift = $this->is_gift ? 0 : 1;
+
                 // 4. Actualizar cabecera
                 $this->invoice->update([
                     'client_id'            => $client->id,
@@ -343,11 +347,12 @@ class Edit extends Component
                     'billing_company_name' => $client->company_name,
                     'billing_email'        => $client->email,
                     'billing_phone'        => $client->phone,
-                    'subtotal'             => round($subtotal, 3),
-                    'discount_amount'      => round($discountAmount, 3),
-                    'tax_base'             => round($taxBase, 3),
-                    'tax_amount'           => round($taxAmount, 3),
-                    'total_amount'         => round($total, 3),
+                    'gift'                 => $this->is_gift,
+                    'subtotal'             => round($subtotal * $multiplyGift, 3),
+                    'discount_amount'      => round($discountAmount * $multiplyGift, 3),
+                    'tax_base'             => round($taxBase * $multiplyGift, 3),
+                    'tax_amount'           => round($taxAmount * $multiplyGift, 3),
+                    'total_amount'         => round($total * $multiplyGift, 3),
                     'payment_status'       => $this->payment_status,
                     'payment_type'         => $this->payment_type ?: null,
                     'observations'         => $this->observations ?: null,
@@ -380,14 +385,14 @@ class Edit extends Component
                             'quantity'            => $qty,
                             'unit_price'          => $unitPrice,
                             'discount_percentage' => $discPct,
-                            'discount_amount'     => $lineDiscount,
+                            'discount_amount'     => $lineDiscount * $multiplyGift,
                             'tax_id'              => $tax?->id,
                             'tax_name'            => $tax?->name,
                             'tax_rate'            => $taxRate,
-                            'subtotal'            => $lineSubtotal,
-                            'tax_base'            => $lineBase,
-                            'tax_amount'          => $taxAmountLine,
-                            'total'               => $lineBase + $taxAmountLine,
+                            'subtotal'            => $lineSubtotal * $multiplyGift,
+                            'tax_base'            => $lineBase * $multiplyGift,
+                            'tax_amount'          => $taxAmountLine * $multiplyGift,
+                            'total'               => ($lineBase + $taxAmountLine) * $multiplyGift,
                         ]);
 
                         if ($lot) {
@@ -413,8 +418,12 @@ class Edit extends Component
     public function render()
     {
         $clients  = Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->orderBy('company_name')->get();
+        $existingLotIds = collect($this->items)->pluck('wine_lot_id')->filter()->values()->all();
         $wineLots = WineLot::where('user_id', Auth::id())->where('archived', false)
-            ->where('available_quantity', '>', 0)
+            ->where(function ($q) use ($existingLotIds) {
+                $q->where('available_quantity', '>', 0)
+                  ->orWhereIn('id', $existingLotIds);
+            })
             ->orderByDesc('vintage')->orderBy('name')->get();
 
         return view('livewire.winery.billing.products.edit', [
