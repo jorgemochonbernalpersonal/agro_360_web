@@ -17,34 +17,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <x-agro.stat-card
-            label="Total recibido"
-            :value="number_format($stats['total_received_kg'], 0) . ' kg'"
-            icon="scale"
-            color="agro"
-        />
-        <x-agro.stat-card
-            label="Previsión bodega"
-            :value="$stats['total_forecast_kg'] ? number_format($stats['total_forecast_kg'], 0) . ' kg' : '—'"
-            icon="clipboard-document-list"
-            color="zinc"
-        />
-        <x-agro.stat-card
-            label="Alertas superado"
-            :value="$stats['exceeded_count']"
-            icon="exclamation-triangle"
-            color="{{ $stats['exceeded_count'] > 0 ? 'red' : 'zinc' }}"
-        />
-        <x-agro.stat-card
-            label="En riesgo (≥80%)"
-            :value="$stats['at_risk_count']"
-            icon="bell-alert"
-            color="{{ $stats['at_risk_count'] > 0 ? 'amber' : 'zinc' }}"
-        />
-    </div>
-
     {{-- Filtros --}}
     <x-agro.filter-bar :active-count="collect([$campaignFilter, $viticulturistFilter, $varietyFilter, $alertFilter])->filter()->count()">
         <x-agro.filter-select wire:model.live="campaignFilter" label="Campaña">

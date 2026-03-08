@@ -11,28 +11,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <x-agro.stat-card
-            label="Total actividades"
-            :value="$stats['total']"
-            icon="clipboard-document-list"
-            color="zinc"
-        />
-        <x-agro.stat-card
-            label="Vendimias"
-            :value="$stats['harvest']"
-            icon="archive-box-arrow-down"
-            color="agro"
-        />
-        <x-agro.stat-card
-            label="Tratamientos fitosanitarios"
-            :value="$stats['phyto']"
-            icon="beaker"
-            color="amber"
-        />
-    </div>
-
     {{-- Filtros --}}
     <x-agro.filter-bar :active-count="collect([$viticulturistFilter, $activityTypeFilter, $campaignFilter, $plotFilter])->filter()->count()">
         <x-agro.filter-select wire:model.live="viticulturistFilter" label="Viticultor">

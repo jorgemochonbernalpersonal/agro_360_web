@@ -68,14 +68,12 @@
                     provinces: @js($provinces->map(fn($p) => ['id' => $p->id, 'name' => $p->name])->values()),
                     municipalities: @js($municipalities->map(fn($m) => ['id' => $m->id, 'name' => $m->name])->values()),
                     async communityChanged(id) {
-                        $wire.province_id = '';
-                        $wire.municipality_id = '';
+                        this.provinces = [];
                         this.municipalities = [];
-                        if (!id) { this.provinces = []; return; }
+                        if (!id) return;
                         this.provinces = await $wire.fetchProvinces(Number(id));
                     },
                     async provinceChanged(id) {
-                        $wire.municipality_id = '';
                         this.municipalities = [];
                         if (!id) return;
                         this.municipalities = await $wire.fetchMunicipalities(Number(id));
@@ -96,10 +94,10 @@
 
                 <flux:field>
                     <flux:label for="province_id">Provincia *</flux:label>
-                    <flux:select wire:model="province_id" id="province_id" data-cy="plot-province-id" required
-                        x-bind:disabled="!$wire.autonomous_community_id"
+                    <flux:select wire:model="province_id" wire:ignore id="province_id" data-cy="plot-province-id" required
+                        x-bind:disabled="provinces.length === 0"
                         x-on:change="provinceChanged($event.target.value)"
-                        x-init="$nextTick(() => { $el.value = $wire.province_id || ''; }); $watch('provinces', () => $nextTick(() => { $el.value = $wire.province_id || ''; }));">
+                        x-init="$nextTick(() => { $el.value = '{{ $province_id }}'; }); $watch('provinces', () => $nextTick(() => { $el.value = ''; }));">
                         <option value="">Seleccionar...</option>
                         <template x-for="province in provinces" :key="province.id">
                             <option :value="province.id" x-text="province.name"></option>
@@ -110,9 +108,10 @@
 
                 <flux:field>
                     <flux:label for="municipality_id">Municipio *</flux:label>
-                    <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
-                        x-bind:disabled="!$wire.province_id"
-                        x-init="$nextTick(() => { $el.value = $wire.municipality_id || ''; }); $watch('municipalities', () => $nextTick(() => { $el.value = $wire.municipality_id || ''; }));">
+                    <flux:select wire:model="municipality_id" wire:ignore id="municipality_id" data-cy="plot-municipality-id" required
+                        x-bind:disabled="municipalities.length === 0"
+                        x-on:change="$wire.selectMunicipality(Number($event.target.value))"
+                        x-init="$nextTick(() => { $el.value = '{{ $municipality_id }}'; }); $watch('municipalities', () => $nextTick(() => { $el.value = ''; }));">
                         <option value="">Seleccionar...</option>
                         <template x-for="municipality in municipalities" :key="municipality.id">
                             <option :value="municipality.id" x-text="municipality.name"></option>

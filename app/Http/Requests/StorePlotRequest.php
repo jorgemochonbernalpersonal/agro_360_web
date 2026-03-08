@@ -77,7 +77,7 @@ class StorePlotRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Calcular área elegible PAC si no se proporciona
-        if (!$this->has('pac_eligible_area') && $this->has('area')) {
+        if (! $this->has('pac_eligible_area') && $this->has('area')) {
             $this->merge([
                 'pac_eligible_area' => $this->input('area'),
             ]);

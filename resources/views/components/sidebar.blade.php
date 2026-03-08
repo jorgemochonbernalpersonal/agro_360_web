@@ -81,7 +81,7 @@
                         <span>{{ $label }}</span>
                         <flux:icon icon="chevron-down" variant="micro" class="transition-transform duration-200 opacity-50" ::class="isOpen('{{ $key }}') ? 'rotate-180' : ''" />
                     </button>
-                    <div x-show="isOpen('{{ $key }}')" x-collapse class="mt-1 space-y-0.5">
+                    <div x-cloak x-show="isOpen('{{ $key }}')" x-collapse class="mt-1 space-y-0.5">
                         @foreach($menu[$key] as $item)
                             @include('components.sidebar-item', ['item' => $item])
                         @endforeach

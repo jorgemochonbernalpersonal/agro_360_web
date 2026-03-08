@@ -146,39 +146,12 @@ class Edit extends Component
         return $rules;
     }
 
-    public function updatedAutonomousCommunityId($value)
-    {
-        // Resetear provincia y municipio cuando cambia la comunidad autónoma
-        // Si la provincia actual no pertenece a la nueva comunidad, resetear
-        if ($this->province_id) {
-            $currentProvince = Province::find($this->province_id);
-            if ($currentProvince && $currentProvince->autonomous_community_id != $value) {
-                $this->province_id = '';
-                $this->municipality_id = '';
-            }
-        } else {
-            $this->province_id = '';
-            $this->municipality_id = '';
-        }
-    }
-
-    public function updatedProvinceId($value)
-    {
-        // Resetear municipio cuando cambia la provincia
-        // Si el municipio actual no pertenece a la nueva provincia, resetear
-        if ($this->municipality_id) {
-            $currentMunicipality = Municipality::find($this->municipality_id);
-            if ($currentMunicipality && $currentMunicipality->province_id != $value) {
-                $this->municipality_id = '';
-            }
-        } else {
-            $this->municipality_id = '';
-        }
-    }
 
     #[Renderless]
     public function fetchProvinces(int $communityId): array
     {
+        $this->province_id = '';
+        $this->municipality_id = '';
         return Province::where('autonomous_community_id', $communityId)
             ->orderBy('name')
             ->get(['id', 'name'])
@@ -188,10 +161,18 @@ class Edit extends Component
     #[Renderless]
     public function fetchMunicipalities(int $provinceId): array
     {
+        $this->province_id = $provinceId;
+        $this->municipality_id = '';
         return Municipality::where('province_id', $provinceId)
             ->orderBy('name')
             ->get(['id', 'name'])
             ->toArray();
+    }
+
+    #[Renderless]
+    public function selectMunicipality(int $municipalityId): void
+    {
+        $this->municipality_id = $municipalityId;
     }
 
     public function update()

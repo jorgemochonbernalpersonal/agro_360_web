@@ -130,19 +130,6 @@ class Create extends Component
         return $rules;
     }
 
-    public function updatedAutonomousCommunityId($value)
-    {
-        // Resetear provincia y municipio cuando cambia la comunidad autónoma
-        $this->province_id = '';
-        $this->municipality_id = '';
-    }
-
-    public function updatedProvinceId($value)
-    {
-        // Resetear municipio cuando cambia la provincia
-        $this->municipality_id = '';
-    }
-
     public function save()
     {
         $this->validate();
@@ -252,6 +239,8 @@ class Create extends Component
     #[Renderless]
     public function fetchProvinces(int $communityId): array
     {
+        $this->province_id = '';
+        $this->municipality_id = '';
         return Province::where('autonomous_community_id', $communityId)
             ->orderBy('name')
             ->get(['id', 'name'])
@@ -261,10 +250,18 @@ class Create extends Component
     #[Renderless]
     public function fetchMunicipalities(int $provinceId): array
     {
+        $this->province_id = $provinceId;
+        $this->municipality_id = '';
         return Municipality::where('province_id', $provinceId)
             ->orderBy('name')
             ->get(['id', 'name'])
             ->toArray();
+    }
+
+    #[Renderless]
+    public function selectMunicipality(int $municipalityId): void
+    {
+        $this->municipality_id = $municipalityId;
     }
 
     public function render()

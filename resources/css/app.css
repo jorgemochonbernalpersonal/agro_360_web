@@ -143,6 +143,9 @@
 ::-webkit-scrollbar-thumb  { background: var(--color-agro-400); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-agro-500); }
 
+/* Prevent Alpine.js flash of unstyled content */
+[x-cloak] { display: none !important; }
+
 /* Force light mode — app does not support dark theme */
 html {
     color-scheme: light;
