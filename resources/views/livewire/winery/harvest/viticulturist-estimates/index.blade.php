@@ -6,11 +6,21 @@
     />
 
     @php
-        $filterCount = (int) !empty($viticulturistFilter) + (int) !empty($vintageFilter) + (int) !empty($statusFilter) + (int) !empty($roundFilter);
+        $filterCount = (int) !empty($search) + (int) !empty($viticulturistFilter) + (int) !empty($vintageFilter) + (int) !empty($statusFilter) + (int) !empty($roundFilter);
     @endphp
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
+
+        {{-- Search --}}
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input wire:model.live.debounce.300ms="search" type="text"
+                placeholder="Buscar viticultor, variedad, parcela..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
+        </div>
 
         {{-- Filtros --}}
         <button x-on:click="$dispatch('open-modal', 'vitic-estimates-filters')"
@@ -36,6 +46,15 @@
     {{-- Chips de filtros activos --}}
     @if($filterCount > 0)
         <div class="flex flex-wrap items-center gap-2">
+            @if($search)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="magnifying-glass" class="size-3" />
+                    {{ $search }}
+                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
             @if($viticulturistFilter)
                 @php $viticLabel = $linkedViticulturists->firstWhere('id', $viticulturistFilter)?->name ?? $viticulturistFilter; @endphp
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
@@ -75,7 +94,7 @@
                     </button>
                 </span>
             @endif
-            <button wire:click="$set('viticulturistFilter', ''); $set('vintageFilter', ''); $set('roundFilter', ''); $set('statusFilter', '')"
+            <button wire:click="$set('search', ''); $set('viticulturistFilter', ''); $set('vintageFilter', ''); $set('roundFilter', ''); $set('statusFilter', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
                 Limpiar todo
             </button>
@@ -83,18 +102,16 @@
     @endif
 
     {{-- Skeleton --}}
-    <div wire:loading wire:target="viticulturistFilter, vintageFilter, roundFilter, statusFilter, gotoPage, previousPage, nextPage">
-        <x-agro.card>
-            <div class="space-y-3">
-                @for($i = 0; $i < 8; $i++)
-                    <div class="h-10 bg-zinc-100 rounded-lg animate-pulse"></div>
-                @endfor
-            </div>
-        </x-agro.card>
+    <div wire:loading wire:target="search, viticulturistFilter, vintageFilter, roundFilter, statusFilter, gotoPage, previousPage, nextPage">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for($i = 0; $i < 6; $i++)
+                <x-agro.skeleton-card />
+            @endfor
+        </div>
     </div>
 
-    {{-- Contenido --}}
-    <div wire:loading.remove wire:target="viticulturistFilter, vintageFilter, roundFilter, statusFilter, gotoPage, previousPage, nextPage">
+    {{-- Grid de cards --}}
+    <div wire:loading.remove wire:target="search, viticulturistFilter, vintageFilter, roundFilter, statusFilter, gotoPage, previousPage, nextPage">
         @if($estimates->isEmpty())
             <x-agro.empty-state
                 icon="calculator"
@@ -102,114 +119,148 @@
                 description="Tus viticultores aún no han registrado estimaciones de rendimiento confirmadas."
             />
         @else
-            <x-agro.card>
-                <x-agro.data-table :headers="['Viticultor', 'Variedad / Parcela', 'Añada', 'Ronda', 'Método', 'Kg/ha estimados', 'Total estimado', 'Alcohol', 'Sanidad', 'Estado']">
-                    @foreach($estimates as $est)
-                        <x-agro.table-row wire:key="est-{{ $est->id }}">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($estimates as $est)
+                    @php
+                        $delay      = min($loop->index * 50, 300);
+                        $vitName    = $est->plotPlanting?->plot?->viticulturist?->name ?? '—';
+                        $initials   = strtoupper(substr($vitName, 0, 1));
+                        $variety    = $est->plotPlanting?->grapeVariety?->name ?? $est->plotPlanting?->name ?? '—';
+                        $plotName   = $est->plotPlanting?->plot?->name ?? '—';
+                        $area       = $est->plotPlanting?->area_planted;
 
-                            <x-agro.table-cell>
-                                <span class="font-medium text-zinc-900">
-                                    {{ $est->plotPlanting?->plot?->viticulturist?->name ?? '—' }}
-                                </span>
-                            </x-agro.table-cell>
+                        $statusColor = match($est->status) {
+                            'confirmed' => 'agro',
+                            'draft'     => 'amber',
+                            default     => 'zinc',
+                        };
+                        $statusLabel = match($est->status) {
+                            'confirmed' => 'Confirmado',
+                            'draft'     => 'Borrador',
+                            default     => 'Archivado',
+                        };
 
-                            <x-agro.table-cell>
-                                <div class="font-medium text-zinc-900">
-                                    {{ $est->plotPlanting?->grapeVariety?->name ?? $est->plotPlanting?->name ?? '—' }}
+                        $sanColors = [
+                            'excellent' => 'agro', 'good' => 'agro',
+                            'botrytis_light' => 'amber', 'oidium_light' => 'amber',
+                            'botrytis_moderate' => 'red', 'oidium_moderate' => 'red',
+                            'mixed' => 'amber', 'poor' => 'red',
+                        ];
+                        $sanColor = $sanColors[$est->health_status] ?? 'zinc';
+                        $sanLabel = \App\Models\EstimatedYield::HEALTH_STATUSES[$est->health_status] ?? null;
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="est-card-{{ $est->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+                                    <span class="text-sm font-bold text-violet-700">{{ $initials }}</span>
                                 </div>
-                                <div class="text-xs text-zinc-400">
-                                    {{ $est->plotPlanting?->plot?->name ?? '—' }}
-                                    @if($est->plotPlanting?->area_planted)
-                                        · {{ number_format($est->plotPlanting->area_planted, 2) }} ha
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $vitName }}</h3>
+                                    <p class="text-xs text-zinc-500 truncate">{{ $variety }}</p>
+                                </div>
+                                <x-agro.status-badge :color="$statusColor" :label="$statusLabel" class="shrink-0" />
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+
+                            {{-- Parcela + área --}}
+                            <div class="flex items-center gap-2 text-sm text-zinc-600">
+                                <flux:icon icon="map" class="size-4 text-zinc-400 shrink-0" />
+                                <span class="truncate">{{ $plotName }}</span>
+                                @if($area)
+                                    <span class="text-zinc-400 shrink-0">· {{ number_format($area, 2) }} ha</span>
+                                @endif
+                            </div>
+
+                            {{-- Mini stats: Total estimado + Kg/ha --}}
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-violet-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-violet-400 uppercase tracking-widest mb-1">Total estimado</p>
+                                    @if($est->estimated_total_yield)
+                                        <p class="text-xl font-bold text-violet-700 leading-none">
+                                            {{ number_format($est->estimated_total_yield, 0) }}
+                                            <span class="text-xs font-medium text-violet-400 ml-0.5">kg</span>
+                                        </p>
+                                    @else
+                                        <p class="text-base font-medium text-zinc-300 italic leading-none">—</p>
                                     @endif
                                 </div>
-                            </x-agro.table-cell>
+                                <div class="bg-zinc-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Kg / ha</p>
+                                    @if($est->estimated_yield_per_hectare)
+                                        <p class="text-xl font-bold text-zinc-700 leading-none">
+                                            {{ number_format($est->estimated_yield_per_hectare, 0) }}
+                                            <span class="text-xs font-medium text-zinc-400 ml-0.5">kg/ha</span>
+                                        </p>
+                                    @else
+                                        <p class="text-base font-medium text-zinc-300 italic leading-none">—</p>
+                                    @endif
+                                </div>
+                            </div>
 
-                            <x-agro.table-cell>
-                                <span class="text-zinc-700">{{ $est->vintage ?? $est->campaign?->year ?? '—' }}</span>
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                <span class="text-violet-700 font-medium text-sm">{{ $est->round_label }}</span>
-                                <div class="text-xs text-zinc-400">{{ $est->estimation_date?->format('d/m/Y') }}</div>
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                <span class="text-zinc-600 text-sm capitalize">
-                                    {{ match($est->estimation_method) {
+                            {{-- Detalles --}}
+                            <div class="space-y-1.5 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Añada · Ronda</span>
+                                    <span class="text-zinc-700 font-medium">
+                                        {{ $est->vintage ?? $est->campaign?->year ?? '—' }}
+                                        · <span class="text-violet-700">{{ $est->round_label }}</span>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-400">Método</span>
+                                    <span class="text-zinc-600 capitalize">{{ match($est->estimation_method) {
                                         'visual'     => 'Visual',
                                         'sampling'   => 'Muestreo',
                                         'historical' => 'Histórico',
                                         'satellite'  => 'Satélite',
                                         default      => $est->estimation_method ?? '—',
-                                    } }}
-                                </span>
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                @if($est->estimated_yield_per_hectare)
-                                    <span class="text-zinc-900">{{ number_format($est->estimated_yield_per_hectare, 0) }} kg/ha</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
+                                    } }}</span>
+                                </div>
+                                @if($est->estimation_date)
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Fecha</span>
+                                        <span class="text-zinc-600">{{ $est->estimation_date->format('d/m/Y') }}</span>
+                                    </div>
                                 @endif
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                @if($est->estimated_total_yield)
-                                    <span class="font-semibold text-violet-700">{{ number_format($est->estimated_total_yield, 0) }} kg</span>
-                                    @if($est->auto_calculated_yield && abs($est->auto_calculated_yield - $est->estimated_total_yield) > 10)
-                                        <div class="text-xs text-zinc-400">Auto: {{ number_format($est->auto_calculated_yield, 0) }} kg</div>
-                                    @endif
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
                                 @if($est->potential_alcohol)
-                                    <span class="text-zinc-700 text-sm font-medium">{{ number_format($est->potential_alcohol, 1) }}°</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">Alcohol potencial</span>
+                                        <span class="text-zinc-700 font-medium">{{ number_format($est->potential_alcohol, 1) }}°</span>
+                                    </div>
                                 @endif
-                            </x-agro.table-cell>
+                            </div>
 
-                            <x-agro.table-cell>
-                                @if($est->health_status)
-                                    @php
-                                        $sanColors = [
-                                            'excellent' => 'agro', 'good' => 'agro',
-                                            'botrytis_light' => 'amber', 'oidium_light' => 'amber',
-                                            'botrytis_moderate' => 'red', 'oidium_moderate' => 'red',
-                                            'mixed' => 'amber', 'poor' => 'red',
-                                        ];
-                                        $sanColor = $sanColors[$est->health_status] ?? 'zinc';
-                                        $sanLabel = \App\Models\EstimatedYield::HEALTH_STATUSES[$est->health_status] ?? $est->health_status;
-                                    @endphp
-                                    <x-agro.status-badge :color="$sanColor" :label="$sanLabel" />
-                                @elseif($est->health_percentage !== null)
-                                    <span class="text-zinc-500 text-xs">{{ number_format($est->health_percentage, 0) }}%</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                                @if($est->other_wineries)
-                                    <div class="text-xs text-amber-600 mt-0.5">Entrega múltiple</div>
-                                @endif
-                            </x-agro.table-cell>
+                            {{-- Sanidad --}}
+                            @if($est->health_status || $est->health_percentage !== null)
+                                <div class="border-t border-zinc-100 pt-3 flex items-center justify-between">
+                                    <span class="text-xs text-zinc-400">Sanidad</span>
+                                    @if($est->health_status && $sanLabel)
+                                        <x-agro.status-badge :color="$sanColor" :label="$sanLabel" />
+                                    @elseif($est->health_percentage !== null)
+                                        <span class="text-sm text-zinc-600">{{ number_format($est->health_percentage, 0) }}%</span>
+                                    @endif
+                                </div>
+                            @endif
 
-                            <x-agro.table-cell>
-                                @if($est->status === 'confirmed')
-                                    <x-agro.status-badge color="agro" label="Confirmado" />
-                                @elseif($est->status === 'draft')
-                                    <x-agro.status-badge color="amber" label="Borrador" />
-                                @else
-                                    <x-agro.status-badge color="zinc" label="Archivado" />
-                                @endif
-                            </x-agro.table-cell>
+                            {{-- Entrega múltiple --}}
+                            @if($est->other_wineries)
+                                <div class="flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-1.5">
+                                    <flux:icon icon="exclamation-triangle" class="size-3 shrink-0" />
+                                    Entrega a múltiples bodegas
+                                </div>
+                            @endif
 
-                        </x-agro.table-row>
-                    @endforeach
-                </x-agro.data-table>
-            </x-agro.card>
+                        </div>
+                    </x-agro.card>
+                @endforeach
+            </div>
 
             <x-agro.pagination :paginator="$estimates" />
         @endif
@@ -270,7 +321,7 @@
 
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCount > 0)
-                <button wire:click="$set('viticulturistFilter', ''); $set('vintageFilter', ''); $set('roundFilter', ''); $set('statusFilter', '')"
+                <button wire:click="$set('search', ''); $set('viticulturistFilter', ''); $set('vintageFilter', ''); $set('roundFilter', ''); $set('statusFilter', '')"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
                     Limpiar filtros
                 </button>

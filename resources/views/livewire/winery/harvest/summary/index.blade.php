@@ -6,11 +6,21 @@
     />
 
     @php
-        $filterCount = (int) !empty($campaignFilter) + (int) !empty($viticulturistFilter) + (int) !empty($varietyFilter) + (int) !empty($alertFilter);
+        $filterCount = (int) !empty($search) + (int) !empty($campaignFilter) + (int) !empty($viticulturistFilter) + (int) !empty($varietyFilter) + (int) !empty($alertFilter);
     @endphp
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
+
+        {{-- Search --}}
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input wire:model.live.debounce.300ms="search" type="text"
+                placeholder="Buscar viticultor, variedad, parcela..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
+        </div>
 
         {{-- Filtros --}}
         <button x-on:click="$dispatch('open-modal', 'summary-filters')"
@@ -42,6 +52,15 @@
     {{-- Chips de filtros activos --}}
     @if($filterCount > 0)
         <div class="flex flex-wrap items-center gap-2">
+            @if($search)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="magnifying-glass" class="size-3" />
+                    {{ $search }}
+                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
             @if($campaignFilter)
                 @php $campLabel = $campaigns->firstWhere('id', $campaignFilter)?->year ?? $campaignFilter; @endphp
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
@@ -82,7 +101,7 @@
                 </span>
             @endif
             <button
-                wire:click="$set('viticulturistFilter', ''); $set('varietyFilter', ''); $set('alertFilter', '')"
+                wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('varietyFilter', ''); $set('alertFilter', '')"
                 class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
                 Limpiar todo
             </button>
@@ -90,18 +109,16 @@
     @endif
 
     {{-- Skeleton durante carga --}}
-    <div wire:loading wire:target="campaignFilter, viticulturistFilter, varietyFilter, alertFilter">
-        <x-agro.card>
-            <div class="space-y-3">
-                @for($i = 0; $i < 8; $i++)
-                    <div class="h-10 bg-zinc-100 rounded-lg animate-pulse"></div>
-                @endfor
-            </div>
-        </x-agro.card>
+    <div wire:loading wire:target="search, campaignFilter, viticulturistFilter, varietyFilter, alertFilter">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for($i = 0; $i < 6; $i++)
+                <x-agro.skeleton-card />
+            @endfor
+        </div>
     </div>
 
-    {{-- Tabla comparativa --}}
-    <div wire:loading.remove wire:target="campaignFilter, viticulturistFilter, varietyFilter, alertFilter">
+    {{-- Grid de cards --}}
+    <div wire:loading.remove wire:target="search, campaignFilter, viticulturistFilter, varietyFilter, alertFilter">
         @if($rows->isEmpty())
             <x-agro.empty-state
                 icon="chart-bar"
@@ -115,140 +132,106 @@
                 </x-slot:action>
             </x-agro.empty-state>
         @else
-            <x-agro.card>
-                <x-agro.data-table :headers="['Viticultor', 'Variedad / Parcela', 'PAC límite', 'Aforo viticultor', 'Previsión bodega', 'Recibido', 'Ejecución', 'Estado']">
-                    @foreach($rows as $row)
-                        @php
-                            $color = $row['exceeded'] || $row['exceeded_pac']
-                                ? 'red'
-                                : ($row['at_risk'] ? 'amber' : 'agro');
-                        @endphp
-                        <x-agro.table-row wire:key="row-{{ $row['key'] }}">
-
-                            <x-agro.table-cell>
-                                <span class="font-medium text-zinc-900">{{ $row['viticulturist']?->name ?? '—' }}</span>
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                <div class="font-medium text-zinc-900">{{ $row['variety'] }}</div>
-                                <div class="text-xs text-zinc-400">
-                                    {{ $row['plot'] }}
-                                    @if($row['area']) · {{ number_format($row['area'], 2) }} ha @endif
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($rows as $row)
+                    @php
+                        $delay         = min($loop->index * 50, 300);
+                        $initials      = strtoupper(substr($row['viticulturist']?->name ?? '?', 0, 1));
+                        $progressColor = $row['exceeded'] || $row['exceeded_pac'] ? 'red' : ($row['at_risk'] ? 'amber' : 'agro');
+                        $statusColor   = $row['exceeded'] || $row['exceeded_pac'] ? 'red' : ($row['at_risk'] ? 'amber' : ($row['received_kg'] > 0 ? 'agro' : 'zinc'));
+                        $statusLabel   = $row['exceeded'] || $row['exceeded_pac'] ? '⚠ Superado' : ($row['at_risk'] ? 'En riesgo' : ($row['received_kg'] > 0 ? 'En curso' : ($row['forecast_kg'] !== null ? 'Pendiente' : 'Sin actividad')));
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="summary-card-{{ $row['key'] }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center shrink-0">
+                                    <span class="text-sm font-bold text-agro-700">{{ $initials }}</span>
                                 </div>
-                            </x-agro.table-cell>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $row['viticulturist']?->name ?? '—' }}</h3>
+                                    <p class="text-xs text-zinc-500 truncate">{{ $row['variety'] }}</p>
+                                </div>
+                                <x-agro.status-badge :color="$statusColor" :label="$statusLabel" class="shrink-0" />
+                            </div>
+                        </x-slot:header>
 
-                            <x-agro.table-cell>
-                                @if($row['pac_limit'] !== null)
-                                    <span class="text-blue-700 font-medium">{{ number_format($row['pac_limit'], 0) }} kg</span>
-                                @else
-                                    <span class="text-zinc-400">Sin límite</span>
+                        <div class="flex-1 space-y-4">
+
+                            {{-- Parcela + área --}}
+                            <div class="flex items-center gap-2 text-sm text-zinc-600">
+                                <flux:icon icon="map" class="size-4 text-zinc-400 shrink-0" />
+                                <span class="truncate">{{ $row['plot'] }}</span>
+                                @if($row['area'])
+                                    <span class="text-zinc-400 shrink-0">· {{ number_format($row['area'], 2) }} ha</span>
                                 @endif
-                            </x-agro.table-cell>
+                            </div>
 
-                            <x-agro.table-cell>
-                                @if($row['vitic_estimate'] !== null)
-                                    <span class="text-violet-700 font-medium">{{ number_format($row['vitic_estimate'], 0) }} kg</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                @if($row['forecast_kg'] !== null)
-                                    <div class="font-medium {{ $row['forecast_status'] === 'confirmed' ? 'text-agro-700' : 'text-zinc-500' }}">
-                                        {{ number_format($row['forecast_kg'], 0) }} kg
-                                    </div>
-                                    @if($row['forecast_status'] === 'draft')
-                                        <div class="text-xs text-amber-500">Borrador</div>
+                            {{-- Mini stats: Recibido + Previsión --}}
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">Recibido</p>
+                                    <p class="text-xl font-bold text-agro-700 leading-none">
+                                        {{ number_format($row['received_kg'], 0) }}
+                                        <span class="text-xs font-medium text-agro-400 ml-0.5">kg</span>
+                                    </p>
+                                </div>
+                                <div class="bg-zinc-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Previsión</p>
+                                    @if($row['forecast_kg'] !== null)
+                                        <p class="text-xl font-bold text-zinc-700 leading-none">
+                                            {{ number_format($row['forecast_kg'], 0) }}
+                                            <span class="text-xs font-medium text-zinc-400 ml-0.5">kg</span>
+                                        </p>
+                                        @if($row['forecast_status'] === 'draft')
+                                            <p class="text-[10px] text-amber-500 mt-0.5">Borrador</p>
+                                        @endif
+                                    @else
+                                        <p class="text-base font-medium text-zinc-300 italic leading-none">—</p>
                                     @endif
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </x-agro.table-cell>
+                                </div>
+                            </div>
 
-                            <x-agro.table-cell>
-                                <span class="font-semibold {{ $row['exceeded'] || $row['exceeded_pac'] ? 'text-red-600' : 'text-zinc-900' }}">
-                                    {{ number_format($row['received_kg'], 0) }} kg
-                                </span>
-                                @if($row['remaining'] !== null && $row['received_kg'] > 0)
-                                    <div class="text-xs text-zinc-400">Resta: {{ number_format($row['remaining'], 0) }} kg</div>
-                                @endif
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                @if($row['pct_op_limit'] !== null)
-                                    <div class="flex items-center gap-2">
-                                        <x-agro.progress-bar :percentage="min($row['pct_op_limit'], 100)" :color="$color" class="w-20" />
-                                        <span class="text-xs font-medium {{ $row['exceeded'] ? 'text-red-600' : ($row['at_risk'] ? 'text-amber-600' : 'text-zinc-600') }}">
+                            {{-- Barra de ejecución --}}
+                            @if($row['pct_op_limit'] !== null)
+                                <div>
+                                    <div class="flex justify-between text-xs text-zinc-500 mb-1">
+                                        <span>Ejecución</span>
+                                        <span class="{{ $row['exceeded'] ? 'text-red-600 font-semibold' : ($row['at_risk'] ? 'text-amber-600 font-semibold' : 'text-zinc-700') }}">
                                             {{ $row['pct_op_limit'] }}%
+                                            @if($row['exceeded']) ⚠ @endif
                                         </span>
                                     </div>
-                                    @if($row['exceeded_pac'] && !$row['exceeded'])
-                                        <div class="text-xs text-orange-500 mt-0.5">PAC: {{ $row['pct_pac'] }}%</div>
-                                    @endif
-                                @elseif($row['received_kg'] > 0)
-                                    <span class="text-xs text-zinc-400">Sin límite definido</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                @if($row['exceeded'] || $row['exceeded_pac'])
-                                    <x-agro.status-badge color="red" label="⚠ Superado" />
-                                @elseif($row['at_risk'])
-                                    <x-agro.status-badge color="amber" label="En riesgo" />
-                                @elseif($row['received_kg'] > 0)
-                                    <x-agro.status-badge color="agro" label="En curso" />
-                                @elseif($row['forecast_kg'] !== null)
-                                    <x-agro.status-badge color="zinc" label="Pendiente" />
-                                @else
-                                    <x-agro.status-badge color="zinc" label="Sin actividad" />
-                                @endif
-                            </x-agro.table-cell>
-
-                        </x-agro.table-row>
-                    @endforeach
-
-                    {{-- Fila de totales --}}
-                    <x-agro.table-row class="bg-zinc-50 font-semibold border-t-2 border-zinc-200">
-                        <x-agro.table-cell>
-                            <span class="text-zinc-700">TOTALES</span>
-                            <div class="text-xs font-normal text-zinc-400">{{ $stats['viticulturists'] }} viticultores · {{ $stats['total_plantings'] }} plantaciones</div>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell></x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($stats['total_pac_kg'])
-                                <span class="text-blue-700">{{ number_format($stats['total_pac_kg'], 0) }} kg</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($stats['total_vitic_est_kg'])
-                                <span class="text-violet-700">{{ number_format($stats['total_vitic_est_kg'], 0) }} kg</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($stats['total_forecast_kg'])
-                                <span class="text-agro-700">{{ number_format($stats['total_forecast_kg'], 0) }} kg</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="text-zinc-900">{{ number_format($stats['total_received_kg'], 0) }} kg</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($stats['total_forecast_kg'] > 0)
-                                @php $totalPct = round(($stats['total_received_kg'] / $stats['total_forecast_kg']) * 100, 1); @endphp
-                                <div class="flex items-center gap-2">
-                                    <x-agro.progress-bar :percentage="min($totalPct, 100)" color="agro" class="w-20" />
-                                    <span class="text-xs font-semibold text-zinc-700">{{ $totalPct }}%</span>
+                                    <x-agro.progress-bar :percentage="min($row['pct_op_limit'], 100)" :color="$progressColor" />
                                 </div>
                             @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell></x-agro.table-cell>
-                    </x-agro.table-row>
 
-                </x-agro.data-table>
-            </x-agro.card>
+                            {{-- PAC + Aforo viticultor --}}
+                            @if($row['pac_limit'] !== null || $row['vitic_estimate'] !== null)
+                                <div class="space-y-1.5 text-sm border-t border-zinc-100 pt-3">
+                                    @if($row['pac_limit'] !== null)
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-zinc-400">PAC límite</span>
+                                            <span class="text-blue-700 font-medium">{{ number_format($row['pac_limit'], 0) }} kg</span>
+                                        </div>
+                                    @endif
+                                    @if($row['vitic_estimate'] !== null)
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-zinc-400">Aforo viticultor</span>
+                                            <span class="text-violet-700 font-medium">{{ number_format($row['vitic_estimate'], 0) }} kg</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+
+                        </div>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
         @endif
     </div>
 
@@ -276,7 +259,6 @@
                     @endforeach
                 </flux:select>
             </div>
-
             <div>
                 <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Viticultor</label>
                 <flux:select wire:model.live="viticulturistFilter">
@@ -286,7 +268,6 @@
                     @endforeach
                 </flux:select>
             </div>
-
             <div>
                 <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Variedad</label>
                 <flux:select wire:model.live="varietyFilter">
@@ -296,7 +277,6 @@
                     @endforeach
                 </flux:select>
             </div>
-
             <div>
                 <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Alertas</label>
                 <flux:select wire:model.live="alertFilter">
@@ -310,7 +290,7 @@
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
             @if($filterCount > 0)
                 <button
-                    wire:click="$set('viticulturistFilter', ''); $set('varietyFilter', ''); $set('alertFilter', '')"
+                    wire:click="$set('search', ''); $set('campaignFilter', ''); $set('viticulturistFilter', ''); $set('varietyFilter', ''); $set('alertFilter', '')"
                     class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
                     Limpiar filtros
                 </button>

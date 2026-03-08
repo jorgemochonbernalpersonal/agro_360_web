@@ -13,18 +13,21 @@ class Index extends Component
 {
     use WithPagination;
 
+    public string $search              = '';
     public string $viticulturistFilter = '';
     public string $vintageFilter       = '';
     public string $statusFilter        = '';
     public string $roundFilter         = '';
 
     protected $queryString = [
+        'search'              => ['except' => ''],
         'viticulturistFilter' => ['except' => ''],
         'vintageFilter'       => ['except' => ''],
         'statusFilter'        => ['except' => ''],
         'roundFilter'         => ['except' => ''],
     ];
 
+    public function updatingSearch(): void              { $this->resetPage(); }
     public function updatingViticulturistFilter(): void { $this->resetPage(); }
     public function updatingVintageFilter(): void       { $this->resetPage(); }
     public function updatingStatusFilter(): void        { $this->resetPage(); }
@@ -68,7 +71,12 @@ class Index extends Component
                 )
             )
             ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
-            ->when($this->roundFilter,  fn($q) => $q->where('estimation_round', $this->roundFilter));
+            ->when($this->roundFilter,  fn($q) => $q->where('estimation_round', $this->roundFilter))
+            ->when($this->search, fn($q) => $q->where(fn($q2) =>
+                $q2->whereHas('plotPlanting.grapeVariety', fn($q3) => $q3->where('name', 'like', '%' . $this->search . '%'))
+                   ->orWhereHas('plotPlanting.plot', fn($q3) => $q3->where('name', 'like', '%' . $this->search . '%'))
+                   ->orWhereHas('plotPlanting.plot.viticulturist', fn($q3) => $q3->where('name', 'like', '%' . $this->search . '%'))
+            ));
 
         $estimates = (clone $query)
             ->orderByDesc('estimation_date')

@@ -14,12 +14,14 @@ use Livewire\Component;
 
 class Index extends Component
 {
+    public string $search              = '';
     public string $campaignFilter      = '';
     public string $viticulturistFilter = '';
     public string $varietyFilter       = '';
     public string $alertFilter         = ''; // 'exceeded' | 'at_risk' | ''
 
     protected $queryString = [
+        'search'              => ['except' => ''],
         'campaignFilter'      => ['except' => ''],
         'viticulturistFilter' => ['except' => ''],
         'varietyFilter'       => ['except' => ''],
@@ -38,6 +40,7 @@ class Index extends Component
         }
     }
 
+    public function updatingSearch(): void              { }
     public function updatingCampaignFilter(): void      { }
     public function updatingViticulturistFilter(): void { }
     public function updatingVarietyFilter(): void       { }
@@ -173,6 +176,15 @@ class Index extends Component
         ->values();
 
         // ── Filtros adicionales ───────────────────────────────────────────
+
+        if ($this->search) {
+            $term = mb_strtolower($this->search);
+            $rows = $rows->filter(fn($r) =>
+                str_contains(mb_strtolower($r['viticulturist']?->name ?? ''), $term) ||
+                str_contains(mb_strtolower($r['variety']), $term) ||
+                str_contains(mb_strtolower($r['plot']), $term)
+            )->values();
+        }
 
         if ($this->varietyFilter) {
             $rows = $rows->filter(fn($r) => str_contains(
