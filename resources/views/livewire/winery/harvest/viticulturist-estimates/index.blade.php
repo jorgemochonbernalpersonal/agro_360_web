@@ -11,28 +11,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <x-agro.stat-card
-            label="Total aforos"
-            :value="$stats['total']"
-            icon="calculator"
-            color="violet"
-        />
-        <x-agro.stat-card
-            label="Confirmados"
-            :value="$stats['confirmed']"
-            icon="check-circle"
-            color="agro"
-        />
-        <x-agro.stat-card
-            label="Kg estimados (confirmados)"
-            :value="$stats['total_kg'] ? number_format($stats['total_kg'], 0) . ' kg' : '—'"
-            icon="scale"
-            color="blue"
-        />
-    </div>
-
     {{-- Filtros --}}
     <x-agro.filter-bar :active-count="collect([$viticulturistFilter, $vintageFilter, $statusFilter, $roundFilter])->filter()->count()">
         <x-agro.filter-select wire:model.live="viticulturistFilter" label="Viticultor">

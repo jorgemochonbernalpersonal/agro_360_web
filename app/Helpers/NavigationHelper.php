@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class NavigationHelper
 {
@@ -19,10 +18,7 @@ class NavigationHelper
             return [];
         }
 
-        // Cachear el menú por usuario durante 1 hora
-        return Cache::remember('menu_' . $user->id, 3600, function() use ($user) {
-            return static::buildMenu($user);
-        });
+        return static::buildMenu($user);
     }
 
     /**

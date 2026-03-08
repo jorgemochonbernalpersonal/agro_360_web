@@ -1,11 +1,12 @@
 {{-- Sidebar Item Component --}}
 <div class="mb-0.5">
-    <a 
-        href="{{ route($item['route']) }}" 
+    <a
+        href="{{ route($item['route']) }}"
+        wire:navigate
         class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
-               {{ $item['active'] 
-                   ? 'bg-white/15 text-white shadow-sm' 
-                   : 'text-white/60 hover:bg-white/8 hover:text-white' 
+               {{ $item['active']
+                   ? 'bg-white/15 text-white shadow-sm'
+                   : 'text-white/60 hover:bg-white/8 hover:text-white'
                }}"
         title="{{ $item['label'] }}"
         data-cy="sidebar-nav-{{ strtolower(str_replace(' ', '-', $item['label'])) }}"
@@ -49,12 +50,13 @@
                             $routeUrl .= '?' . http_build_query($subitem['query']);
                         }
                     @endphp
-                    <a 
-                        href="{{ $routeUrl }}" 
+                    <a
+                        href="{{ $routeUrl }}"
+                        wire:navigate
                         class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all duration-200
-                               {{ $subitem['active'] 
-                                   ? 'bg-white/12 text-white font-semibold' 
-                                   : 'text-white/50 hover:bg-white/8 hover:text-white/80' 
+                               {{ $subitem['active']
+                                   ? 'bg-white/12 text-white font-semibold'
+                                   : 'text-white/50 hover:bg-white/8 hover:text-white/80'
                                }}"
                         data-cy="sidebar-submenu-item-{{ strtolower(str_replace(' ', '-', $subitem['label'])) }}"
                     >

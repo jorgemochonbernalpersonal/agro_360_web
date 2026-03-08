@@ -46,7 +46,7 @@
 >
     {{-- Logo --}}
     <div class="h-16 flex items-center justify-between px-5 border-b border-white/10">
-        <a href="{{ route($user->role . '.dashboard') }}" class="flex items-center gap-3 group" data-cy="sidebar-logo-link">
+        <a href="{{ route($user->role . '.dashboard') }}" wire:navigate class="flex items-center gap-3 group" data-cy="sidebar-logo-link">
             <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shadow-lg group-hover:bg-white/20 transition-all duration-200 flex-shrink-0">
                 <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="28" height="28" class="object-contain group-hover:scale-110 transition-transform duration-200">
             </div>
