@@ -42,7 +42,7 @@ class ContainerStockService
             HarvestStock::create([
                 'harvest_id'      => $harvest->id,
                 'container_id'    => $harvest->container_id,
-                'user_id'         => $harvest->activity->user_id ?? Auth::id(),
+                'user_id'         => $harvest->activity?->user_id ?? Auth::id(),
                 'movement_type'   => 'initial',
                 'quantity_change' => $harvest->total_weight,
                 'quantity_after'  => $harvest->total_weight,
