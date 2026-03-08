@@ -63,9 +63,7 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGTPTZSQ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     @auth
-        @persist('sidebar')
-            <x-sidebar />
-        @endpersist
+        <x-sidebar />
         <x-top-bar />
 
         {{-- Impersonation banner --}}
