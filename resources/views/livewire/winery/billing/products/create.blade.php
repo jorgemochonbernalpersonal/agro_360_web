@@ -61,17 +61,11 @@
                         </flux:select>
                     </flux:field>
 
-                    <flux:field class="md:col-span-2">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <flux:checkbox wire:model.live="is_gift" id="is_gift" />
-                            <span class="text-sm font-medium text-zinc-700">Factura regalo <span class="text-xs text-zinc-400">(importes = 0, stock se deduce igualmente)</span></span>
-                        </label>
-                    </flux:field>
                 </div>
             </x-agro.form-section>
 
-            {{-- Albarán y Fechas --}}
-            <x-agro.form-section title="Albarán">
+            {{-- Documento y Fechas --}}
+            <x-agro.form-section title="Documento">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <flux:field>
                         <flux:label required>Código de albarán</flux:label>
@@ -96,6 +90,12 @@
                         <flux:input wire:model="invoice_date" type="date" required />
                         <flux:error name="invoice_date" />
                     </flux:field>
+                    <div class="mt-6">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <flux:checkbox wire:model.live="is_gift" id="is_gift" />
+                            <span class="text-sm font-medium text-zinc-700">Factura regalo <span class="text-xs text-zinc-400">(importes = 0, stock se deduce igualmente)</span></span>
+                        </label>
+                    </div>
                 </div>
             </x-agro.form-section>
 
@@ -142,8 +142,8 @@
                 </div>
             </x-agro.form-section>
 
-            {{-- Líneas del albarán --}}
-            <x-agro.form-section title="Líneas del albarán">
+            {{-- Líneas de la factura --}}
+            <x-agro.form-section title="Líneas de la factura">
                 <div class="space-y-4">
                     @forelse ($items as $index => $item)
                         @php
@@ -325,7 +325,7 @@
                         </div>
                     @empty
                         <div class="text-center py-10 border-2 border-dashed border-zinc-300 rounded-xl">
-                            <p class="text-zinc-500 mb-2">No hay líneas en el albarán.</p>
+                            <p class="text-zinc-500 mb-2">No hay líneas en la factura.</p>
                             <p class="text-sm text-zinc-400">Selecciona un lote arriba o añade un concepto manual.</p>
                         </div>
                     @endforelse
@@ -357,7 +357,7 @@
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.invoices.products.index')" submit-label="Crear Albarán" />
+            <x-agro.form-actions :cancel-url="route('winery.invoices.products.index')" submit-label="Crear Factura" />
         </form>
     </x-agro.card>
 </div>
