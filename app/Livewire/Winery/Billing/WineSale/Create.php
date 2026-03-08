@@ -7,7 +7,7 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
-use App\Models\UserTax;
+use App\Models\Tax;
 use App\Models\WineLot;
 use App\Services\WineStockService;
 use Illuminate\Support\Facades\Auth;
@@ -19,173 +19,245 @@ class Create extends Component
 {
     use WithToastNotifications;
 
-    // Header
-    public string $client_id    = '';
-    public string $invoice_date = '';
-    public string $observations = '';
-    public string $payment_type = '';
+    public string $client_id          = '';
+    public string $invoice_date       = '';
+    public string $delivery_note_date = '';
+    public string $observations       = '';
+    public string $payment_type       = '';
 
-    // Lines (array of rows)
-    public array $lines = [];
+    public array $items = [];
 
-    protected float $defaultTaxRate = 0.0;
+    public string $selectedLotId = '';
+
+    public $availableTaxes = [];
+    protected string $defaultTaxId = '';
 
     public function mount(): void
     {
-        $this->invoice_date = now()->toDateString();
+        $this->invoice_date       = now()->toDateString();
+        $this->delivery_note_date = now()->toDateString();
 
-        $userTax = UserTax::where('user_id', Auth::id())->with('tax')->first();
-        $this->defaultTaxRate = $userTax?->tax?->rate ?? 0.0;
+        $user = Auth::user();
+        $this->availableTaxes = $user->taxes()->orderByPivot('order')->get();
+        if ($this->availableTaxes->isEmpty()) {
+            $this->availableTaxes = Tax::active()->orderBy('rate')->get();
+        }
 
-        $this->addLine();
+        $defaultTax         = $user->defaultTax()->first() ?? $this->availableTaxes->first();
+        $this->defaultTaxId = (string) ($defaultTax?->id ?? '');
     }
 
-    public function addLine(): void
+    // ── Añadir producto desde selector ───────────────────────────────────────
+
+    public function addProductToInvoice(): void
     {
-        $this->lines[] = [
-            'wine_lot_id' => '',
-            'quantity'    => '',
-            'unit_price'  => '',
-            'tax_rate'    => (string) $this->defaultTaxRate,
-            'description' => '',
+        if (!$this->selectedLotId) return;
+
+        $lot = WineLot::where('user_id', Auth::id())->find($this->selectedLotId);
+
+        if (!$lot) {
+            $this->toastError('Lote no encontrado.');
+            return;
+        }
+
+        if ((float) $lot->available_quantity <= 0) {
+            $this->toastError('Este lote no tiene stock disponible para facturar.');
+            return;
+        }
+
+        foreach ($this->items as $item) {
+            if (isset($item['wine_lot_id']) && (int) $item['wine_lot_id'] === $lot->id) {
+                $this->toastError('Este lote ya está en la factura.');
+                return;
+            }
+        }
+
+        $this->items[] = [
+            'wine_lot_id'         => $lot->id,
+            'name'                => $lot->name . ($lot->vintage ? " ({$lot->vintage})" : ''),
+            'description'         => '',
+            'sku'                 => $lot->sku ?? '',
+            'quantity'            => 1,
+            'available_qty'       => (float) $lot->available_quantity,
+            'unit_price'          => $lot->price_per_unit ? (float) $lot->price_per_unit : 0,
+            'discount_percentage' => 0,
+            'tax_id'              => $this->defaultTaxId ?: null,
+            'concept_type'        => 'wine',
+        ];
+
+        $this->selectedLotId = '';
+        $this->toastSuccess('Producto añadido al albarán.');
+    }
+
+    // ── Añadir concepto manual ────────────────────────────────────────────────
+
+    public function addItem(): void
+    {
+        $this->items[] = [
+            'wine_lot_id'         => null,
+            'name'                => '',
+            'description'         => '',
+            'sku'                 => '',
+            'quantity'            => 1,
+            'available_qty'       => null,
+            'unit_price'          => 0,
+            'discount_percentage' => 0,
+            'tax_id'              => $this->defaultTaxId ?: null,
+            'concept_type'        => 'other',
         ];
     }
 
-    public function removeLine(int $index): void
+    public function removeItem(int $index): void
     {
-        if (count($this->lines) <= 1) return;
-        array_splice($this->lines, $index, 1);
-        $this->lines = array_values($this->lines);
+        unset($this->items[$index]);
+        $this->items = array_values($this->items);
     }
 
-    public function updatedLinesWineLotId(string $value, string $index): void
-    {
-        if ($value) {
-            $lot = WineLot::where('user_id', Auth::id())->find($value);
-            if ($lot) {
-                $this->lines[(int) $index]['unit_price'] = (string) $lot->price_per_unit;
-            }
-        }
-    }
+    // ── Validation ────────────────────────────────────────────────────────────
 
     protected function rules(): array
     {
         return [
-            'client_id'           => 'required|exists:clients,id',
-            'invoice_date'        => 'required|date',
-            'payment_type'        => 'nullable|in:cash,transfer,check,other',
-            'observations'        => 'nullable|string',
-            'lines'               => 'required|array|min:1',
-            'lines.*.wine_lot_id' => 'required|exists:wine_lots,id',
-            'lines.*.quantity'    => 'required|numeric|min:0.001',
-            'lines.*.unit_price'  => 'required|numeric|min:0',
-            'lines.*.tax_rate'    => 'required|numeric|min:0|max:100',
-            'lines.*.description' => 'nullable|string|max:255',
+            'client_id'                    => 'required|exists:clients,id',
+            'invoice_date'                 => 'required|date',
+            'delivery_note_date'           => 'required|date',
+            'payment_type'                 => 'nullable|in:cash,transfer,check,other',
+            'observations'                 => 'nullable|string',
+            'items'                        => 'required|array|min:1',
+            'items.*.name'                 => 'required|string|max:255',
+            'items.*.wine_lot_id'          => 'nullable|exists:wine_lots,id',
+            'items.*.quantity'             => 'required|numeric|min:0.001',
+            'items.*.unit_price'           => 'required|numeric|min:0',
+            'items.*.tax_id'               => 'nullable|exists:taxes,id',
+            'items.*.discount_percentage'  => 'nullable|numeric|min:0|max:100',
+            'items.*.description'          => 'nullable|string',
+            'items.*.sku'                  => 'nullable|string|max:100',
         ];
     }
 
     protected function validationAttributes(): array
     {
         $attrs = [
-            'client_id'    => 'cliente',
-            'invoice_date' => 'fecha',
+            'client_id'          => 'cliente',
+            'invoice_date'       => 'fecha de factura',
+            'delivery_note_date' => 'fecha de albarán',
         ];
-        foreach ($this->lines as $i => $_) {
-            $attrs["lines.{$i}.wine_lot_id"] = 'lote de vino';
-            $attrs["lines.{$i}.quantity"]    = 'cantidad';
-            $attrs["lines.{$i}.unit_price"]  = 'precio unitario';
-            $attrs["lines.{$i}.tax_rate"]    = 'IVA';
+        foreach ($this->items as $i => $_) {
+            $attrs["items.{$i}.name"]     = 'concepto';
+            $attrs["items.{$i}.quantity"] = 'cantidad';
+            $attrs["items.{$i}.unit_price"] = 'precio unitario';
         }
         return $attrs;
     }
+
+    // ── Save ──────────────────────────────────────────────────────────────────
 
     public function save()
     {
         $this->validate();
 
-        // Verify client belongs to this winery
-        $client = Client::where('user_id', Auth::id())->findOrFail($this->client_id);
+        $client   = Client::where('user_id', Auth::id())->findOrFail($this->client_id);
+        $taxRates = $this->availableTaxes->keyBy('id');
 
         try {
             DB::beginTransaction();
 
-            // ── Códigos desde InvoicingSetting (prefijo/contador configurables) ──
             $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
-            $number   = $settings->generateAndIncrementInvoiceCode();
             $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
 
-            // ── Calculate totals ──────────────────────────────────────────────────────
-            $subtotal  = 0;
-            $taxAmount = 0;
+            // Calcular totales
+            $subtotal       = 0;
+            $discountAmount = 0;
+            $taxAmount      = 0;
 
-            foreach ($this->lines as $line) {
-                $lineSubtotal  = (float) $line['quantity'] * (float) $line['unit_price'];
-                $lineTax       = $lineSubtotal * ((float) $line['tax_rate'] / 100);
-                $subtotal     += $lineSubtotal;
-                $taxAmount    += $lineTax;
+            foreach ($this->items as $item) {
+                $qty          = (float) $item['quantity'];
+                $unitPrice    = (float) $item['unit_price'];
+                $discPct      = (float) ($item['discount_percentage'] ?? 0);
+                $lineSubtotal = $qty * $unitPrice;
+                $lineDiscount = $lineSubtotal * ($discPct / 100);
+                $lineBase     = $lineSubtotal - $lineDiscount;
+                $tax          = $item['tax_id'] ? $taxRates[$item['tax_id']] ?? null : null;
+                $taxRate      = $tax ? (float) $tax->rate : 0;
+
+                $subtotal       += $lineSubtotal;
+                $discountAmount += $lineDiscount;
+                $taxAmount      += $lineBase * ($taxRate / 100);
             }
 
-            $total = $subtotal + $taxAmount;
+            $taxBase = $subtotal - $discountAmount;
+            $total   = $taxBase + $taxAmount;
 
-            // ── Create invoice ────────────────────────────────────────────────────────
+            // Crear factura en borrador (sin número de factura)
             $invoice = Invoice::create([
                 'user_id'              => Auth::id(),
                 'client_id'            => $client->id,
                 'invoice_type'         => 'wine_sale',
-                'invoice_number'       => $number,
                 'delivery_note_code'   => $noteCode,
+                'delivery_note_date'   => $this->delivery_note_date,
                 'invoice_date'         => $this->invoice_date,
                 'delivery_status'      => 'pending',
+                'status'               => 'draft',
+                'payment_status'       => 'unpaid',
+                'payment_type'         => $this->payment_type ?: null,
                 'billing_first_name'   => $client->first_name,
                 'billing_last_name'    => $client->last_name,
                 'billing_company_name' => $client->company_name,
                 'billing_email'        => $client->email,
                 'billing_phone'        => $client->phone,
                 'subtotal'             => round($subtotal, 3),
-                'tax_base'             => round($subtotal, 3),
+                'discount_amount'      => round($discountAmount, 3),
+                'tax_base'             => round($taxBase, 3),
                 'tax_amount'           => round($taxAmount, 3),
                 'total_amount'         => round($total, 3),
-                'status'               => 'draft',
-                'payment_status'       => 'unpaid',
-                'payment_type'         => $this->payment_type ?: null,
                 'observations'         => $this->observations ?: null,
             ]);
 
-            // ── Create items + move stock (available → reserved) ──────────────────────
-            foreach ($this->lines as $line) {
-                $lot = WineLot::where('user_id', Auth::id())
-                    ->lockForUpdate()
-                    ->findOrFail($line['wine_lot_id']);
+            // Crear líneas
+            foreach ($this->items as $item) {
+                $qty          = (float) $item['quantity'];
+                $unitPrice    = (float) $item['unit_price'];
+                $discPct      = (float) ($item['discount_percentage'] ?? 0);
+                $tax          = $item['tax_id'] ? $taxRates[$item['tax_id']] ?? null : null;
+                $taxRate      = $tax ? (float) $tax->rate : 0;
+                $lineSubtotal = round($qty * $unitPrice, 3);
+                $lineDiscount = round($lineSubtotal * ($discPct / 100), 3);
+                $lineBase     = round($lineSubtotal - $lineDiscount, 3);
+                $taxAmountLine = round($lineBase * ($taxRate / 100), 3);
 
-                $qty           = (float) $line['quantity'];
-                $unitPrice     = (float) $line['unit_price'];
-                $taxRate       = (float) $line['tax_rate'];
-                $subtotalLine  = round($qty * $unitPrice, 3);
-                $taxAmountLine = round($subtotalLine * ($taxRate / 100), 3);
+                $lot = $item['wine_lot_id']
+                    ? WineLot::where('user_id', Auth::id())->lockForUpdate()->find($item['wine_lot_id'])
+                    : null;
 
-                $item = InvoiceItem::create([
-                    'invoice_id'   => $invoice->id,
-                    'wine_lot_id'  => $lot->id,
-                    'concept_type' => 'wine',
-                    'name'         => $line['description'] ?: "{$lot->name}" . ($lot->vintage ? " ({$lot->vintage})" : ''),
-                    'description'  => $line['description'] ?: null,
-                    'quantity'     => $qty,
-                    'unit_price'   => $unitPrice,
-                    'tax_rate'     => $taxRate,
-                    'subtotal'     => $subtotalLine,
-                    'tax_base'     => $subtotalLine,
-                    'tax_amount'   => $taxAmountLine,
-                    'total'        => $subtotalLine + $taxAmountLine,
+                $createdItem = InvoiceItem::create([
+                    'invoice_id'          => $invoice->id,
+                    'wine_lot_id'         => $lot?->id,
+                    'concept_type'        => $item['concept_type'] ?? ($lot ? 'wine' : 'other'),
+                    'name'                => $item['name'],
+                    'description'         => $item['description'] ?: null,
+                    'sku'                 => $item['sku'] ?: ($lot?->sku ?? null),
+                    'quantity'            => $qty,
+                    'unit_price'          => $unitPrice,
+                    'discount_percentage' => $discPct,
+                    'discount_amount'     => $lineDiscount,
+                    'tax_id'              => $tax?->id,
+                    'tax_name'            => $tax?->name,
+                    'tax_rate'            => $taxRate,
+                    'subtotal'            => $lineSubtotal,
+                    'tax_base'            => $lineBase,
+                    'tax_amount'          => $taxAmountLine,
+                    'total'               => $lineBase + $taxAmountLine,
                 ]);
 
-                // Move stock: available → reserved (throws RuntimeException if insufficient)
-                WineStockService::moveOnCreate($invoice, $item, $lot, $qty);
+                if ($lot) {
+                    WineStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
+                }
             }
 
             DB::commit();
 
-            $this->toastSuccess("Factura {$number} creada — Albarán: {$noteCode}");
-            return $this->redirect(route('winery.invoices.wine-sale.index'), navigate: true);
+            $this->toastSuccess("Albarán {$noteCode} creado. Emítelo para generar el número de factura.");
+            return $this->redirect(route('winery.invoices.products.index'), navigate: true);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -200,12 +272,14 @@ class Create extends Component
     public function render()
     {
         $clients  = Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->orderBy('company_name')->get();
-        $wineLots = WineLot::where('user_id', Auth::id())->where('archived', false)->orderByDesc('vintage')->orderBy('name')->get();
+        $wineLots = WineLot::where('user_id', Auth::id())->where('archived', false)
+            ->where('available_quantity', '>', 0)
+            ->orderByDesc('vintage')->orderBy('name')->get();
 
-        return view('livewire.winery.billing.wine-sale.create', [
+        return view('livewire.winery.billing.products.create', [
             'clients'        => $clients,
             'wineLots'       => $wineLots,
-            'defaultTaxRate' => $this->defaultTaxRate,
+            'availableTaxes' => $this->availableTaxes,
         ])->layout('layouts.app');
     }
 }

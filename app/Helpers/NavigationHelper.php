@@ -459,8 +459,8 @@ class NavigationHelper
                 [
                     'icon'   => 'arrow-up-tray',
                     'label'  => 'Venta de Productos',
-                    'route'  => 'winery.invoices.wine-sale.index',
-                    'active' => request()->routeIs('winery.invoices.wine-sale*'),
+                    'route'  => 'winery.invoices.products.index',
+                    'active' => request()->routeIs('winery.invoices.products*'),
                 ],
                 [
                     'icon'   => 'users',

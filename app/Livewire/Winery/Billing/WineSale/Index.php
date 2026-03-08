@@ -17,10 +17,15 @@ class Index extends AbstractIndex
 {
     use WithInvoiceActions;
 
-    public string $search          = '';
-    public string $statusFilter    = '';
-    public string $paymentFilter   = '';
-    public string $deliveryFilter  = '';
+    public string $search               = '';
+    public string $filterStatus         = '';
+    public string $filterPaymentStatus  = '';
+    public string $filterDeliveryStatus = '';
+
+    // Modal emitir
+    public bool   $emitirModal = false;
+    public ?int   $emitirId    = null;
+    public string $emitirDate  = '';
 
     // Modal rectificativa
     public bool   $correctiveModal  = false;
@@ -29,23 +34,104 @@ class Index extends AbstractIndex
     public string $correctiveReason = '';
 
     protected $queryString = [
-        'search'         => ['except' => ''],
-        'statusFilter'   => ['except' => ''],
-        'paymentFilter'  => ['except' => ''],
-        'deliveryFilter' => ['except' => ''],
+        'search'               => ['except' => ''],
+        'filterStatus'         => ['except' => ''],
+        'filterPaymentStatus'  => ['except' => ''],
+        'filterDeliveryStatus' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void         { $this->resetPage(); }
-    public function updatingStatusFilter(): void   { $this->resetPage(); }
-    public function updatingPaymentFilter(): void  { $this->resetPage(); }
-    public function updatingDeliveryFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void               { $this->resetPage(); }
+    public function updatingFilterStatus(): void         { $this->resetPage(); }
+    public function updatingFilterPaymentStatus(): void  { $this->resetPage(); }
+    public function updatingFilterDeliveryStatus(): void { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
-        return ['search' => '', 'statusFilter' => '', 'paymentFilter' => '', 'deliveryFilter' => ''];
+        return [
+            'search'               => '',
+            'filterStatus'         => '',
+            'filterPaymentStatus'  => '',
+            'filterDeliveryStatus' => '',
+        ];
     }
 
-    // ── Actions ───────────────────────────────────────────────────────────────
+    // ── Limpiar filtros ───────────────────────────────────────────────────────
+
+    public function clearFilters(): void
+    {
+        $this->search               = '';
+        $this->filterStatus         = '';
+        $this->filterPaymentStatus  = '';
+        $this->filterDeliveryStatus = '';
+        $this->resetPage();
+    }
+
+    // ── Emitir ────────────────────────────────────────────────────────────────
+
+    public function openEmitirModal(int $id): void
+    {
+        $invoice = $this->findInvoice($id);
+        if (!$invoice) return;
+
+        if ($invoice->status !== 'draft') {
+            $this->toastError('Solo se puede emitir una factura en borrador.');
+            return;
+        }
+
+        $this->emitirId    = $id;
+        $this->emitirDate  = now()->toDateString();
+        $this->emitirModal = true;
+    }
+
+    public function closeEmitirModal(): void
+    {
+        $this->emitirModal = false;
+        $this->emitirId    = null;
+        $this->emitirDate  = '';
+        $this->resetValidation();
+    }
+
+    public function confirmEmitir(): void
+    {
+        $this->validate(
+            ['emitirDate' => 'required|date'],
+            ['emitirDate.required' => 'La fecha de factura es obligatoria.']
+        );
+
+        $invoice = $this->findInvoice($this->emitirId);
+        if (!$invoice || $invoice->status !== 'draft') {
+            $this->toastError('La factura ya no está en borrador.');
+            $this->closeEmitirModal();
+            return;
+        }
+
+        $invoiceNumber = null;
+
+        try {
+            DB::transaction(function () use ($invoice, &$invoiceNumber) {
+                $settings      = InvoicingSetting::getOrCreateForUser(Auth::id());
+                $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
+
+                $invoice->update([
+                    'invoice_number' => $invoiceNumber,
+                    'invoice_date'   => $this->emitirDate,
+                    'status'         => 'sent',
+                ]);
+            });
+
+            $this->closeEmitirModal();
+            $this->toastSuccess("Factura {$invoiceNumber} emitida correctamente.");
+
+        } catch (\Exception $e) {
+            Log::error('Error al emitir factura de vino: ' . $e->getMessage(), [
+                'invoice_id' => $this->emitirId,
+                'user_id'    => Auth::id(),
+            ]);
+            $this->toastError('Error al emitir la factura.');
+        }
+    }
+
+    // ── Entregar ──────────────────────────────────────────────────────────────
 
     public function markDelivered(int $invoiceId): void
     {
@@ -78,6 +164,8 @@ class Index extends AbstractIndex
             $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al procesar la entrega.');
         }
     }
+
+    // ── Cancelar ──────────────────────────────────────────────────────────────
 
     public function cancel(int $invoiceId): void
     {
@@ -267,7 +355,7 @@ class Index extends AbstractIndex
     {
         return Invoice::where('user_id', $this->wineryId())
             ->where('invoice_type', 'wine_sale')
-            ->with('client')
+            ->with(['client', 'items'])
             ->withCount('correctives');
     }
 
@@ -285,31 +373,36 @@ class Index extends AbstractIndex
             });
         }
 
-        if ($this->statusFilter) {
-            $query->where('status', $this->statusFilter);
+        if ($this->filterStatus) {
+            $query->where('status', $this->filterStatus);
         }
 
-        if ($this->paymentFilter) {
-            $query->where('payment_status', $this->paymentFilter);
+        if ($this->filterPaymentStatus) {
+            $query->where('payment_status', $this->filterPaymentStatus);
         }
 
-        if ($this->deliveryFilter) {
-            $query->where('delivery_status', $this->deliveryFilter);
+        if ($this->filterDeliveryStatus) {
+            $query->where('delivery_status', $this->filterDeliveryStatus);
         }
     }
 
     protected function applyOrderBy(Builder $query): void
     {
-        $query->orderByDesc('invoice_date')->orderByDesc('id');
+        $query->orderByDesc('created_at')->orderByDesc('id');
     }
 
-    protected function defaultOrderBy(): array { return ['invoice_date', 'desc']; }
+    protected function defaultOrderBy(): array { return ['created_at', 'desc']; }
 
     protected function perPage(): int { return 15; }
 
     protected function viewData(mixed $entries): array
     {
         return ['invoices' => $entries];
+    }
+
+    protected function resolveViewName(): string
+    {
+        return 'livewire.winery.billing.products.index';
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

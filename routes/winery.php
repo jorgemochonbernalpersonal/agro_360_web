@@ -99,13 +99,16 @@ Route::middleware(['role:winery'])
         Route::get('/clients/create', \App\Livewire\Winery\Clients\Create::class)->name('clients.create');
         Route::get('/clients/{client}/edit', \App\Livewire\Winery\Clients\Edit::class)->name('clients.edit');
 
-        // ── Facturación: venta de vino ────────────────────────────────
-        Route::get('/invoices/wine-sale', \App\Livewire\Winery\Billing\WineSale\Index::class)->name('invoices.wine-sale.index');
-        Route::get('/invoices/wine-sale/create', \App\Livewire\Winery\Billing\WineSale\Create::class)->name('invoices.wine-sale.create');
-        Route::get('/invoices/wine-sale/{id}/edit', \App\Livewire\Winery\Billing\WineSale\Edit::class)->name('invoices.wine-sale.edit');
-        Route::get('/invoices/wine-sale/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->defaults('type', 'wine_sale')->name('invoices.wine-sale.pdf');
-        Route::get('/invoices/wine-sale/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->defaults('type', 'wine_sale')->name('invoices.wine-sale.delivery-note-pdf');
-        Route::get('/invoices/wine-sale/{id}/albaran-valorado-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'valoradoNote'])->defaults('type', 'wine_sale')->name('invoices.wine-sale.valorado-pdf');
+        // ── Facturación: venta de productos ──────────────────────────
+        Route::get('/invoices/products', \App\Livewire\Winery\Billing\WineSale\Index::class)->name('invoices.products.index');
+        Route::get('/invoices/products/create', \App\Livewire\Winery\Billing\WineSale\Create::class)->name('invoices.products.create');
+        Route::get('/invoices/products/{id}/edit', \App\Livewire\Winery\Billing\WineSale\Edit::class)->name('invoices.products.edit');
+        Route::get('/invoices/products/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->defaults('type', 'wine_sale')->name('invoices.products.pdf');
+        Route::get('/invoices/products/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->defaults('type', 'wine_sale')->name('invoices.products.delivery-note-pdf');
+        Route::get('/invoices/products/{id}/albaran-valorado-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'valoradoNote'])->defaults('type', 'wine_sale')->name('invoices.products.valorado-pdf');
+        // Compatibilidad URLs antiguas (wine-sale → products)
+        Route::redirect('/invoices/wine-sale', '/winery/invoices/products')->name('invoices.wine-sale.index');
+        Route::redirect('/invoices/wine-sale/create', '/winery/invoices/products/create')->name('invoices.wine-sale.create');
 
         // ── Facturación: liquidación de vendimia ──────────────────────
         Route::get('/invoices/grape-purchase', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('invoices.grape-purchase.index');
