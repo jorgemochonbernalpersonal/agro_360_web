@@ -229,9 +229,6 @@
                                             type="number"
                                             step="0.001"
                                             min="0.001"
-                                            @if ($isWineItem && $availableQty !== null)
-                                                max="{{ $availableQty }}"
-                                            @endif
                                             placeholder="0.000"
                                             class="text-sm"
                                         />

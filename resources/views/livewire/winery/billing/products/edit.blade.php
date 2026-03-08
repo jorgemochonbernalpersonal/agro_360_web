@@ -273,7 +273,6 @@
                                         <flux:label class="text-xs">Cantidad <span class="text-red-500">*</span></flux:label>
                                         <flux:input wire:model.live="items.{{ $index }}.quantity"
                                             type="number" step="0.001" min="0.001"
-                                            @if ($isWineItem && $availableQty !== null && !$locked) max="{{ $availableQty }}" @endif
                                             class="text-sm" :disabled="$locked" />
                                         <flux:error name="items.{{ $index }}.quantity" />
                                         @if ($isWineItem && $availableQty !== null && !$locked)
