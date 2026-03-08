@@ -92,12 +92,6 @@
                         <flux:error name="delivery_note_date" />
                     </flux:field>
 
-                    <div class="md:col-span-3">
-                        <flux:callout variant="info">
-                            El <strong>número y fecha de factura</strong> se asignarán al emitir el documento.
-                        </flux:callout>
-                    </div>
-
                     <div class="mt-6">
                         <label class="flex items-center gap-3 cursor-pointer">
                             <flux:checkbox wire:model.live="is_gift" id="is_gift" />
