@@ -430,6 +430,8 @@ class Edit extends Component
             'clients'        => $clients,
             'wineLots'       => $wineLots,
             'availableTaxes' => $this->availableTaxes,
+            'isLocked'       => $this->isLocked,
+            'isInvoiced'     => $this->isInvoiced,
         ])->layout('layouts.app');
     }
 }
