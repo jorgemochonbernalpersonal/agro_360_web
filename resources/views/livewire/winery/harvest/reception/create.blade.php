@@ -182,9 +182,9 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Depósito destino</flux:label>
+                        <flux:label>Depósito destino *</flux:label>
                         <flux:select wire:model="container_id">
-                            <flux:select.option value="">Sin asignar (asignar después)</flux:select.option>
+                            <flux:select.option value="">Selecciona un depósito...</flux:select.option>
                             @foreach($availableContainers as $container)
                                 @php
                                     $available = max(0, $container->capacity - $container->used_capacity);
@@ -194,7 +194,6 @@
                                 </flux:select.option>
                             @endforeach
                         </flux:select>
-                        <flux:description>Opcional. También puedes asignarlo después desde el listado.</flux:description>
                         <flux:error name="container_id" />
                     </flux:field>
                 </div>

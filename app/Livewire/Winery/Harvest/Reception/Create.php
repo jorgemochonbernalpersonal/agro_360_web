@@ -266,7 +266,7 @@ class Create extends Component
             'destination_rega_code'      => ['nullable', 'string', 'max:20'],
             'vehicle_plate'              => ['nullable', 'string', 'max:20'],
             'harvest_time'               => ['nullable', 'date_format:H:i'],
-            'container_id'               => ['nullable', 'exists:containers,id'],
+            'container_id'               => ['required', 'exists:containers,id'],
             'disqualified'               => ['boolean'],
             'disqualified_reason'        => ['nullable', 'string', 'max:500'],
             'notes'                      => ['nullable', 'string'],
@@ -283,6 +283,7 @@ class Create extends Component
             'harvest_start_date.required' => 'La fecha de recepción es obligatoria.',
             'total_weight.required'       => 'El peso recibido es obligatorio.',
             'total_weight.min'            => 'El peso debe ser mayor que 0.',
+            'container_id.required'       => 'Selecciona un depósito de destino.',
         ];
     }
 
@@ -312,12 +313,9 @@ class Create extends Component
             ->findOrFail($this->plot_planting_id);
 
         // Guard: container must belong to this winery
-        $containerId = null;
-        if ($this->container_id) {
-            $containerId = Container::where('user_id', $wineryId)
-                ->find($this->container_id)
-                ?->id;
-        }
+        $containerId = Container::where('user_id', $wineryId)
+            ->findOrFail((int) $this->container_id)
+            ->id;
 
         // Auto-get/create campaign for vintage year
         $campaign = Campaign::getOrCreateActiveForYear($wineryId, $this->vintage_year);

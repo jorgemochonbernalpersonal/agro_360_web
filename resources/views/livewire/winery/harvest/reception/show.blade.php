@@ -293,9 +293,6 @@
                         <flux:button href="{{ route('winery.grape-reception.edit', $harvest) }}" variant="primary" class="w-full" icon="pencil-square">
                             Editar recepción
                         </flux:button>
-                        <flux:button href="{{ route('winery.grape-reception.assign', $harvest) }}" variant="ghost" class="w-full" icon="cube">
-                            {{ $harvest->container_id ? 'Reasignar depósito' : 'Asignar depósito' }}
-                        </flux:button>
                         <flux:button
                             href="{{ route('winery.grape-reception.export-pdf-single', $harvest) }}"
                             target="_blank"

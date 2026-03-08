@@ -84,9 +84,6 @@ Route::middleware(['role:winery'])
         Route::get('/external-grape/create', \App\Livewire\Winery\ExternalGrape\Create::class)->name('external-grape.create');
         Route::get('/external-grape/{grape}/edit', \App\Livewire\Winery\ExternalGrape\Edit::class)->name('external-grape.edit');
 
-        // ── Asignación recepción → contenedor ────────────────────────
-        Route::get('/grape-reception/{harvest}/assign', \App\Livewire\Winery\Harvest\Reception\Assign::class)->name('grape-reception.assign');
-
         // ── Lotes de vino ────────────────────────────────────────────
         Route::get('/wine-lots', \App\Livewire\Winery\Cellar\WineLots\Index::class)->name('wine-lots.index');
         Route::get('/wine-lots/create', \App\Livewire\Winery\Cellar\WineLots\Create::class)->name('wine-lots.create');

@@ -187,12 +187,6 @@
                                             <flux:icon icon="pencil-square" class="size-4" />
                                         </button>
                                     </a>
-                                    <a href="{{ route('winery.grape-reception.assign', $reception) }}"
-                                       title="{{ $reception->container_id ? 'Reasignar contenedor' : 'Asignar a contenedor' }}">
-                                        <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                            <flux:icon icon="cube" class="size-4" />
-                                        </button>
-                                    </a>
                                 @endif
                             </div>
                         </div>
