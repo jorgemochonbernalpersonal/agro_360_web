@@ -80,16 +80,24 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label required>Fecha de albarán</flux:label>
-                        <flux:input wire:model="delivery_note_date" type="date" required />
-                        <flux:error name="delivery_note_date" />
+                        <flux:label required>Fecha de pedido</flux:label>
+                        <flux:input wire:model="order_date" type="date" required />
+                        <flux:error name="order_date" />
+                        <flux:description>Fecha en que se realiza el pedido.</flux:description>
                     </flux:field>
 
                     <flux:field>
-                        <flux:label required>Fecha de factura</flux:label>
-                        <flux:input wire:model="invoice_date" type="date" required />
-                        <flux:error name="invoice_date" />
+                        <flux:label>Fecha de albarán</flux:label>
+                        <flux:input wire:model="delivery_note_date" type="date" />
+                        <flux:error name="delivery_note_date" />
                     </flux:field>
+
+                    <div class="md:col-span-3">
+                        <flux:callout variant="info">
+                            El <strong>número y fecha de factura</strong> se asignarán al emitir el documento.
+                        </flux:callout>
+                    </div>
+
                     <div class="mt-6">
                         <label class="flex items-center gap-3 cursor-pointer">
                             <flux:checkbox wire:model.live="is_gift" id="is_gift" />

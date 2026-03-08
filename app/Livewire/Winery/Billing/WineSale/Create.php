@@ -21,7 +21,7 @@ class Create extends Component
 
     public string $client_id          = '';
     public string $client_address_id  = '';
-    public string $invoice_date       = '';
+    public string $order_date         = '';
     public string $delivery_note_date = '';
     public string $observations          = '';
     public string $observations_invoice  = '';
@@ -39,7 +39,7 @@ class Create extends Component
 
     public function mount(): void
     {
-        $this->invoice_date       = now()->toDateString();
+        $this->order_date         = now()->toDateString();
         $this->delivery_note_date = now()->toDateString();
 
         $user = Auth::user();
@@ -146,8 +146,8 @@ class Create extends Component
         return [
             'client_id'                    => 'required|exists:clients,id',
             'client_address_id'            => 'required|exists:client_addresses,id',
-            'invoice_date'                 => 'required|date',
-            'delivery_note_date'           => 'required|date',
+            'order_date'                   => 'required|date',
+            'delivery_note_date'           => 'nullable|date',
             'delivery_note_code'           => 'required|string|max:255',
             'payment_type'                 => 'nullable|in:cash,transfer,check,other',
             'observations'                 => 'nullable|string',
@@ -168,7 +168,7 @@ class Create extends Component
     {
         $attrs = [
             'client_id'          => 'cliente',
-            'invoice_date'       => 'fecha de factura',
+            'order_date'         => 'fecha de pedido',
             'delivery_note_date' => 'fecha de albarán',
         ];
         foreach ($this->items as $i => $_) {
@@ -226,8 +226,9 @@ class Create extends Component
                 'client_address_id'    => $this->client_address_id ?: null,
                 'invoice_type'         => 'wine_sale',
                 'delivery_note_code'   => $noteCode,
-                'delivery_note_date'   => $this->delivery_note_date,
-                'invoice_date'         => $this->invoice_date,
+                'delivery_note_date'   => $this->delivery_note_date ?: null,
+                'order_date'           => $this->order_date,
+                'invoice_date'         => null,
                 'delivery_status'      => 'pending',
                 'status'               => 'draft',
                 'payment_status'       => 'unpaid',

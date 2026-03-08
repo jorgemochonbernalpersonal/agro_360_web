@@ -22,7 +22,7 @@ class Edit extends Component
     public Invoice $invoice;
 
     public string $client_id          = '';
-    public string $invoice_date       = '';
+    public string $order_date         = '';
     public string $delivery_note_date = '';
     public string $observations         = '';
     public string $observations_invoice = '';
@@ -55,8 +55,8 @@ class Edit extends Component
             ->findOrFail($id);
 
         $this->client_id          = (string) $this->invoice->client_id;
-        $this->invoice_date       = $this->invoice->invoice_date
-            ? $this->invoice->invoice_date->format('Y-m-d') : '';
+        $this->order_date         = $this->invoice->order_date
+            ? $this->invoice->order_date->format('Y-m-d') : now()->toDateString();
         $this->delivery_note_date = $this->invoice->delivery_note_date
             ? $this->invoice->delivery_note_date->format('Y-m-d') : '';
         $this->observations         = $this->invoice->observations ?? '';
@@ -354,7 +354,7 @@ class Edit extends Component
     {
         return [
             'client_id'                   => 'required|exists:clients,id',
-            'invoice_date'                => 'required|date',
+            'order_date'                  => 'required|date',
             'delivery_note_date'          => 'nullable|date',
             'payment_type'                => 'nullable|in:cash,transfer,check,other',
             'payment_status'              => 'required|in:unpaid,partial,paid',
@@ -374,7 +374,7 @@ class Edit extends Component
 
     protected function validationAttributes(): array
     {
-        $attrs = ['client_id' => 'cliente', 'invoice_date' => 'fecha'];
+        $attrs = ['client_id' => 'cliente', 'order_date' => 'fecha de pedido'];
         foreach ($this->items as $i => $_) {
             $attrs["items.{$i}.name"]       = 'concepto';
             $attrs["items.{$i}.quantity"]   = 'cantidad';
@@ -431,7 +431,7 @@ class Edit extends Component
                 // 4. Actualizar cabecera
                 $this->invoice->update([
                     'client_id'            => $client->id,
-                    'invoice_date'         => $this->invoice_date,
+                    'order_date'           => $this->order_date,
                     'delivery_note_date'   => $this->delivery_note_date ?: null,
                     'billing_first_name'   => $client->first_name,
                     'billing_last_name'    => $client->last_name,

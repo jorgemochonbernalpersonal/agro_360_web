@@ -139,22 +139,22 @@
 
                     <flux:field>
                         <flux:label>Número de factura</flux:label>
-                        <flux:input value="{{ $invoice->invoice_number ?? '— (se asignará al emitir)' }}" disabled
+                        <flux:input value="{{ $invoice->invoice_number ?? '— (pendiente de emitir)' }}" disabled
                             class="{{ $invoice->invoice_number ? 'bg-zinc-100 font-mono font-semibold' : 'bg-zinc-50 text-zinc-400' }} cursor-not-allowed" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Fecha albarán</flux:label>
-                        <flux:input wire:model="delivery_note_date" type="date"
-                            :disabled="$isLocked || $isInvoiced" />
-                        <flux:error name="delivery_note_date" />
+                        <flux:label required>Fecha de pedido</flux:label>
+                        <flux:input wire:model="order_date" type="date"
+                            :disabled="$isLocked" />
+                        <flux:error name="order_date" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Fecha factura</flux:label>
-                        <flux:input wire:model="invoice_date" type="date"
-                            :disabled="$isLocked" />
-                        <flux:error name="invoice_date" />
+                        <flux:label>Fecha de albarán</flux:label>
+                        <flux:input wire:model="delivery_note_date" type="date"
+                            :disabled="$isLocked || $isInvoiced" />
+                        <flux:error name="delivery_note_date" />
                     </flux:field>
                 </div>
 
