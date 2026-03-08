@@ -141,7 +141,7 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Nº de ticket / albarán</flux:label>
+                        <flux:label>Nº de ticket/Vendimia</flux:label>
                         <flux:input wire:model="harvest_ticket_number" placeholder="Ej: VND-2026-001" />
                         <flux:error name="harvest_ticket_number" />
                     </flux:field>

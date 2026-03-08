@@ -41,12 +41,16 @@ class HarvestObserver
         $oldContainerId = $harvest->getOriginal('container_id');
         $newContainerId = $harvest->container_id;
 
-        try {
-            if ($oldWeight != $newWeight) {
-                $this->stockService->adjustWeight($harvest, $oldWeight, $newWeight);
-            }
+        $weightChanged    = $oldWeight != $newWeight;
+        $containerChanged = $oldContainerId != $newContainerId;
 
-            if ($oldContainerId != $newContainerId) {
+        try {
+            if ($weightChanged && $containerChanged) {
+                // Caso combinado: ajustar peso en el contenedor VIEJO y luego transferir el nuevo peso
+                $this->stockService->adjustAndTransfer($harvest, $oldWeight, $newWeight, $oldContainerId, $newContainerId);
+            } elseif ($weightChanged) {
+                $this->stockService->adjustWeight($harvest, $oldWeight, $newWeight);
+            } elseif ($containerChanged) {
                 $this->stockService->transferContainer($harvest, $oldContainerId, $newContainerId);
             }
         } catch (\Exception $e) {

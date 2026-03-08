@@ -254,6 +254,110 @@ class ContainerStockService
     }
 
     /**
+     * Ajusta el peso Y cambia de contenedor en una sola operación atómica.
+     * Libera el contenedor antiguo con el PESO VIEJO e ingresa el PESO NUEVO al contenedor destino.
+     *
+     * @throws \Exception Si el contenedor destino no tiene capacidad.
+     */
+    public function adjustAndTransfer(Harvest $harvest, float $oldWeight, float $newWeight, ?int $oldContainerId, ?int $newContainerId): void
+    {
+        DB::transaction(function () use ($harvest, $oldWeight, $newWeight, $oldContainerId, $newContainerId) {
+            $difference = $newWeight - $oldWeight;
+            $lastStock  = $this->getLatestStock($harvest);
+
+            if ($lastStock) {
+                $newAvailable = max(0, $lastStock->available_qty + $difference);
+                $newTotal     = $lastStock->quantity_after + $difference;
+
+                HarvestStock::create([
+                    'harvest_id'      => $harvest->id,
+                    'container_id'    => $newContainerId,
+                    'user_id'         => Auth::id(),
+                    'movement_type'   => 'adjustment',
+                    'quantity_change' => $difference,
+                    'quantity_after'  => $newTotal,
+                    'available_qty'   => $newAvailable,
+                    'reserved_qty'    => $lastStock->reserved_qty,
+                    'sold_qty'        => $lastStock->sold_qty,
+                    'gifted_qty'      => $lastStock->gifted_qty,
+                    'lost_qty'        => $lastStock->lost_qty,
+                    'notes'           => sprintf(
+                        'Ajuste de peso y cambio de contenedor: %s → %s kg',
+                        $oldWeight,
+                        $newWeight
+                    ),
+                ]);
+            }
+
+            // Liberar contenedor antiguo con el PESO VIEJO
+            if ($oldContainerId) {
+                $oldContainer = Container::find($oldContainerId);
+                if ($oldContainer) {
+                    $oldContainer->decrementUsedCapacity($oldWeight);
+
+                    $oldState = ContainerCurrentState::where('container_id', $oldContainer->id)
+                        ->where('harvest_id', $harvest->id)
+                        ->first();
+                    if ($oldState) {
+                        if ($oldContainer->isEmpty()) {
+                            $oldState->delete();
+                        } else {
+                            $oldState->update([
+                                'current_quantity' => 0,
+                                'available_qty'    => 0,
+                                'last_movement_at' => now(),
+                                'last_movement_by' => Auth::id(),
+                            ]);
+                        }
+                    }
+
+                    $this->recordHistory($oldContainer, $harvest, 'transfer', -$oldWeight);
+                }
+            }
+
+            // Asignar contenedor nuevo con el PESO NUEVO
+            if ($newContainerId) {
+                $newContainer = Container::find($newContainerId);
+                if ($newContainer) {
+                    if (! $newContainer->hasAvailableCapacity($newWeight)) {
+                        throw new \Exception(
+                            "El contenedor '{$newContainer->name}' no tiene capacidad suficiente. " .
+                            "Disponible: {$newContainer->getAvailableCapacity()} kg, " .
+                            "Requerido: {$newWeight} kg"
+                        );
+                    }
+
+                    $newContainer->incrementUsedCapacity($newWeight);
+
+                    $available = $lastStock ? max(0, $lastStock->available_qty + $difference) : $newWeight;
+                    ContainerCurrentState::updateOrCreate(
+                        ['container_id' => $newContainer->id, 'harvest_id' => $harvest->id],
+                        [
+                            'current_quantity' => $newWeight,
+                            'available_qty'    => $available,
+                            'reserved_qty'     => $lastStock?->reserved_qty ?? 0,
+                            'sold_qty'         => $lastStock?->sold_qty ?? 0,
+                            'has_subproducts'  => false,
+                            'last_movement_at' => now(),
+                            'last_movement_by' => Auth::id(),
+                        ]
+                    );
+
+                    $this->recordHistory($newContainer, $harvest, 'transfer', $newWeight);
+                }
+            }
+
+            Log::info('[ContainerStockService] Peso ajustado y contenedor transferido', [
+                'harvest_id'       => $harvest->id,
+                'old_weight'       => $oldWeight,
+                'new_weight'       => $newWeight,
+                'old_container_id' => $oldContainerId,
+                'new_container_id' => $newContainerId,
+            ]);
+        });
+    }
+
+    /**
      * Libera la capacidad del contenedor al eliminar una cosecha.
      */
     public function releaseHarvestStock(Harvest $harvest): void

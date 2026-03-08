@@ -128,8 +128,8 @@ class Edit extends Component
             'planting_pattern' => 'nullable|string|max:50',
             'slope' => 'nullable|numeric|min:0|max:100',
             'number_of_vines' => 'nullable|integer|min:0',
-            'pac_eligible_area' => 'nullable|numeric|min:0',
-            'non_eligible_area' => 'nullable|numeric|min:0',
+            'pac_eligible_area' => 'nullable|numeric|min:0|lte:area',
+            'non_eligible_area' => 'nullable|numeric|min:0|lte:area',
         ];
 
         // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
@@ -146,6 +146,13 @@ class Edit extends Component
         return $rules;
     }
 
+    protected function messages(): array
+    {
+        return [
+            'pac_eligible_area.lte' => 'La superficie admisible PAC no puede superar la superficie total de la parcela.',
+            'non_eligible_area.lte' => 'La superficie no admisible no puede superar la superficie total de la parcela.',
+        ];
+    }
 
     #[Renderless]
     public function fetchProvinces(int $communityId): array

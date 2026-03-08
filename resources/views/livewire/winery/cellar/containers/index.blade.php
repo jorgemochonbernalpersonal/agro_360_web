@@ -10,6 +10,16 @@
         </x-slot:actions>
     </x-agro.page-header>
 
+    {{-- Tabs Activos / Inactivos --}}
+    <x-agro.tabs
+        :tabs="[
+            'active'   => ['label' => 'Activos',    'count' => $stats['active']],
+            'archived' => ['label' => 'Inactivos',  'count' => $stats['archived']],
+        ]"
+        :active="$currentTab"
+        wireMethod="switchTab"
+    />
+
     <x-agro.filter-bar>
         <x-agro.filter-input
             wire:model.live.debounce.300ms="search"
@@ -21,12 +31,7 @@
                 <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
             @endforeach
         </flux:select>
-        <flux:select wire:model.live="statusFilter" size="sm" class="w-36">
-            <flux:select.option value="active">Activos</flux:select.option>
-            <flux:select.option value="archived">Archivados</flux:select.option>
-            <flux:select.option value="all">Todos</flux:select.option>
-        </flux:select>
-        @if($search || $typeFilter || $statusFilter !== 'active')
+        @if($search || $typeFilter)
             <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
                 Limpiar
             </flux:button>
@@ -34,7 +39,11 @@
     </x-agro.filter-bar>
 
     @if($containers->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="switchTab, search, typeFilter, clearFilters"
+        >
             @foreach($containers as $container)
                 @php
                     $pct      = $container->getOccupancyPercentage();
@@ -42,7 +51,7 @@
                     $delay    = min($loop->index * 50, 300);
                 @endphp
                 <x-agro.card
-                    class="animate-fade-in-up flex flex-col {{ $container->archived ? 'opacity-60' : '' }}"
+                    class="animate-fade-in-up flex flex-col"
                     style="animation-delay: {{ $delay }}ms;"
                     wire:key="container-card-{{ $container->id }}"
                 >
@@ -59,9 +68,7 @@
                                     <p class="text-xs text-zinc-400">{{ $typeName }}</p>
                                 @endif
                             </div>
-                            @if($container->archived)
-                                <flux:badge color="zinc" size="sm" class="shrink-0">Archivado</flux:badge>
-                            @elseif($container->isFull())
+                            @if($container->isFull())
                                 <flux:badge color="red" size="sm" class="shrink-0">Lleno</flux:badge>
                             @elseif($container->isEmpty())
                                 <flux:badge color="green" size="sm" class="shrink-0">Vacío</flux:badge>
@@ -125,16 +132,17 @@
                                 </button>
                             </a>
                             @if($container->archived)
-                                <button wire:click="unarchive({{ $container->id }})" title="Reactivar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="arrow-path" class="size-4" />
+                                <button wire:click="unarchive({{ $container->id }})"
+                                    title="Activar"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
+                                    <flux:icon icon="check-circle" class="size-4" />
                                 </button>
                             @else
                                 <button wire:click="archive({{ $container->id }})"
-                                    wire:confirm="¿Archivar este contenedor?"
-                                    title="Archivar"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="archive-box-arrow-down" class="size-4" />
+                                    wire:confirm="¿Desactivar este contenedor?"
+                                    title="Desactivar"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                    <flux:icon icon="no-symbol" class="size-4" />
                                 </button>
                             @endif
                             @if($container->harvests_count === 0)
@@ -157,14 +165,20 @@
     @else
         <x-agro.empty-state
             icon="cube"
-            title="No hay contenedores registrados"
-            description="Crea tu primer contenedor para empezar a asignar recepciones de uva"
+            title="{{ $currentTab === 'active' ? 'No hay contenedores activos' : 'No hay contenedores inactivos' }}"
+            description="{{ $search || $typeFilter ? 'Ningún contenedor coincide con los filtros aplicados.' : ($currentTab === 'active' ? 'Crea tu primer contenedor para empezar a asignar recepciones de uva.' : '') }}"
         >
-            <x-slot:action>
-                <flux:button href="{{ route('winery.containers.create') }}" variant="primary" icon="plus">
-                    Nuevo Contenedor
-                </flux:button>
-            </x-slot:action>
+            @if($search || $typeFilter)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @elseif($currentTab === 'active')
+                <x-slot:action>
+                    <flux:button href="{{ route('winery.containers.create') }}" variant="primary" icon="plus">
+                        Nuevo Contenedor
+                    </flux:button>
+                </x-slot:action>
+            @endif
         </x-agro.empty-state>
     @endif
 </div>

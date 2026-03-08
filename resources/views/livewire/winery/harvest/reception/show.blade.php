@@ -110,7 +110,7 @@
                     @endif
                     @if($harvest->harvest_ticket_number)
                         <div>
-                            <dt class="text-zinc-500">Nº ticket / albarán</dt>
+                            <dt class="text-zinc-500">Nº de ticket/Vendimia</dt>
                             <dd class="font-mono text-zinc-900">{{ $harvest->harvest_ticket_number }}</dd>
                         </div>
                     @endif
