@@ -723,7 +723,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">
-                    Soluciones que impulsan tu explotación
+                    Todo lo que incluye el plan Viticultor
                 </h2>
                 <div class="w-20 h-1 bg-[var(--color-agro-green-light)] mx-auto mt-4 rounded-full"></div>
             </div>

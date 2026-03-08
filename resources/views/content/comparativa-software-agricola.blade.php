@@ -163,7 +163,7 @@
                                 </tr>
                                 <tr class="bg-gray-50">
                                     <td class="px-6 py-4 text-sm text-gray-700 font-medium">Precio Mensual</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">€9/mes</span></td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">Gratis · 9€ · 14€</span></td>
                                     <td class="px-6 py-4 text-center text-gray-500">€20-50/mes o más</td>
                                 </tr>
                                 <tr>
@@ -184,8 +184,8 @@
                             <p class="text-gray-700">Agro365 está diseñado específicamente para cumplir con todos los requisitos de la normativa 2027 desde el primer día.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💰 Precio Asequible</h3>
-                            <p class="text-gray-700">A solo €9/mes, Agro365 es la solución más asequible del mercado sin sacrificar funcionalidades.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">💰 Precio Justo por Perfil</h3>
+                            <p class="text-gray-700">Básico gratis (invitado por bodega), completo desde 9€/mes o 14€/mes independiente. La opción más asequible del mercado.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🎁 3 Meses Gratis</h3>
