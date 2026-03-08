@@ -467,9 +467,12 @@
                     </flux:callout>
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl">
-                    <flux:button wire:click="closeEmitirModal" variant="outline">Cancelar</flux:button>
-                    <flux:button wire:click="markAsSent" variant="primary" icon="paper-airplane">
-                        Emitir factura
+                    <flux:button wire:click="closeEmitirModal" variant="outline"
+                        wire:loading.attr="disabled" wire:target="markAsSent">Cancelar</flux:button>
+                    <flux:button wire:click="markAsSent" variant="primary" icon="paper-airplane"
+                        wire:loading.attr="disabled" wire:target="markAsSent">
+                        <span wire:loading.remove wire:target="markAsSent">Emitir factura</span>
+                        <span wire:loading wire:target="markAsSent">Emitiendo...</span>
                     </flux:button>
                 </div>
             </div>
