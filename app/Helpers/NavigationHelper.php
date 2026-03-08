@@ -347,6 +347,12 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.grape-reception*'),
                 ],
                 [
+                    'icon'   => 'beaker',
+                    'label'  => 'Análisis de Calidad',
+                    'route'  => 'winery.harvest-quality.index',
+                    'active' => request()->routeIs('winery.harvest-quality*'),
+                ],
+                [
                     'icon'   => 'clipboard-document-list',
                     'label'  => 'Actividades de campo',
                     'route'  => 'winery.field-activities.index',

@@ -97,7 +97,7 @@
                     $planting = $harvest->plotPlanting;
                 @endphp
                 <tr class="{{ $rowClass }}">
-                    <td>{{ $harvest->activity?->viticulturist?->name ?? '—' }}</td>
+                    <td>{{ $harvest->batch?->viticulturist?->name ?? '—' }}</td>
                     <td>
                         {{ $planting?->plot?->name ?? '—' }}<br>
                         <span style="color:#6b7280;">{{ $planting?->grapeVariety?->name ?? '—' }}</span>

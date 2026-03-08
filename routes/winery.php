@@ -10,9 +10,7 @@ Route::middleware(['role:winery'])
     ->name('winery.')
     ->group(function () use ($stub) {
 
-        Route::get('/dashboard', function () {
-            return view('winery.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', \App\Livewire\Winery\Dashboard::class)->name('dashboard');
 
         // ── Viticultores ─────────────────────────────────────────────
         Route::get('/viticulturists', \App\Livewire\Winery\Viticulturists\Index::class)->name('viticulturists.index');
@@ -40,6 +38,10 @@ Route::middleware(['role:winery'])
 
         // ── Aforos de viticultores (solo lectura) ─────────────────────
         Route::get('/vitic-estimates', \App\Livewire\Winery\Harvest\ViticulturistEstimates\Index::class)->name('vitic-estimates.index');
+
+        // ── Análisis de calidad vendimia ───────────────────────────────
+        Route::get('/harvest-quality', \App\Livewire\Winery\Harvest\QualityAnalysis\Index::class)->name('harvest-quality.index');
+        Route::get('/harvest-quality/export/pdf', [\App\Http\Controllers\Winery\HarvestQualityController::class, 'exportPdf'])->name('harvest-quality.export-pdf');
 
         // ── Actividades de campo (solo lectura) ───────────────────────
         Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');

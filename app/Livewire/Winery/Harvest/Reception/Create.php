@@ -75,6 +75,17 @@ class Create extends Component
     {
         $this->harvest_start_date = now()->toDateString();
         $this->vintage_year       = now()->year;
+
+        // Pre-populate from previous reception (passed via query params)
+        if ($preVitic = request()->query('viticulturist_id')) {
+            $this->viticulturist_id = $preVitic;
+            $this->updatedViticulturistId();
+
+            if ($prePlot = request()->query('plot_id')) {
+                $this->plot_id = $prePlot;
+                $this->updatedPlotId();
+            }
+        }
     }
 
     // ── Watchers ─────────────────────────────────────────────────────────────
@@ -330,6 +341,17 @@ class Create extends Component
         // Auto-get/create campaign for vintage year
         $campaign = Campaign::getOrCreateActiveForYear($wineryId, $this->vintage_year);
         abort_if(!$campaign, 500, 'No se pudo obtener la campaña.');
+
+        // Guard: batch cerrado
+        $existingBatch = GrapeReceptionBatch::where('winery_id', $wineryId)
+            ->where('plot_planting_id', $planting->id)
+            ->where('campaign_id', $campaign->id)
+            ->first();
+        if ($existingBatch && $existingBatch->status === 'closed') {
+            $this->toastError('El lote de esta plantación está cerrado. Réabrelo desde el Cuadro de Mando antes de añadir más recepciones.');
+            return;
+        }
+
         $pricePerKg = $this->price_per_kg ? (float) $this->price_per_kg : null;
         $totalValue = ($weight && $pricePerKg) ? round($weight * $pricePerKg, 3) : null;
 
@@ -393,8 +415,11 @@ class Create extends Component
                 $batch->increment('total_weight_kg', $weight);
             });
 
-            $this->toastSuccess('Recepción de uva registrada correctamente.');
-            redirect()->route('winery.grape-reception.index');
+            $this->toastSuccess('Recepción registrada. Puedes continuar con el mismo viticultor.');
+            redirect()->route('winery.grape-reception.create', array_filter([
+                'viticulturist_id' => $this->viticulturist_id,
+                'plot_id'          => $this->plot_id,
+            ]));
 
         } catch (\Exception $e) {
             \Log::error('Error al registrar recepción de uva', [

@@ -48,7 +48,7 @@
             <div style="font-size:8.5pt;color:#6b7280;margin-top:2pt;">
                 {{ $harvest->harvest_start_date?->format('d/m/Y') }}
                 @if($harvest->harvest_time) · {{ $harvest->harvest_time }} @endif
-                · Añada {{ $harvest->activity?->campaign?->year ?? '—' }}
+                · Añada {{ $harvest->batch?->vintage_year ?? $harvest->vintage ?? '—' }}
             </div>
         </div>
         <div class="header-right">
@@ -92,7 +92,7 @@
         <div class="section-title">Viticultor y Parcela</div>
         <div class="grid">
             <div class="col">
-                <div class="field"><div class="field-label">Viticultor</div><div class="field-value">{{ $harvest->activity?->viticulturist?->name ?? '—' }}</div></div>
+                <div class="field"><div class="field-label">Viticultor</div><div class="field-value">{{ $harvest->batch?->viticulturist?->name ?? '—' }}</div></div>
                 <div class="field"><div class="field-label">Parcela</div><div class="field-value">{{ $planting?->plot?->name ?? '—' }}</div></div>
             </div>
             <div class="col">
@@ -171,6 +171,22 @@
         <p style="font-size:8.5pt;color:#374151;">{{ $harvest->notes }}</p>
     </div>
     @endif
+
+    {{-- Firmas --}}
+    <div style="display:table;width:100%;margin-top:30pt;">
+        <div style="display:table-row;">
+            <div style="display:table-cell;width:50%;padding-right:20pt;text-align:center;">
+                <div style="border-top:0.5pt solid #374151;margin-top:40pt;padding-top:5pt;font-size:8pt;color:#6b7280;">
+                    Firma del viticultor / Proveedor
+                </div>
+            </div>
+            <div style="display:table-cell;width:50%;padding-left:20pt;text-align:center;">
+                <div style="border-top:0.5pt solid #374151;margin-top:40pt;padding-top:5pt;font-size:8pt;color:#6b7280;">
+                    Firma de la bodega / Receptor
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="footer">
         Agro365 · Recepción #{{ $harvest->id }} · Generado el {{ now()->format('d/m/Y H:i') }}

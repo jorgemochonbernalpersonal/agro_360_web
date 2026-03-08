@@ -5,6 +5,39 @@
         description="Registro de entradas de uva por viticultor, parcela y variedad"
     />
 
+    {{-- Nav vendimia --}}
+    <x-agro.harvest-nav />
+
+    {{-- Stat-bar --}}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total recibido</p>
+            <p class="text-2xl font-bold text-agro-700 leading-none">
+                {{ number_format($stats['total_kg'], 0) }}
+                <span class="text-sm font-medium text-zinc-400">kg</span>
+            </p>
+        </div>
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Entradas</p>
+            <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $stats['total_count'] }}</p>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ $stats['viticulturists'] }} viticultores</p>
+        </div>
+        <div class="rounded-2xl p-4 shadow-sm border {{ $stats['disqualified_kg'] > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200' }}">
+            <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['disqualified_kg'] > 0 ? 'text-red-400' : 'text-zinc-400' }}">Descartados</p>
+            <p class="text-2xl font-bold leading-none {{ $stats['disqualified_kg'] > 0 ? 'text-red-600' : 'text-zinc-300' }}">
+                {{ number_format($stats['disqualified_kg'], 0) }}
+                <span class="text-sm font-medium {{ $stats['disqualified_kg'] > 0 ? 'text-red-400' : 'text-zinc-300' }}">kg</span>
+            </p>
+        </div>
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Neto válido</p>
+            <p class="text-2xl font-bold text-agro-700 leading-none">
+                {{ number_format(max(0, $stats['total_kg'] - $stats['disqualified_kg']), 0) }}
+                <span class="text-sm font-medium text-zinc-400">kg</span>
+            </p>
+        </div>
+    </div>
+
     @php
         $filterCount = (int) !empty($campaignFilter) + (int) !empty($viticulturistFilter) + (int) !empty($disqualifiedFilter);
     @endphp

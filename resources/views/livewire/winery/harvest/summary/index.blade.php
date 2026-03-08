@@ -5,6 +5,43 @@
         description="Comparativa en tiempo real: aforo viticultor · previsión bodega · recibido real."
     />
 
+    {{-- Nav vendimia --}}
+    <x-agro.harvest-nav />
+
+    {{-- Stat-bar --}}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total recibido</p>
+            <p class="text-2xl font-bold text-agro-700 leading-none">
+                {{ number_format($stats['total_received_kg'], 0) }}
+                <span class="text-sm font-medium text-zinc-400">kg</span>
+            </p>
+        </div>
+        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Viticultores</p>
+            <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $stats['viticulturists'] }}</p>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ $stats['total_plantings'] }} plantaciones</p>
+        </div>
+        <div class="rounded-2xl p-4 shadow-sm border {{ $stats['exceeded_count'] > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-zinc-200' }}">
+            <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['exceeded_count'] > 0 ? 'text-red-400' : 'text-zinc-400' }}">⚠ Superados</p>
+            <p class="text-2xl font-bold leading-none {{ $stats['exceeded_count'] > 0 ? 'text-red-600' : 'text-zinc-300' }}">
+                {{ $stats['exceeded_count'] }}
+            </p>
+            @if($stats['exceeded_count'] > 0)
+                <button wire:click="$set('alertFilter', 'exceeded')" class="text-xs text-red-500 hover:underline mt-0.5">Ver afectados</button>
+            @endif
+        </div>
+        <div class="rounded-2xl p-4 shadow-sm border {{ $stats['at_risk_count'] > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-zinc-200' }}">
+            <p class="text-[10px] font-semibold uppercase tracking-widest mb-1 {{ $stats['at_risk_count'] > 0 ? 'text-amber-500' : 'text-zinc-400' }}">En riesgo</p>
+            <p class="text-2xl font-bold leading-none {{ $stats['at_risk_count'] > 0 ? 'text-amber-600' : 'text-zinc-300' }}">
+                {{ $stats['at_risk_count'] }}
+            </p>
+            @if($stats['at_risk_count'] > 0)
+                <button wire:click="$set('alertFilter', 'at_risk')" class="text-xs text-amber-500 hover:underline mt-0.5">Ver en riesgo</button>
+            @endif
+        </div>
+    </div>
+
     @php
         $filterCount = (int) !empty($search) + (int) !empty($campaignFilter) + (int) !empty($viticulturistFilter) + (int) !empty($varietyFilter) + (int) !empty($alertFilter);
     @endphp
@@ -33,20 +70,6 @@
                 </span>
             @endif
         </button>
-
-        {{-- Separador --}}
-        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
-
-        {{-- Navegación rápida --}}
-        <flux:button variant="ghost" icon="calculator" href="{{ route('winery.vitic-estimates.index') }}" wire:navigate size="sm">
-            Aforos
-        </flux:button>
-        <flux:button variant="ghost" icon="clipboard-document-list" href="{{ route('winery.harvest-forecasts.index') }}" wire:navigate size="sm">
-            Previsiones
-        </flux:button>
-        <flux:button variant="primary" icon="archive-box-arrow-down" href="{{ route('winery.grape-reception.index') }}" wire:navigate size="sm">
-            Recepciones
-        </flux:button>
     </div>
 
     {{-- Chips de filtros activos --}}
@@ -123,12 +146,27 @@
             <x-agro.empty-state
                 icon="chart-bar"
                 title="Sin datos para esta campaña"
-                description="Crea previsiones o registra recepciones para ver el cuadro de mando."
+                description="Sigue estos pasos para comenzar la vendimia."
             >
                 <x-slot:action>
-                    <flux:button variant="primary" icon="plus" href="{{ route('winery.harvest-forecasts.create') }}" wire:navigate>
-                        Nueva previsión
-                    </flux:button>
+                    <div class="mt-4 flex flex-col gap-2 text-left max-w-xs mx-auto">
+                        <a href="{{ route('winery.harvest-forecasts.create') }}" wire:navigate
+                            class="flex items-center gap-3 p-3 bg-agro-50 border border-agro-200 rounded-xl hover:bg-agro-100 transition-colors">
+                            <div class="w-7 h-7 rounded-lg bg-agro-600 text-white font-bold text-xs flex items-center justify-center shrink-0">1</div>
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-900">Crear previsión de uva</p>
+                                <p class="text-xs text-zinc-500">Define el aforo esperado por plantación</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+                            class="flex items-center gap-3 p-3 bg-white border border-zinc-200 rounded-xl hover:bg-zinc-50 transition-colors">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-200 text-zinc-500 font-bold text-xs flex items-center justify-center shrink-0">2</div>
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-900">Registrar recepciones</p>
+                                <p class="text-xs text-zinc-500">Anota cada entrada de uva durante la vendimia</p>
+                            </div>
+                        </a>
+                    </div>
                 </x-slot:action>
             </x-agro.empty-state>
         @else
@@ -228,12 +266,120 @@
                             @endif
 
                         </div>
+
+                        {{-- Footer: estado del lote --}}
+                        @if($row['batch_id'])
+                        <x-slot:footer>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-zinc-400">
+                                    Lote:
+                                    @if($row['batch_status'] === 'closed')
+                                        <span class="font-semibold text-zinc-500">Cerrado</span>
+                                    @elseif($row['batch_status'] === 'invoiced')
+                                        <span class="font-semibold text-agro-600">Facturado</span>
+                                    @else
+                                        <span class="font-semibold text-green-600">Abierto</span>
+                                    @endif
+                                </span>
+                                @if($row['batch_status'] === 'open')
+                                    <button
+                                        wire:click="closeBatch({{ $row['batch_id'] }})"
+                                        wire:confirm="¿Cerrar este lote? No se podrán añadir más recepciones hasta reabrirlo."
+                                        class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors flex items-center gap-1"
+                                        title="Cerrar lote"
+                                    >
+                                        <flux:icon icon="lock-closed" class="size-3.5" />
+                                        Cerrar lote
+                                    </button>
+                                @elseif($row['batch_status'] === 'closed')
+                                    <button
+                                        wire:click="reopenBatch({{ $row['batch_id'] }})"
+                                        class="text-xs text-agro-500 hover:text-agro-700 transition-colors flex items-center gap-1"
+                                        title="Reabrir lote"
+                                    >
+                                        <flux:icon icon="lock-open" class="size-3.5" />
+                                        Reabrir
+                                    </button>
+                                @endif
+                            </div>
+                        </x-slot:footer>
+                        @endif
+
                     </x-agro.card>
                 @endforeach
             </div>
 
         @endif
     </div>
+
+    {{-- Histórico multi-añada --}}
+    @if($historicalRows->isNotEmpty() && $historicalYears->count() > 1)
+        <div x-data="{ open: false }">
+            <button @click="open = !open"
+                class="w-full flex items-center justify-between px-5 py-3 bg-white border border-zinc-200 rounded-xl shadow-sm hover:bg-zinc-50 transition-colors text-sm font-medium text-zinc-700">
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="chart-bar" class="size-4 text-zinc-400" />
+                    Histórico multi-añada
+                    <span class="text-xs text-zinc-400 font-normal">({{ $historicalYears->first() }} – {{ $historicalYears->last() }})</span>
+                </div>
+                <flux:icon icon="chevron-down" class="size-4 text-zinc-400 transition-transform" x-bind:class="open ? 'rotate-180' : ''" />
+            </button>
+
+            <div x-show="open" x-transition class="mt-3">
+                <x-agro.card>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-zinc-100">
+                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Viticultor</th>
+                                    <th class="text-left py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Variedad</th>
+                                    @foreach($historicalYears as $year)
+                                        <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">{{ $year }}</th>
+                                    @endforeach
+                                    <th class="text-right py-2 px-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Tendencia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($historicalRows as $hRow)
+                                    @php
+                                        $vals = $hRow['years']->values()->filter(fn($v) => $v > 0);
+                                        $trend = $vals->count() >= 2
+                                            ? ($vals->last() > $vals->first() ? 'up' : ($vals->last() < $vals->first() ? 'down' : 'flat'))
+                                            : 'flat';
+                                    @endphp
+                                    <tr class="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
+                                        <td class="py-2.5 px-3 font-medium text-zinc-800">{{ $hRow['viticulturist_name'] }}</td>
+                                        <td class="py-2.5 px-3 text-zinc-500">{{ $hRow['variety'] }}</td>
+                                        @foreach($historicalYears as $year)
+                                            @php $kg = $hRow['years'][$year] ?? 0; @endphp
+                                            <td class="py-2.5 px-3 text-right {{ $kg > 0 ? 'text-zinc-800 font-medium' : 'text-zinc-300' }}">
+                                                {{ $kg > 0 ? number_format($kg, 0) . ' kg' : '—' }}
+                                            </td>
+                                        @endforeach
+                                        <td class="py-2.5 px-3 text-right">
+                                            @if($trend === 'up')
+                                                <span class="text-agro-600 font-semibold flex items-center justify-end gap-1">
+                                                    <flux:icon icon="arrow-trending-up" class="size-4" /> Sube
+                                                </span>
+                                            @elseif($trend === 'down')
+                                                <span class="text-red-500 font-semibold flex items-center justify-end gap-1">
+                                                    <flux:icon icon="arrow-trending-down" class="size-4" /> Baja
+                                                </span>
+                                            @else
+                                                <span class="text-zinc-400 flex items-center justify-end gap-1">
+                                                    <flux:icon icon="minus" class="size-4" /> Estable
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </x-agro.card>
+            </div>
+        </div>
+    @endif
 
     {{-- Modal Filtros --}}
     <x-agro.modal name="summary-filters" maxWidth="sm">

@@ -6,7 +6,6 @@ use App\Exports\HarvestReceptionExport;
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use App\Models\Harvest;
-use App\Models\WineryViticulturist;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -25,11 +24,12 @@ class HarvestReceptionController extends Controller
             : null;
         $campaignYear = $campaign?->year;
 
+        $activeHarvests = $harvests->where('status', 'active');
         $stats = [
-            'total_kg'        => $harvests->where('status', 'active')->sum(fn($h) => (float) $h->total_weight),
-            'total_count'     => $harvests->where('status', 'active')->count(),
-            'disqualified_kg' => $harvests->where('status', 'active')->where('disqualified', true)->sum(fn($h) => (float) $h->total_weight),
-            'viticulturists'  => $harvests->map(fn($h) => $h->activity?->viticulturist_id)->unique()->filter()->count(),
+            'total_kg'        => $activeHarvests->sum(fn($h) => (float) $h->total_weight),
+            'total_count'     => $activeHarvests->count(),
+            'disqualified_kg' => $activeHarvests->where('disqualified', true)->sum(fn($h) => (float) $h->total_weight),
+            'viticulturists'  => $activeHarvests->map(fn($h) => $h->batch?->viticulturist_id)->unique()->filter()->count(),
         ];
 
         $pdf = Pdf::loadView('reports.harvest-reception', [
@@ -66,23 +66,13 @@ class HarvestReceptionController extends Controller
 
     public function exportPdfSingle(Harvest $harvest)
     {
-        $wineryId         = Auth::id();
-        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)->pluck('viticulturist_id');
-        $campaignIds      = Campaign::forViticulturist($wineryId)->pluck('id');
-
-        $exists = Harvest::where('id', $harvest->id)
-            ->whereHas('activity', fn($q) =>
-                $q->whereIn('viticulturist_id', $viticulturistIds)
-                  ->whereIn('campaign_id', $campaignIds)
-            )->exists();
-
-        abort_unless($exists, 403);
+        $wineryId = Auth::id();
+        abort_unless($harvest->winery_id === $wineryId, 403);
 
         $harvest->load([
             'plotPlanting.grapeVariety',
             'plotPlanting.plot',
-            'activity.viticulturist',
-            'activity.campaign',
+            'batch.viticulturist',
             'container',
         ]);
 
@@ -102,28 +92,21 @@ class HarvestReceptionController extends Controller
 
     protected function buildQuery(int $wineryId, Request $request)
     {
-        $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)->pluck('viticulturist_id');
-        $campaignIds      = Campaign::forViticulturist($wineryId)->pluck('id');
-
         $query = Harvest::with([
             'plotPlanting.grapeVariety',
             'plotPlanting.plot',
-            'activity.viticulturist',
-            'activity.campaign',
+            'batch.viticulturist',
             'container',
-        ])->whereHas('activity', fn(Builder $q) =>
-            $q->whereIn('viticulturist_id', $viticulturistIds)
-              ->whereIn('campaign_id', $campaignIds)
-        );
+        ])->where('winery_id', $wineryId);
 
         if ($request->campaign) {
-            $query->whereHas('activity', fn(Builder $q) =>
+            $query->whereHas('batch', fn(Builder $q) =>
                 $q->where('campaign_id', $request->campaign)
             );
         }
 
         if ($request->viticulturist) {
-            $query->whereHas('activity', fn(Builder $q) =>
+            $query->whereHas('batch', fn(Builder $q) =>
                 $q->where('viticulturist_id', $request->viticulturist)
             );
         }

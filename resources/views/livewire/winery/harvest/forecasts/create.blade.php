@@ -45,7 +45,7 @@
                     </flux:field>
                 </div>
 
-                {{-- Panel de referencia: PAC + aforo viticultor --}}
+                {{-- Panel de referencia: PAC + aforo viticultor + ya recibido --}}
                 @if($plot_planting_id)
                     <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
 
@@ -95,6 +95,34 @@
                         @endif
 
                     </div>
+
+                    {{-- Alerta: ya hay recepciones registradas --}}
+                    @if($receivedKg !== null && $receivedKg > 0)
+                        @php
+                            $pctVsPac      = ($pacLimit && $pacLimit > 0) ? round(($receivedKg / $pacLimit) * 100, 1) : null;
+                            $alreadyOver   = $pacLimit !== null && $receivedKg > $pacLimit;
+                        @endphp
+                        <div class="mt-3 p-4 rounded-xl border {{ $alreadyOver ? 'bg-red-50 border-red-300' : 'bg-amber-50 border-amber-300' }}">
+                            <div class="flex items-start gap-3">
+                                <flux:icon icon="{{ $alreadyOver ? 'exclamation-triangle' : 'information-circle' }}"
+                                    class="size-5 shrink-0 mt-0.5 {{ $alreadyOver ? 'text-red-500' : 'text-amber-500' }}" />
+                                <div class="flex-1 text-sm">
+                                    <p class="font-semibold {{ $alreadyOver ? 'text-red-700' : 'text-amber-700' }}">
+                                        {{ $alreadyOver ? 'Límite PAC ya superado' : 'Esta plantación ya tiene recepciones' }}
+                                    </p>
+                                    <p class="{{ $alreadyOver ? 'text-red-600' : 'text-amber-600' }} mt-0.5">
+                                        Kg ya recibidos: <strong>{{ number_format($receivedKg, 0) }} kg</strong>
+                                        @if($pctVsPac !== null)
+                                            — {{ $pctVsPac }}% del límite PAC
+                                        @endif
+                                    </p>
+                                    <p class="text-xs {{ $alreadyOver ? 'text-red-400' : 'text-amber-400' }} mt-1">
+                                        La previsión que crees ahora se usará como referencia retroactiva en el Cuadro de Mando.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @endif
             </x-agro.form-section>
 

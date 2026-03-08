@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Harvest\Forecasts;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
+use App\Models\GrapeReceptionBatch;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\WineryViticulturist;
@@ -39,6 +40,9 @@ class Create extends Component
     public ?float  $viticEstimateKg     = null;
     public ?string $viticEstimateStatus = null; // 'confirmed' | 'draft' | null
 
+    // Kg ya recibidos para esta plantación+campaña
+    public ?float $receivedKg = null;
+
     public function mount(): void
     {
         $this->estimation_date = now()->format('Y-m-d');
@@ -59,6 +63,7 @@ class Create extends Component
         $this->pacLimit         = null;
         $this->viticEstimateKg  = null;
         $this->viticEstimateStatus = null;
+        $this->receivedKg       = null;
         $this->loadPlots();
     }
 
@@ -68,6 +73,7 @@ class Create extends Component
         $this->pacLimit            = null;
         $this->viticEstimateKg     = null;
         $this->viticEstimateStatus = null;
+        $this->receivedKg          = null;
         $this->loadPlantings();
     }
 
@@ -117,6 +123,7 @@ class Create extends Component
     {
         $this->viticEstimateKg     = null;
         $this->viticEstimateStatus = null;
+        $this->receivedKg          = null;
 
         if (!$this->plot_planting_id || !$this->vintage_year) {
             $this->pacLimit = null;
@@ -149,6 +156,15 @@ class Create extends Component
         if ($viticEstimate) {
             $this->viticEstimateKg     = (float) $viticEstimate->estimated_total_yield;
             $this->viticEstimateStatus = $viticEstimate->status;
+        }
+
+        // Kg ya recibidos para esta plantación + campaña
+        if ($this->campaign_id) {
+            $batch = GrapeReceptionBatch::where('winery_id', Auth::id())
+                ->where('plot_planting_id', $this->plot_planting_id)
+                ->where('campaign_id', $this->campaign_id)
+                ->first();
+            $this->receivedKg = $batch ? (float) $batch->total_weight_kg : 0;
         }
     }
 

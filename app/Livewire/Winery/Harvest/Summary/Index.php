@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Summary;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
 use App\Models\GrapeReceptionBatch;
@@ -14,6 +15,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
+    use WithToastNotifications;
     public string $search              = '';
     public string $campaignFilter      = '';
     public string $viticulturistFilter = '';
@@ -45,6 +47,20 @@ class Index extends Component
     public function updatingViticulturistFilter(): void { }
     public function updatingVarietyFilter(): void       { }
     public function updatingAlertFilter(): void         { }
+
+    public function closeBatch(int $batchId): void
+    {
+        $batch = GrapeReceptionBatch::where('winery_id', Auth::id())->findOrFail($batchId);
+        $batch->update(['status' => 'closed']);
+        $this->toastSuccess('Lote cerrado. No se podrán añadir más recepciones.');
+    }
+
+    public function reopenBatch(int $batchId): void
+    {
+        $batch = GrapeReceptionBatch::where('winery_id', Auth::id())->findOrFail($batchId);
+        $batch->update(['status' => 'open']);
+        $this->toastSuccess('Lote reabierto.');
+    }
 
     public function render()
     {
@@ -169,6 +185,7 @@ class Index extends Component
                 'exceeded'         => $exceeded,
                 'exceeded_pac'     => $exceededPac,
                 'at_risk'          => $atRisk,
+                'batch_id'         => $batch?->id,
                 'batch_status'     => $batch?->status,
             ];
         })
@@ -216,6 +233,30 @@ class Index extends Component
         // Variedades únicas para filtro
         $varieties = $allRows->pluck('variety')->unique()->sort()->values();
 
+        // ── Histórico multi-añada (para sección de tendencia) ─────────────────
+        $historicalBatches = GrapeReceptionBatch::where('winery_id', $wineryId)
+            ->with(['viticulturist:id,name', 'plotPlanting.grapeVariety'])
+            ->whereIn('viticulturist_id', $viticulturistIds)
+            ->orderBy('vintage_year')
+            ->get();
+
+        $historicalYears = $historicalBatches->pluck('vintage_year')->unique()->sort()->values();
+
+        $historicalRows = $historicalBatches
+            ->groupBy(fn($b) => $b->viticulturist_id . '_' . $b->plot_planting_id)
+            ->map(function ($batches) use ($historicalYears) {
+                $first = $batches->first();
+                $byYear = $batches->keyBy('vintage_year');
+                return [
+                    'viticulturist_name' => $first->viticulturist?->name ?? '—',
+                    'variety'            => $first->plotPlanting?->grapeVariety?->name ?? '—',
+                    'years'              => $historicalYears->mapWithKeys(
+                        fn($y) => [$y => (float) ($byYear->get($y)?->total_weight_kg ?? 0)]
+                    ),
+                ];
+            })
+            ->values();
+
         return view('livewire.winery.harvest.summary.index', [
             'rows'                 => $rows,
             'stats'                => $stats,
@@ -224,6 +265,8 @@ class Index extends Component
             'varieties'            => $varieties,
             'campaign'             => $campaign,
             'vintageYear'          => $vintageYear,
+            'historicalYears'      => $historicalYears,
+            'historicalRows'       => $historicalRows,
         ])->layout('layouts.app');
     }
 }
