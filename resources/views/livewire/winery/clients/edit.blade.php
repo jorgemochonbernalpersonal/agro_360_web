@@ -92,6 +92,22 @@
                 </div>
             </x-agro.form-section>
 
+            <x-agro.form-section title="CAE">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-center">
+                        <flux:checkbox wire:model.live="has_cae" id="has_cae" />
+                        <flux:label for="has_cae" class="ml-2">Tiene CAE</flux:label>
+                    </div>
+                    @if($has_cae)
+                        <flux:field>
+                            <flux:label>Número CAE</flux:label>
+                            <flux:input wire:model="cae_number" id="cae_number" />
+                            <flux:error name="cae_number" />
+                        </flux:field>
+                    @endif
+                </div>
+            </x-agro.form-section>
+
             <x-agro.form-actions :cancel-url="route('winery.clients.index')" submit-label="Guardar Cambios" />
         </form>
     </x-agro.form-card>

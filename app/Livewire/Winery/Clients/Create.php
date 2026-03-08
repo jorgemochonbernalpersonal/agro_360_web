@@ -26,6 +26,8 @@ class Create extends Component
     public float  $default_discount    = 0;
     public string $payment_method      = '';
     public string $account_number      = '';
+    public bool   $has_cae             = false;
+    public string $cae_number          = '';
     public string $notes               = '';
 
     public array $addresses = [];
@@ -130,6 +132,8 @@ class Create extends Component
             'default_discount' => 'nullable|numeric|min:0|max:100',
             'payment_method'   => 'nullable|in:cash,transfer,check,other',
             'account_number'   => 'nullable|string|max:50',
+            'has_cae'          => 'boolean',
+            'cae_number'       => 'nullable|string|max:255',
             'notes'            => 'nullable|string',
 
             'addresses'                              => 'required|array|min:1',
@@ -173,6 +177,8 @@ class Create extends Component
                     'default_discount'    => $this->default_discount,
                     'payment_method'      => $this->payment_method ?: null,
                     'account_number'      => $this->account_number ?: null,
+                    'has_cae'             => $this->has_cae,
+                    'cae_number'          => $this->has_cae ? ($this->cae_number ?: null) : null,
                     'notes'               => $this->notes ?: null,
                     'active'              => true,
                 ]);

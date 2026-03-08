@@ -2,38 +2,55 @@
 
 namespace App\Livewire\Winery\Clients;
 
-use App\Livewire\Winery\AbstractIndex;
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+use Livewire\WithPagination;
 
-class Index extends AbstractIndex
+class Index extends Component
 {
-    public string $search       = '';
-    public string $typeFilter   = '';
-    public string $statusFilter = 'active';
+    use WithPagination, WithToastNotifications;
+
+    public string $currentTab  = 'active';
+    public string $search      = '';
+    public string $filterType  = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
-        'statusFilter' => ['except' => 'active'],
+        'currentTab' => ['as' => 'tab', 'except' => 'active'],
+        'search'     => ['except' => ''],
+        'filterType' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void       { $this->resetPage(); }
-    public function updatingTypeFilter(): void   { $this->resetPage(); }
-    public function updatingStatusFilter(): void { $this->resetPage(); }
-
-    protected function filterDefaults(): array
+    public function switchTab(string $tab): void
     {
-        return ['search' => '', 'typeFilter' => '', 'statusFilter' => 'active'];
+        $this->currentTab = $tab;
+        $this->resetPage();
+    }
+
+    public function updatingSearch(): void     { $this->resetPage(); }
+    public function updatingFilterType(): void { $this->resetPage(); }
+
+    public function clearFilters(): void
+    {
+        $this->search     = '';
+        $this->filterType = '';
+        $this->resetPage();
     }
 
     public function toggleActive(int $clientId): void
     {
         $client = Client::where('user_id', Auth::id())->findOrFail($clientId);
-        $client->update(['active' => !$client->active]);
-        $label = $client->active ? 'reactivado' : 'desactivado';
-        $this->toastSuccess("Cliente «{$client->full_name}» {$label}.");
+        $newState = !$client->active;
+        $client->update(['active' => $newState]);
+
+        if ($newState) {
+            $this->toastSuccess('Cliente activado correctamente.');
+            if ($this->currentTab === 'inactive') $this->currentTab = 'active';
+        } else {
+            $this->toastSuccess('Cliente desactivado correctamente.');
+            if ($this->currentTab === 'active') $this->currentTab = 'inactive';
+        }
     }
 
     public function delete(int $clientId): void
@@ -51,45 +68,46 @@ class Index extends AbstractIndex
         $this->toastSuccess('Cliente eliminado.');
     }
 
-    protected function baseQuery(): Builder
+    public function render()
     {
-        return Client::where('user_id', $this->wineryId());
-    }
+        $userId = Auth::id();
 
-    protected function applyFilters(Builder $query): void
-    {
+        $query = Client::where('user_id', $userId)
+            ->with(['addresses.municipality', 'addresses.province', 'invoices']);
+
+        if ($this->filterType) {
+            $query->where('client_type', $this->filterType);
+        }
+
+        if ($this->currentTab === 'active') {
+            $query->where('active', true);
+        } elseif ($this->currentTab === 'inactive') {
+            $query->where('active', false);
+        }
+
         if ($this->search) {
-            $term = '%' . mb_strtolower($this->search) . '%';
+            $term = '%' . $this->search . '%';
             $query->where(function ($q) use ($term) {
-                $q->whereRaw('LOWER(IFNULL(first_name,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(last_name,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(company_name,\'\')) LIKE ?', [$term])
-                  ->orWhereRaw('LOWER(IFNULL(email,\'\')) LIKE ?', [$term]);
+                $q->where('first_name', 'like', $term)
+                  ->orWhere('last_name', 'like', $term)
+                  ->orWhere('company_name', 'like', $term)
+                  ->orWhere('email', 'like', $term)
+                  ->orWhere('phone', 'like', $term)
+                  ->orWhere('company_document', 'like', $term)
+                  ->orWhere('particular_document', 'like', $term);
             });
         }
 
-        if ($this->typeFilter) {
-            $query->where('client_type', $this->typeFilter);
-        }
+        $clients = $query->orderBy('created_at', 'desc')->paginate(12);
 
-        match ($this->statusFilter) {
-            'active'   => $query->where('active', true),
-            'inactive' => $query->where('active', false),
-            default    => null,
-        };
-    }
+        $stats = [
+            'active'   => Client::where('user_id', $userId)->where('active', true)->count(),
+            'inactive' => Client::where('user_id', $userId)->where('active', false)->count(),
+        ];
 
-    protected function applyOrderBy(Builder $query): void
-    {
-        $query->orderBy('first_name')->orderBy('company_name');
-    }
-
-    protected function defaultOrderBy(): array { return ['first_name', 'asc']; }
-
-    protected function perPage(): int { return 15; }
-
-    protected function viewData(mixed $entries): array
-    {
-        return ['clients' => $entries];
+        return view('livewire.winery.clients.index', [
+            'clients' => $clients,
+            'stats'   => $stats,
+        ])->layout('layouts.app');
     }
 }

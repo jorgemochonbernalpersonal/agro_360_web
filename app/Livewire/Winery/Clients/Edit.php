@@ -23,6 +23,8 @@ class Edit extends Component
     public string $particular_document  = '';
     public string $payment_method       = '';
     public string $account_number       = '';
+    public bool   $has_cae              = false;
+    public string $cae_number           = '';
     public string $notes                = '';
 
     public function mount(Client $client): void
@@ -40,6 +42,8 @@ class Edit extends Component
         $this->particular_document = $client->particular_document ?? '';
         $this->payment_method      = $client->payment_method ?? '';
         $this->account_number      = $client->account_number ?? '';
+        $this->has_cae             = (bool) ($client->has_cae ?? false);
+        $this->cae_number          = $client->cae_number ?? '';
         $this->notes               = $client->notes ?? '';
     }
 
@@ -51,6 +55,8 @@ class Edit extends Component
             'phone'          => 'nullable|string|max:30',
             'payment_method' => 'nullable|in:cash,transfer,check,other',
             'account_number' => 'nullable|string|max:50',
+            'has_cae'        => 'boolean',
+            'cae_number'     => 'nullable|string|max:255',
             'notes'          => 'nullable|string',
         ];
 
@@ -81,6 +87,8 @@ class Edit extends Component
             'phone'               => $data['phone'] ?: null,
             'payment_method'      => $data['payment_method'] ?: null,
             'account_number'      => $data['account_number'] ?: null,
+            'has_cae'             => $this->has_cae,
+            'cae_number'          => $this->has_cae ? ($this->cae_number ?: null) : null,
             'notes'               => $data['notes'] ?: null,
         ]);
 
