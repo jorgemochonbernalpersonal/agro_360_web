@@ -307,47 +307,6 @@
                     </div>
                 </div>
 
-                {{-- Totales generales --}}
-                @php
-                    $grandSub  = 0; $grandDisc = 0; $grandTax = 0;
-                    foreach ($items as $item) {
-                        $s = (float)($item['quantity'] ?? 0) * (float)($item['unit_price'] ?? 0);
-                        $d = $s * ((float)($item['discount_percentage'] ?? 0) / 100);
-                        $b = $s - $d;
-                        $t = $item['tax_id'] ? $availableTaxes->firstWhere('id', $item['tax_id']) : null;
-                        $grandSub  += $s;
-                        $grandDisc += $d;
-                        $grandTax  += $b * ((float)($t?->rate ?? 0) / 100);
-                    }
-                    $grandBase  = $grandSub - $grandDisc;
-                    $grandTotal = $grandBase + $grandTax;
-                @endphp
-                <div class="flex justify-end mt-6">
-                    <div class="w-72 bg-zinc-50 rounded-lg p-4 space-y-2 text-sm border border-zinc-200">
-                        <div class="flex justify-between">
-                            <span class="text-zinc-500">Subtotal:</span>
-                            <span class="font-medium">{{ number_format($grandSub, 2) }} €</span>
-                        </div>
-                        @if ($grandDisc > 0)
-                            <div class="flex justify-between">
-                                <span class="text-zinc-500">Descuento:</span>
-                                <span class="font-medium text-red-600">-{{ number_format($grandDisc, 2) }} €</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-zinc-500">Base imponible:</span>
-                                <span class="font-medium">{{ number_format($grandBase, 2) }} €</span>
-                            </div>
-                        @endif
-                        <div class="flex justify-between">
-                            <span class="text-zinc-500">IVA:</span>
-                            <span class="font-medium">{{ number_format($grandTax, 2) }} €</span>
-                        </div>
-                        <div class="flex justify-between font-bold text-base border-t border-zinc-300 pt-2 mt-2">
-                            <span>Total:</span>
-                            <span class="text-green-700">{{ number_format($grandTotal, 2) }} €</span>
-                        </div>
-                    </div>
-                </div>
             </x-agro.form-section>
 
             {{-- Observaciones --}}

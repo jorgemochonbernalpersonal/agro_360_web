@@ -304,29 +304,6 @@
                     @endif
                 </div>
 
-                {{-- Totales generales --}}
-                <div class="flex justify-end mt-6">
-                    <div class="w-72 bg-zinc-50 rounded-lg p-4 space-y-2 text-sm border border-zinc-200">
-                        <div class="flex justify-between">
-                            <span class="text-zinc-500">Subtotal:</span>
-                            <span class="font-medium">{{ number_format($this->subtotal, 2) }} €</span>
-                        </div>
-                        @if ($this->discountAmount > 0)
-                            <div class="flex justify-between">
-                                <span class="text-zinc-500">Descuento:</span>
-                                <span class="font-medium text-red-600">-{{ number_format($this->discountAmount, 2) }} €</span>
-                            </div>
-                        @endif
-                        <div class="flex justify-between">
-                            <span class="text-zinc-500">IVA:</span>
-                            <span class="font-medium">{{ number_format($this->taxAmount, 2) }} €</span>
-                        </div>
-                        <div class="flex justify-between font-bold text-base border-t border-zinc-300 pt-2 mt-2">
-                            <span>Total:</span>
-                            <span class="text-green-700">{{ number_format($this->totalAmount, 2) }} €</span>
-                        </div>
-                    </div>
-                </div>
             </x-agro.form-section>
 
             {{-- Observaciones --}}
