@@ -110,7 +110,7 @@ class ContentController extends Controller
             'challenge'   => 'Control de rendimientos para producción de vinos generosos (Fino, Amontillado, Oloroso) y cumplimiento del sistema de envejecimiento biológico en soleras y criaderas.',
             'rendimiento' => '80 hl/ha',
             'keywords'    => 'software viticultores jerez, cuaderno campo jerez, palomino fino jerez, vinos generosos DO jerez',
-            'description' => 'Software para viticultores de DO Jerez. Gestión de Palomino Fino, Pedro Ximénez y Moscatel. Cuaderno de campo digital y cumplimiento del Consejo Regulador de Jerez.',
+            'description' => 'Software para viticultores de DO Jerez. Gestión de Palomino Fino, Pedro Ximénez y Moscatel. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento del Consejo Regulador de Jerez.',
         ],
         'software-viticultores-cava' => [
             'name'        => 'DO Cava',
@@ -126,7 +126,7 @@ class ContentController extends Controller
             'challenge'   => 'Trazabilidad de la segunda fermentación en botella y cumplimiento de los tiempos mínimos de crianza sobre lías (9 meses joven, 18 meses reserva, 30 meses gran reserva).',
             'rendimiento' => '12.000 kg/ha',
             'keywords'    => 'software viticultores cava, cuaderno campo cava, macabeo xarelo parellada, DO cava penedes',
-            'description' => 'Software para viticultores de DO Cava. Gestión de Macabeo, Xarel·lo y Parellada. Trazabilidad completa y cumplimiento del Consejo Regulador del Cava.',
+            'description' => 'Software para viticultores de DO Cava. Gestión de Macabeo, Xarel·lo y Parellada. Cuaderno digital, teledetección NDVI, Verifactu y trazabilidad de la segunda fermentación en botella.',
         ],
         'software-viticultores-valdepenas' => [
             'name'        => 'DO Valdepeñas',
@@ -142,7 +142,7 @@ class ContentController extends Controller
             'challenge'   => 'Gestión de heladas tardías de primavera sobre Cencibel y control del estrés hídrico en verano, con parcelas mayoritariamente en secano en suelos arcillo-calcáreos.',
             'rendimiento' => '10.000 kg/ha tintas · 12.000 kg/ha blancas',
             'keywords'    => 'software viticultores valdepeñas, cuaderno campo valdepeñas, cencibel valdepeñas, DO valdepeñas ciudad real',
-            'description' => 'Software para viticultores de DO Valdepeñas. Gestión de Cencibel y Airén en Ciudad Real. Cuaderno de campo digital y cumplimiento normativo.',
+            'description' => 'Software para viticultores de DO Valdepeñas. Gestión de Cencibel y Airén en Ciudad Real. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento normativo.',
         ],
         'software-viticultores-navarra' => [
             'name'        => 'DO Navarra',
@@ -158,7 +158,7 @@ class ContentController extends Controller
             'challenge'   => 'Enorme diversidad de zonas (Baja Montaña, Valdizarbe, Tierra Estella, Ribera Alta, Ribera Baja) con regímenes climáticos distintos que requieren gestión diferenciada por parcela.',
             'rendimiento' => '10.000 kg/ha tintas · 12.000 kg/ha blancas',
             'keywords'    => 'software viticultores navarra, cuaderno campo navarra, garnacha navarra, DO navarra',
-            'description' => 'Software para viticultores de DO Navarra. Gestión de Garnacha, Tempranillo y Moscatel. Cuaderno de campo digital adaptado a las cinco zonas navarras.',
+            'description' => 'Software para viticultores de DO Navarra. Gestión de Garnacha, Tempranillo y Moscatel. Cuaderno digital, teledetección NDVI, Verifactu y gestión adaptada a las cinco zonas navarras.',
         ],
         'software-viticultores-somontano' => [
             'name'        => 'DO Somontano',
@@ -174,7 +174,7 @@ class ContentController extends Controller
             'challenge'   => 'Gestión de la diversidad varietal (variedades internacionales + autóctonas Moristel y Parraleta) y adaptación a los cambios de temperatura altitudinales entre parcelas.',
             'rendimiento' => '9.000 kg/ha tintas · 10.000 kg/ha blancas',
             'keywords'    => 'software viticultores somontano, cuaderno campo somontano, cabernet somontano, DO somontano huesca',
-            'description' => 'Software para viticultores de DO Somontano. Gestión de variedades internacionales y autóctonas en Huesca. Cuaderno de campo digital y cumplimiento normativo.',
+            'description' => 'Software para viticultores de DO Somontano. Gestión de variedades internacionales y autóctonas en Huesca. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento normativo.',
         ],
         'software-viticultores-utiel-requena' => [
             'name'        => 'DO Utiel-Requena',
@@ -190,7 +190,7 @@ class ContentController extends Controller
             'challenge'   => 'Optimización de la variedad Bobal, tardía en maduración y sensible al mildiu, en parcelas de alta altitud con ciclos térmicos día-noche muy marcados.',
             'rendimiento' => '10.000 kg/ha',
             'keywords'    => 'software viticultores utiel requena, cuaderno campo utiel requena, bobal utiel, DO utiel-requena valencia',
-            'description' => 'Software para viticultores de DO Utiel-Requena. Especializado en Bobal, la variedad estrella valenciana. Cuaderno de campo digital y gestión PAC.',
+            'description' => 'Software para viticultores de DO Utiel-Requena. Especializado en Bobal, la variedad estrella valenciana. Cuaderno digital, teledetección NDVI, Verifactu y gestión PAC.',
         ],
         'software-viticultores-yecla' => [
             'name'        => 'DO Yecla',
@@ -206,7 +206,7 @@ class ContentController extends Controller
             'challenge'   => 'Gestión del Monastrell en condiciones de extrema aridez y temperaturas elevadas, con control riguroso de tratamientos en el marco de prácticas de agricultura sostenible.',
             'rendimiento' => '7.000 kg/ha tintas · 10.000 kg/ha blancas',
             'keywords'    => 'software viticultores yecla, cuaderno campo yecla, monastrell yecla, DO yecla murcia',
-            'description' => 'Software para viticultores de DO Yecla. Especializado en Monastrell en Murcia. Cuaderno de campo digital, PAC y cumplimiento del Consejo Regulador de Yecla.',
+            'description' => 'Software para viticultores de DO Yecla. Especializado en Monastrell en Murcia. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento del Consejo Regulador de Yecla.',
         ],
         'software-viticultores-bullas' => [
             'name'        => 'DO Bullas',
@@ -222,7 +222,7 @@ class ContentController extends Controller
             'challenge'   => 'La variedad Monastrell requiere control estricto de los tratamientos fitosanitarios y del estrés hídrico. La altitud alarga el ciclo vegetativo, retrasando la vendimia.',
             'rendimiento' => '7.000 kg/ha',
             'keywords'    => 'software viticultores bullas, cuaderno campo bullas, monastrell bullas, DO bullas murcia',
-            'description' => 'Software para viticultores de DO Bullas. Gestión de Monastrell en alta altitud en Murcia. Cuaderno de campo digital y cumplimiento normativo DO Bullas.',
+            'description' => 'Software para viticultores de DO Bullas. Gestión de Monastrell en alta altitud en Murcia. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento normativo DO Bullas.',
         ],
         'software-viticultores-monterrei' => [
             'name'        => 'DO Monterrei',
@@ -238,7 +238,7 @@ class ContentController extends Controller
             'challenge'   => 'La humedad atlántica en primavera favorece el mildiu y la botritis. La gestión preventiva de fitosanitarios es crítica, especialmente en las variedades tintas.',
             'rendimiento' => '10.000 kg/ha blancas · 8.000 kg/ha tintas',
             'keywords'    => 'software viticultores monterrei, cuaderno campo monterrei, mencía monterrei, godello ourense, DO monterrei',
-            'description' => 'Software para viticultores de DO Monterrei. Gestión de Mencía y Godello en Ourense. Cuaderno de campo digital y control fitosanitario adaptado al clima gallego.',
+            'description' => 'Software para viticultores de DO Monterrei. Gestión de Mencía y Godello en Ourense. Cuaderno digital, teledetección NDVI, Verifactu y control fitosanitario para el clima atlántico gallego.',
         ],
         'software-viticultores-bierzo' => [
             'name'        => 'DO Bierzo',
@@ -254,7 +254,7 @@ class ContentController extends Controller
             'challenge'   => 'Gestión de viñas viejas de Mencía en ladera (vendimia manual, baja mecanización) y control de la humedad en zonas bajas para evitar botritis en racimos.',
             'rendimiento' => '8.000 kg/ha tintas · 10.500 kg/ha blancas',
             'keywords'    => 'software viticultores bierzo, cuaderno campo bierzo, mencía bierzo, godello bierzo, DO bierzo',
-            'description' => 'Software para viticultores de DO Bierzo. Especializado en Mencía y Godello en León. Cuaderno de campo digital adaptado a viñas en ladera y parcelas SIGPAC.',
+            'description' => 'Software para viticultores de DO Bierzo. Especializado en Mencía y Godello en León. Cuaderno digital, teledetección NDVI, Verifactu y gestión de parcelas SIGPAC en ladera.',
         ],
         'software-viticultores-ribeiro' => [
             'name'        => 'DO Ribeiro',
@@ -270,7 +270,7 @@ class ContentController extends Controller
             'challenge'   => 'Minifundismo extremo (parcelas muy pequeñas) y alta humedad primaveral que favorece el mildiu y la podredumbre. Gestión de muchas parcelas dispersas con cuaderno digital.',
             'rendimiento' => '11.000 kg/ha blancas · 9.000 kg/ha tintas',
             'keywords'    => 'software viticultores ribeiro, cuaderno campo ribeiro, treixadura ribeiro, DO ribeiro ourense',
-            'description' => 'Software para viticultores de DO Ribeiro. Gestión de Treixadura, Torrontés y Godello en Ourense. Cuaderno de campo digital para múltiples parcelas dispersas.',
+            'description' => 'Software para viticultores de DO Ribeiro. Gestión de Treixadura, Torrontés y Godello en Ourense. Cuaderno digital, teledetección NDVI, Verifactu y gestión de minifundios dispersos.',
         ],
         'software-viticultores-cigales' => [
             'name'        => 'DO Cigales',
@@ -286,7 +286,7 @@ class ContentController extends Controller
             'challenge'   => 'Las heladas tardías de mayo en la meseta castellana son el principal riesgo para el Tinto Fino. Control de los rendimientos para mantener la calidad característica de los rosados de Cigales.',
             'rendimiento' => '9.000 kg/ha',
             'keywords'    => 'software viticultores cigales, cuaderno campo cigales, tinto fino cigales, rosados cigales, DO cigales valladolid',
-            'description' => 'Software para viticultores de DO Cigales. Gestión de Tinto Fino en Valladolid y Palencia. Cuaderno de campo digital y control de rendimientos.',
+            'description' => 'Software para viticultores de DO Cigales. Gestión de Tinto Fino en Valladolid y Palencia. Cuaderno digital, teledetección NDVI, Verifactu y control de rendimientos.',
         ],
         'software-viticultores-calatayud' => [
             'name'        => 'DO Calatayud',
@@ -302,7 +302,7 @@ class ContentController extends Controller
             'challenge'   => 'Viñas viejas de Garnacha (muchas superiores a 50 años) con rendimientos muy bajos. El Cierzo puede provocar daños mecánicos en los brotes jóvenes durante la primavera.',
             'rendimiento' => '8.000 kg/ha tintas · 10.000 kg/ha blancas',
             'keywords'    => 'software viticultores calatayud, cuaderno campo calatayud, garnacha calatayud, DO calatayud zaragoza',
-            'description' => 'Software para viticultores de DO Calatayud. Gestión de Garnacha en viñas viejas de Zaragoza. Cuaderno de campo digital y control de rendimientos.',
+            'description' => 'Software para viticultores de DO Calatayud. Gestión de Garnacha en viñas viejas de Zaragoza. Cuaderno digital, teledetección NDVI, Verifactu y control de rendimientos.',
         ],
         'software-viticultores-campo-de-borja' => [
             'name'        => 'DO Campo de Borja',
@@ -318,7 +318,7 @@ class ContentController extends Controller
             'challenge'   => 'El Cierzo puede dañar los brotes en brotación y provocar desecación de racimos en maduración. Gestión preventiva clave para proteger la Garnacha en sus diferentes altitudes.',
             'rendimiento' => '9.000 kg/ha tintas · 11.000 kg/ha blancas',
             'keywords'    => 'software viticultores campo de borja, cuaderno campo borja, garnacha campo borja, DO campo de borja zaragoza',
-            'description' => 'Software para viticultores de DO Campo de Borja. Gestión de Garnacha en Zaragoza. Cuaderno de campo digital y control normativo del Consejo Regulador.',
+            'description' => 'Software para viticultores de DO Campo de Borja. Gestión de Garnacha en Zaragoza. Cuaderno digital, teledetección NDVI, Verifactu y control normativo del Consejo Regulador.',
         ],
         'software-viticultores-carinena' => [
             'name'        => 'DO Cariñena',
@@ -334,7 +334,7 @@ class ContentController extends Controller
             'challenge'   => 'Recuperación y conservación de la variedad autóctona Cariñena (Mazuela), muy sensible al oidio, junto con la gestión de altas temperaturas estivales que pueden acelerar la maduración.',
             'rendimiento' => '10.000 kg/ha tintas · 12.000 kg/ha blancas',
             'keywords'    => 'software viticultores cariñena, cuaderno campo cariñena, garnacha cariñena, mazuela zaragoza, DO cariñena',
-            'description' => 'Software para viticultores de DO Cariñena. Gestión de Garnacha y Cariñena en Zaragoza. Cuaderno de campo digital y cumplimiento del Consejo Regulador.',
+            'description' => 'Software para viticultores de DO Cariñena. Gestión de Garnacha y Cariñena en Zaragoza. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento del Consejo Regulador.',
         ],
         'software-viticultores-malaga' => [
             'name'        => 'DO Málaga',
@@ -350,7 +350,7 @@ class ContentController extends Controller
             'challenge'   => 'La producción de pasas (uva sobremadurada para Pedro Ximénez) requiere control preciso del ciclo de maduración y gestión del soleo. Las parcelas en ladera dificultan la mecanización.',
             'rendimiento' => '8.000 kg/ha',
             'keywords'    => 'software viticultores málaga, cuaderno campo málaga, pedro ximénez málaga, moscatel málaga, DO málaga axarquía',
-            'description' => 'Software para viticultores de DO Málaga. Gestión de Pedro Ximénez y Moscatel en la Axarquía malagueña. Cuaderno de campo digital y trazabilidad.',
+            'description' => 'Software para viticultores de DO Málaga. Gestión de Pedro Ximénez y Moscatel en la Axarquía malagueña. Cuaderno digital, teledetección NDVI, Verifactu y trazabilidad para vinos generosos.',
         ],
         'software-viticultores-montilla-moriles' => [
             'name'        => 'DO Montilla-Moriles',
@@ -366,7 +366,7 @@ class ContentController extends Controller
             'challenge'   => 'El Pedro Ximénez acumula azúcares muy rápidamente en verano. El timing de vendimia es crítico: días de diferencia pueden cambiar el destino de la uva (vino joven vs. generoso).',
             'rendimiento' => '11.000 kg/ha',
             'keywords'    => 'software viticultores montilla moriles, cuaderno campo montilla, pedro ximénez montilla, DO montilla-moriles córdoba',
-            'description' => 'Software para viticultores de DO Montilla-Moriles. Gestión de Pedro Ximénez en Córdoba. Cuaderno de campo digital y control de vendimia para vinos generosos.',
+            'description' => 'Software para viticultores de DO Montilla-Moriles. Gestión de Pedro Ximénez en Córdoba. Cuaderno digital, teledetección NDVI, Verifactu y control de vendimia para vinos generosos.',
         ],
         'software-viticultores-terra-alta' => [
             'name'        => 'DO Terra Alta',
@@ -382,7 +382,7 @@ class ContentController extends Controller
             'challenge'   => 'La Garnacha Blanca, variedad insignia de la DO, es sensible a la oxidación. Gestión de la maduración precisa y control de temperatura en depósito son claves para su calidad.',
             'rendimiento' => '10.000 kg/ha blancas · 8.000 kg/ha tintas',
             'keywords'    => 'software viticultores terra alta, cuaderno campo terra alta, garnacha blanca terra alta, DO terra alta tarragona',
-            'description' => 'Software para viticultores de DO Terra Alta. Gestión de Garnacha Blanca y Garnacha Tinta en Tarragona. Cuaderno de campo digital y cumplimiento normativo.',
+            'description' => 'Software para viticultores de DO Terra Alta. Gestión de Garnacha Blanca y Garnacha Tinta en Tarragona. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento normativo.',
         ],
         'software-viticultores-costers-del-segre' => [
             'name'        => 'DO Costers del Segre',
@@ -398,7 +398,7 @@ class ContentController extends Controller
             'challenge'   => 'La escasez hídrica es el principal limitante. La mayoría de viñedos requieren riego de apoyo con concesiones controladas. Gestión eficiente del agua y registro obligatorio de riegos.',
             'rendimiento' => '10.000 kg/ha',
             'keywords'    => 'software viticultores costers del segre, cuaderno campo lleida, cabernet lleida, DO costers del segre',
-            'description' => 'Software para viticultores de DO Costers del Segre. Gestión de variedades en Lleida. Cuaderno de campo digital y control de riego en la DO más árida de Cataluña.',
+            'description' => 'Software para viticultores de DO Costers del Segre. Gestión de variedades en Lleida. Cuaderno digital, teledetección NDVI, Verifactu y control de riego en la DO más árida de Cataluña.',
         ],
     ];
 

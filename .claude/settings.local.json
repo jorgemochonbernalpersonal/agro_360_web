@@ -49,7 +49,8 @@
       "Bash(test:*)",
       "Bash(mv:*)",
       "Bash(set SEED_USER_ID=1:*)",
-      "Bash(composer show:*)"
+      "Bash(composer show:*)",
+      "Bash(python:*)"
     ]
   }
 }

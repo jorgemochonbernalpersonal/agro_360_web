@@ -189,8 +189,57 @@
                 </section>
             </article>
 
+            <!-- Internal linking: Funcionalidades relacionadas -->
+            <div class="mt-16 pt-12 border-t border-gray-200">
+                <h2 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-6">Funcionalidades relacionadas</h2>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <a href="{{ content_route('content.ndvi-viñedo-teledeteccion') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
+                        <span class="text-2xl">🛰️</span>
+                        <div>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Teledetección NDVI</p>
+                            <p class="text-sm text-gray-500">Vigor vegetativo e índice de salud de tus parcelas desde satélite</p>
+                        </div>
+                    </a>
+                    <a href="{{ content_route('content.facturacion-agricola') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
+                        <span class="text-2xl">🧾</span>
+                        <div>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Facturación Verifactu</p>
+                            <p class="text-sm text-gray-500">Facturas de cosecha certificadas con cumplimiento fiscal 2025</p>
+                        </div>
+                    </a>
+                    <a href="{{ content_route('content.trazabilidad-agricola') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
+                        <span class="text-2xl">🔍</span>
+                        <div>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Trazabilidad Agrícola</p>
+                            <p class="text-sm text-gray-500">De la parcela SIGPAC al producto final con trazabilidad completa</p>
+                        </div>
+                    </a>
+                    <a href="{{ content_route('content.informes-oficiales-agricultura') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
+                        <span class="text-2xl">📄</span>
+                        <div>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Informes Oficiales SHA-256</p>
+                            <p class="text-sm text-gray-500">Firma electrónica y QR de verificación para inspecciones PAC</p>
+                        </div>
+                    </a>
+                    <a href="{{ content_route('content.que-es-sigpac') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
+                        <span class="text-2xl">🗺️</span>
+                        <div>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Gestión SIGPAC</p>
+                            <p class="text-sm text-gray-500">Parcelas con códigos SIGPAC oficiales en mapa interactivo</p>
+                        </div>
+                    </a>
+                    <a href="{{ content_route('content.gestion-vendimia') }}" class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-[var(--color-agro-green)] hover:bg-green-50 transition-all group">
+                        <span class="text-2xl">🍇</span>
+                        <div>
+                            <p class="font-semibold text-gray-900 group-hover:text-[var(--color-agro-green-dark)]">Gestión de Vendimia</p>
+                            <p class="text-sm text-gray-500">Contenedores, kg por parcela, baumé y albaranes automáticos</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
             <!-- CTA Section -->
-            <div class="mt-16 pt-12 border-t border-gray-200 text-center">
+            <div class="mt-12 pt-12 border-t border-gray-200 text-center">
                 <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">
                     Cuaderno Digital Obligatorio desde 2027
                 </h2>

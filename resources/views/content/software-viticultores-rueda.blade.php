@@ -255,6 +255,20 @@
                                 Organiza el trabajo de vendimia, poda y laboreo. Asigna cuadrillas a parcelas, controla jornadas y genera partes de trabajo.
                             </p>
                         </div>
+                        <div class="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl border border-green-200">
+                            <div class="text-3xl mb-3">🛰️</div>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Teledetección NDVI</h3>
+                            <p class="text-gray-700 text-sm">
+                                Analiza el vigor vegetativo de tus parcelas con imágenes satelitales Sentinel-2. Detecta zonas de estrés hídrico o deficiencias nutricionales antes de que sean visibles a pie de viñedo.
+                            </p>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl border border-green-200">
+                            <div class="text-3xl mb-3">🧾</div>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Facturación Verifactu</h3>
+                            <p class="text-gray-700 text-sm">
+                                Genera facturas de cosecha certificadas con Verifactu integrado. Cumplimiento fiscal 2025, control de entregas a bodega y trazabilidad documental completa.
+                            </p>
+                        </div>
                     </div>
                 </section>
 
