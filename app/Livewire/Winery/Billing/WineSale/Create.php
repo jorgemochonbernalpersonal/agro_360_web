@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
+use App\Models\UserTax;
 use App\Models\WineLot;
 use App\Services\WineStockService;
 use Illuminate\Support\Facades\Auth;
@@ -27,9 +28,15 @@ class Create extends Component
     // Lines (array of rows)
     public array $lines = [];
 
+    protected float $defaultTaxRate = 0.0;
+
     public function mount(): void
     {
         $this->invoice_date = now()->toDateString();
+
+        $userTax = UserTax::where('user_id', Auth::id())->with('tax')->first();
+        $this->defaultTaxRate = $userTax?->tax?->rate ?? 0.0;
+
         $this->addLine();
     }
 
@@ -39,7 +46,7 @@ class Create extends Component
             'wine_lot_id' => '',
             'quantity'    => '',
             'unit_price'  => '',
-            'tax_rate'    => '0',
+            'tax_rate'    => (string) $this->defaultTaxRate,
             'description' => '',
         ];
     }
@@ -196,8 +203,9 @@ class Create extends Component
         $wineLots = WineLot::where('user_id', Auth::id())->where('archived', false)->orderByDesc('vintage')->orderBy('name')->get();
 
         return view('livewire.winery.billing.wine-sale.create', [
-            'clients'  => $clients,
-            'wineLots' => $wineLots,
+            'clients'        => $clients,
+            'wineLots'       => $wineLots,
+            'defaultTaxRate' => $this->defaultTaxRate,
         ])->layout('layouts.app');
     }
 }

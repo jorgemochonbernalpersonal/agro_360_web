@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\UserTax;
 use App\Models\WineLot;
 use App\Services\WineStockService;
 use Illuminate\Support\Facades\Auth;
@@ -19,12 +20,15 @@ class Edit extends Component
 
     public Invoice $invoice;
 
-    public string $client_id    = '';
-    public string $invoice_date = '';
-    public string $observations = '';
-    public string $payment_type = '';
+    public string $client_id      = '';
+    public string $invoice_date   = '';
+    public string $observations   = '';
+    public string $payment_type   = '';
+    public string $payment_status = '';
 
     public array $lines = [];
+
+    protected float $defaultTaxRate = 0.0;
 
     public function mount(int $id): void
     {
@@ -33,12 +37,16 @@ class Edit extends Component
             ->with('items.wineLot')
             ->findOrFail($id);
 
-        $this->client_id    = (string) $this->invoice->client_id;
-        $this->invoice_date = $this->invoice->invoice_date
+        $this->client_id      = (string) $this->invoice->client_id;
+        $this->invoice_date   = $this->invoice->invoice_date
             ? $this->invoice->invoice_date->format('Y-m-d')
             : '';
-        $this->observations = $this->invoice->observations ?? '';
-        $this->payment_type = $this->invoice->payment_type ?? '';
+        $this->observations   = $this->invoice->observations ?? '';
+        $this->payment_type   = $this->invoice->payment_type ?? '';
+        $this->payment_status = $this->invoice->payment_status ?? 'unpaid';
+
+        $userTax = UserTax::where('user_id', Auth::id())->with('tax')->first();
+        $this->defaultTaxRate = $userTax?->tax?->rate ?? 0.0;
 
         $this->lines = $this->invoice->items->map(fn ($item) => [
             'wine_lot_id' => (string) $item->wine_lot_id,
@@ -65,7 +73,7 @@ class Edit extends Component
             'wine_lot_id' => '',
             'quantity'    => '',
             'unit_price'  => '',
-            'tax_rate'    => '0',
+            'tax_rate'    => (string) $this->defaultTaxRate,
             'description' => '',
         ];
     }
@@ -89,10 +97,18 @@ class Edit extends Component
 
     protected function rules(): array
     {
+        if ($this->isLocked) {
+            return [
+                'payment_status' => 'required|in:unpaid,partial,paid',
+                'payment_type'   => 'nullable|in:cash,transfer,check,other',
+            ];
+        }
+
         return [
             'client_id'           => 'required|exists:clients,id',
             'invoice_date'        => 'required|date',
             'payment_type'        => 'nullable|in:cash,transfer,check,other',
+            'payment_status'      => 'required|in:unpaid,partial,paid',
             'observations'        => 'nullable|string',
             'lines'               => 'required|array|min:1',
             'lines.*.wine_lot_id' => 'required|exists:wine_lots,id',
@@ -120,12 +136,17 @@ class Edit extends Component
 
     public function save()
     {
-        if ($this->isLocked) {
-            $this->toastError('Esta factura no se puede editar.');
-            return;
-        }
-
         $this->validate();
+
+        // Locked invoices: only payment status/type can be updated
+        if ($this->isLocked) {
+            $this->invoice->update([
+                'payment_status' => $this->payment_status,
+                'payment_type'   => $this->payment_type ?: null,
+            ]);
+            $this->toastSuccess('Estado de cobro actualizado.');
+            return $this->redirect(route('winery.invoices.wine-sale.index'), navigate: true);
+        }
 
         $client = Client::where('user_id', Auth::id())->findOrFail($this->client_id);
 
@@ -163,6 +184,7 @@ class Edit extends Component
                     'tax_base'             => round($subtotal, 3),
                     'tax_amount'           => round($taxAmount, 3),
                     'total_amount'         => round($total, 3),
+                    'payment_status'       => $this->payment_status,
                     'payment_type'         => $this->payment_type ?: null,
                     'observations'         => $this->observations ?: null,
                 ]);

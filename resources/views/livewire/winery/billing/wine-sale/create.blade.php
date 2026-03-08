@@ -1,5 +1,5 @@
 <div>
-    <x-agro.form-card title="Nueva Factura de Vino" description="Crea una factura de venta de vino a un cliente"
+    <x-agro.form-card title="Nueva Factura de Productos" description="Crea una factura de venta de productos a un cliente"
         :back-url="route('winery.invoices.wine-sale.index')">
 
         <form wire:submit.prevent="save" class="space-y-8">
@@ -43,8 +43,16 @@
                 </div>
             </x-agro.form-section>
 
+            {{-- IVA por defecto info --}}
+            @if ($defaultTaxRate > 0)
+                <div class="text-xs text-zinc-400 -mt-4">
+                    <flux:icon icon="information-circle" class="size-3.5 inline-block mr-1" />
+                    IVA por defecto aplicado: {{ number_format($defaultTaxRate, 0) }}%
+                </div>
+            @endif
+
             <!-- Líneas -->
-            <x-agro.form-section title="Líneas de Vino">
+            <x-agro.form-section title="Líneas de Productos">
                 <div class="space-y-4">
                     @foreach ($lines as $i => $line)
                         <div class="grid grid-cols-12 gap-3 items-end p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg" wire:key="line-{{ $i }}">

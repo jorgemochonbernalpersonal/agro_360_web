@@ -385,6 +385,7 @@ class NavigationHelper
                     'label'  => 'Análisis de Lab.',
                     'route'  => 'winery.wine-analysis.index',
                     'active' => request()->routeIs('winery.wine-analysis*'),
+                    'wip'    => true,
                 ],
                 [
                     'icon'   => 'archive-box',
@@ -436,12 +437,14 @@ class NavigationHelper
                     'label'  => 'Insumos de Bodega',
                     'route'  => 'winery.winery-supplies.index',
                     'active' => request()->routeIs('winery.winery-supplies*'),
+                    'wip'    => true,
                 ],
                 [
                     'icon'   => 'truck',
                     'label'  => 'Proveedores',
                     'route'  => 'winery.suppliers.index',
                     'active' => request()->routeIs('winery.suppliers*'),
+                    'wip'    => true,
                 ],
             ];
 
@@ -455,7 +458,7 @@ class NavigationHelper
                 ],
                 [
                     'icon'   => 'arrow-up-tray',
-                    'label'  => 'Venta de Vino',
+                    'label'  => 'Venta de Productos',
                     'route'  => 'winery.invoices.wine-sale.index',
                     'active' => request()->routeIs('winery.invoices.wine-sale*'),
                 ],
@@ -474,16 +477,14 @@ class NavigationHelper
                     'label'  => 'SILICIE',
                     'route'  => 'winery.silicie.dashboard',
                     'active' => request()->routeIs('winery.silicie*'),
-                    'submenu' => [
-                        ['label' => 'Panel', 'route' => 'winery.silicie.dashboard', 'active' => request()->routeIs('winery.silicie.dashboard')],
-                        ['label' => 'Movimientos', 'route' => 'winery.silicie.movements.index', 'active' => request()->routeIs('winery.silicie.movements*')],
-                    ],
+                    'wip'    => true,
                 ],
                 [
                     'icon'   => 'folder-open',
                     'label'  => 'Documentos Bodega',
                     'route'  => 'winery.documents.index',
                     'active' => request()->routeIs('winery.documents*'),
+                    'wip'    => true,
                 ],
             ];
 

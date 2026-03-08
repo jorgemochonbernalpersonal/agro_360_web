@@ -8,52 +8,48 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search       = '';
-    public string $typeFilter   = '';
-    public string $statusFilter = 'active';
+    public string $search      = '';
+    public string $typeFilter  = '';
+    public string $currentTab  = 'active';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
-        'statusFilter' => ['except' => 'active'],
+        'search'     => ['except' => ''],
+        'typeFilter' => ['except' => ''],
+        'currentTab' => ['except' => 'active'],
     ];
 
-    public function updatingSearch(): void       { $this->resetPage(); }
-    public function updatingTypeFilter(): void   { $this->resetPage(); }
-    public function updatingStatusFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void     { $this->resetPage(); }
+    public function updatingTypeFilter(): void { $this->resetPage(); }
+    public function updatingCurrentTab(): void { $this->resetPage(); }
+
+    public function switchTab(string $tab): void
+    {
+        $this->currentTab = $tab;
+        $this->resetPage();
+    }
+
+    public function toggleActive(int $id): void
+    {
+        $lot = WineLot::where('user_id', $this->wineryId())->findOrFail($id);
+        $wasArchived = (bool) $lot->archived;
+        $lot->update(['archived' => !$wasArchived]);
+
+        if ($wasArchived) {
+            $this->toastSuccess("«{$lot->name}» activado.");
+            if ($this->currentTab === 'inactive') {
+                $this->currentTab = 'active';
+            }
+        } else {
+            $this->toastSuccess("«{$lot->name}» desactivado.");
+            if ($this->currentTab === 'active') {
+                $this->currentTab = 'inactive';
+            }
+        }
+    }
 
     protected function filterDefaults(): array
     {
-        return ['search' => '', 'typeFilter' => '', 'statusFilter' => 'active'];
-    }
-
-    public function archive(int $id): void
-    {
-        $lot = WineLot::where('user_id', $this->wineryId())->findOrFail($id);
-        $lot->update(['archived' => true]);
-        $this->toastSuccess("Lote «{$lot->name}» archivado.");
-    }
-
-    public function unarchive(int $id): void
-    {
-        $lot = WineLot::where('user_id', $this->wineryId())->findOrFail($id);
-        $lot->update(['archived' => false]);
-        $this->toastSuccess("Lote «{$lot->name}» reactivado.");
-    }
-
-    public function delete(int $id): void
-    {
-        $lot = WineLot::where('user_id', $this->wineryId())
-            ->withCount('invoiceItems')
-            ->findOrFail($id);
-
-        if ($lot->invoice_items_count > 0) {
-            $this->toastError('No se puede eliminar un lote que ya tiene líneas de factura.');
-            return;
-        }
-
-        $lot->delete();
-        $this->toastSuccess('Lote de vino eliminado.');
+        return ['search' => '', 'typeFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -72,9 +68,9 @@ class Index extends AbstractIndex
             $query->where('wine_type', $this->typeFilter);
         }
 
-        match ($this->statusFilter) {
+        match ($this->currentTab) {
             'active'   => $query->where('archived', false),
-            'archived' => $query->where('archived', true),
+            'inactive' => $query->where('archived', true),
             default    => null,
         };
     }
@@ -90,6 +86,12 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        return ['lots' => $entries];
+        $base = WineLot::where('user_id', $this->wineryId());
+        $stats = [
+            'active'   => (clone $base)->where('archived', false)->count(),
+            'inactive' => (clone $base)->where('archived', true)->count(),
+        ];
+
+        return ['lots' => $entries, 'stats' => $stats];
     }
 }

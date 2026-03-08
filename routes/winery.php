@@ -70,10 +70,13 @@ Route::middleware(['role:winery'])
         Route::get('/containers/{container}/additives', \App\Livewire\Winery\Cellar\Containers\Additives\Index::class)->name('containers.additives.index');
         Route::get('/containers/{container}/additives/create', \App\Livewire\Winery\Cellar\Containers\Additives\Create::class)->name('containers.additives.create');
 
-        // ── Insumos de bodega ─────────────────────────────────────────
-        Route::get('/winery-supplies', \App\Livewire\Winery\WinerySupplies\Index::class)->name('winery-supplies.index');
-        Route::get('/winery-supplies/create', \App\Livewire\Winery\WinerySupplies\Create::class)->name('winery-supplies.create');
-        Route::get('/winery-supplies/{winerySupply}/edit', \App\Livewire\Winery\WinerySupplies\Edit::class)->name('winery-supplies.edit');
+        // ── Insumos de bodega (en construcción) ──────────────────────
+        Route::get('/winery-supplies', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('winery-supplies.index')
+            ->defaults('module', 'Insumos de Bodega')
+            ->defaults('icon', 'building-storefront');
+        Route::get('/winery-supplies/create', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.create');
+        Route::get('/winery-supplies/{winerySupply}/edit', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.edit');
 
         // ── Vinos (pipeline de vinificación) ──────────────────────────
         Route::get('/wines', \App\Livewire\Winery\Wines\Index::class)->name('wines.index');
@@ -115,21 +118,33 @@ Route::middleware(['role:winery'])
         // ── Elaboración de vino ───────────────────────────────────────
         Route::get('/wine-process', fn() => redirect()->route('winery.wines.index'))->name('wine-process.index');
 
-        // ── Análisis de laboratorio ───────────────────────────────────
-        Route::get('/wine-analysis', $stub)->name('wine-analysis.index');
+        // ── Análisis de laboratorio (en construcción) ────────────────
+        Route::get('/wine-analysis', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('wine-analysis.index')
+            ->defaults('module', 'Análisis de Lab.')
+            ->defaults('icon', 'beaker');
 
         // ── Inventario de insumos de bodega ───────────────────────────
         Route::get('/inventory', fn() => redirect()->route('winery.winery-supplies.index'))->name('inventory.index');
 
-        // ── Proveedores ───────────────────────────────────────────────
-        Route::get('/suppliers', $stub)->name('suppliers.index');
+        // ── Proveedores (en construcción) ─────────────────────────────
+        Route::get('/suppliers', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('suppliers.index')
+            ->defaults('module', 'Proveedores')
+            ->defaults('icon', 'truck');
 
-        // ── SILICIE ───────────────────────────────────────────────────
-        Route::get('/silicie', $stub)->name('silicie.dashboard');
-        Route::get('/silicie/movements', $stub)->name('silicie.movements.index');
+        // ── SILICIE (en construcción) ─────────────────────────────────
+        Route::get('/silicie', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('silicie.dashboard')
+            ->defaults('module', 'SILICIE')
+            ->defaults('icon', 'document-chart-bar');
+        Route::get('/silicie/movements', fn() => redirect()->route('winery.silicie.dashboard'))->name('silicie.movements.index');
 
-        // ── Documentos ────────────────────────────────────────────────
-        Route::get('/documents', $stub)->name('documents.index');
+        // ── Documentos Bodega (en construcción) ───────────────────────
+        Route::get('/documents', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('documents.index')
+            ->defaults('module', 'Documentos Bodega')
+            ->defaults('icon', 'folder-open');
 
         // ── Configuración ─────────────────────────────────────────────
         Route::get('/settings', \App\Livewire\Winery\Settings::class)->name('settings');

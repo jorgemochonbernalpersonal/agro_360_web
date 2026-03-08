@@ -1,5 +1,5 @@
 <div class="space-y-6 animate-fade-in">
-    <x-agro.page-header title="Facturas de Vino" description="Ventas de vino a clientes externos">
+    <x-agro.page-header title="Venta de Productos" description="Facturas de venta de productos a clientes externos">
         <x-slot:actions>
             <flux:button href="{{ route('winery.invoices.wine-sale.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Factura
@@ -212,8 +212,8 @@
     @else
         <x-agro.empty-state
             icon="document-text"
-            title="No hay facturas de vino registradas"
-            description="Crea la primera factura para vender tu vino"
+            title="No hay facturas de productos registradas"
+            description="Crea la primera factura para vender tus productos"
         >
             <x-slot:action>
                 <flux:button href="{{ route('winery.invoices.wine-sale.create') }}" wire:navigate variant="primary" icon="plus">

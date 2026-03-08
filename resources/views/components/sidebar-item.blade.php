@@ -23,6 +23,8 @@
             <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full sidebar-indicator">
                 {{ $item['badge'] }}
             </span>
+        @elseif(isset($item['wip']) && $item['wip'])
+            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-400/20 text-amber-300 rounded-full sidebar-indicator whitespace-nowrap">Pronto</span>
         @elseif($item['active'])
             <div class="w-1.5 h-1.5 rounded-full bg-white/60 sidebar-indicator flex-shrink-0"></div>
         @endif
