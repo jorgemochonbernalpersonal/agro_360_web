@@ -101,7 +101,7 @@
                         <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
                             <li>El servicio puede contener errores o bugs</li>
                             <li>Algunas funcionalidades pueden cambiar sin previo aviso</li>
-                            <li>Los primeros 50 usuarios reciben 6 meses gratis más 25% de descuento permanente</li>
+                            <li>Los primeros 50 usuarios reciben 3 meses gratis más 25% de descuento permanente</li>
                             <li>Nos reservamos el derecho de modificar características durante la fase beta</li>
                         </ul>
                     </section>
@@ -161,7 +161,7 @@
                             Los precios actuales son:
                         </p>
                         <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                            <li>6 meses completamente gratis para todos los beta testers</li>
+                            <li>3 meses completamente gratis para todos los beta testers</li>
                             <li>Después: €9/mes o €90/año (Plan Mensual o Anual)</li>
                             <li>Primeros 50 usuarios: 25% de descuento permanente (€9→€6.75/mes o €90→€67.50/año)</li>
                         </ul>

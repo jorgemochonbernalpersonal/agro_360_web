@@ -6,7 +6,7 @@
     
     <!-- SEO Meta Tags -->
     <title>SIGPAC | Software de Gestión SIGPAC para Agricultores - Agro365</title>
-    <meta name="description" content="Software de gestión SIGPAC para agricultores y viticultores. Gestión de parcelas con códigos SIGPAC, visualización en mapa, cumplimiento normativo PAC. Prueba gratis 6 meses.">
+    <meta name="description" content="Software de gestión SIGPAC para agricultores y viticultores. Gestión de parcelas con códigos SIGPAC, visualización en mapa, cumplimiento normativo PAC. Prueba gratis 3 meses.">
     <meta name="keywords" content="SIGPAC, software SIGPAC, gestión SIGPAC, códigos SIGPAC, parcelas SIGPAC, gestión parcelas agrícolas, software SIGPAC agricultura">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
@@ -21,7 +21,7 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url('/sigpac') }}">
     <meta property="og:title" content="SIGPAC - Software de Gestión">
-    <meta property="og:description" content="Software de gestión SIGPAC con códigos oficiales, mapa interactivo y cumplimiento normativo. Prueba gratis 6 meses.">
+    <meta property="og:description" content="Software de gestión SIGPAC con códigos oficiales, mapa interactivo y cumplimiento normativo. Prueba gratis 3 meses.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/sigpac') }}">
     <meta name="twitter:title" content="SIGPAC - Agro365">
-    <meta name="twitter:description" content="Software de gestión SIGPAC con códigos oficiales. Prueba gratis 6 meses.">
+    <meta name="twitter:description" content="Software de gestión SIGPAC con códigos oficiales. Prueba gratis 3 meses.">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- Favicon -->
@@ -195,10 +195,10 @@
                     Software de Gestión SIGPAC Profesional
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Gestiona tus parcelas SIGPAC con Agro365. Códigos oficiales, mapa interactivo y cumplimiento normativo PAC. Prueba gratis 6 meses.
+                    Gestiona tus parcelas SIGPAC con Agro365. Códigos oficiales, mapa interactivo y cumplimiento normativo PAC. Prueba gratis 3 meses.
                 </p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

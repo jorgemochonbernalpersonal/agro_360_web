@@ -6,7 +6,7 @@
     
     <!-- SEO Meta Tags -->
     <title>Facturación Agrícola | Software para Viticultores y Bodegas</title>
-    <meta name="description" content="Automatiza la facturación de tus cosechas. Gestor de facturas para viticultores, control de entregas a bodega y pagos. Prueba gratuita de 6 meses.">
+    <meta name="description" content="Automatiza la facturación de tus cosechas. Gestor de facturas para viticultores, control de entregas a bodega y pagos. Prueba gratuita de 3 meses.">
     <meta name="keywords" content="facturación agrícola, software facturación agricultura, facturación viticultores, facturar cosecha, facturación bodegas, software factura agrícola, control pagos agricultura, gestión clientes bodega, facturación vendimia, factura electrónica agricultura">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
@@ -212,7 +212,7 @@
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">💰 Facturación Agrícola Profesional</h3>
                         <p class="text-gray-700 mb-6">
-                            De la vendimia a la factura sin complicaciones. Gestiona clientes, albaranes y controla pagos. <strong>6 meses gratis</strong>.
+                            De la vendimia a la factura sin complicaciones. Gestiona clientes, albaranes y controla pagos. <strong>3 meses gratis</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -243,7 +243,7 @@
                 <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Factura tu Cosecha con Agro365</h2>
                 <p class="text-gray-600 mb-8 text-lg">Software de facturación agrícola integrado con gestión de vendimia y control de pagos.</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white shadow-lg font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                 </a>
             </div>
         </div>

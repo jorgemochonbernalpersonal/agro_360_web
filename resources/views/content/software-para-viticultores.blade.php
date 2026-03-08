@@ -6,7 +6,7 @@
     
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores | Gestión Profesional de Viñedos</title>
-    <meta name="description" content="Software de viticultura para el control total de tu explotación. Gestión de parcelas, vendimia y costes en una sola plataforma. Gratis durante 6 meses.">
+    <meta name="description" content="Software de viticultura para el control total de tu explotación. Gestión de parcelas, vendimia y costes en una sola plataforma. Gratis durante 3 meses.">
     <meta name="keywords" content="software para viticultores, software viticultura, gestión viñedos, app viticultores, software bodega, gestión vendimia, software viñedos España, digitalización viticultura, software viticultores profesional, gestión cosechas, control viñedos, software agrícola viticultura">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
@@ -21,7 +21,7 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url('/software-para-viticultores') }}">
     <meta property="og:title" content="Software para Viticultores - Gestión Profesional de Viñedos">
-    <meta property="og:description" content="Software profesional para viticultores con cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 6 meses.">
+    <meta property="og:description" content="Software profesional para viticultores con cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 3 meses.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/software-para-viticultores') }}">
     <meta name="twitter:title" content="Software para Viticultores - Gestión Profesional">
-    <meta name="twitter:description" content="Software profesional para viticultores con cuaderno digital y SIGPAC. Prueba gratis 6 meses.">
+    <meta name="twitter:description" content="Software profesional para viticultores con cuaderno digital y SIGPAC. Prueba gratis 3 meses.">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- Favicon -->
@@ -219,10 +219,10 @@
                     Software Profesional para Viticultores
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Gestiona tu viñedo de forma profesional con Agro365. Cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 6 meses.
+                    Gestiona tu viñedo de forma profesional con Agro365. Cuaderno digital, SIGPAC, control de vendimia y cumplimiento normativo. Prueba gratis 3 meses.
                 </p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

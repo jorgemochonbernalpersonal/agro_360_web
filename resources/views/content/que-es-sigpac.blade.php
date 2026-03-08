@@ -179,7 +179,7 @@
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Listo para Digitalizar tu Gestión SIGPAC?</h3>
                         <p class="text-gray-700 mb-6">
-                            Comienza a gestionar tus parcelas SIGPAC de forma profesional con Agro365. <strong>6 meses gratis</strong> para beta testers.
+                            Comienza a gestionar tus parcelas SIGPAC de forma profesional con Agro365. <strong>3 meses gratis</strong> para beta testers.
                         </p>
                         @guest
                             <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
@@ -224,11 +224,11 @@
                     Gestiona tus Parcelas SIGPAC con Agro365
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Software profesional de gestión agrícola con integración completa SIGPAC. Prueba gratis 6 meses.
+                    Software profesional de gestión agrícola con integración completa SIGPAC. Prueba gratis 3 meses.
                 </p>
                 @guest
                     <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                        Comenzar Gratis - 6 Meses
+                        Comenzar Gratis
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                         </svg>

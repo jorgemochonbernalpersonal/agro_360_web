@@ -183,7 +183,7 @@
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">📊 Dashboard PAC en Tiempo Real</h3>
                         <p class="text-gray-700 mb-6">
-                            Sabe en todo momento si cumples con los requisitos PAC. Detecta errores antes de las inspecciones. <strong>6 meses gratis</strong>.
+                            Sabe en todo momento si cumples con los requisitos PAC. Detecta errores antes de las inspecciones. <strong>3 meses gratis</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -214,7 +214,7 @@
                 <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cumple con la PAC sin Complicaciones</h2>
                 <p class="text-gray-600 mb-8 text-lg">Dashboard de cumplimiento en tiempo real. No pierdas tus ayudas por errores evitables.</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white shadow-lg font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                 </a>
             </div>
         </div>

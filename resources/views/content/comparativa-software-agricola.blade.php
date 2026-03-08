@@ -168,7 +168,7 @@
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 text-sm text-gray-700 font-medium">Prueba Gratis</td>
-                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">6 meses</span></td>
+                                    <td class="px-6 py-4 text-center"><span class="text-[var(--color-agro-green)] font-bold">3 meses</span></td>
                                     <td class="px-6 py-4 text-center text-gray-500">7-30 días</td>
                                 </tr>
                             </tbody>
@@ -188,8 +188,8 @@
                             <p class="text-gray-700">A solo €9/mes, Agro365 es la solución más asequible del mercado sin sacrificar funcionalidades.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
-                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🎁 6 Meses Gratis</h3>
-                            <p class="text-gray-700">Prueba completa durante 6 meses sin compromiso. La prueba más larga del mercado.</p>
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🎁 3 Meses Gratis</h3>
+                            <p class="text-gray-700">Prueba completa durante 3 meses sin compromiso. Sin tarjeta requerida.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[var(--color-agro-green)]">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📱 100% Móvil</h3>
@@ -248,10 +248,10 @@
                     Prueba Agro365 Gratis Durante 6 Meses
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Compara tú mismo. Prueba Agro365 durante 6 meses completamente gratis y descubre por qué es la mejor opción para tu viñedo.
+                    Compara tú mismo. Prueba Agro365 durante 3 meses completamente gratis y descubre por qué es la mejor opción para tu viñedo.
                 </p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

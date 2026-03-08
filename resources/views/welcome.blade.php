@@ -456,7 +456,7 @@
                     </div>
                     
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
-                        Cuaderno de Campo Digital
+                        <span class="block">Cuaderno de Campo Digital</span>
                         <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">Fitosanitarios obligatorios en 2027 · Cuaderno completo en 2028</span>
                     </h1>
 
@@ -822,271 +822,70 @@
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="py-20 bg-white/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 space-y-4">
-                <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Software Agrícola Completo: Cuaderno Digital, SIGPAC e Informes Oficiales
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Herramientas profesionales para <strong><a href="{{ content_route('content.software-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores y bodegas</a></strong>: <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital obligatorio</a>, gestión de parcelas SIGPAC, informes oficiales con firma electrónica, control de vendimia y facturación integrada.
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Feature 1: Cuaderno Digital (PRIORIDAD #1) -->
-                <div class="glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md mb-6">
-                        <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Cuaderno de Campo Digital Obligatorio 2027</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        <strong><a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">Cuaderno de campo digital</a></strong> obligatorio desde 2027 según normativa europea. Registra tratamientos fitosanitarios, riegos, fertilizaciones y labores culturales desde cualquier lugar. Cumplimiento normativo garantizado para inspecciones PAC.
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Listo para inspecciones en segundos</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Cumplimiento normativo garantizado</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Feature 2: Gestión de Parcelas -->
-                <div class="glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] flex items-center justify-center shadow-md mb-6">
-                        <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Gestión de Parcelas SIGPAC con Mapa Interactivo</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        <strong>Integración completa con SIGPAC</strong> (Sistema de Información Geográfica de Parcelas Agrícolas). Gestiona tus viñedos con códigos SIGPAC integrados, visualiza parcelas en mapa interactivo, controla variedades, hectáreas y cumple con normativa PAC.
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Mapa interactivo con geometrías SIGPAC</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Cumplimiento PAC automático</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Feature 3: Informes Oficiales & Cumplimiento PAC -->
-                <div class="glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-md mb-6">
-                        <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Informes Oficiales & Cumplimiento PAC</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        Genera <strong>7 tipos de informes oficiales</strong> certificados con <strong>firma electrónica SHA-256</strong> y código QR de verificación. <strong>Dashboard de cumplimiento PAC en tiempo real</strong> que detecta automáticamente errores, valida datos y te prepara para inspecciones. Cumple con normativa 2027.
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Dashboard PAC con detección de errores</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Firma electrónica SHA-256 segura</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Validación automática de cumplimiento</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Feature 4: Cosechas y Rendimientos -->
-                <div class="glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md mb-6">
-                        <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Control de Vendimia y Gestión de Cosechas</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        <strong>Gestión completa de vendimia</strong>: controla toda tu cosecha desde la viña hasta la factura. Registra contenedores individuales, compara rendimientos reales vs estimados por parcela, analiza producción por variedad y genera facturación automática de cosechas.
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Rendimiento por parcela y variedad</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>De vendimia a factura en 1 click</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Feature 5: Control de Actividades -->
-                <div class="glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-md mb-6">
-                        <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Control de Actividades</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        Registra podas, tratamientos, labores culturales y maquinaria utilizada. Histórico completo de cada viñedo.
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Seguimiento de cuadrillas y equipos</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Costos reales por parcela</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Feature 6: Facturación -->
-                <div class="glass-card rounded-xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/50 transition-all duration-300">
-                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-md mb-6">
-                        <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
-                            <path d="M8 12h8v2H8zm0 4h8v2H8z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-2xl text-[var(--color-agro-green-dark)] mb-3">Facturación Integrada</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        Factura tus cosechas directamente desde la app. Gestión de clientes, control de pagos y cumplimiento fiscal simplificado.
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-700">
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Facturas desde vendimia registrada</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Control de pagos pendientes</span>
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Solutions by Sector Section -->
+    <!-- Solutions by Role Section -->
     <section id="solutions" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 space-y-4">
+            <div class="text-center mb-12 space-y-4">
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Soluciones Especializadas por Sector
+                    Diseñado para los tres roles del vino
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Software diseñado para las necesidades específicas de cada profesional del sector vitivinícola.
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Un ecosistema conectado. Cada rol ve lo que necesita, cuando lo necesita.
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Viticultores -->
-                <a href="{{ content_route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Viticultores</h3>
-                    <p class="text-gray-600 text-sm mb-4">Gestión de viñedos, variedad de uva, cuaderno digital obligatorio y control de vendimia.</p>
-                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
-                        Saber más
-                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Viticultor -->
+                <a href="{{ content_route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-[var(--color-agro-green-light)]/30 hover:border-[var(--color-agro-green-light)] transition-all duration-300">
+                    <div class="text-4xl mb-5">🌿</div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Viticultor</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">Básico gratis · Completo 9€ · Independiente 14€</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Cuaderno de campo digital, SIGPAC, teledetección NDVI, PAC, vendimia y facturación. Tus datos son siempre tuyos aunque cambies de bodega.</p>
+                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
+                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> Cuaderno obligatorio 2027</li>
+                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> SIGPAC y parcelas</li>
+                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> Teledetección satelital</li>
+                        <li class="flex items-center gap-1.5"><span class="text-[var(--color-agro-green)]">✓</span> Facturación + Verifactu</li>
+                    </ul>
+                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Ver más sobre Viticultores
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </span>
                 </a>
 
-                <!-- Bodegas -->
-                <a href="{{ content_route('content.bodegas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-red-100 text-red-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.051.155A2 2 0 004 17.145V19a2 2 0 002 2h12a2 2 0 002-2v-1.572a2 2 0 00-.572-1.428z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11V3m0 0l-3 3m3-3l3 3"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Bodegas</h3>
-                    <p class="text-gray-600 text-sm mb-4">Trazabilidad desde la cepa, recepción de uva, rendimientos por DO e inventario.</p>
-                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
-                        Saber más
-                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                <!-- Bodega -->
+                <a href="{{ url('/software-bodegas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-red-200/50 hover:border-red-300 transition-all duration-300">
+                    <div class="text-4xl mb-5">🍷</div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Bodega</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">Gratis en DO · 14€/mes independiente</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Recepción de uva, depósitos, elaboración, aditivos, informes AICA/INFOVI y facturación. Conecta con tus viticultores proveedores en un clic.</p>
+                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
+                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Recepción y pesaje</li>
+                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Gestión de depósitos</li>
+                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> AICA, INFOVI, libros de bodega</li>
+                        <li class="flex items-center gap-1.5"><span class="text-red-500">✓</span> Panel de viticultores proveedores</li>
+                    </ul>
+                    <span class="text-red-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Ver más sobre Bodegas
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </span>
                 </a>
 
-                <!-- Cooperativas -->
-                <a href="{{ content_route('content.cooperativas') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 01-4 4H9a4 4 0 01-4-4V5a4 4 0 014-4h4a4 4 0 014 4v2z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Cooperativas</h3>
-                    <p class="text-gray-600 text-sm mb-4">Gestión de socios, centralización de cuadernos de campo y control de entregas masivas.</p>
-                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
-                        Saber más
-                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </a>
-
-                <!-- Ingenieros -->
-                <a href="{{ content_route('content.ingenieros-agronomos') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-transparent hover:border-[var(--color-agro-green-light)]/30 transition-all duration-300">
-                    <div class="w-14 h-14 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Asesores e Ingenieros</h3>
-                    <p class="text-gray-600 text-sm mb-4">Asesoramiento técnico, firma de informes oficiales y validación de tratamientos PAC.</p>
-                    <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1">
-                        Saber más
-                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                <!-- DO -->
+                <a href="#precios" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-amber-200/50 hover:border-amber-300 transition-all duration-300">
+                    <div class="text-4xl mb-5">🏛️</div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Denominación de Origen</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">Desde 149€/mes · Bodegas incluidas gratis</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Panel centralizado de supervisión. Registra bodegas adscritas, controla cumplimiento normativo y accede a informes consolidados de toda tu red. Tus bodegas acceden sin coste adicional.</p>
+                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
+                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Panel de supervisión centralizado</li>
+                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Alertas de incumplimiento</li>
+                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Informes consolidados DO</li>
+                        <li class="flex items-center gap-1.5"><span class="text-amber-600">✓</span> Account manager dedicado</li>
+                    </ul>
+                    <span class="text-amber-700 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Ver precios para DO
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </span>
                 </a>
             </div>
@@ -1413,7 +1212,7 @@
                 <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
                     🍷 Empezar Gratis — Bodega
                 </a>
-                <a href="mailto:info@agro365.es?subject=Demo%20Denominaci%C3%B3n%20de%20Origen" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white/90 hover:bg-white/10 transition-all font-semibold text-lg">
+                <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white/90 hover:bg-white/10 transition-all font-semibold text-lg">
                     🏛️ Solicitar Demo — DO
                 </a>
             </div>

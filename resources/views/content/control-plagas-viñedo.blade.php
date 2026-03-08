@@ -265,7 +265,7 @@
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🛡️ Control de Plagas Digitalizado</h3>
                         <p class="text-gray-700 mb-6">
-                            Gestiona plagas, tratamientos y cumple con la normativa de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">registro de fitosanitarios</a>. <strong>6 meses gratis</strong>.
+                            Gestiona plagas, tratamientos y cumple con la normativa de <a href="{{ url('/registro-fitosanitarios') }}" class="text-[var(--color-agro-green)] hover:underline">registro de fitosanitarios</a>. <strong>3 meses gratis</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis
@@ -278,7 +278,7 @@
                 <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">Protege tu Viñedo con Agro365</h2>
                 <p class="text-gray-600 mb-8 text-lg">Gestión integral de plagas con registro de tratamientos y cumplimiento normativo.</p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white shadow-lg font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                 </a>
             </div>
         </div>

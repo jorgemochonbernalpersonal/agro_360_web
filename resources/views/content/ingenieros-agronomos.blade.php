@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Software para Ingenieros Agrónomos | Gestión Profesional - Agro365</title>
-    <meta name="description" content="Software profesional para ingenieros agrónomos en España. Gestión de explotaciones, asesoramiento técnico, cuaderno digital y cumplimiento normativo. Prueba gratis 6 meses.">
+    <meta name="description" content="Software profesional para ingenieros agrónomos en España. Gestión de explotaciones, asesoramiento técnico, cuaderno digital y cumplimiento normativo. Prueba gratis 3 meses.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/ingenieros-agronomos') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

@@ -6,7 +6,7 @@
     
     <!-- SEO Meta Tags -->
     <title>App Agricultura | Software de Gestión Agrícola Digital - Agro365</title>
-    <meta name="description" content="App de agricultura digital para gestionar explotaciones agrícolas. Cuaderno de campo digital, SIGPAC, control de parcelas y cumplimiento normativo. Prueba gratis 6 meses.">
+    <meta name="description" content="App de agricultura digital para gestionar explotaciones agrícolas. Cuaderno de campo digital, SIGPAC, control de parcelas y cumplimiento normativo. Prueba gratis 3 meses.">
     <meta name="keywords" content="app agricultura, aplicación agrícola, app campo, software agricultura móvil, app gestión agrícola, aplicación campo digital, app agricultura España, software agrícola móvil, app cuaderno campo, aplicación SIGPAC, app viticultura, agricultura digital móvil">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
@@ -21,7 +21,7 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url('/app-agricultura') }}">
     <meta property="og:title" content="App Agricultura - Software de Gestión Agrícola Digital">
-    <meta property="og:description" content="App de agricultura digital para gestionar explotaciones. Cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 6 meses.">
+    <meta property="og:description" content="App de agricultura digital para gestionar explotaciones. Cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 3 meses.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/app-agricultura') }}">
     <meta name="twitter:title" content="App Agricultura - Gestión Agrícola Digital">
-    <meta name="twitter:description" content="App de agricultura digital con cuaderno digital y SIGPAC. Prueba gratis 6 meses.">
+    <meta name="twitter:description" content="App de agricultura digital con cuaderno digital y SIGPAC. Prueba gratis 3 meses.">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- Favicon -->
@@ -219,10 +219,10 @@
                     App de Agricultura Digital Completa
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Gestiona tu explotación desde cualquier lugar con Agro365. Cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 6 meses.
+                    Gestiona tu explotación desde cualquier lugar con Agro365. Cuaderno digital, SIGPAC y cumplimiento normativo. Prueba gratis 3 meses.
                 </p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

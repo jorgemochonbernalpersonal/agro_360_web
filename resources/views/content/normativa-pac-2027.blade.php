@@ -69,7 +69,7 @@
                 <div class="bg-gradient-to-r from-green-50 to-green-100/30 p-8 rounded-xl border border-green-200 mt-12">
                     <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">Cumple con la Normativa PAC</h3>
                     <p class="text-gray-700 mb-6">
-                        Agro365 te ayuda a cumplir automaticamente con todos los requisitos PAC. 6 meses gratis.
+                        Agro365 te ayuda a cumplir automaticamente con todos los requisitos PAC. 3 meses gratis.
                     </p>
                     @guest
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">

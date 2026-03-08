@@ -266,10 +266,10 @@
                     Comienza a Digitalizar tu Viñedo Hoy
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Agro365 incluye todo lo que necesitas para digitalizar tu viñedo. Prueba gratis 6 meses sin compromiso.
+                    Agro365 incluye todo lo que necesitas para digitalizar tu viñedo. Prueba gratis 3 meses sin compromiso.
                 </p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

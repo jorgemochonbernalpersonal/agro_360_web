@@ -6,7 +6,7 @@
     
     <!-- SEO Meta Tags -->
     <title>Trazabilidad Agrícola | Software de Trazabilidad para Agricultores - Agro365</title>
-    <meta name="description" content="Software de trazabilidad agrícola para agricultores y viticultores. Trazabilidad completa desde la parcela hasta el producto final. Registro de movimientos y transformaciones. Prueba gratis 6 meses.">
+    <meta name="description" content="Software de trazabilidad agrícola para agricultores y viticultores. Trazabilidad completa desde la parcela hasta el producto final. Registro de movimientos y transformaciones. Prueba gratis 3 meses.">
     <meta name="keywords" content="trazabilidad agrícola, trazabilidad agricultura, software trazabilidad, trazabilidad productos agrícolas, registro trazabilidad, trazabilidad desde parcela">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">
@@ -21,7 +21,7 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url('/trazabilidad-agricola') }}">
     <meta property="og:title" content="Trazabilidad Agrícola - Software Completo">
-    <meta property="og:description" content="Software de trazabilidad agrícola desde la parcela hasta el producto final. Prueba gratis 6 meses.">
+    <meta property="og:description" content="Software de trazabilidad agrícola desde la parcela hasta el producto final. Prueba gratis 3 meses.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/trazabilidad-agricola') }}">
     <meta name="twitter:title" content="Trazabilidad Agrícola - Agro365">
-    <meta name="twitter:description" content="Software de trazabilidad agrícola completo. Prueba gratis 6 meses.">
+    <meta name="twitter:description" content="Software de trazabilidad agrícola completo. Prueba gratis 3 meses.">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
     <!-- Favicon -->
@@ -195,10 +195,10 @@
                     Software de Trazabilidad Agrícola Profesional
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Trazabilidad completa desde la parcela hasta el producto final con Agro365. Registro de movimientos y cumplimiento normativo. Prueba gratis 6 meses.
+                    Trazabilidad completa desde la parcela hasta el producto final con Agro365. Registro de movimientos y cumplimiento normativo. Prueba gratis 3 meses.
                 </p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

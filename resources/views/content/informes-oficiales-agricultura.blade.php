@@ -150,7 +150,7 @@
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">📄 Documentación Oficial en Segundos</h3>
                         <p class="text-gray-700 mb-6">
-                            Genera informes certificados con firma digital. Listos para inspección. <strong>6 meses gratis</strong>.
+                            Genera informes certificados con firma digital. Listos para inspección. <strong>3 meses gratis</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis

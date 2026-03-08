@@ -114,7 +114,7 @@
                     <div class="bg-gradient-to-r from-red-50 to-red-100/30 p-8 rounded-xl border border-red-200">
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">🍷 Gestiona tu Viñedo en Rioja</h3>
                         <p class="text-gray-700 mb-6">
-                            Software especializado para viticultores de DOCa Rioja. Cumple con la normativa del Consejo Regulador. <strong>6 meses gratis</strong>.
+                            Software especializado para viticultores de DOCa Rioja. Cumple con la normativa del Consejo Regulador. <strong>3 meses gratis</strong>.
                         </p>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">
                             Comenzar Gratis

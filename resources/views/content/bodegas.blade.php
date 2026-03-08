@@ -120,7 +120,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                         </svg>
                     </a>
-                    <p class="mt-4 text-sm text-gray-500">Prueba gratuita de 6 meses para las primeras 50 bodegas</p>
+                    <p class="mt-4 text-sm text-gray-500">Prueba gratuita de 3 meses para las primeras 50 bodegas</p>
                 </div>
             </article>
         </div>

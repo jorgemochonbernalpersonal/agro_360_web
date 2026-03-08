@@ -225,7 +225,7 @@
             <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-1 group-hover:text-[var(--color-agro-green)] transition-colors">
                 ¿Cuánto cuesta Agro365 realmente?
             </h3>
-            <p class="text-sm text-gray-500">6 meses gratis + precios especiales beta</p>
+            <p class="text-sm text-gray-500">Básico gratis · Completo desde 9€/mes</p>
         </div>
         <svg class="w-7 h-7 text-[var(--color-agro-green)] flex-shrink-0 transition-transform mt-1" :class="{ 'rotate-180': openIndexes.includes(5) }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
@@ -233,24 +233,36 @@
     </button>
     <div x-show="openIndexes.includes(5)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed mb-3">
-            Agro365 ofrece <strong>6 meses completamente gratis</strong> para todos los usuarios beta. Después del período gratuito:
+            Depende de tu perfil:
         </p>
         <ul class="space-y-2 text-gray-700">
             <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <span><strong>Plan Mensual:</strong> €9/mes (precio con descuento beta del 25%)</span>
+                <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>Viticultor básico</strong> (invitado por una bodega): <strong>gratis</strong> — cuaderno de campo básico sin coste.</span>
             </li>
             <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <span><strong>Plan Anual:</strong> €90/año (equivalente a €7.50/mes, ahorra €18 al año)</span>
+                <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>Viticultor completo</strong> (invitado): <strong>9€/mes</strong> o 85€/año — SIGPAC, teledetección, PAC, facturación.</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>Viticultor independiente</strong> (sin bodega asociada): <strong>14€/mes</strong> o 130€/año — acceso completo.</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>Bodega dentro de una DO</strong>: <strong>gratis</strong> — cubierta por el plan de la Denominación.</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>Bodega independiente</strong>: <strong>14€/mes</strong> o 130€/año.</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span><strong>Denominación de Origen</strong>: desde <strong>149€/mes</strong> (hasta 25 bodegas), escala según tamaño.</span>
             </li>
         </ul>
         <p class="text-gray-700 leading-relaxed mt-3">
-            <strong>Sin tarjeta requerida</strong> para comenzar la prueba. Cancela en cualquier momento sin compromiso.
+            <strong>Sin tarjeta requerida</strong> para empezar. 3 meses de prueba gratuita para bodegas y DO.
         </p>
     </div>
 </div>

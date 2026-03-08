@@ -122,10 +122,10 @@
                     ¿Aún tienes dudas?
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
-                    Estamos aquí para ayudarte. Comienza tu prueba gratuita de 6 meses hoy mismo.
+                    Estamos aquí para ayudarte. Viticultor básico gratis, completo desde 9€/mes.
                 </p>
                 <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                    Comenzar Gratis - 6 Meses
+                    Comenzar Gratis — Uso básico gratuito
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
@@ -188,7 +188,7 @@
                     'name' => '¿Cuánto cuesta Agro365 realmente?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Agro365 ofrece 6 meses completamente gratis para todos los usuarios beta. Después: Plan Mensual €9/mes (descuento beta 25%), Plan Anual €90/año (€7.50/mes, ahorra €18 al año). Sin tarjeta requerida para comenzar. Cancela en cualquier momento.'
+                        'text' => 'Depende del perfil. Viticultor básico (invitado por bodega): gratis. Viticultor completo (invitado): 9€/mes o 85€/año. Viticultor independiente: 14€/mes o 130€/año. Bodega dentro de una DO: gratis. Bodega independiente: 14€/mes o 130€/año. DO: desde 149€/mes. Sin tarjeta requerida para empezar.'
                     ]
                 ],
                 [

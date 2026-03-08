@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Software para Viticultores | Gestión de Viñedos y Cuaderno Digital</title>
-    <meta name="description" content="La solución definitiva para viticultores. Gestiona tus viñedos, cumple con la PAC y digitaliza tu cuaderno de campo con Agro365. Prueba 6 meses gratis.">
+    <meta name="description" content="La solución definitiva para viticultores. Gestiona tus viñedos, cumple con la PAC y digitaliza tu cuaderno de campo con Agro365. Prueba 3 meses gratis.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/viticultores') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -115,7 +115,7 @@
                 <div class="mt-16 pt-12 border-t border-gray-200 text-center">
                     <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-6">Empieza a digitalizar tu viñedo hoy mismo</h2>
                     <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg">
-                        Comenzar Gratis - 6 Meses
+                        Comenzar Gratis
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                         </svg>
