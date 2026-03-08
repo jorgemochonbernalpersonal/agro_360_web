@@ -1,95 +1,225 @@
 <div>
-    <x-agro.form-card title="Nuevo Cliente" description="Registra un comprador de vino"
-        :back-url="route('winery.clients.index')">
-
-        <form wire:submit.prevent="save" class="space-y-8">
-
+    <x-agro.form-card
+        title="Nuevo Cliente"
+        description="Crea un nuevo cliente"
+        :back-url="route('winery.clients.index')"
+    >
+        <form wire:submit="save" class="space-y-8">
             <x-agro.form-section title="Tipo de Cliente">
-                <div class="flex gap-4">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <flux:radio wire:model.live="client_type" value="individual" />
-                        <span>Particular</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <flux:radio wire:model.live="client_type" value="company" />
-                        <span>Empresa</span>
-                    </label>
-                </div>
+                <flux:field>
+                    <flux:label>Tipo <span class="text-red-500">*</span></flux:label>
+                    <flux:select wire:model.live="client_type" id="client_type">
+                        <flux:select.option value="individual">Particular</flux:select.option>
+                        <flux:select.option value="company">Empresa</flux:select.option>
+                    </flux:select>
+                </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-section title="Datos de Contacto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @if ($client_type === 'individual')
+            @if($client_type === 'individual')
+                <x-agro.form-section title="Datos Personales">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <flux:field>
-                            <flux:label for="first_name">Nombre *</flux:label>
-                            <flux:input wire:model="first_name" type="text" id="first_name" required />
+                            <flux:label>Nombre <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="first_name" id="first_name" required />
                             <flux:error name="first_name" />
                         </flux:field>
                         <flux:field>
-                            <flux:label for="last_name">Apellidos</flux:label>
-                            <flux:input wire:model="last_name" type="text" id="last_name" />
+                            <flux:label>Apellidos <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="last_name" id="last_name" required />
                             <flux:error name="last_name" />
                         </flux:field>
                         <flux:field>
-                            <flux:label for="particular_document">DNI / NIE</flux:label>
-                            <flux:input wire:model="particular_document" type="text" id="particular_document" placeholder="12345678A" />
+                            <flux:label>DNI/NIE</flux:label>
+                            <flux:input wire:model="particular_document" id="particular_document" />
                             <flux:error name="particular_document" />
                         </flux:field>
-                    @else
+                    </div>
+                </x-agro.form-section>
+            @else
+                <x-agro.form-section title="Datos de la Empresa">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <flux:field>
-                            <flux:label for="company_name">Razón Social *</flux:label>
-                            <flux:input wire:model="company_name" type="text" id="company_name" required />
+                            <flux:label>Nombre de la Empresa <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="company_name" id="company_name" required />
                             <flux:error name="company_name" />
                         </flux:field>
                         <flux:field>
-                            <flux:label for="company_document">CIF / NIF Empresa</flux:label>
-                            <flux:input wire:model="company_document" type="text" id="company_document" placeholder="B12345678" />
+                            <flux:label>CIF/NIF <span class="text-red-500">*</span></flux:label>
+                            <flux:input wire:model="company_document" id="company_document" required />
                             <flux:error name="company_document" />
                         </flux:field>
-                    @endif
+                    </div>
+                </x-agro.form-section>
+            @endif
 
+            <x-agro.form-section title="Contacto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="email">Email</flux:label>
-                        <flux:input wire:model="email" type="email" id="email" />
+                        <flux:label>Email</flux:label>
+                        <flux:input wire:model="email" id="email" type="email" />
                         <flux:error name="email" />
                     </flux:field>
-
                     <flux:field>
-                        <flux:label for="phone">Teléfono</flux:label>
-                        <flux:input wire:model="phone" type="tel" id="phone" />
+                        <flux:label>Teléfono</flux:label>
+                        <flux:input wire:model="phone" id="phone" />
                         <flux:error name="phone" />
                     </flux:field>
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-section title="Datos de Pago">
+            <x-agro.form-section title="Configuración">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="payment_method">Método de pago</flux:label>
+                        <flux:label>Descuento por defecto (%)</flux:label>
+                        <flux:input wire:model="default_discount" id="default_discount" type="number" step="0.01" min="0" max="100" />
+                        <flux:error name="default_discount" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Método de pago</flux:label>
                         <flux:select wire:model="payment_method" id="payment_method">
-                            <option value="">Sin especificar</option>
-                            <option value="cash">Efectivo</option>
-                            <option value="transfer">Transferencia bancaria</option>
-                            <option value="check">Cheque</option>
-                            <option value="other">Otro</option>
+                            <flux:select.option value="">Selecciona...</flux:select.option>
+                            <flux:select.option value="cash">Efectivo</flux:select.option>
+                            <flux:select.option value="transfer">Transferencia</flux:select.option>
+                            <flux:select.option value="check">Cheque</flux:select.option>
+                            <flux:select.option value="other">Otro</flux:select.option>
                         </flux:select>
                         <flux:error name="payment_method" />
                     </flux:field>
-
                     <flux:field>
-                        <flux:label for="account_number">Número de cuenta (IBAN)</flux:label>
-                        <flux:input wire:model="account_number" type="text" id="account_number" placeholder="ES00 0000 0000 0000 0000 0000" />
+                        <flux:label>Número de cuenta</flux:label>
+                        <flux:input wire:model="account_number" id="account_number" />
                         <flux:error name="account_number" />
                     </flux:field>
                 </div>
+            </x-agro.form-section>
 
-                <div class="mt-6">
-                    <flux:field>
-                        <flux:label for="notes">Notas</flux:label>
-                        <flux:textarea wire:model="notes" id="notes" rows="3" />
-                        <flux:error name="notes" />
-                    </flux:field>
+            <x-agro.form-section title="Direcciones">
+                <div class="space-y-4">
+                    @foreach($addresses as $index => $address)
+                        <div class="border-2 border-zinc-200 rounded-lg p-4 bg-white shadow-xs hover:border-blue-300 transition-colors">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-zinc-900">Dirección #{{ $index + 1 }}</h4>
+                                    @if($address['is_default'])
+                                        <flux:badge color="blue" size="sm">Por defecto</flux:badge>
+                                    @endif
+                                </div>
+
+                                <div class="flex gap-2">
+                                    @if(!$address['is_default'])
+                                        <button
+                                            type="button"
+                                            wire:click="setDefaultAddress({{ $index }})"
+                                            class="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                                        >
+                                            Marcar por defecto
+                                        </button>
+                                    @endif
+
+                                    @if(count($addresses) > 1)
+                                        <button
+                                            type="button"
+                                            wire:click="removeAddress({{ $index }})"
+                                            class="text-red-600 hover:text-red-800 text-xs font-medium flex items-center gap-1"
+                                        >
+                                            <flux:icon icon="trash" class="size-4" />
+                                            Eliminar
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <flux:field>
+                                        <flux:label>Dirección completa <span class="text-red-500">*</span></flux:label>
+                                        <flux:input
+                                            wire:model="addresses.{{ $index }}.address"
+                                            placeholder="Calle, número, piso, puerta..."
+                                            required
+                                        />
+                                        <flux:error name="addresses.{{ $index }}.address" />
+                                    </flux:field>
+                                </div>
+
+                                <flux:field>
+                                    <flux:label>Comunidad Autónoma <span class="text-red-500">*</span></flux:label>
+                                    <flux:select wire:model.live="addresses.{{ $index }}.autonomous_community_id">
+                                        <flux:select.option value="">Seleccionar...</flux:select.option>
+                                        @foreach($autonomousCommunities as $ca)
+                                            <flux:select.option value="{{ $ca->id }}">{{ $ca->name }}</flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                    <flux:error name="addresses.{{ $index }}.autonomous_community_id" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Provincia <span class="text-red-500">*</span></flux:label>
+                                    <flux:select
+                                        wire:model.live="addresses.{{ $index }}.province_id"
+                                        :disabled="!($addresses[$index]['autonomous_community_id'] ?? null)"
+                                    >
+                                        <flux:select.option value="">Seleccionar...</flux:select.option>
+                                        @if(isset($provinces[$index]))
+                                            @foreach($provinces[$index] as $province)
+                                                <flux:select.option value="{{ $province->id }}">{{ $province->name }}</flux:select.option>
+                                            @endforeach
+                                        @endif
+                                    </flux:select>
+                                    <flux:error name="addresses.{{ $index }}.province_id" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Municipio <span class="text-red-500">*</span></flux:label>
+                                    <flux:select
+                                        wire:model.live="addresses.{{ $index }}.municipality_id"
+                                        :disabled="!($addresses[$index]['province_id'] ?? null)"
+                                    >
+                                        <flux:select.option value="">Seleccionar...</flux:select.option>
+                                        @if(isset($municipalities[$index]))
+                                            @foreach($municipalities[$index] as $municipality)
+                                                <flux:select.option value="{{ $municipality->id }}">{{ $municipality->name }}</flux:select.option>
+                                            @endforeach
+                                        @endif
+                                    </flux:select>
+                                    <flux:error name="addresses.{{ $index }}.municipality_id" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Código Postal <span class="text-red-500">*</span></flux:label>
+                                    <flux:input
+                                        wire:model="addresses.{{ $index }}.postal_code"
+                                        placeholder="28001"
+                                        required
+                                    />
+                                    <flux:error name="addresses.{{ $index }}.postal_code" />
+                                </flux:field>
+
+                                <flux:field>
+                                    <flux:label>Observaciones</flux:label>
+                                    <flux:input wire:model="addresses.{{ $index }}.description" placeholder="Notas adicionales..." />
+                                </flux:field>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <button
+                        type="button"
+                        wire:click="addAddress"
+                        class="w-full py-3 border-2 border-dashed border-zinc-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-zinc-600 hover:text-blue-600 font-semibold flex items-center justify-center gap-2"
+                    >
+                        <flux:icon icon="plus" class="size-5" />
+                        Añadir otra dirección
+                    </button>
                 </div>
+            </x-agro.form-section>
+
+            <x-agro.form-section title="Notas">
+                <flux:field>
+                    <flux:label>Notas</flux:label>
+                    <flux:textarea wire:model="notes" id="notes" rows="3" />
+                    <flux:error name="notes" />
+                </flux:field>
             </x-agro.form-section>
 
             <x-agro.form-actions :cancel-url="route('winery.clients.index')" submit-label="Crear Cliente" />
