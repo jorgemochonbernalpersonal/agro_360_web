@@ -6,14 +6,14 @@
     
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Rías Baixas - Gestión de Viñedos | Agro365</title>
-    <meta name="description" content="Software especializado para viticultores de DOCa Rías Baixas. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 10.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
+    <meta name="description" content="Software para viticultores de Rías Baixas. Cuaderno digital obligatorio 2027, teledetección NDVI y facturación Verifactu. Gestiona Albariño, Treixadura y Caiño. Rendimientos 10.000 kg/ha y cumplimiento Consejo Regulador.">
     <meta name="keywords" content="software viticultores rías baixas, cuaderno campo rías baixas, gestión viñedo galicia, albariño, DO rías baixas">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
     <link rel="canonical" href="{{ url('/software-viticultores-rias-baixas') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Rías Baixas - Agro365">
-    <meta property="og:description" content="Gestión especializada para viñedos de Rías Baixas. Control de rendimientos, heladas y cumplimiento normativo.">
+    <meta property="og:description" content="Gestión especializada para viñedos de Albariño en Rías Baixas. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-rias-baixas') }}">
     

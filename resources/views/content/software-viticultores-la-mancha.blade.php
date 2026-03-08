@@ -6,14 +6,14 @@
     
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa La Mancha - Gestión de Viñedos | Agro365</title>
-    <meta name="description" content="Software especializado para viticultores de DOCa La Mancha. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 10.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
+    <meta name="description" content="Software para viticultores de DOCa La Mancha. Cuaderno digital obligatorio 2027, teledetección NDVI y facturación Verifactu. Gestiona Airén, Cencibel y Garnacha. Rendimientos 10.000 kg/ha y cumplimiento Consejo Regulador.">
     <meta name="keywords" content="software viticultores la mancha, cuaderno campo la mancha, gestión viñedo la mancha, airén, tempranillo, DO la mancha">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
     <link rel="canonical" href="{{ url('/software-viticultores-la-mancha') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa La Mancha - Agro365">
-    <meta property="og:description" content="Gestión especializada para viñedos de La Mancha. Control de rendimientos, heladas y cumplimiento normativo.">
+    <meta property="og:description" content="Gestión especializada para viñedos de Airén y Cencibel en La Mancha. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-la-mancha') }}">
     

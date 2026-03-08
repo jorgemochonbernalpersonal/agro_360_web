@@ -6,14 +6,14 @@
     
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Rioja - Gestión de Viñedos | Agro365</title>
-    <meta name="description" content="Software especializado para viticultores de DOCa Rioja. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 6.500 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
+    <meta name="description" content="Software para viticultores de DOCa Rioja. Cuaderno digital obligatorio 2027, teledetección NDVI y facturación Verifactu. Gestiona Tempranillo, Garnacha y Viura. Rendimientos 6.500 kg/ha y cumplimiento Consejo Regulador.">
     <meta name="keywords" content="software viticultores rioja, cuaderno campo rioja, gestión viñedo rioja, tempranillo rioja, DOCa rioja, consejo regulador rioja, rendimientos rioja, heladas rioja alavesa">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
     <link rel="canonical" href="{{ url('/software-viticultores-rioja') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Rioja - Agro365">
-    <meta property="og:description" content="Gestión especializada para viñedos de Rioja. Control de rendimientos, heladas y cumplimiento normativo.">
+    <meta property="og:description" content="Gestión especializada para Tempranillo, Garnacha y Viura en DOCa Rioja. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-rioja') }}">
     

@@ -161,12 +161,15 @@
                             Los precios actuales son:
                         </p>
                         <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                            <li>3 meses completamente gratis para todos los beta testers</li>
-                            <li>Después: €9/mes o €90/año (Plan Mensual o Anual)</li>
-                            <li>Primeros 50 usuarios: 25% de descuento permanente (€9→€6.75/mes o €90→€67.50/año)</li>
+                            <li><strong>Viticultor básico</strong> (invitado por bodega): gratis</li>
+                            <li><strong>Viticultor completo</strong> (invitado por bodega): 9€/mes o 85€/año</li>
+                            <li><strong>Viticultor independiente</strong>: 14€/mes o 130€/año</li>
+                            <li><strong>Bodega</strong> dentro de una DO asociada: gratis</li>
+                            <li><strong>Bodega independiente</strong>: 14€/mes o 130€/año</li>
+                            <li><strong>Denominación de Origen</strong>: desde 149€/mes según número de viticultores</li>
                         </ul>
                         <p class="text-gray-700 leading-relaxed mt-4">
-                            Nos reservamos el derecho de modificar los precios con 30 días de aviso previo. Los descuentos especiales se mantendrán según lo prometido.
+                            Nos reservamos el derecho de modificar los precios con 30 días de aviso previo.
                         </p>
                     </section>
 

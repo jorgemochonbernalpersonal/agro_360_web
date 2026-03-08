@@ -6,7 +6,7 @@
     
     <!-- SEO Meta Tags -->
     <title>Gestión de Vendimia Digital 2024 | Control de Cosechas y Contenedores - Agro365</title>
-    <meta name="description" content="Software profesional para gestión de vendimia: control de cosechas, contenedores, rendimientos por parcela y facturación automática. Digitaliza tu vendimia con Agro365.">
+    <meta name="description" content="Gestión digital de vendimia: control de contenedores, kg por parcela, grados baumé, estado sanitario y facturación Verifactu automática. Conecta viñedo y bodega en tiempo real con Agro365.">
     <meta name="keywords" content="gestión vendimia, software vendimia, control cosecha uva, contenedores vendimia, rendimientos viñedo, vendimia digital, app vendimia, cosecha viñedo, registro vendimia, gestión cosecha vino, software bodega, control vendimia, trazabilidad vendimia, facturación vendimia">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">

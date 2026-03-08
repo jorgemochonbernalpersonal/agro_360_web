@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Informes Oficiales de Agricultura con Firma Digital | Agro365</title>
-    <meta name="description" content="Genera informes oficiales de agricultura certificados con firma electrónica SHA-256 y código QR de verificación. 7 tipos de informes para inspecciones PAC.">
+    <meta name="description" content="Informes oficiales de agricultura con firma electrónica SHA-256 y QR de verificación pública. Tratamientos fitosanitarios, riegos, fertilizaciones y PAC. Válidos para inspecciones y Denominaciones de Origen.">
     <meta name="keywords" content="informes oficiales agricultura, informes PAC, firma electrónica agricultura, informe cuaderno campo, informes fitosanitarios, certificado digital agricultura, informes inspección, documentos oficiales agricultura">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/informes-oficiales-agricultura') }}">

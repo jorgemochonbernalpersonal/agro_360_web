@@ -6,14 +6,14 @@
     
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Ribera del Duero - Gestión de Viñedos | Agro365</title>
-    <meta name="description" content="Software especializado para viticultores de DOCa Ribera del Duero. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 7.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
+    <meta name="description" content="Software para viticultores de DOCa Ribera del Duero. Cuaderno digital obligatorio 2027, teledetección NDVI y facturación Verifactu. Gestiona Tinta del País (Tempranillo) y Cabernet Sauvignon. Rendimientos 7.000 kg/ha y cumplimiento Consejo Regulador.">
     <meta name="keywords" content="software viticultores ribera del duero, cuaderno campo ribera, gestión viñedo ribera, tinta del país, DO ribera del duero, consejo regulador ribera">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
     <link rel="canonical" href="{{ url('/software-viticultores-ribera-duero') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Ribera del Duero - Agro365">
-    <meta property="og:description" content="Gestión especializada para viñedos de Ribera del Duero. Control de rendimientos, heladas y cumplimiento normativo.">
+    <meta property="og:description" content="Gestión especializada para Tinta del País en Ribera del Duero. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-ribera-duero') }}">
     

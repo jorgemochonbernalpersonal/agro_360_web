@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Normativa PAC | Cambios y Cumplimiento - Agro365</title>
-    <meta name="description" content="Normativa PAC: cambios, requisitos y cumplimiento.">
+    <meta name="description" content="Normativa PAC 2025–2027: cuaderno digital obligatorio, condicionalidad reforzada y eco-esquemas. Guía completa para viticultores y agricultores. Cumple con Agro365.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/normativa-pac') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

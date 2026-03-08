@@ -6,7 +6,7 @@
     
     <!-- SEO Meta Tags -->
     <title>Comparativa Software Agrícola para Viñedos 2027 | Agro365 vs Competencia</title>
-    <meta name="description" content="Comparativa de software agrícola para viñedos. Compara Agro365 con otras soluciones. Cuaderno digital, SIGPAC, informes oficiales y más.">
+    <meta name="description" content="Comparativa de software agrícola 2025: Agro365 vs otras soluciones. Cuaderno digital, SIGPAC, teledetección NDVI, Verifactu, trazabilidad y precios. Viticultor básico gratis · desde 9€/mes.">
     <meta name="keywords" content="comparativa software agrícola, mejor software viñedos, software agrícola comparativa, software gestión viñedos, comparar software agrícola, software viticultura España">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Agro365">

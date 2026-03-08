@@ -6,14 +6,14 @@
     
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Jumilla - Gestión de Viñedos | Agro365</title>
-    <meta name="description" content="Software especializado para viticultores de DOCa Jumilla. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 7.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
+    <meta name="description" content="Software para viticultores de DOCa Jumilla. Cuaderno digital obligatorio 2027, teledetección NDVI y facturación Verifactu. Gestiona Monastrell y Garnacha Tintorera. Rendimientos 7.000 kg/ha y cumplimiento Consejo Regulador.">
     <meta name="keywords" content="software viticultores jumilla, cuaderno campo jumilla, gestión viñedo jumilla, monastrell, DO jumilla, murcia">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
     <link rel="canonical" href="{{ url('/software-viticultores-jumilla') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Jumilla - Agro365">
-    <meta property="og:description" content="Gestión especializada para viñedos de Jumilla. Control de rendimientos, heladas y cumplimiento normativo.">
+    <meta property="og:description" content="Gestión especializada para viñedos de Monastrell en Jumilla. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento Consejo Regulador.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-jumilla') }}">
     

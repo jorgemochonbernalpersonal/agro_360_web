@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Trazabilidad del Vino: Del Viñedo a la Bodega | Agro365</title>
-    <meta name="description" content="Sistema de trazabilidad completa del vino: desde la parcela SIGPAC hasta la factura. Cumple con normativa de trazabilidad alimentaria y Denominación de Origen.">
+    <meta name="description" content="Trazabilidad completa del vino: desde la parcela SIGPAC hasta el depósito y la botella. Libros de bodega, AICA, INFOVI y cumplimiento DO. Agro365 conecta viñedo y bodega.">
     <meta name="keywords" content="trazabilidad vino, trazabilidad uva, origen vino, trazabilidad alimentaria, DO vino, certificación origen, vinculación parcela bodega, trazabilidad vendimia, control origen uva">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/trazabilidad-vino-origen') }}">

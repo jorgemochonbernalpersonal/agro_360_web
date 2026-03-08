@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Software para Bodegas | Gestión de Producción y Trazabilidad</title>
-    <meta name="description" content="Digitaliza tu bodega con Agro365. Control integral de vendimia, trazabilidad total y gestión de depósitos. La herramienta que tu bodega necesita.">
+    <meta name="description" content="Software para bodegas. Trazabilidad integral, gestión de depósitos, Verifactu y libros de bodega. Gratis si tu DO usa Agro365. Bodega independiente desde 14€/mes.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/bodegas') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

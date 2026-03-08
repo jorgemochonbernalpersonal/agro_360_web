@@ -6,14 +6,14 @@
     
     <!-- SEO Meta Tags -->
     <title>Software para Viticultores en DOCa Priorat - Gestión de Viñedos | Agro365</title>
-    <meta name="description" content="Software especializado para viticultores de DOCa Priorat. Gestiona Tempranillo, Garnacha y Viura. Control de rendimientos 6.000 kg/ha, cumplimiento Consejo Regulador y cuaderno de campo digital.">
+    <meta name="description" content="Software para viticultores de DOQ Priorat. Cuaderno digital obligatorio 2027, teledetección NDVI y facturación Verifactu. Gestiona Garnacha y Cariñena en suelos de llicorella. Rendimientos 6.000 kg/ha y cumplimiento Consejo Regulador.">
     <meta name="keywords" content="software viticultores priorat, cuaderno campo priorat, gestión viñedo priorat, garnacha priorat, DOQ priorat, llicorella">
     <meta name="robots" content="index, follow">
     
     <!-- Canonical & Open Graph -->
     <link rel="canonical" href="{{ url('/software-viticultores-priorat') }}">
     <meta property="og:title" content="Software para Viticultores en DOCa Priorat - Agro365">
-    <meta property="og:description" content="Gestión especializada para viñedos de Priorat. Control de rendimientos, heladas y cumplimiento normativo.">
+    <meta property="og:description" content="Gestión especializada para viñedos de Garnacha y Cariñena en Priorat. Cuaderno digital, teledetección NDVI, Verifactu y cumplimiento DOQ.">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:url" content="{{ url('/software-viticultores-priorat') }}">
     

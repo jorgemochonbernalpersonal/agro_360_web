@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Teledetección NDVI en Viñedos | Monitorización Satelital</title>
-    <meta name="description" content="Analiza la salud de tu viñedo con imágenes satelitales. Índice NDVI, vigor vegetativo y humedad del suelo. Agricultura de precisión gratis con Agro365.">
+    <meta name="description" content="Teledetección NDVI para viñedos: analiza vigor vegetativo, humedad del suelo y zonas de estrés hídrico con imágenes satelitales Sentinel-2. Agricultura de precisión incluida en Agro365. Gratis en plan básico.">
     <meta name="keywords" content="NDVI viñedo, teledetección viñedo, índice vegetación vid, análisis satelital viña, Sentinel-2 agricultura, estrés hídrico viñedo, salud viñedo satélite, agricultura de precisión, NASA earthdata viñedo">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/ndvi-viñedo-teledeteccion') }}">

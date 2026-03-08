@@ -89,11 +89,19 @@
             'offers' => [
                 [
                     '@type' => 'Offer',
+                    'name' => 'Viticultor básico (invitado por bodega)',
+                    'price' => '0',
+                    'priceCurrency' => 'EUR',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Acceso básico gratuito para viticultor invitado por su bodega'
+                ],
+                [
+                    '@type' => 'Offer',
                     'name' => 'Viticultor completo (invitado por bodega)',
                     'price' => '9.00',
                     'priceCurrency' => 'EUR',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Plan completo para viticultor invitado: SIGPAC, teledetección, PAC, facturación'
+                    'description' => 'Plan completo para viticultor invitado: SIGPAC, teledetección NDVI, PAC, Verifactu'
                 ],
                 [
                     '@type' => 'Offer',
@@ -105,33 +113,44 @@
                 ],
                 [
                     '@type' => 'Offer',
+                    'name' => 'Bodega dentro de DO asociada',
+                    'price' => '0',
+                    'priceCurrency' => 'EUR',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Gestión completa de bodega incluida en el plan de Denominación de Origen'
+                ],
+                [
+                    '@type' => 'Offer',
                     'name' => 'Bodega independiente — Mensual',
                     'price' => '14.00',
                     'priceCurrency' => 'EUR',
                     'availability' => 'https://schema.org/InStock',
-                    'description' => 'Gestión completa de bodega sin Denominación de Origen'
+                    'description' => 'Trazabilidad, depósitos, Verifactu y gestión de vendimia para bodega sin DO'
+                ],
+                [
+                    '@type' => 'Offer',
+                    'name' => 'Denominación de Origen — desde',
+                    'price' => '149.00',
+                    'priceCurrency' => 'EUR',
+                    'availability' => 'https://schema.org/InStock',
+                    'description' => 'Plataforma completa para DO: panel de viticultores, trazabilidad y cuaderno de campo colectivo'
                 ]
             ],
-            'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027.',
+            'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027. Teledetección NDVI, Verifactu y trazabilidad completa.',
             'operatingSystem' => ['Web', 'iOS', 'Android'],
             'releaseNotes' => 'Versión Beta - En desarrollo activo',
             'screenshot' => asset('images/dashboard-preview.png'),
-            // ✅ SEO: Rating solo si hay reviews reales (comentado por ahora)
-            // 'aggregateRating' => [
-            //     '@type' => 'AggregateRating',
-            //     'ratingValue' => '4.8',
-            //     'ratingCount' => '150',
-            //     'bestRating' => '5',
-            //     'worstRating' => '1'
-            // ],
             'featureList' => [
-                'Cuaderno de campo digital',
+                'Cuaderno de campo digital obligatorio 2027',
                 'Gestión de parcelas SIGPAC',
-                'Informes oficiales con firma electrónica',
+                'Teledetección NDVI y análisis de vigor vegetativo',
+                'Informes oficiales con firma electrónica SHA-256',
                 'Dashboard de cumplimiento PAC en tiempo real',
-                'Control de cosechas y rendimientos',
-                'Facturación integrada',
-                'Gestión de cuadrillas y maquinaria'
+                'Control de cosechas y rendimientos por parcela',
+                'Facturación Verifactu integrada',
+                'Gestión de cuadrillas y maquinaria agrícola',
+                'Trazabilidad vino-origen: parcela → bodega → botella',
+                'Gestión de depósitos y pipeline de elaboración'
             ]
         ];
     @endphp
