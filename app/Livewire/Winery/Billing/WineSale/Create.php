@@ -6,7 +6,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\User;
+use App\Models\InvoicingSetting;
 use App\Models\WineLot;
 use App\Services\WineStockService;
 use Illuminate\Support\Facades\Auth;
@@ -102,14 +102,10 @@ class Create extends Component
         try {
             DB::beginTransaction();
 
-            // ── Atomic sequential numbering (lockForUpdate prevents race conditions) ──
-            DB::table('users')->where('id', Auth::id())->lockForUpdate()->first();
-            DB::table('users')->where('id', Auth::id())->increment('wine_sale_seq');
-            $seq  = DB::table('users')->where('id', Auth::id())->value('wine_sale_seq');
-            $year = now()->year;
-
-            $number   = 'WS-' . $year . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
-            $noteCode = 'ALB-' . $year . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
+            // ── Códigos desde InvoicingSetting (prefijo/contador configurables) ──
+            $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
+            $number   = $settings->generateAndIncrementInvoiceCode();
+            $noteCode = $settings->generateAndIncrementDeliveryNoteCode();
 
             // ── Calculate totals ──────────────────────────────────────────────────────
             $subtotal  = 0;
