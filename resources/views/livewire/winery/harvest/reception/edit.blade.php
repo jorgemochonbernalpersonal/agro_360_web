@@ -12,86 +12,117 @@
 
     <form wire:submit="save" class="space-y-8">
 
-        {{-- Contexto (solo lectura) --}}
-        <x-agro.form-section title="Viticultor y Parcela">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
-                    <p class="text-xs text-zinc-500 mb-1">Viticultor</p>
-                    <p class="font-medium text-zinc-900">{{ $viticulturistName }}</p>
-                </div>
-                <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
-                    <p class="text-xs text-zinc-500 mb-1">Parcela</p>
-                    <p class="font-medium text-zinc-900">{{ $plotName }}</p>
-                </div>
-                <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
-                    <p class="text-xs text-zinc-500 mb-1">Plantación / Variedad</p>
-                    <p class="font-medium text-zinc-900">{{ $plantingLabel }}</p>
-                </div>
-            </div>
+        {{-- Sección 1: Datos esenciales --}}
+        <x-agro.form-section title="Datos Esenciales">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <flux:field>
+                    <flux:label>Añada</flux:label>
+                    <flux:input value="{{ $vintageYear }}" disabled />
+                </flux:field>
 
-            {{-- Control de límite de cosecha --}}
-            @if($harvestLimitInfo)
-                @php $info = $harvestLimitInfo; @endphp
-                <div class="p-3 rounded-lg border {{ $info['exceeds'] ? 'bg-red-50 border-red-200' : 'bg-agro-50 border-agro-200' }}">
-                    <p class="text-xs font-semibold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }} mb-2">
-                        Control de límite de cosecha
-                    </p>
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                        <span class="text-zinc-600">Límite PAC base:</span>
-                        <span class="font-medium">{{ number_format($info['raw_limit'], 0) }} kg</span>
-                        @if($info['age_factor'] < 100)
-                            <span class="text-zinc-600">Factor edad:</span>
-                            <span class="font-medium text-amber-700">{{ $info['age_factor'] }}%</span>
-                        @endif
-                        <span class="text-zinc-600">Límite PAC efectivo:</span>
-                        <span class="font-medium text-blue-700">{{ number_format($info['pac_limit'], 0) }} kg</span>
-                        @if($info['has_forecast'])
-                            <span class="text-zinc-600">Previsión bodega:</span>
-                            <span class="font-medium text-agro-700">{{ number_format($info['forecast_kg'], 0) }} kg</span>
-                            <span class="text-zinc-600 font-semibold">Límite operativo:</span>
-                            <span class="font-bold text-agro-700">{{ number_format($info['limit'], 0) }} kg</span>
-                        @endif
-                        <span class="text-zinc-600">Resto recepciones (añada):</span>
-                        <span class="font-medium">{{ number_format($info['harvested'], 0) }} kg</span>
-                        @if($info['adding'] > 0)
-                            <span class="text-zinc-600">Esta recepción:</span>
-                            <span class="font-medium">{{ number_format($info['adding'], 0) }} kg</span>
-                            <span class="text-zinc-600">Total:</span>
-                            <span class="font-bold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }}">
-                                {{ number_format($info['new_total'], 0) }} kg ({{ $info['percentage'] }}%)
-                            </span>
-                        @endif
-                    </div>
-                    @if($info['age_factor'] < 100)
-                        <p class="mt-2 text-xs text-amber-700">
-                            Plantación joven — límite PAC reducido por factor de edad.
-                        </p>
-                    @endif
-                    @if($info['exceeds'])
-                        <p class="mt-2 text-xs text-red-700 font-medium">
-                            ⚠ Esta recepción supera el límite {{ $info['has_forecast'] ? 'de la previsión' : 'PAC' }}.
-                        </p>
-                    @endif
-                    @if(!$info['exceeds'] && isset($info['exceeds_pac']) && $info['exceeds_pac'])
-                        <p class="mt-2 text-xs text-orange-600 font-medium">
-                            ⚠ Se supera el límite PAC aunque esté dentro de la previsión.
-                        </p>
-                    @endif
-                </div>
-            @endif
+                <flux:field>
+                    <flux:label>Kg recibidos *</flux:label>
+                    <flux:input wire:model.live="total_weight" type="number" step="0.001" min="0" placeholder="0.000" />
+                    <flux:error name="total_weight" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Depósito destino *</flux:label>
+                    <flux:select wire:model="container_id">
+                        <flux:select.option value="">Selecciona un depósito...</flux:select.option>
+                        @foreach($availableContainers as $container)
+                            @php
+                                $isCurrent   = $container->id == $harvest->container_id;
+                                $available   = max(0, $container->capacity - $container->used_capacity);
+                                $freeForThis = $isCurrent ? $available + (float) $harvest->total_weight : $available;
+                            @endphp
+                            <flux:select.option value="{{ $container->id }}">
+                                {{ $container->name }} ({{ number_format($freeForThis, 0) }} kg disp.)
+                            </flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="container_id" />
+                </flux:field>
+            </div>
         </x-agro.form-section>
 
-        {{-- Datos de la recepción --}}
+        {{-- Sección 2: Viticultor y Parcela (solo lectura) --}}
+        <x-agro.form-section title="Viticultor y Parcela">
+            <div class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+                        <p class="text-xs text-zinc-500 mb-1">Viticultor</p>
+                        <p class="font-medium text-zinc-900">{{ $viticulturistName }}</p>
+                    </div>
+                    <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+                        <p class="text-xs text-zinc-500 mb-1">Parcela</p>
+                        <p class="font-medium text-zinc-900">{{ $plotName }}</p>
+                    </div>
+                    <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+                        <p class="text-xs text-zinc-500 mb-1">Plantación / Variedad</p>
+                        <p class="font-medium text-zinc-900">{{ $plantingLabel }}</p>
+                    </div>
+                </div>
+
+                {{-- Control de límite de cosecha --}}
+                @if($harvestLimitInfo)
+                    @php $info = $harvestLimitInfo; @endphp
+                    <div class="p-3 rounded-lg border {{ $info['exceeds'] ? 'bg-red-50 border-red-200' : 'bg-agro-50 border-agro-200' }}">
+                        <p class="text-xs font-semibold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }} mb-2">
+                            Control de límite de cosecha
+                        </p>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                            <span class="text-zinc-600">Límite PAC base:</span>
+                            <span class="font-medium">{{ number_format($info['raw_limit'], 0) }} kg</span>
+                            @if($info['age_factor'] < 100)
+                                <span class="text-zinc-600">Factor edad:</span>
+                                <span class="font-medium text-amber-700">{{ $info['age_factor'] }}%</span>
+                            @endif
+                            <span class="text-zinc-600">Límite PAC efectivo:</span>
+                            <span class="font-medium text-blue-700">{{ number_format($info['pac_limit'], 0) }} kg</span>
+                            @if($info['has_forecast'])
+                                <span class="text-zinc-600">Previsión bodega:</span>
+                                <span class="font-medium text-agro-700">{{ number_format($info['forecast_kg'], 0) }} kg</span>
+                                <span class="text-zinc-600 font-semibold">Límite operativo:</span>
+                                <span class="font-bold text-agro-700">{{ number_format($info['limit'], 0) }} kg</span>
+                            @endif
+                            <span class="text-zinc-600">Resto recepciones (añada):</span>
+                            <span class="font-medium">{{ number_format($info['harvested'], 0) }} kg</span>
+                            @if($info['adding'] > 0)
+                                <span class="text-zinc-600">Esta recepción:</span>
+                                <span class="font-medium">{{ number_format($info['adding'], 0) }} kg</span>
+                                <span class="text-zinc-600">Total:</span>
+                                <span class="font-bold {{ $info['exceeds'] ? 'text-red-700' : 'text-agro-700' }}">
+                                    {{ number_format($info['new_total'], 0) }} kg ({{ $info['percentage'] }}%)
+                                </span>
+                            @endif
+                        </div>
+                        @if($info['age_factor'] < 100)
+                            <p class="mt-2 text-xs text-amber-700">
+                                Plantación joven — límite PAC reducido por factor de edad.
+                            </p>
+                        @endif
+                        @if($info['exceeds'])
+                            <p class="mt-2 text-xs text-red-700 font-medium">
+                                ⚠ Esta recepción supera el límite {{ $info['has_forecast'] ? 'de la previsión' : 'PAC' }}.
+                            </p>
+                        @endif
+                        @if(!$info['exceeds'] && isset($info['exceeds_pac']) && $info['exceeds_pac'])
+                            <p class="mt-2 text-xs text-orange-600 font-medium">
+                                ⚠ Se supera el límite PAC aunque esté dentro de la previsión.
+                            </p>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        </x-agro.form-section>
+
+        {{-- Sección 3: Datos de la recepción --}}
         <x-agro.form-section title="Datos de la Recepción">
             <div class="space-y-5">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <flux:field>
-                        <flux:label>Añada</flux:label>
-                        <flux:input value="{{ $vintageYear }}" disabled />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Fecha de recepción</flux:label>
+                        <flux:label>Fecha de recepción *</flux:label>
                         <flux:input wire:model="harvest_start_date" type="date" />
                         <flux:error name="harvest_start_date" />
                     </flux:field>
@@ -106,12 +137,6 @@
                         <flux:label>Nº de ticket/Vendimia</flux:label>
                         <flux:input wire:model="harvest_ticket_number" placeholder="Ej: VND-2026-001" />
                         <flux:error name="harvest_ticket_number" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kg recibidos</flux:label>
-                        <flux:input wire:model.live="total_weight" type="number" step="0.001" min="0" placeholder="0.000" />
-                        <flux:error name="total_weight" />
                     </flux:field>
                 </div>
 
@@ -142,29 +167,11 @@
                         <flux:description>Código REGA de tu bodega como destino de la uva.</flux:description>
                         <flux:error name="destination_rega_code" />
                     </flux:field>
-
-                    <flux:field>
-                        <flux:label>Depósito destino</flux:label>
-                        <flux:select wire:model="container_id">
-                            <flux:select.option value="">Sin asignar</flux:select.option>
-                            @foreach($availableContainers as $container)
-                                @php
-                                    $isCurrent  = $container->id == $harvest->container_id;
-                                    $available  = max(0, $container->capacity - $container->used_capacity);
-                                    $freeForThis = $isCurrent ? $available + (float) $harvest->total_weight : $available;
-                                @endphp
-                                <flux:select.option value="{{ $container->id }}">
-                                    {{ $container->name }} ({{ number_format($freeForThis, 0) }} kg disp.)
-                                </flux:select.option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="container_id" />
-                    </flux:field>
                 </div>
             </div>
         </x-agro.form-section>
 
-        {{-- Calidad --}}
+        {{-- Sección 4: Calidad --}}
         <x-agro.form-section title="Parámetros de Calidad" description="Opcional">
             <div class="space-y-5">
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-5">
@@ -244,7 +251,7 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Descarte --}}
+        {{-- Sección 5: Descarte --}}
         <x-agro.form-section title="Descarte">
             <div class="space-y-4">
                 <flux:field>
@@ -262,7 +269,7 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Notas --}}
+        {{-- Sección 6: Notas --}}
         <x-agro.form-section title="Notas">
             <flux:field>
                 <flux:label>Observaciones (opcional)</flux:label>

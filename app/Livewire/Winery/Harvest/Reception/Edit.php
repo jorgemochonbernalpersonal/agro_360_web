@@ -222,11 +222,25 @@ class Edit extends Component
         $totalValue  = ($weight && $pricePerKg) ? round($weight * $pricePerKg, 3) : null;
 
         // Guard: container must belong to this winery
-        $containerId = Container::where('user_id', $wineryId)
-            ->findOrFail((int) $this->container_id)
-            ->id;
+        $container   = Container::where('user_id', $wineryId)->findOrFail((int) $this->container_id);
+        $containerId = $container->id;
 
         $oldWeight = (float) $this->harvest->total_weight;
+
+        // Validar capacidad antes de la transacción.
+        // Si es el mismo contenedor, su used_capacity ya incluye el peso actual → sumamos oldWeight al disponible.
+        $isSameContainer    = (int) $this->harvest->container_id === $containerId;
+        $effectiveAvailable = $isSameContainer
+            ? $container->getAvailableCapacity() + $oldWeight
+            : $container->getAvailableCapacity();
+
+        if ($weight > $effectiveAvailable) {
+            $this->addError('container_id',
+                "El contenedor «{$container->name}» no tiene capacidad suficiente. " .
+                "Disponible: " . number_format($effectiveAvailable, 0) . " kg."
+            );
+            return;
+        }
 
         try {
             DB::transaction(function () use ($wineryId, $weight, $pricePerKg, $totalValue, $containerId, $oldWeight) {

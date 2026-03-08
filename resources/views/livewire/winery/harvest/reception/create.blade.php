@@ -12,12 +12,47 @@
 
     <form wire:submit="save" class="space-y-8">
 
-        {{-- Sección 1: Contexto --}}
+        {{-- Sección 1: Datos esenciales --}}
+        <x-agro.form-section title="Datos Esenciales">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <flux:field>
+                    <flux:label>Añada *</flux:label>
+                    <flux:select wire:model.live="vintage_year">
+                        @for($y = now()->year + 1; $y >= 2000; $y--)
+                            <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
+                        @endfor
+                    </flux:select>
+                    <flux:error name="vintage_year" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Kg recibidos *</flux:label>
+                    <flux:input wire:model.live="total_weight" type="number" step="0.001" min="0" placeholder="0.000" />
+                    <flux:error name="total_weight" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Depósito destino *</flux:label>
+                    <flux:select wire:model="container_id">
+                        <flux:select.option value="">Selecciona un depósito...</flux:select.option>
+                        @foreach($availableContainers as $c)
+                            @php $available = max(0, $c->capacity - $c->used_capacity); @endphp
+                            <flux:select.option value="{{ $c->id }}">
+                                {{ $c->name }} ({{ number_format($available, 0) }} kg disp.)
+                            </flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="container_id" />
+                </flux:field>
+            </div>
+        </x-agro.form-section>
+
+        {{-- Sección 2: Viticultor y Parcela --}}
         <x-agro.form-section title="Viticultor y Parcela">
             <div class="space-y-5">
                 {{-- Viticultor --}}
                 <flux:field>
-                    <flux:label>Viticultor</flux:label>
+                    <flux:label>Viticultor *</flux:label>
                     <flux:select wire:model.live="viticulturist_id">
                         <flux:select.option value="">Selecciona un viticultor...</flux:select.option>
                         @foreach($linkedViticulturists as $v)
@@ -27,10 +62,10 @@
                     <flux:error name="viticulturist_id" />
                 </flux:field>
 
-                {{-- Parcela (carga al seleccionar viticultor) --}}
+                {{-- Parcela --}}
                 @if($viticulturist_id)
                     <flux:field>
-                        <flux:label>Parcela</flux:label>
+                        <flux:label>Parcela *</flux:label>
                         <flux:select wire:model.live="plot_id">
                             <flux:select.option value="">Selecciona una parcela...</flux:select.option>
                             @foreach($availablePlots as $plot)
@@ -40,16 +75,16 @@
                         <flux:error name="plot_id" />
                         @if(empty($availablePlots))
                             <flux:description class="text-amber-600">
-                                Este viticultor no tiene parcelas con plantaciones activas.
+                                Este viticultor no tiene parcelas activas con plantaciones activas.
                             </flux:description>
                         @endif
                     </flux:field>
                 @endif
 
-                {{-- Plantación (carga al seleccionar parcela) --}}
+                {{-- Plantación --}}
                 @if($plot_id)
                     <flux:field>
-                        <flux:label>Plantación (variedad)</flux:label>
+                        <flux:label>Plantación / Variedad *</flux:label>
                         <flux:select wire:model.live="plot_planting_id">
                             <flux:select.option value="">Selecciona una plantación...</flux:select.option>
                             @foreach($availablePlantings as $planting)
@@ -113,23 +148,12 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Sección 2: Datos de la recepción --}}
+        {{-- Sección 3: Datos de la recepción --}}
         <x-agro.form-section title="Datos de la Recepción">
             <div class="space-y-5">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <flux:field>
-                        <flux:label>Añada *</flux:label>
-                        <flux:select wire:model.live="vintage_year">
-                            @for($y = now()->year + 1; $y >= 2000; $y--)
-                                <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
-                            @endfor
-                        </flux:select>
-                        <flux:description>Año de cosecha de la uva recibida.</flux:description>
-                        <flux:error name="vintage_year" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Fecha de recepción</flux:label>
+                        <flux:label>Fecha de recepción *</flux:label>
                         <flux:input wire:model="harvest_start_date" type="date" />
                         <flux:error name="harvest_start_date" />
                     </flux:field>
@@ -144,12 +168,6 @@
                         <flux:label>Nº de ticket/Vendimia</flux:label>
                         <flux:input wire:model="harvest_ticket_number" placeholder="Ej: VND-2026-001" />
                         <flux:error name="harvest_ticket_number" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kg recibidos</flux:label>
-                        <flux:input wire:model.live="total_weight" type="number" step="0.001" min="0" placeholder="0.000" />
-                        <flux:error name="total_weight" />
                     </flux:field>
                 </div>
 
@@ -180,27 +198,11 @@
                         <flux:description>Código REGA de tu bodega como destino de la uva.</flux:description>
                         <flux:error name="destination_rega_code" />
                     </flux:field>
-
-                    <flux:field>
-                        <flux:label>Depósito destino *</flux:label>
-                        <flux:select wire:model="container_id">
-                            <flux:select.option value="">Selecciona un depósito...</flux:select.option>
-                            @foreach($availableContainers as $container)
-                                @php
-                                    $available = max(0, $container->capacity - $container->used_capacity);
-                                @endphp
-                                <flux:select.option value="{{ $container->id }}">
-                                    {{ $container->name }} ({{ number_format($available, 0) }} kg disp.)
-                                </flux:select.option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="container_id" />
-                    </flux:field>
                 </div>
             </div>
         </x-agro.form-section>
 
-        {{-- Sección 3: Calidad --}}
+        {{-- Sección 4: Calidad --}}
         <x-agro.form-section title="Parámetros de Calidad" description="Opcional">
             <div class="space-y-5">
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-5">
@@ -247,7 +249,6 @@
                     <flux:error name="health_status" />
                 </flux:field>
 
-                {{-- Estado sanitario detallado --}}
                 <div>
                     <p class="text-sm font-medium text-zinc-700 mb-3">Estado sanitario detallado (%)</p>
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -281,7 +282,7 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Sección 4: Descarte --}}
+        {{-- Sección 5: Descarte --}}
         <x-agro.form-section title="Descarte">
             <div class="space-y-4">
                 <flux:field>
@@ -299,7 +300,7 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Notas --}}
+        {{-- Sección 6: Notas --}}
         <x-agro.form-section title="Notas">
             <flux:field>
                 <flux:label>Observaciones (opcional)</flux:label>

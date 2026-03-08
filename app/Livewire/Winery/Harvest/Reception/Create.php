@@ -313,15 +313,23 @@ class Create extends Component
             ->findOrFail($this->plot_planting_id);
 
         // Guard: container must belong to this winery
-        $containerId = Container::where('user_id', $wineryId)
-            ->findOrFail((int) $this->container_id)
-            ->id;
+        $container   = Container::where('user_id', $wineryId)->findOrFail((int) $this->container_id);
+        $containerId = $container->id;
+
+        $weight = (float) $this->total_weight;
+
+        // Validar capacidad antes de la transacción
+        if (! $container->hasAvailableCapacity($weight)) {
+            $this->addError('container_id',
+                "El contenedor «{$container->name}» no tiene capacidad suficiente. " .
+                "Disponible: " . number_format($container->getAvailableCapacity(), 0) . " kg."
+            );
+            return;
+        }
 
         // Auto-get/create campaign for vintage year
         $campaign = Campaign::getOrCreateActiveForYear($wineryId, $this->vintage_year);
         abort_if(!$campaign, 500, 'No se pudo obtener la campaña.');
-
-        $weight     = (float) $this->total_weight;
         $pricePerKg = $this->price_per_kg ? (float) $this->price_per_kg : null;
         $totalValue = ($weight && $pricePerKg) ? round($weight * $pricePerKg, 3) : null;
 
@@ -405,6 +413,7 @@ class Create extends Component
         $wineryId = Auth::id();
 
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
+            ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
             ->with('viticulturist:id,name')
             ->get()
             ->pluck('viticulturist')
