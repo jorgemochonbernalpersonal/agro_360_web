@@ -1,14 +1,14 @@
 <div>
-    <x-agro.form-card title="Nuevo Lote de Vino" description="Registra un lote de vino para su venta y facturación"
+    <x-agro.form-card title="Nuevo Producto" description="Registra un producto para su venta y facturación"
         :back-url="route('winery.wine-lots.index')">
 
         <form wire:submit.prevent="save" class="space-y-8">
 
-            <x-agro.form-section title="Informacion del Lote">
+            <x-agro.form-section title="Información del Producto">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="name">Nombre del lote *</flux:label>
-                        <flux:input wire:model="name" type="text" id="name" placeholder="Ej: Vino Jorge Reserva 2023" required />
+                        <flux:label for="name">Nombre del producto *</flux:label>
+                        <flux:input wire:model="name" type="text" id="name" placeholder="Ej: Rioja Reserva 2022" required />
                         <flux:error name="name" />
                     </flux:field>
 
@@ -70,7 +70,7 @@
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.wine-lots.index')" submit-label="Crear Lote" />
+            <x-agro.form-actions :cancel-url="route('winery.wine-lots.index')" submit-label="Crear Producto" />
         </form>
     </x-agro.form-card>
 </div>

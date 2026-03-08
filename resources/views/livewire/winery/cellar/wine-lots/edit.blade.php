@@ -1,13 +1,13 @@
 <div>
-    <x-agro.form-card title="Editar Lote de Vino" description="Modifica los datos del lote"
+    <x-agro.form-card title="Editar Producto" description="Modifica los datos del producto"
         :back-url="route('winery.wine-lots.index')">
 
         <form wire:submit.prevent="update" class="space-y-8">
 
-            <x-agro.form-section title="Informacion del Lote">
+            <x-agro.form-section title="Información del Producto">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label for="name">Nombre del lote *</flux:label>
+                        <flux:label for="name">Nombre del producto *</flux:label>
                         <flux:input wire:model="name" type="text" id="name" required />
                         <flux:error name="name" />
                     </flux:field>

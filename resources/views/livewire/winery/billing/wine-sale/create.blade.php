@@ -51,9 +51,9 @@
                             <!-- Lote -->
                             <div class="col-span-12 md:col-span-4">
                                 <flux:field>
-                                    <flux:label>Lote de vino *</flux:label>
+                                    <flux:label>Producto *</flux:label>
                                     <flux:select wire:model.live="lines.{{ $i }}.wine_lot_id">
-                                        <option value="">Seleccionar lote...</option>
+                                        <option value="">Seleccionar producto...</option>
                                         @foreach ($wineLots as $lot)
                                             <option value="{{ $lot->id }}">
                                                 {{ $lot->name }}

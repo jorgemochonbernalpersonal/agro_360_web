@@ -388,7 +388,7 @@ class NavigationHelper
                 ],
                 [
                     'icon'   => 'archive-box',
-                    'label'  => 'Lotes de Vino',
+                    'label'  => 'Productos',
                     'route'  => 'winery.wine-lots.index',
                     'active' => request()->routeIs('winery.wine-lots*'),
                 ],

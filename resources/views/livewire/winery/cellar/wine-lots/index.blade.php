@@ -1,8 +1,8 @@
 <div class="space-y-6 animate-fade-in">
-    <x-agro.page-header title="Lotes de Vino" description="Gestiona tu stock de vino para facturar a clientes">
+    <x-agro.page-header title="Productos" description="Gestiona tu catálogo de productos y stock para facturar a clientes">
         <x-slot:actions>
             <flux:button href="{{ route('winery.wine-lots.create') }}" wire:navigate variant="primary" icon="plus">
-                Nuevo Lote
+                Nuevo Producto
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
@@ -165,12 +165,12 @@
     @else
         <x-agro.empty-state
             icon="beaker"
-            title="No hay lotes de vino registrados"
-            description="Crea el primer lote para gestionar tu stock"
+            title="No hay productos registrados"
+            description="Crea el primer producto para gestionar tu stock"
         >
             <x-slot:action>
                 <flux:button href="{{ route('winery.wine-lots.create') }}" wire:navigate variant="primary" icon="plus">
-                    Nuevo Lote
+                    Nuevo Producto
                 </flux:button>
             </x-slot:action>
         </x-agro.empty-state>
