@@ -18,7 +18,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
                         <flux:label required>Cliente</flux:label>
-                        <flux:select wire:model="client_id" id="client_id" required>
+                        <flux:select wire:model.live="client_id" id="client_id" required>
                             <option value="">Selecciona un cliente</option>
                             @foreach ($clients as $client)
                                 <option value="{{ $client->id }}">{{ $client->full_name }}</option>
@@ -32,6 +32,24 @@
                         @endif
                     </flux:field>
 
+                    @if ($client_id)
+                        <flux:field>
+                            <flux:label required>Dirección de facturación</flux:label>
+                            <flux:select wire:model="client_address_id" id="client_address_id">
+                                <option value="">Selecciona una dirección</option>
+                                @foreach ($availableAddresses as $address)
+                                    <option value="{{ $address->id }}">
+                                        {{ $address->full_address }}
+                                        @if ($address->is_default) (Por defecto) @endif
+                                    </option>
+                                @endforeach
+                            </flux:select>
+                            <flux:error name="client_address_id" />
+                        </flux:field>
+                    @endif
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <flux:field>
                         <flux:label>Forma de pago</flux:label>
                         <flux:select wire:model="payment_type" id="payment_type">
@@ -49,6 +67,18 @@
             <x-agro.form-section title="Albarán">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <flux:field>
+                        <flux:label required>Código de albarán</flux:label>
+                        <flux:input
+                            wire:model="delivery_note_code"
+                            type="text"
+                            disabled
+                            class="bg-zinc-100 cursor-not-allowed font-mono font-semibold"
+                        />
+                        <flux:error name="delivery_note_code" />
+                        <p class="mt-1 text-xs text-zinc-400">Secuencial automático</p>
+                    </flux:field>
+
+                    <flux:field>
                         <flux:label required>Fecha de albarán</flux:label>
                         <flux:input wire:model="delivery_note_date" type="date" required />
                         <flux:error name="delivery_note_date" />
@@ -59,13 +89,6 @@
                         <flux:input wire:model="invoice_date" type="date" required />
                         <flux:error name="invoice_date" />
                     </flux:field>
-
-                    <div class="flex items-end pb-1">
-                        <p class="text-xs text-zinc-400">
-                            <flux:icon icon="information-circle" class="size-3.5 inline-block mr-1 align-middle" />
-                            El código de albarán se genera automáticamente. El número de factura se asigna al emitir.
-                        </p>
-                    </div>
                 </div>
             </x-agro.form-section>
 

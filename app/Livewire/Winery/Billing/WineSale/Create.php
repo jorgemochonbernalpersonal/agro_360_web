@@ -20,16 +20,19 @@ class Create extends Component
     use WithToastNotifications;
 
     public string $client_id          = '';
+    public string $client_address_id  = '';
     public string $invoice_date       = '';
     public string $delivery_note_date = '';
     public string $observations       = '';
     public string $payment_type       = '';
+    public string $delivery_note_code = '';
 
     public array $items = [];
 
     public string $selectedLotId = '';
 
-    public $availableTaxes = [];
+    public $availableTaxes    = [];
+    public $availableAddresses = [];
     protected string $defaultTaxId = '';
 
     public function mount(): void
@@ -45,6 +48,27 @@ class Create extends Component
 
         $defaultTax         = $user->defaultTax()->first() ?? $this->availableTaxes->first();
         $this->defaultTaxId = (string) ($defaultTax?->id ?? '');
+
+        $settings = InvoicingSetting::getOrCreateForUser(Auth::id());
+        $this->delivery_note_code = $settings->getDeliveryNotePreview();
+    }
+
+    public function updatedClientId(string $value): void
+    {
+        if ($value) {
+            $client = Client::with(['addresses.municipality', 'addresses.province'])->find($value);
+            if ($client) {
+                $this->availableAddresses = $client->addresses;
+                $primary = $client->addresses->firstWhere('is_default', true) ?? $client->addresses->first();
+                $this->client_address_id = $primary ? (string) $primary->id : '';
+            } else {
+                $this->availableAddresses = collect();
+                $this->client_address_id  = '';
+            }
+        } else {
+            $this->availableAddresses = collect();
+            $this->client_address_id  = '';
+        }
     }
 
     // ── Añadir producto desde selector ───────────────────────────────────────
@@ -119,8 +143,10 @@ class Create extends Component
     {
         return [
             'client_id'                    => 'required|exists:clients,id',
+            'client_address_id'            => 'required|exists:client_addresses,id',
             'invoice_date'                 => 'required|date',
             'delivery_note_date'           => 'required|date',
+            'delivery_note_code'           => 'required|string|max:255',
             'payment_type'                 => 'nullable|in:cash,transfer,check,other',
             'observations'                 => 'nullable|string',
             'items'                        => 'required|array|min:1',
@@ -192,6 +218,7 @@ class Create extends Component
             $invoice = Invoice::create([
                 'user_id'              => Auth::id(),
                 'client_id'            => $client->id,
+                'client_address_id'    => $this->client_address_id ?: null,
                 'invoice_type'         => 'wine_sale',
                 'delivery_note_code'   => $noteCode,
                 'delivery_note_date'   => $this->delivery_note_date,
