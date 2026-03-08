@@ -11,14 +11,6 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <x-agro.stat-card label="Total" :value="$stats['total']" icon="clipboard-document-list" color="zinc" />
-        <x-agro.stat-card label="Confirmadas" :value="$stats['confirmed']" icon="check-circle" color="green" />
-        <x-agro.stat-card label="Borradores" :value="$stats['draft']" icon="pencil" color="amber" />
-        <x-agro.stat-card label="Kg previstos (confirmados)" :value="number_format($stats['total_kg'], 0) . ' kg'" icon="scale" color="agro" />
-    </div>
-
     {{-- Filtros --}}
     <x-agro.filter-bar :active-count="collect([$campaignFilter, $viticulturistFilter, $statusFilter, $search])->filter()->count()">
         <x-agro.filter-input wire:model.live="search" placeholder="Buscar viticultor, parcela, variedad..." />
