@@ -80,6 +80,8 @@ class Login extends Component
 
         $this->validate();
 
+        $this->email = \App\Models\User::canonicalizeEmail($this->email);
+
         if (!Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             // Incrementar contador de intentos fallidos
             RateLimiter::hit($failedKey, 3600); // Expira en 1 hora

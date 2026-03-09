@@ -38,6 +38,8 @@ class ForgotPassword extends Component
 
         $this->validate();
 
+        $this->email = \App\Models\User::canonicalizeEmail($this->email);
+
         // Enviar enlace de reset usando Laravel's Password broker
         try {
             $status = Password::sendResetLink(

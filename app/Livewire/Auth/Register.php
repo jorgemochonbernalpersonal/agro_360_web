@@ -112,6 +112,8 @@ class Register extends Component
         
         $this->validate();
 
+        $this->email = User::canonicalizeEmail($this->email);
+
         $existing = User::where('email', $this->email)->first();
 
         // Registro público (sin usuario autenticado): puede ser alta nueva o activación de viticultor pre-creado

@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             TrainingSystemSeeder::class,        // Sistemas de conducción base
             PlotCatalogSeeder::class,           // Catálogos territoriales: suelos, riegos, topografías, propiedades, valles
             TaxSeeder::class,                   // Impuestos (IVA, IGIC)
+            UnitSeeder::class,                  // Unidades de medida (L, kg, g...)
+            PestSeeder::class,                  // Plagas y enfermedades del viñedo
         ]);
         
         $this->command->info('✅ Seeders completados.');

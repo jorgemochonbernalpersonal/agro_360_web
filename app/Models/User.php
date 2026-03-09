@@ -78,6 +78,17 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Normaliza un email eliminando el sufijo _tag de cuentas Gmail.
+     * Ejemplo: bernalmochonjorge_test@gmail.com → bernalmochonjorge@gmail.com
+     */
+    public static function canonicalizeEmail(string $email): string
+    {
+        $email = strtolower(trim($email));
+        // Gmail: strip último _suffix antes de @gmail.com
+        return preg_replace('/(_[^_@]+)(@gmail\.com)$/', '$2', $email);
+    }
+
+    /**
      * Roles disponibles
      */
     public const ROLE_ADMIN = 'admin';
