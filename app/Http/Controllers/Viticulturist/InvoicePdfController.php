@@ -13,7 +13,7 @@ class InvoicePdfController extends Controller
     /**
      * Descarga el PDF de la factura fiscal.
      */
-    public function invoice(int $id): Response
+    public function invoice(string $id): Response
     {
         $invoice = $this->loadInvoice($id);
 
@@ -36,7 +36,7 @@ class InvoicePdfController extends Controller
     /**
      * Descarga el PDF del albarán de entrega.
      */
-    public function deliveryNote(int $id): Response
+    public function deliveryNote(string $id): Response
     {
         $invoice = $this->loadInvoice($id);
 
@@ -57,7 +57,7 @@ class InvoicePdfController extends Controller
 
     // -------------------------------------------------------------------------
 
-    private function loadInvoice(int $id): Invoice
+    private function loadInvoice(string $id): Invoice
     {
         $user = Auth::user();
 

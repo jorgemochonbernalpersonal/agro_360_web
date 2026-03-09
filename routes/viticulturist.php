@@ -339,8 +339,8 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             
             // Rutas dinámicas: más específicas primero
             Route::get('/{invoice}/edit', \App\Livewire\Viticulturist\Invoices\Edit::class)->name('edit');
-            Route::get('/{id}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');
-            Route::get('/{id}/albaran-pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
+            Route::get('/{invoice}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');
+            Route::get('/{invoice}/albaran-pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
             Route::get('/{invoice}', \App\Livewire\Viticulturist\Invoices\Show::class)->name('show');
         });
 
