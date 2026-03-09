@@ -505,7 +505,7 @@
                     </tr>
                     <tr>
                         <td class="lbl">
-                            IVA@if(!$multipleRates && $taxGroups->count() === 1) ({{ number_format($taxGroups->first()['rate'], 0) }}%)@endif
+                            IVA{{ (!$multipleRates && $taxGroups->count() === 1) ? ' (' . number_format((float) $taxGroups->first()['rate'], 0) . '%)' : '' }}
                         </td>
                         <td class="val">{{ number_format((float) $invoice->tax_amount, 2, ',', '.') }} €</td>
                     </tr>
