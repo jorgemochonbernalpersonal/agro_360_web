@@ -534,7 +534,7 @@
                         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
                             <div class="text-amber-700 font-bold text-sm mb-2">📅 Enero 2027 — Fase 1</div>
                             <p class="text-gray-700 text-sm leading-relaxed">
-                                Obligatorio el registro digital de tratamientos fitosanitarios. Multas de hasta <strong>3.000€</strong> por incumplimiento. Agro365 te cubre desde hoy.
+                                Obligatorio el registro digital de tratamientos fitosanitarios. Agro365 te cubre desde hoy.
                             </p>
                         </div>
                         <!-- Fase 2 -->
