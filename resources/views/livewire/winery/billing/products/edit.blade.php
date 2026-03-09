@@ -119,17 +119,15 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label required>Fecha de pedido</flux:label>
-                        <flux:input wire:model="order_date" type="date"
-                            :disabled="$isLocked" />
-                        <flux:error name="order_date" />
+                        <flux:label>Fecha de pedido</flux:label>
+                        <flux:input value="{{ $invoice->order_date ? $invoice->order_date->format('d/m/Y') : '—' }}" disabled
+                            class="bg-zinc-100 cursor-not-allowed" />
                     </flux:field>
 
                     <flux:field>
                         <flux:label>Fecha de albarán</flux:label>
-                        <flux:input wire:model="delivery_note_date" type="date"
-                            :disabled="$isLocked || $isInvoiced" />
-                        <flux:error name="delivery_note_date" />
+                        <flux:input value="{{ $invoice->delivery_note_date ? $invoice->delivery_note_date->format('d/m/Y') : '—' }}" disabled
+                            class="bg-zinc-100 cursor-not-allowed" />
                     </flux:field>
                 </div>
 
