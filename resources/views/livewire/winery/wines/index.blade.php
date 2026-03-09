@@ -65,9 +65,9 @@
                 <x-agro.table-cell>{{ $wine->process_details_count }}</x-agro.table-cell>
                 <x-agro.table-cell align="right">
                     <div class="flex justify-end gap-2">
-                        <flux:button size="sm" variant="ghost" icon="plus"
-                            href="{{ route('winery.wines.process.create', $wine) }}" wire:navigate
-                            title="Añadir operación" />
+                        <flux:button size="sm" variant="ghost" icon="eye"
+                            href="{{ route('winery.wines.show', $wine) }}" wire:navigate
+                            title="Ver detalle" />
                         <flux:button size="sm" variant="ghost" icon="pencil"
                             href="{{ route('winery.wines.edit', $wine) }}" wire:navigate />
                         <flux:button size="sm" variant="ghost" icon="trash"

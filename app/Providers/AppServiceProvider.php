@@ -12,6 +12,8 @@ use App\Models\Machinery;
 use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
+use App\Models\WineLoss;
+use App\Models\WineTransfer;
 use App\Observers\AgriculturalActivityObserver;
 use App\Observers\CampaignObserver;
 use App\Observers\HarvestObserver;
@@ -20,6 +22,8 @@ use App\Observers\InvoiceObserver;
 use App\Observers\PhytosanitaryTreatmentObserver;
 use App\Observers\PlotObserver;
 use App\Observers\PlotPlantingObserver;
+use App\Observers\WineLossObserver;
+use App\Observers\WineTransferObserver;
 use App\Policies\AgriculturalActivityPolicy;
 use App\Policies\CampaignPolicy;
 use App\Policies\CrewPolicy;
@@ -115,6 +119,8 @@ class AppServiceProvider extends ServiceProvider
         PlotPlanting::observe(PlotPlantingObserver::class);
         Campaign::observe(CampaignObserver::class);
         PhytosanitaryTreatment::observe(PhytosanitaryTreatmentObserver::class);
+        WineTransfer::observe(WineTransferObserver::class);
+        WineLoss::observe(WineLossObserver::class);
     }
 
     private function registerEmailRedirect(): void

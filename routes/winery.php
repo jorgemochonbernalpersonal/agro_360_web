@@ -78,14 +78,12 @@ Route::middleware(['role:winery'])
         Route::get('/winery-supplies/create', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.create');
         Route::get('/winery-supplies/{winerySupply}/edit', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.edit');
 
-        // ── Vinos (en construcción) ────────────────────────────────────
-        Route::get('/wines', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('wines.index')
-            ->defaults('module', 'Vinos')
-            ->defaults('icon', 'arrows-right-left');
-        Route::get('/wines/create', fn() => redirect()->route('winery.wines.index'))->name('wines.create');
-        Route::get('/wines/{wine}/edit', fn() => redirect()->route('winery.wines.index'))->name('wines.edit');
-        Route::get('/wines/{wine}/process/create', fn() => redirect()->route('winery.wines.index'))->name('wines.process.create');
+        // ── Vinos ─────────────────────────────────────────────────────────────
+        Route::get('/wines', \App\Livewire\Winery\Wines\Index::class)->name('wines.index');
+        Route::get('/wines/create', \App\Livewire\Winery\Wines\Create::class)->name('wines.create');
+        Route::get('/wines/{wine}', \App\Livewire\Winery\Wines\Show::class)->name('wines.show');
+        Route::get('/wines/{wine}/edit', \App\Livewire\Winery\Wines\Edit::class)->name('wines.edit');
+        Route::get('/wines/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('wines.process.create');
 
         // ── Uva / mosto / vino externo (en construcción) ─────────────
         Route::get('/external-grape', \App\Livewire\Winery\UnderConstruction::class)
