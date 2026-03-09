@@ -182,8 +182,9 @@ class Create extends Component
             'description'         => 'Cosecha del ' . $harvest->harvest_start_date->format('d/m/Y') .
                                      ($harvest->plotPlanting->grapeVariety ? ' - Variedad: ' . $harvest->plotPlanting->grapeVariety->name : ''),
             'sku'                 => 'HARV-' . $harvest->id,
-            'quantity'            => $availableQty,      // Stock disponible real, no total_weight
-            'available_qty'       => $availableQty,      // Para mostrar el máximo en UI
+            'quantity'            => $availableQty,
+            'unit'                => 'kg',
+            'available_qty'       => $availableQty,
             'total_weight'        => (float) $harvest->total_weight,
             'unit_price'          => $harvest->price_per_kg ?? 0,
             'discount_percentage' => 0,
@@ -245,6 +246,7 @@ class Create extends Component
             'description' => '',
             'sku' => '',
             'quantity' => 1,
+            'unit' => 'unidades',
             'unit_price' => 0,
             'discount_percentage' => 0,
             'tax_id' => null,
@@ -288,6 +290,7 @@ class Create extends Component
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.discount_percentage' => 'nullable|numeric|min:0|max:100',
             'items.*.tax_id' => 'nullable|exists:taxes,id',
+            'items.*.unit' => 'nullable|string|max:20',
             'items.*.concept_type' => 'nullable|in:harvest,service,product,other',
             'payment_type' => 'nullable|in:cash,transfer,check,other',
             'observations' => 'nullable|string',
@@ -412,6 +415,7 @@ class Create extends Component
                         'description' => $itemData['description'] ?? null,
                         'sku' => $itemData['sku'] ?? null,
                         'quantity' => $itemData['quantity'],
+                        'unit' => $itemData['unit'] ?? 'unidades',
                         'unit_price' => $itemData['unit_price'],
                         'discount_percentage' => $itemData['discount_percentage'] ?? 0,
                         'discount_amount' => $itemDiscount,

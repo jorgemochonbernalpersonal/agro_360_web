@@ -272,11 +272,11 @@
                                     </flux:field>
                                 </div>
 
-                                {{-- Cantidad --}}
+                                {{-- Cantidad + Unidad --}}
                                 <div class="md:col-span-3">
                                     <flux:field>
                                         <flux:label class="text-xs">
-                                            Cantidad (kg) <span class="text-red-500">*</span>
+                                            Cantidad <span class="text-red-500">*</span>
                                         </flux:label>
                                         <flux:input
                                             wire:model.live="items.{{ $index }}.quantity"
@@ -306,12 +306,23 @@
                                             </p>
                                         @endif
                                     </flux:field>
+                                    <flux:field class="mt-2">
+                                        <flux:label class="text-xs">Unidad</flux:label>
+                                        <flux:select wire:model="items.{{ $index }}.unit" class="text-sm" :disabled="$isHarvestItem">
+                                            <option value="kg">kg</option>
+                                            <option value="litros">litros</option>
+                                            <option value="centilitros">centilitros</option>
+                                            <option value="botellas">botellas</option>
+                                            <option value="cajas">cajas</option>
+                                            <option value="unidades">unidades</option>
+                                        </flux:select>
+                                    </flux:field>
                                 </div>
 
                                 {{-- Precio --}}
                                 <div class="md:col-span-3">
                                     <flux:field>
-                                        <flux:label class="text-xs">Precio €/kg <span class="text-red-500">*</span></flux:label>
+                                        <flux:label class="text-xs">Precio / unidad <span class="text-red-500">*</span></flux:label>
                                         <flux:input
                                             wire:model.live="items.{{ $index }}.unit_price"
                                             type="number"

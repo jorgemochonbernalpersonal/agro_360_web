@@ -20,6 +20,7 @@ class InvoiceItem extends Model
         'sku',
         'concept_type',
         'quantity',
+        'unit',
         'unit_price',
         'discount_percentage',
         'discount_amount',

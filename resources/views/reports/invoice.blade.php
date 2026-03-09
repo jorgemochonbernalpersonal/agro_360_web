@@ -373,7 +373,7 @@
                 @else
                     <th style="width:10%">SKU</th>
                 @endif
-                <th class="r" style="width:7%">Cant.</th>
+                <th class="r" style="width:9%">Cant. / Ud.</th>
                 <th class="r" style="width:11%">P. Unit.</th>
                 <th class="r" style="width:7%">Dto.%</th>
                 <th class="r" style="width:7%">IVA%</th>
@@ -419,7 +419,7 @@
                             @endif
                         </td>
                     @endif
-                    <td class="r">{{ number_format((float) $item->quantity, 2, ',', '.') }}</td>
+                    <td class="r">{{ number_format((float) $item->quantity, 2, ',', '.') }}<br><span style="font-size:7pt;color:#6b7280;">{{ $item->unit ?? 'ud.' }}</span></td>
                     <td class="r">{{ number_format((float) $item->unit_price, 2, ',', '.') }} €</td>
                     <td class="r">
                         @if((float) $item->discount_percentage > 0)
