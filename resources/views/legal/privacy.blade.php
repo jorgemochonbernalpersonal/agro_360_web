@@ -52,209 +52,138 @@
                     Volver a Inicio
                 </a>
                 <h1 class="text-4xl font-bold text-gray-900">Política de Privacidad y Cookies</h1>
-                <p class="mt-2 text-gray-600">Última actualización: {{ date('d/m/Y') }}</p>
+                <p class="mt-2 text-gray-600">Última actualización: 09/03/2026</p>
             </div>
 
             <!-- Content -->
             <div class="bg-white rounded-lg shadow-sm p-8 space-y-6">
-                <!-- Introducción -->
+
                 <section>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">1. Información General</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">1. Responsable del Tratamiento</h2>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><strong>Denominación social:</strong> Agro365</li>
+                        <li><strong>Domicilio:</strong> Calle Toledo 172, Madrid, España</li>
+                        <li><strong>Email:</strong> <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a></li>
+                        <li><strong>Actividad:</strong> Software de gestión agrícola</li>
+                    </ul>
+                    <p class="text-gray-500 text-sm mt-3 italic">(NIF se añadirá al formalizarse el alta)</p>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">2. Información General</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        En <strong>Agro365</strong>, nos tomamos muy en serio la privacidad de nuestros usuarios. 
-                        Esta política describe cómo recopilamos, usamos y protegemos tu información personal 
-                        cuando utilizas nuestra plataforma de gestión agrícola.
+                        En <strong>Agro365</strong> nos tomamos muy en serio la privacidad de nuestros usuarios. Esta política describe cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestra plataforma, de conformidad con el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).
                     </p>
                 </section>
 
-                <!-- Datos que recopilamos -->
                 <section>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">2. Datos que Recopilamos</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Datos que Recopilamos</h2>
                     <div class="space-y-4 text-gray-700">
                         <div>
-                            <h3 class="font-semibold text-lg mb-2">2.1 Información de Cuenta</h3>
+                            <h3 class="font-semibold text-lg mb-2">3.1 Información de Cuenta</h3>
                             <ul class="list-disc list-inside space-y-1 ml-4">
                                 <li>Nombre y apellidos</li>
                                 <li>Dirección de correo electrónico</li>
-                                <li>Contraseña (encriptada)</li>
-                                <li>Rol dentro de la organización</li>
+                                <li>Contraseña (almacenada con hash bcrypt, nunca en texto plano)</li>
+                                <li>Rol dentro de la plataforma (viticultor, bodega, DO)</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-lg mb-2">2.2 Información de Gestión Agrícola</h3>
+                            <h3 class="font-semibold text-lg mb-2">3.2 Información de Gestión Agrícola</h3>
                             <ul class="list-disc list-inside space-y-1 ml-4">
                                 <li>Parcelas y ubicaciones SIGPAC</li>
-                                <li>Actividades agrícolas y tratamientos</li>
+                                <li>Actividades agrícolas y tratamientos fitosanitarios</li>
                                 <li>Cuadrillas y personal asignado</li>
-                                <li>Maquinaria y productos fitosanitarios</li>
+                                <li>Maquinaria y productos utilizados</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-lg mb-2">2.3 Información Técnica</h3>
+                            <h3 class="font-semibold text-lg mb-2">3.3 Información Técnica</h3>
                             <ul class="list-disc list-inside space-y-1 ml-4">
                                 <li>Dirección IP</li>
-                                <li>Tipo de navegador</li>
+                                <li>Tipo de navegador y dispositivo</li>
                                 <li>Fecha y hora de acceso</li>
+                                <li>Logs de actividad para seguridad del servicio</li>
                             </ul>
                         </div>
                     </div>
                 </section>
 
-                <!-- Uso de datos -->
                 <section>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">3. Uso de tus Datos</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Utilizamos tu información para:
-                    </p>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                        <li>Proporcionar y mantener el servicio de Agro365</li>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Base Legal del Tratamiento</h2>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><strong>Datos de cuenta y gestión agrícola</strong> → Ejecución del contrato (art. 6.1.b RGPD)</li>
+                        <li><strong>Cumplimiento normativo</strong> (cuaderno de campo, PAC, informes) → Obligación legal (art. 6.1.c RGPD)</li>
+                        <li><strong>Datos técnicos</strong> → Interés legítimo (art. 6.1.f RGPD)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Uso de tus Datos</h2>
+                    <p class="text-gray-700 leading-relaxed mb-3">Utilizamos tu información exclusivamente para:</p>
+                    <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>Proporcionar y mantener el servicio</li>
                         <li>Gestionar tu cuenta y suscripción</li>
+                        <li>Generar informes oficiales con validez normativa</li>
                         <li>Enviar notificaciones importantes sobre el servicio</li>
                         <li>Mejorar la funcionalidad de la plataforma</li>
-                        <li>Cumplir con obligaciones legales y normativas agrícolas</li>
+                        <li>Cumplir con obligaciones legales agrícolas</li>
                     </ul>
+                    <p class="text-gray-700 mt-4 font-medium">No cedemos ni vendemos tus datos a terceros con fines comerciales o publicitarios.</p>
                 </section>
 
-                <!-- Cookies -->
-                <section class="border-l-4 border-green-500 pl-6 bg-green-50 p-6 rounded-r-lg">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">4. Política de Cookies</h2>
-                    
-                    <div class="space-y-4 text-gray-700">
-                        <p class="leading-relaxed">
-                            Agro365 utiliza <strong>únicamente cookies técnicas estrictamente necesarias</strong> 
-                            para el funcionamiento del servicio. Estas cookies son esenciales y no requieren 
-                            tu consentimiento según el RGPD.
-                        </p>
-
-                        <h3 class="font-semibold text-lg mt-4 mb-2">4.1 Cookies que Utilizamos</h3>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full border border-gray-300 text-sm">
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th class="border border-gray-300 px-4 py-2 text-left">Nombre</th>
-                                        <th class="border border-gray-300 px-4 py-2 text-left">Propósito</th>
-                                        <th class="border border-gray-300 px-4 py-2 text-left">Duración</th>
-                                        <th class="border border-gray-300 px-4 py-2 text-left">Tipo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="border border-gray-300 px-4 py-2 font-mono text-xs">agro365_session</td>
-                                        <td class="border border-gray-300 px-4 py-2">Mantener tu sesión activa</td>
-                                        <td class="border border-gray-300 px-4 py-2">3 horas</td>
-                                        <td class="border border-gray-300 px-4 py-2">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                Esencial
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-gray-50">
-                                        <td class="border border-gray-300 px-4 py-2 font-mono text-xs">XSRF-TOKEN</td>
-                                        <td class="border border-gray-300 px-4 py-2">Protección contra ataques CSRF</td>
-                                        <td class="border border-gray-300 px-4 py-2">Sesión del navegador</td>
-                                        <td class="border border-gray-300 px-4 py-2">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                Esencial/Seguridad
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border border-gray-300 px-4 py-2 font-mono text-xs">remember_web_*</td>
-                                        <td class="border border-gray-300 px-4 py-2">Recordar sesión (si seleccionas "Recordarme")</td>
-                                        <td class="border border-gray-300 px-4 py-2">2 semanas</td>
-                                        <td class="border border-gray-300 px-4 py-2">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                Funcional
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <h3 class="font-semibold text-lg mt-6 mb-2">4.2 ¿Necesito Aceptar las Cookies?</h3>
-                        <div class="bg-white border-l-4 border-green-600 p-4 rounded">
-                            <p class="font-semibold text-green-800">No.</p>
-                            <p class="text-gray-700 mt-2">
-                                Estas cookies son estrictamente necesarias para el funcionamiento del servicio 
-                                y no requieren tu consentimiento según la normativa RGPD.
-                            </p>
-                        </div>
-
-                        <h3 class="font-semibold text-lg mt-6 mb-2">4.3 Cookies que NO Utilizamos</h3>
-                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                            <li>❌ Cookies de publicidad</li>
-                            <li>❌ Cookies de analytics (Google Analytics, etc.)</li>
-                            <li>❌ Cookies de redes sociales</li>
-                            <li>❌ Cookies de terceros para tracking</li>
-                        </ul>
-
-                        <h3 class="font-semibold text-lg mt-6 mb-2">4.4 Gestión de Cookies</h3>
-                        <p class="text-gray-700 leading-relaxed">
-                            Puedes configurar tu navegador para bloquear o eliminar cookies, pero esto afectará 
-                            tu capacidad para usar Agro365 correctamente, ya que las cookies de sesión son 
-                            necesarias para mantener tu autenticación.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- Seguridad -->
                 <section>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">5. Seguridad</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Conservación de los Datos</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        Implementamos medidas técnicas y organizativas apropiadas para proteger tus datos:
+                        Tus datos se conservarán mientras mantengas tu cuenta activa. Tras la cancelación, se conservarán durante un máximo de <strong>5 años</strong> para el cumplimiento de obligaciones legales, tras lo cual serán eliminados o anonimizados. Puedes exportar tus datos en cualquier momento desde la plataforma.
                     </p>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4 mt-4">
-                        <li>Encriptación SSL/TLS para todas las conexiones</li>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">7. Transferencias Internacionales</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        Agro365 utiliza infraestructura alojada en servidores dentro del Espacio Económico Europeo. No realizamos transferencias de datos fuera de la UE/EEE.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">8. Seguridad</h2>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li>Cifrado SSL/TLS en todas las conexiones</li>
                         <li>Contraseñas hasheadas con bcrypt</li>
-                        <li>Protección contra ataques CSRF, XSS y clickjacking</li>
+                        <li>Protección contra CSRF, XSS y clickjacking</li>
                         <li>Copias de seguridad regulares</li>
                         <li>Acceso restringido basado en roles</li>
+                        <li>Firma electrónica SHA-256 en documentos oficiales</li>
                     </ul>
                 </section>
 
-                <!-- Tus Derechos -->
                 <section>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">6. Tus Derechos (RGPD)</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Según el RGPD, tienes derecho a:
-                    </p>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                        <li><strong>Acceso:</strong> Solicitar una copia de tus datos personales</li>
-                        <li><strong>Rectificación:</strong> Corregir datos inexactos o incompletos</li>
-                        <li><strong>Supresión:</strong> Solicitar la eliminación de tus datos</li>
-                        <li><strong>Portabilidad:</strong> Recibir tus datos en formato estructurado</li>
-                        <li><strong>Oposición:</strong> Oponerte al tratamiento de tus datos</li>
-                        <li><strong>Limitación:</strong> Solicitar la limitación del tratamiento</li>
-                    </ul>
-                    <p class="text-gray-700 leading-relaxed mt-4">
-                        Para ejercer estos derechos, contacta con nosotros en: 
-                        <a href="mailto:privacidad@agro365.es" class="text-green-600 hover:text-green-700 font-medium">
-                            privacidad@agro365.es
-                        </a>
-                    </p>
-                </section>
-
-                <!-- Cambios -->
-                <section>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">7. Cambios en esta Política</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">9. Tus Derechos (RGPD)</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        Nos reservamos el derecho de actualizar esta política. Te notificaremos de cualquier 
-                        cambio significativo por correo electrónico o mediante un aviso en la plataforma.
+                        Tienes derecho a acceso, rectificación, supresión, portabilidad, oposición y limitación del tratamiento. Para ejercerlos escríbenos a <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">info@agro365.es</a>. Responderemos en un máximo de 30 días. Si lo consideras necesario, puedes reclamar ante la AEPD en <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="text-[var(--color-agro-green-dark)] hover:underline">www.aepd.es</a>.
                     </p>
                 </section>
 
-                <!-- Contacto -->
-                <section class="bg-gray-50 p-6 rounded-lg">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">8. Contacto</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Si tienes preguntas sobre esta política o sobre el tratamiento de tus datos:
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">10. Cambios en esta Política</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        Te notificaremos cualquier cambio significativo por email o mediante aviso en la plataforma con al menos 15 días de antelación.
                     </p>
-                    <div class="space-y-2 text-gray-700">
-                        <p><strong>Email:</strong> <a href="mailto:info@agro365.es" class="text-green-600 hover:text-green-700">info@agro365.es</a></p>
-                    </div>
                 </section>
+
+                <section class="bg-gray-50 p-6 rounded-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">11. Contacto</h2>
+                    <p class="text-gray-700">
+                        📧 <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">info@agro365.es</a>
+                        <span class="text-gray-500 text-sm ml-2">— respondemos en menos de 48 horas</span>
+                    </p>
+                    <p class="text-gray-600 text-sm mt-3">
+                        Para más información sobre el uso de cookies, consulta nuestra
+                        <a href="{{ route('cookies') }}" class="text-[var(--color-agro-green-dark)] hover:underline">Política de Cookies</a>.
+                    </p>
+                </section>
+
             </div>
 
             <!-- Footer Links -->

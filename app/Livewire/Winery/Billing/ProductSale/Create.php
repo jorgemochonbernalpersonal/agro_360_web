@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Livewire\Winery\Billing\WineSale;
+namespace App\Livewire\Winery\Billing\ProductSale;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
+use App\Models\ProductLot;
 use App\Models\Tax;
-use App\Models\WineLot;
-use App\Services\WineStockService;
+use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -79,7 +79,7 @@ class Create extends Component
     {
         if (!$this->selectedLotId) return;
 
-        $lot = WineLot::where('user_id', Auth::id())->find($this->selectedLotId);
+        $lot = ProductLot::where('user_id', Auth::id())->find($this->selectedLotId);
 
         if (!$lot) {
             $this->toastError('Lote no encontrado.');
@@ -261,7 +261,7 @@ class Create extends Component
                 $taxAmountLine = round($lineBase * ($taxRate / 100), 3);
 
                 $lot = $item['wine_lot_id']
-                    ? WineLot::where('user_id', Auth::id())->lockForUpdate()->find($item['wine_lot_id'])
+                    ? ProductLot::where('user_id', Auth::id())->lockForUpdate()->find($item['wine_lot_id'])
                     : null;
 
                 $createdItem = InvoiceItem::create([
@@ -285,7 +285,7 @@ class Create extends Component
                 ]);
 
                 if ($lot) {
-                    WineStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
+                    ProductStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
                 }
             }
 
@@ -296,7 +296,7 @@ class Create extends Component
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al crear factura de vino: ' . $e->getMessage(), [
+            Log::error('Error al crear factura de productos: ' . $e->getMessage(), [
                 'user_id'   => Auth::id(),
                 'exception' => $e,
             ]);
@@ -306,14 +306,14 @@ class Create extends Component
 
     public function render()
     {
-        $clients  = Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->orderBy('company_name')->get();
-        $wineLots = WineLot::where('user_id', Auth::id())->where('archived', false)
+        $clients     = Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->orderBy('company_name')->get();
+        $productLots = ProductLot::where('user_id', Auth::id())->where('archived', false)
             ->where('available_quantity', '>', 0)
             ->orderByDesc('vintage')->orderBy('name')->get();
 
         return view('livewire.winery.billing.products.create', [
             'clients'        => $clients,
-            'wineLots'       => $wineLots,
+            'wineLots'       => $productLots,
             'availableTaxes' => $this->availableTaxes,
         ])->layout('layouts.app');
     }

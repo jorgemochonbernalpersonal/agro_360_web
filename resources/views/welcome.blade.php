@@ -138,7 +138,7 @@
             ],
             'description' => 'Software de gestión agrícola para viticultores, bodegas y Denominaciones de Origen. Cuaderno de campo digital obligatorio 2027. Teledetección NDVI, Verifactu y trazabilidad completa.',
             'operatingSystem' => ['Web', 'iOS', 'Android'],
-            'releaseNotes' => 'Versión Beta - En desarrollo activo',
+            'releaseNotes' => 'Versión 1.0 - Plataforma en producción',
             'screenshot' => asset('images/dashboard-preview.png'),
             'featureList' => [
                 'Cuaderno de campo digital obligatorio 2027',
@@ -470,26 +470,26 @@
                             <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-sm font-semibold text-amber-800">⚡ Obligatorio en <span id="days-counter">{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}</span> días</span>
+                            <span class="text-sm font-semibold text-amber-800">Obligatorio desde 2027 — faltan <span id="days-counter">{{ now()->lt('2027-01-01') ? (int) now()->startOfDay()->diffInDays('2027-01-01') : 0 }}</span> días</span>
                         </div>
                     </div>
                     
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
                         <span class="block">Cuaderno de Campo Digital</span>
-                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">Fitosanitarios obligatorios en 2027 · Cuaderno completo en 2028</span>
+                        <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">Para viticultores, bodegas y Denominaciones de Origen</span>
                     </h1>
 
                     <p class="text-xl text-gray-600 leading-relaxed">
-                        La plataforma que conecta <strong>viticultores</strong>, <strong>bodegas</strong> y <strong>Denominaciones de Origen</strong>.
-                        Lleva tu cuaderno de campo digital, cumple con la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">PAC</a>,
+                        Cumple con la normativa <a href="{{ content_route('content.normativa-pac') }}" class="text-[var(--color-agro-green)] hover:underline">PAC</a>,
                         gestiona tus parcelas <a href="{{ content_route('content.que-es-sigpac') }}" class="text-[var(--color-agro-green)] hover:underline">SIGPAC</a>
                         y lleva la trazabilidad completa desde el viñedo hasta la bodega.
+                        <strong>Sin papel. Sin Excel. Todo en un solo sitio.</strong>
                     </p>
                     
-                    <!-- 3 CTAs por rol -->
+                    <!-- CTAs por rol -->
                     <div class="flex flex-col sm:flex-row gap-3">
                         <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base">
-                            <span>🌿</span> Soy Viticultor
+                            <span>🌿</span> Empezar gratis — Soy Viticultor
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
@@ -507,25 +507,19 @@
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">Básico gratis vía bodega</span>
+                            <span class="text-gray-600 text-sm font-medium">3 meses gratis al registrarse</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">Completo 9€</span>
+                            <span class="text-gray-600 text-sm font-medium">Sin tarjeta de crédito</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-gray-600 text-sm font-medium">Independiente 14€</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-[var(--color-agro-green)]" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-gray-600 text-sm font-medium">Sin tarjeta</span>
+                            <span class="text-gray-600 text-sm font-medium">Cancela cuando quieras</span>
                         </div>
                     </div>
                 </div>
@@ -591,54 +585,53 @@
 
             <!-- Diagrama visual del ecosistema -->
             <div class="flex justify-center mb-16">
-                <div class="relative max-w-2xl w-full">
+                <div class="relative max-w-3xl w-full">
                     <!-- DO en la cima -->
-                    <div class="flex justify-center mb-6">
-                        <div class="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-6 text-center w-72 shadow-md">
+                    <div class="flex justify-center mb-4">
+                        <div class="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-6 text-center w-80 shadow-md">
                             <div class="text-3xl mb-2">🏛️</div>
                             <div class="font-bold text-amber-900 text-lg">Denominación de Origen</div>
                             <div class="text-amber-700 text-sm mt-1">Supervisa bodegas y cumplimiento normativo</div>
+                            <div class="mt-3 flex justify-center gap-2 flex-wrap">
+                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">Panel centralizado</span>
+                                <span class="bg-amber-200/60 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">Trazabilidad DO</span>
+                            </div>
                         </div>
                     </div>
-                    <!-- Línea DO → Bodegas -->
-                    <div class="flex justify-center mb-1">
-                        <div class="w-px h-8 bg-zinc-300"></div>
-                    </div>
-                    <div class="flex justify-center gap-2 mb-1">
-                        <div class="flex-1 max-w-[200px] h-px bg-zinc-300 self-center"></div>
-                        <div class="w-px h-0 self-center"></div>
-                        <div class="flex-1 max-w-[200px] h-px bg-zinc-300 self-center"></div>
+                    <!-- Conector DO → Bodegas -->
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="w-px h-4 bg-amber-300"></div>
+                        <div class="text-xs text-amber-600 font-semibold bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">supervisa</div>
+                        <div class="w-px h-4 bg-amber-300"></div>
+                        <div class="flex w-full max-w-sm justify-between px-8">
+                            <div class="w-px h-6 bg-amber-300"></div>
+                            <div class="w-px h-6 bg-amber-300"></div>
+                        </div>
                     </div>
                     <!-- Bodegas -->
-                    <div class="flex justify-center gap-6 mb-1">
-                        <div class="flex flex-col items-center">
-                            <div class="w-px h-6 bg-zinc-300"></div>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <div class="w-px h-6 bg-zinc-300"></div>
-                        </div>
-                    </div>
-                    <div class="flex justify-center gap-6 mb-6">
-                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-44 shadow-md">
+                    <div class="flex justify-center gap-6 mb-4">
+                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-48 shadow-md">
                             <div class="text-2xl mb-1">🍷</div>
                             <div class="font-bold text-red-900">Bodega</div>
-                            <div class="text-red-700 text-xs mt-1">Gestión propia</div>
+                            <div class="text-red-700 text-xs mt-1">Vendimia · Depósitos · Facturación</div>
                         </div>
-                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-44 shadow-md">
+                        <div class="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-4 text-center w-48 shadow-md">
                             <div class="text-2xl mb-1">🍷</div>
                             <div class="font-bold text-red-900">Bodega</div>
-                            <div class="text-red-700 text-xs mt-1">Gestión propia</div>
+                            <div class="text-red-700 text-xs mt-1">Vendimia · Depósitos · Facturación</div>
                         </div>
                     </div>
-                    <!-- Líneas Bodegas → Viticultores -->
-                    <div class="flex justify-center gap-6 mb-1">
-                        <div class="flex gap-3 justify-center w-44">
-                            <div class="w-px h-6 bg-zinc-300"></div>
-                            <div class="w-px h-6 bg-zinc-300"></div>
+                    <!-- Conector Bodegas → Viticultores -->
+                    <div class="flex justify-center gap-6 mb-4">
+                        <div class="flex flex-col items-center w-48">
+                            <div class="w-px h-4 bg-red-300"></div>
+                            <div class="text-xs text-red-600 font-semibold bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">gestiona</div>
+                            <div class="w-px h-4 bg-red-300"></div>
                         </div>
-                        <div class="flex gap-3 justify-center w-44">
-                            <div class="w-px h-6 bg-zinc-300"></div>
-                            <div class="w-px h-6 bg-zinc-300"></div>
+                        <div class="flex flex-col items-center w-48">
+                            <div class="w-px h-4 bg-red-300"></div>
+                            <div class="text-xs text-red-600 font-semibold bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">gestiona</div>
+                            <div class="w-px h-4 bg-red-300"></div>
                         </div>
                     </div>
                     <!-- Viticultores -->
@@ -664,7 +657,7 @@
                             <div class="font-semibold text-blue-700 text-xs">Viticultor independiente</div>
                         </div>
                     </div>
-                    <p class="text-center text-xs text-zinc-400 mt-3">El viticultor independiente no necesita bodega ni DO para empezar</p>
+                    <p class="text-center text-xs text-zinc-400 mt-4">El viticultor independiente no necesita bodega ni DO para empezar</p>
                 </div>
             </div>
 

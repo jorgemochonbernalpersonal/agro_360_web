@@ -209,7 +209,7 @@
                     <p class="text-xs text-zinc-400">Registrar entrada de uva</p>
                 </div>
             </a>
-            <a href="{{ route('winery.wine-lots.index') }}" wire:navigate
+            <a href="{{ route('winery.product-lots.index') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
                     <flux:icon icon="beaker" class="size-5 text-agro-600" />

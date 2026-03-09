@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Winery\Cellar\WineLots;
+namespace App\Livewire\Winery\Cellar\ProductLots;
 
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Models\WineLot;
+use App\Models\ProductLot;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -120,7 +120,7 @@ class Create extends Component
             return;
         }
 
-        WineLot::create([
+        ProductLot::create([
             'user_id'             => Auth::id(),
             'name'                => $data['name'],
             'vintage'             => $data['vintage'] ?: null,
@@ -165,11 +165,11 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Producto creado correctamente.');
-        return $this->redirect(route('winery.wine-lots.index'), navigate: true);
+        return $this->redirect(route('winery.product-lots.index'), navigate: true);
     }
 
     public function render()
     {
-        return view('livewire.winery.cellar.wine-lots.create')->layout('layouts.app');
+        return view('livewire.winery.cellar.product-lots.create')->layout('layouts.app');
     }
 }

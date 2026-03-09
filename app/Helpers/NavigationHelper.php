@@ -390,8 +390,8 @@ class NavigationHelper
                 [
                     'icon'   => 'archive-box',
                     'label'  => 'Productos',
-                    'route'  => 'winery.wine-lots.index',
-                    'active' => request()->routeIs('winery.wine-lots*'),
+                    'route'  => 'winery.product-lots.index',
+                    'active' => request()->routeIs('winery.product-lots*'),
                 ],
             ];
 

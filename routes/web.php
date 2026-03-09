@@ -55,7 +55,7 @@ Route::get('/health', function () {
 // Rutas públicas legales
 Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
 Route::get('/terminos', fn() => view('legal.terms'))->name('terms');
-Route::get('/cookies', fn() => view('legal.privacy'))->name('cookies'); // Misma vista que privacidad
+Route::get('/cookies', fn() => view('legal.cookies'))->name('cookies');
 Route::get('/aviso-legal', fn() => view('legal.aviso-legal'))->name('aviso-legal');
 
 // Sitemap dinámico

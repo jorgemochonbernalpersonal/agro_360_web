@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header title="Productos" description="Gestiona tu catálogo de productos y stock para facturar a clientes">
         <x-slot:actions>
-            <flux:button href="{{ route('winery.wine-lots.create') }}" wire:navigate variant="primary" icon="plus">
+            <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
                 Nuevo Producto
             </flux:button>
         </x-slot:actions>
@@ -157,7 +157,7 @@
                             <div class="flex items-center justify-between">
                                 {{-- Grupo izquierdo: editar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('winery.wine-lots.edit', $lot) }}" wire:navigate
+                                    <a href="{{ route('winery.product-lots.edit', $lot) }}" wire:navigate
                                         class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
@@ -195,7 +195,7 @@
                 description="Crea el primer producto para gestionar tu stock"
             >
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.wine-lots.create') }}" wire:navigate variant="primary" icon="plus">
+                    <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
                         Nuevo Producto
                     </flux:button>
                 </x-slot:action>

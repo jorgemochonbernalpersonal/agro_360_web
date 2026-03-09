@@ -34,7 +34,7 @@ class InvoiceStockMovement extends Model
 
     public function wineLot(): BelongsTo
     {
-        return $this->belongsTo(WineLot::class);
+        return $this->belongsTo(ProductLot::class, 'wine_lot_id');
     }
 
     public function user(): BelongsTo

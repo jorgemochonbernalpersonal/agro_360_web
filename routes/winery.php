@@ -89,10 +89,13 @@ Route::middleware(['role:winery'])
         Route::get('/external-grape/create', \App\Livewire\Winery\ExternalGrape\Create::class)->name('external-grape.create');
         Route::get('/external-grape/{grape}/edit', \App\Livewire\Winery\ExternalGrape\Edit::class)->name('external-grape.edit');
 
-        // ── Lotes de vino ────────────────────────────────────────────
-        Route::get('/wine-lots', \App\Livewire\Winery\Cellar\WineLots\Index::class)->name('wine-lots.index');
-        Route::get('/wine-lots/create', \App\Livewire\Winery\Cellar\WineLots\Create::class)->name('wine-lots.create');
-        Route::get('/wine-lots/{lot}/edit', \App\Livewire\Winery\Cellar\WineLots\Edit::class)->name('wine-lots.edit');
+        // ── Lotes de producto ─────────────────────────────────────────
+        Route::get('/product-lots', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('product-lots.index');
+        Route::get('/product-lots/create', \App\Livewire\Winery\Cellar\ProductLots\Create::class)->name('product-lots.create');
+        Route::get('/product-lots/{lot}/edit', \App\Livewire\Winery\Cellar\ProductLots\Edit::class)->name('product-lots.edit');
+        // Compatibilidad URLs antiguas (wine-lots → product-lots)
+        Route::redirect('/wine-lots', '/winery/product-lots')->name('wine-lots.index');
+        Route::redirect('/wine-lots/create', '/winery/product-lots/create')->name('wine-lots.create');
 
         // ── Clientes ──────────────────────────────────────────────────
         Route::get('/clients', \App\Livewire\Winery\Clients\Index::class)->name('clients.index');
@@ -100,9 +103,9 @@ Route::middleware(['role:winery'])
         Route::get('/clients/{client}/edit', \App\Livewire\Winery\Clients\Edit::class)->name('clients.edit');
 
         // ── Facturación: venta de productos ──────────────────────────
-        Route::get('/invoices/products', \App\Livewire\Winery\Billing\WineSale\Index::class)->name('invoices.products.index');
-        Route::get('/invoices/products/create', \App\Livewire\Winery\Billing\WineSale\Create::class)->name('invoices.products.create');
-        Route::get('/invoices/products/{id}/edit', \App\Livewire\Winery\Billing\WineSale\Edit::class)->name('invoices.products.edit');
+        Route::get('/invoices/products', \App\Livewire\Winery\Billing\ProductSale\Index::class)->name('invoices.products.index');
+        Route::get('/invoices/products/create', \App\Livewire\Winery\Billing\ProductSale\Create::class)->name('invoices.products.create');
+        Route::get('/invoices/products/{id}/edit', \App\Livewire\Winery\Billing\ProductSale\Edit::class)->name('invoices.products.edit');
         Route::get('/invoices/products/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->defaults('type', 'wine_sale')->name('invoices.products.pdf');
         Route::get('/invoices/products/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->defaults('type', 'wine_sale')->name('invoices.products.delivery-note-pdf');
         Route::get('/invoices/products/{id}/albaran-valorado-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'valoradoNote'])->defaults('type', 'wine_sale')->name('invoices.products.valorado-pdf');

@@ -1,6 +1,6 @@
 <div>
     <x-agro.form-card title="Editar Producto" description="Modifica los datos del producto"
-        :back-url="route('winery.wine-lots.index')">
+        :back-url="route('winery.product-lots.index')">
 
         <form wire:submit.prevent="update" class="space-y-8">
 
@@ -276,7 +276,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.wine-lots.index')" submit-label="Guardar Cambios" />
+            <x-agro.form-actions :cancel-url="route('winery.product-lots.index')" submit-label="Guardar Cambios" />
         </form>
     </x-agro.form-card>
 </div>

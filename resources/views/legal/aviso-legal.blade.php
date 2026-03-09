@@ -52,7 +52,7 @@
                     Volver a Inicio
                 </a>
                 <h1 class="text-4xl font-bold text-gray-900">Aviso Legal</h1>
-                <p class="mt-2 text-gray-600">Última actualización: {{ now()->format('d/m/Y') }}</p>
+                <p class="mt-2 text-gray-600">Última actualización: 09/03/2026</p>
             </div>
 
             <!-- Content -->
@@ -64,12 +64,10 @@
                     </p>
                     <ul class="mt-4 space-y-2 text-gray-700">
                         <li><strong>Denominación social:</strong> Agro365</li>
-                        @if(config('app.legal_owner_name'))
-                        <li><strong>Titular / Responsable:</strong> {{ config('app.legal_owner_name') }}</li>
-                        <li><strong>NIF/DNI:</strong> {{ config('app.legal_owner_dni') }}</li>
-                        @endif
+                        <li><strong>Domicilio:</strong> Calle Toledo 172, Madrid, España</li>
                         <li><strong>Dominio:</strong> agro365.es</li>
-                        <li><strong>Email de contacto:</strong> <a href="mailto:{{ config('app.legal_contact_email') }}" class="text-[var(--color-agro-green-dark)] hover:underline">{{ config('app.legal_contact_email') }}</a></li>
+                        <li><strong>Email de contacto:</strong> <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a></li>
+                        <li><strong>Teléfono de contacto:</strong> <a href="tel:+34684217167" class="text-[var(--color-agro-green-dark)] hover:underline">+34 684 217 167</a></li>
                         <li><strong>Actividad:</strong> Software de gestión agrícola</li>
                     </ul>
                 </section>
@@ -77,10 +75,7 @@
                 <section>
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">2. Objeto</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        El presente aviso legal regula el uso del sitio web <strong>agro365.es</strong> (en adelante, el "Sitio Web"), del que es titular Agro365.
-                    </p>
-                    <p class="text-gray-700 leading-relaxed mt-2">
-                        La navegación por el Sitio Web atribuye la condición de usuario del mismo e implica la aceptación plena y sin reservas de todas y cada una de las disposiciones incluidas en este Aviso Legal.
+                        El presente aviso legal regula el uso del sitio web <strong>agro365.es</strong> (en adelante, el "Sitio Web"), del que es titular Agro365. La navegación por el Sitio Web atribuye la condición de usuario del mismo e implica la aceptación plena y sin reservas de todas y cada una de las disposiciones incluidas en este Aviso Legal.
                     </p>
                 </section>
 
@@ -94,6 +89,7 @@
                         <li>El usuario se compromete a hacer un uso adecuado de los contenidos y servicios.</li>
                         <li>Queda prohibido el uso del Sitio Web con fines ilícitos o lesivos.</li>
                         <li>El usuario no podrá realizar actividades publicitarias o de explotación comercial sin autorización previa.</li>
+                        <li>Agro365 se reserva el derecho de denegar o retirar el acceso al Sitio Web a aquellos usuarios que incumplan las presentes condiciones.</li>
                     </ul>
                 </section>
 
@@ -102,41 +98,64 @@
                     <p class="text-gray-700 leading-relaxed">
                         Todos los contenidos del Sitio Web, incluyendo textos, fotografías, gráficos, imágenes, iconos, tecnología, software, así como su diseño gráfico y códigos fuente, constituyen una obra cuya propiedad pertenece a Agro365, sin que puedan entenderse cedidos al usuario ninguno de los derechos de explotación sobre los mismos.
                     </p>
+                    <p class="text-gray-700 leading-relaxed mt-3">
+                        El usuario se compromete a respetar los derechos de propiedad intelectual e industrial titularidad de Agro365. Cualquier reproducción, distribución, comunicación pública o transformación de los contenidos del Sitio Web requerirá la autorización expresa y por escrito de Agro365.
+                    </p>
                 </section>
 
                 <section>
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Exclusión de Garantías y Responsabilidad</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        Agro365 no se hace responsable, en ningún caso, de los daños y perjuicios de cualquier naturaleza que pudieran ocasionar, a título enunciativo: errores u omisiones en los contenidos, falta de disponibilidad del portal o la transmisión de virus o programas maliciosos o lesivos en los contenidos.
+                        Agro365 no se hace responsable, en ningún caso, de los daños y perjuicios de cualquier naturaleza que pudieran ocasionar, a título enunciativo:
+                    </p>
+                    <ul class="mt-4 space-y-2 text-gray-700 list-disc list-inside">
+                        <li>Errores u omisiones en los contenidos.</li>
+                        <li>Falta de disponibilidad del portal.</li>
+                        <li>Transmisión de virus o programas maliciosos en los contenidos.</li>
+                        <li>El uso que los usuarios hagan de los contenidos del Sitio Web.</li>
+                        <li>La falta de veracidad, exactitud o actualización de los contenidos.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mt-3">
+                        Agro365 no garantiza la disponibilidad y continuidad del funcionamiento del Sitio Web, aunque realizará sus mejores esfuerzos para mantener el servicio operativo.
                     </p>
                 </section>
 
                 <section>
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Modificaciones</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        Agro365 se reserva el derecho de efectuar sin previo aviso las modificaciones que considere oportunas en su portal, pudiendo cambiar, suprimir o añadir tanto los contenidos y servicios que se presten a través de la misma como la forma en la que éstos aparezcan presentados o localizados.
+                        Agro365 se reserva el derecho de efectuar sin previo aviso las modificaciones que considere oportunas en su portal, pudiendo cambiar, suprimir o añadir tanto los contenidos y servicios que se presten a través de la misma como la forma en la que éstos aparezcan presentados o localizados. La fecha de última actualización indicada al inicio del presente documento refleja la versión vigente en cada momento.
                     </p>
                 </section>
 
                 <section>
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">7. Enlaces</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        En el caso de que en el Sitio Web se dispusiesen enlaces o hipervínculos hacia otros sitios de Internet, Agro365 no ejercerá ningún tipo de control sobre dichos sitios y contenidos. En ningún caso Agro365 asumirá responsabilidad alguna por los contenidos de algún enlace perteneciente a un sitio web ajeno.
+                        En el caso de que en el Sitio Web se dispusiesen enlaces o hipervínculos hacia otros sitios de Internet, Agro365 no ejercerá ningún tipo de control sobre dichos sitios y contenidos. En ningún caso Agro365 asumirá responsabilidad alguna por los contenidos de algún enlace perteneciente a un sitio web ajeno, ni garantizará la disponibilidad técnica, calidad, fiabilidad, exactitud, amplitud, veracidad, validez y constitucionalidad de cualquier material o información contenida en ninguno de dichos hipervínculos u otros sitios de Internet.
                     </p>
                 </section>
 
                 <section>
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">8. Protección de Datos</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        Para más información sobre el tratamiento de datos personales, consulte nuestra 
-                        <a href="{{ route('privacy') }}" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">Política de Privacidad</a>.
+                        En cumplimiento del Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo (RGPD) y de la Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), Agro365 trata los datos personales de los usuarios conforme a lo establecido en la
+                        <a href="{{ route('privacy') }}" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">Política de Privacidad</a>
+                        disponible en el Sitio Web. Para más información o para ejercer sus derechos, el usuario puede dirigirse a <a href="mailto:info@agro365.es" class="text-[var(--color-agro-green-dark)] hover:underline">info@agro365.es</a>.
                     </p>
                 </section>
 
                 <section>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">9. Legislación Aplicable y Jurisdicción</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">9. Cookies</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        La relación entre Agro365 y el usuario se regirá por la normativa española vigente. Para la resolución de cualquier controversia las partes se someterán a los Juzgados y Tribunales del domicilio del usuario.
+                        El Sitio Web puede utilizar cookies propias y de terceros con finalidades técnicas, analíticas y de personalización. Para más información consulte nuestra
+                        <a href="{{ route('cookies') }}" class="text-[var(--color-agro-green-dark)] hover:underline font-semibold">Política de Cookies</a>
+                        disponible en el Sitio Web.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">10. Legislación Aplicable y Jurisdicción</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        La relación entre Agro365 y el usuario se regirá por la normativa española vigente. Para la resolución de cualquier controversia las partes se someterán a los Juzgados y Tribunales del domicilio del usuario, salvo que la legislación aplicable establezca un fuero distinto de carácter imperativo.
                     </p>
                 </section>
             </div>

@@ -58,11 +58,11 @@ class InvoiceItem extends Model
     }
 
     /**
-     * Lote de vino relacionado (si aplica)
+     * Lote de producto relacionado (si aplica)
      */
     public function wineLot(): BelongsTo
     {
-        return $this->belongsTo(WineLot::class);
+        return $this->belongsTo(ProductLot::class, 'wine_lot_id');
     }
 
     /**

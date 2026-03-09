@@ -52,7 +52,8 @@
       "Bash(composer show:*)",
       "Bash(python:*)",
       "Bash(grep \"\"version\"\":*)",
-      "Bash(\"C:/Users/jorge/Desktop/agro365/resources/views/livewire/winery/billing/products/index.blade.php\":*)"
+      "Bash(\"C:/Users/jorge/Desktop/agro365/resources/views/livewire/winery/billing/products/index.blade.php\":*)",
+      "Bash(sed:*)"
     ]
   }
 }

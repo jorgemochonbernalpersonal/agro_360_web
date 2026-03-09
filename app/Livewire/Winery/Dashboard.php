@@ -5,7 +5,7 @@ namespace App\Livewire\Winery;
 use App\Models\Campaign;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
-use App\Models\WineLot;
+use App\Models\ProductLot;
 use App\Models\WineryViticulturist;
 use App\Models\WineryYieldForecast;
 use Illuminate\Support\Facades\Auth;
@@ -69,7 +69,7 @@ class Dashboard extends Component
         }
 
         // Lotes de vino en bodega
-        $wineLotCount = WineLot::where('user_id', $wineryId)->count();
+        $wineLotCount = ProductLot::where('user_id', $wineryId)->count();
 
         // Últimas 5 recepciones
         $recentReceptions = Harvest::where('winery_id', $wineryId)

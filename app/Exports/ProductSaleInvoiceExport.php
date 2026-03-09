@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class WineSaleInvoiceExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class ProductSaleInvoiceExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     public function __construct(
         protected int    $userId,

@@ -98,7 +98,7 @@
                 </div>
             </div>
 
-            <a href="{{ route('winery.wine-lots.index') }}" wire:navigate
+            <a href="{{ route('winery.product-lots.index') }}" wire:navigate
                class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl shadow-lg border-2 border-green-200 p-5 hover:shadow-xl hover:border-green-300 transition-all">
                 <div class="flex items-center justify-between">
                     <div>
@@ -197,7 +197,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('winery.wine-lots.index') }}" wire:navigate
+            <a href="{{ route('winery.product-lots.index') }}" wire:navigate
                class="bg-white rounded-xl shadow border border-gray-200 p-4 hover:shadow-lg hover:border-green-300 transition-all flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-xl">🍷</div>
                 <div>

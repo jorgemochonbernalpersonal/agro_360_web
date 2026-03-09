@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Livewire\Winery\Billing\WineSale;
+namespace App\Livewire\Winery\Billing\ProductSale;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
+use App\Models\ProductLot;
 use App\Models\Tax;
-use App\Models\WineLot;
-use App\Services\WineStockService;
+use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -146,7 +146,7 @@ class Edit extends Component
     {
         if (!$this->selectedLotId) return;
 
-        $lot = WineLot::where('user_id', Auth::id())->find($this->selectedLotId);
+        $lot = ProductLot::where('user_id', Auth::id())->find($this->selectedLotId);
 
         if (!$lot) {
             $this->toastError('Lote no encontrado.');
@@ -279,9 +279,8 @@ class Edit extends Component
                 $this->invoice->load('items.wineLot');
                 if (!$this->invoice->corrective) {
                     $action = $newStatus === 'delivered' ? 'deliver' : 'cancel';
-                    WineStockService::moveForInvoice($this->invoice, $action);
+                    ProductStockService::moveForInvoice($this->invoice, $action);
                 }
-                // Guardamos delivery_status aquí; el resto en persistStatuses
                 $this->invoice->update(['delivery_status' => $newStatus]);
             });
 
@@ -289,7 +288,6 @@ class Edit extends Component
             $this->showDeliveryModal     = false;
             $this->pendingDeliveryStatus = '';
 
-            // Guardar también el estado de cobro
             $this->persistPaymentStatus();
 
             $label = $newStatus === 'delivered' ? 'entregada' : 'cancelada';
@@ -379,7 +377,7 @@ class Edit extends Component
         try {
             DB::transaction(function () use ($client, $taxRates) {
                 // 1. Restaurar stock de todos los ítems con lote
-                WineStockService::moveForInvoice($this->invoice, 'cancel');
+                ProductStockService::moveForInvoice($this->invoice, 'cancel');
 
                 // 2. Borrar líneas antiguas
                 InvoiceItem::withoutObservers(fn () => $this->invoice->items()->delete());
@@ -443,7 +441,7 @@ class Edit extends Component
                         $taxAmountLine = round($lineBase * ($taxRate / 100), 3);
 
                         $lot = $item['wine_lot_id']
-                            ? WineLot::where('user_id', Auth::id())->lockForUpdate()->find($item['wine_lot_id'])
+                            ? ProductLot::where('user_id', Auth::id())->lockForUpdate()->find($item['wine_lot_id'])
                             : null;
 
                         $createdItem = $this->invoice->items()->create([
@@ -466,7 +464,7 @@ class Edit extends Component
                         ]);
 
                         if ($lot) {
-                            WineStockService::moveOnCreate($this->invoice, $createdItem, $lot, $qty);
+                            ProductStockService::moveOnCreate($this->invoice, $createdItem, $lot, $qty);
                         }
                     }
                 });
@@ -476,7 +474,7 @@ class Edit extends Component
             return $this->redirect(route('winery.invoices.products.index'), navigate: true);
 
         } catch (\Exception $e) {
-            Log::error('Error al editar factura de vino: ' . $e->getMessage(), [
+            Log::error('Error al editar factura de productos: ' . $e->getMessage(), [
                 'invoice_id' => $this->invoice->id,
                 'user_id'    => Auth::id(),
                 'exception'  => $e,
@@ -489,7 +487,7 @@ class Edit extends Component
     {
         $clients  = Client::where('user_id', Auth::id())->where('active', true)->orderBy('first_name')->orderBy('company_name')->get();
         $existingLotIds = collect($this->items)->pluck('wine_lot_id')->filter()->values()->all();
-        $wineLots = WineLot::where('user_id', Auth::id())->where('archived', false)
+        $productLots = ProductLot::where('user_id', Auth::id())->where('archived', false)
             ->where(function ($q) use ($existingLotIds) {
                 $q->where('available_quantity', '>', 0)
                   ->orWhereIn('id', $existingLotIds);
@@ -498,7 +496,7 @@ class Edit extends Component
 
         return view('livewire.winery.billing.products.edit', [
             'clients'        => $clients,
-            'wineLots'       => $wineLots,
+            'wineLots'       => $productLots,
             'availableTaxes' => $this->availableTaxes,
             'isLocked'       => $this->isLocked,
             'isInvoiced'     => $this->isInvoiced,

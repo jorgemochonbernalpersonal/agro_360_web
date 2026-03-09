@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Winery\Billing\WineSale;
+namespace App\Livewire\Winery\Billing\ProductSale;
 
 use App\Livewire\Concerns\WithInvoiceActions;
 use App\Livewire\Winery\AbstractIndex;
@@ -8,9 +8,9 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoicingSetting;
+use App\Models\ProductLot;
 use App\Models\Tax;
-use App\Models\WineLot;
-use App\Services\WineStockService;
+use App\Services\ProductStockService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -144,7 +144,7 @@ class Index extends AbstractIndex
             $this->toastSuccess("Factura {$invoiceNumber} emitida correctamente.");
 
         } catch (\Exception $e) {
-            Log::error('Error al emitir factura de vino: ' . $e->getMessage(), [
+            Log::error('Error al emitir factura de productos: ' . $e->getMessage(), [
                 'invoice_id' => $this->emitirId,
                 'user_id'    => Auth::id(),
             ]);
@@ -171,7 +171,7 @@ class Index extends AbstractIndex
 
         try {
             DB::transaction(function () use ($invoice) {
-                WineStockService::moveForInvoice($invoice, 'deliver');
+                ProductStockService::moveForInvoice($invoice, 'deliver');
                 $invoice->update(['delivery_status' => 'delivered']);
             });
 
@@ -205,7 +205,7 @@ class Index extends AbstractIndex
 
         try {
             DB::transaction(function () use ($invoice) {
-                WineStockService::moveForInvoice($invoice, 'cancel');
+                ProductStockService::moveForInvoice($invoice, 'cancel');
                 $invoice->update([
                     'status'          => 'cancelled',
                     'delivery_status' => 'cancelled',
@@ -215,7 +215,7 @@ class Index extends AbstractIndex
             $this->toastSuccess('Factura cancelada y stock restaurado.');
 
         } catch (\Exception $e) {
-            Log::error('Error al cancelar factura de vino: ' . $e->getMessage(), [
+            Log::error('Error al cancelar factura de productos: ' . $e->getMessage(), [
                 'invoice_id' => $invoiceId,
                 'user_id'    => Auth::id(),
             ]);
@@ -355,14 +355,14 @@ class Index extends AbstractIndex
                     }
                 });
 
-                WineStockService::moveForInvoice($original, 'cancel');
+                ProductStockService::moveForInvoice($original, 'cancel');
             });
 
             $this->closeCorrectiveModal();
-            $this->toastSuccess("Rectificativa {$invoiceNumber} emitida. Stock de vino restaurado.");
+            $this->toastSuccess("Rectificativa {$invoiceNumber} emitida. Stock restaurado.");
 
         } catch (\Exception $e) {
-            Log::error('Error al crear rectificativa de venta de vino: ' . $e->getMessage(), [
+            Log::error('Error al crear rectificativa de venta de productos: ' . $e->getMessage(), [
                 'original_invoice_id' => $this->correctiveId,
                 'user_id'             => Auth::id(),
             ]);
@@ -412,7 +412,7 @@ class Index extends AbstractIndex
 
                 foreach ($original->items as $item) {
                     $lot = $item->wine_lot_id
-                        ? WineLot::where('user_id', Auth::id())->lockForUpdate()->find($item->wine_lot_id)
+                        ? ProductLot::where('user_id', Auth::id())->lockForUpdate()->find($item->wine_lot_id)
                         : null;
 
                     $createdItem = InvoiceItem::create([
@@ -436,7 +436,7 @@ class Index extends AbstractIndex
                     ]);
 
                     if ($lot) {
-                        WineStockService::moveOnCreate($newInvoice, $createdItem, $lot, (float) $item->quantity);
+                        ProductStockService::moveOnCreate($newInvoice, $createdItem, $lot, (float) $item->quantity);
                     }
                 }
             });
@@ -501,7 +501,7 @@ class Index extends AbstractIndex
     public function updatedQuickLotId(string $value): void
     {
         if ($value) {
-            $lot = WineLot::where('user_id', Auth::id())->find($value);
+            $lot = ProductLot::where('user_id', Auth::id())->find($value);
             if ($lot) {
                 $this->quickConceptName  = $lot->name . ($lot->vintage ? " ({$lot->vintage})" : '');
                 $this->quickPrice        = (string) ($lot->price_per_unit ?? 0);
@@ -526,7 +526,7 @@ class Index extends AbstractIndex
             [
                 'quickClientId.required'        => 'Selecciona un cliente.',
                 'quickClientAddressId.required' => 'Selecciona una dirección.',
-                'quickLotId.required'           => 'Selecciona un lote de vino.',
+                'quickLotId.required'           => 'Selecciona un lote de producto.',
                 'quickConceptName.required'     => 'El concepto es obligatorio.',
                 'quickQty.required'             => 'La cantidad es obligatoria.',
                 'quickPrice.required'           => 'El precio es obligatorio.',
@@ -576,7 +576,7 @@ class Index extends AbstractIndex
                     'total_amount'         => $total,
                 ]);
 
-                $lot         = WineLot::where('user_id', Auth::id())->lockForUpdate()->findOrFail($this->quickLotId);
+                $lot         = ProductLot::where('user_id', Auth::id())->lockForUpdate()->findOrFail($this->quickLotId);
                 $createdItem = InvoiceItem::create([
                     'invoice_id'          => $invoice->id,
                     'wine_lot_id'         => $lot->id,
@@ -595,7 +595,7 @@ class Index extends AbstractIndex
                     'total'               => $total,
                 ]);
 
-                WineStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
+                ProductStockService::moveOnCreate($invoice, $createdItem, $lot, $qty);
             });
 
             $this->closeQuickModal();
@@ -637,7 +637,7 @@ class Index extends AbstractIndex
         $this->closeExportModal();
 
         return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\WineSaleInvoiceExport(Auth::id(), $this->exportDateFrom, $this->exportDateTo),
+            new \App\Exports\ProductSaleInvoiceExport(Auth::id(), $this->exportDateFrom, $this->exportDateTo),
             'facturas_venta_' . $this->exportDateFrom . '_' . $this->exportDateTo . '.xlsx'
         );
     }

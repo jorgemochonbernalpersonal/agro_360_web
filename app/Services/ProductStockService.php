@@ -5,12 +5,12 @@ namespace App\Services;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceStockMovement;
-use App\Models\WineLot;
+use App\Models\ProductLot;
 use Illuminate\Support\Facades\Auth;
 use RuntimeException;
 
 /**
- * Manages the three-bucket stock system for wine lots.
+ * Manages the three-bucket stock system for product lots.
  *
  * Buckets:
  *   available  — ready to sell
@@ -18,15 +18,15 @@ use RuntimeException;
  *   sold       — definitively delivered
  *
  * All public methods must be called INSIDE an open DB transaction.
- * WineLot rows must already be locked with lockForUpdate() by the caller.
+ * ProductLot rows must already be locked with lockForUpdate() by the caller.
  */
-class WineStockService
+class ProductStockService
 {
     /**
-     * Process stock movement for every wine item on an invoice.
+     * Process stock movement for every product item on an invoice.
      *
      * Used for 'deliver' and 'cancel' actions where the invoice already exists.
-     * Locks each wine_lot row within the active transaction.
+     * Locks each product_lot row within the active transaction.
      *
      * @param  string  $action  'deliver' | 'cancel'
      */
@@ -37,7 +37,7 @@ class WineStockService
                 continue;
             }
 
-            $lot = WineLot::lockForUpdate()->findOrFail($item->wine_lot_id);
+            $lot = ProductLot::lockForUpdate()->findOrFail($item->wine_lot_id);
             self::apply($invoice, $item, $lot, (float) $item->quantity, $action);
         }
     }
@@ -46,18 +46,18 @@ class WineStockService
      * Move stock for a single item during invoice creation (available → reserved).
      *
      * The InvoiceItem must already be persisted before calling this.
-     * The WineLot must already be locked with lockForUpdate() by the caller.
+     * The ProductLot must already be locked with lockForUpdate() by the caller.
      *
      * @throws RuntimeException if available stock is insufficient
      */
-    public static function moveOnCreate(Invoice $invoice, InvoiceItem $item, WineLot $lot, float $qty): void
+    public static function moveOnCreate(Invoice $invoice, InvoiceItem $item, ProductLot $lot, float $qty): void
     {
         self::apply($invoice, $item, $lot, $qty, 'create');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
 
-    private static function apply(Invoice $invoice, InvoiceItem $item, WineLot $lot, float $qty, string $action): void
+    private static function apply(Invoice $invoice, InvoiceItem $item, ProductLot $lot, float $qty, string $action): void
     {
         match ($action) {
             'create'  => self::onCreate($invoice, $item, $lot, $qty),
@@ -70,7 +70,7 @@ class WineStockService
     /**
      * Invoice created: available -= qty, reserved += qty
      */
-    private static function onCreate(Invoice $invoice, InvoiceItem $item, WineLot $lot, float $qty): void
+    private static function onCreate(Invoice $invoice, InvoiceItem $item, ProductLot $lot, float $qty): void
     {
         if ($qty > (float) $lot->available_quantity) {
             throw new RuntimeException(
@@ -87,7 +87,7 @@ class WineStockService
     /**
      * Invoice delivered: reserved -= qty, sold += qty
      */
-    private static function onDeliver(Invoice $invoice, InvoiceItem $item, WineLot $lot, float $qty): void
+    private static function onDeliver(Invoice $invoice, InvoiceItem $item, ProductLot $lot, float $qty): void
     {
         if ($qty > (float) $lot->reserved_quantity) {
             throw new RuntimeException(
@@ -109,7 +109,7 @@ class WineStockService
      * Clamps decrements at 0 to guard against pre-existing invoices that
      * were created before the stock system was in place.
      */
-    private static function onCancel(Invoice $invoice, InvoiceItem $item, WineLot $lot, float $qty): void
+    private static function onCancel(Invoice $invoice, InvoiceItem $item, ProductLot $lot, float $qty): void
     {
         if ($invoice->delivery_status === 'delivered') {
             $restoreFromSold = min($qty, max(0, (float) $lot->sold_quantity));
@@ -131,7 +131,7 @@ class WineStockService
     private static function log(
         Invoice $invoice,
         InvoiceItem $item,
-        WineLot $lot,
+        ProductLot $lot,
         float $qty,
         string $action,
         string $from,

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Winery\Cellar\WineLots;
+namespace App\Livewire\Winery\Cellar\ProductLots;
 
 use App\Livewire\Winery\AbstractIndex;
-use App\Models\WineLot;
+use App\Models\ProductLot;
 use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
@@ -30,7 +30,7 @@ class Index extends AbstractIndex
 
     public function toggleActive(int $id): void
     {
-        $lot = WineLot::where('user_id', $this->wineryId())->findOrFail($id);
+        $lot = ProductLot::where('user_id', $this->wineryId())->findOrFail($id);
         $wasArchived = (bool) $lot->archived;
         $lot->update(['archived' => !$wasArchived]);
 
@@ -54,7 +54,7 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        return WineLot::where('user_id', $this->wineryId());
+        return ProductLot::where('user_id', $this->wineryId());
     }
 
     protected function applyFilters(Builder $query): void
@@ -86,7 +86,7 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $base = WineLot::where('user_id', $this->wineryId());
+        $base = ProductLot::where('user_id', $this->wineryId());
         $stats = [
             'active'   => (clone $base)->where('archived', false)->count(),
             'inactive' => (clone $base)->where('archived', true)->count(),

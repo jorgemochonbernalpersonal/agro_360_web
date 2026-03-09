@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Winery\Cellar\WineLots;
+namespace App\Livewire\Winery\Cellar\ProductLots;
 
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Models\WineLot;
+use App\Models\ProductLot;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -11,7 +11,7 @@ class Edit extends Component
 {
     use WithToastNotifications;
 
-    public WineLot $lot;
+    public ProductLot $lot;
 
     // ── Información básica ──────────────────────────────────────────
     public string $name               = '';
@@ -60,7 +60,7 @@ class Edit extends Component
     public string $bottling_date       = '';
     public string $release_date        = '';
 
-    public function mount(WineLot $lot): void
+    public function mount(ProductLot $lot): void
     {
         abort_if($lot->user_id !== Auth::id(), 403);
 
@@ -199,11 +199,11 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Producto actualizado correctamente.');
-        return $this->redirect(route('winery.wine-lots.index'), navigate: true);
+        return $this->redirect(route('winery.product-lots.index'), navigate: true);
     }
 
     public function render()
     {
-        return view('livewire.winery.cellar.wine-lots.edit')->layout('layouts.app');
+        return view('livewire.winery.cellar.product-lots.edit')->layout('layouts.app');
     }
 }
