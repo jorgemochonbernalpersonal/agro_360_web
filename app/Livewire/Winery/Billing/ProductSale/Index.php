@@ -24,6 +24,7 @@ class Index extends AbstractIndex
     public string $filterStatus         = '';
     public string $filterPaymentStatus  = '';
     public string $filterDeliveryStatus = '';
+    public bool   $filterGift           = false;
 
     // Modal emitir
     public bool   $emitirModal = false;
@@ -59,12 +60,14 @@ class Index extends AbstractIndex
         'filterStatus'         => ['except' => ''],
         'filterPaymentStatus'  => ['except' => ''],
         'filterDeliveryStatus' => ['except' => ''],
+        'filterGift'           => ['except' => false],
     ];
 
     public function updatingSearch(): void               { $this->resetPage(); }
     public function updatingFilterStatus(): void         { $this->resetPage(); }
     public function updatingFilterPaymentStatus(): void  { $this->resetPage(); }
     public function updatingFilterDeliveryStatus(): void { $this->resetPage(); }
+    public function updatingFilterGift(): void           { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
@@ -73,6 +76,7 @@ class Index extends AbstractIndex
             'filterStatus'         => '',
             'filterPaymentStatus'  => '',
             'filterDeliveryStatus' => '',
+            'filterGift'           => false,
         ];
     }
 
@@ -84,6 +88,7 @@ class Index extends AbstractIndex
         $this->filterStatus         = '';
         $this->filterPaymentStatus  = '';
         $this->filterDeliveryStatus = '';
+        $this->filterGift           = false;
         $this->resetPage();
     }
 
@@ -684,6 +689,10 @@ class Index extends AbstractIndex
         if ($this->filterDeliveryStatus) {
             $query->where('delivery_status', $this->filterDeliveryStatus);
         }
+
+        if ($this->filterGift) {
+            $query->where('gift', true);
+        }
     }
 
     protected function applyOrderBy(Builder $query): void
@@ -697,7 +706,23 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        return ['invoices' => $entries];
+        $giftCount = Invoice::where('user_id', $this->wineryId())
+            ->where('invoice_type', 'wine_sale')
+            ->where('gift', true)
+            ->where('status', '!=', 'cancelled')
+            ->when($this->search, function ($q) {
+                $term = '%' . mb_strtolower($this->search) . '%';
+                $q->where(function ($q2) use ($term) {
+                    $q2->whereRaw('LOWER(IFNULL(invoice_number,\'\')) LIKE ?', [$term])
+                       ->orWhereRaw('LOWER(IFNULL(delivery_note_code,\'\')) LIKE ?', [$term]);
+                });
+            })
+            ->when($this->filterStatus, fn ($q) => $q->where('status', $this->filterStatus))
+            ->when($this->filterPaymentStatus, fn ($q) => $q->where('payment_status', $this->filterPaymentStatus))
+            ->when($this->filterDeliveryStatus, fn ($q) => $q->where('delivery_status', $this->filterDeliveryStatus))
+            ->count();
+
+        return ['invoices' => $entries, 'giftCount' => $giftCount];
     }
 
     protected function resolveViewName(): string

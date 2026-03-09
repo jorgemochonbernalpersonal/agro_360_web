@@ -21,7 +21,7 @@
                 />
             </div>
 
-            @php $filterCount = ($filterStatus ? 1 : 0) + ($filterPaymentStatus ? 1 : 0) + ($filterDeliveryStatus ? 1 : 0); @endphp
+            @php $filterCount = ($filterStatus ? 1 : 0) + ($filterPaymentStatus ? 1 : 0) + ($filterDeliveryStatus ? 1 : 0) + ($filterGift ? 1 : 0); @endphp
             <button
                 x-on:click="$dispatch('open-modal', 'products-invoice-filters')"
                 class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
@@ -54,7 +54,7 @@
         </div>
 
         {{-- Active filter chips --}}
-        @if($search || $filterStatus || $filterPaymentStatus || $filterDeliveryStatus)
+        @if($search || $filterStatus || $filterPaymentStatus || $filterDeliveryStatus || $filterGift)
             <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs text-zinc-400">Filtros activos:</span>
 
@@ -90,10 +90,29 @@
                     </span>
                 @endif
 
+                @if($filterGift)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-pink-50 text-pink-700 text-xs font-medium rounded-full border border-pink-200">
+                        Solo regalos
+                        <button wire:click="$set('filterGift', false)" class="hover:text-pink-900 ml-0.5"><flux:icon icon="x-mark" class="size-3" /></button>
+                    </span>
+                @endif
+
                 <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">Limpiar todo</button>
             </div>
         @endif
     </div>
+
+    {{-- Gift counter --}}
+    @if($giftCount > 0 && !$filterGift)
+        <button
+            wire:click="$set('filterGift', true)"
+            class="inline-flex items-center gap-2 px-3 py-1.5 bg-pink-50 border border-pink-200 rounded-full text-xs font-medium text-pink-700 hover:bg-pink-100 transition-colors"
+        >
+            <flux:icon icon="gift" class="size-3.5" />
+            {{ $giftCount }} {{ $giftCount === 1 ? 'factura regalo' : 'facturas regalo' }}
+            <span class="text-pink-400">· ver solo estas</span>
+        </button>
+    @endif
 
     {{-- Card grid --}}
     @if($invoices->count() > 0)
@@ -556,6 +575,13 @@
                     <option value="delivered">Entregada</option>
                     <option value="cancelled">Cancelada</option>
                 </select>
+            </div>
+            <div class="flex items-center justify-between py-2 px-3 bg-pink-50 rounded-xl border border-pink-100">
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="gift" class="size-4 text-pink-500" />
+                    <span class="text-sm font-medium text-pink-700">Solo facturas regalo</span>
+                </div>
+                <flux:checkbox wire:model.live="filterGift" />
             </div>
         </div>
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
