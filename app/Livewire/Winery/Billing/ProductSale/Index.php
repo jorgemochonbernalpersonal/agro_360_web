@@ -336,7 +336,7 @@ class Index extends AbstractIndex
                     'observations'             => $notes,
                 ]));
 
-                InvoiceItem::withoutObservers(function () use ($original, $corrective) {
+                InvoiceItem::withoutEvents(function () use ($original, $corrective) {
                     foreach ($original->items as $item) {
                         $corrective->items()->create([
                             'wine_lot_id'         => $item->wine_lot_id,

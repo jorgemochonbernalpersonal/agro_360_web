@@ -227,7 +227,7 @@ class Index extends Component
                 // ── 3. Clone items with negative quantities
                 //       withoutObservers: InvoiceItemObserver would call ContainerStockService
                 //       which we handle explicitly below to avoid double movement.
-                InvoiceItem::withoutObservers(function () use ($original, $corrective) {
+                InvoiceItem::withoutEvents(function () use ($original, $corrective) {
                     foreach ($original->items as $item) {
                         $corrective->items()->create([
                             'harvest_id'          => $item->harvest_id,

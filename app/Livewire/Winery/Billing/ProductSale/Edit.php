@@ -372,7 +372,7 @@ class Edit extends Component
                 ProductStockService::moveForInvoice($this->invoice, 'cancel');
 
                 // 2. Borrar líneas antiguas
-                InvoiceItem::withoutObservers(fn () => $this->invoice->items()->delete());
+                InvoiceItem::withoutEvents(fn () => $this->invoice->items()->delete());
 
                 // 3. Calcular totales
                 $subtotal = $discountAmount = $taxAmount = 0;
@@ -418,7 +418,7 @@ class Edit extends Component
                 ]);
 
                 // 5. Crear líneas nuevas + mover stock
-                InvoiceItem::withoutObservers(function () use ($taxRates, $multiplyGift) {
+                InvoiceItem::withoutEvents(function () use ($taxRates, $multiplyGift) {
                     foreach ($this->items as $item) {
                         $qty          = (float) $item['quantity'];
                         $unitPrice    = (float) $item['unit_price'];

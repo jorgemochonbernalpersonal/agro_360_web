@@ -518,7 +518,7 @@ class Edit extends Component
                 // HarvestStockService::moveOnItemSave es la fuente de verdad aquí.
                 $newDeliveryStatus = $this->delivery_status;
 
-                \App\Models\InvoiceItem::withoutObservers(function () use ($newDeliveryStatus) {
+                \App\Models\InvoiceItem::withoutEvents(function () use ($newDeliveryStatus) {
                     foreach ($this->items as $itemData) {
                         $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
                         $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
