@@ -46,7 +46,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-mono font-bold text-zinc-900 truncate">
-                                    {{ $invoice->invoice_number ?? '—' }}
+                                    {{ $invoice->invoice_number ?? 'Sin código de factura' }}
                                 </h3>
                                 @if ($invoice->delivery_note_code)
                                     <p class="text-xs text-zinc-400 font-mono truncate">{{ $invoice->delivery_note_code }}</p>

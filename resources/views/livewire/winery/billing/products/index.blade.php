@@ -138,7 +138,7 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-1.5">
                                     <p class="font-semibold text-zinc-900 text-sm font-mono truncate leading-tight">
-                                        {{ $invoice->invoice_number ?? 'Sin número' }}
+                                        {{ $invoice->invoice_number ?? 'Sin código de factura' }}
                                     </p>
                                     @if($invoice->corrective)
                                         <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded shrink-0">R/</span>
