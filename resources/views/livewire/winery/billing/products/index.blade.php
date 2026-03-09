@@ -222,24 +222,19 @@
                                     </button>
                                 @endif
 
-                                @if($invoice->delivery_note_code)
-                                    <a href="{{ route('winery.invoices.products.delivery-note-pdf', $invoice->id) }}"
-                                       target="_blank" class="{{ $btnBase }}" title="Albarán PDF">
-                                        <flux:icon icon="document-arrow-down" class="size-4" />
-                                    </a>
-                                @endif
-
-                                @if($invoice->delivery_note_code || $invoice->invoice_number)
-                                    <a href="{{ route('winery.invoices.products.valorado-pdf', $invoice->id) }}"
-                                       target="_blank" class="{{ $btnBase }}" title="Albarán valorado">
-                                        <flux:icon icon="currency-euro" class="size-4" />
-                                    </a>
-                                @endif
-
                                 <a href="{{ route('winery.invoices.products.pdf', $invoice->id) }}"
-                                   target="_blank" class="{{ $btnBase }}"
-                                   title="{{ $invoice->invoice_number ? 'Factura PDF' : 'Borrador PDF' }}">
+                                   target="_blank" class="{{ $btnBase }}" title="Descargar Factura">
                                     <flux:icon icon="document-text" class="size-4" />
+                                </a>
+
+                                <a href="{{ route('winery.invoices.products.delivery-note-pdf', $invoice->id) }}"
+                                   target="_blank" class="{{ $btnBase }}" title="Descargar Albarán">
+                                    <flux:icon icon="document-arrow-down" class="size-4" />
+                                </a>
+
+                                <a href="{{ route('winery.invoices.products.valorado-pdf', $invoice->id) }}"
+                                   target="_blank" class="{{ $btnBase }}" title="Descargar Albarán Valorado">
+                                    <flux:icon icon="currency-euro" class="size-4" />
                                 </a>
 
                                 @if($invoice->status === 'draft')

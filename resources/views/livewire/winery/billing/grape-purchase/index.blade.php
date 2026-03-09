@@ -97,16 +97,15 @@
                                 </a>
                             @endif
 
-                            <a href="{{ route('winery.invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Liquidación PDF (albarán)">
+                            <a href="{{ route('winery.invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank" title="Descargar Liquidación">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="document-arrow-down" class="size-4" />
+                                    <flux:icon icon="document-text" class="size-4" />
                                 </button>
                             </a>
 
-                            <a href="{{ route('winery.invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank"
-                               title="{{ $invoice->invoice_number ? 'Liquidación PDF' : 'Borrador PDF' }}">
+                            <a href="{{ route('winery.invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                    <flux:icon icon="document-text" class="size-4" />
+                                    <flux:icon icon="document-arrow-down" class="size-4" />
                                 </button>
                             </a>
 
