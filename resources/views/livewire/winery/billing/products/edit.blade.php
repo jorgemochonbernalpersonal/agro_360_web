@@ -12,102 +12,77 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- ── Card de estados rápidos (fuera del form) ─────────────────────────── --}}
-    @php
-        $deliveryLabels = [
-            'pending'    => ['label' => 'Pendiente',   'color' => 'zinc'],
-            'in_transit' => ['label' => 'En tránsito', 'color' => 'sky'],
-            'delivered'  => ['label' => 'Entregada',   'color' => 'green'],
-            'cancelled'  => ['label' => 'Cancelada',   'color' => 'red'],
-        ];
-        $dl = $deliveryLabels[$invoice->delivery_status] ?? ['label' => ucfirst($invoice->delivery_status), 'color' => 'zinc'];
-    @endphp
-
+    {{-- ── Card de estados ──────────────────────────────────────────────────── --}}
     <x-agro.card>
-        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-100 gap-0">
+        <div class="flex flex-wrap items-end gap-4">
 
-            {{-- Col 1: Entrega --}}
-            <div class="pb-5 md:pb-0 md:pr-6 space-y-3">
-                <p class="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Entrega</p>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <flux:badge color="{{ $dl['color'] }}" size="sm">{{ $dl['label'] }}</flux:badge>
-                    @if ($invoice->delivery_status === 'delivered' && $invoice->updated_at)
-                        <span class="text-xs text-zinc-400">{{ $invoice->updated_at->format('d/m/Y') }}</span>
-                    @endif
-                </div>
-                @if (!$isLocked && in_array($invoice->delivery_status, ['pending', 'in_transit']))
-                    <div class="flex gap-2 flex-wrap">
-                        <flux:button type="button" size="sm" variant="primary" icon="check-circle"
-                            wire:click="openDeliveryModal('delivered')">
-                            Entregar
-                        </flux:button>
-                        <flux:button type="button" size="sm" variant="danger" icon="x-circle"
-                            wire:click="openDeliveryModal('cancelled')">
-                            Cancelar
-                        </flux:button>
-                    </div>
-                @endif
+            {{-- Entrega --}}
+            <div class="flex-1 min-w-[160px]">
+                <flux:field>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Entrega</flux:label>
+                    <flux:select wire:model="delivery_status" :disabled="$isLocked">
+                        <option value="pending">Pendiente</option>
+                        <option value="in_transit">En tránsito</option>
+                        <option value="delivered">Entregada</option>
+                        <option value="cancelled">Cancelada</option>
+                    </flux:select>
+                </flux:field>
             </div>
 
-            {{-- Col 2: Cobro --}}
-            <div class="py-5 md:py-0 md:px-6 space-y-3">
-                <p class="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Cobro</p>
-                @if ($invoice->status !== 'cancelled')
-                    <div class="space-y-2">
-                        <flux:select wire:model.live="payment_status" class="text-sm">
-                            <option value="unpaid">Pendiente de cobro</option>
-                            <option value="partial">Pago parcial</option>
-                            <option value="paid">Cobrada</option>
-                        </flux:select>
-                        <flux:select wire:model="payment_type" class="text-sm">
-                            <option value="">Sin especificar</option>
-                            <option value="cash">Efectivo</option>
-                            <option value="transfer">Transferencia</option>
-                            <option value="check">Cheque</option>
-                            <option value="other">Otro</option>
-                        </flux:select>
-                        <div x-data x-show="$wire.payment_status === 'paid'" x-cloak>
-                            <flux:input wire:model="payment_date" type="date" class="text-sm"
-                                placeholder="Fecha de cobro" />
-                        </div>
-                        <flux:button type="button" size="sm" variant="filled"
-                            wire:click="updatePaymentStatus"
-                            wire:loading.attr="disabled" wire:target="updatePaymentStatus">
-                            <span wire:loading.remove wire:target="updatePaymentStatus">Guardar cobro</span>
-                            <span wire:loading wire:target="updatePaymentStatus">Guardando...</span>
-                        </flux:button>
-                    </div>
-                @else
-                    <flux:badge color="red" size="sm">Cancelada</flux:badge>
-                @endif
+            {{-- Cobro --}}
+            <div class="flex-1 min-w-[160px]">
+                <flux:field>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Estado de cobro</flux:label>
+                    <flux:select wire:model="payment_status" :disabled="$invoice->status === 'cancelled'">
+                        <option value="unpaid">Pendiente de cobro</option>
+                        <option value="partial">Pago parcial</option>
+                        <option value="paid">Cobrada</option>
+                    </flux:select>
+                </flux:field>
             </div>
 
-            {{-- Col 3: Factura --}}
-            <div class="pt-5 md:pt-0 md:pl-6 space-y-3">
-                <p class="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Factura</p>
-                @if ($invoice->status === 'draft')
-                    <div class="flex items-center gap-2">
-                        <flux:badge color="zinc" size="sm">Borrador</flux:badge>
-                        <span class="text-xs text-zinc-400">Nº pendiente</span>
-                    </div>
-                    @if (!$isLocked)
-                        <flux:button type="button" size="sm" variant="primary" icon="paper-airplane"
-                            wire:click="openEmitirModal">
-                            Emitir factura
-                        </flux:button>
+            {{-- Forma de pago --}}
+            <div class="flex-1 min-w-[160px]">
+                <flux:field>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Forma de pago</flux:label>
+                    <flux:select wire:model="payment_type" :disabled="$invoice->status === 'cancelled'">
+                        <option value="">Sin especificar</option>
+                        <option value="cash">Efectivo</option>
+                        <option value="transfer">Transferencia</option>
+                        <option value="check">Cheque</option>
+                        <option value="other">Otro</option>
+                    </flux:select>
+                </flux:field>
+            </div>
+
+            {{-- Info factura --}}
+            <div class="flex-1 min-w-[140px] space-y-1">
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Factura</p>
+                @if ($invoice->invoice_number)
+                    <p class="font-mono font-bold text-zinc-900 text-sm">{{ $invoice->invoice_number }}</p>
+                    @if ($invoice->invoice_date)
+                        <p class="text-xs text-zinc-400">{{ $invoice->invoice_date->format('d/m/Y') }}</p>
                     @endif
-                @elseif ($invoice->status === 'sent')
-                    <div class="space-y-1">
-                        <p class="text-sm font-mono font-bold text-zinc-900">{{ $invoice->invoice_number }}</p>
-                        @if ($invoice->invoice_date)
-                            <p class="text-xs text-zinc-400">{{ $invoice->invoice_date->format('d/m/Y') }}</p>
-                        @endif
-                    </div>
                     <flux:badge color="blue" size="sm">Emitida</flux:badge>
                 @elseif ($invoice->status === 'cancelled')
                     <flux:badge color="red" size="sm">Cancelada</flux:badge>
+                @else
+                    <flux:badge color="zinc" size="sm">Borrador</flux:badge>
+                    <p class="text-xs text-zinc-400">Emite desde el listado</p>
                 @endif
             </div>
+
+            {{-- Botón guardar --}}
+            @if ($invoice->status !== 'cancelled')
+                <div class="flex-shrink-0">
+                    <flux:button type="button" variant="primary" size="sm"
+                        wire:click="saveStatuses"
+                        wire:loading.attr="disabled" wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">
+                        <span wire:loading.remove wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">Guardar estados</span>
+                        <span wire:loading wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">Guardando...</span>
+                    </flux:button>
+                </div>
+            @endif
         </div>
     </x-agro.card>
 
@@ -422,60 +397,48 @@
                     @endif
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl">
-                    <flux:button wire:click="closeDeliveryModal" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="closeDeliveryModal" variant="outline"
+                        wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">Cancelar</flux:button>
                     <flux:button wire:click="confirmDeliveryStatus"
                         variant="{{ $pendingDeliveryStatus === 'delivered' ? 'primary' : 'danger' }}"
-                        icon="{{ $pendingDeliveryStatus === 'delivered' ? 'check-circle' : 'x-circle' }}">
-                        {{ $pendingDeliveryStatus === 'delivered' ? 'Confirmar entrega' : 'Confirmar cancelación' }}
+                        icon="{{ $pendingDeliveryStatus === 'delivered' ? 'check-circle' : 'x-circle' }}"
+                        wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">
+                        <span wire:loading.remove wire:target="confirmDeliveryStatus">{{ $pendingDeliveryStatus === 'delivered' ? 'Confirmar entrega' : 'Confirmar cancelación' }}</span>
+                        <span wire:loading wire:target="confirmDeliveryStatus">Guardando...</span>
                     </flux:button>
                 </div>
             </div>
         </div>
     @endif
 
-    {{-- Modal: Emitir Factura --}}
-    @if ($showEmitirModal)
+    {{-- Modal: Fecha de pago --}}
+    @if ($showPaymentDateModal)
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-             x-data x-on:keydown.escape.window="$wire.closeEmitirModal()">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md" @click.stop>
+             x-data x-on:keydown.escape.window="$wire.closePaymentDateModal()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm" @click.stop>
                 <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-zinc-900">Emitir factura</h3>
-                    <flux:button wire:click="closeEmitirModal" variant="ghost" size="sm" icon="x-mark" />
+                    <h3 class="text-lg font-bold text-zinc-900">Fecha de pago</h3>
+                    <flux:button wire:click="closePaymentDateModal" variant="ghost" size="sm" icon="x-mark" />
                 </div>
                 <div class="p-6 space-y-4">
-                    <div class="bg-zinc-50 rounded-lg p-4 grid grid-cols-2 gap-3 text-sm">
-                        <div>
-                            <p class="text-zinc-500">Albarán</p>
-                            <p class="font-mono font-semibold text-zinc-900">{{ $invoice->delivery_note_code }}</p>
-                        </div>
-                        <div>
-                            <p class="text-zinc-500">Cliente</p>
-                            <p class="font-semibold text-zinc-900">{{ $invoice->client?->full_name ?? '—' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-zinc-500">Total</p>
-                            <p class="font-bold text-green-600 text-base">{{ number_format($this->totalAmount, 2) }} €</p>
-                        </div>
-                    </div>
+                    <p class="text-sm text-zinc-600">Indica la fecha en que se realizó el cobro.</p>
                     <flux:field>
-                        <flux:label required>Fecha de la factura</flux:label>
-                        <flux:input wire:model="emitirDate" type="date" required />
-                        <flux:error name="emitirDate" />
+                        <flux:label required>Fecha de cobro</flux:label>
+                        <flux:input wire:model="payment_date" type="date" required />
+                        <flux:error name="payment_date" />
                     </flux:field>
-                    <flux:callout variant="warning">
-                        Se asignará el <strong>número de factura</strong> secuencial y el documento quedará bloqueado para edición.
-                    </flux:callout>
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl">
-                    <flux:button wire:click="closeEmitirModal" variant="outline"
-                        wire:loading.attr="disabled" wire:target="markAsSent">Cancelar</flux:button>
-                    <flux:button wire:click="markAsSent" variant="primary" icon="paper-airplane"
-                        wire:loading.attr="disabled" wire:target="markAsSent">
-                        <span wire:loading.remove wire:target="markAsSent">Emitir factura</span>
-                        <span wire:loading wire:target="markAsSent">Emitiendo...</span>
+                    <flux:button wire:click="closePaymentDateModal" variant="outline"
+                        wire:loading.attr="disabled" wire:target="confirmPaymentDate">Cancelar</flux:button>
+                    <flux:button wire:click="confirmPaymentDate" variant="primary" icon="check"
+                        wire:loading.attr="disabled" wire:target="confirmPaymentDate">
+                        <span wire:loading.remove wire:target="confirmPaymentDate">Confirmar</span>
+                        <span wire:loading wire:target="confirmPaymentDate">Guardando...</span>
                     </flux:button>
                 </div>
             </div>
         </div>
     @endif
+
 </div>

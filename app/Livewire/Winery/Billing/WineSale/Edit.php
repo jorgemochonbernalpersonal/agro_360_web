@@ -32,9 +32,10 @@ class Edit extends Component
     public string $delivery_status    = '';
     public bool   $is_gift            = false;
 
-    // ── Delivery status modal ────────────────────────────────────────────────
+    // ── Status modals ────────────────────────────────────────────────────────
     public bool   $showDeliveryModal     = false;
     public string $pendingDeliveryStatus = '';
+    public bool   $showPaymentDateModal  = false;
 
     public array $items = [];
 
@@ -42,10 +43,6 @@ class Edit extends Component
 
     public $availableTaxes = [];
     protected string $defaultTaxId = '';
-
-    // Emitir modal
-    public bool   $showEmitirModal = false;
-    public string $emitirDate      = '';
 
     public function mount(int $id): void
     {
@@ -202,76 +199,74 @@ class Edit extends Component
         $this->items = array_values($this->items);
     }
 
-    // ── Emitir ────────────────────────────────────────────────────────────────
+    // ── Guardar estados (entrega + cobro) ─────────────────────────────────────
 
-    public function openEmitirModal(): void
+    public function saveStatuses(): void
     {
-        $this->emitirDate      = now()->toDateString();
-        $this->showEmitirModal = true;
-    }
-
-    public function closeEmitirModal(): void
-    {
-        $this->showEmitirModal = false;
-        $this->emitirDate      = '';
-        $this->resetValidation();
-    }
-
-    // ── Payment status (quick action, outside main form) ─────────────────────
-
-    public function updatePaymentStatus(): void
-    {
-        $this->validate([
-            'payment_status' => 'required|in:unpaid,partial,paid',
-            'payment_type'   => 'nullable|in:cash,transfer,check,other',
-            'payment_date'   => 'nullable|date',
-        ]);
-
         if ($this->invoice->status === 'cancelled') {
             $this->toastError('No se puede modificar una factura cancelada.');
             return;
         }
 
-        $this->invoice->update([
-            'payment_status' => $this->payment_status,
-            'payment_type'   => $this->payment_type ?: null,
-            'payment_date'   => $this->payment_status === 'paid' && $this->payment_date
-                ? $this->payment_date
-                : null,
-        ]);
-
-        $this->invoice->refresh();
-        $this->toastSuccess('Estado de cobro actualizado.');
-    }
-
-    // ── Delivery status ───────────────────────────────────────────────────────
-
-    public function openDeliveryModal(string $newStatus): void
-    {
-        if (!in_array($newStatus, ['delivered', 'cancelled'])) return;
-
-        if ($this->isLocked) {
-            $this->toastError('Esta factura no se puede modificar.');
+        // Si cobro = pagado y no hay fecha → modal para pedir la fecha
+        if ($this->payment_status === 'paid' && !$this->payment_date) {
+            $this->showPaymentDateModal = true;
             return;
         }
 
-        $this->pendingDeliveryStatus = $newStatus;
-        $this->showDeliveryModal     = true;
+        // Si la entrega cambia a un estado que mueve stock → confirmar
+        $originalDelivery = $this->invoice->delivery_status;
+        if ($this->delivery_status !== $originalDelivery
+            && in_array($this->delivery_status, ['delivered', 'cancelled'])) {
+            $this->pendingDeliveryStatus = $this->delivery_status;
+            $this->showDeliveryModal     = true;
+            return;
+        }
+
+        $this->persistStatuses();
     }
+
+    // ── Modal: fecha de pago ──────────────────────────────────────────────────
+
+    public function confirmPaymentDate(): void
+    {
+        $this->validate(
+            ['payment_date' => 'required|date'],
+            ['payment_date.required' => 'La fecha de pago es obligatoria.']
+        );
+
+        $this->showPaymentDateModal = false;
+
+        // Comprobar si además hay que confirmar entrega
+        $originalDelivery = $this->invoice->delivery_status;
+        if ($this->delivery_status !== $originalDelivery
+            && in_array($this->delivery_status, ['delivered', 'cancelled'])) {
+            $this->pendingDeliveryStatus = $this->delivery_status;
+            $this->showDeliveryModal     = true;
+            return;
+        }
+
+        $this->persistStatuses();
+    }
+
+    public function closePaymentDateModal(): void
+    {
+        $this->showPaymentDateModal = false;
+        $this->resetValidation('payment_date');
+    }
+
+    // ── Modal: confirmación entrega (mueve stock) ─────────────────────────────
 
     public function closeDeliveryModal(): void
     {
+        // Revertir el select al valor actual de la BD
+        $this->delivery_status       = $this->invoice->delivery_status;
         $this->showDeliveryModal     = false;
         $this->pendingDeliveryStatus = '';
     }
 
     public function confirmDeliveryStatus(): void
     {
-        if ($this->isLocked) {
-            $this->closeDeliveryModal();
-            return;
-        }
-
         $newStatus = $this->pendingDeliveryStatus;
 
         if (!in_array($newStatus, ['delivered', 'cancelled'])) {
@@ -282,21 +277,23 @@ class Edit extends Component
         try {
             DB::transaction(function () use ($newStatus) {
                 $this->invoice->load('items.wineLot');
-
-                // Only move stock for non-corrective invoices
                 if (!$this->invoice->corrective) {
                     $action = $newStatus === 'delivered' ? 'deliver' : 'cancel';
                     WineStockService::moveForInvoice($this->invoice, $action);
                 }
-
+                // Guardamos delivery_status aquí; el resto en persistStatuses
                 $this->invoice->update(['delivery_status' => $newStatus]);
             });
 
-            $this->invoice->refresh();
-            $this->delivery_status = $this->invoice->delivery_status;
+            $this->delivery_status = $newStatus;
+            $this->showDeliveryModal     = false;
+            $this->pendingDeliveryStatus = '';
+
+            // Guardar también el estado de cobro
+            $this->persistPaymentStatus();
 
             $label = $newStatus === 'delivered' ? 'entregada' : 'cancelada';
-            $this->toastSuccess("Factura marcada como {$label}.");
+            $this->toastSuccess("Estados guardados. Entrega: {$label}.");
 
         } catch (\Exception $e) {
             Log::error('Error al actualizar estado de entrega: ' . $e->getMessage(), [
@@ -304,48 +301,30 @@ class Edit extends Component
                 'user_id'    => Auth::id(),
             ]);
             $this->toastError($e instanceof \RuntimeException ? $e->getMessage() : 'Error al actualizar el estado de entrega.');
+            $this->closeDeliveryModal();
         }
-
-        $this->closeDeliveryModal();
     }
 
-    public function markAsSent(): void
+    private function persistStatuses(): void
     {
-        $this->validate(
-            ['emitirDate' => 'required|date'],
-            ['emitirDate.required' => 'La fecha de factura es obligatoria.']
-        );
+        $this->invoice->update([
+            'delivery_status' => $this->delivery_status,
+            'payment_status'  => $this->payment_status,
+            'payment_type'    => $this->payment_type ?: null,
+            'payment_date'    => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
+        ]);
+        $this->invoice->refresh();
+        $this->toastSuccess('Estados actualizados correctamente.');
+    }
 
-        if ($this->invoice->status !== 'draft') {
-            $this->toastError('Esta factura ya no está en borrador.');
-            $this->closeEmitirModal();
-            return;
-        }
-
-        try {
-            $invoiceNumber = null;
-            DB::transaction(function () use (&$invoiceNumber) {
-                $settings      = InvoicingSetting::getOrCreateForUser(Auth::id());
-                $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
-
-                $this->invoice->update([
-                    'invoice_number' => $invoiceNumber,
-                    'invoice_date'   => $this->emitirDate,
-                    'status'         => 'sent',
-                ]);
-            });
-
-            $this->closeEmitirModal();
-            $this->invoice->refresh();
-            $this->toastSuccess("Factura {$invoiceNumber} emitida correctamente.");
-
-        } catch (\Exception $e) {
-            Log::error('Error al emitir factura de vino: ' . $e->getMessage(), [
-                'invoice_id' => $this->invoice->id,
-                'user_id'    => Auth::id(),
-            ]);
-            $this->toastError('Error al emitir la factura.');
-        }
+    private function persistPaymentStatus(): void
+    {
+        $this->invoice->update([
+            'payment_status' => $this->payment_status,
+            'payment_type'   => $this->payment_type ?: null,
+            'payment_date'   => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
+        ]);
+        $this->invoice->refresh();
     }
 
     // ── Validation ────────────────────────────────────────────────────────────
