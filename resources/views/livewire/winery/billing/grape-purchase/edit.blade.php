@@ -96,7 +96,7 @@
                                 <div class="col-span-4 md:col-span-2">
                                     <flux:field>
                                         <flux:label>Kg *</flux:label>
-                                        <flux:input wire:model="lines.{{ $i }}.quantity" type="number" step="0.001" min="0.001" />
+                                        <flux:input wire:model.live.debounce.300ms="lines.{{ $i }}.quantity" type="number" step="0.001" min="0.001" />
                                         <flux:error name="lines.{{ $i }}.quantity" />
                                     </flux:field>
                                 </div>
@@ -104,7 +104,7 @@
                                 <div class="col-span-4 md:col-span-2">
                                     <flux:field>
                                         <flux:label>€/kg *</flux:label>
-                                        <flux:input wire:model="lines.{{ $i }}.unit_price" type="number" step="0.001" min="0" placeholder="0.000" />
+                                        <flux:input wire:model.live.debounce.300ms="lines.{{ $i }}.unit_price" type="number" step="0.001" min="0" placeholder="0.000" />
                                         <flux:error name="lines.{{ $i }}.unit_price" />
                                     </flux:field>
                                 </div>
@@ -112,7 +112,7 @@
                                 <div class="col-span-4 md:col-span-1">
                                     <flux:field>
                                         <flux:label>IRPF %</flux:label>
-                                        <flux:input wire:model="lines.{{ $i }}.tax_rate" type="number" step="0.01" min="0" max="100" />
+                                        <flux:input wire:model.live.debounce.300ms="lines.{{ $i }}.tax_rate" type="number" step="0.01" min="0" max="100" />
                                     </flux:field>
                                 </div>
 
@@ -129,7 +129,7 @@
                                         $price = (float)($line['unit_price'] ?? 0);
                                         $tax   = (float)($line['tax_rate'] ?? 0);
                                         $sub   = $qty * $price;
-                                        $total = $sub * (1 + $tax / 100);
+                                        $total = $sub - ($sub * $tax / 100);
                                     @endphp
                                     <span class="text-xs text-zinc-500">Total</span>
                                     <span class="font-semibold text-sm">{{ number_format($total, 2) }} €</span>
@@ -161,7 +161,7 @@
                             </div>
                             <div class="flex justify-between font-bold text-base border-t pt-1">
                                 <span>A pagar:</span>
-                                <span>{{ number_format($grandSubtotal + $grandTax, 2) }} €</span>
+                                <span>{{ number_format($grandSubtotal - $grandTax, 2) }} €</span>
                             </div>
                         </div>
                     </div>

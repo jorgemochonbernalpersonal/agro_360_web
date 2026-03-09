@@ -119,7 +119,7 @@ class Create extends Component
                 $taxAmount    += $lineTax;
             }
 
-            $total = $subtotal + $taxAmount;
+            $total = $subtotal - $taxAmount;
 
             // ── Create invoice ────────────────────────────────────────────────────────
             $invoice = Invoice::create([
@@ -197,7 +197,7 @@ class Create extends Component
                     'subtotal'     => $subtotalLine,
                     'tax_base'     => $subtotalLine,
                     'tax_amount'   => $taxAmountLine,
-                    'total'        => $subtotalLine + $taxAmountLine,
+                    'total'        => $subtotalLine - $taxAmountLine,
                 ]);
             }
 

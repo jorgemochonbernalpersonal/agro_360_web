@@ -145,7 +145,7 @@ class Edit extends Component
                     $taxAmount    += $lineSubtotal * ((float) $line['tax_rate'] / 100);
                 }
 
-                $total = $subtotal + $taxAmount;
+                $total = $subtotal - $taxAmount;
 
                 // ── 2. Update invoice header (numbers stay unchanged)
                 $this->invoice->update([
@@ -212,7 +212,7 @@ class Edit extends Component
                         'subtotal'     => $subtotalLine,
                         'tax_base'     => $subtotalLine,
                         'tax_amount'   => $taxAmountLine,
-                        'total'        => $subtotalLine + $taxAmountLine,
+                        'total'        => $subtotalLine - $taxAmountLine,
                     ]);
                 }
             });
