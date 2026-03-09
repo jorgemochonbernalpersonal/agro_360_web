@@ -27,6 +27,7 @@
         {{ $slot }}
     </main>
 
+    <x-agro.toast />
     @livewireScripts
 </body>
 </html>

@@ -21,9 +21,9 @@
             </flux:subheading>
         </div>
 
-        @if(session('status'))
+        @if(session('status') || session('message'))
             <flux:callout variant="success" icon="check-circle" class="mb-5">
-                <flux:callout.text>{{ session('status') }}</flux:callout.text>
+                <flux:callout.text>{{ session('status') ?? session('message') }}</flux:callout.text>
             </flux:callout>
         @endif
 

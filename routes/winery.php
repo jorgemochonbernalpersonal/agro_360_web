@@ -78,16 +78,22 @@ Route::middleware(['role:winery'])
         Route::get('/winery-supplies/create', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.create');
         Route::get('/winery-supplies/{winerySupply}/edit', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.edit');
 
-        // ── Vinos (pipeline de vinificación) ──────────────────────────
-        Route::get('/wines', \App\Livewire\Winery\Wines\Index::class)->name('wines.index');
-        Route::get('/wines/create', \App\Livewire\Winery\Wines\Create::class)->name('wines.create');
-        Route::get('/wines/{wine}/edit', \App\Livewire\Winery\Wines\Edit::class)->name('wines.edit');
-        Route::get('/wines/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('wines.process.create');
+        // ── Vinos (en construcción) ────────────────────────────────────
+        Route::get('/wines', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('wines.index')
+            ->defaults('module', 'Vinos')
+            ->defaults('icon', 'arrows-right-left');
+        Route::get('/wines/create', fn() => redirect()->route('winery.wines.index'))->name('wines.create');
+        Route::get('/wines/{wine}/edit', fn() => redirect()->route('winery.wines.index'))->name('wines.edit');
+        Route::get('/wines/{wine}/process/create', fn() => redirect()->route('winery.wines.index'))->name('wines.process.create');
 
-        // ── Uva / mosto / vino externo ────────────────────────────────
-        Route::get('/external-grape', \App\Livewire\Winery\ExternalGrape\Index::class)->name('external-grape.index');
-        Route::get('/external-grape/create', \App\Livewire\Winery\ExternalGrape\Create::class)->name('external-grape.create');
-        Route::get('/external-grape/{grape}/edit', \App\Livewire\Winery\ExternalGrape\Edit::class)->name('external-grape.edit');
+        // ── Uva / mosto / vino externo (en construcción) ─────────────
+        Route::get('/external-grape', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('external-grape.index')
+            ->defaults('module', 'Uva / Mosto externo')
+            ->defaults('icon', 'archive-box');
+        Route::get('/external-grape/create', fn() => redirect()->route('winery.external-grape.index'))->name('external-grape.create');
+        Route::get('/external-grape/{grape}/edit', fn() => redirect()->route('winery.external-grape.index'))->name('external-grape.edit');
 
         // ── Lotes de producto ─────────────────────────────────────────
         Route::get('/product-lots', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('product-lots.index');
@@ -114,12 +120,16 @@ Route::middleware(['role:winery'])
         Route::redirect('/invoices/wine-sale/create', '/winery/invoices/products/create')->name('invoices.wine-sale.create');
 
         // ── Facturación: liquidación de vendimia ──────────────────────
-        Route::get('/invoices/grape-purchase', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('invoices.grape-purchase.index');
-        Route::get('/invoices/grape-purchase/create', \App\Livewire\Winery\Billing\GrapePurchase\Create::class)->name('invoices.grape-purchase.create');
-        Route::get('/invoices/grape-purchase/{id}/edit', \App\Livewire\Winery\Billing\GrapePurchase\Edit::class)->name('invoices.grape-purchase.edit');
-        Route::get('/invoices/grape-purchase/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->defaults('type', 'grape_purchase')->name('invoices.grape-purchase.pdf');
-        Route::get('/invoices/grape-purchase/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->defaults('type', 'grape_purchase')->name('invoices.grape-purchase.delivery-note-pdf');
-        Route::get('/invoices/grape-purchase/{id}/albaran-valorado-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'valoradoNote'])->defaults('type', 'grape_purchase')->name('invoices.grape-purchase.valorado-pdf');
+        // ── Compra de Uva (en construcción) ───────────────────────────
+        Route::get('/invoices/grape-purchase', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('invoices.grape-purchase.index')
+            ->defaults('module', 'Compra de Uva')
+            ->defaults('icon', 'arrow-down-tray');
+        Route::get('/invoices/grape-purchase/create', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.create');
+        Route::get('/invoices/grape-purchase/{id}/edit', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.edit');
+        Route::get('/invoices/grape-purchase/{id}/pdf', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.pdf');
+        Route::get('/invoices/grape-purchase/{id}/albaran-pdf', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.delivery-note-pdf');
+        Route::get('/invoices/grape-purchase/{id}/albaran-valorado-pdf', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.valorado-pdf');
 
         // ── Elaboración de vino ───────────────────────────────────────
         Route::get('/wine-process', fn() => redirect()->route('winery.wines.index'))->name('wine-process.index');

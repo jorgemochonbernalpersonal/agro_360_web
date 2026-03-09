@@ -53,7 +53,8 @@
       "Bash(python:*)",
       "Bash(grep \"\"version\"\":*)",
       "Bash(\"C:/Users/jorge/Desktop/agro365/resources/views/livewire/winery/billing/products/index.blade.php\":*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(/dev/null:*)"
     ]
   }
 }

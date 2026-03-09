@@ -70,6 +70,21 @@
                         ['icon' => 'chart-bar',           'label' => 'Evolución',        'desc' => 'Histórico por contenedor'],
                         ['icon' => 'clipboard-document',  'label' => 'Informes',         'desc' => 'Exportación a PDF'],
                     ],
+                    'Compra de Uva'       => [
+                        ['icon' => 'arrow-down-tray',      'label' => 'Liquidaciones',    'desc' => 'Liquidaciones de uva por viticultor'],
+                        ['icon' => 'document-text',        'label' => 'Albaranes',         'desc' => 'Albaranes de entrega y valorados'],
+                        ['icon' => 'calculator',           'label' => 'Precios',           'desc' => 'Tarifas por variedad, calidad y añada'],
+                    ],
+                    'Vinos'               => [
+                        ['icon' => 'arrows-right-left',   'label' => 'Pipeline',         'desc' => 'Seguimiento del proceso de vinificación'],
+                        ['icon' => 'beaker',              'label' => 'Elaboración',       'desc' => 'Trasiegos, clarificaciones y filtraciones'],
+                        ['icon' => 'archive-box',         'label' => 'Lotes',             'desc' => 'Trazabilidad completa por lote de vino'],
+                    ],
+                    'Uva / Mosto externo' => [
+                        ['icon' => 'archive-box',         'label' => 'Partidas externas','desc' => 'Uva, mosto y vino a granel de proveedores'],
+                        ['icon' => 'scale',               'label' => 'Control de stock', 'desc' => 'Seguimiento de kg disponibles por partida'],
+                        ['icon' => 'arrows-right-left',   'label' => 'Vinculación',      'desc' => 'Asociación directa con contenedores y vinos'],
+                    ],
                     default             => [
                         ['icon' => 'cog-6-tooth',   'label' => 'En desarrollo', 'desc' => 'Módulo en proceso de construcción'],
                         ['icon' => 'rocket-launch', 'label' => 'Próximamente',  'desc' => 'Estará disponible muy pronto'],
