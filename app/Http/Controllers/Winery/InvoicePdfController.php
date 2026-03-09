@@ -13,7 +13,7 @@ class InvoicePdfController extends Controller
     /**
      * Descarga el PDF de la factura (wine_sale o grape_purchase).
      */
-    public function invoice(string $type, int $id): Response
+    public function invoice(string $type, string $id): Response
     {
         $invoice = $this->loadInvoice($type, $id);
 
@@ -34,7 +34,7 @@ class InvoicePdfController extends Controller
     /**
      * Descarga el PDF del albarán valorado (con precios, sin valor fiscal).
      */
-    public function valoradoNote(string $type, int $id): Response
+    public function valoradoNote(string $type, string $id): Response
     {
         $invoice = $this->loadInvoice($type, $id);
 
@@ -56,7 +56,7 @@ class InvoicePdfController extends Controller
     /**
      * Descarga el PDF del albarán / liquidación.
      */
-    public function deliveryNote(string $type, int $id): Response
+    public function deliveryNote(string $type, string $id): Response
     {
         $invoice = $this->loadInvoice($type, $id);
 
@@ -77,7 +77,7 @@ class InvoicePdfController extends Controller
 
     // -------------------------------------------------------------------------
 
-    private function loadInvoice(string $type, int $id): Invoice
+    private function loadInvoice(string $type, string $id): Invoice
     {
         return Invoice::where('user_id', Auth::id())
             ->where('invoice_type', $type)
