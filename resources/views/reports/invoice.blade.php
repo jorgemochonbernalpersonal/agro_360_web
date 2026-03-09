@@ -54,20 +54,25 @@
             font-weight: bold;
             color: #111827;
             letter-spacing: -0.5pt;
+            margin-bottom: 4pt;
         }
         .doc-number {
             font-size: 11pt;
             font-weight: bold;
             color: #15803d;
-            margin-top: 3pt;
+            margin-top: 5pt;
+            margin-bottom: 10pt;
         }
         .doc-number.grape { color: #92400e; }
 
         .doc-meta {
             font-size: 8pt;
             color: #6b7280;
-            margin-top: 6pt;
-            line-height: 1.75;
+            margin-top: 4pt;
+        }
+        .doc-meta p {
+            margin: 0 0 4pt 0;
+            padding: 0;
         }
         .doc-meta strong { color: #374151; }
 
@@ -386,15 +391,15 @@
         <div class="doc-title">{{ $docTitle }}</div>
         <div class="doc-number {{ $isGrape ? 'grape' : '' }}">{{ $docNumber }}</div>
         <div class="doc-meta">
-            <strong>Fecha:</strong> {{ $invoice->invoice_date?->format('d/m/Y') ?? now()->format('d/m/Y') }}<br>
+            <p><strong>Fecha:</strong> {{ $invoice->invoice_date?->format('d/m/Y') ?? now()->format('d/m/Y') }}</p>
             @if($invoice->delivery_note_date)
-                <strong>F. albarán:</strong> {{ $invoice->delivery_note_date->format('d/m/Y') }}<br>
+                <p><strong>F. albarán:</strong> {{ $invoice->delivery_note_date->format('d/m/Y') }}</p>
             @endif
             @if($invoice->delivery_note_code)
-                <strong>Ref. albarán:</strong> {{ $invoice->delivery_note_code }}<br>
+                <p><strong>Ref. albarán:</strong> {{ $invoice->delivery_note_code }}</p>
             @endif
             @if($paymentLabel)
-                <strong>Forma de pago:</strong> {{ $paymentLabel }}<br>
+                <p><strong>Forma de pago:</strong> {{ $paymentLabel }}</p>
             @endif
         </div>
         @if(isset($statusLabels[$invoice->status]))
