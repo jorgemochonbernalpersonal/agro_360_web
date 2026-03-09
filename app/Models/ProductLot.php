@@ -125,7 +125,7 @@ class ProductLot extends Model
 
     public function grapeVarieties(): BelongsToMany
     {
-        return $this->belongsToMany(GrapeVariety::class, 'wine_lot_grape_varieties')
+        return $this->belongsToMany(GrapeVariety::class, 'wine_lot_grape_varieties', 'wine_lot_id', 'grape_variety_id')
             ->withPivot('percentage')
             ->withTimestamps();
     }
