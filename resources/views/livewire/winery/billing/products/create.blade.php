@@ -332,6 +332,42 @@
 
             </x-agro.form-section>
 
+            {{-- Resumen de totales --}}
+            @if(count($items) > 0)
+            <x-agro.form-section title="Resumen">
+                <div class="flex justify-end">
+                    <div class="w-full max-w-sm space-y-2 text-sm">
+                        <div class="flex justify-between text-zinc-600">
+                            <span>Subtotal</span>
+                            <span class="font-medium">{{ number_format($this->subtotal, 2, ',', '.') }} €</span>
+                        </div>
+                        @if($this->discountAmount > 0)
+                        <div class="flex justify-between text-red-600">
+                            <span>Descuento</span>
+                            <span class="font-medium">-{{ number_format($this->discountAmount, 2, ',', '.') }} €</span>
+                        </div>
+                        <div class="flex justify-between text-zinc-600">
+                            <span>Base imponible</span>
+                            <span class="font-medium">{{ number_format($this->subtotal - $this->discountAmount, 2, ',', '.') }} €</span>
+                        </div>
+                        @endif
+                        <div class="flex justify-between text-zinc-600">
+                            <span>IVA</span>
+                            <span class="font-medium">{{ number_format($this->taxAmount, 2, ',', '.') }} €</span>
+                        </div>
+                        <div class="flex justify-between text-base font-bold text-zinc-900 border-t border-zinc-200 pt-2">
+                            <span>Total</span>
+                            @if($is_gift)
+                                <span class="text-pink-600">0,00 € <span class="text-xs font-normal">(regalo)</span></span>
+                            @else
+                                <span class="text-agro-700">{{ number_format($this->totalAmount, 2, ',', '.') }} €</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </x-agro.form-section>
+            @endif
+
             {{-- Observaciones --}}
             <x-agro.form-section title="Observaciones">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
