@@ -91,6 +91,7 @@
     </main>
 
     @livewireScripts
+    @fluxScripts
 
     {{-- Pass session flash data to toast.js --}}
     <script>

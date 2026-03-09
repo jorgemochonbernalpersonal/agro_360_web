@@ -29,5 +29,6 @@
 
     <x-agro.toast />
     @livewireScripts
+    @fluxScripts
 </body>
 </html>
