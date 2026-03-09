@@ -5,7 +5,6 @@ namespace App\Livewire\Winery\Cellar\ProductLots;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\ProductLot;
-use App\Models\Tax;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -40,9 +39,6 @@ class Edit extends Component
 
     // ── Variedades de uva ────────────────────────────────────────────
     public array $grapes = [];
-
-    // ── Impuestos ────────────────────────────────────────────────────
-    public array $selectedTaxIds = [];
 
     // ── Certificaciones ──────────────────────────────────────────────
     public bool $sulfites      = false;
@@ -163,28 +159,12 @@ class Edit extends Component
                 'grape_variety_id' => (string) $g->id,
                 'percentage'       => (string) $g->pivot->percentage,
             ])->toArray();
-
-        // Cargar impuestos asignados
-        $this->selectedTaxIds = $lot->taxes()->pluck('taxes.id')
-            ->map(fn($id) => (string) $id)
-            ->toArray();
     }
 
     #[Computed]
     public function grapeVarieties()
     {
         return GrapeVariety::active()->orderBy('name')->get();
-    }
-
-    #[Computed]
-    public function userTaxes()
-    {
-        return Tax::join('user_taxes', 'taxes.id', '=', 'user_taxes.tax_id')
-            ->where('user_taxes.user_id', Auth::id())
-            ->where('taxes.active', true)
-            ->select('taxes.*', 'user_taxes.is_default as user_is_default')
-            ->orderBy('user_taxes.order')
-            ->get();
     }
 
     #[Computed]
@@ -226,8 +206,6 @@ class Edit extends Component
             'grapes'             => 'array',
             'grapes.*.grape_variety_id' => 'nullable|integer|exists:grape_varieties,id',
             'grapes.*.percentage'       => 'nullable|numeric|min:0|max:100',
-            'selectedTaxIds'     => 'array',
-            'selectedTaxIds.*'   => 'integer|exists:taxes,id',
             'sulfites'           => 'boolean',
             'ecological'         => 'boolean',
             'is_vegan'           => 'boolean',
@@ -335,9 +313,6 @@ class Edit extends Component
                 $g['grape_variety_id'] => ['percentage' => (float) ($g['percentage'] ?? 0)],
             ])->toArray();
             $this->lot->grapeVarieties()->sync($syncGrapes);
-
-            // Sincronizar impuestos
-            $this->lot->taxes()->sync($this->selectedTaxIds);
         });
 
         $this->toastSuccess('Producto actualizado correctamente.');

@@ -9,7 +9,7 @@
                 <div class="flex border-b border-zinc-200 mb-8 -mx-6 px-6 overflow-x-auto gap-0">
                     @foreach([
                         ['key' => 'general',     'label' => 'General'],
-                        ['key' => 'stock',       'label' => 'Stock e impuestos'],
+                        ['key' => 'stock',       'label' => 'Stock'],
                         ['key' => 'descripcion', 'label' => 'Descripción'],
                         ['key' => 'tecnico',     'label' => 'Técnico'],
                         ['key' => 'marketing',   'label' => 'Marketing'],
@@ -232,28 +232,6 @@
                                 <flux:error name="units_per_case" />
                             </flux:field>
                         </div>
-                    </x-agro.form-section>
-
-                    <x-agro.form-section title="Impuestos">
-                        @if($this->userTaxes->isEmpty())
-                            <p class="text-sm text-zinc-500">No tienes impuestos configurados. Ve a Configuración para añadirlos.</p>
-                        @else
-                            <div class="space-y-2">
-                                @foreach($this->userTaxes as $tax)
-                                    <label class="flex items-center gap-3 cursor-pointer">
-                                        <flux:checkbox wire:model="selectedTaxIds" value="{{ $tax->id }}" id="tax-edit-{{ $tax->id }}" />
-                                        <span class="text-sm text-zinc-700">
-                                            {{ $tax->name }}
-                                            <span class="text-zinc-400">— {{ number_format($tax->rate, 2) }}%</span>
-                                        </span>
-                                        @if($tax->user_is_default)
-                                            <span class="text-xs text-zinc-400">(por defecto)</span>
-                                        @endif
-                                    </label>
-                                @endforeach
-                            </div>
-                        @endif
-                        <flux:error name="selectedTaxIds" />
                     </x-agro.form-section>
 
                 </div>{{-- /tab stock --}}

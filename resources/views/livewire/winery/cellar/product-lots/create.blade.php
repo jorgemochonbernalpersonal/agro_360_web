@@ -144,30 +144,7 @@
                 </div>
             </x-agro.form-section>
 
-            {{-- ── Impuestos ───────────────────────────────────────────── --}}
-            <x-agro.form-section title="Impuestos">
-                @if($this->userTaxes->isEmpty())
-                    <p class="text-sm text-zinc-500">No tienes impuestos configurados. Ve a Configuración para añadirlos.</p>
-                @else
-                    <div class="space-y-2">
-                        @foreach($this->userTaxes as $tax)
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <flux:checkbox wire:model="selectedTaxIds" value="{{ $tax->id }}" id="tax-{{ $tax->id }}" />
-                                <span class="text-sm text-zinc-700">
-                                    {{ $tax->name }}
-                                    <span class="text-zinc-400">— {{ number_format($tax->rate, 2) }}%</span>
-                                </span>
-                                @if($tax->user_is_default)
-                                    <span class="text-xs text-zinc-400">(por defecto)</span>
-                                @endif
-                            </label>
-                        @endforeach
-                    </div>
-                @endif
-                <flux:error name="selectedTaxIds" />
-            </x-agro.form-section>
-
-            {{-- ── Certificaciones ─────────────────────────────────────── --}}
+{{-- ── Certificaciones ─────────────────────────────────────── --}}
             <x-agro.form-section title="Certificaciones">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label class="flex items-center gap-3 cursor-pointer">
