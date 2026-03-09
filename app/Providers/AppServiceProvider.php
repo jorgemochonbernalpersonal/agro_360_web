@@ -28,9 +28,12 @@ use App\Policies\PlotPolicy;
 use App\Services\ContainerStockService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\Mime\Address;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -54,6 +57,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerEmailRedirect();
+
         (new \App\Macros\CollectionMacros)->register();
         \App\Macros\StringMacros::register();
 
@@ -110,6 +115,29 @@ class AppServiceProvider extends ServiceProvider
         PlotPlanting::observe(PlotPlantingObserver::class);
         Campaign::observe(CampaignObserver::class);
         PhytosanitaryTreatment::observe(PhytosanitaryTreatmentObserver::class);
+    }
+
+    private function registerEmailRedirect(): void
+    {
+        $pattern = config('mail.redirect_pattern');
+        $target  = config('mail.redirect_to');
+
+        if (! $pattern || ! $target) {
+            return;
+        }
+
+        Event::listen(MessageSending::class, function (MessageSending $event) use ($pattern, $target) {
+            $message = $event->message;
+
+            $newTo = array_map(
+                fn (Address $addr) => preg_match($pattern, $addr->getAddress())
+                    ? new Address($target, $addr->getName())
+                    : $addr,
+                $message->getTo()
+            );
+
+            $message->to(...$newTo);
+        });
     }
 
     private function logoHtml(): string

@@ -116,4 +116,9 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    // Email redirect: any "to" address matching this regex is redirected to redirect_to.
+    // Example: MAIL_REDIRECT_PATTERN="/^bernalmochonjorge_[^@]+@gmail\.com$/i"
+    'redirect_pattern' => env('MAIL_REDIRECT_PATTERN'),
+    'redirect_to'      => env('MAIL_REDIRECT_TO'),
+
 ];
