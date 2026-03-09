@@ -23,7 +23,9 @@ class InvoicePdfController extends Controller
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isRemoteEnabled', false);
 
-        $filename = 'factura_' . str_replace(['/', '\\', ' '], '-', $invoice->invoice_number ?? $invoice->id) . '.pdf';
+        $date     = $invoice->invoice_date?->format('d-m-Y') ?? now()->format('d-m-Y');
+        $code     = str_replace(['/', '\\', ' '], '-', $invoice->invoice_number ?? $invoice->id);
+        $filename = 'factura_' . $code . '_' . $date . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -41,8 +43,9 @@ class InvoicePdfController extends Controller
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isRemoteEnabled', false);
 
-        $code     = $invoice->delivery_note_code ?? $invoice->invoice_number ?? $invoice->id;
-        $filename = 'albaran_valorado_' . str_replace(['/', '\\', ' '], '-', $code) . '.pdf';
+        $date     = $invoice->delivery_note_date?->format('d-m-Y') ?? $invoice->invoice_date?->format('d-m-Y') ?? now()->format('d-m-Y');
+        $code     = str_replace(['/', '\\', ' '], '-', $invoice->delivery_note_code ?? $invoice->invoice_number ?? $invoice->id);
+        $filename = 'albaran_valorado_' . $code . '_' . $date . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -60,8 +63,9 @@ class InvoicePdfController extends Controller
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isRemoteEnabled', false);
 
-        $code     = $invoice->delivery_note_code ?? $invoice->invoice_number ?? $invoice->id;
-        $filename = 'albaran_' . str_replace(['/', '\\', ' '], '-', $code) . '.pdf';
+        $date     = $invoice->delivery_note_date?->format('d-m-Y') ?? $invoice->invoice_date?->format('d-m-Y') ?? now()->format('d-m-Y');
+        $code     = str_replace(['/', '\\', ' '], '-', $invoice->delivery_note_code ?? $invoice->invoice_number ?? $invoice->id);
+        $filename = 'albaran_' . $code . '_' . $date . '.pdf';
 
         return $pdf->download($filename);
     }
