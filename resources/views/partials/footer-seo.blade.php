@@ -10,9 +10,6 @@
                         </svg>
                     </div>
                     <span class="text-xl font-bold">Agro365</span>
-                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30">
-                        BETA
-                    </span>
                 </div>
                 <p class="text-white/70 mb-4 text-sm">
                     La plataforma que conecta viticultores, bodegas y Denominaciones de Origen en España.
@@ -136,7 +133,7 @@
                     @endif
                 </p>
                 <p class="text-white/50">
-                    Software para viticultores, bodegas y Denominaciones de Origen · Versión Beta
+                    Software para viticultores, bodegas y Denominaciones de Origen
                 </p>
             </div>
             

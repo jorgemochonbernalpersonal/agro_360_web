@@ -524,47 +524,76 @@
                     </div>
                 </div>
                 
-                <!-- Hero Visual - Dashboard Preview -->
-                <div class="relative lg:h-[600px] animate-scale-in">
-                    <div class="relative h-full flex items-center justify-center">
-                        <!-- Browser Mockup Frame -->
-                        <div class="glass-card rounded-2xl overflow-hidden shadow-2xl hover-lift w-full max-w-3xl border-4 border-gray-200/50">
-                            <!-- Browser Header -->
-                            <div class="bg-gray-100 px-4 py-3 flex items-center gap-2 border-b border-gray-200">
-                                <div class="flex gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                </div>
-                                <div class="flex-1 mx-4">
-                                    <div class="bg-white rounded px-3 py-1 text-xs text-gray-500 border border-gray-200">
-                                        agro365.app/dashboard
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Dashboard Preview Image -->
-                            <img 
-                                src="{{ asset('images/dashboard-preview.png') }}" 
-                                alt="Demo interactiva de Agro365: Dashboard, Cumplimiento PAC y Gestión Agrícola" 
-                                class="w-full h-auto object-cover aspect-video"
-                                loading="eager"
-                                decoding="async"
-                                fetchpriority="high"
-                            >
-                            <!-- Overlay distintivo -->
-                            <div class="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-md flex items-center gap-2 pointer-events-none border border-white/10 z-10 shadow-lg">
-                                <span class="relative flex h-2 w-2">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                                </span>
-                                Demo en Vivo
-                            </div>
+                <!-- Banda normativa -->
+                <div class="flex flex-col justify-center space-y-6 animate-scale-in">
+                    <h2 class="text-2xl lg:text-3xl font-bold text-[var(--color-agro-green-dark)] leading-snug">
+                        La normativa llega en dos fases.<br>¿Estás preparado?
+                    </h2>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <!-- Fase 1 -->
+                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                            <div class="text-amber-700 font-bold text-sm mb-2">📅 Enero 2027 — Fase 1</div>
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                Obligatorio el registro digital de tratamientos fitosanitarios. Multas de hasta <strong>3.000€</strong> por incumplimiento. Agro365 te cubre desde hoy.
+                            </p>
                         </div>
-                        <!-- Decorative Elements -->
-                        <div class="absolute -top-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-[var(--color-agro-green-light)] to-[var(--color-agro-green)] opacity-20 animate-pulse blur-xl"></div>
-                        <div class="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-agro-yellow)] to-[var(--color-agro-brown)] opacity-20 animate-pulse blur-xl" style="animation-delay: 1s;"></div>
+                        <!-- Fase 2 -->
+                        <div class="bg-[var(--color-agro-green-bg)] border border-[var(--color-agro-green-light)]/40 rounded-2xl p-5">
+                            <div class="text-[var(--color-agro-green-dark)] font-bold text-sm mb-2">📅 Enero 2028 — Fase 2</div>
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                Entra en vigor el cuaderno completo según el Reglamento (UE) 2022/1441. Parcelas, riegos, fertilización y maquinaria — todo en digital.
+                            </p>
+                        </div>
                     </div>
+                    <p class="text-center text-sm font-semibold text-[var(--color-agro-green-dark)] bg-[var(--color-agro-green-bg)] rounded-xl px-4 py-3 border border-[var(--color-agro-green-light)]/30">
+                        Agro365 cubre ambas fases. Empieza gratis hoy y llega a 2027 sin estrés.
+                    </p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="py-20 bg-gray-50 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-bold text-[var(--color-agro-green-dark)]">
+                    Empieza en 5 minutos. Sin papel. Sin complicaciones.
+                </h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Paso 1 -->
+                <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
+                    <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">1</div>
+                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Crea tu cuenta gratis</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Sin tarjeta, sin llamadas. Regístrate como viticultor, bodega o DO y accede al panel en segundos.
+                    </p>
+                </div>
+                <!-- Paso 2 -->
+                <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
+                    <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">2</div>
+                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Importa tus parcelas SIGPAC</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Introduce tu NIF y tus parcelas se importan automáticamente desde el Ministerio. Sin introducir datos a mano.
+                    </p>
+                </div>
+                <!-- Paso 3 -->
+                <div class="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
+                    <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">3</div>
+                    <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Registra desde el móvil</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Anota tratamientos, riegos y labores desde el campo. Sin conexión si no tienes cobertura — se sincroniza solo al recuperarla.
+                    </p>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base">
+                    Comenzar gratis — sin tarjeta
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
