@@ -1,11 +1,5 @@
 <div class="space-y-6 animate-fade-in">
-    <x-agro.page-header title="Productos" description="Gestiona tu catálogo de productos y stock para facturar a clientes">
-        <x-slot:actions>
-            <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
-                Nuevo Producto
-            </flux:button>
-        </x-slot:actions>
-    </x-agro.page-header>
+    <x-agro.page-header title="Productos" description="Gestiona tu catálogo de productos y stock para facturar a clientes" />
 
     {{-- Tabs --}}
     <x-agro.tabs :tabs="[
@@ -13,7 +7,7 @@
         'inactive' => ['label' => 'Inactivos', 'count' => $stats['inactive']],
     ]" :active="$currentTab" wireMethod="switchTab" />
 
-    {{-- Toolbar: search + tipo --}}
+    {{-- Toolbar: search + tipo + nuevo producto --}}
     <div class="flex items-center gap-3">
         <div class="flex-1 relative">
             <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
@@ -37,6 +31,14 @@
                 Limpiar
             </flux:button>
         @endif
+
+        {{-- Separador --}}
+        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
+        {{-- Nuevo Producto --}}
+        <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
+            Nuevo
+        </flux:button>
     </div>
 
     {{-- Grid skeleton durante carga --}}
