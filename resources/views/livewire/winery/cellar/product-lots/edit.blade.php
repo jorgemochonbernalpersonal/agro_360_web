@@ -136,22 +136,10 @@
                     {{-- Certificaciones --}}
                     <x-agro.form-section title="Certificaciones">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <flux:checkbox wire:model.live="sulfites" id="sulfites" />
-                                <span class="text-sm font-medium text-zinc-700">Contiene sulfitos</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <flux:checkbox wire:model.live="ecological" id="ecological" />
-                                <span class="text-sm font-medium text-zinc-700">Ecológico</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <flux:checkbox wire:model.live="is_vegan" id="is_vegan" />
-                                <span class="text-sm font-medium text-zinc-700">Apto para veganos</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <flux:checkbox wire:model.live="is_biodynamic" id="is_biodynamic" />
-                                <span class="text-sm font-medium text-zinc-700">Biodinámico</span>
-                            </label>
+                            <flux:checkbox wire:model="sulfites" label="Contiene sulfitos" />
+                            <flux:checkbox wire:model="ecological" label="Ecológico" />
+                            <flux:checkbox wire:model="is_vegan" label="Apto para veganos" />
+                            <flux:checkbox wire:model="is_biodynamic" label="Biodinámico" />
                         </div>
                     </x-agro.form-section>
 

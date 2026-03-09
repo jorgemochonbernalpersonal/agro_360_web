@@ -41,10 +41,7 @@
     </flux:field>
 
     <div class="md:col-span-2 space-y-3">
-        <div class="flex items-center gap-3">
-            <flux:checkbox wire:model.live="is_advisor" id="is_advisor_form" />
-            <flux:label for="is_advisor_form" class="cursor-pointer">También actúa como asesor técnico cualificado</flux:label>
-        </div>
+        <flux:checkbox wire:model.live="is_advisor" label="También actúa como asesor técnico cualificado" />
         @if($is_advisor)
             <flux:field class="ml-7">
                 <flux:label required>Nº colegiado / licencia de asesor</flux:label>

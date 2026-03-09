@@ -93,10 +93,7 @@
                     </flux:field>
 
                     <div class="mt-6">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <flux:checkbox wire:model.live="is_gift" id="is_gift" />
-                            <span class="text-sm font-medium text-zinc-700">Factura regalo <span class="text-xs text-zinc-400">(importes = 0, stock se deduce igualmente)</span></span>
-                        </label>
+                        <flux:checkbox wire:model.live="is_gift" label="Factura regalo" description="Importes = 0, stock se deduce igualmente" />
                     </div>
                 </div>
             </x-agro.form-section>

@@ -95,9 +95,8 @@
 
             <x-agro.form-section title="CAE">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex items-center">
-                        <flux:checkbox wire:model.live="has_cae" id="has_cae" />
-                        <flux:label for="has_cae" class="ml-2">Tiene CAE</flux:label>
+                    <div>
+                        <flux:checkbox wire:model.live="has_cae" label="Tiene CAE" />
                     </div>
                     @if($has_cae)
                         <flux:field>

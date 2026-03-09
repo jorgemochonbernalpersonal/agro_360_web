@@ -133,12 +133,7 @@
 
                 {{-- Factura regalo --}}
                 <div class="mt-4">
-                    <label class="flex items-center gap-3 cursor-pointer w-fit">
-                        <flux:checkbox wire:model.live="is_gift" id="is_gift" :disabled="$isLocked" />
-                        <span class="text-sm font-medium text-zinc-700">Factura regalo
-                            <span class="text-xs font-normal text-zinc-400">(importes = 0, stock se deduce igualmente)</span>
-                        </span>
-                    </label>
+                    <flux:checkbox wire:model.live="is_gift" label="Factura regalo" description="Importes = 0, stock se deduce igualmente" :disabled="$isLocked" />
                 </div>
             </x-agro.form-section>
 

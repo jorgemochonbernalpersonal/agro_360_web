@@ -675,13 +675,7 @@
                     @endforeach
                 </select>
             </div>
-            <label class="flex items-center gap-3 cursor-pointer">
-                <flux:checkbox wire:model.live="sup_low" />
-                <div>
-                    <p class="text-sm font-medium text-zinc-700">Solo stock bajo</p>
-                    <p class="text-xs text-zinc-400">Muestra solo insumos por debajo del mínimo</p>
-                </div>
-            </label>
+            <flux:checkbox wire:model.live="sup_low" label="Solo stock bajo" description="Muestra solo insumos por debajo del mínimo" />
         </div>
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
             <button wire:click="clearInsumoFilters" x-on:click="$dispatch('close-modal', 'almacen-sup-filters')"

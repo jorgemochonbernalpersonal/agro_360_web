@@ -363,13 +363,7 @@
 
                 {{-- Asesoramiento técnico --}}
                 <div class="mt-6 space-y-4">
-                    <div class="flex items-center gap-3">
-                        <flux:checkbox wire:model.live="under_advisory" id="under_advisory" />
-                        <flux:label for="under_advisory" class="cursor-pointer">
-                            Tratamiento bajo asesoramiento técnico cualificado
-                            <span class="text-xs text-zinc-500 block">Obligatorio en Producción Integrada (RD 1311/2012 Art. 14)</span>
-                        </flux:label>
-                    </div>
+                    <flux:checkbox wire:model.live="under_advisory" label="Tratamiento bajo asesoramiento técnico cualificado" description="Obligatorio en Producción Integrada (RD 1311/2012 Art. 14)" />
                     @if($under_advisory)
                         <div class="ml-7">
                             <flux:field>
