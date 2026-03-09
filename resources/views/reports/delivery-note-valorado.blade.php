@@ -16,6 +16,7 @@
             font-size: 9pt;
             color: #1f2937;
             line-height: 1.5;
+            padding: 15mm 15mm 20mm 15mm;
         }
 
         /* ── LOGO / CABECERA SUPERIOR ── */

@@ -14,6 +14,7 @@
             font-size: 9pt;
             color: #1f2937;
             line-height: 1.5;
+            padding: 15mm 16mm 20mm 16mm;
         }
 
         /* ── LOGO HEADER ── */
