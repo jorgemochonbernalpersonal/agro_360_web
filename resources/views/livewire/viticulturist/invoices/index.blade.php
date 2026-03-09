@@ -100,23 +100,34 @@
                 @php
                     $btnBase = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
 
-                    [$deliveryLabel, $deliveryColor] = match($invoice->delivery_status) {
-                        'pending'    => ['Pendiente',   'yellow'],
-                        'in_transit' => ['En Tránsito', 'blue'],
-                        'delivered'  => ['Entregado',   'green'],
-                        'cancelled'  => ['Cancelado',   'red'],
-                        default      => [ucfirst($invoice->delivery_status ?? ''), null],
+                    [$deliveryLabel, $deliveryColor, $deliveryIcon] = match($invoice->delivery_status) {
+                        'pending'    => ['Pendiente',   'yellow', 'clock'],
+                        'in_transit' => ['En tránsito', 'blue',   'truck'],
+                        'delivered'  => ['Entregado',   'green',  'check-circle'],
+                        'cancelled'  => ['Cancelado',   'red',    'x-circle'],
+                        default      => [ucfirst($invoice->delivery_status ?? ''), null, 'question-mark-circle'],
                     };
 
-                    [$paymentLabel, $paymentColor] = match($invoice->payment_status) {
-                        'paid'    => ['Pagado',    'green'],
-                        'overdue' => ['Vencido',   'red'],
-                        'partial' => ['Parcial',   'blue'],
-                        'unpaid'  => ['Pendiente', 'yellow'],
-                        default   => [ucfirst($invoice->payment_status ?? ''), null],
+                    [$paymentLabel, $paymentColor, $paymentIcon] = match($invoice->payment_status) {
+                        'paid'    => ['Cobrado',   'green',  'banknotes'],
+                        'overdue' => ['Vencido',   'red',    'exclamation-circle'],
+                        'partial' => ['Parcial',   'blue',   'adjustments-horizontal'],
+                        'unpaid'  => ['Sin cobrar','yellow', 'clock'],
+                        default   => [ucfirst($invoice->payment_status ?? ''), null, 'question-mark-circle'],
                     };
 
-                    $totalKilos = $invoice->items->sum('quantity');
+                    $totalUnits = $invoice->items->sum('quantity');
+
+                    // Identificador principal: factura > albarán > ID
+                    $primaryId   = $invoice->invoice_number ?? $invoice->delivery_note_code ?? '#' . $invoice->id;
+                    $isInvoice   = (bool) $invoice->invoice_number;
+                    $hasAlbaran  = (bool) $invoice->delivery_note_code;
+                    $docType     = $isInvoice ? 'Factura' : ($hasAlbaran ? 'Albarán' : 'Pedido');
+                    $docIcon     = $isInvoice ? 'document-text' : ($hasAlbaran ? 'document' : 'shopping-cart');
+                    $docColor    = $isInvoice ? 'text-agro-600 bg-agro-100' : ($hasAlbaran ? 'text-blue-600 bg-blue-100' : 'text-zinc-500 bg-zinc-100');
+
+                    // Fecha más relevante para mostrar
+                    $primaryDate = $invoice->invoice_date ?? $invoice->order_date;
                 @endphp
 
                 <x-agro.card
@@ -125,61 +136,83 @@
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
                     <x-slot:header>
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center shrink-0">
-                                <flux:icon icon="document-text" class="size-4 text-zinc-500" />
+                        <div class="flex items-start gap-3">
+                            {{-- Icono tipo documento --}}
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 {{ $docColor }}">
+                                <flux:icon icon="{{ $docIcon }}" class="size-4" />
                             </div>
+
+                            {{-- Título: tipo + número --}}
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-1.5">
-                                    <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">
-                                        {{ $invoice->invoice_number ?? 'Sin código de factura' }}
-                                    </p>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">{{ $docType }}</span>
                                     @if($invoice->corrective)
-                                        <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded shrink-0" title="Factura rectificativa">R/</span>
+                                        <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded" title="Factura rectificativa">RECT</span>
                                     @endif
                                 </div>
-                                @if($invoice->delivery_note_code)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5">Albarán: {{ $invoice->delivery_note_code }}</p>
+                                <p class="font-bold text-zinc-900 text-sm leading-tight truncate">{{ $primaryId }}</p>
+                                {{-- Si hay factura Y albarán, mostrar el albarán como secundario --}}
+                                @if($isInvoice && $hasAlbaran)
+                                    <p class="text-xs text-zinc-400 leading-tight">Alb. {{ $invoice->delivery_note_code }}</p>
+                                @elseif(!$isInvoice && !$hasAlbaran)
+                                    <p class="text-xs text-zinc-400 leading-tight">Sin número asignado</p>
                                 @endif
                             </div>
-                            <flux:badge :color="$paymentColor" size="sm" class="shrink-0">{{ $paymentLabel }}</flux:badge>
+                        </div>
+
+                        {{-- Badges de estado en fila --}}
+                        <div class="flex items-center gap-1.5 mt-2.5 flex-wrap">
+                            <flux:badge :color="$paymentColor" size="sm">{{ $paymentLabel }}</flux:badge>
+                            <flux:badge :color="$deliveryColor" size="sm">{{ $deliveryLabel }}</flux:badge>
+                            @if($invoice->correctives_count > 0)
+                                <flux:badge color="orange" size="sm">Rectificada</flux:badge>
+                            @endif
                         </div>
                     </x-slot:header>
 
                     {{-- Cliente --}}
                     <div class="flex items-center gap-2 mb-3">
-                        <flux:icon icon="user" class="size-3.5 text-zinc-400 shrink-0" />
-                        <span class="text-xs text-zinc-600 truncate">{{ $invoice->client->full_name }}</span>
+                        <flux:icon icon="building-office" class="size-3.5 text-zinc-400 shrink-0" />
+                        <span class="text-sm font-medium text-zinc-800 truncate">{{ $invoice->client->full_name }}</span>
                     </div>
 
-                    {{-- Total + Kilos --}}
+                    {{-- Total + Unidades --}}
                     <div class="grid grid-cols-2 gap-2 mb-3">
-                        <div class="bg-agro-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Total</p>
-                            <p class="text-sm font-bold text-agro-700">{{ number_format($invoice->total_amount, 2) }} €</p>
+                        <div class="bg-agro-50 rounded-xl p-3">
+                            <p class="text-[10px] text-agro-600 font-semibold uppercase tracking-wide mb-1">Importe</p>
+                            <p class="text-base font-bold text-agro-700 leading-tight">{{ number_format($invoice->total_amount, 2, ',', '.') }} €</p>
                         </div>
-                        <div class="bg-zinc-50 rounded-xl p-2.5">
-                            <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Kilos</p>
-                            <p class="text-sm font-bold text-zinc-700">
-                                {{ $totalKilos > 0 ? number_format($totalKilos, 2) . ' kg' : '—' }}
+                        <div class="bg-zinc-50 rounded-xl p-3">
+                            <p class="text-[10px] text-zinc-500 font-semibold uppercase tracking-wide mb-1">Unidades</p>
+                            <p class="text-base font-bold text-zinc-700 leading-tight">
+                                {{ $totalUnits > 0 ? number_format($totalUnits, 0, ',', '.') : '—' }}
                             </p>
                         </div>
                     </div>
 
                     {{-- Fechas --}}
-                    <div class="flex items-center gap-3 text-xs text-zinc-500">
-                        @if($invoice->order_date)
-                            <span>Pedido: {{ $invoice->order_date->format('d/m/Y') }}</span>
+                    <div class="flex flex-col gap-0.5 text-xs text-zinc-400">
+                        @if($primaryDate)
+                            <span>
+                                <span class="font-medium text-zinc-500">{{ $isInvoice ? 'Fecha factura' : 'Fecha pedido' }}:</span>
+                                {{ $primaryDate->format('d/m/Y') }}
+                            </span>
                         @endif
                         @if($invoice->payment_status === 'paid' && $invoice->payment_date)
-                            <span>· Pago: {{ $invoice->payment_date->format('d/m/Y') }}</span>
+                            <span>
+                                <span class="font-medium text-green-600">Cobrado:</span>
+                                {{ $invoice->payment_date->format('d/m/Y') }}
+                            </span>
+                        @elseif($invoice->payment_status === 'overdue' && $invoice->due_date)
+                            <span>
+                                <span class="font-medium text-red-500">Venció:</span>
+                                {{ $invoice->due_date->format('d/m/Y') }}
+                            </span>
                         @endif
                     </div>
 
                     <x-slot:footer>
-                        <div class="flex items-center justify-between gap-2">
-                            <flux:badge :color="$deliveryColor" size="sm" class="shrink-0">{{ $deliveryLabel }}</flux:badge>
-                            <div class="flex items-center gap-1 flex-wrap justify-end">
+                        <div class="flex items-center justify-end gap-1 flex-wrap">
 
                                 {{-- Ver --}}
                                 <a href="{{ route('viticulturist.invoices.show', $invoice->id) }}"
@@ -248,13 +281,6 @@
                                             title="Crear factura rectificativa">
                                         <flux:icon icon="arrow-uturn-left" class="size-4" />
                                     </button>
-                                @endif
-
-                                {{-- Badge rectificativa (si ya tiene una) --}}
-                                @if($invoice->correctives_count > 0)
-                                    <span class="text-[10px] font-medium text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded" title="Tiene rectificativa">
-                                        RECT
-                                    </span>
                                 @endif
 
                                 {{-- Cancelar (solo draft) --}}
