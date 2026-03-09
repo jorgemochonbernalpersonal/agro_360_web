@@ -336,7 +336,16 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             
             // Rutas estáticas primero (antes de rutas dinámicas)
             Route::get('/harvest', \App\Livewire\Viticulturist\Invoices\Harvest\Index::class)->name('harvest.index');
-            
+
+            // ── Facturación de Vendimia (Cosecha Comercializada) ──────────────────────
+            Route::prefix('harvest-sale')->name('harvest-sale.')->group(function () {
+                Route::get('/', \App\Livewire\Viticulturist\Billing\HarvestSale\Index::class)->name('index');
+                Route::get('/create', \App\Livewire\Viticulturist\Billing\HarvestSale\Create::class)->name('create');
+                Route::get('/{id}/edit', \App\Livewire\Viticulturist\Billing\HarvestSale\Edit::class)->name('edit');
+                Route::get('/{id}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');
+                Route::get('/{id}/albaran-pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
+            });
+
             // Rutas dinámicas: más específicas primero
             Route::get('/{invoice}/edit', \App\Livewire\Viticulturist\Invoices\Edit::class)->name('edit');
             Route::get('/{invoice}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');

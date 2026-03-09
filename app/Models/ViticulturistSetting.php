@@ -16,6 +16,7 @@ class ViticulturistSetting extends Model
         'legal_text_fieldbook',
         'notify_harvest_alerts',
         'notify_activity_alerts',
+        'default_irpf_rate',
     ];
 
     protected $casts = [
@@ -23,6 +24,7 @@ class ViticulturistSetting extends Model
         'degree_day_base'          => 'decimal:1',
         'notify_harvest_alerts'    => 'boolean',
         'notify_activity_alerts'   => 'boolean',
+        'default_irpf_rate'        => 'decimal:2',
     ];
 
     public function viticulturist(): BelongsTo
