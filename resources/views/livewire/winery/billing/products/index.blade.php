@@ -303,7 +303,7 @@
                 </div>
                 <div class="px-6 py-5 space-y-4">
                     <p class="text-sm text-zinc-500">
-                        Se generará un número de factura secuencial. El stock reservado pasará a <strong>vendido</strong>.
+                        Se generará un número de factura secuencial. El stock permanece <strong>reservado</strong> hasta confirmar la entrega.
                     </p>
                     <div>
                         <label class="block text-sm font-medium text-zinc-700 mb-1.5">Fecha de factura <span class="text-red-500">*</span></label>
@@ -409,7 +409,7 @@
                         <select wire:model.live="quickLotId"
                             class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
                             <option value="">Selecciona lote con stock</option>
-                            @foreach(\App\Models\WineLot::where('user_id', Auth::id())->where('archived', false)->where('available_quantity', '>', 0)->orderByDesc('vintage')->orderBy('name')->get() as $wl)
+                            @foreach(\App\Models\ProductLot::where('user_id', Auth::id())->where('archived', false)->where('available_quantity', '>', 0)->orderByDesc('vintage')->orderBy('name')->get() as $wl)
                                 <option value="{{ $wl->id }}">{{ $wl->name }}@if($wl->vintage) ({{ $wl->vintage }})@endif – {{ number_format($wl->available_quantity, 0) }} {{ $wl->unit }}</option>
                             @endforeach
                         </select>
@@ -446,7 +446,7 @@
                             <select wire:model="quickTaxId"
                                 class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400">
                                 <option value="">Sin impuesto</option>
-                                @foreach(\App\Models\Tax::where('is_active', true)->orderBy('rate')->get() as $t)
+                                @foreach(\App\Models\Tax::where('active', true)->orderBy('rate')->get() as $t)
                                     <option value="{{ $t->id }}">{{ $t->name }} ({{ number_format($t->rate, 2) }}%)</option>
                                 @endforeach
                             </select>

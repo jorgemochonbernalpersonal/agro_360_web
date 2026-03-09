@@ -418,7 +418,7 @@ class Edit extends Component
                 ]);
 
                 // 5. Crear líneas nuevas + mover stock
-                InvoiceItem::withoutObservers(function () use ($taxRates) {
+                InvoiceItem::withoutObservers(function () use ($taxRates, $multiplyGift) {
                     foreach ($this->items as $item) {
                         $qty          = (float) $item['quantity'];
                         $unitPrice    = (float) $item['unit_price'];

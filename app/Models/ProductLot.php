@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductLot extends Model
@@ -54,6 +55,19 @@ class ProductLot extends Model
         'production_quantity',
         'bottling_date',
         'release_date',
+        // Identificación
+        'sku',
+        // Descripción comercial
+        'description',
+        'pairing',
+        'tasting_notes',
+        'consumption_recommendation',
+        'recommended_temperature_min',
+        'recommended_temperature_max',
+        'tags',
+        // Certificaciones adicionales
+        'sulfites',
+        'ecological',
     ];
 
     protected $casts = [
@@ -86,6 +100,12 @@ class ProductLot extends Model
         'production_quantity'=> 'integer',
         'bottling_date'      => 'date',
         'release_date'       => 'date',
+        // Descripción comercial
+        'recommended_temperature_min' => 'decimal:1',
+        'recommended_temperature_max' => 'decimal:1',
+        // Certificaciones adicionales
+        'sulfites'   => 'boolean',
+        'ecological' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -101,6 +121,19 @@ class ProductLot extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(InvoiceStockMovement::class, 'wine_lot_id');
+    }
+
+    public function grapeVarieties(): BelongsToMany
+    {
+        return $this->belongsToMany(GrapeVariety::class, 'wine_lot_grape_varieties')
+            ->withPivot('percentage')
+            ->withTimestamps();
+    }
+
+    public function taxes(): BelongsToMany
+    {
+        return $this->belongsToMany(Tax::class, 'wine_lot_taxes')
+            ->withTimestamps();
     }
 
     public function getFillPercentAttribute(): float
