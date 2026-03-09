@@ -6,167 +6,184 @@
     <title>Albarán {{ $invoice->delivery_note_code ?? $invoice->invoice_number ?? $invoice->id }}</title>
     <style>
         @page {
-            margin: 18mm 15mm 22mm 15mm;
-            @bottom-center {
-                content: "Página " counter(page) " de " counter(pages);
-                font-size: 8pt;
-                color: #6b7280;
-            }
-            @bottom-right {
-                content: "Agro365";
-                font-size: 8pt;
-                color: #9ca3af;
-            }
+            margin: 15mm 15mm 20mm 15mm;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 9.5pt;
+            font-family: Arial, sans-serif;
+            font-size: 9pt;
             color: #1f2937;
             line-height: 1.5;
         }
 
-        /* ── CABECERA ── */
-        .header {
+        /* ── LOGO / CABECERA SUPERIOR ── */
+        .header-top {
+            text-align: center;
+            margin-bottom: 12pt;
+            padding-bottom: 10pt;
+            border-bottom: 2.5pt solid #0891b2;
+        }
+        .header-logo img {
+            height: 44pt;
+            width: auto;
+        }
+        .header-brand {
+            font-size: 8.5pt;
+            color: #6b7280;
+            letter-spacing: 0.4pt;
+            margin-top: 3pt;
+        }
+
+        /* ── TÍTULO DEL DOCUMENTO ── */
+        .doc-info-row {
             display: table;
             width: 100%;
-            margin-bottom: 18pt;
-            border-bottom: 2.5pt solid #0891b2;
-            padding-bottom: 12pt;
+            margin-bottom: 12pt;
         }
-        .header-left  { display: table-cell; width: 55%; vertical-align: top; }
-        .header-right { display: table-cell; width: 45%; vertical-align: top; text-align: right; }
+        .doc-info-left  { display: table-cell; width: 55%; vertical-align: top; }
+        .doc-info-right { display: table-cell; width: 45%; vertical-align: top; text-align: right; }
 
-        .issuer-name {
-            font-size: 15pt;
+        .doc-title {
+            font-size: 20pt;
             font-weight: bold;
-            color: #0e7490;
-            margin-bottom: 3pt;
+            color: #111827;
+            letter-spacing: -0.5pt;
         }
-        .issuer-detail {
-            font-size: 8.5pt;
-            color: #4b5563;
-            line-height: 1.6;
+        .doc-code {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0891b2;
+            margin-top: 3pt;
         }
-
-        .doc-title   { font-size: 22pt; font-weight: bold; color: #111827; letter-spacing: -0.5pt; }
-        .doc-code    { font-size: 11pt; font-weight: bold; color: #0891b2; margin-top: 2pt; }
-        .doc-meta    { font-size: 8.5pt; color: #6b7280; margin-top: 6pt; line-height: 1.7; }
+        .doc-meta {
+            font-size: 8pt;
+            color: #6b7280;
+            margin-top: 6pt;
+            line-height: 1.75;
+        }
         .doc-meta strong { color: #374151; }
 
-        /* ── BLOQUE DIRECCIONES ── */
+        /* ── PARTES (A: / De:) ── */
         .parties {
             display: table;
             width: 100%;
-            margin-bottom: 16pt;
+            margin-bottom: 12pt;
         }
         .party-box {
             display: table-cell;
             width: 48%;
-            padding: 10pt 12pt;
+            padding: 9pt 11pt;
             border: 1pt solid #e5e7eb;
-            border-radius: 4pt;
             vertical-align: top;
         }
-        .party-gap  { display: table-cell; width: 4%; }
-        .party-label {
-            font-size: 7.5pt;
+        .party-gap { display: table-cell; width: 4%; }
+
+        .party-role {
+            font-size: 7pt;
             font-weight: bold;
-            color: #6b7280;
+            color: #9ca3af;
             text-transform: uppercase;
-            letter-spacing: 0.5pt;
-            margin-bottom: 5pt;
-            border-bottom: 1pt solid #f3f4f6;
+            letter-spacing: 0.6pt;
+            margin-bottom: 4pt;
             padding-bottom: 4pt;
+            border-bottom: 0.5pt solid #f3f4f6;
         }
-        .party-name   { font-size: 10.5pt; font-weight: bold; color: #111827; margin-bottom: 2pt; }
-        .party-detail { font-size: 8.5pt; color: #4b5563; line-height: 1.6; }
+        .party-name   { font-size: 10pt; font-weight: bold; color: #111827; margin-bottom: 2pt; }
+        .party-detail { font-size: 8pt; color: #4b5563; line-height: 1.65; }
 
         /* ── TABLA DE ÍTEMS (sin precios) ── */
         table.items {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20pt;
-            font-size: 9pt;
+            margin-bottom: 14pt;
+            font-size: 8.5pt;
         }
         table.items thead tr {
             background: #0891b2;
             color: white;
         }
         table.items thead th {
-            padding: 7pt 8pt;
+            padding: 6pt 7pt;
             text-align: left;
             font-weight: bold;
-            font-size: 8.5pt;
+            font-size: 7.5pt;
             text-transform: uppercase;
             letter-spacing: 0.3pt;
         }
         table.items thead th.right  { text-align: right; }
         table.items thead th.center { text-align: center; }
 
-        table.items tbody tr:nth-child(even) { background: #f9fafb; }
+        table.items tbody tr.row-even { background: #f9fafb; }
 
         table.items tbody td {
-            padding: 7pt 8pt;
+            padding: 5pt 7pt;
             border-bottom: 0.5pt solid #e5e7eb;
-            vertical-align: middle;
+            vertical-align: top;
         }
-        table.items tbody td.right  { text-align: right; }
+        table.items tbody td.right  { text-align: right; white-space: nowrap; }
         table.items tbody td.center { text-align: center; }
 
-        .item-name { font-weight: bold; color: #111827; }
-        .item-desc { font-size: 8pt; color: #6b7280; margin-top: 1pt; }
-
-        /* ── CAJA DE INFORMACIÓN ── */
-        .info-box {
-            background: #f0f9ff;
-            border: 1pt solid #bae6fd;
-            border-radius: 4pt;
-            padding: 9pt 12pt;
-            font-size: 8.5pt;
-            line-height: 1.7;
-            margin-bottom: 16pt;
+        .item-name  { font-weight: bold; color: #111827; }
+        .item-sub   { font-size: 7.5pt; color: #6b7280; margin-top: 1pt; }
+        .wine-tag {
+            font-size: 7pt;
+            color: #0e7490;
+            background: #e0f2fe;
+            border: 0.5pt solid #bae6fd;
+            padding: 0pt 3pt;
+            margin-right: 2pt;
         }
-        .info-box .info-title { font-weight: bold; color: #0369a1; font-size: 9pt; margin-bottom: 5pt; }
-        .info-box .info-row   { color: #374151; }
-        .info-box .info-row strong { color: #111827; }
+
+        /* ── FILA TOTAL CANTIDADES ── */
+        .total-qty-row td {
+            background: #e0f2fe;
+            font-weight: bold;
+            color: #0369a1;
+            padding: 5pt 7pt;
+        }
 
         /* ── OBSERVACIONES ── */
         .obs-box {
             background: #fffbeb;
             border-left: 3pt solid #f59e0b;
-            padding: 8pt 12pt;
-            font-size: 8.5pt;
+            padding: 7pt 11pt;
+            font-size: 8pt;
             color: #374151;
-            margin-bottom: 16pt;
-            border-radius: 0 4pt 4pt 0;
+            margin-bottom: 12pt;
         }
-        .obs-box .obs-title { font-weight: bold; color: #b45309; margin-bottom: 4pt; }
+        .obs-box .obs-title { font-weight: bold; color: #b45309; margin-bottom: 3pt; font-size: 8.5pt; }
 
-        /* ── SECCIÓN FIRMA ── */
+        /* ── FIRMAS ── */
         .signatures {
             display: table;
             width: 100%;
-            margin-top: 10pt;
+            margin-top: 14pt;
         }
         .sig-cell {
             display: table-cell;
             width: 45%;
             border: 1pt solid #d1d5db;
-            border-radius: 4pt;
             padding: 8pt 12pt;
             text-align: center;
             vertical-align: bottom;
         }
-        .sig-gap { display: table-cell; width: 10%; }
-        .sig-line {
-            border-top: 1pt solid #374151;
-            margin: 50pt 10pt 6pt 10pt;
+        .sig-gap  { display: table-cell; width: 10%; }
+        .sig-line { border-top: 1pt solid #9ca3af; margin: 44pt 8pt 5pt 8pt; }
+        .sig-label { font-size: 7.5pt; color: #9ca3af; }
+        .sig-name  { font-size: 8.5pt; font-weight: bold; color: #374151; margin-top: 2pt; }
+
+        /* ── PIE ── */
+        .footer-legal {
+            font-size: 7pt;
+            color: #9ca3af;
+            text-align: center;
+            border-top: 0.5pt solid #e5e7eb;
+            padding-top: 7pt;
+            margin-top: 14pt;
+            line-height: 1.6;
         }
-        .sig-label { font-size: 8pt; color: #6b7280; }
-        .sig-name  { font-size: 9pt; font-weight: bold; color: #111827; margin-top: 2pt; }
     </style>
 </head>
 <body>
@@ -174,158 +191,182 @@
 @php
     $profile = $user->profile;
     $code    = $invoice->delivery_note_code ?? $invoice->invoice_number ?? ('ALB-' . $invoice->id);
+    $isGrape = $invoice->invoice_type === 'grape_purchase';
+
+    // Logo base64
+    $logoPath = public_path('images/logo.png');
+    $logoSrc  = file_exists($logoPath)
+        ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+        : null;
+
+    // Nombres para A:
+    $billingName = trim(implode(' ', array_filter([
+        $invoice->billing_first_name ?? '',
+        $invoice->billing_last_name  ?? '',
+    ])));
+    if (!$billingName) {
+        $billingName = $isGrape
+            ? ($invoice->viticulturist?->name ?? '—')
+            : ($invoice->billing_company_name ?? '—');
+    }
+
+    // Emisor ciudad
+    $issuerCity = trim(implode(' ', array_filter([
+        $profile->postal_code ?? '',
+        $profile->city        ?? '',
+    ])));
+
+    // Total Kg o unidades
+    $totalQty = $invoice->items->sum(fn($i) => abs((float) $i->quantity));
+    $qtyUnit  = $isGrape ? 'kg' : 'ud.';
 @endphp
 
-{{-- ═══ CABECERA ═══ --}}
-<div class="header">
-    <div class="header-left">
-        <div class="issuer-name">{{ $user->name }}</div>
-        <div class="issuer-detail">
-            @if($profile)
-                @if($profile->address){{ $profile->address }}<br>@endif
-                @if($profile->postal_code || $profile->city)
-                    {{ implode(' ', array_filter([$profile->postal_code, $profile->city])) }}
-                    @if($profile->province) — {{ $profile->province->name }}@endif
-                    <br>
-                @endif
-                @if($profile->phone)Tel.: {{ $profile->phone }}<br>@endif
-            @endif
+{{-- ═══ LOGO CENTRADO ═══ --}}
+<div class="header-top">
+    @if($logoSrc)
+        <div class="header-logo">
+            <img src="{{ $logoSrc }}" alt="Agro360"/>
+        </div>
+    @endif
+    <div class="header-brand">Agro360 &middot; Plataforma de gestión vitivinícola</div>
+</div>
+
+{{-- ═══ DATOS DEL DOCUMENTO ═══ --}}
+<div class="doc-info-row">
+    <div class="doc-info-left">
+        <div style="font-size:7.5pt; font-weight:bold; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5pt; margin-bottom:3pt;">Emitido por</div>
+        <div style="font-size:11pt; font-weight:bold; color:#111827;">{{ $user->name }}</div>
+        <div style="font-size:8pt; color:#4b5563; margin-top:3pt; line-height:1.65;">
+            @if($profile?->address){{ $profile->address }}<br>@endif
+            @if($issuerCity){{ $issuerCity }}@if($profile?->province?->name) &mdash; {{ $profile->province->name }}@endif<br>@endif
+            @if($profile?->phone)Tel.: {{ $profile->phone }}<br>@endif
             {{ $user->email }}
         </div>
     </div>
-    <div class="header-right">
+    <div class="doc-info-right">
         <div class="doc-title">ALBARÁN</div>
         <div class="doc-code">{{ $code }}</div>
         <div class="doc-meta">
             <strong>Fecha:</strong> {{ ($invoice->delivery_note_date ?? $invoice->invoice_date)?->format('d/m/Y') ?? now()->format('d/m/Y') }}<br>
-            @if($invoice->invoice_number)
-                <strong>Factura:</strong> {{ $invoice->invoice_number }}<br>
-            @endif
-            @if($invoice->tracking_code)
-                <strong>Seguimiento:</strong> {{ $invoice->tracking_code }}<br>
+            @if($invoice->invoice_number && $invoice->delivery_note_code)
+                <strong>Ref. factura:</strong> {{ $invoice->invoice_number }}<br>
             @endif
         </div>
     </div>
 </div>
 
-{{-- ═══ REMITENTE / DESTINATARIO ═══ --}}
+{{-- ═══ PARTES (A: / De:) ═══ --}}
 <div class="parties">
+    {{-- A: --}}
     <div class="party-box">
-        <div class="party-label">Remitente</div>
+        <div class="party-role">A:</div>
+        @if($isGrape && $invoice->viticulturist)
+            <div class="party-name">{{ $invoice->viticulturist->name }}</div>
+            <div class="party-detail">
+                {{ $invoice->viticulturist->email }}<br>
+                @if($invoice->billing_address){{ $invoice->billing_address }}<br>@endif
+                @if($invoice->billing_postal_code || $invoice->billing_city)
+                    {{ trim(implode(' ', array_filter([$invoice->billing_postal_code ?? '', $invoice->billing_city ?? '']))) }}<br>
+                @endif
+            </div>
+        @else
+            <div class="party-name">{{ $billingName }}</div>
+            <div class="party-detail">
+                @if($invoice->billing_company_name && $invoice->billing_company_name !== $billingName)
+                    {{ $invoice->billing_company_name }}<br>
+                @endif
+                @if($invoice->billing_email){{ $invoice->billing_email }}<br>@endif
+                @if($invoice->billing_phone)Tel.: {{ $invoice->billing_phone }}<br>@endif
+                @if($invoice->billing_address){{ $invoice->billing_address }}<br>@endif
+                @if($invoice->billing_postal_code || $invoice->billing_city)
+                    {{ trim(implode(' ', array_filter([$invoice->billing_postal_code ?? '', $invoice->billing_city ?? '']))) }}
+                    @if($invoice->billing_state) &mdash; {{ $invoice->billing_state }}@endif
+                    <br>
+                @endif
+            </div>
+        @endif
+    </div>
+
+    <div class="party-gap"></div>
+
+    {{-- De: --}}
+    <div class="party-box">
+        <div class="party-role">De:</div>
         <div class="party-name">{{ $user->name }}</div>
         <div class="party-detail">
-            {{ $user->email }}
-            @if($profile?->phone)<br>{{ $profile->phone }}@endif
-            @if($profile?->address)<br>{{ $profile->address }}@endif
-            @if($profile?->city)<br>{{ implode(' ', array_filter([$profile->postal_code, $profile->city])) }}@endif
-        </div>
-    </div>
-    <div class="party-gap"></div>
-    <div class="party-box">
-        <div class="party-label">Destinatario</div>
-        @php
-            $billingName = implode(' ', array_filter([
-                $invoice->billing_first_name,
-                $invoice->billing_last_name,
-            ])) ?: $invoice->client?->full_name;
-        @endphp
-        <div class="party-name">{{ $billingName }}</div>
-        <div class="party-detail">
-            @if($invoice->billing_company_name){{ $invoice->billing_company_name }}<br>@endif
-            @if($invoice->billing_address){{ $invoice->billing_address }}<br>@endif
-            @if($invoice->billing_postal_code || $invoice->billing_city)
-                {{ implode(' ', array_filter([$invoice->billing_postal_code, $invoice->billing_city])) }}
-                @if($invoice->billing_state) — {{ $invoice->billing_state }}@endif
-                <br>
-            @endif
-            @if($invoice->billing_email){{ $invoice->billing_email }}<br>@endif
-            @if($invoice->billing_phone){{ $invoice->billing_phone }}@endif
+            {{ $user->email }}<br>
+            @if($profile?->phone)Tel.: {{ $profile->phone }}<br>@endif
+            @if($profile?->address){{ $profile->address }}<br>@endif
+            @if($issuerCity){{ $issuerCity }}@if($profile?->province?->name) &mdash; {{ $profile->province->name }}@endif<br>@endif
         </div>
     </div>
 </div>
 
-{{-- ═══ TABLA DE BULTOS / ÍTEMS ═══ --}}
+{{-- ═══ TABLA DE ÍTEMS (sin precios) ═══ --}}
 <table class="items">
     <thead>
         <tr>
             <th style="width:5%">#</th>
-            <th style="width:60%">Descripción</th>
-            <th class="right" style="width:20%">Cantidad</th>
-            <th class="right" style="width:15%">Kg / Und.</th>
+            <th style="width:{{ $isGrape ? '45%' : '50%' }}">Producto / Descripción</th>
+            <th style="width:20%">SKU / Ref.</th>
+            <th class="right" style="width:{{ $isGrape ? '30%' : '25%' }}">Cantidad</th>
         </tr>
     </thead>
     <tbody>
-        @forelse($invoice->items as $i => $item)
-            <tr>
-                <td class="center" style="color:#9ca3af">{{ $i + 1 }}</td>
+        @forelse($invoice->items as $idx => $item)
+            <tr class="{{ $idx % 2 !== 0 ? 'row-even' : '' }}">
+                <td class="center" style="color:#9ca3af; font-size:8pt;">{{ $idx + 1 }}</td>
                 <td>
                     <div class="item-name">{{ $item->name }}</div>
-                    @if($item->description)
-                        <div class="item-desc">{{ $item->description }}</div>
+                    @if($item->description && $item->description !== $item->name)
+                        <div class="item-sub">{{ $item->description }}</div>
                     @endif
-                    @if($item->harvest?->plotPlanting?->grapeVariety)
-                        <div class="item-desc">
-                            Variedad: {{ $item->harvest->plotPlanting->grapeVariety->name }}
+                    @if($item->wineLot)
+                        @php $lot = $item->wineLot; @endphp
+                        <div class="item-sub">
+                            @if($lot->vintage)<span class="wine-tag">{{ $lot->vintage }}</span>@endif
+                            @if($lot->wine_type)<span class="wine-tag">{{ ucfirst($lot->wine_type) }}</span>@endif
+                            @if($lot->alcohol)<span class="wine-tag">{{ $lot->alcohol }}%</span>@endif
+                            @if($lot->bottle_format)<span class="wine-tag">{{ number_format((float)$lot->bottle_format * 1000) }} ml</span>@endif
                         </div>
                     @endif
                 </td>
-                <td class="right">{{ number_format($item->quantity, 3) }}</td>
-                <td class="right" style="color:#6b7280">kg</td>
+                <td style="font-size:8pt; color:#6b7280;">
+                    {{ $item->sku ?? ($item->wineLot?->sku ?? '&mdash;') }}
+                </td>
+                <td class="right" style="font-weight:bold;">
+                    {{ number_format(abs((float) $item->quantity), $isGrape ? 3 : 2, ',', '.') }}
+                    <span style="font-size:7.5pt; color:#6b7280; font-weight:normal;">{{ $qtyUnit }}</span>
+                </td>
             </tr>
         @empty
             <tr>
-                <td colspan="4" style="text-align:center; color:#9ca3af; padding:20pt;">
-                    Sin ítems
-                </td>
+                <td colspan="4" style="text-align:center; color:#9ca3af; padding:18pt;">Sin líneas</td>
             </tr>
         @endforelse
 
-        {{-- Fila de totales de bultos --}}
         @if($invoice->items->count() > 0)
-            <tr style="background:#e0f2fe; font-weight:bold;">
-                <td colspan="2" style="text-align:right; color:#0369a1; padding:6pt 8pt;">
-                    Total
+            <tr class="total-qty-row">
+                <td colspan="3" style="text-align:right;">Total</td>
+                <td class="right">
+                    {{ number_format($totalQty, $isGrape ? 3 : 2, ',', '.') }}
+                    <span style="font-size:7.5pt; font-weight:normal;">{{ $qtyUnit }}</span>
                 </td>
-                <td class="right" style="color:#0369a1; padding:6pt 8pt;">
-                    {{ number_format($invoice->items->sum('quantity'), 3) }}
-                </td>
-                <td class="right" style="color:#6b7280; padding:6pt 8pt;">kg</td>
             </tr>
         @endif
     </tbody>
 </table>
 
-{{-- ═══ INFO DE ENTREGA ═══ --}}
-@if($invoice->delivery_status || $invoice->tracking_code)
-    <div class="info-box">
-        <div class="info-title">Información de entrega</div>
-        @if($invoice->delivery_status)
-            @php
-                $deliveryLabels = [
-                    'pending'    => 'Pendiente',
-                    'in_transit' => 'En tránsito',
-                    'delivered'  => 'Entregado',
-                    'cancelled'  => 'Cancelado',
-                ];
-            @endphp
-            <div class="info-row">
-                <strong>Estado:</strong> {{ $deliveryLabels[$invoice->delivery_status] ?? $invoice->delivery_status }}
-            </div>
-        @endif
-        @if($invoice->tracking_code)
-            <div class="info-row"><strong>Código seguimiento:</strong> {{ $invoice->tracking_code }}</div>
-        @endif
-        @if($invoice->delivery_note_date)
-            <div class="info-row"><strong>Fecha albarán:</strong> {{ $invoice->delivery_note_date->format('d/m/Y') }}</div>
-        @endif
-    </div>
-@endif
-
 {{-- ═══ OBSERVACIONES ═══ --}}
-@if($invoice->observations)
+@if($invoice->observations || $invoice->observations_invoice)
     <div class="obs-box">
         <div class="obs-title">Observaciones</div>
-        {{ $invoice->observations }}
+        @if($invoice->observations)
+            <div>{{ $invoice->observations }}</div>
+        @endif
+        @if($invoice->observations_invoice && $invoice->observations_invoice !== $invoice->observations)
+            <div style="margin-top:3pt;">{{ $invoice->observations_invoice }}</div>
+        @endif
     </div>
 @endif
 
@@ -333,22 +374,23 @@
 <div class="signatures">
     <div class="sig-cell">
         <div class="sig-line"></div>
-        <div class="sig-label">Firma y sello del remitente</div>
-        <div class="sig-name">{{ $user->name }}</div>
+        <div class="sig-label">Firma y sello del {{ $isGrape ? 'viticultor' : 'cliente' }}</div>
+        <div class="sig-name">{{ $isGrape ? ($invoice->viticulturist?->name ?? $billingName) : $billingName }}</div>
+        <div style="font-size:7pt; color:#9ca3af; margin-top:2pt;">Fecha de recepción: _______________</div>
     </div>
     <div class="sig-gap"></div>
     <div class="sig-cell">
         <div class="sig-line"></div>
-        <div class="sig-label">Firma y sello del destinatario</div>
-        <div class="sig-name">{{ $billingName }}</div>
-        <div style="font-size:7.5pt; color:#9ca3af; margin-top:3pt;">Fecha de recepción: _______________</div>
+        <div class="sig-label">Firma y sello de la bodega</div>
+        <div class="sig-name">{{ $user->name }}</div>
     </div>
 </div>
 
-{{-- ═══ PIE ═══ --}}
-<div style="font-size:7.5pt; color:#9ca3af; text-align:center; border-top:0.5pt solid #e5e7eb; padding-top:8pt; margin-top:14pt;">
-    Documento generado el {{ now()->format('d/m/Y H:i') }} · Agro365
-    · Albarán {{ $code }}
+{{-- ═══ PIE LEGAL ═══ --}}
+<div class="footer-legal">
+    Documento generado el {{ now()->format('d/m/Y \a \l\a\s H:i') }}
+    &middot; Agro360 &middot; Albarán {{ $code }}
+    &middot; Página <span class="pagenum"></span>
 </div>
 
 </body>
