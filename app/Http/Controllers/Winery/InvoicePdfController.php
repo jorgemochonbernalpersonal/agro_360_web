@@ -10,12 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class InvoicePdfController extends Controller
 {
-    /**
-     * Descarga el PDF de la factura (wine_sale o grape_purchase).
-     */
-    public function invoice(string $type, string $id): Response
+    public function invoice(string $id): Response
     {
-        $invoice = $this->loadInvoice($type, $id);
+        $invoice = $this->loadInvoice($id);
 
         $pdf = Pdf::loadView('reports.invoice', [
             'invoice' => $invoice,
@@ -31,12 +28,9 @@ class InvoicePdfController extends Controller
         return $pdf->download($filename);
     }
 
-    /**
-     * Descarga el PDF del albarán valorado (con precios, sin valor fiscal).
-     */
-    public function valoradoNote(string $type, string $id): Response
+    public function valoradoNote(string $id): Response
     {
-        $invoice = $this->loadInvoice($type, $id);
+        $invoice = $this->loadInvoice($id);
 
         $pdf = Pdf::loadView('reports.delivery-note-valorado', [
             'invoice' => $invoice,
@@ -53,12 +47,9 @@ class InvoicePdfController extends Controller
         return $pdf->download($filename);
     }
 
-    /**
-     * Descarga el PDF del albarán / liquidación.
-     */
-    public function deliveryNote(string $type, string $id): Response
+    public function deliveryNote(string $id): Response
     {
-        $invoice = $this->loadInvoice($type, $id);
+        $invoice = $this->loadInvoice($id);
 
         $pdf = Pdf::loadView('reports.delivery-note', [
             'invoice' => $invoice,
@@ -77,10 +68,9 @@ class InvoicePdfController extends Controller
 
     // -------------------------------------------------------------------------
 
-    private function loadInvoice(string $type, string $id): Invoice
+    private function loadInvoice(string $id): Invoice
     {
         return Invoice::where('user_id', Auth::id())
-            ->where('invoice_type', $type)
             ->with([
                 'user.profile.province',
                 'client',
