@@ -15,7 +15,7 @@ Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist', 'check.
     ->name('plots.')
     ->group(function () {
         Route::get('/', Index::class)->name('index');
-        Route::get('/territorio', TerritorialManagement::class)->name('territory');
+        Route::get('/territory', TerritorialManagement::class)->name('territory');
         // Índice global de plantaciones
         Route::get('/plantings', PlantingsIndex::class)->name('plantings.index');
         // Edición de plantación (no depende de capturar la parcela en la URL)

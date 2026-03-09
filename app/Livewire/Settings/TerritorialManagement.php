@@ -79,6 +79,19 @@ class TerritorialManagement extends Component
         };
     }
 
+    private function catalogLabel(string $type): string
+    {
+        return match($type) {
+            'valleys'          => 'Valle',
+            'soil_types'       => 'Tipo de suelo',
+            'irrigation_types' => 'Tipo de riego',
+            'topographies'     => 'Topografía',
+            'property_types'   => 'Tipo de propiedad',
+            'training_systems' => 'Sistema de conducción',
+            default            => 'Elemento',
+        };
+    }
+
     /** IDs de items globales ocultados por este usuario para un tipo dado */
     private function hiddenIds(string $catalogType): array
     {
@@ -187,14 +200,14 @@ class TerritorialManagement extends Component
         $this->newName        = '';
         $this->newDescription = '';
         $this->newCode        = '';
-        $this->toastSuccess('Elemento añadido correctamente.');
+        $this->toastSuccess($this->catalogLabel($type) . ' añadido correctamente.');
     }
 
     public function deleteCatalogItem(string $type, int $id): void
     {
         $model = $this->catalogModel($type);
         $model::where('id', $id)->where('user_id', Auth::id())->firstOrFail()->delete();
-        $this->toastSuccess('Elemento eliminado.');
+        $this->toastSuccess($this->catalogLabel($type) . ' eliminado correctamente.');
     }
 
     /** Activa/desactiva la visibilidad de un item GLOBAL en los selects del usuario */
@@ -226,7 +239,7 @@ class TerritorialManagement extends Component
         $this->editingId          = 0;
         $this->editingName        = '';
         $this->editingDescription = '';
-        $this->toastSuccess('Actualizado correctamente.');
+        $this->toastSuccess($this->catalogLabel($type) . ' actualizado correctamente.');
     }
 
     public function cancelEdit(): void
