@@ -17,12 +17,16 @@ window.toastNotifications = function () {
             // Livewire toast events
             if (typeof Livewire !== 'undefined') {
                 Livewire.on('toast', (data) => {
+                    let d = null;
                     if (Array.isArray(data) && data.length > 0) {
-                        const d = data[0];
-                        this.add(d.message, d.type || 'success');
+                        d = data[0];
+                    } else if (data && typeof data === 'object') {
+                        d = data;
                     } else if (typeof data === 'string') {
                         this.add(data, 'success');
+                        return;
                     }
+                    if (d) this.add(d.message, d.type || 'success');
                 });
             }
         },

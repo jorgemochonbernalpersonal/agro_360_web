@@ -1,7 +1,6 @@
 {{-- Toast notification container — JS logic in resources/js/toast.js --}}
 <div
     x-data="toastNotifications()"
-    x-init="init()"
     class="fixed bottom-4 left-4 z-[9999] space-y-3"
     style="max-width: 400px;"
 >
