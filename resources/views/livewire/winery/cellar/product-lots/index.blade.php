@@ -57,8 +57,12 @@
                 @foreach ($lots as $lot)
                     @php
                         $avail    = (float) $lot->available_quantity;
+                        $reserved = (float) $lot->reserved_quantity;
+                        $sold     = (float) $lot->sold_quantity;
                         $total    = (float) $lot->quantity;
-                        $pct      = $total > 0 ? round($avail / $total * 100) : 0;
+                        $pctAvail = $total > 0 ? round($avail    / $total * 100) : 0;
+                        $pctRes   = $total > 0 ? round($reserved / $total * 100) : 0;
+                        $pctSold  = $total > 0 ? round($sold     / $total * 100) : 0;
                         $delay    = min($loop->index * 50, 300);
                         $isActive = ! $lot->archived;
 
@@ -96,16 +100,31 @@
                         </x-slot:header>
 
                         <div class="flex-1 space-y-4">
-                            {{-- Barra de stock --}}
+                            {{-- Barra de stock apilada --}}
                             @if ($total > 0)
                                 <div>
-                                    <div class="flex justify-between text-xs text-zinc-500 mb-1">
-                                        <span>Stock disponible</span>
-                                        <span class="{{ $avail <= 0 ? 'text-red-600 font-semibold' : 'text-zinc-700' }}">
-                                            {{ $pct }}%
+                                    <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
+                                        <span>Stock</span>
+                                        <span class="{{ $avail <= 0 ? 'text-red-600 font-semibold' : 'text-zinc-500' }}">
+                                            {{ $pctAvail }}% disp.
                                         </span>
                                     </div>
-                                    <x-agro.progress-bar :percent="$pct" />
+                                    <div class="flex h-2 w-full rounded-full overflow-hidden bg-zinc-100">
+                                        @if ($pctAvail > 0)
+                                            <div class="bg-green-500 h-full transition-all" style="width: {{ $pctAvail }}%"></div>
+                                        @endif
+                                        @if ($pctRes > 0)
+                                            <div class="bg-orange-400 h-full transition-all" style="width: {{ $pctRes }}%"></div>
+                                        @endif
+                                        @if ($pctSold > 0)
+                                            <div class="bg-blue-400 h-full transition-all" style="width: {{ $pctSold }}%"></div>
+                                        @endif
+                                    </div>
+                                    <div class="flex gap-3 mt-1.5 text-[10px] text-zinc-400">
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>Disp.</span>
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400 inline-block"></span>Res.</span>
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>Vend.</span>
+                                    </div>
                                 </div>
                             @endif
 
