@@ -120,16 +120,11 @@ Route::middleware(['role:winery'])
         Route::redirect('/invoices/wine-sale/create', '/winery/invoices/products/create')->name('invoices.wine-sale.create');
 
         // ── Facturación: liquidación de vendimia ──────────────────────
-        // ── Compra de Uva (en construcción) ───────────────────────────
-        Route::get('/invoices/grape-purchase', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('invoices.grape-purchase.index')
-            ->defaults('module', 'Compra de Uva')
-            ->defaults('icon', 'arrow-down-tray');
-        Route::get('/invoices/grape-purchase/create', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.create');
-        Route::get('/invoices/grape-purchase/{id}/edit', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.edit');
-        Route::get('/invoices/grape-purchase/{id}/pdf', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.pdf');
-        Route::get('/invoices/grape-purchase/{id}/albaran-pdf', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.delivery-note-pdf');
-        Route::get('/invoices/grape-purchase/{id}/albaran-valorado-pdf', fn() => redirect()->route('winery.invoices.grape-purchase.index'))->name('invoices.grape-purchase.valorado-pdf');
+        Route::get('/invoices/grape-purchase', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('invoices.grape-purchase.index');
+        Route::get('/invoices/grape-purchase/create', \App\Livewire\Winery\Billing\GrapePurchase\Create::class)->name('invoices.grape-purchase.create');
+        Route::get('/invoices/grape-purchase/{id}/edit', \App\Livewire\Winery\Billing\GrapePurchase\Edit::class)->name('invoices.grape-purchase.edit');
+        Route::get('/invoices/grape-purchase/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->defaults('type', 'grape_purchase')->name('invoices.grape-purchase.pdf');
+        Route::get('/invoices/grape-purchase/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->defaults('type', 'grape_purchase')->name('invoices.grape-purchase.delivery-note-pdf');
 
         // ── Elaboración de vino ───────────────────────────────────────
         Route::get('/wine-process', fn() => redirect()->route('winery.wines.index'))->name('wine-process.index');

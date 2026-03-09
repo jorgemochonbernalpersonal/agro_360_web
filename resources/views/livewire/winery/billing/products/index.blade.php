@@ -236,12 +236,11 @@
                                     </a>
                                 @endif
 
-                                @if($invoice->invoice_number)
-                                    <a href="{{ route('winery.invoices.products.pdf', $invoice->id) }}"
-                                       target="_blank" class="{{ $btnBase }}" title="Factura PDF">
-                                        <flux:icon icon="document-text" class="size-4" />
-                                    </a>
-                                @endif
+                                <a href="{{ route('winery.invoices.products.pdf', $invoice->id) }}"
+                                   target="_blank" class="{{ $btnBase }}"
+                                   title="{{ $invoice->invoice_number ? 'Factura PDF' : 'Borrador PDF' }}">
+                                    <flux:icon icon="document-text" class="size-4" />
+                                </a>
 
                                 @if($invoice->status === 'draft')
                                     <button wire:click="openEmitirModal({{ $invoice->id }})"
