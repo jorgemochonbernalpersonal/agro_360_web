@@ -87,8 +87,8 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <h3 class="font-bold text-zinc-900 truncate">{{ $lot->name }}</h3>
-                                    <p class="text-xs text-zinc-500">
-                                        {{ ucfirst($lot->wine_type) }}{{ $lot->vintage ? ' · ' . $lot->vintage : '' }}
+                                    <p class="text-xs text-zinc-500 truncate">
+                                        {{ ucfirst($lot->wine_type) }}{{ $lot->vintage ? ' · ' . $lot->vintage : '' }}{{ $lot->aging_type ? ' · ' . ucfirst(str_replace('_', ' ', $lot->aging_type)) : '' }}{{ $lot->alcohol ? ' · ' . $lot->alcohol . '°' : '' }}
                                     </p>
                                 </div>
                                 <x-agro.status-badge :active="$isActive" class="shrink-0" />
@@ -135,11 +135,11 @@
                                 </div>
                             </div>
 
-                            {{-- Unidad y precio --}}
+                            {{-- Unidad, precio y SKU --}}
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
                                     <span class="text-zinc-400">Unidad</span>
-                                    <span class="text-zinc-700 font-medium">{{ $lot->unit }}</span>
+                                    <span class="text-zinc-700 font-medium">{{ ucfirst($lot->unit) }}</span>
                                 </div>
                                 @if ($lot->price_per_unit > 0)
                                     <div class="flex items-center justify-between">
@@ -147,7 +147,32 @@
                                         <span class="text-zinc-700 font-medium">{{ number_format($lot->price_per_unit, 2) }} €</span>
                                     </div>
                                 @endif
+                                @if ($lot->sku)
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-400">SKU</span>
+                                        <span class="text-zinc-500 font-mono text-xs">{{ $lot->sku }}</span>
+                                    </div>
+                                @endif
                             </div>
+
+                            {{-- Certificaciones --}}
+                            @php
+                                $certs = array_filter([
+                                    $lot->ecological    ? 'Ecológico'  : null,
+                                    $lot->is_vegan      ? 'Vegano'     : null,
+                                    $lot->is_biodynamic ? 'Biodinámico': null,
+                                    $lot->sulfites      ? 'Sulfitos'   : null,
+                                ]);
+                            @endphp
+                            @if ($certs)
+                                <div class="flex flex-wrap gap-1.5">
+                                    @foreach ($certs as $cert)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-agro-50 text-agro-700 border border-agro-200">
+                                            {{ $cert }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
 
                         <x-slot:footer>
