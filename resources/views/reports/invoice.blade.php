@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>{{ $invoice->invoice_type === 'grape_purchase' ? 'Liquidación de Vendimia' : 'Factura' }} {{ $invoice->invoice_number ?? 'Borrador' }}</title>
+    <title>{{ $invoice->invoice_type === 'grape_purchase' ? 'Liquidación de Vendimia' : 'Factura' }} {{ $invoice->invoice_number ?? '' }}</title>
     <style>
         @page {
-            margin: 15mm 15mm 20mm 15mm;
+            margin: 18mm 18mm 22mm 18mm;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,28 +15,15 @@
             font-family: Arial, sans-serif;
             font-size: 9pt;
             color: #1f2937;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
-        /* ── WATERMARK BORRADOR ── */
-        .draft-band {
-            background: #fef3c7;
-            border: 1pt solid #f59e0b;
-            padding: 5pt 10pt;
-            font-size: 10pt;
-            font-weight: bold;
-            color: #92400e;
-            text-align: center;
-            margin-bottom: 10pt;
-            letter-spacing: 2pt;
-            text-transform: uppercase;
-        }
 
         /* ── LOGO / CABECERA SUPERIOR ── */
         .header-top {
             text-align: center;
-            margin-bottom: 12pt;
-            padding-bottom: 10pt;
+            margin-bottom: 18pt;
+            padding-bottom: 12pt;
             border-bottom: 2.5pt solid #15803d;
         }
         .header-top.grape {
@@ -57,7 +44,7 @@
         .doc-title-row {
             display: table;
             width: 100%;
-            margin-bottom: 12pt;
+            margin-bottom: 18pt;
         }
         .doc-title-left  { display: table-cell; width: 55%; vertical-align: top; }
         .doc-title-right { display: table-cell; width: 45%; vertical-align: top; text-align: right; }
@@ -95,7 +82,6 @@
             letter-spacing: 0.5pt;
             margin-top: 5pt;
         }
-        .badge-draft     { background: #fef9c3; color: #854d0e; border: 1pt solid #fde047; }
         .badge-sent      { background: #dbeafe; color: #1e40af; border: 1pt solid #93c5fd; }
         .badge-paid      { background: #dcfce7; color: #166534; border: 1pt solid #86efac; }
         .badge-cancelled { background: #fee2e2; color: #991b1b; border: 1pt solid #fca5a5; }
@@ -104,12 +90,12 @@
         .parties {
             display: table;
             width: 100%;
-            margin-bottom: 12pt;
+            margin-bottom: 18pt;
         }
         .party-box {
             display: table-cell;
             width: 48%;
-            padding: 9pt 11pt;
+            padding: 12pt 14pt;
             border: 1pt solid #e5e7eb;
             vertical-align: top;
         }
@@ -132,7 +118,7 @@
         table.items {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12pt;
+            margin-bottom: 18pt;
             font-size: 8.5pt;
         }
         table.items thead tr {
@@ -141,7 +127,7 @@
         }
         table.items thead tr.grape-head { background: #92400e; }
         table.items thead th {
-            padding: 6pt 7pt;
+            padding: 7pt 9pt;
             text-align: left;
             font-weight: bold;
             font-size: 7.5pt;
@@ -154,7 +140,7 @@
         table.items tbody tr.row-even { background: #f9fafb; }
 
         table.items tbody td {
-            padding: 5pt 7pt;
+            padding: 7pt 9pt;
             border-bottom: 0.5pt solid #e5e7eb;
             vertical-align: top;
         }
@@ -176,7 +162,7 @@
         .totals-section {
             display: table;
             width: 100%;
-            margin-bottom: 12pt;
+            margin-bottom: 18pt;
         }
         .totals-left  { display: table-cell; width: 52%; vertical-align: top; }
         .totals-right { display: table-cell; width: 48%; vertical-align: top; }
@@ -187,7 +173,7 @@
             font-size: 8.5pt;
         }
         table.totals td {
-            padding: 3.5pt 8pt;
+            padding: 5pt 10pt;
         }
         table.totals td:first-child { color: #6b7280; }
         table.totals td:last-child  { text-align: right; font-weight: bold; color: #374151; }
@@ -232,10 +218,10 @@
         .obs-box {
             background: #fffbeb;
             border-left: 3pt solid #f59e0b;
-            padding: 7pt 11pt;
+            padding: 10pt 14pt;
             font-size: 8pt;
             color: #374151;
-            margin-bottom: 12pt;
+            margin-bottom: 18pt;
         }
         .obs-box .obs-title { font-weight: bold; color: #b45309; margin-bottom: 3pt; font-size: 8.5pt; }
 
@@ -251,18 +237,18 @@
         .signatures {
             display: table;
             width: 100%;
-            margin-top: 14pt;
+            margin-top: 20pt;
         }
         .sig-cell {
             display: table-cell;
             width: 45%;
             border: 1pt solid #d1d5db;
-            padding: 8pt 12pt;
+            padding: 10pt 14pt;
             text-align: center;
             vertical-align: bottom;
         }
         .sig-gap  { display: table-cell; width: 10%; }
-        .sig-line { border-top: 1pt solid #9ca3af; margin: 44pt 8pt 5pt 8pt; }
+        .sig-line { border-top: 1pt solid #9ca3af; margin: 52pt 8pt 6pt 8pt; }
         .sig-label { font-size: 7.5pt; color: #9ca3af; }
         .sig-name  { font-size: 8.5pt; font-weight: bold; color: #374151; margin-top: 2pt; }
 
@@ -299,7 +285,6 @@
 @php
     $profile  = $user->profile;
     $isGrape  = $invoice->invoice_type === 'grape_purchase';
-    $isDraft  = $invoice->status === 'draft';
     $isPaid   = $invoice->payment_status === 'paid';
 
     $accentGreen = '#15803d';
@@ -329,7 +314,7 @@
 
     // Título y número
     $docTitle  = $isGrape ? 'LIQUIDACIÓN DE VENDIMIA' : 'FACTURA';
-    $docNumber = $invoice->invoice_number ?? ($isDraft ? 'BORRADOR' : '—');
+    $docNumber = $invoice->invoice_number ?? '—';
 
     // Agrupación por tasa impositiva
     $taxGroups = $invoice->items
@@ -358,13 +343,11 @@
 
     // Estado
     $statusLabels = [
-        'draft'      => 'Borrador',
-        'sent'       => 'Enviada',
-        'paid'       => 'Pagada',
-        'cancelled'  => 'Cancelada',
+        'sent'      => 'Enviada',
+        'paid'      => 'Pagada',
+        'cancelled' => 'Cancelada',
     ];
     $statusClasses = [
-        'draft'     => 'badge-draft',
         'sent'      => 'badge-sent',
         'paid'      => 'badge-paid',
         'cancelled' => 'badge-cancelled',
@@ -374,11 +357,6 @@
 {{-- SELLO PAGADO --}}
 @if($isPaid)
     <div class="paid-stamp">PAGADA</div>
-@endif
-
-{{-- ═══ BANNER BORRADOR ═══ --}}
-@if($isDraft)
-    <div class="draft-band">&#9888; BORRADOR — No tiene validez fiscal</div>
 @endif
 
 {{-- ═══ LOGO CENTRADO ═══ --}}
@@ -419,9 +397,11 @@
                 <strong>Forma de pago:</strong> {{ $paymentLabel }}<br>
             @endif
         </div>
-        <div class="badge {{ $statusClasses[$invoice->status] ?? 'badge-draft' }}">
-            {{ $statusLabels[$invoice->status] ?? $invoice->status }}
+        @if(isset($statusLabels[$invoice->status]))
+        <div class="badge {{ $statusClasses[$invoice->status] }}">
+            {{ $statusLabels[$invoice->status] }}
         </div>
+        @endif
     </div>
 </div>
 
