@@ -133,7 +133,7 @@
 
     {{-- Skeleton durante carga --}}
     <div wire:loading wire:target="search, campaignFilter, viticulturistFilter, varietyFilter, alertFilter">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @for($i = 0; $i < 6; $i++)
                 <x-agro.skeleton-card />
             @endfor
@@ -170,7 +170,7 @@
                 </x-slot:action>
             </x-agro.empty-state>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($rows as $row)
                     @php
                         $delay         = min($loop->index * 50, 300);

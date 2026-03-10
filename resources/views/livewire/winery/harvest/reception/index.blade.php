@@ -137,7 +137,7 @@
 
     {{-- Skeleton durante carga --}}
     <div wire:loading wire:target="search, campaignFilter, viticulturistFilter, disqualifiedFilter, clearFilters, gotoPage, previousPage, nextPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @for($i = 0; $i < 6; $i++)
                 <x-agro.skeleton-card />
             @endfor
@@ -147,7 +147,7 @@
     {{-- Contenido real --}}
     <div wire:loading.remove wire:target="search, campaignFilter, viticulturistFilter, disqualifiedFilter, clearFilters, gotoPage, previousPage, nextPage">
         @if($receptions->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($receptions as $reception)
                     @php
                         $planting    = $reception->plotPlanting;

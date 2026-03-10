@@ -107,7 +107,7 @@
 
     {{-- Skeleton --}}
     <div wire:loading wire:target="campaignFilter, viticulturistFilter">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @for($i = 0; $i < 6; $i++) <x-agro.skeleton-card /> @endfor
         </div>
     </div>
@@ -158,7 +158,7 @@
             @if($byViticulturist->isNotEmpty())
                 <div>
                     <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-3">Por viticultor</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         @foreach($byViticulturist as $idx => $item)
                             @php $delay = min($idx * 50, 300); @endphp
                             <x-agro.card class="animate-fade-in-up hover:-translate-y-1" style="animation-delay: {{ $delay }}ms;">

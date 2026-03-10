@@ -144,7 +144,7 @@
     {{-- Grid de Parcelas — skeleton durante carga --}}
     <div wire:loading
         wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-2">
             @for ($i = 0; $i < 6; $i++)
                 <x-agro.skeleton-card />
             @endfor
@@ -155,7 +155,7 @@
     <div wire:loading.remove
         wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage">
         @if ($plots->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-2">
                 @foreach ($plots as $plot)
                     @php
                         $wineryName = '-';

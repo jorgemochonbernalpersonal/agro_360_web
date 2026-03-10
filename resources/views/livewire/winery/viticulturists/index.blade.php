@@ -31,7 +31,7 @@
 
     {{-- Grid de Viticultores — skeleton durante carga --}}
     <div wire:loading wire:target="search, nextPage, previousPage, gotoPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-2">
             @for ($i = 0; $i < 6; $i++)
                 <x-agro.skeleton-card />
             @endfor
@@ -41,7 +41,7 @@
     {{-- Grid de Viticultores — contenido real --}}
     <div wire:loading.remove wire:target="search, nextPage, previousPage, gotoPage">
         @if ($relations->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-2">
                 @foreach ($relations as $relation)
                     @php
                         $v     = $relation->viticulturist;

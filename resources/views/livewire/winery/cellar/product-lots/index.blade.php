@@ -43,7 +43,7 @@
 
     {{-- Grid skeleton durante carga --}}
     <div wire:loading wire:target="switchTab, search, typeFilter, nextPage, previousPage, gotoPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @for ($i = 0; $i < 6; $i++)
                 <x-agro.skeleton-card />
             @endfor
@@ -53,7 +53,7 @@
     {{-- Grid real --}}
     <div wire:loading.remove wire:target="switchTab, search, typeFilter, nextPage, previousPage, gotoPage">
         @if ($lots->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach ($lots as $lot)
                     @php
                         $avail    = (float) $lot->available_quantity;
