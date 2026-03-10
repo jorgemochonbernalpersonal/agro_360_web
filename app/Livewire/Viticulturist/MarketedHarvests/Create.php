@@ -93,7 +93,7 @@ class Create extends AbstractCreate
     {
         return [
             'harvests'     => Harvest::whereHas('activity', fn($q) => $q->where('viticulturist_id', $this->viticulturistId()))
-                ->with(['plotPlanting.plot', 'plotPlanting.grape'])
+                ->with(['plotPlanting.plot', 'plotPlanting.grapeVariety'])
                 ->orderByDesc('harvest_start_date')
                 ->get(),
             'destinations' => MarketedHarvest::DESTINATION_TYPES,

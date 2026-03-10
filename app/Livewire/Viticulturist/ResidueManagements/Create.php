@@ -87,7 +87,7 @@ class Create extends AbstractCreate
             'campaigns'     => Campaign::forViticulturist($id)->orderByDesc('year')->get(),
             'plots'         => Plot::where('viticulturist_id', $id)->active()->get(),
             'plantings'     => PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $id))
-                ->with(['plot', 'grape'])->active()->get(),
+                ->with(['plot', 'grapeVariety'])->active()->get(),
             'practiceTypes' => ResidueManagement::PRACTICE_TYPES,
             'materialTypes' => ResidueManagement::MATERIAL_TYPES,
             'units'         => Unit::active()->where('category', 'weight')->orderBy('name')->get(),

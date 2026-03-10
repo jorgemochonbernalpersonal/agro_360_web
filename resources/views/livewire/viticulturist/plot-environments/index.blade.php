@@ -45,7 +45,7 @@
                 @foreach($entries as $entry)
                     <x-agro.table-row>
                         <x-agro.table-cell class="font-medium">{{ $entry->plot->name ?? '-' }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->plotPlanting?->grape?->name ?? 'Global' }}</x-agro.table-cell>
+                        <x-agro.table-cell>{{ $entry->plotPlanting?->grapeVariety?->name ?? 'Global' }}</x-agro.table-cell>
                         <x-agro.table-cell>
                             @if($entry->water_intake_nearby)
                                 <span class="text-amber-600 font-medium text-sm flex items-center gap-1">

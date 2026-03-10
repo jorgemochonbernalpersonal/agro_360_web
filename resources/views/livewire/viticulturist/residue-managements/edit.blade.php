@@ -41,7 +41,7 @@
                     <flux:select wire:model="plot_planting_id">
                         <option value="">Sin especificar</option>
                         @foreach($plantings as $p)
-                            <option value="{{ $p->id }}">{{ $p->plot->name }} — {{ $p->grape->name ?? '' }}</option>
+                            <option value="{{ $p->id }}">{{ $p->plot->name }} — {{ $p->grapeVariety->name ?? '' }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="plot_planting_id" />

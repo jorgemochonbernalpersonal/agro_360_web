@@ -35,7 +35,7 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        return ResidueAnalysis::with(['plotPlanting.plot', 'plotPlanting.grape'])
+        return ResidueAnalysis::with(['plotPlanting.plot', 'plotPlanting.grapeVariety'])
             ->where('viticulturist_id', $this->viticulturistId())
             ->active();
     }

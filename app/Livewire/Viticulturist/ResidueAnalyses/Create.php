@@ -78,7 +78,7 @@ class Create extends AbstractCreate
         return [
             'campaigns' => Campaign::forViticulturist($id)->orderByDesc('year')->get(),
             'plantings' => PlotPlanting::whereHas('plot', fn($q) => $q->where('viticulturist_id', $id))
-                ->with(['plot', 'grape'])->active()->get(),
+                ->with(['plot', 'grapeVariety'])->active()->get(),
         ];
     }
 }

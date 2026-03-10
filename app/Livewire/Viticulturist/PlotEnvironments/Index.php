@@ -33,7 +33,7 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        return PlotEnvironment::with(['plot', 'plotPlanting.grape'])
+        return PlotEnvironment::with(['plot', 'plotPlanting.grapeVariety'])
             ->where('viticulturist_id', $this->viticulturistId());
     }
 

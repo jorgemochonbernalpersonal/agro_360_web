@@ -49,7 +49,7 @@
                         <x-agro.table-cell>{{ $entry->delivery_date->format('d/m/Y') }}</x-agro.table-cell>
                         <x-agro.table-cell>
                             {{ $entry->harvest->plotPlanting->plot->name ?? '-' }}
-                            <span class="text-zinc-400 text-xs block">{{ $entry->harvest->plotPlanting->grape->name ?? '' }}</span>
+                            <span class="text-zinc-400 text-xs block">{{ $entry->harvest->plotPlanting->grapeVariety->name ?? '' }}</span>
                         </x-agro.table-cell>
                         <x-agro.table-cell>
                             <x-agro.status-badge :status="$entry->destination_type" :label="$entry->destination_type_label" />

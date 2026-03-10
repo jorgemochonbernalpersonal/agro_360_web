@@ -45,7 +45,7 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        return MarketedHarvest::with(['harvest.plotPlanting.plot', 'harvest.plotPlanting.grape', 'invoice'])
+        return MarketedHarvest::with(['harvest.plotPlanting.plot', 'harvest.plotPlanting.grapeVariety', 'invoice'])
             ->where('viticulturist_id', $this->viticulturistId())
             ->active();
     }

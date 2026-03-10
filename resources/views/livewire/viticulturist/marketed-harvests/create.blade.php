@@ -14,7 +14,7 @@
                         <option value="">Seleccionar cosecha...</option>
                         @foreach($harvests as $h)
                             <option value="{{ $h->id }}">
-                                {{ $h->plotPlanting->plot->name ?? '?' }} — {{ $h->plotPlanting->grape->name ?? '?' }}
+                                {{ $h->plotPlanting->plot->name ?? '?' }} — {{ $h->plotPlanting->grapeVariety->name ?? '?' }}
                                 ({{ $h->harvest_start_date->format('d/m/Y') }}, {{ number_format($h->total_weight, 0, ',', '.') }} kg)
                             </option>
                         @endforeach
