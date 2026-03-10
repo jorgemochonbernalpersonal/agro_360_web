@@ -1,140 +1,34 @@
 /**
- * Agro365 Sidebar Logic
- * Replaces inline <script> in sidebar component
- * Uses CustomEvent instead of polling for layout sync
+ * Agro365 Nav Rail Logic
+ * Initializes Alpine.store('nav') for the rail + flyout sidebar
  */
 
-// Restore collapsed state from localStorage after each navigation
-function restoreSidebarCollapsedState() {
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar) return;
+// Mobile toggle (hamburger button in top-bar)
+window.toggleSidebar = function () {
+    const rail = document.querySelector('aside');
+    if (rail) rail.classList.toggle('-translate-x-full');
+};
 
-    const collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-    const icon = document.getElementById('collapse-icon');
-    const main = document.getElementById('main-content');
-    const topBar = document.getElementById('top-bar');
-
-    if (collapsed) {
-        sidebar.classList.add('lg:w-20');
-        sidebar.classList.remove('lg:w-72');
-        sidebar.setAttribute('data-collapsed', 'true');
-        if (icon) icon.style.transform = 'rotate(180deg)';
-        document.querySelectorAll('.sidebar-text, .sidebar-indicator, .sidebar-submenu').forEach(el => {
-            el.style.opacity = '0';
-            el.style.display = 'none';
-        });
-        if (main) { main.classList.add('lg:pl-20'); main.classList.remove('lg:pl-72'); }
-        if (topBar) { topBar.classList.add('lg:left-20'); topBar.classList.remove('lg:left-72'); }
-    } else {
-        sidebar.classList.remove('lg:w-20');
-        sidebar.classList.add('lg:w-72');
-        sidebar.setAttribute('data-collapsed', 'false');
-        if (icon) icon.style.transform = '';
-        if (main) { main.classList.remove('lg:pl-20'); main.classList.add('lg:pl-72'); }
-        if (topBar) { topBar.classList.remove('lg:left-20'); topBar.classList.add('lg:left-72'); }
-    }
-
-    // Init transitions on text elements
-    document.querySelectorAll('.sidebar-text, .sidebar-indicator, .sidebar-submenu').forEach(el => {
-        el.style.transition = 'opacity 150ms ease-in-out';
+// Init (or re-init) Alpine store for the nav rail
+function initNavStore() {
+    if (typeof Alpine === 'undefined') return;
+    if (Alpine.store('nav')) return;
+    Alpine.store('nav', {
+        open: null,
+        toggle(key) { this.open = (this.open === key) ? null : key; },
+        close()     { this.open = null; },
     });
 }
 
-// Desktop collapse/expand
-window.toggleSidebarCollapse = function () {
-    const sidebar = document.getElementById('sidebar');
-    const icon = document.getElementById('collapse-icon');
-    if (!sidebar) return;
+// Case 1: Alpine not started yet when this module runs → listen for alpine:init
+document.addEventListener('alpine:init', initNavStore);
 
-    const isCollapsed = sidebar.getAttribute('data-collapsed') === 'true';
-    const willCollapse = !isCollapsed;
+// Case 2: Alpine already started (e.g. after wire:navigate re-execution) → try immediately
+initNavStore();
 
-    sidebar.classList.toggle('lg:w-20', willCollapse);
-    sidebar.classList.toggle('lg:w-72', !willCollapse);
-    sidebar.setAttribute('data-collapsed', String(willCollapse));
-    localStorage.setItem('sidebarCollapsed', String(willCollapse));
-    if (icon) icon.style.transform = willCollapse ? 'rotate(180deg)' : '';
-
-    // Toggle text visibility
-    document.querySelectorAll('.sidebar-text, .sidebar-indicator, .sidebar-submenu').forEach(el => {
-        if (willCollapse) {
-            el.style.opacity = '0';
-            setTimeout(() => { if (sidebar.getAttribute('data-collapsed') === 'true') el.style.display = 'none'; }, 150);
-        } else {
-            setTimeout(() => { el.style.display = ''; el.style.opacity = '1'; }, 150);
-        }
-    });
-
-    // Broadcast change for top-bar and main content
-    window.dispatchEvent(new CustomEvent('sidebar-toggle', { detail: { collapsed: willCollapse } }));
-};
-
-// Mobile open/close
-window.toggleSidebar = function () {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    if (!sidebar) return;
-
-    sidebar.classList.toggle('-translate-x-full');
-    if (overlay) overlay.classList.toggle('hidden');
-    document.body.style.overflow = sidebar.classList.contains('-translate-x-full') ? '' : 'hidden';
-};
-
-// Listen for sidebar-toggle to update main content + top-bar
-window.addEventListener('sidebar-toggle', (e) => {
-    const collapsed = e.detail.collapsed;
-    const main = document.getElementById('main-content');
-    const topBar = document.getElementById('top-bar');
-
-    if (main) {
-        main.classList.toggle('lg:pl-20', collapsed);
-        main.classList.toggle('lg:pl-72', !collapsed);
-    }
-    if (topBar) {
-        topBar.classList.toggle('lg:left-20', collapsed);
-        topBar.classList.toggle('lg:left-72', !collapsed);
+// Close flyout on every wire:navigate (sidebar re-renders)
+document.addEventListener('livewire:navigate', () => {
+    if (window.Alpine && Alpine.store('nav')) {
+        Alpine.store('nav').close();
     }
 });
-
-// Close sidebar on outside click (mobile)
-document.addEventListener('click', (e) => {
-    const sidebar = document.getElementById('sidebar');
-    const toggle = document.getElementById('sidebar-toggle');
-    if (window.innerWidth < 1024 && sidebar && toggle &&
-        !sidebar.contains(e.target) && !toggle.contains(e.target) &&
-        !sidebar.classList.contains('-translate-x-full')) {
-        toggleSidebar();
-    }
-});
-
-// Handle resize
-window.addEventListener('resize', () => {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    if (window.innerWidth >= 1024) {
-        if (sidebar) sidebar.classList.remove('-translate-x-full');
-        if (overlay) overlay.classList.add('hidden');
-        document.body.style.overflow = '';
-    } else if (sidebar) {
-        sidebar.classList.add('-translate-x-full');
-        sidebar.classList.remove('lg:w-20');
-        sidebar.classList.add('lg:w-72');
-        sidebar.setAttribute('data-collapsed', 'false');
-    }
-});
-
-// Escape key closes mobile sidebar
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
-            toggleSidebar();
-        }
-    }
-});
-
-// Restore state on initial load
-document.addEventListener('DOMContentLoaded', restoreSidebarCollapsedState);
-
-// Restore state after every wire:navigate page change (sidebar re-renders without @persist)
-document.addEventListener('livewire:navigated', restoreSidebarCollapsedState);

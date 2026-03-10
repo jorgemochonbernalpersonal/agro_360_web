@@ -53,7 +53,7 @@
 @endphp
 
 <div
-    x-data
+    x-data="{}"
     @keydown.escape.window="$store.nav.close()"
 >
     {{-- ═══════════════════ RAIL 64px ═══════════════════ --}}
@@ -327,22 +327,4 @@
     }
 </style>
 
-<script>
-    // Alpine.store es global y persiste entre wire:navigate — sin problemas de timing
-    document.addEventListener('alpine:init', () => {
-        if (!Alpine.store('nav')) {
-            Alpine.store('nav', {
-                open: null,
-                toggle(key) { this.open = (this.open === key) ? null : key; },
-                close()     { this.open = null; },
-            });
-        }
-    });
-
-    // Al navegar con wire:navigate, resetear el flyout abierto
-    document.addEventListener('livewire:navigate', () => {
-        if (window.Alpine && Alpine.store('nav')) {
-            Alpine.store('nav').close();
-        }
-    });
-</script>
+{{-- Alpine.store('nav') initialized in resources/js/sidebar.js (via app.js) --}}
