@@ -68,7 +68,8 @@
       "Read(//c/Users/dispo/Desktop/personal/agro_360_web/=== Fix 4: GrapePurchase/**)",
       "Read(//c/Users/dispo/Desktop/personal/agro_360_web/=== Fix 5: Containers/**)",
       "Read(//c/Users/dispo/Desktop/personal/agro_360_web/**)",
-      "Bash(vendor/bin/phpunit:*)"
+      "Bash(vendor/bin/phpunit:*)",
+      "WebFetch(domain:agro365.es)"
     ]
   }
 }
