@@ -87,8 +87,8 @@ class ClaimAccount extends Component
             'invitation_sent_at'     => null,
         ]);
 
-        // Login automático
-        Auth::login($this->pendingUser);
+        // Login automático con modelo fresco de BD (garantiza email_verified_at cargado)
+        Auth::login($this->pendingUser->fresh());
 
         $this->activated = true;
 

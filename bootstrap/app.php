@@ -28,7 +28,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'require.password.change' => \App\Http\Middleware\RequirePasswordChange::class,
             'password.changed' => \App\Http\Middleware\EnsurePasswordIsChanged::class,
-            'check.beta' => \App\Http\Middleware\CheckBetaAccess::class,
+            'check.beta'       => \App\Http\Middleware\CheckBetaAccess::class,
+            'require.complete' => \App\Http\Middleware\RequireCompleteAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

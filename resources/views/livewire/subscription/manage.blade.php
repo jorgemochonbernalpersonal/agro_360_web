@@ -1,214 +1,163 @@
-<div class="p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-agro-400/30">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="text-5xl">💳</div>
-                <div>
-                    <h1 class="text-3xl font-bold text-agro-700">
-                        Suscripciones
-                    </h1>
-                    <p class="text-agro-600 text-lg">
-                        Gestiona tu suscripción a Agro365
+<div class="max-w-2xl mx-auto space-y-6">
+
+    <div class="flex items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-zinc-900">Suscripción</h1>
+            <p class="text-zinc-500 text-sm">Gestiona tu plan de Agro365</p>
+        </div>
+    </div>
+
+    @if (session()->has('info'))
+        <flux:callout variant="info">
+            <flux:callout.text>{{ session('info') }}</flux:callout.text>
+        </flux:callout>
+    @endif
+
+    @if (session()->has('error'))
+        <flux:callout variant="danger">
+            <flux:callout.text>{{ session('error') }}</flux:callout.text>
+        </flux:callout>
+    @endif
+
+    @if($activeSubscription)
+        {{-- Suscripción activa --}}
+        <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+            <div class="flex items-start justify-between">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <flux:icon icon="check-circle" class="size-5 text-green-600" />
+                        <span class="font-semibold text-green-800">Plan Completo activo</span>
+                    </div>
+                    <p class="text-green-700 text-sm">
+                        <strong>Tipo:</strong> {{ $activeSubscription->plan_type === 'yearly' ? 'Anual' : 'Mensual' }}
+                        &nbsp;·&nbsp;
+                        <strong>Precio:</strong> {{ number_format($activeSubscription->amount, 2) }}€
+                        &nbsp;·&nbsp;
+                        <strong>Válida hasta:</strong> {{ $activeSubscription->ends_at->format('d/m/Y') }}
                     </p>
                 </div>
+                <flux:button
+                    wire:click="cancelSubscription"
+                    wire:confirm="¿Seguro que quieres cancelar? Perderás el acceso al plan Completo al finalizar el periodo."
+                    variant="danger"
+                    size="sm"
+                >
+                    Cancelar
+                </flux:button>
             </div>
+        </div>
 
-            @if (session()->has('message'))
-                <flux:callout variant="success" class="mb-6">
-                    <flux:callout.text>{{ session('message') }}</flux:callout.text>
-                </flux:callout>
-            @endif
+    @else
+        {{-- Sin suscripción activa --}}
 
-            @if (session()->has('error'))
-                <flux:callout variant="danger" class="mb-6">
-                    <flux:callout.text>{{ session('error') }}</flux:callout.text>
-                </flux:callout>
-            @endif
-
-            @if($activeSubscription)
-                <div class="bg-gradient-to-r from-green-100 to-green-50 rounded-xl p-6 mb-6 border border-green-300">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h2 class="text-xl font-bold text-green-800 mb-2">Suscripción Activa</h2>
-                            <p class="text-green-700">
-                                <strong>Plan:</strong> {{ $activeSubscription->plan_type === 'yearly' ? 'Anual' : 'Mensual' }}
-                            </p>
-                            <p class="text-green-700">
-                                <strong>Precio:</strong> {{ number_format($activeSubscription->amount, 2) }} €
-                            </p>
-                            <p class="text-green-700">
-                                <strong>Válida hasta:</strong> {{ $activeSubscription->ends_at->format('d/m/Y') }}
-                            </p>
-                        </div>
-                        <flux:button wire:click="cancelSubscription"
-                            wire:confirm="¿Estás seguro de que quieres cancelar tu suscripción?"
-                            variant="danger">
-                            Cancelar Suscripción
-                        </flux:button>
-                    </div>
+        @if($isWineryLinked)
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                <flux:icon icon="information-circle" class="size-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                <div class="text-sm text-blue-800">
+                    <strong>Tienes acceso básico gratuito</strong> porque estás vinculado a una bodega.
+                    El cuaderno de campo, parcelas, SIGPAC y fenología son gratis para siempre.
+                    Actualiza al plan Completo para acceder a PAC, facturación, almacén, maquinaria y más.
                 </div>
-            @else
-                <!-- Banner de Fase Beta -->
-                <div class="mb-8 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 border-2 border-blue-200 shadow-xl">
-                    <div class="flex items-start gap-4 mb-6">
-                        <div class="text-6xl">🎉</div>
-                        <div>
-                            <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                                ¡Bienvenido a la Fase Beta de Agro365!
-                            </h2>
-                            <p class="text-zinc-700 text-lg">
-                                Como early adopter, disfrutarás de beneficios exclusivos
-                            </p>
-                        </div>
-                    </div>
+            </div>
+        @endif
 
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <!-- Beneficio 1 -->
-                        <div class="bg-white/70 backdrop-blur rounded-xl p-6 border border-blue-100">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <flux:icon icon="clock" class="size-6 text-blue-600" />
-                                </div>
-                                <h3 class="text-xl font-bold text-zinc-900">6 Meses Gratuitos</h3>
-                            </div>
-                            <p class="text-zinc-600">
-                                Acceso completo a todas las funcionalidades sin coste alguno durante el periodo beta
-                            </p>
-                        </div>
+        {{-- Selector de plan --}}
+        <div class="grid grid-cols-2 gap-4">
 
-                        <!-- Beneficio 2 -->
-                        <div class="bg-white/70 backdrop-blur rounded-xl p-6 border border-purple-100">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <flux:icon icon="currency-euro" class="size-6 text-purple-600" />
-                                </div>
-                                <h3 class="text-xl font-bold text-zinc-900">25% Descuento de Por Vida (primeros 50 viticultores)</h3>
-                            </div>
-                            <p class="text-zinc-600">
-                                Tras la fase beta, los <strong>50 primeros viticultores</strong> disfrutarán de un <strong>25% de descuento permanente</strong> en cualquier plan
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border-l-4 border-amber-400">
-                        <div class="flex items-start gap-3">
-                            <flux:icon icon="information-circle" class="size-6 text-amber-600 flex-shrink-0 mt-0.5" />
-                            <div>
-                                <h4 class="font-bold text-amber-900 mb-2">¿Qué significa esto para ti?</h4>
-                                @php
-                                    $betaEndDate = now()->addMonths(6)->endOfMonth();
-                                @endphp
-                                <ul class="space-y-2 text-amber-800 text-sm">
-                                    <li class="flex items-center gap-2">
-                                        <flux:icon icon="check" class="size-4 text-green-600 flex-shrink-0" />
-                                        <span>Uso totalmente <strong>gratuito hasta {{ $betaEndDate->format('d/m/Y') }}</strong></span>
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <flux:icon icon="check" class="size-4 text-green-600 flex-shrink-0" />
-                                        <span>Después: <del class="text-zinc-500">12€/mes</del> → <strong class="text-green-600">solo 9€/mes</strong> (Plan Mensual, 25% dto.)</span>
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <flux:icon icon="check" class="size-4 text-green-600 flex-shrink-0" />
-                                        <span>O bien: <del class="text-zinc-500">120€/año</del> → <strong class="text-green-600">solo 90€/año</strong> (Plan Anual, 7,50€/mes, 25% dto.)</span>
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <flux:icon icon="check" class="size-4 text-green-600 flex-shrink-0" />
-                                        <span>El 25% de descuento de por vida está limitado a los <strong>50 primeros viticultores</strong> que se registren antes del <strong>{{ $betaEndDate->format('d/m/Y') }}</strong></span>
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <flux:icon icon="check" class="size-4 text-green-600 flex-shrink-0" />
-                                        <span>Este descuento es <strong>permanente</strong> mientras mantengas tu suscripción</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 text-center p-6 bg-white/50 rounded-xl border border-zinc-200">
-                        <div class="inline-flex items-center gap-2 text-zinc-700">
-                            <flux:icon icon="information-circle" class="size-5 text-blue-500" />
-                            <p class="text-sm">
-                                <strong>Nota:</strong> El sistema de pagos estará disponible al finalizar la fase beta. 
-                                Mientras tanto, ¡disfruta de Agro365 sin límites!
-                            </p>
-                        </div>
-                    </div>
+            {{-- Plan Mensual --}}
+            <button
+                wire:click="selectPlan('monthly')"
+                class="relative border-2 rounded-xl p-6 text-left transition-all
+                    {{ $selectedPlan === 'monthly'
+                        ? 'border-[var(--color-agro-green)] bg-green-50'
+                        : 'border-zinc-200 bg-white hover:border-zinc-300' }}"
+            >
+                <div class="font-semibold text-zinc-900 mb-1">Mensual</div>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-bold text-[var(--color-agro-green-dark)]">{{ number_format($monthlyPrice, 0) }}€</span>
+                    <span class="text-zinc-500 text-sm">/mes</span>
                 </div>
-
-                <!-- Previsualización de Planes (deshabilitado) -->
-                <div class="mb-6 opacity-60 pointer-events-none">
-                    <h2 class="text-xl font-bold text-agro-700 mb-4 text-center">
-                        Planes Futuros (25% de descuento para ti)
-                    </h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Plan Mensual -->
-                        <div class="border-2 rounded-xl p-6 border-zinc-200 bg-zinc-50/50">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-2xl font-bold text-zinc-900">Plan Mensual</h3>
-                            </div>
-                            <div class="mb-4">
-                                <div class="flex items-baseline gap-2">
-                                    <span class="text-2xl text-zinc-400 line-through">12€</span>
-                                    <span class="text-4xl font-bold text-agro-700">9€</span>
-                                    <span class="text-zinc-600">/mes</span>
-                                </div>
-                                <p class="text-sm text-green-600 font-semibold mt-1">Tu precio especial (25% dto.)</p>
-                            </div>
-                            <ul class="space-y-2 text-zinc-700 mb-6">
-                                <li class="flex items-center">
-                                    <flux:icon icon="check" class="size-5 text-green-500 mr-2 flex-shrink-0" />
-                                    Acceso completo a todas las funcionalidades
-                                </li>
-                                <li class="flex items-center">
-                                    <flux:icon icon="check" class="size-5 text-green-500 mr-2 flex-shrink-0" />
-                                    Soporte técnico incluido
-                                </li>
-                                <li class="flex items-center">
-                                    <flux:icon icon="check" class="size-5 text-green-500 mr-2 flex-shrink-0" />
-                                    Cancelación en cualquier momento
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Plan Anual -->
-                        <div class="border-2 rounded-xl p-6 border-zinc-200 bg-zinc-50/50 relative">
-                            <div class="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">
-                                MEJOR OFERTA
-                            </div>
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-2xl font-bold text-zinc-900">Plan Anual</h3>
-                            </div>
-                            <div class="mb-4">
-                                <div class="flex items-baseline gap-2">
-                                    <span class="text-2xl text-zinc-400 line-through">120€</span>
-                                    <span class="text-4xl font-bold text-agro-700">90€</span>
-                                    <span class="text-zinc-600">/año</span>
-                                </div>
-                                <p class="text-sm text-green-600 font-semibold mt-1">Tu precio especial (7,50€/mes, 25% dto.)</p>
-                            </div>
-                            <ul class="space-y-2 text-zinc-700 mb-6">
-                                <li class="flex items-center">
-                                    <flux:icon icon="check" class="size-5 text-green-500 mr-2 flex-shrink-0" />
-                                    Acceso completo a todas las funcionalidades
-                                </li>
-                                <li class="flex items-center">
-                                    <flux:icon icon="check" class="size-5 text-green-500 mr-2 flex-shrink-0" />
-                                    Soporte técnico prioritario
-                                </li>
-                                <li class="flex items-center">
-                                    <flux:icon icon="check" class="size-5 text-green-500 mr-2 flex-shrink-0" />
-                                    Ahorro de 18€/año vs plan mensual
-                                </li>
-                            </ul>
-                        </div>
+                @if($isWineryLinked)
+                    <p class="text-xs text-green-600 font-medium mt-1">Precio especial por estar vinculado a bodega</p>
+                @endif
+                @if($selectedPlan === 'monthly')
+                    <div class="absolute top-3 right-3">
+                        <flux:icon icon="check-circle" class="size-5 text-[var(--color-agro-green)]" />
                     </div>
-                </div>
-            @endif
+                @endif
+            </button>
 
-            <script>
-                document.addEventListener('livewire:init', () => {
-                    Livewire.on('redirect-to-paypal', (event) => {
-                        window.location.href = event.url;
-                    });
-                });
-            </script>
+            {{-- Plan Anual --}}
+            <button
+                wire:click="selectPlan('yearly')"
+                class="relative border-2 rounded-xl p-6 text-left transition-all
+                    {{ $selectedPlan === 'yearly'
+                        ? 'border-[var(--color-agro-green)] bg-green-50'
+                        : 'border-zinc-200 bg-white hover:border-zinc-300' }}"
+            >
+                <div class="absolute top-3 right-3 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded">
+                    MEJOR OFERTA
+                </div>
+                <div class="font-semibold text-zinc-900 mb-1">Anual</div>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-bold text-[var(--color-agro-green-dark)]">{{ number_format($yearlyPrice, 0) }}€</span>
+                    <span class="text-zinc-500 text-sm">/año</span>
+                </div>
+                <p class="text-xs text-zinc-500 mt-1">{{ number_format($yearlyPrice / 12, 2) }}€/mes · ahorras {{ number_format($monthlyPrice * 12 - $yearlyPrice, 0) }}€</p>
+                @if($isWineryLinked)
+                    <p class="text-xs text-green-600 font-medium">Precio especial por estar vinculado a bodega</p>
+                @endif
+                @if($selectedPlan === 'yearly')
+                    <div class="absolute top-8 right-3">
+                        <flux:icon icon="check-circle" class="size-5 text-[var(--color-agro-green)]" />
+                    </div>
+                @endif
+            </button>
+        </div>
+
+        {{-- Lo que incluye el plan Completo --}}
+        <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-5">
+            <p class="text-sm font-semibold text-zinc-700 mb-3">Plan Completo incluye todo lo básico más:</p>
+            <div class="grid grid-cols-2 gap-1.5 text-sm text-zinc-600">
+                @foreach([
+                    'PAC y declaraciones',
+                    'Facturación + Verifactu',
+                    'Almacén de insumos',
+                    'Maquinaria y equipos',
+                    'Explotaciones (SIEX/DGC)',
+                    'CUE exports',
+                    'Residuos y análisis',
+                    'Informes oficiales',
+                ] as $feature)
+                    <div class="flex items-center gap-1.5">
+                        <flux:icon icon="check" class="size-4 text-green-500 flex-shrink-0" />
+                        {{ $feature }}
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Botón de pago --}}
+        <flux:button
+            wire:click="initiatePayment"
+            wire:loading.attr="disabled"
+            variant="primary"
+            class="w-full"
+        >
+            <span wire:loading.remove>
+                Suscribirse por {{ $selectedPlan === 'yearly' ? number_format($yearlyPrice, 0).'€/año' : number_format($monthlyPrice, 0).'€/mes' }}
+            </span>
+            <span wire:loading>Redirigiendo a PayPal...</span>
+        </flux:button>
+
+        <p class="text-center text-xs text-zinc-400">Pago seguro vía PayPal · Cancela cuando quieras</p>
+    @endif
+
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('redirect-to-paypal', (event) => {
+                window.location.href = event.url;
+            });
+        });
+    </script>
 </div>

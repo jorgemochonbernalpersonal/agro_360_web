@@ -39,22 +39,8 @@ class ViticulturistInvitationNotification extends Notification
             $registerUrl = str_replace('http://', 'https://', $registerUrl);
         }
         
-        // Generar URL absoluta para la imagen
-        $logoUrl = url('images/logo.png');
-        
-        // Solo forzar HTTPS en producción
-        if (app()->environment('production')) {
-            $logoUrl = str_replace('http://', 'https://', $logoUrl);
-        }
-
         return (new MailMessage)
             ->subject('Invitación a Agro365')
-            ->line(new HtmlString(
-                '<div style="text-align:center; margin-bottom: 16px;">
-                    <img src="'.$logoUrl.'" alt="Agro365"
-                         style="max-width: 160px; height: auto;">
-                 </div>'
-            ))
             ->greeting('Hola ' . ($notifiable->name ?: ''))
             ->line('La bodega **' . $this->creator->name . '** te ha invitado a acceder a Agro365.')
             ->line('Ya tienes tus parcelas y plantaciones configuradas. Solo necesitas activar tu cuenta para acceder al cuaderno de campo digital.')

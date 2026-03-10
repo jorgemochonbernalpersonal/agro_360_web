@@ -259,11 +259,9 @@ class Register extends Component
             return $this->redirect(route($this->getRedirectRoute()), navigate: true);
         }
 
-        // Para registro público: enviar email de verificación y activar beta
+        // Para registro público: enviar email de verificación
+        // El beta de 3 meses se activa automáticamente al confirmar el email (evento Verified)
         $user->sendEmailVerificationNotification();
-        
-        // Activar acceso beta (6 meses gratis)
-        $user->grantBetaAccess();
         
         // Si es viticultor, crear registro en WineryViticulturist para que aparezca en listas
         if ($this->role === 'viticulturist') {

@@ -35,13 +35,71 @@ Route::middleware(['role:viticulturist', 'check.beta'])
     ->prefix('viticulturist')
     ->name('viticulturist.')
     ->group(function () {
+
+        // ── PLAN BÁSICO (gratis para viticultores vinculados a bodega) ────────────
         Route::get('/dashboard', function () {
             return view('viticulturist.dashboard');
         })->name('dashboard');
 
+        Route::get('/calendar', Calendar::class)->name('calendar');
+        Route::get('/settings', \App\Livewire\Viticulturist\Settings::class)->name('settings');
+        Route::get('/settings/taxes', function() {
+            return redirect()->route('viticulturist.settings', ['tab' => 'taxes']);
+        });
+        Route::get('/settings/invoicing', function() {
+            return redirect()->route('viticulturist.settings', ['tab' => 'invoicing']);
+        });
+
+        Route::prefix('support')->name('support.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Support\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Support\CreateTicket::class)->name('create');
+        });
+
+        Route::prefix('campaign')->name('campaign.')->group(function () {
+            Route::get('/', CampaignIndex::class)->name('index');
+            Route::get('/create', CampaignCreate::class)->name('create');
+            Route::get('/{campaign}', CampaignShow::class)->name('show');
+            Route::get('/{campaign}/edit', CampaignEdit::class)->name('edit');
+        });
+
+        Route::get('/digital-notebook', DigitalNotebook::class)->name('digital-notebook');
+        Route::prefix('digital-notebook')->name('digital-notebook.')->group(function () {
+            Route::get('/treatment/create', CreatePhytosanitaryTreatment::class)->name('treatment.create');
+            Route::get('/treatment/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditPhytosanitaryTreatment::class)->name('treatment.edit');
+            Route::get('/fertilization/create', CreateFertilization::class)->name('fertilization.create');
+            Route::get('/fertilization/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditFertilization::class)->name('fertilization.edit');
+            Route::get('/irrigation/create', CreateIrrigation::class)->name('irrigation.create');
+            Route::get('/irrigation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditIrrigation::class)->name('irrigation.edit');
+            Route::get('/cultural/create', CreateCulturalWork::class)->name('cultural.create');
+            Route::get('/cultural/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditCulturalWork::class)->name('cultural.edit');
+            Route::get('/observation/create', CreateObservation::class)->name('observation.create');
+            Route::get('/observation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditObservation::class)->name('observation.edit');
+            Route::get('/harvest/create', CreateHarvest::class)->name('harvest.create');
+            Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
+            Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');
+            Route::get('/pruning/create', CreatePruning::class)->name('pruning.create');
+            Route::get('/pruning/{activity}/edit', EditPruning::class)->name('pruning.edit');
+            Route::get('/post-harvest/create', CreatePostHarvest::class)->name('post-harvest.create');
+            Route::get('/post-harvest/{activity}/edit', EditPostHarvest::class)->name('post-harvest.edit');
+            Route::prefix('estimated-yields')->name('estimated-yields.')->group(function () {
+                Route::get('/', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Index::class)->name('index');
+                Route::get('/create', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Create::class)->name('create');
+                Route::get('/{estimatedYield}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EstimatedYields\Edit::class)->name('edit');
+            });
+        });
+
+        Route::prefix('phenology')->name('phenology.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Phenology\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Phenology\Create::class)->name('create');
+            Route::get('/{observation}/edit', \App\Livewire\Viticulturist\Phenology\Edit::class)->name('edit');
+        });
+
+        // ── PLAN COMPLETO (requiere suscripción) ─────────────────────────────────
+        Route::middleware('require.complete')->group(function () {
+
         // Estadísticas Financieras
         Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
-        
+
         // Dashboard de Cumplimiento PAC (cuaderno)
         Route::get('/pac-compliance', \App\Livewire\Viticulturist\PacComplianceDashboard::class)->name('pac-compliance');
 
@@ -109,13 +167,6 @@ Route::middleware(['role:viticulturist', 'check.beta'])
 
         // Mis Entregas a Bodega (cuadro de vendimia del viticulturist)
         Route::get('/vendimia', \App\Livewire\Viticulturist\Vendimia\Index::class)->name('vendimia.index');
-
-        // Fenología
-        Route::prefix('phenology')->name('phenology.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\Phenology\Index::class)->name('index');
-            Route::get('/create', \App\Livewire\Viticulturist\Phenology\Create::class)->name('create');
-            Route::get('/{observation}/edit', \App\Livewire\Viticulturist\Phenology\Edit::class)->name('edit');
-        });
 
         // Aplicadores fitosanitarios (ROPO)
         Route::prefix('field-applicators')->name('field-applicators.')->group(function () {
@@ -319,8 +370,6 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         });
 
 
-        Route::get('/calendar', Calendar::class)->name('calendar');
-
         // Clientes
         Route::prefix('clients')->name('clients.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Clients\Index::class)->name('index');
@@ -387,18 +436,5 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             ]);
         })->name('official-reports.preview');
 
-        // Support / Soporte
-        Route::get('/support', \App\Livewire\Viticulturist\Support\Index::class)->name('support.index');
-        Route::get('/support/create', \App\Livewire\Viticulturist\Support\CreateTicket::class)->name('support.create');
-
-        // Configuración
-        Route::get('/settings', \App\Livewire\Viticulturist\Settings::class)->name('settings');
-        
-        // Rutas legacy - redirigen a settings con tab
-        Route::get('/settings/taxes', function() {
-            return redirect()->route('viticulturist.settings', ['tab' => 'taxes']);
-        });
-        Route::get('/settings/invoicing', function() {
-            return redirect()->route('viticulturist.settings', ['tab' => 'invoicing']);
-        });
+        }); // end require.complete
     });

@@ -47,7 +47,7 @@ trait HasBetaAccess
     {
         $this->update([
             'is_beta_user'        => true,
-            'beta_ends_at'        => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
+            'beta_ends_at'        => now()->addMonths(3)->endOfDay(),
             'beta_access_granted' => true,
         ]);
 
@@ -84,5 +84,33 @@ trait HasBetaAccess
         }
 
         return false;
+    }
+
+    /**
+     * Viticultor vinculado a una bodega → acceso básico gratis permanente
+     */
+    public function hasBasicFreeAccess(): bool
+    {
+        return $this->isViticulturist() && $this->hasWinery();
+    }
+
+    /**
+     * Precio mensual según si está vinculado a bodega o es independiente
+     */
+    public function viticulturistMonthlyPrice(): float
+    {
+        return $this->hasWinery()
+            ? \App\Models\Subscription::PRICE_MONTHLY_WINERY
+            : \App\Models\Subscription::PRICE_MONTHLY_INDEPENDENT;
+    }
+
+    /**
+     * Precio anual según si está vinculado a bodega o es independiente
+     */
+    public function viticulturistYearlyPrice(): float
+    {
+        return $this->hasWinery()
+            ? \App\Models\Subscription::PRICE_YEARLY_WINERY
+            : \App\Models\Subscription::PRICE_YEARLY_INDEPENDENT;
     }
 }

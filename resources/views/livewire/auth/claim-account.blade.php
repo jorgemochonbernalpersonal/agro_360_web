@@ -58,13 +58,13 @@
 
                 <flux:field>
                     <flux:label>Contraseña</flux:label>
-                    <flux:input wire:model="password" type="password" autocomplete="new-password" />
+                    <flux:input wire:model="password" type="password" viewable autocomplete="new-password" />
                     <flux:error name="password" />
                 </flux:field>
 
                 <flux:field>
                     <flux:label>Confirmar contraseña</flux:label>
-                    <flux:input wire:model="password_confirmation" type="password" autocomplete="new-password" />
+                    <flux:input wire:model="password_confirmation" type="password" viewable autocomplete="new-password" />
                 </flux:field>
 
                 <flux:button

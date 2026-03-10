@@ -39,9 +39,17 @@ class Subscription extends Model
     public const STATUS_CANCELLED = 'cancelled';
     public const STATUS_EXPIRED = 'expired';
 
-    // Constantes para precios
+    // Precios para viticultor invitado por bodega
+    public const PRICE_MONTHLY_WINERY = 9.00;
+    public const PRICE_YEARLY_WINERY  = 85.00;
+
+    // Precios para viticultor independiente (sin bodega)
+    public const PRICE_MONTHLY_INDEPENDENT = 14.00;
+    public const PRICE_YEARLY_INDEPENDENT  = 130.00;
+
+    // Alias legacy (precio anterior, por compatibilidad)
     public const PRICE_MONTHLY = 12.00;
-    public const PRICE_YEARLY = 120.00;
+    public const PRICE_YEARLY  = 120.00;
 
     /**
      * Relación con el usuario

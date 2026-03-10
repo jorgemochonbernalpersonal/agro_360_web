@@ -96,6 +96,51 @@
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">📦 Escandallos y Costes</h3>
                             <p class="text-gray-600 text-sm">Análisis detallado de costes de producción, desde la materia prima hasta los materiales auxiliares.</p>
                         </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🔬 Análisis Enológicos</h3>
+                            <p class="text-gray-600 text-sm">Registra análisis propios y de laboratorio externo. Control de alcohol, SO₂, acidez, pH, turbidez y más. Alertas automáticas cuando el SO₂ libre cae por debajo del umbral de protección.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">♻️ Gestión de Residuos</h3>
+                            <p class="text-gray-600 text-sm">Control de lías, orujos y otros subproductos. Registro de destino, gestor autorizado y documentación. Cumple con la normativa de residuos vitivinícolas.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">🧾 Facturación y Verifactu</h3>
+                            <p class="text-gray-600 text-sm">Facturación integrada con trazabilidad de entregas. Compatible con el sistema Verifactu de la AEAT para la verificación de facturas.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mb-12">
+                    <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Tienes viñedo propio? Todo en uno</h2>
+                    <p class="text-gray-700 leading-relaxed mb-6">
+                        Si tu bodega gestiona viñedo propio, Agro365 conecta campo y bodega sin salir de la misma plataforma. No hay Excel intermedios ni transferencias manuales de datos.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-4 not-prose">
+                        <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                            <h4 class="font-bold text-green-900 mb-2">🗺️ SIGPAC integrado</h4>
+                            <p class="text-green-800 text-sm">Parcelas con datos SIGPAC, coordenadas y superficies. Cumple con los requisitos PAC.</p>
+                        </div>
+                        <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                            <h4 class="font-bold text-green-900 mb-2">📓 Cuaderno de campo digital</h4>
+                            <p class="text-green-800 text-sm">Tratamientos, fenología, cosecha y análisis de suelo. Registro conforme a normativa DO.</p>
+                        </div>
+                        <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                            <h4 class="font-bold text-green-900 mb-2">🛰️ Teledetección NDVI</h4>
+                            <p class="text-green-800 text-sm">Imágenes satelitales de vigor vegetativo por parcela. Detecta zonas de estrés hídrico antes de que sea visible.</p>
+                        </div>
+                        <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                            <h4 class="font-bold text-green-900 mb-2">🔗 Trazabilidad parcela → botella</h4>
+                            <p class="text-green-800 text-sm">Cada litro vinculado a su parcela de origen. Documentación completa para auditorías y DO.</p>
+                        </div>
+                        <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                            <h4 class="font-bold text-green-900 mb-2">👨‍🌾 Panel de viticultores</h4>
+                            <p class="text-green-800 text-sm">Si trabajas con viticultores proveedores, invítalos con un enlace. Ves sus parcelas y cosechas en tiempo real sin llamarles.</p>
+                        </div>
+                        <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                            <h4 class="font-bold text-green-900 mb-2">📋 CUE y declaraciones</h4>
+                            <p class="text-green-800 text-sm">Exportación del Cuaderno Único de Explotación y declaraciones de campaña listas para presentar.</p>
+                        </div>
                     </div>
                 </section>
 

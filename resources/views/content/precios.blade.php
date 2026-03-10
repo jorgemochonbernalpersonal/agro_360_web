@@ -224,6 +224,11 @@
                             @endforeach
                         </ul>
 
+                        <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-center">
+                            <p class="text-sm font-semibold text-amber-800">🎁 3 meses gratis al registrarte</p>
+                            <p class="text-xs text-amber-600 mt-0.5">Acceso completo sin tarjeta · Sin compromiso</p>
+                        </div>
+
                         <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg font-bold text-lg">
                             Comenzar Gratis
                         </a>
@@ -283,6 +288,11 @@
                             </li>
                             @endforeach
                         </ul>
+
+                        <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-center">
+                            <p class="text-sm font-semibold text-amber-800">🎁 3 meses gratis al registrarte</p>
+                            <p class="text-xs text-amber-600 mt-0.5">Demo gratuita · Onboarding incluido</p>
+                        </div>
 
                         <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-bold text-lg">
                             Comenzar Gratis

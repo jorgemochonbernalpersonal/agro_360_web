@@ -37,10 +37,10 @@ class Manage extends Component
             return;
         }
 
-        // Determinar precio según el plan
-        $amount = $this->selectedPlan === 'yearly' 
-            ? Subscription::PRICE_YEARLY 
-            : Subscription::PRICE_MONTHLY;
+        // Determinar precio según el plan y si el usuario está vinculado a bodega
+        $amount = $this->selectedPlan === 'yearly'
+            ? $user->viticulturistYearlyPrice()
+            : $user->viticulturistMonthlyPrice();
 
         try {
             $provider = new PayPalClient;
@@ -147,6 +147,11 @@ class Manage extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        return view('livewire.subscription.manage');
+        $user = Auth::user();
+        return view('livewire.subscription.manage', [
+            'monthlyPrice' => $user->viticulturistMonthlyPrice(),
+            'yearlyPrice'  => $user->viticulturistYearlyPrice(),
+            'isWineryLinked' => $user->hasWinery(),
+        ]);
     }
 }

@@ -21,8 +21,12 @@ class CheckBetaAccess
             return $next($request);
         }
         
-        // Si el usuario es beta y la beta expiró, redirigir a página de expiración
+        // Si el usuario es beta y la beta expiró...
         if ($user->betaExpired()) {
+            // Viticultores vinculados a bodega tienen acceso básico gratis permanente
+            if ($user->hasBasicFreeAccess()) {
+                return $next($request);
+            }
             return redirect()->route('beta.expired');
         }
         
