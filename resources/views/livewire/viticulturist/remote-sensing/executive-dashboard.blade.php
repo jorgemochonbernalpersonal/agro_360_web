@@ -54,11 +54,10 @@
                 </div>
                 
                 <div class="flex items-center gap-3">
-                    {{-- Plot Selector --}}
-                    <flux:select wire:model.live="selectedPlotId" 
-                            >
-                        @foreach($plots as $plot)
-                            <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                    {{-- Recinto Selector (parcela + SIGPAC) --}}
+                    <flux:select wire:model.live="selectedRecintoId">
+                        @foreach($recintos as $recinto)
+                            <option value="{{ $recinto['id'] }}">{{ $recinto['display_name'] }}</option>
                         @endforeach
                     </flux:select>
                     

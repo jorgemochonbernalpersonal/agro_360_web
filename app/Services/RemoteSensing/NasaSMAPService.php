@@ -32,7 +32,7 @@ class NasaSMAPService
     /**
      * Fetch SMAP soil moisture
      */
-    public function fetchSoilMoisture(Plot $plot, string $token): ?array
+    public function fetchSoilMoisture(Plot $plot, string $token, ?int $recintoId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockSMAP($plot);
@@ -44,7 +44,7 @@ class NasaSMAPService
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
 
             // SPL4SMGP: SMAP L4 Global 9km daily
             /** @var Response $response */

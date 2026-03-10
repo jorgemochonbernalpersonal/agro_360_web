@@ -4,13 +4,19 @@ namespace App\Livewire\Winery\Wines;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
+use App\Models\Harvest;
+use App\Models\Oenologist;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
+use App\Models\WineAdditive;
 use App\Models\WineAnalysis;
 use App\Models\WineFermentationControl;
+use App\Models\WineHarvest;
 use App\Models\WineLoss;
 use App\Models\WineTransfer;
+use App\Models\WinerySupply;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Show extends Component
@@ -46,6 +52,20 @@ class Show extends Component
     public string $lo_date         = '';
     public string $lo_notes        = '';
 
+    // ── Formulario: composición (uva → vino) ─────────────────────────────────
+    public string $co_harvest_id  = '';
+    public string $co_quantity_kg = '';
+
+    // ── Formulario: aditivos ──────────────────────────────────────────────────
+    public string $ad_supply_id         = '';
+    public string $ad_process_detail_id = '';
+    public string $ad_oenologist_id     = '';
+    public string $ad_additive_name     = '';
+    public string $ad_quantity          = '';
+    public string $ad_unit_id           = '';
+    public string $ad_date              = '';
+    public string $ad_notes             = '';
+
     // ── Formulario: análisis ──────────────────────────────────────────────────
     public string $an_container_id      = '';
     public string $an_date              = '';
@@ -72,6 +92,7 @@ class Show extends Component
         $this->tr_date         = $now->format('Y-m-d');
         $this->lo_date         = $now->format('Y-m-d');
         $this->an_date         = $now->format('Y-m-d');
+        $this->ad_date         = $now->format('Y-m-d');
     }
 
     // ─── Guardar control de fermentación ─────────────────────────────────────
@@ -236,6 +257,121 @@ class Show extends Component
         $this->toastSuccess('Análisis eliminado.');
     }
 
+    // ─── Aditivos ─────────────────────────────────────────────────────────────
+
+    public function updatedAdSupplyId(): void
+    {
+        if ($this->ad_supply_id) {
+            $supply = WinerySupply::find($this->ad_supply_id);
+            if ($supply) {
+                $this->ad_additive_name = $supply->name;
+                $this->ad_unit_id       = (string) ($supply->unit_of_measurement_id ?? '');
+            }
+        }
+    }
+
+    public function saveAdditive(): void
+    {
+        $this->validate([
+            'ad_additive_name'     => ['required', 'string', 'max:200'],
+            'ad_quantity'          => ['required', 'numeric', 'min:0.001'],
+            'ad_unit_id'           => ['required', 'exists:units_of_measurement,id'],
+            'ad_date'              => ['required', 'date'],
+            'ad_supply_id'         => ['nullable', 'exists:winery_supplies,id'],
+            'ad_process_detail_id' => ['nullable', 'exists:wine_process_details,id'],
+            'ad_oenologist_id'     => ['nullable', 'exists:oenologists,id'],
+            'ad_notes'             => ['nullable', 'string'],
+        ]);
+
+        DB::transaction(function () {
+            WineAdditive::create([
+                'wine_id'               => $this->wine->id,
+                'wine_process_detail_id'=> $this->ad_process_detail_id ?: null,
+                'winery_supply_id'      => $this->ad_supply_id ?: null,
+                'oenologist_id'         => $this->ad_oenologist_id ?: null,
+                'unit_of_measurement_id'=> $this->ad_unit_id,
+                'additive_name'         => $this->ad_additive_name,
+                'quantity'              => $this->ad_quantity,
+                'application_date'      => $this->ad_date,
+                'notes'                 => $this->ad_notes ?: null,
+                'created_by'            => Auth::id(),
+            ]);
+
+            // Descuenta stock del insumo si está vinculado
+            if ($this->ad_supply_id) {
+                $supply = WinerySupply::where('user_id', Auth::id())->find($this->ad_supply_id);
+                if ($supply) {
+                    $supply->decrement('current_stock', (float) $this->ad_quantity);
+                }
+            }
+        });
+
+        $this->resetAdForm();
+        $this->dispatch('close-modal', id: 'modal-additive');
+        $this->toastSuccess('Aditivo registrado correctamente.');
+    }
+
+    public function deleteAdditive(int $id): void
+    {
+        $additive = WineAdditive::where('wine_id', $this->wine->id)->findOrFail($id);
+
+        DB::transaction(function () use ($additive) {
+            // Restaura stock si tenía supply vinculado
+            if ($additive->winery_supply_id) {
+                $supply = WinerySupply::where('user_id', Auth::id())->find($additive->winery_supply_id);
+                if ($supply) {
+                    $supply->increment('current_stock', (float) $additive->quantity);
+                }
+            }
+            $additive->delete();
+        });
+
+        $this->toastSuccess('Aditivo eliminado.');
+    }
+
+    // ─── Composición ─────────────────────────────────────────────────────────
+
+    public function linkHarvest(): void
+    {
+        $this->validate([
+            'co_harvest_id'  => ['required', 'exists:harvests,id'],
+            'co_quantity_kg' => ['required', 'numeric', 'min:0.001'],
+        ]);
+
+        // Verify the harvest belongs to this winery
+        $harvest = Harvest::where('winery_id', Auth::id())->findOrFail($this->co_harvest_id);
+
+        WineHarvest::updateOrCreate(
+            ['wine_id' => $this->wine->id, 'harvest_id' => $harvest->id],
+            ['quantity_kg' => $this->co_quantity_kg]
+        );
+
+        $this->recalculateCompositionPercentages();
+        $this->co_harvest_id  = '';
+        $this->co_quantity_kg = '';
+        $this->dispatch('close-modal', id: 'modal-composition');
+        $this->toastSuccess('Recepción vinculada al lote.');
+    }
+
+    public function unlinkHarvest(int $wineHarvestId): void
+    {
+        WineHarvest::where('wine_id', $this->wine->id)->findOrFail($wineHarvestId)->delete();
+        $this->recalculateCompositionPercentages();
+        $this->toastSuccess('Recepción desvinculada.');
+    }
+
+    private function recalculateCompositionPercentages(): void
+    {
+        $entries = WineHarvest::where('wine_id', $this->wine->id)->get();
+        $total   = $entries->sum('quantity_kg');
+
+        if ($total <= 0) return;
+
+        foreach ($entries as $entry) {
+            $entry->update(['percentage' => round(($entry->quantity_kg / $total) * 100, 2)]);
+        }
+    }
+
     // ─── Render ───────────────────────────────────────────────────────────────
 
     public function render()
@@ -269,10 +405,36 @@ class Show extends Component
 
         $timeline = $this->buildTimeline($fermentationControls, $transfers, $losses, $analyses);
 
+        // Aditivos
+        $additives = $this->wine->additives()
+            ->with(['supply', 'processDetail', 'oenologist', 'unitOfMeasurement:id,abbreviation'])
+            ->get();
+
+        $supplies    = WinerySupply::where('user_id', Auth::id())->active()->orderBy('name')->get();
+        $oenologists = Oenologist::where('user_id', Auth::id())->active()->orderBy('name')->get();
+        $processes   = $this->wine->processDetails()->orderBy('start_date')->get(['id', 'process_type', 'start_date']);
+
+        // Composición: recepciones vinculadas
+        $composition = $this->wine->wineHarvests()
+            ->with([
+                'harvest.plotPlanting.plotVariety.grapeVariety',
+                'harvest.plotPlanting.plot',
+            ])
+            ->get();
+
+        // Recepciones disponibles de esta bodega (excluye las ya vinculadas)
+        $linkedHarvestIds = $composition->pluck('harvest_id')->all();
+        $availableHarvests = Harvest::where('winery_id', Auth::id())
+            ->whereNotIn('id', $linkedHarvestIds)
+            ->where('status', '!=', 'cancelled')
+            ->orderByDesc('harvest_start_date')
+            ->get(['id', 'harvest_start_date', 'total_weight', 'plot_planting_id', 'vintage']);
+
         return view('livewire.winery.wines.show', compact(
             'containers', 'units',
             'fermentationControls', 'transfers', 'losses', 'analyses',
-            'timeline'
+            'timeline', 'composition', 'availableHarvests',
+            'additives', 'supplies', 'oenologists', 'processes'
         ))->layout('layouts.app');
     }
 
@@ -323,6 +485,19 @@ class Show extends Component
         $this->lo_type = 'evaporation';
         $this->lo_quantity = $this->lo_unit_id = $this->lo_notes = '';
         $this->lo_date = now()->format('Y-m-d');
+    }
+
+    private function resetAdForm(): void
+    {
+        $this->ad_supply_id = $this->ad_process_detail_id = $this->ad_oenologist_id = '';
+        $this->ad_additive_name = $this->ad_quantity = $this->ad_unit_id = $this->ad_notes = '';
+        $this->ad_date = now()->format('Y-m-d');
+    }
+
+    private function resetCoForm(): void
+    {
+        $this->co_harvest_id  = '';
+        $this->co_quantity_kg = '';
     }
 
     private function resetAnForm(): void

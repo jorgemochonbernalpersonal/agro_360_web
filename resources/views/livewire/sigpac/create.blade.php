@@ -199,13 +199,13 @@
                                 <div>
                                     <flux:label for="sigpacCodes.{{ $index }}.code_aggregate">
                                         Agregado
-                                        <span class="text-xs text-zinc-500">(1)</span>
+                                        <span class="text-xs text-zinc-500">(1-3)</span>
                                     </flux:label>
                                     <flux:input
                                         wire:model.live="sigpacCodes.{{ $index }}.code_aggregate"
                                         type="text"
                                         placeholder="0"
-                                        maxlength="1"
+                                        maxlength="3"
                                         value="0"
                                         class="font-mono text-center"
                                     />
@@ -215,13 +215,13 @@
                                 <div>
                                     <flux:label for="sigpacCodes.{{ $index }}.code_zone">
                                         Zona
-                                        <span class="text-xs text-zinc-500">(1)</span>
+                                        <span class="text-xs text-zinc-500">(1-3)</span>
                                     </flux:label>
                                     <flux:input
                                         wire:model.live="sigpacCodes.{{ $index }}.code_zone"
                                         type="text"
                                         placeholder="0"
-                                        maxlength="1"
+                                        maxlength="3"
                                         class="font-mono text-center {{ $errors->has('sigpacCodes.' . $index . '.code_zone') ? 'border-red-400' : '' }}"
                                     />
                                     @error("sigpacCodes.{$index}.code_zone")
@@ -233,13 +233,13 @@
                                 <div>
                                     <flux:label for="sigpacCodes.{{ $index }}.code_polygon">
                                         Polígono
-                                        <span class="text-xs text-zinc-500">(2)</span>
+                                        <span class="text-xs text-zinc-500">(1-3)</span>
                                     </flux:label>
                                     <flux:input
                                         wire:model.live="sigpacCodes.{{ $index }}.code_polygon"
                                         type="text"
                                         placeholder="12"
-                                        maxlength="2"
+                                        maxlength="3"
                                         class="font-mono text-center {{ $errors->has('sigpacCodes.' . $index . '.code_polygon') || $hasDuplicate ? 'border-red-400' : '' }} {{ $hasDuplicate ? 'ring-2 ring-red-200' : '' }}"
                                     />
                                     @error("sigpacCodes.{$index}.code_polygon")

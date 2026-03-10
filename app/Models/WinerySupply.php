@@ -54,6 +54,11 @@ class WinerySupply extends Model
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
+    public function wineAdditives(): HasMany
+    {
+        return $this->hasMany(WineAdditive::class, 'winery_supply_id');
+    }
+
     public function maintenanceSupplies(): HasMany
     {
         return $this->hasMany(ContainerMaintenanceSupply::class);

@@ -30,7 +30,7 @@ class NasaSpectralBandsService
     /**
      * Fetch spectral bands from VIIRS Surface Reflectance
      */
-    public function fetchSpectralBands(Plot $plot, string $token): ?array
+    public function fetchSpectralBands(Plot $plot, string $token, ?int $recintoId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockBands($plot);
@@ -42,7 +42,7 @@ class NasaSpectralBandsService
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
 
             /** @var Response $response */
             $response = Http::withToken($token)

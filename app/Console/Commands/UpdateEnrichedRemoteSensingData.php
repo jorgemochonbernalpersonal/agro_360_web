@@ -8,8 +8,9 @@ use Illuminate\Console\Command;
 
 class UpdateEnrichedRemoteSensingData extends Command
 {
-    protected $signature = 'remote-sensing:update-enriched 
+    protected $signature = 'remote-sensing:update-enriched
                             {--plot-id= : Update specific plot ID}
+                            {--recinto-id= : Use specific MultipartPlotSigpac ID for coordinates}
                             {--include-area : Include area statistics (slower, async)}
                             {--ultra : Use ALL NASA products (VIIRS, LAI, SMAP, ET)}
                             {--force : Force update even if recently updated}';
@@ -95,10 +96,11 @@ class UpdateEnrichedRemoteSensingData extends Command
                 }
 
                 // Fetch data (ultra or standard enriched)
+                $recintoId = $this->option('recinto-id') ? (int) $this->option('recinto-id') : null;
                 if ($ultra) {
-                    $result = $this->service->fetchUltraEnrichedData($plot, $includeArea);
+                    $result = $this->service->fetchUltraEnrichedData($plot, $includeArea, $recintoId);
                 } else {
-                    $result = $this->service->fetchEnrichedData($plot, $includeArea);
+                    $result = $this->service->fetchEnrichedData($plot, $includeArea, null, $recintoId);
                 }
 
                 if ($result) {

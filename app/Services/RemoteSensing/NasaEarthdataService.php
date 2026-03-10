@@ -575,10 +575,10 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
      * @param bool $includeArea Whether to include area statistics
      * @return PlotRemoteSensing|null
      */
-    public function fetchUltraEnrichedData(Plot $plot, bool $includeArea = false): ?PlotRemoteSensing
+    public function fetchUltraEnrichedData(Plot $plot, bool $includeArea = false, ?int $recintoId = null): ?PlotRemoteSensing
     {
         $token = $this->getAuthToken();
-        
+
         if (!$token) {
             Log::warning('Cannot fetch ultra-enriched data without auth token');
             return $this->getLatestData($plot);
@@ -586,22 +586,22 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
         try {
             // Start with VIIRS NDVI (better than MODIS)
-            $viirsData = $this->viirsService->fetchVIIRSNDVI($plot, $token);
-            
+            $viirsData = $this->viirsService->fetchVIIRSNDVI($plot, $token, $recintoId);
+
             // Fetch spectral bands for real indices
-            $spectralData = $this->spectralService->fetchSpectralBands($plot, $token);
-            
+            $spectralData = $this->spectralService->fetchSpectralBands($plot, $token, $recintoId);
+
             // Fetch official LAI
-            $laiData = $this->laiService->fetchOfficialLAI($plot, $token);
-            
+            $laiData = $this->laiService->fetchOfficialLAI($plot, $token, $recintoId);
+
             // Fetch LST
-            $lstData = $this->lstService->fetchLSTData($plot, $token);
-            
+            $lstData = $this->lstService->fetchLSTData($plot, $token, null, $recintoId);
+
             // Fetch SMAP soil moisture
-            $smapData = $this->smapService->fetchSoilMoisture($plot, $token);
-            
+            $smapData = $this->smapService->fetchSoilMoisture($plot, $token, $recintoId);
+
             // Fetch official ET
-            $etData = $this->etService->fetchEvapotranspiration($plot, $token);
+            $etData = $this->etService->fetchEvapotranspiration($plot, $token, $recintoId);
 
             // Merge all data
             $mergedData = array_merge(

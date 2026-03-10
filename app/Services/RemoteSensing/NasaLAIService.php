@@ -29,7 +29,7 @@ class NasaLAIService
     /**
      * Fetch official LAI from MODIS
      */
-    public function fetchOfficialLAI(Plot $plot, string $token): ?array
+    public function fetchOfficialLAI(Plot $plot, string $token, ?int $recintoId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockLAI($plot);
@@ -41,7 +41,7 @@ class NasaLAIService
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
 
             // MCD15A2H: MODIS LAI/FPAR 500m, 8-day
             $response = Http::withToken($token)

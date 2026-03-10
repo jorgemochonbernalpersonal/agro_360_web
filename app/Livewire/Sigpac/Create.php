@@ -53,9 +53,9 @@ class Create extends Component
             $rules["sigpacCodes.{$index}.code_autonomous_community"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
             $rules["sigpacCodes.{$index}.code_province"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
             $rules["sigpacCodes.{$index}.code_municipality"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
-            $rules["sigpacCodes.{$index}.code_aggregate"] = ['nullable', 'string', 'size:1', 'regex:/^\d{1}$/'];
-            $rules["sigpacCodes.{$index}.code_zone"] = ['required', 'string', 'size:1', 'regex:/^\d{1}$/'];
-            $rules["sigpacCodes.{$index}.code_polygon"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
+            $rules["sigpacCodes.{$index}.code_aggregate"] = ['nullable', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
+            $rules["sigpacCodes.{$index}.code_zone"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
+            $rules["sigpacCodes.{$index}.code_polygon"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
             $rules["sigpacCodes.{$index}.code_plot"] = ['required', 'string', 'size:5', 'regex:/^\d{5}$/'];
             $rules["sigpacCodes.{$index}.code_enclosure"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
 
@@ -84,7 +84,7 @@ class Create extends Component
                     $enclosure = $code['code_enclosure'] ?? '';
 
                     // Solo validar si todos los campos están completos
-                    if (strlen($polygon) === 2 && strlen($plot) === 5 && strlen($enclosure) === 3) {
+                    if (!empty($polygon) && strlen($polygon) <= 3 && strlen($plot) === 5 && strlen($enclosure) === 3) {
                         // Buscar duplicados en otros códigos del formulario
                         foreach ($this->sigpacCodes as $otherIndex => $otherCode) {
                             if ($otherIndex !== $index) {
@@ -93,7 +93,8 @@ class Create extends Component
                                 $otherEnclosure = $otherCode['code_enclosure'] ?? '';
 
                                 // Si todos los campos están completos y coinciden
-                                if (strlen($otherPolygon) === 2 &&
+                                if (!empty($otherPolygon) &&
+                                        strlen($otherPolygon) <= 3 &&
                                         strlen($otherPlot) === 5 &&
                                         strlen($otherEnclosure) === 3 &&
                                         $polygon === $otherPolygon &&
@@ -232,9 +233,9 @@ class Create extends Component
             return false;
         if (strlen($code['code_municipality'] ?? '') !== 3)
             return false;
-        if (strlen($code['code_zone'] ?? '') !== 1)
+        if (empty($code['code_zone']) || strlen($code['code_zone']) > 3)
             return false;
-        if (strlen($code['code_polygon'] ?? '') !== 2)
+        if (empty($code['code_polygon']) || strlen($code['code_polygon']) > 3)
             return false;
         if (strlen($code['code_plot'] ?? '') !== 5)
             return false;
@@ -259,7 +260,7 @@ class Create extends Component
         $enclosure = $code['code_enclosure'] ?? '';
 
         // Solo validar si todos los campos están completos
-        if (strlen($polygon) !== 2 || strlen($plot) !== 5 || strlen($enclosure) !== 3) {
+        if (empty($polygon) || strlen($polygon) > 3 || strlen($plot) !== 5 || strlen($enclosure) !== 3) {
             return false;
         }
 
@@ -270,7 +271,8 @@ class Create extends Component
                 $otherPlot = $otherCode['code_plot'] ?? '';
                 $otherEnclosure = $otherCode['code_enclosure'] ?? '';
 
-                if (strlen($otherPolygon) === 2 &&
+                if (!empty($otherPolygon) &&
+                        strlen($otherPolygon) <= 3 &&
                         strlen($otherPlot) === 5 &&
                         strlen($otherEnclosure) === 3 &&
                         $polygon === $otherPolygon &&

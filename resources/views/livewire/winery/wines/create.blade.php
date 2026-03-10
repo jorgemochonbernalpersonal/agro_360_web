@@ -46,6 +46,28 @@
                     <flux:error name="status" />
                 </flux:field>
 
+                <flux:field>
+                    <flux:label>Crianza</flux:label>
+                    <flux:select wire:model="aging_type">
+                        <flux:select.option value="">Sin especificar</flux:select.option>
+                        @foreach($agingTypes as $key => $label)
+                            <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="aging_type" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Categoría / DOP</flux:label>
+                    <flux:select wire:model="category">
+                        <flux:select.option value="">Sin especificar</flux:select.option>
+                        @foreach($categories as $key => $label)
+                            <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="category" />
+                </flux:field>
+
                 <flux:field class="md:col-span-2">
                     <flux:label>Variedad / Coupage</flux:label>
                     <flux:input wire:model="variety" type="text" placeholder="Ej. 80% Tempranillo, 20% Garnacha" />
@@ -57,6 +79,22 @@
                     <flux:input wire:model="volume_liters" type="number" step="0.001" min="0" placeholder="0" />
                     <flux:error name="volume_liters" />
                 </flux:field>
+
+                <flux:field>
+                    <flux:label>Enólogo responsable</flux:label>
+                    <flux:select wire:model="oenologist_id">
+                        <flux:select.option value="">Sin asignar</flux:select.option>
+                        @foreach($oenologists as $oenologist)
+                            <flux:select.option value="{{ $oenologist->id }}">{{ $oenologist->full_name }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="oenologist_id" />
+                </flux:field>
+
+                <div class="flex flex-col gap-3 justify-center">
+                    <flux:checkbox wire:model="is_must" label="Es mosto (sin fermentar)" />
+                    <flux:checkbox wire:model="is_organic" label="Producción ecológica" />
+                </div>
             </div>
         </x-agro.form-section>
 

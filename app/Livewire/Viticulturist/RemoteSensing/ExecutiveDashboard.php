@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Cache;
 class ExecutiveDashboard extends Component
 {
     public ?int $selectedPlotId = null;
+    public ?int $selectedRecintoId = null;
     public $plots = [];
+    public $recintos = [];
     public ?Plot $selectedPlot = null;
     public array $summary = [];
     public bool $loading = false;
@@ -25,18 +27,46 @@ class ExecutiveDashboard extends Component
 
     public function mount()
     {
-        // Eager loading para evitar N+1 queries
-        // Plot::forUser handles viticulturist (own plots) and winery (viticultors' plots)
+        $this->loadRecintos();
+
+        if ($this->recintos->isNotEmpty()) {
+            $first = $this->recintos->first();
+            $this->selectedRecintoId = $first['id'];
+            $this->selectedPlotId    = $first['plot_id'];
+            $this->loadSummary();
+        }
+    }
+
+    private function loadRecintos(): void
+    {
+        // Cargar plots con geometría para el usuario
         $this->plots = Plot::forUser(auth()->user())
             ->whereHas('plotGeometries')
             ->select('id', 'name', 'area', 'viticulturist_id')
             ->orderBy('name')
             ->get();
 
-        if ($this->plots->isNotEmpty()) {
-            $this->selectedPlotId = $this->plots->first()->id;
-            $this->loadSummary();
-        }
+        // Construir lista plana de recintos: un item por MultipartPlotSigpac con geometría
+        $this->recintos = $this->plots->flatMap(function (Plot $plot) {
+            return $plot->multiplePlotSigpacs()
+                ->whereNotNull('plot_geometry_id')
+                ->with('sigpacCode')
+                ->get()
+                ->map(fn ($mps) => [
+                    'id'           => $mps->id,
+                    'plot_id'      => $plot->id,
+                    'plot_name'    => $plot->name,
+                    'sigpac_code'  => $mps->sigpacCode?->formatted_code ?? 'Recinto ' . $mps->id,
+                    'display_name' => $plot->name . ' — ' . ($mps->sigpacCode?->formatted_code ?? 'Recinto ' . $mps->id),
+                ]);
+        });
+    }
+
+    public function updatedSelectedRecintoId(): void
+    {
+        $recinto = $this->recintos->firstWhere('id', $this->selectedRecintoId);
+        $this->selectedPlotId = $recinto['plot_id'] ?? null;
+        $this->loadSummary();
     }
 
     public function updatedSelectedPlotId()
@@ -108,7 +138,7 @@ class ExecutiveDashboard extends Component
         }
 
         try {
-            GenerateRemoteSensingDataJob::dispatch($this->selectedPlotId, true);
+            GenerateRemoteSensingDataJob::dispatch($this->selectedPlotId, true, $this->selectedRecintoId);
 
             $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
             Cache::forget($cacheKey);

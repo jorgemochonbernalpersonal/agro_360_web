@@ -101,6 +101,11 @@ Route::middleware(['role:winery'])
         Route::redirect('/wine-lots', '/winery/product-lots')->name('wine-lots.index');
         Route::redirect('/wine-lots/create', '/winery/product-lots/create')->name('wine-lots.create');
 
+        // ── Enólogos ──────────────────────────────────────────────────
+        Route::get('/oenologists', \App\Livewire\Winery\Oenologists\Index::class)->name('oenologists.index');
+        Route::get('/oenologists/create', \App\Livewire\Winery\Oenologists\Create::class)->name('oenologists.create');
+        Route::get('/oenologists/{oenologist}/edit', \App\Livewire\Winery\Oenologists\Edit::class)->name('oenologists.edit');
+
         // ── Clientes ──────────────────────────────────────────────────
         Route::get('/clients', \App\Livewire\Winery\Clients\Index::class)->name('clients.index');
         Route::get('/clients/create', \App\Livewire\Winery\Clients\Create::class)->name('clients.create');

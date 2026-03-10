@@ -32,7 +32,7 @@ class NasaLSTService
      *
      * @param array|null $coordinates Override del recinto ['lat','lng'|'lon']
      */
-    public function fetchLSTData(Plot $plot, string $token, ?array $coordinates = null): ?array
+    public function fetchLSTData(Plot $plot, string $token, ?array $coordinates = null, ?int $recintoId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockLST($plot);
@@ -44,9 +44,7 @@ class NasaLSTService
         }
 
         try {
-            $coords = $coordinates
-                ? CoordinatesHelper::getCoordinates($plot, null, $coordinates)
-                : CoordinatesHelper::getCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId, $coordinates);
 
             /** @var Response $response */
             $response = Http::withToken($token)

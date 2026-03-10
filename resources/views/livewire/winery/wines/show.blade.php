@@ -51,6 +51,12 @@
         <flux:modal.trigger name="modal-analysis">
             <flux:button variant="filled" icon="document-magnifying-glass" size="sm">Añadir análisis</flux:button>
         </flux:modal.trigger>
+        <flux:modal.trigger name="modal-composition">
+            <flux:button variant="outline" icon="queue-list" size="sm">Vincular recepción</flux:button>
+        </flux:modal.trigger>
+        <flux:modal.trigger name="modal-additive">
+            <flux:button variant="outline" icon="beaker" size="sm">Añadir aditivo</flux:button>
+        </flux:modal.trigger>
     </div>
 
     {{-- ── Tabs ─────────────────────────────────────────────────────────────── --}}
@@ -58,6 +64,8 @@
         <nav class="flex gap-0 -mb-px overflow-x-auto">
             @foreach([
                 ['id' => 'timeline',     'label' => 'Timeline',       'icon' => 'clock'],
+                ['id' => 'composition',  'label' => 'Composición',    'icon' => 'queue-list'],
+                ['id' => 'additives',    'label' => 'Aditivos',       'icon' => 'beaker'],
                 ['id' => 'fermentation', 'label' => 'Fermentación',   'icon' => 'fire'],
                 ['id' => 'transfers',    'label' => 'Trasvases',      'icon' => 'arrows-right-left'],
                 ['id' => 'losses',       'label' => 'Mermas',         'icon' => 'minus-circle'],
@@ -74,6 +82,138 @@
             </button>
             @endforeach
         </nav>
+    </div>
+
+    {{-- ════════════════════════════════════════════════════════════════════════
+         TAB: COMPOSICIÓN
+    ════════════════════════════════════════════════════════════════════════════ --}}
+    <div x-show="tab === 'composition'" x-cloak>
+        @if($composition->isEmpty())
+            <x-agro.empty-state icon="queue-list" message="Sin uva vinculada"
+                description="Vincula recepciones de uva para registrar la composición de este lote.">
+                <x-slot:action>
+                    <flux:modal.trigger name="modal-composition">
+                        <flux:button variant="primary" icon="plus" size="sm">Vincular recepción</flux:button>
+                    </flux:modal.trigger>
+                </x-slot:action>
+            </x-agro.empty-state>
+        @else
+            @php $totalKg = $composition->sum('quantity_kg'); @endphp
+
+            {{-- Resumen total --}}
+            <div class="flex items-center justify-between mb-4">
+                <p class="text-sm text-zinc-500">
+                    Total vinculado: <span class="font-semibold text-zinc-900">{{ number_format($totalKg, 0) }} kg</span>
+                </p>
+                <flux:modal.trigger name="modal-composition">
+                    <flux:button variant="outline" icon="plus" size="sm">Añadir recepción</flux:button>
+                </flux:modal.trigger>
+            </div>
+
+            {{-- Barra visual de composición --}}
+            @php
+                $colors = ['bg-violet-500','bg-blue-500','bg-emerald-500','bg-amber-500','bg-rose-500','bg-sky-500','bg-orange-500','bg-teal-500'];
+            @endphp
+            <div class="flex rounded-full overflow-hidden h-3 mb-6 gap-px">
+                @foreach($composition as $i => $entry)
+                    <div
+                        class="{{ $colors[$i % count($colors)] }} transition-all"
+                        style="width: {{ $entry->percentage ?? 0 }}%"
+                        title="{{ $entry->harvest->plotPlanting?->plotVariety?->grapeVariety?->name ?? 'Variedad desconocida' }} · {{ number_format($entry->percentage ?? 0, 1) }}%"
+                    ></div>
+                @endforeach
+            </div>
+
+            {{-- Tabla de recepciones --}}
+            <div class="space-y-3">
+                @foreach($composition as $i => $entry)
+                    @php
+                        $harvest  = $entry->harvest;
+                        $variety  = $harvest->plotPlanting?->plotVariety?->grapeVariety?->name ?? '—';
+                        $plot     = $harvest->plotPlanting?->plot?->name ?? '—';
+                    @endphp
+                    <div class="flex items-center gap-4 p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+                        <div class="w-3 h-3 rounded-full {{ $colors[$i % count($colors)] }} shrink-0"></div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-zinc-900">{{ $variety }}</p>
+                            <p class="text-xs text-zinc-500">{{ $plot }} · {{ $harvest->harvest_start_date?->format('d/m/Y') ?? '—' }}</p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-sm font-semibold text-zinc-900">{{ number_format($entry->quantity_kg, 0) }} kg</p>
+                            <p class="text-xs text-violet-600 font-medium">{{ number_format($entry->percentage ?? 0, 1) }}%</p>
+                        </div>
+                        <button
+                            wire:click="unlinkHarvest({{ $entry->id }})"
+                            wire:confirm="¿Desvincular esta recepción del lote?"
+                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
+                        >
+                            <flux:icon icon="x-mark" class="size-4" />
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
+    {{-- ════════════════════════════════════════════════════════════════════════
+         TAB: ADITIVOS
+    ════════════════════════════════════════════════════════════════════════════ --}}
+    <div x-show="tab === 'additives'" x-cloak>
+        @if($additives->isEmpty())
+            <x-agro.empty-state icon="beaker" message="Sin aditivos registrados"
+                description="Registra los aditivos enológicos aplicados en cada etapa del proceso.">
+                <x-slot:action>
+                    <flux:modal.trigger name="modal-additive">
+                        <flux:button variant="primary" icon="plus" size="sm">Añadir aditivo</flux:button>
+                    </flux:modal.trigger>
+                </x-slot:action>
+            </x-agro.empty-state>
+        @else
+            <div class="flex justify-end mb-4">
+                <flux:modal.trigger name="modal-additive">
+                    <flux:button variant="outline" icon="plus" size="sm">Añadir aditivo</flux:button>
+                </flux:modal.trigger>
+            </div>
+            <div class="space-y-3">
+                @foreach($additives as $ad)
+                    <div class="flex items-start gap-4 p-4 rounded-xl bg-zinc-50 border border-zinc-100">
+                        <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center shrink-0">
+                            <flux:icon icon="beaker" class="size-4 text-amber-600" />
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="text-sm font-semibold text-zinc-900">{{ $ad->additive_name }}</p>
+                                @if($ad->processDetail)
+                                    <flux:badge color="violet" size="sm">{{ $ad->processDetail->process_type_label }}</flux:badge>
+                                @endif
+                                @if($ad->supply?->isLowStock())
+                                    <flux:badge color="red" size="sm">Stock bajo</flux:badge>
+                                @endif
+                            </div>
+                            <div class="flex flex-wrap gap-3 mt-1 text-xs text-zinc-500">
+                                <span>{{ $ad->application_date->format('d/m/Y') }}</span>
+                                <span class="font-medium text-zinc-700">
+                                    {{ number_format($ad->quantity, 3) }} {{ $ad->unitOfMeasurement?->abbreviation }}
+                                </span>
+                                @if($ad->oenologist)
+                                    <span>{{ $ad->oenologist->full_name }}</span>
+                                @endif
+                            </div>
+                            @if($ad->notes)
+                                <p class="text-xs text-zinc-400 mt-1">{{ $ad->notes }}</p>
+                            @endif
+                        </div>
+                        <button
+                            wire:click="deleteAdditive({{ $ad->id }})"
+                            wire:confirm="¿Eliminar este aditivo? Se restaurará el stock del insumo si estaba vinculado."
+                            class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
+                        >
+                            <flux:icon icon="trash" class="size-4" />
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     {{-- ════════════════════════════════════════════════════════════════════════
@@ -674,6 +814,135 @@
             <div class="flex justify-end gap-3 pt-2">
                 <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
                 <flux:button variant="primary" wire:click="saveAnalysis">Guardar análisis</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- ── Modal: aditivo enológico ───────────────────────────────────────── --}}
+    <flux:modal name="modal-additive" class="w-full max-w-lg">
+        <div class="p-6 space-y-5">
+            <div>
+                <h3 class="text-base font-semibold text-zinc-900">Registrar aditivo</h3>
+                <p class="text-sm text-zinc-500 mt-1">Al guardar se descontará del stock del insumo si está vinculado.</p>
+            </div>
+
+            {{-- Insumo de bodega (opcional) --}}
+            <flux:field>
+                <flux:label>Insumo de bodega</flux:label>
+                <flux:select wire:model.live="ad_supply_id">
+                    <flux:select.option value="">Introducir manualmente...</flux:select.option>
+                    @foreach($supplies as $supply)
+                        <flux:select.option value="{{ $supply->id }}">
+                            {{ $supply->name }}
+                            @if($supply->commercial_name) ({{ $supply->commercial_name }})@endif
+                            · Stock: {{ number_format($supply->current_stock, 2) }} {{ $supply->unitOfMeasurement?->abbreviation }}
+                        </flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="ad_supply_id" />
+            </flux:field>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <flux:field class="sm:col-span-2">
+                    <flux:label>Nombre del aditivo <span class="text-red-500">*</span></flux:label>
+                    <flux:input wire:model="ad_additive_name" placeholder="Ej. Bentonita, SO₂, Levadura EC1118..." />
+                    <flux:error name="ad_additive_name" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Cantidad <span class="text-red-500">*</span></flux:label>
+                    <flux:input wire:model="ad_quantity" type="number" step="0.001" min="0.001" placeholder="0" />
+                    <flux:error name="ad_quantity" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Unidad <span class="text-red-500">*</span></flux:label>
+                    <flux:select wire:model="ad_unit_id">
+                        <flux:select.option value="">Seleccionar...</flux:select.option>
+                        @foreach($units as $unit)
+                            <flux:select.option value="{{ $unit->id }}">{{ $unit->abbreviation }} — {{ $unit->name }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="ad_unit_id" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Fecha aplicación <span class="text-red-500">*</span></flux:label>
+                    <flux:input wire:model="ad_date" type="date" />
+                    <flux:error name="ad_date" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Etapa del proceso</flux:label>
+                    <flux:select wire:model="ad_process_detail_id">
+                        <flux:select.option value="">Sin etapa específica</flux:select.option>
+                        @foreach($processes as $process)
+                            <flux:select.option value="{{ $process->id }}">
+                                {{ $process->process_type_label }} · {{ $process->start_date?->format('d/m/Y') }}
+                            </flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="ad_process_detail_id" />
+                </flux:field>
+
+                <flux:field class="sm:col-span-2">
+                    <flux:label>Enólogo responsable</flux:label>
+                    <flux:select wire:model="ad_oenologist_id">
+                        <flux:select.option value="">Sin asignar</flux:select.option>
+                        @foreach($oenologists as $oenologist)
+                            <flux:select.option value="{{ $oenologist->id }}">{{ $oenologist->full_name }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="ad_oenologist_id" />
+                </flux:field>
+
+                <flux:field class="sm:col-span-2">
+                    <flux:label>Observaciones</flux:label>
+                    <flux:textarea wire:model="ad_notes" rows="2" />
+                    <flux:error name="ad_notes" />
+                </flux:field>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="saveAdditive">Registrar aditivo</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- ── Modal: vincular recepción de uva ────────────────────────────────── --}}
+    <flux:modal name="modal-composition" class="w-full max-w-lg">
+        <div class="p-6 space-y-5">
+            <div>
+                <h3 class="text-base font-semibold text-zinc-900">Vincular recepción de uva</h3>
+                <p class="text-sm text-zinc-500 mt-1">Selecciona una recepción de uva y la cantidad aportada a este lote.</p>
+            </div>
+
+            <flux:field>
+                <flux:label>Recepción de uva <span class="text-red-500">*</span></flux:label>
+                <flux:select wire:model="co_harvest_id">
+                    <flux:select.option value="">Seleccionar recepción...</flux:select.option>
+                    @foreach($availableHarvests as $h)
+                        @php
+                            $label = ($h->plotPlanting?->plotVariety?->grapeVariety?->name ?? 'Sin variedad')
+                                   . ' · ' . ($h->harvest_start_date?->format('d/m/Y') ?? '—')
+                                   . ' · ' . number_format($h->total_weight ?? 0, 0) . ' kg';
+                        @endphp
+                        <flux:select.option value="{{ $h->id }}">{{ $label }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="co_harvest_id" />
+            </flux:field>
+
+            <flux:field>
+                <flux:label>Cantidad aportada (kg) <span class="text-red-500">*</span></flux:label>
+                <flux:input wire:model="co_quantity_kg" type="number" step="0.001" min="0.001" placeholder="0" />
+                <flux:error name="co_quantity_kg" />
+            </flux:field>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <flux:modal.close><flux:button variant="ghost">Cancelar</flux:button></flux:modal.close>
+                <flux:button variant="primary" wire:click="linkHarvest">Vincular</flux:button>
             </div>
         </div>
     </flux:modal>

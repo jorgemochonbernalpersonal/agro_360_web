@@ -33,16 +33,38 @@ class Wine extends Model
         'cancelled'   => 'Cancelado',
     ];
 
+    const AGING_TYPES = [
+        'joven'       => 'Joven',
+        'roble'       => 'Roble',
+        'crianza'     => 'Crianza',
+        'reserva'     => 'Reserva',
+        'gran_reserva'=> 'Gran Reserva',
+        'other'       => 'Otro',
+    ];
+
+    const CATEGORIES = [
+        'VdM'         => 'Vino de Mesa',
+        'IGP'         => 'IGP',
+        'DO'          => 'DO',
+        'DOCa'        => 'DOCa',
+        'vino_de_pago'=> 'Vino de Pago',
+    ];
+
     protected $fillable = [
         'user_id',
+        'oenologist_id',
         'name',
         'vintage',
         'wine_type',
+        'aging_type',
+        'category',
         'status',
         'variety',
         'volume_liters',
         'initial_quantity_kg',
         'internal_code',
+        'is_must',
+        'is_organic',
         'notes',
     ];
 
@@ -50,6 +72,8 @@ class Wine extends Model
         'vintage'             => 'integer',
         'volume_liters'       => 'decimal:3',
         'initial_quantity_kg' => 'decimal:3',
+        'is_must'             => 'boolean',
+        'is_organic'          => 'boolean',
     ];
 
     // ─── Relaciones ────────────────────────────────────────────────────────────
@@ -57,6 +81,11 @@ class Wine extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function oenologist(): BelongsTo
+    {
+        return $this->belongsTo(Oenologist::class);
     }
 
     public function processDetails(): HasMany
@@ -95,6 +124,11 @@ class Wine extends Model
     public function analyses(): HasMany
     {
         return $this->hasMany(WineAnalysis::class)->orderByDesc('analysis_date');
+    }
+
+    public function additives(): HasMany
+    {
+        return $this->hasMany(WineAdditive::class)->orderByDesc('application_date');
     }
 
     // ─── Helpers de contenedores ───────────────────────────────────────────────
@@ -161,6 +195,16 @@ class Wine extends Model
     public function getStatusLabelAttribute(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getAgingTypeLabelAttribute(): ?string
+    {
+        return $this->aging_type ? (self::AGING_TYPES[$this->aging_type] ?? $this->aging_type) : null;
+    }
+
+    public function getCategoryLabelAttribute(): ?string
+    {
+        return $this->category ? (self::CATEGORIES[$this->category] ?? $this->category) : null;
     }
 
     // ─── Scopes ────────────────────────────────────────────────────────────────

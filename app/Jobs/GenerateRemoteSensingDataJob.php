@@ -17,14 +17,16 @@ class GenerateRemoteSensingDataJob implements ShouldQueue
 
     public int $plotId;
     public bool $ultra;
+    public ?int $recintoId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $plotId, bool $ultra = true)
+    public function __construct(int $plotId, bool $ultra = true, ?int $recintoId = null)
     {
-        $this->plotId = $plotId;
-        $this->ultra = $ultra;
+        $this->plotId    = $plotId;
+        $this->ultra     = $ultra;
+        $this->recintoId = $recintoId;
     }
 
     /**
@@ -34,14 +36,20 @@ class GenerateRemoteSensingDataJob implements ShouldQueue
     {
         try {
             Log::info('Starting remote sensing data generation', [
-                'plot_id' => $this->plotId,
-                'ultra' => $this->ultra,
+                'plot_id'    => $this->plotId,
+                'ultra'      => $this->ultra,
+                'recinto_id' => $this->recintoId,
             ]);
 
-            $exitCode = Artisan::call('remote-sensing:update-enriched', [
+            $args = [
                 '--plot-id' => $this->plotId,
-                '--ultra' => $this->ultra,
-            ]);
+                '--ultra'   => $this->ultra,
+            ];
+            if ($this->recintoId) {
+                $args['--recinto-id'] = $this->recintoId;
+            }
+
+            $exitCode = Artisan::call('remote-sensing:update-enriched', $args);
 
             if ($exitCode === 0) {
                 Log::info('Remote sensing data generated successfully', [

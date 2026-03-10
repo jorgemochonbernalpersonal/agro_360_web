@@ -28,7 +28,7 @@ class NasaETService
     /**
      * Fetch official ET from MODIS
      */
-    public function fetchEvapotranspiration(Plot $plot, string $token): ?array
+    public function fetchEvapotranspiration(Plot $plot, string $token, ?int $recintoId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockET($plot);
@@ -40,7 +40,7 @@ class NasaETService
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
 
             // MOD16A2: MODIS ET 500m, 8-day
             $response = Http::withToken($token)

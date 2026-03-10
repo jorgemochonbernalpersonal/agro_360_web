@@ -62,9 +62,9 @@ class Edit extends Component
         $rules["sigpacCodes.{$index}.code_autonomous_community"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
         $rules["sigpacCodes.{$index}.code_province"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
         $rules["sigpacCodes.{$index}.code_municipality"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
-        $rules["sigpacCodes.{$index}.code_aggregate"] = ['nullable', 'string', 'size:1', 'regex:/^\d{1}$/'];
-        $rules["sigpacCodes.{$index}.code_zone"] = ['required', 'string', 'size:1', 'regex:/^\d{1}$/'];
-        $rules["sigpacCodes.{$index}.code_polygon"] = ['required', 'string', 'size:2', 'regex:/^\d{2}$/'];
+        $rules["sigpacCodes.{$index}.code_aggregate"] = ['nullable', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
+        $rules["sigpacCodes.{$index}.code_zone"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
+        $rules["sigpacCodes.{$index}.code_polygon"] = ['required', 'string', 'max:3', 'regex:/^\d{1,3}$/'];
         $rules["sigpacCodes.{$index}.code_plot"] = ['required', 'string', 'size:5', 'regex:/^\d{5}$/'];
         $rules["sigpacCodes.{$index}.code_enclosure"] = ['required', 'string', 'size:3', 'regex:/^\d{3}$/'];
 
@@ -162,8 +162,8 @@ class Edit extends Component
         if (strlen($code['code_autonomous_community'] ?? '') !== 2) return false;
         if (strlen($code['code_province'] ?? '') !== 2) return false;
         if (strlen($code['code_municipality'] ?? '') !== 3) return false;
-        if (strlen($code['code_zone'] ?? '') !== 1) return false;
-        if (strlen($code['code_polygon'] ?? '') !== 2) return false;
+        if (empty($code['code_zone']) || strlen($code['code_zone']) > 3) return false;
+        if (empty($code['code_polygon']) || strlen($code['code_polygon']) > 3) return false;
         if (strlen($code['code_plot'] ?? '') !== 5) return false;
         if (strlen($code['code_enclosure'] ?? '') !== 3) return false;
 

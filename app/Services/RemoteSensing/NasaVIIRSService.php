@@ -33,7 +33,7 @@ class NasaVIIRSService
     /**
      * Fetch VIIRS NDVI (better than MODIS for small plots)
      */
-    public function fetchVIIRSNDVI(Plot $plot, string $token): ?array
+    public function fetchVIIRSNDVI(Plot $plot, string $token, ?int $recintoId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockVIIRS($plot);
@@ -45,7 +45,7 @@ class NasaVIIRSService
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot);
+            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
 
             /** @var Response $response */
             $response = Http::withToken($token)

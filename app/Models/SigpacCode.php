@@ -77,8 +77,9 @@ class SigpacCode extends Model
     /**
      * Construir código SIGPAC completo desde campos individuales
      *
-     * Formato: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)
-     * Total: 19 dígitos
+     * Formato: CA(2) - Provincia(2) - Municipio(3) - Agregado(3) - Zona(3) - Polígono(3) - Parcela(5) - Recinto(3)
+     * Total: 24 dígitos
+     * Ejemplo: 13-28-079-000-000-012-00045-003
      *
      * @param array $fields Campos individuales
      * @return string Código completo sin guiones
@@ -86,13 +87,13 @@ class SigpacCode extends Model
     public static function buildCodeFromFields(array $fields): string
     {
         $autonomousCommunity = str_pad($fields['code_autonomous_community'] ?? '', 2, '0', STR_PAD_LEFT);
-        $province = str_pad($fields['code_province'] ?? '', 2, '0', STR_PAD_LEFT);
-        $municipality = str_pad($fields['code_municipality'] ?? '', 3, '0', STR_PAD_LEFT);
-        $aggregate = str_pad($fields['code_aggregate'] ?? '0', 1, '0', STR_PAD_LEFT);
-        $zone = str_pad($fields['code_zone'] ?? '0', 1, '0', STR_PAD_LEFT);
-        $polygon = str_pad($fields['code_polygon'] ?? '', 2, '0', STR_PAD_LEFT);
-        $plot = str_pad($fields['code_plot'] ?? '', 5, '0', STR_PAD_LEFT);
-        $enclosure = str_pad($fields['code_enclosure'] ?? '', 3, '0', STR_PAD_LEFT);
+        $province            = str_pad($fields['code_province']             ?? '', 2, '0', STR_PAD_LEFT);
+        $municipality        = str_pad($fields['code_municipality']         ?? '', 3, '0', STR_PAD_LEFT);
+        $aggregate           = str_pad($fields['code_aggregate']            ?? '0', 3, '0', STR_PAD_LEFT);
+        $zone                = str_pad($fields['code_zone']                 ?? '0', 3, '0', STR_PAD_LEFT);
+        $polygon             = str_pad($fields['code_polygon']              ?? '', 3, '0', STR_PAD_LEFT);
+        $plot                = str_pad($fields['code_plot']                 ?? '', 5, '0', STR_PAD_LEFT);
+        $enclosure           = str_pad($fields['code_enclosure']            ?? '', 3, '0', STR_PAD_LEFT);
 
         return $autonomousCommunity . $province . $municipality . $aggregate . $zone . $polygon . $plot . $enclosure;
     }
@@ -100,9 +101,9 @@ class SigpacCode extends Model
     /**
      * Parsear y validar código SIGPAC completo
      *
-     * Formato esperado: 13-28-079-0-0-12-00045-003 o 1328079001200045003
-     * Estructura: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)
-     * Total: 19 dígitos
+     * Formato esperado: 13-28-079-000-000-012-00045-003 o 132807900000001200045003
+     * Estructura: CA(2) - Provincia(2) - Municipio(3) - Agregado(3) - Zona(3) - Polígono(3) - Parcela(5) - Recinto(3)
+     * Total: 24 dígitos
      *
      * @param string $code Código completo con o sin guiones
      * @return array Array con los campos parseados
@@ -116,38 +117,38 @@ class SigpacCode extends Model
         // Validar que solo contenga dígitos
         if (!preg_match('/^\d+$/', $cleanCode)) {
             throw new \InvalidArgumentException(
-                'El código SIGPAC solo puede contener números y guiones. Formato esperado: 13-28-079-0-0-12-00045-003'
+                'El código SIGPAC solo puede contener números y guiones. Formato esperado: 13-28-079-000-000-012-00045-003'
             );
         }
 
-        // Validar longitud exacta (19 dígitos)
-        if (strlen($cleanCode) !== 19) {
+        // Validar longitud exacta (24 dígitos)
+        if (strlen($cleanCode) !== 24) {
             throw new \InvalidArgumentException(
-                'El código SIGPAC debe tener exactamente 19 dígitos. Recibido: ' . strlen($cleanCode) . ' dígitos. '
-                . 'Formato esperado: CA(2) - Provincia(2) - Municipio(3) - Agregado(1) - Zona(1) - Polígono(2) - Parcela(5) - Recinto(3)'
+                'El código SIGPAC debe tener exactamente 24 dígitos. Recibido: ' . strlen($cleanCode) . ' dígitos. '
+                . 'Formato esperado: CA(2) - Provincia(2) - Municipio(3) - Agregado(3) - Zona(3) - Polígono(3) - Parcela(5) - Recinto(3)'
             );
         }
 
         // Extraer cada parte según la estructura SIGPAC
-        $autonomousCommunity = substr($cleanCode, 0, 2);  // Posiciones 0-1 (2 dígitos)
-        $province = substr($cleanCode, 2, 2);  // Posiciones 2-3 (2 dígitos)
-        $municipality = substr($cleanCode, 4, 3);  // Posiciones 4-6 (3 dígitos)
-        $aggregate = substr($cleanCode, 7, 1);  // Posición 7 (1 dígito)
-        $zone = substr($cleanCode, 8, 1);  // Posición 8 (1 dígito)
-        $polygon = substr($cleanCode, 9, 2);  // Posiciones 9-10 (2 dígitos)
-        $plot = substr($cleanCode, 11, 5);  // Posiciones 11-15 (5 dígitos)
-        $enclosure = substr($cleanCode, 16, 3);  // Posiciones 16-18 (3 dígitos)
+        $autonomousCommunity = substr($cleanCode, 0, 2);   // Posiciones 0-1   (2 dígitos)
+        $province            = substr($cleanCode, 2, 2);   // Posiciones 2-3   (2 dígitos)
+        $municipality        = substr($cleanCode, 4, 3);   // Posiciones 4-6   (3 dígitos)
+        $aggregate           = substr($cleanCode, 7, 3);   // Posiciones 7-9   (3 dígitos)
+        $zone                = substr($cleanCode, 10, 3);  // Posiciones 10-12 (3 dígitos)
+        $polygon             = substr($cleanCode, 13, 3);  // Posiciones 13-15 (3 dígitos)
+        $plot                = substr($cleanCode, 16, 5);  // Posiciones 16-20 (5 dígitos)
+        $enclosure           = substr($cleanCode, 21, 3);  // Posiciones 21-23 (3 dígitos)
 
         return [
-            'code' => $cleanCode,  // Guardar sin guiones
-            'code_autonomous_community' => $autonomousCommunity,
-            'code_province' => $province,
-            'code_municipality' => $municipality,
-            'code_aggregate' => $aggregate,
-            'code_zone' => $zone,
-            'code_polygon' => $polygon,
-            'code_plot' => $plot,
-            'code_enclosure' => $enclosure,
+            'code'                       => $cleanCode,
+            'code_autonomous_community'  => $autonomousCommunity,
+            'code_province'              => $province,
+            'code_municipality'          => $municipality,
+            'code_aggregate'             => $aggregate,
+            'code_zone'                  => $zone,
+            'code_polygon'               => $polygon,
+            'code_plot'                  => $plot,
+            'code_enclosure'             => $enclosure,
         ];
     }
 
@@ -169,21 +170,21 @@ class SigpacCode extends Model
      */
     public function getFormattedCodeAttribute(): string
     {
-        if (!$this->code || strlen($this->code) !== 19) {
+        if (!$this->code || strlen($this->code) !== 24) {
             return $this->code ?? 'N/A';
         }
 
-        // Formatear: 13-28-079-0-0-12-00045-003
+        // Formatear: 13-28-079-000-000-012-00045-003
         return sprintf(
             '%s-%s-%s-%s-%s-%s-%s-%s',
-            substr($this->code, 0, 2),  // CA
-            substr($this->code, 2, 2),  // Provincia
-            substr($this->code, 4, 3),  // Municipio
-            substr($this->code, 7, 1),  // Agregado
-            substr($this->code, 8, 1),  // Zona
-            substr($this->code, 9, 2),  // Polígono
-            substr($this->code, 11, 5),  // Parcela
-            substr($this->code, 16, 3)  // Recinto
+            substr($this->code, 0, 2),   // CA
+            substr($this->code, 2, 2),   // Provincia
+            substr($this->code, 4, 3),   // Municipio
+            substr($this->code, 7, 3),   // Agregado
+            substr($this->code, 10, 3),  // Zona
+            substr($this->code, 13, 3),  // Polígono
+            substr($this->code, 16, 5),  // Parcela
+            substr($this->code, 21, 3)   // Recinto
         );
     }
 }

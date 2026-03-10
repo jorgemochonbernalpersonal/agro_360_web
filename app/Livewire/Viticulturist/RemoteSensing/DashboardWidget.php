@@ -25,7 +25,7 @@ class DashboardWidget extends Component
         $this->isLoading = true;
         
         $user = auth()->user();
-        $plots = Plot::forUser($user)->get();
+        $plots = Plot::forUser($user)->whereHas('plotGeometries')->get();
         $service = app(NasaEarthdataService::class);
 
         $excellent = 0;
