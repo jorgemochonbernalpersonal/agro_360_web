@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Campaign extends Model
 {
@@ -82,73 +83,77 @@ class Campaign extends Model
     }
 
     /**
-     * Activar esta campaña y desactivar las demás del viticultor
+     * Activar esta campaña y desactivar las demás del viticultor.
+     * Usa transacción para evitar race condition entre llamadas concurrentes.
      */
     public function activate(): void
     {
-        // Desactivar todas las campañas del viticultor
-        static::where('viticulturist_id', $this->viticulturist_id)
-            ->where('id', '!=', $this->id)
-            ->update(['active' => false]);
+        DB::transaction(function () {
+            static::where('viticulturist_id', $this->viticulturist_id)
+                ->where('id', '!=', $this->id)
+                ->update(['active' => false]);
 
-        // Activar esta campaña
-        $this->update(['active' => true]);
+            $this->update(['active' => true]);
+        });
     }
 
     /**
-     * Obtener o crear la campaña activa del año actual para un viticultor
-     * Retorna null si hay algún error (ej: tabla no existe)
+     * Obtener o crear la campaña activa del año para un viticultor.
+     * Usa transacción con lockForUpdate para prevenir duplicados en requests concurrentes.
+     * Retorna null si hay algún error (ej: tabla no existe).
      */
     public static function getOrCreateActiveForYear(int $viticulturistId, int $year = null): ?self
     {
+        $year = $year ?? now()->year;
+
         try {
-            $year = $year ?? now()->year;
+            return DB::transaction(function () use ($viticulturistId, $year) {
+                // lockForUpdate bloquea el gap en InnoDB, evitando inserciones concurrentes
+                $campaign = static::forViticulturist($viticulturistId)
+                    ->forYear($year)
+                    ->active()
+                    ->lockForUpdate()
+                    ->first();
 
-            // Buscar campaña activa del año
-            $campaign = static::forViticulturist($viticulturistId)
-                ->forYear($year)
-                ->active()
-                ->first();
+                if ($campaign) {
+                    return $campaign;
+                }
 
-            if ($campaign) {
+                // Buscar cualquier campaña del año (aunque no esté activa)
+                $campaign = static::forViticulturist($viticulturistId)
+                    ->forYear($year)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($campaign) {
+                    $campaign->activate();
+                    return $campaign;
+                }
+
+                // Crear nueva campaña y desactivar el resto en la misma transacción
+                $campaign = static::create([
+                    'name'             => "Campaña {$year}",
+                    'year'             => $year,
+                    'viticulturist_id' => $viticulturistId,
+                    'start_date'       => now()->startOfYear(),
+                    'end_date'         => now()->endOfYear(),
+                    'active'           => true,
+                ]);
+
+                static::where('viticulturist_id', $viticulturistId)
+                    ->where('id', '!=', $campaign->id)
+                    ->update(['active' => false]);
+
                 return $campaign;
-            }
-
-            // Buscar cualquier campaña del año (aunque no esté activa)
-            $campaign = static::forViticulturist($viticulturistId)
-                ->forYear($year)
-                ->first();
-
-            if ($campaign) {
-                $campaign->activate();
-                return $campaign;
-            }
-
-            // Crear nueva campaña
-            $campaign = static::create([
-                'name' => "Campaña {$year}",
-                'year' => $year,
-                'viticulturist_id' => $viticulturistId,
-                'start_date' => now()->startOfYear(),
-                'end_date' => now()->endOfYear(),
-                'active' => true,
-            ]);
-
-            // Desactivar otras campañas del viticultor
-            static::where('viticulturist_id', $viticulturistId)
-                ->where('id', '!=', $campaign->id)
-                ->update(['active' => false]);
-
-            return $campaign;
+            });
         } catch (\Exception $e) {
             \Log::error('Error al obtener/crear campaña activa', [
-                'error' => $e->getMessage(),
+                'error'            => $e->getMessage(),
                 'viticulturist_id' => $viticulturistId,
-                'year' => $year ?? now()->year,
-                'trace' => $e->getTraceAsString(),
+                'year'             => $year,
+                'trace'            => $e->getTraceAsString(),
             ]);
-            
-            // Retornar null en lugar de lanzar excepción
+
             return null;
         }
     }

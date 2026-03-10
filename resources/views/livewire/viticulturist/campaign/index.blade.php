@@ -108,9 +108,9 @@
                                 <flux:icon icon="calendar" class="size-4 text-agro-600" />
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $campaign->name }}</p>
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight" title="{{ $campaign->name }}">{{ $campaign->name }}</p>
                                 @if($campaign->description)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $campaign->description }}</p>
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate" title="{{ $campaign->description }}">{{ $campaign->description }}</p>
                                 @endif
                             </div>
                             <flux:badge color="{{ $campaign->active ? 'green' : null }}" size="sm" class="shrink-0">

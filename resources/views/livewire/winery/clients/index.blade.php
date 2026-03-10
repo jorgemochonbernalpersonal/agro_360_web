@@ -173,6 +173,7 @@
                             <div class="flex items-center gap-1">
                                 <button
                                     wire:click="toggleActive({{ $client->id }})"
+                                    wire:loading.attr="disabled"
                                     class="{{ $client->active ? $btnDanger : $btnSuccess }}"
                                     title="{{ $client->active ? 'Desactivar' : 'Activar' }}"
                                 >

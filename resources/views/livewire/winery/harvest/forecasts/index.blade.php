@@ -280,6 +280,7 @@
                                         href="{{ route('winery.harvest-forecasts.edit', $forecast) }}" wire:navigate />
                                     <flux:button size="sm" variant="ghost" icon="trash" class="text-red-500"
                                         wire:click="delete({{ $forecast->id }})"
+                                        wire:loading.attr="disabled"
                                         wire:confirm="¿Eliminar esta previsión? Esta acción no se puede deshacer." />
                                 </div>
                             </div>

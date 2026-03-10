@@ -58,7 +58,7 @@ class Create extends Component
     public function updatedClientId(string $value): void
     {
         if ($value) {
-            $client = Client::with(['addresses.municipality', 'addresses.province'])->find($value);
+            $client = Client::where('user_id', Auth::id())->with(['addresses.municipality', 'addresses.province'])->find($value);
             if ($client) {
                 $this->availableAddresses = $client->addresses;
                 $primary = $client->addresses->firstWhere('is_default', true) ?? $client->addresses->first();
@@ -184,8 +184,22 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'client_id'                    => 'required|exists:clients,id',
-            'client_address_id'            => 'required|exists:client_addresses,id',
+            'client_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                        $fail('El cliente seleccionado no es válido.');
+                    }
+                },
+            ],
+            'client_address_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && $this->client_id && !\App\Models\ClientAddress::where('id', $value)->where('client_id', $this->client_id)->exists()) {
+                        $fail('La dirección seleccionada no pertenece al cliente.');
+                    }
+                },
+            ],
             'order_date'                   => 'required|date',
             'delivery_note_date'           => 'nullable|date',
             'delivery_note_code'           => 'required|string|max:255',
@@ -194,7 +208,14 @@ class Create extends Component
             'observations_invoice'         => 'nullable|string',
             'items'                        => 'required|array|min:1',
             'items.*.name'                 => 'required|string|max:255',
-            'items.*.wine_lot_id'          => 'nullable|exists:wine_lots,id',
+            'items.*.wine_lot_id' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\ProductLot::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                        $fail('El lote de vino seleccionado no es válido.');
+                    }
+                },
+            ],
             'items.*.quantity'             => 'required|numeric|min:0.001',
             'items.*.unit_price'           => 'required|numeric|min:0',
             'items.*.tax_id'               => 'nullable|exists:taxes,id',

@@ -324,14 +324,28 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'client_id'                   => 'required|exists:clients,id',
+            'client_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                        $fail('El cliente seleccionado no es válido.');
+                    }
+                },
+            ],
             'payment_type'                => 'nullable|in:cash,transfer,check,other',
             'payment_status'              => 'required|in:unpaid,partial,paid',
             'observations'                => 'nullable|string',
             'observations_invoice'        => 'nullable|string',
             'items'                       => 'required|array|min:1',
             'items.*.name'                => 'required|string|max:255',
-            'items.*.wine_lot_id'         => 'nullable|exists:wine_lots,id',
+            'items.*.wine_lot_id' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\ProductLot::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                        $fail('El lote de vino seleccionado no es válido.');
+                    }
+                },
+            ],
             'items.*.quantity'            => 'required|numeric|min:0.001',
             'items.*.unit_price'          => 'required|numeric|min:0',
             'items.*.tax_id'              => 'nullable|exists:taxes,id',

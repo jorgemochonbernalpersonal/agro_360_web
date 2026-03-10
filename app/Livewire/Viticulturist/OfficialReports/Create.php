@@ -421,7 +421,7 @@ class Create extends Component
             // Re-abrir el modal de resumen para mostrar el error
             $this->showSummaryModal = true;
             $this->addError('generation', $e->getMessage());
-            $this->toastError($e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al generar el informe. Inténtalo de nuevo.');
         }
     }
 
@@ -719,7 +719,7 @@ class Create extends Component
             ]);
 
             $this->addError('generation', $e->getMessage());
-            $this->toastError($e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al generar el informe. Inténtalo de nuevo.');
             $this->showSummaryModal = true;
         }
     }

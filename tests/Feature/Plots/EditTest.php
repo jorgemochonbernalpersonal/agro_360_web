@@ -52,7 +52,6 @@ class EditTest extends TestCase
 
         $plot = Plot::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'winery_id' => $winery->id,
             'autonomous_community_id' => $autonomousCommunity->id,
             'province_id' => $province->id,
             'municipality_id' => $municipality->id,
@@ -108,7 +107,6 @@ class EditTest extends TestCase
 
         $plot = Plot::factory()->create([
             'viticulturist_id' => $childViticulturist->id,
-            'winery_id' => $winery->id,
             'autonomous_community_id' => $autonomousCommunity->id,
             'province_id' => $province->id,
             'municipality_id' => $municipality->id,
@@ -153,7 +151,6 @@ class EditTest extends TestCase
 
         $plot = Plot::factory()->create([
             'viticulturist_id' => $otherViticulturist->id,
-            'winery_id' => $winery->id,
             'autonomous_community_id' => $autonomousCommunity->id,
             'province_id' => $province->id,
             'municipality_id' => $municipality->id,
@@ -201,7 +198,6 @@ class EditTest extends TestCase
         ]);
 
         $plot = Plot::factory()->create([
-            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
             'autonomous_community_id' => $autonomousCommunity->id,
             'province_id' => $province->id,
@@ -256,7 +252,6 @@ class EditTest extends TestCase
         $municipality = Municipality::where('province_id', $province->id)->first();
 
         $plot = Plot::factory()->create([
-            'winery_id' => $winery2->id,
             'viticulturist_id' => $viticulturist->id,
             'autonomous_community_id' => $autonomousCommunity->id,
             'province_id' => $province->id,
@@ -292,7 +287,6 @@ class EditTest extends TestCase
 
         $plot = Plot::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'winery_id' => $winery->id,
             'autonomous_community_id' => $autonomousCommunity->id,
             'province_id' => $province->id,
             'municipality_id' => $municipality->id,
@@ -332,7 +326,6 @@ class EditTest extends TestCase
 
         $plot = Plot::factory()->create([
             'viticulturist_id' => $viticulturist->id,
-            'winery_id' => $winery->id,
             'autonomous_community_id' => $autonomousCommunity1->id,
             'province_id' => $province1->id,
             'municipality_id' => $municipality1->id,

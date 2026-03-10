@@ -207,12 +207,18 @@ class AgriculturalActivity extends Model
     }
 
     /**
-     * Desbloquear actividad
+     * Desbloquear actividad.
+     * Solo administradores pueden desbloquear — las actividades se bloquean
+     * para cumplimiento PAC y no deben desbloquearse por el viticultor.
      */
     public function unlock(): void
     {
         if (!$this->is_locked) {
             return;
+        }
+
+        if (!\Illuminate\Support\Facades\Auth::user()?->isAdmin()) {
+            throw new \RuntimeException('Solo los administradores pueden desbloquear actividades.');
         }
 
         $this->update([

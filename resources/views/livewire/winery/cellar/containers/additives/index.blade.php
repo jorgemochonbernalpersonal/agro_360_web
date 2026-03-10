@@ -34,6 +34,7 @@
                 <x-agro.table-cell align="right">
                     <flux:button size="sm" variant="ghost" icon="trash"
                         wire:click="delete({{ $additive->id }})"
+                        wire:loading.attr="disabled"
                         wire:confirm="¿Eliminar este registro de aditivo?" />
                 </x-agro.table-cell>
             </x-agro.table-row>

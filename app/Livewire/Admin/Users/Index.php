@@ -115,6 +115,12 @@ class Index extends Component
         $user->save();
 
         $status = $user->can_login ? 'activado' : 'desactivado';
+        SecurityLogger::logSecurityEvent('user_account_toggled', [
+            'admin_id'  => Auth::id(),
+            'user_id'   => $user->id,
+            'user_email'=> $user->email,
+            'action'    => $status,
+        ]);
         $this->toastSuccess("Usuario {$status} exitosamente.");
     }
 
@@ -122,34 +128,44 @@ class Index extends Component
     {
         $user = User::findOrFail($userId);
 
-        $enabling = !$user->is_beta_user;
-
-        $user->is_beta_user = $enabling;
-        if ($enabling) {
-            $user->beta_ends_at      = \Carbon\Carbon::parse('2026-06-30 23:59:59');
-            $user->beta_access_granted = true;
-        } else {
-            $user->beta_ends_at = null;
-        }
-        $user->save();
-
-        // When enabling beta for a winery, cascade to its linked viticultors
+        $enabling     = !$user->is_beta_user;
         $cascadeCount = 0;
-        if ($enabling && $user->role === 'winery') {
-            $viticulturistIds = DB::table('winery_viticulturist')
-                ->where('winery_id', $user->id)
-                ->pluck('viticulturist_id');
 
-            if ($viticulturistIds->isNotEmpty()) {
-                $cascadeCount = User::whereIn('id', $viticulturistIds)
-                    ->where('is_beta_user', false)
-                    ->update([
-                        'is_beta_user'         => true,
-                        'beta_ends_at'         => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
-                        'beta_access_granted'  => true,
-                    ]);
+        DB::transaction(function () use ($user, $enabling, &$cascadeCount) {
+            $user->is_beta_user = $enabling;
+            if ($enabling) {
+                $user->beta_ends_at      = \Carbon\Carbon::parse('2026-06-30 23:59:59');
+                $user->beta_access_granted = true;
+            } else {
+                $user->beta_ends_at = null;
             }
-        }
+            $user->save();
+
+            // When enabling beta for a winery, cascade to its linked viticultors
+            if ($enabling && $user->role === 'winery') {
+                $viticulturistIds = DB::table('winery_viticulturist')
+                    ->where('winery_id', $user->id)
+                    ->pluck('viticulturist_id');
+
+                if ($viticulturistIds->isNotEmpty()) {
+                    $cascadeCount = User::whereIn('id', $viticulturistIds)
+                        ->where('is_beta_user', false)
+                        ->update([
+                            'is_beta_user'         => true,
+                            'beta_ends_at'         => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
+                            'beta_access_granted'  => true,
+                        ]);
+                }
+            }
+        });
+
+        SecurityLogger::logSecurityEvent('user_beta_toggled', [
+            'admin_id'      => Auth::id(),
+            'user_id'       => $user->id,
+            'user_email'    => $user->email,
+            'action'        => $enabling ? 'enabled' : 'disabled',
+            'cascade_count' => $cascadeCount,
+        ]);
 
         $status  = $enabling ? 'con acceso beta' : 'sin acceso beta';
         $message = "Usuario {$status}.";

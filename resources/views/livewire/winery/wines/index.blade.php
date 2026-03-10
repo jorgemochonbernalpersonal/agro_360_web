@@ -72,6 +72,7 @@
                             href="{{ route('winery.wines.edit', $wine) }}" wire:navigate />
                         <flux:button size="sm" variant="ghost" icon="trash"
                             wire:click="delete({{ $wine->id }})"
+                            wire:loading.attr="disabled"
                             wire:confirm="¿Eliminar este vino y todas sus operaciones?" />
                     </div>
                 </x-agro.table-cell>

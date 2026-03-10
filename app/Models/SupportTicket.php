@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class SupportTicket extends Model
@@ -26,6 +27,15 @@ class SupportTicket extends Model
         'resolved_at' => 'datetime',
         'closed_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function (SupportTicket $ticket) {
+            if ($ticket->wasRecentlyCreated || $ticket->wasChanged('status')) {
+                Cache::forget("nav_badge_support_{$ticket->user_id}");
+            }
+        });
+    }
 
     /**
      * Usuario que creó el ticket

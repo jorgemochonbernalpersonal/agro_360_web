@@ -49,14 +49,14 @@ class CreateTest extends TestCase
 
         $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
-        return [$viticulturist, $plot];
+        $variety = GrapeVariety::create(['name' => 'Tempranillo', 'code' => 'TEMP', 'color' => 'red']);
+
+        return [$viticulturist, $plot, $variety];
     }
 
     public function test_viticulturist_can_create_planting_on_own_plot(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
-
-        $variety = GrapeVariety::create(['name' => 'Tempranillo', 'code' => 'TEMP', 'color' => 'red']);
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
@@ -78,7 +78,7 @@ class CreateTest extends TestCase
 
     public function test_area_planted_is_required(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
@@ -91,11 +91,12 @@ class CreateTest extends TestCase
 
     public function test_vine_count_and_density_both_empty_fails(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->set('grape_variety_id', $variety->id)
             ->set('area_planted', '1.0')
             ->set('vine_count', '')
             ->set('density', '')
@@ -107,11 +108,12 @@ class CreateTest extends TestCase
 
     public function test_vine_count_alone_passes_density_check(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->set('grape_variety_id', $variety->id)
             ->set('area_planted', '1.0')
             ->set('vine_count', 3000)
             ->set('density', '')
@@ -126,11 +128,12 @@ class CreateTest extends TestCase
 
     public function test_density_alone_passes_density_check(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->set('grape_variety_id', $variety->id)
             ->set('area_planted', '1.0')
             ->set('vine_count', '')
             ->set('density', 3000)
@@ -145,11 +148,12 @@ class CreateTest extends TestCase
 
     public function test_pac_fields_are_saved(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Plantings\Create::class, ['plot' => $plot])
+            ->set('grape_variety_id', $variety->id)
             ->set('area_planted', '1.5')
             ->set('vine_count', 4000)
             ->set('planting_authorization', 'AUTH-2024-001')
@@ -168,7 +172,7 @@ class CreateTest extends TestCase
 
     public function test_invalid_right_type_fails_validation(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
@@ -182,7 +186,7 @@ class CreateTest extends TestCase
 
     public function test_viticulturist_cannot_access_another_viticulturists_plot(): void
     {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
+        [$viticulturist, $plot, $variety] = $this->makeViticulturistWithPlot();
 
         $other = User::factory()->create([
             'role'              => 'viticulturist',

@@ -100,7 +100,19 @@ class Edit extends Component
             'payment_type'        => 'nullable|in:cash,transfer,check,other',
             'observations'        => 'nullable|string',
             'lines'               => 'required|array|min:1',
-            'lines.*.harvest_id'  => 'required|exists:harvests,id',
+            'lines.*.harvest_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $wineryId        = \Illuminate\Support\Facades\Auth::id();
+                    $viticulturistId = $this->invoice->viticulturist_id;
+                    if ($value && !\App\Models\Harvest::where('id', $value)
+                        ->where('viticulturist_id', $viticulturistId)
+                        ->whereIn('campaign_id', fn($q) => $q->select('id')->from('campaigns')->where('winery_id', $wineryId))
+                        ->exists()) {
+                        $fail('La recepción seleccionada no pertenece a esta liquidación.');
+                    }
+                },
+            ],
             'lines.*.quantity'    => 'required|numeric|min:0.001',
             'lines.*.unit_price'  => 'required|numeric|min:0',
             'lines.*.tax_rate'    => 'required|numeric|min:0|max:100',

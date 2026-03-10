@@ -79,7 +79,7 @@ class CreateCulturalWork extends Component
     protected function rules(): array
     {
         return [
-            'plot_id' => 'required|exists:plots,id',
+            'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => [
                 'nullable',
                 'exists:plot_plantings,id',
@@ -98,7 +98,7 @@ class CreateCulturalWork extends Component
                     }
                 },
             ],
-            'campaign_id' => 'required|exists:campaigns,id',
+            'campaign_id' => $this->campaignOwnershipRule(),
             'activity_date' => 'required|date',
             'work_type' => 'required|string|max:100',
             'hours_worked' => 'nullable|numeric|min:0',
@@ -108,7 +108,7 @@ class CreateCulturalWork extends Component
             'workType' => 'required|in:crew,individual',
             'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
             'crew_member_id' => 'required_if:workType,individual|nullable|exists:users,id',
-            'machinery_id' => 'nullable|exists:machinery,id',
+            'machinery_id' => $this->machineryOwnershipRule(),
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',

@@ -90,7 +90,8 @@ class Edit extends Component
             return;
         }
 
-        $harvest = Harvest::find($harvestId);
+        $harvest = Harvest::whereHas('activity', fn($q) => $q->where('viticulturist_id', Auth::id()))
+            ->find($harvestId);
         if (!$harvest) return;
 
         $state   = $this->getHarvestStockState($harvestId);
@@ -147,6 +148,9 @@ class Edit extends Component
 
         try {
             DB::transaction(function () {
+                // Lock invoice row to prevent concurrent edits
+                Invoice::where('id', $this->invoice->id)->lockForUpdate()->first();
+
                 // ── 1. Revert old stock reservations ───────────────────────────
                 $oldItems = InvoiceItem::where('invoice_id', $this->invoice->id)->get();
                 foreach ($oldItems as $oldItem) {

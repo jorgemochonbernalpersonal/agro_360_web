@@ -230,7 +230,7 @@ class Create extends Component
             $this->toastSuccess('Cliente creado exitosamente.');
             return redirect()->route('viticulturist.clients.index');
         } catch (\Exception $e) {
-            $this->toastError('Error al crear el cliente: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear el cliente. Inténtalo de nuevo.');
         }
     }
 

@@ -112,9 +112,9 @@
                                 <flux:icon icon="{{ $isCompany ? 'building-office' : 'user' }}" class="size-4 {{ $isCompany ? 'text-blue-500' : 'text-agro-600' }}" />
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight">{{ $client->full_name }}</p>
+                                <p class="font-semibold text-zinc-900 text-sm truncate leading-tight" title="{{ $client->full_name }}">{{ $client->full_name }}</p>
                                 @if($isCompany && $client->company_name)
-                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate">{{ $client->company_name }}</p>
+                                    <p class="text-xs text-zinc-400 leading-tight mt-0.5 truncate" title="{{ $client->company_name }}">{{ $client->company_name }}</p>
                                 @endif
                             </div>
                             <flux:badge :color="$isCompany ? 'blue' : null" size="sm" class="shrink-0">
@@ -128,7 +128,7 @@
                         @if($client->email)
                             <div class="flex items-center gap-2">
                                 <flux:icon icon="envelope" class="size-3.5 text-zinc-400 shrink-0" />
-                                <span class="text-xs text-zinc-600 truncate">{{ $client->email }}</span>
+                                <span class="text-xs text-zinc-600 truncate" title="{{ $client->email }}">{{ $client->email }}</span>
                             </div>
                         @endif
                         @if($client->phone)
@@ -147,11 +147,11 @@
                         <div class="bg-zinc-50 rounded-xl p-2.5">
                             <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wide mb-0.5">Ubicación</p>
                             @if($defaultAddress)
-                                <p class="text-xs font-semibold text-zinc-700 truncate">
+                                <p class="text-xs font-semibold text-zinc-700 truncate" title="{{ $defaultAddress->municipality?->name ?? $defaultAddress->address }}">
                                     {{ $defaultAddress->municipality?->name ?? $defaultAddress->address }}
                                 </p>
                                 @if($defaultAddress->province)
-                                    <p class="text-[10px] text-zinc-400 truncate">{{ $defaultAddress->province->name }}</p>
+                                    <p class="text-[10px] text-zinc-400 truncate" title="{{ $defaultAddress->province->name }}">{{ $defaultAddress->province->name }}</p>
                                 @endif
                             @else
                                 <p class="text-xs text-zinc-400 italic">Sin dirección</p>

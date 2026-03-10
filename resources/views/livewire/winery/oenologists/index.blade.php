@@ -124,6 +124,7 @@
                             <div class="flex items-center gap-1">
                                 <button
                                     wire:click="toggleActive({{ $oenologist->id }})"
+                                    wire:loading.attr="disabled"
                                     class="{{ $oenologist->active ? $btnDanger : $btnGreen }}"
                                     title="{{ $oenologist->active ? 'Desactivar' : 'Activar' }}"
                                 >
@@ -131,6 +132,7 @@
                                 </button>
                                 <button
                                     wire:click="delete({{ $oenologist->id }})"
+                                    wire:loading.attr="disabled"
                                     wire:confirm="¿Seguro que quieres eliminar este enólogo?"
                                     class="{{ $btnDanger }}"
                                     title="Eliminar"

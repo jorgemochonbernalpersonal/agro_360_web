@@ -98,7 +98,7 @@ class CreatePhytosanitaryTreatment extends Component
     protected function rules(): array
     {
         return [
-            'plot_id' => 'required|exists:plots,id',
+            'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => [
                 'nullable',
                 'exists:plot_plantings,id',
@@ -117,7 +117,7 @@ class CreatePhytosanitaryTreatment extends Component
                     }
                 },
             ],
-            'campaign_id' => 'required|exists:campaigns,id',
+            'campaign_id' => $this->campaignOwnershipRule(),
             'activity_date' => 'required|date',
             'phenological_stage' => 'required|string|max:50',
             'product_id' => 'required|exists:phytosanitary_products,id',
@@ -126,9 +126,9 @@ class CreatePhytosanitaryTreatment extends Component
             'area_treated' => 'required|numeric|min:0.01',
             'application_method' => 'nullable|string|max:50',
             'pest_id' => 'nullable|exists:pests,id',
-            'crew_id' => 'nullable|exists:crews,id',
+            'crew_id' => $this->crewOwnershipRule(),
             'crew_member_id' => 'nullable|exists:users,id',
-            'machinery_id' => 'nullable|exists:machinery,id',
+            'machinery_id' => $this->machineryOwnershipRule(),
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'wind_speed' => 'nullable|numeric|min:0',

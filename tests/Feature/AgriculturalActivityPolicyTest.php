@@ -8,6 +8,9 @@ use App\Models\PlotPlanting;
 use App\Models\GrapeVariety;
 use App\Models\Campaign;
 use App\Models\AgriculturalActivity;
+use Database\Seeders\AutonomousCommunitySeeder;
+use Database\Seeders\MunicipalitySeeder;
+use Database\Seeders\ProvinceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +21,13 @@ class AgriculturalActivityPolicyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
+        $this->seed([
+            AutonomousCommunitySeeder::class,
+            ProvinceSeeder::class,
+            MunicipalitySeeder::class,
+        ]);
+
         // Crear usuarios de prueba
         $this->viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $this->otherViticulturist = User::factory()->create(['role' => 'viticulturist']);

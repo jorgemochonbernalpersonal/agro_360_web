@@ -131,16 +131,13 @@ class Index extends Component
 
         $campaigns = $query->paginate(12);
 
+        // Una sola query para stats y años (evita 3 COUNT extra por render)
+        $allCampaigns = Campaign::forViticulturist($user->id)->select('active', 'year')->get();
         $stats = [
-            'active'   => Campaign::forViticulturist($user->id)->active()->count(),
-            'inactive' => Campaign::forViticulturist($user->id)->where('active', false)->count(),
+            'active'   => $allCampaigns->where('active', true)->count(),
+            'inactive' => $allCampaigns->where('active', false)->count(),
         ];
-
-        $years = Campaign::forViticulturist($user->id)
-            ->select('year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        $years = $allCampaigns->pluck('year')->unique()->sortDesc()->values();
 
         return view('livewire.viticulturist.campaign.index', [
             'campaigns' => $campaigns,

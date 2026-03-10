@@ -40,13 +40,15 @@ Route::middleware(['auth', 'verified', 'check.beta'])->group(function () {
         
         // PDF Reports
         Route::get('/report/plot/{plot}', function (Plot $plot) {
+            abort_unless(auth()->user()->can('view', $plot), 403);
+
             $service = new RemoteSensingReportService();
             $result = $service->generatePlotReport($plot);
-            
+
             if ($result['success']) {
                 return $service->downloadReport($result['pdf_path']);
             }
-            
+
             return back()->with('error', 'No se pudo generar el informe');
         })->name('report.plot');
         

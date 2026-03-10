@@ -46,11 +46,14 @@ class EditTest extends TestCase
 
         $plot = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
 
+        $variety = GrapeVariety::create(['name' => 'Tempranillo', 'code' => 'TEMP', 'color' => 'red']);
+
         $planting = PlotPlanting::create([
-            'plot_id'      => $plot->id,
-            'area_planted' => 2.0,
-            'status'       => 'active',
-            'vine_count'   => 4000,
+            'plot_id'          => $plot->id,
+            'grape_variety_id' => $variety->id,
+            'area_planted'     => 2.0,
+            'status'           => 'active',
+            'vine_count'       => 4000,
         ]);
 
         $planting->refresh(); // pick up DB defaults (irrigated, active…)
@@ -72,7 +75,7 @@ class EditTest extends TestCase
             ->set('planting_year', 2018)
             ->set('vine_count', 6000)
             ->call('update')
-            ->assertRedirect(route('plots.plantings.index'));
+            ->assertRedirect(route('plots.show', $plot));
 
         $this->assertDatabaseHas('plot_plantings', [
             'id'               => $planting->id,

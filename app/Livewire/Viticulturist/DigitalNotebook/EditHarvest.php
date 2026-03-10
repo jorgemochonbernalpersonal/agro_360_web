@@ -121,6 +121,16 @@ class EditHarvest extends Component
 
         $activity = $this->harvest->activity;
 
+        if (!$user->can('update', $activity)) {
+            abort(403, 'No tienes permiso para editar esta actividad.');
+        }
+
+        if ($activity->isLocked()) {
+            $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
+            redirect()->route('viticulturist.digital-notebook');
+            return;
+        }
+
         // Cargar datos de la actividad
         $this->plot_id = $activity->plot_id;
         $this->plot_planting_id = $this->harvest->plot_planting_id;
@@ -427,10 +437,10 @@ class EditHarvest extends Component
     protected function rules(): array
     {
         $rules = [
-            'plot_id' => 'required|exists:plots,id',
-            'plot_planting_id' => 'required|exists:plot_plantings,id',
+            'plot_id' => $this->plotOwnershipRule(),
+            'plot_planting_id' => $this->plotPlantingOwnershipRule(required: true),
             'container_id' => 'required|exists:containers,id',
-            'campaign_id' => 'required|exists:campaigns,id',
+            'campaign_id' => $this->campaignOwnershipRule(),
             'activity_date' => 'required|date',
             'harvest_start_date' => 'required|date',
             'harvest_end_date' => 'nullable|date|after_or_equal:harvest_start_date',
@@ -461,9 +471,9 @@ class EditHarvest extends Component
             'sanitary_state_oidium'  => 'nullable|numeric|min:0|max:100',
             'sanitary_state_mildew'  => 'nullable|numeric|min:0|max:100',
 
-            'crew_id' => 'nullable|exists:crews,id',
+            'crew_id' => $this->crewOwnershipRule(),
             'crew_member_id' => 'nullable|exists:users,id',
-            'machinery_id' => 'nullable|exists:machinery,id',
+            'machinery_id' => $this->machineryOwnershipRule(),
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',

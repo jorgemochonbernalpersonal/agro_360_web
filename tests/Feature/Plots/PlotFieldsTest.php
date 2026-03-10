@@ -4,9 +4,11 @@ namespace Tests\Feature\Plots;
 
 use App\Models\AutonomousCommunity;
 use App\Models\Municipality;
+use App\Models\Orientation;
 use App\Models\Plot;
 use App\Models\Province;
 use App\Models\SigpacUse;
+use App\Models\SoilType;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Database\Seeders\AutonomousCommunitySeeder;
@@ -57,7 +59,7 @@ class PlotFieldsTest extends TestCase
             'municipality_id'         => $municipality->id,
         ]);
 
-        $plot->refresh(); // pick up DB defaults (ndvi_alert_threshold, alert_email_enabled, tenure_regime…)
+        $plot->refresh();
 
         $sigpacUse = SigpacUse::create(['code' => 'VI', 'description' => 'Viñedo']);
         $plot->sigpacUses()->sync([$sigpacUse->id]);
@@ -66,55 +68,24 @@ class PlotFieldsTest extends TestCase
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // tenure_regime
-    // ──────────────────────────────────────────────────────────────────────────
-
-    public function test_tenure_regime_is_saved_on_edit(): void
-    {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
-
-        $this->actingAs($viticulturist);
-
-        Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-            ->set('tenure_regime', 'arrendamiento')
-            ->call('update')
-            ->assertHasNoErrors(['tenure_regime']);
-
-        $this->assertDatabaseHas('plots', [
-            'id'             => $plot->id,
-            'tenure_regime'  => 'arrendamiento',
-        ]);
-    }
-
-    public function test_invalid_tenure_regime_fails_validation(): void
-    {
-        [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
-
-        $this->actingAs($viticulturist);
-
-        Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-            ->set('tenure_regime', 'herencia')   // valor no permitido
-            ->call('update')
-            ->assertHasErrors(['tenure_regime']);
-    }
-
-    // ──────────────────────────────────────────────────────────────────────────
-    // soil_type
+    // soil_type_id
     // ──────────────────────────────────────────────────────────────────────────
 
     public function test_soil_type_is_saved_on_edit(): void
     {
         [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
 
+        $soilType = SoilType::create(['name' => 'Franco-arcilloso', 'active' => true]);
+
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-            ->set('soil_type', 'franco-arcilloso')
+            ->set('soil_type_id', $soilType->id)
             ->call('update');
 
         $this->assertDatabaseHas('plots', [
-            'id'        => $plot->id,
-            'soil_type' => 'franco-arcilloso',
+            'id'           => $plot->id,
+            'soil_type_id' => $soilType->id,
         ]);
     }
 
@@ -125,9 +96,9 @@ class PlotFieldsTest extends TestCase
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-            ->set('soil_type', 'volcanico')   // valor no permitido
+            ->set('soil_type_id', 99999)   // ID que no existe
             ->call('update')
-            ->assertHasErrors(['soil_type']);
+            ->assertHasErrors(['soil_type_id']);
     }
 
     public function test_soil_type_can_be_left_empty(): void
@@ -137,33 +108,35 @@ class PlotFieldsTest extends TestCase
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-            ->set('soil_type', '')
+            ->set('soil_type_id', '')
             ->call('update')
-            ->assertHasNoErrors(['soil_type']);
+            ->assertHasNoErrors(['soil_type_id']);
 
         $this->assertDatabaseHas('plots', [
-            'id'        => $plot->id,
-            'soil_type' => null,
+            'id'           => $plot->id,
+            'soil_type_id' => null,
         ]);
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // orientation
+    // orientation_id
     // ──────────────────────────────────────────────────────────────────────────
 
     public function test_orientation_is_saved_on_edit(): void
     {
         [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
 
+        $orientation = Orientation::create(['name' => 'Sureste', 'abbreviation' => 'SE', 'active' => true]);
+
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-            ->set('orientation', 'SE')
+            ->set('orientation_id', $orientation->id)
             ->call('update');
 
         $this->assertDatabaseHas('plots', [
-            'id'          => $plot->id,
-            'orientation' => 'SE',
+            'id'             => $plot->id,
+            'orientation_id' => $orientation->id,
         ]);
     }
 
@@ -174,22 +147,25 @@ class PlotFieldsTest extends TestCase
         $this->actingAs($viticulturist);
 
         Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-            ->set('orientation', 'SUR')   // valor no permitido (debe ser 'S')
+            ->set('orientation_id', 99999)   // ID que no existe
             ->call('update')
-            ->assertHasErrors(['orientation']);
+            ->assertHasErrors(['orientation_id']);
     }
 
-    public function test_all_valid_orientations_pass(): void
+    public function test_orientation_can_be_left_empty(): void
     {
         [$viticulturist, $plot] = $this->makeViticulturistWithPlot();
 
         $this->actingAs($viticulturist);
 
-        foreach (['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'] as $orientation) {
-            Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
-                ->set('orientation', $orientation)
-                ->call('update')
-                ->assertHasNoErrors(['orientation']);
-        }
+        Livewire::test(\App\Livewire\Plots\Edit::class, ['plot' => $plot])
+            ->set('orientation_id', '')
+            ->call('update')
+            ->assertHasNoErrors(['orientation_id']);
+
+        $this->assertDatabaseHas('plots', [
+            'id'             => $plot->id,
+            'orientation_id' => null,
+        ]);
     }
 }

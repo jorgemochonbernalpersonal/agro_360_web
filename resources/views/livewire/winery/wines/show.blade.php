@@ -205,6 +205,7 @@
                         </div>
                         <button
                             wire:click="deleteAdditive({{ $ad->id }})"
+                            wire:loading.attr="disabled"
                             wire:confirm="¿Eliminar este aditivo? Se restaurará el stock del insumo si estaba vinculado."
                             class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
                         >
@@ -256,6 +257,7 @@
                                             </div>
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteFermentationControl({{ $m->id }})"
+                                                wire:loading.attr="disabled"
                                                 wire:confirm="¿Eliminar este control?" />
                                         </div>
                                         <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1">
@@ -294,6 +296,7 @@
                                             </div>
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteTransfer({{ $m->id }})"
+                                                wire:loading.attr="disabled"
                                                 wire:confirm="¿Eliminar este trasvase? Se revertirán los cambios de capacidad." />
                                         </div>
                                         <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
@@ -326,6 +329,7 @@
                                             </div>
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteLoss({{ $m->id }})"
+                                                wire:loading.attr="disabled"
                                                 wire:confirm="¿Eliminar esta merma?" />
                                         </div>
                                         @if($m->notes)
@@ -352,6 +356,7 @@
                                             </div>
                                             <flux:button size="xs" variant="ghost" icon="trash"
                                                 wire:click="deleteAnalysis({{ $m->id }})"
+                                                wire:loading.attr="disabled"
                                                 wire:confirm="¿Eliminar este análisis?" />
                                         </div>
                                         <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1">
@@ -406,6 +411,7 @@
                         <x-agro.table-cell align="right">
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteFermentationControl({{ $fc->id }})"
+                                wire:loading.attr="disabled"
                                 wire:confirm="¿Eliminar este control?" />
                         </x-agro.table-cell>
                     </x-agro.table-row>
@@ -437,6 +443,7 @@
                         <x-agro.table-cell align="right">
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteTransfer({{ $tr->id }})"
+                                wire:loading.attr="disabled"
                                 wire:confirm="¿Eliminar este trasvase? Se revertirán los cambios de capacidad." />
                         </x-agro.table-cell>
                     </x-agro.table-row>
@@ -468,6 +475,7 @@
                         <x-agro.table-cell align="right">
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteLoss({{ $lo->id }})"
+                                wire:loading.attr="disabled"
                                 wire:confirm="¿Eliminar esta merma?" />
                         </x-agro.table-cell>
                     </x-agro.table-row>
@@ -510,6 +518,7 @@
                         <x-agro.table-cell align="right">
                             <flux:button size="sm" variant="ghost" icon="trash"
                                 wire:click="deleteAnalysis({{ $an->id }})"
+                                wire:loading.attr="disabled"
                                 wire:confirm="¿Eliminar este análisis?" />
                         </x-agro.table-cell>
                     </x-agro.table-row>

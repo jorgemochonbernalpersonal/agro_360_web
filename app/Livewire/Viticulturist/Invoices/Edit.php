@@ -94,17 +94,20 @@ class Edit extends Component
         $this->delivery_note_code  = $this->invoice->delivery_note_code ?? '';
         $this->invoice_number      = $this->invoice->invoice_number ?? '';
 
-        $this->items = $this->invoice->items->map(function ($item) {
-            // Cargar stock disponible actual para items de cosecha
+        // Batch-load latest HarvestStock per harvest item (evita N+1)
+        $itemHarvestIds = $this->invoice->items->pluck('harvest_id')->filter();
+        $itemLatestStocks = \App\Models\HarvestStock::whereIn('harvest_id', $itemHarvestIds)
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->get()
+            ->keyBy('harvest_id');
+
+        $this->items = $this->invoice->items->map(function ($item) use ($itemLatestStocks) {
             $availableQty = null;
             $totalWeight  = null;
             if ($item->harvest_id) {
-                $latestStock = \App\Models\HarvestStock::where('harvest_id', $item->harvest_id)
-                    ->latest('id')
-                    ->first();
-                // Disponible = stock actual + lo que ya tiene reservado este item
+                $latestStock  = $itemLatestStocks->get($item->harvest_id);
                 $currentAvail = $latestStock ? (float) $latestStock->available_qty : 0;
-                $availableQty = $currentAvail + (float) $item->quantity; // devolver lo de este item al pool
+                $availableQty = $currentAvail + (float) $item->quantity;
                 $totalWeight  = $item->harvest ? (float) $item->harvest->total_weight : null;
             }
 
@@ -158,12 +161,6 @@ class Edit extends Component
     {
         $user = Auth::user();
 
-        // IDs de cosechas ya presentes en esta factura (no repetir)
-        $currentHarvestIds = collect($this->items)
-            ->pluck('harvest_id')
-            ->filter()
-            ->toArray();
-
         $harvests = Harvest::whereHas('activity', function ($q) use ($user) {
             $q->where('viticulturist_id', $user->id);
         })
@@ -175,11 +172,16 @@ class Edit extends Component
         ->orderBy('harvest_start_date', 'desc')
         ->get();
 
+        // Batch-load latest HarvestStock por cosecha (evita N+1)
+        $harvestIds   = $harvests->pluck('id');
+        $latestStocks = \App\Models\HarvestStock::whereIn('harvest_id', $harvestIds)
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->get()
+            ->keyBy('harvest_id');
+
         $this->availableHarvests = $harvests
-            ->map(function ($harvest) {
-                $latestStock = \App\Models\HarvestStock::where('harvest_id', $harvest->id)
-                    ->latest('id')
-                    ->first();
+            ->map(function ($harvest) use ($latestStocks) {
+                $latestStock = $latestStocks->get($harvest->id);
                 $harvest->available_qty_computed = $latestStock
                     ? (float) $latestStock->available_qty
                     : (float) $harvest->total_weight;
@@ -326,7 +328,7 @@ class Edit extends Component
             $this->closeInvoiceModal();
             return redirect()->route('viticulturist.invoices.index');
         } catch (\Exception $e) {
-            $this->toastError('Error al facturar: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al facturar. Inténtalo de nuevo.');
         }
     }
 
@@ -381,16 +383,14 @@ class Edit extends Component
 
     public function getTaxAmountProperty(): float
     {
+        $taxRates  = collect($this->availableTaxes)->keyBy('id');
         $taxAmount = 0;
         foreach ($this->items as $item) {
             $itemSubtotal = ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
             $itemDiscount = $itemSubtotal * (($item['discount_percentage'] ?? 0) / 100);
             $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
-            
-            $tax = ($item['tax_id'] ?? null) ? Tax::find($item['tax_id']) : null;
-            $taxRate = $tax ? $tax->rate : 0;
-            $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-            $taxAmount += $itemTax;
+            $taxRate  = ($item['tax_id'] ?? null) ? (float) ($taxRates[$item['tax_id']]?->rate ?? 0) : 0;
+            $taxAmount += $itemSubtotalAfterDiscount * ($taxRate / 100);
         }
         return round($taxAmount, 2);
     }
@@ -420,7 +420,14 @@ class Edit extends Component
 
         // Validación normal para facturas no bloqueadas
         return [
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                        $fail('El cliente seleccionado no es válido.');
+                    }
+                },
+            ],
             'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
             'invoice_date' => 'nullable|date', // Solo requerido cuando se factura, no en borrador
             'delivery_status' => [
@@ -575,7 +582,7 @@ class Edit extends Component
             $this->toastSuccess('Factura actualizada exitosamente.');
             return redirect()->route('viticulturist.invoices.index');
         } catch (\Exception $e) {
-            $this->toastError('Error al actualizar la factura: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar la factura. Inténtalo de nuevo.');
         }
     }
 

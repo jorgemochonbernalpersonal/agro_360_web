@@ -48,19 +48,19 @@ class AgriculturalActivityPolicy
 
     /**
      * Determinar si el usuario puede actualizar la actividad.
+     * Las actividades bloqueadas (PAC/cuaderno oficial) son inmutables.
      */
     public function update(User $user, AgriculturalActivity $activity): bool
     {
-        // Solo el viticultor dueño puede actualizar
-        return $activity->viticulturist_id === $user->id;
+        return $activity->viticulturist_id === $user->id && !$activity->is_locked;
     }
 
     /**
      * Determinar si el usuario puede eliminar la actividad.
+     * Las actividades bloqueadas no se pueden eliminar.
      */
     public function delete(User $user, AgriculturalActivity $activity): bool
     {
-        // Solo el viticultor dueño puede eliminar
-        return $activity->viticulturist_id === $user->id;
+        return $activity->viticulturist_id === $user->id && !$activity->is_locked;
     }
 }

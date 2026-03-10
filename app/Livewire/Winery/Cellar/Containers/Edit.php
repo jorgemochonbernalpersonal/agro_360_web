@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerType;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Edit extends Component
@@ -64,21 +65,30 @@ class Edit extends Component
         $this->validate();
 
         $newCapacity = (float) $this->capacity;
+        $containerId = $this->container->id;
 
-        if ($newCapacity < $this->container->used_capacity) {
-            $this->addError('capacity', "La capacidad no puede ser menor que lo ya utilizado ({$this->container->used_capacity} kg).");
+        $error = DB::transaction(function () use ($newCapacity, $containerId) {
+            $fresh = Container::where('id', $containerId)->where('user_id', Auth::id())->lockForUpdate()->first();
+            if (!$fresh) return 'Contenedor no encontrado.';
+            if ($newCapacity < (float) $fresh->used_capacity) {
+                return "La capacidad no puede ser menor que lo ya utilizado ({$fresh->used_capacity} kg).";
+            }
+            $fresh->update([
+                'name'          => $this->name,
+                'type_id'       => (int) $this->type_id,
+                'capacity'      => $newCapacity,
+                'serial_number' => $this->serial_number ?: null,
+                'description'   => $this->description ?: null,
+                'purchase_date' => $this->purchase_date ?: null,
+                'supplier_name' => $this->supplier_name ?: null,
+            ]);
+            return null;
+        });
+
+        if ($error) {
+            $this->addError('capacity', $error);
             return;
         }
-
-        $this->container->update([
-            'name'          => $this->name,
-            'type_id'       => (int) $this->type_id,
-            'capacity'      => $newCapacity,
-            'serial_number' => $this->serial_number ?: null,
-            'description'   => $this->description ?: null,
-            'purchase_date' => $this->purchase_date ?: null,
-            'supplier_name' => $this->supplier_name ?: null,
-        ]);
 
         $this->toastSuccess('Contenedor actualizado correctamente.');
         redirect()->route('winery.containers.index');

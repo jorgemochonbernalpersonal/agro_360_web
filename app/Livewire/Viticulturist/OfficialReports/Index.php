@@ -234,7 +234,7 @@ class Index extends Component
             return $service->downloadReportInFormat($report, $format);
             
         } catch (\Exception $e) {
-            $this->toastError('Error al descargar: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al descargar el informe. Inténtalo de nuevo.');
         }
     }
 

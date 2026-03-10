@@ -58,7 +58,8 @@ class Create extends Component
             return;
         }
 
-        $harvest = Harvest::find($harvestId);
+        $harvest = Harvest::whereHas('activity', fn($q) => $q->where('viticulturist_id', Auth::id()))
+            ->find($harvestId);
         if (!$harvest) return;
 
         $state = $this->getHarvestStockState($harvestId);

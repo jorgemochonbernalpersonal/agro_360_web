@@ -50,12 +50,13 @@ class Index extends Component
 
         $grapes = (clone $query)->orderByDesc('entry_date')->paginate(25);
 
+        $statsRow = (clone $query)->where('status', 'available')
+            ->selectRaw('COALESCE(SUM(total_weight_kg), 0) as total_kg, COALESCE(SUM(total_weight_kg - used_weight_kg), 0) as available_kg, COUNT(*) as partidas')
+            ->first();
         $stats = [
-            'total_kg'     => (clone $query)->where('status', 'available')->sum('total_weight_kg'),
-            'available_kg' => (clone $query)->where('status', 'available')
-                ->selectRaw('SUM(total_weight_kg - used_weight_kg) as avail')
-                ->value('avail') ?? 0,
-            'partidas'     => (clone $query)->where('status', 'available')->count(),
+            'total_kg'     => (float) $statsRow->total_kg,
+            'available_kg' => (float) $statsRow->available_kg,
+            'partidas'     => (int) $statsRow->partidas,
         ];
 
         $vintages = ExternalGrape::where('user_id', $wineryId)

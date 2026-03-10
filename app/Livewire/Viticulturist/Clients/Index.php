@@ -98,9 +98,11 @@ class Index extends Component
 
         $clients = $query->orderBy('created_at', 'desc')->paginate(12);
 
+        // Una sola query para stats (evita 2 COUNT extra por render)
+        $allClients = Client::forUser($user->id)->select('active')->get();
         $stats = [
-            'active'   => Client::forUser($user->id)->active()->count(),
-            'inactive' => Client::forUser($user->id)->where('active', false)->count(),
+            'active'   => $allClients->where('active', true)->count(),
+            'inactive' => $allClients->where('active', false)->count(),
         ];
 
         return view('livewire.viticulturist.clients.index', [

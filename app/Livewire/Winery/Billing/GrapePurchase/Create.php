@@ -66,7 +66,17 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'viticulturist_id'    => 'required|exists:users,id',
+            'viticulturist_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\WineryViticulturist::where('winery_id', \Illuminate\Support\Facades\Auth::id())
+                        ->where('viticulturist_id', $value)
+                        ->where('source', 'own')
+                        ->exists()) {
+                        $fail('El viticultor seleccionado no pertenece a tu bodega.');
+                    }
+                },
+            ],
             'invoice_date'        => 'required|date',
             'payment_type'        => 'nullable|in:cash,transfer,check,other',
             'observations'        => 'nullable|string',

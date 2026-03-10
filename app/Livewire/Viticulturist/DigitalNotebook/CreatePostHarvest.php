@@ -68,7 +68,7 @@ class CreatePostHarvest extends Component
     protected function rules(): array
     {
         return [
-            'plot_id' => 'required|exists:plots,id',
+            'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => [
                 'nullable',
                 'exists:plot_plantings,id',

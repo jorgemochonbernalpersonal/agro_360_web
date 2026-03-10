@@ -1,6 +1,5 @@
 <?php
 
-use App\Livewire\Counter;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -64,8 +63,6 @@ Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'inde
 // Verificación pública de informes oficiales
 Route::get('/verify-report/{code}', [App\Http\Controllers\ReportVerificationController::class, 'verify'])
     ->name('reports.verify');
-
-Route::get('/counter', Counter::class)->name('counter');
 
 // Ruta de beta expirada (requiere auth)
 Route::middleware('auth')->get('/beta/expired', \App\Livewire\Beta\Expired::class)->name('beta.expired');

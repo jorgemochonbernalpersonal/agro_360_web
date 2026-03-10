@@ -264,7 +264,7 @@ class Settings extends Component
             $this->toastSuccess('Contraseña de firma digital ' . ($wasUpdate ? 'actualizada' : 'creada') . ' correctamente');
             
         } catch (\Exception $e) {
-            $this->toastError('Error al guardar la contraseña de firma: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al guardar la configuración. Inténtalo de nuevo.');
         }
     }
     
@@ -338,7 +338,7 @@ class Settings extends Component
             $this->toastSuccess('Contraseña de firma eliminada. Te hemos enviado un email de confirmación. Ahora puedes crear una nueva.');
             
         } catch (\Exception $e) {
-            $this->toastError('Error al resetear: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al resetear. Inténtalo de nuevo.');
         }
     }
     

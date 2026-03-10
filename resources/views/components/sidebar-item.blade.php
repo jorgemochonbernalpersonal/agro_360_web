@@ -1,4 +1,7 @@
 {{-- Sidebar Item Component --}}
+@if(isset($item['divider']) && $item['divider'])
+    <div class="mx-2 my-1.5 border-t border-white/10"></div>
+@else
 <div class="mb-0.5">
     <a
         href="{{ route($item['route']) }}"
@@ -70,3 +73,4 @@
         </div>
     @endif
 </div>
+@endif

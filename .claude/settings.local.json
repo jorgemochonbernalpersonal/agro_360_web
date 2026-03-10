@@ -55,7 +55,19 @@
       "Bash(\"C:/Users/jorge/Desktop/agro365/resources/views/livewire/winery/billing/products/index.blade.php\":*)",
       "Bash(sed:*)",
       "Bash(/dev/null:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(cd \"/c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Viticulturist/DigitalNotebook\" && \\\\\nfor f in EditHarvest.php CreateHarvest.php EditObservation.php EditPhytosanitaryTreatment.php EditIrrigation.php EditFertilization.php CreatePhytosanitaryTreatment.php EditCulturalWork.php CreateObservation.php CreateCulturalWork.php CreateIrrigation.php CreateFertilization.php; do\n  sed -i \"s/'campaign_id' => 'required|exists:campaigns,id',/'campaign_id' => \\\\$this->campaignOwnershipRule\\(\\),/\" \"$f\"\n  sed -i \"s/'machinery_id' => 'nullable|exists:machinery,id',/'machinery_id' => \\\\$this->machineryOwnershipRule\\(\\),/\" \"$f\"\ndone\necho \"campaign + machinery done\")",
+      "Bash(cd \"/c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Viticulturist/DigitalNotebook\" && \\\\\nfor f in EditHarvest.php EditObservation.php EditPhytosanitaryTreatment.php EditIrrigation.php EditFertilization.php CreatePhytosanitaryTreatment.php EditCulturalWork.php CreateObservation.php; do\n  sed -i \"s/'crew_id' => 'nullable|exists:crews,id',/'crew_id' => \\\\$this->crewOwnershipRule\\(\\),/\" \"$f\"\ndone\necho \"crew done\")",
+      "Bash(cd \"/c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Viticulturist\"\nsed -i \"s/\\\\$this->toastError\\(\\\\$e->getMessage\\(\\)\\);/\\\\$this->toastError\\(\\\\$e instanceof \\\\\\\\\\\\\\\\RuntimeException ? \\\\$e->getMessage\\(\\) : 'Error al generar el informe. Inténtalo de nuevo.'\\);/g\" OfficialReports/Create.php\necho \"done\")",
+      "Bash(find app/Livewire/Viticulturist/DigitalNotebook -name \"*.php\" | xargs sed -i \\\\\n  \"s/'plot_id' => 'required|exists:plots,id',/'plot_id' => \\\\$this->plotOwnershipRule\\(\\),/g\" && echo \"Done\")",
+      "Bash(grep -rn \"'campaign_id'.*exists:campaigns\" app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/ 2>/dev/null && grep -rn \"'plot_planting_id'\\\\|'campaign_id'\" app/Livewire/Viticulturist/DigitalNotebook/EstimatedYields/ 2>/dev/null)",
+      "Bash(grep -n \"activities\\\\\\(\\\\\\)\" app/Models/Plot.php | head -5 && grep -n \"->activities\" resources/views/livewire/viticulturist/digital-notebook/create-fertilization.blade.php 2>/dev/null | head -5)",
+      "Bash(grep -rn \"\\\\$e->getMessage\\(\\)\" \"C:\\\\Users\\\\dispo\\\\Desktop\\\\personal\\\\agro_360_web\\\\app\\\\Livewire\\\\Winery\" | head -10)",
+      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/=== Fix 2: ProductSale/**)",
+      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/=== Fix 3: ProductSale/**)",
+      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/=== Fix 4: GrapePurchase/**)",
+      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/=== Fix 5: Containers/**)",
+      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/**)"
     ]
   }
 }

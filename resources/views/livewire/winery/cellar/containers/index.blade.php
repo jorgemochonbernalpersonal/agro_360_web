@@ -139,6 +139,7 @@
                                 </button>
                             @else
                                 <button wire:click="archive({{ $container->id }})"
+                                wire:loading.attr="disabled"
                                     wire:confirm="¿Desactivar este contenedor?"
                                     title="Desactivar"
                                     class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
@@ -147,6 +148,7 @@
                             @endif
                             @if($container->harvests_count === 0)
                                 <button wire:click="delete({{ $container->id }})"
+                                wire:loading.attr="disabled"
                                     wire:confirm="¿Eliminar este contenedor permanentemente?"
                                     title="Eliminar"
                                     class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors">

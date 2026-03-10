@@ -54,6 +54,7 @@
                             href="{{ route('winery.winery-supplies.edit', $supply) }}" wire:navigate />
                         <flux:button size="sm" variant="ghost" icon="trash"
                             wire:click="delete({{ $supply->id }})"
+                            wire:loading.attr="disabled"
                             wire:confirm="¿Eliminar este insumo?" />
                     </div>
                 </x-agro.table-cell>

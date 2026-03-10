@@ -144,8 +144,8 @@ class Edit extends Component
         $this->toastSuccess('Plantación actualizada correctamente.');
 
         $showRoute = Auth::user()->isWinery()
-            ? route('winery.plots.show', $this->plot->id)
-            : route('plots.show', $this->plot->id);
+            ? route('winery.plots.show', $this->planting->plot_id)
+            : route('plots.show', $this->planting->plot_id);
 
         return $this->redirect($showRoute, navigate: true);
     }

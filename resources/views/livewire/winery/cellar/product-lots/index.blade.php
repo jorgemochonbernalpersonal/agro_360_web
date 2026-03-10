@@ -215,11 +215,13 @@
                                 <div class="flex items-center gap-0.5">
                                     @if ($isActive)
                                         <button wire:click="toggleActive({{ $lot->id }})"
+                                        wire:loading.attr="disabled"
                                             class="{{ $btnDanger }}" title="Desactivar">
                                             <flux:icon icon="no-symbol" class="size-4" />
                                         </button>
                                     @else
                                         <button wire:click="toggleActive({{ $lot->id }})"
+                                        wire:loading.attr="disabled"
                                             class="{{ $btnSuccess }}" title="Activar">
                                             <flux:icon icon="check-circle" class="size-4" />
                                         </button>

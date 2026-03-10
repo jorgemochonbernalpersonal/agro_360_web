@@ -133,7 +133,7 @@ class EditFertilization extends Component
     protected function rules(): array
     {
         return [
-            'plot_id' => 'required|exists:plots,id',
+            'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => [
                 'nullable',
                 'exists:plot_plantings,id',
@@ -152,7 +152,7 @@ class EditFertilization extends Component
                     }
                 },
             ],
-            'campaign_id' => 'required|exists:campaigns,id',
+            'campaign_id' => $this->campaignOwnershipRule(),
             'activity_date' => 'required|date',
             'fertilizer_type' => 'required|string|max:100',
             'fertilizer_name' => 'nullable|string|max:255',
@@ -161,9 +161,9 @@ class EditFertilization extends Component
             'application_method' => 'nullable|string|max:50',
             'area_applied' => 'required|numeric|min:0.01',
             'phenological_stage' => 'required|string|max:50',
-            'crew_id' => 'nullable|exists:crews,id',
+            'crew_id' => $this->crewOwnershipRule(),
             'crew_member_id' => 'nullable|exists:users,id',
-            'machinery_id' => 'nullable|exists:machinery,id',
+            'machinery_id' => $this->machineryOwnershipRule(),
             'weather_conditions' => 'nullable|string|max:255',
             'temperature' => 'nullable|numeric',
             'notes' => 'nullable|string',

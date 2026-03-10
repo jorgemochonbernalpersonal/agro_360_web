@@ -87,7 +87,6 @@ class CreateTest extends TestCase
             'area' => '10.500',
             'active' => true,
             'viticulturist_id' => $childViticulturist->id,
-            'winery_id' => $winery->id,
             'autonomous_community_id' => $autonomousCommunity->id,
             'province_id' => $province->id,
             'municipality_id' => $municipality->id,
@@ -329,7 +328,6 @@ class CreateTest extends TestCase
 
         $component = Livewire::test(\App\Livewire\Plots\Create::class)
             ->set('name', 'Parcela Winery')
-            ->set('winery_id', $winery->id)
             ->set('viticulturist_id', $viticulturist->id)
             ->set('autonomous_community_id', $autonomousCommunity->id)
             ->set('province_id', $province->id)
@@ -342,7 +340,6 @@ class CreateTest extends TestCase
 
         $this->assertDatabaseHas('plots', [
             'name' => 'Parcela Winery',
-            'winery_id' => $winery->id,
             'viticulturist_id' => $viticulturist->id,
         ]);
     }

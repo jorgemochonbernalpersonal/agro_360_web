@@ -45,11 +45,11 @@
                                 <flux:icon icon="document-text" class="size-5 text-agro-600" />
                             </div>
                             <div class="flex-1 min-w-0">
-                                <h3 class="font-mono font-bold text-zinc-900 truncate">
+                                <h3 class="font-mono font-bold text-zinc-900 truncate" title="{{ $invoice->invoice_number ?? 'Sin código de factura' }}">
                                     {{ $invoice->invoice_number ?? 'Sin código de factura' }}
                                 </h3>
                                 @if ($invoice->delivery_note_code)
-                                    <p class="text-xs text-zinc-400 font-mono truncate">{{ $invoice->delivery_note_code }}</p>
+                                    <p class="text-xs text-zinc-400 font-mono truncate" title="{{ $invoice->delivery_note_code }}">{{ $invoice->delivery_note_code }}</p>
                                 @else
                                     <p class="text-xs text-zinc-400">
                                         {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}
@@ -78,7 +78,7 @@
                     <div class="flex-1 space-y-3 text-sm">
                         <div class="flex items-center gap-2 text-zinc-600">
                             <flux:icon icon="building-office" class="size-4 text-zinc-400 shrink-0" />
-                            <span class="truncate font-medium">{{ $invoice->billing_company_name ?? '—' }}</span>
+                            <span class="truncate font-medium" title="{{ $invoice->billing_company_name ?? '' }}">{{ $invoice->billing_company_name ?? '—' }}</span>
                         </div>
 
                         <div class="flex items-center justify-between">

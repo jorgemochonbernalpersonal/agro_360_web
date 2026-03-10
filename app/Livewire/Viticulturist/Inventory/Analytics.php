@@ -31,8 +31,9 @@ class Analytics extends Component
 
     public function exportInventory()
     {
+        $userId = Auth::id();
         return response()->download(
-            storage_path('app/exports/inventory_' . now()->format('Y-m-d') . '.xlsx')
+            storage_path('app/exports/inventory_' . $userId . '_' . now()->format('Y-m-d') . '.xlsx')
         );
     }
 

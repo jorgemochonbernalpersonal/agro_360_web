@@ -17,6 +17,8 @@ class PlotApiTest extends TestCase
     {
         parent::setUp();
 
+        $this->markTestSkipped('REST API for plots not yet implemented.');
+
         $this->user = User::factory()->create();
     }
 

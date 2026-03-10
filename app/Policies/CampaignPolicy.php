@@ -36,20 +36,20 @@ class CampaignPolicy
 
     /**
      * Determinar si el usuario puede actualizar la campaña.
+     * Las campañas bloqueadas (firmadas para PAC) son inmutables.
      */
     public function update(User $user, Campaign $campaign): bool
     {
-        // Solo el viticultor dueño puede actualizar
-        return $campaign->viticulturist_id === $user->id;
+        return $campaign->viticulturist_id === $user->id && !$campaign->locked_at;
     }
 
     /**
      * Determinar si el usuario puede eliminar la campaña.
+     * Las campañas bloqueadas no se pueden eliminar.
      */
     public function delete(User $user, Campaign $campaign): bool
     {
-        // Solo el viticultor dueño puede eliminar
-        return $campaign->viticulturist_id === $user->id;
+        return $campaign->viticulturist_id === $user->id && !$campaign->locked_at;
     }
 
     /**

@@ -7,13 +7,14 @@ use App\Models\PlotPlanting;
 use App\Models\Campaign;
 use App\Models\Plot;
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithViticulturistValidation;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithViticulturistValidation;
 
     public $estimatedYield;
     public $estimated_yield_id;
@@ -195,8 +196,8 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'plot_planting_id'            => 'required|exists:plot_plantings,id',
-            'campaign_id'                 => 'required|exists:campaigns,id',
+            'plot_planting_id'            => $this->plotPlantingOwnershipRule(required: true),
+            'campaign_id'                 => $this->campaignOwnershipRule(),
             'estimation_round'            => 'required|integer|min:1|max:4',
             'estimated_yield_per_hectare' => 'required|numeric|min:0.01',
             'estimated_total_yield'       => 'required|numeric|min:0.01',
@@ -274,7 +275,7 @@ class Edit extends Component
             $this->toastSuccess('Rendimiento estimado actualizado exitosamente.');
             return redirect()->route('viticulturist.digital-notebook.estimated-yields.index');
         } catch (\Exception $e) {
-            $this->toastError('Error al actualizar el rendimiento estimado: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar el rendimiento estimado. Inténtalo de nuevo.');
         }
     }
 

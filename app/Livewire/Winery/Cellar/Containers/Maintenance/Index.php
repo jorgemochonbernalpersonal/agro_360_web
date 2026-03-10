@@ -62,10 +62,11 @@ class Index extends Component
 
         $maintenances = (clone $query)->orderByDesc('scheduled_date')->paginate(20);
 
+        $allMaintenance = ContainerMaintenance::where('container_id', $this->container->id)->get(['status', 'cost']);
         $stats = [
-            'scheduled'  => ContainerMaintenance::where('container_id', $this->container->id)->where('status', 'scheduled')->count(),
-            'completed'  => ContainerMaintenance::where('container_id', $this->container->id)->where('status', 'completed')->count(),
-            'total_cost' => ContainerMaintenance::where('container_id', $this->container->id)->where('status', 'completed')->sum('cost'),
+            'scheduled'  => $allMaintenance->where('status', 'scheduled')->count(),
+            'completed'  => $allMaintenance->where('status', 'completed')->count(),
+            'total_cost' => $allMaintenance->where('status', 'completed')->sum('cost'),
         ];
 
         return view('livewire.winery.cellar.containers.maintenance.index', [

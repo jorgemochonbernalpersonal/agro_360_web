@@ -4,6 +4,7 @@ namespace Tests\Feature\Viticulturist\Machinery;
 
 use App\Livewire\Viticulturist\Machinery\Create;
 use App\Models\Machinery;
+use App\Models\MachineryType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -20,11 +21,13 @@ class CreateTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
+        $type = MachineryType::create(['name' => 'Tractor', 'active' => true]);
+
         $this->actingAs($viticulturist);
 
         Livewire::test(Create::class)
             ->set('name', 'Tractor Test')
-            ->set('type', 'Tractor')
+            ->set('machinery_type_id', $type->id)
             ->set('brand', 'Marca X')
             ->set('model', 'Modelo Y')
             ->set('year', now()->year)
@@ -33,8 +36,8 @@ class CreateTest extends TestCase
             ->assertRedirect(route('viticulturist.machinery.index'));
 
         $this->assertDatabaseHas('machinery', [
-            'name' => 'Tractor Test',
-            'type' => 'Tractor',
+            'name'             => 'Tractor Test',
+            'type'             => 'Tractor',
             'viticulturist_id' => $viticulturist->id,
         ]);
     }
@@ -50,13 +53,11 @@ class CreateTest extends TestCase
 
         Livewire::test(Create::class)
             ->set('name', '')
-            ->set('type', '')
+            ->set('machinery_type_id', '')
             ->set('year', 1800) // menor que 1900
             ->call('save')
-            ->assertHasErrors(['name', 'type', 'year']);
+            ->assertHasErrors(['name', 'machinery_type_id', 'year']);
 
         $this->assertSame(0, Machinery::count());
     }
 }
-
-

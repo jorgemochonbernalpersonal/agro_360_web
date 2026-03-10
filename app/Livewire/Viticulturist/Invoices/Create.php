@@ -107,17 +107,19 @@ class Create extends Component
         ->orderBy('harvest_start_date', 'desc')
         ->get();
 
-        // Añadir stock disponible real a cada cosecha (una query por cosecha — lista pequeña)
-        $this->availableHarvests = $harvests
-            ->map(function ($harvest) {
-                $latestStock = \App\Models\HarvestStock::where('harvest_id', $harvest->id)
-                    ->latest('id')
-                    ->first();
+        // Cargar el último HarvestStock por cosecha en una sola query (evita N+1)
+        $harvestIds  = $harvests->pluck('id');
+        $latestStocks = \App\Models\HarvestStock::whereIn('harvest_id', $harvestIds)
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->get()
+            ->keyBy('harvest_id');
 
+        $this->availableHarvests = $harvests
+            ->map(function ($harvest) use ($latestStocks) {
+                $latestStock = $latestStocks->get($harvest->id);
                 $harvest->available_qty_computed = $latestStock
                     ? (float) $latestStock->available_qty
                     : (float) $harvest->total_weight;
-
                 return $harvest;
             })
             ->filter(fn ($h) => $h->available_qty_computed > 0)
@@ -278,7 +280,14 @@ class Create extends Component
     protected function rules(): array
     {
         $rules = [
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\Client::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                        $fail('El cliente seleccionado no es válido.');
+                    }
+                },
+            ],
             'client_address_id' => 'required|exists:client_addresses,id', // AHORA OBLIGATORIO
             'invoice_date' => 'required|date',
             'delivery_note_date' => 'required|date|before_or_equal:today',
@@ -456,7 +465,7 @@ class Create extends Component
             $this->toastSuccess("Albarán {$deliveryNoteCode} creado. Emítelo para generar el número de factura.");
             return redirect()->route('viticulturist.invoices.index');
         } catch (\Exception $e) {
-            $this->toastError('Error al crear la factura: ' . $e->getMessage());
+            $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear la factura. Inténtalo de nuevo.');
         }
     }
 

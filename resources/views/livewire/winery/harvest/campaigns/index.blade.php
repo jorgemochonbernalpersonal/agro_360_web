@@ -80,12 +80,14 @@
                                 <flux:button size="sm" variant="ghost"
                                     :icon="$campaign->active ? 'lock-closed' : 'lock-open'"
                                     wire:click="toggleActive({{ $campaign->id }})"
+                                    wire:loading.attr="disabled"
                                     title="{{ $campaign->active ? 'Cerrar campaña' : 'Activar campaña' }}"
                                 />
                                 @if($campaign->activities_count === 0)
                                     <flux:button size="sm" variant="ghost" icon="trash"
                                         class="text-red-500"
                                         wire:click="delete({{ $campaign->id }})"
+                                        wire:loading.attr="disabled"
                                         wire:confirm="¿Eliminar esta campaña?"
                                         title="Eliminar campaña"
                                     />

@@ -4,7 +4,7 @@
     $user = auth()->user();
 
     $activeSections = [];
-    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'territory', 'resources', 'billing', 'clients', 'compliance', 'cuaderno_official', 'pac', 'system'] as $section) {
+    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'territory', 'resources', 'billing', 'clients', 'compliance', 'pac', 'system'] as $section) {
         if (isset($menu[$section])) {
             foreach ($menu[$section] as $item) {
                 if ($item['active'] ?? false) { $activeSections[] = $section; break; }
@@ -13,22 +13,21 @@
     }
 
     $sections = [
-        // Viticulturist
+        // Viticulturist — uso diario primero
         'operations'        => 'Campaña y Cuaderno',
         'plots_analysis'    => 'Parcelas y Territorio',
         // Winery
         'harvest'           => 'Vendimia',
         'cellar'            => 'Bodega',
         'territory'         => 'Territorio',
-        // Shared
+        // Shared — uso frecuente
         'resources'         => 'Recursos',
         'billing'           => 'Facturación y Clientes',
         'clients'           => 'Clientes',
-        // Viticulturist compliance (split)
-        'compliance'        => 'Normativa',
-        'cuaderno_official' => 'Cuaderno Oficial',
+        // Cumplimiento normativo (uso periódico)
+        'compliance'        => 'Normativa y Cumplimiento',
         'pac'               => 'PAC',
-        // Winery compliance
+        // Sistema
         'system'            => 'Sistema',
     ];
 @endphp
@@ -76,12 +75,13 @@
                 <div class="mt-2">
                     <button
                         @click="toggle('{{ $key }}')"
-                        class="w-full flex items-center justify-between px-3 py-1.5 text-[10px] font-bold text-white/35 uppercase tracking-widest hover:text-white/60 rounded-lg transition-colors duration-200 sidebar-text"
+                        :aria-expanded="isOpen('{{ $key }}')"
+                        class="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-semibold text-white/55 uppercase tracking-widest hover:text-white/75 rounded-lg transition-colors duration-200 sidebar-text"
                     >
                         <span>{{ $label }}</span>
                         <flux:icon icon="chevron-down" variant="micro" class="transition-transform duration-200 opacity-50" ::class="isOpen('{{ $key }}') ? 'rotate-180' : ''" />
                     </button>
-                    <div x-cloak x-show="isOpen('{{ $key }}')" x-collapse class="mt-1 space-y-0.5">
+                    <div x-cloak x-show="isOpen('{{ $key }}')" x-collapse class="section-items mt-1 space-y-0.5">
                         @foreach($menu[$key] as $item)
                             @include('components.sidebar-item', ['item' => $item])
                         @endforeach
@@ -126,6 +126,13 @@
     #sidebar[data-collapsed="true"] .sidebar-indicator,
     #sidebar[data-collapsed="true"] .sidebar-submenu { opacity: 0; pointer-events: none; }
     #sidebar { transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* Collapsed mode: show all section items as icon-only (override Alpine x-show & x-collapse) */
+    #sidebar[data-collapsed="true"] .section-items {
+        display: block !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
 
     /* Sidebar scrollbar styling */
     .sidebar-scrollbar::-webkit-scrollbar { width: 4px; }

@@ -38,16 +38,14 @@ class Dashboard extends Component
             ->whereHas('batch', fn($q) => $q->where('vintage_year', $vintageYear))
             ->count();
 
-        // Kg y entradas de hoy
-        $todayKg = (float) Harvest::where('winery_id', $wineryId)
+        // Kg y entradas de hoy (una sola query)
+        $todayStats = Harvest::where('winery_id', $wineryId)
             ->where('status', 'active')
             ->whereDate('harvest_start_date', today())
-            ->sum('total_weight');
-
-        $todayCount = Harvest::where('winery_id', $wineryId)
-            ->where('status', 'active')
-            ->whereDate('harvest_start_date', today())
-            ->count();
+            ->selectRaw('COUNT(*) as count, COALESCE(SUM(total_weight), 0) as kg')
+            ->first();
+        $todayKg    = (float) $todayStats->kg;
+        $todayCount = (int) $todayStats->count;
 
         // Alertas: lotes superados o en riesgo (comparando con forecast confirmado)
         $forecasts = WineryYieldForecast::where('winery_id', $wineryId)

@@ -3,12 +3,14 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class NavigationHelper
 {
     /**
-     * Obtener el menú de navegación según el rol del usuario
-     * Cacheado por 1 hora para mejorar rendimiento
+     * Obtener el menú de navegación según el rol del usuario.
+     * La estructura del menú se reconstruye por request (contiene active states via routeIs).
+     * Solo los contadores de BD (badges) se cachean brevemente.
      */
     public static function getMenu(): array
     {
@@ -111,7 +113,7 @@ class NavigationHelper
                 ],
             ];
 
-            // GRUPO: NORMATIVA (registros y certificaciones)
+            // GRUPO: NORMATIVA Y CUMPLIMIENTO (registros legales + compliance del cuaderno)
             $menu['compliance'] = [
                 [
                     'icon' => 'building-office',
@@ -143,10 +145,7 @@ class NavigationHelper
                     'route' => 'viticulturist.field-equipment.index',
                     'active' => request()->routeIs('viticulturist.field-equipment.*'),
                 ],
-            ];
-
-            // GRUPO: CUADERNO OFICIAL (compliance del cuaderno de campo)
-            $menu['cuaderno_official'] = [
+                ['divider' => true],
                 [
                     'icon' => 'chart-bar',
                     'label' => 'Cumplimiento Cuaderno',
@@ -294,7 +293,7 @@ class NavigationHelper
                     'label' => 'Soporte',
                     'route' => 'viticulturist.support.index',
                     'active' => request()->routeIs('viticulturist.support.*'),
-                    'badge' => $user->supportTickets()->open()->count(),
+                    'badge' => Cache::remember("nav_badge_support_{$user->id}", 120, fn() => $user->supportTickets()->open()->count()),
                 ],
             ];
         }

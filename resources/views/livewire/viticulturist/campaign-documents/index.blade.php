@@ -120,8 +120,12 @@
 
             <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
                 <flux:button variant="ghost" wire:click="$set('showModal', false)">Cancelar</flux:button>
-                <flux:button variant="primary" wire:click="save" wire:loading.attr="disabled">
-                    {{ $editingId ? 'Actualizar' : 'Subir Documento' }}
+                <flux:button variant="primary" wire:click="save" wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed">
+                    <span wire:loading.remove wire:target="save">{{ $editingId ? 'Actualizar' : 'Subir Documento' }}</span>
+                    <span wire:loading wire:target="save" class="flex items-center gap-2">
+                        <flux:icon icon="arrow-path" class="w-4 h-4 animate-spin" />
+                        Guardando...
+                    </span>
                 </flux:button>
             </div>
         </div>
