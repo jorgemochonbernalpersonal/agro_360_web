@@ -69,7 +69,9 @@
       "Read(//c/Users/dispo/Desktop/personal/agro_360_web/=== Fix 5: Containers/**)",
       "Read(//c/Users/dispo/Desktop/personal/agro_360_web/**)",
       "Bash(vendor/bin/phpunit:*)",
-      "WebFetch(domain:agro365.es)"
+      "WebFetch(domain:agro365.es)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ]
   }
 }

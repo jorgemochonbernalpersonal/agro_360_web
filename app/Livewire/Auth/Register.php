@@ -121,26 +121,26 @@ class Register extends Component
             if ($existing) {
                 // Activar viticultor que fue creado previamente sin acceso (can_login = false)
                 if ($existing->role === User::ROLE_VITICULTURIST && $existing->can_login === false) {
-                    // Actualizar el usuario en la base de datos
+                    // El email ya fue verificado implícitamente: la bodega envió la invitación
+                    // a este correo y el viticultor lo recibió (de lo contrario no sabría que
+                    // tiene una cuenta pre-creada). Marcamos email_verified_at automáticamente.
                     $existing->update([
-                        'name' => $this->name,
-                        'password' => Hash::make($this->password),
-                        'can_login' => true,
+                        'name'              => $this->name,
+                        'password'          => Hash::make($this->password),
+                        'can_login'         => true,
                         'password_must_reset' => false,
-                        // NO marcamos email_verified_at - el usuario debe verificar desde el email
+                        'email_verified_at' => $existing->email_verified_at ?? now(),
+                        'invitation_token'  => null,
+                        'invitation_expires_at' => null,
+                        'invitation_sent_at' => null,
                     ]);
 
-                    // Loguear al usuario
-                    Auth::login($existing);
+                    Auth::login($existing->fresh());
                     session()->regenerate();
-                    
-                    // Enviar email de verificación después del registro
-                    $existing->sendEmailVerificationNotification();
-                    
-                    $this->toastSuccess('Cuenta activada correctamente. Se ha enviado un email de verificación. Por favor, verifica tu email antes de continuar.');
 
-                    // Redirigir a la página de verificación de email
-                    return $this->redirect(route('verification.notice'), navigate: true);
+                    $this->toastSuccess('Cuenta activada correctamente. ¡Bienvenido a Agro365!');
+
+                    return $this->redirect(route('viticulturist.dashboard'), navigate: true);
                 }
 
                 // Cualquier otro caso: email ya usado por una cuenta activa
