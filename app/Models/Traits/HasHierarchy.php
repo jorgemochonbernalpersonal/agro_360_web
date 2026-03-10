@@ -158,7 +158,8 @@ trait HasHierarchy
      */
     public function hasWinery(): bool
     {
-        return $this->isViticulturist() && $this->wineryRelationsAsViticulturist()->exists();
+        return $this->isViticulturist()
+            && $this->wineryRelationsAsViticulturist()->whereNotNull('winery_id')->exists();
     }
 
     /**
