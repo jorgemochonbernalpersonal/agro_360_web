@@ -306,21 +306,22 @@ class NavigationHelper
                 'route'  => 'winery.dashboard',
                 'active' => request()->routeIs('winery.dashboard'),
             ];
-            $menu['main'][] = [
-                'icon'   => 'clipboard-document-list',
-                'label'  => 'Campañas de Vendimia',
-                'route'  => 'winery.campaigns.index',
-                'active' => request()->routeIs('winery.campaigns*'),
-            ];
-            $menu['main'][] = [
-                'icon'   => 'user-group',
-                'label'  => 'Mis Viticultores',
-                'route'  => 'winery.viticulturists.index',
-                'active' => request()->routeIs('winery.viticulturists*'),
-            ];
 
             // ── VENDIMIA ─────────────────────────────────────────────
             $menu['harvest'] = [
+                [
+                    'icon'   => 'clipboard-document-list',
+                    'label'  => 'Campañas de Vendimia',
+                    'route'  => 'winery.campaigns.index',
+                    'active' => request()->routeIs('winery.campaigns*'),
+                ],
+                [
+                    'icon'   => 'user-group',
+                    'label'  => 'Mis Viticultores',
+                    'route'  => 'winery.viticulturists.index',
+                    'active' => request()->routeIs('winery.viticulturists*'),
+                ],
+                ['divider' => true],
                 [
                     'icon'   => 'chart-bar',
                     'label'  => 'Cuadro de Mando',

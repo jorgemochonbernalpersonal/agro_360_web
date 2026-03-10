@@ -30,7 +30,8 @@
         'winery.harvest*', 'winery.grape-reception*',
         'winery.vitic-estimates*', 'winery.harvest-summary*',
         'winery.harvest-forecasts*', 'winery.harvest-quality*',
-        'winery.field-activities*', 'winery.campaigns*'
+        'winery.field-activities*', 'winery.campaigns*',
+        'winery.viticulturists*'
     )) {
         $detectedChapter = 'vendimia';
     } elseif (request()->routeIs(
