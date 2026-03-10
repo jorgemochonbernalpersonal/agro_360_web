@@ -53,8 +53,8 @@
 @endphp
 
 <div
-    x-data="navRail(null)"
-    @keydown.escape.window="close()"
+    x-data
+    @keydown.escape.window="$store.nav.close()"
 >
     {{-- ═══════════════════ RAIL 64px ═══════════════════ --}}
     <aside
@@ -93,10 +93,10 @@
             @endphp
             <button
                 type="button"
-                x-on:click="toggle('{{ $ch['key'] }}')"
+                x-on:click="$store.nav.toggle('{{ $ch['key'] }}')"
                 title="{{ $ch['label'] }}"
                 class="notebook-tab relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
-                :class="open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
+                :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
                 data-key="{{ $ch['key'] }}"
                 data-active="{{ $isActive ? 'true' : 'false' }}"
                 style="
@@ -157,7 +157,7 @@
         @endphp
 
         <div
-            x-show="open === '{{ $ch['key'] }}'"
+            x-show="$store.nav.open === '{{ $ch['key'] }}'"
             x-cloak
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 -translate-x-2"
@@ -180,7 +180,7 @@
                     <flux:icon icon="{{ $ch['icon'] }}" class="w-4 h-4" style="color: {{ $color['accent'] }}" />
                 </div>
                 <span class="text-sm font-semibold text-zinc-800 tracking-wide">{{ $ch['label'] }}</span>
-                <button type="button" x-on:click="close()"
+                <button type="button" x-on:click="$store.nav.close()"
                         class="ml-auto w-7 h-7 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200/60 transition-colors">
                     <flux:icon icon="x-mark" class="w-4 h-4" />
                 </button>
@@ -198,7 +198,7 @@
                             <a
                                 href="{{ route($item['route']) }}"
                                 wire:navigate
-                                x-on:click="close()"
+                                x-on:click="$store.nav.close()"
                                 class="notebook-item flex items-center gap-3 px-3 py-2.5 mx-2 transition-all duration-150 group
                                        {{ ($item['active'] ?? false) ? 'notebook-item-active' : 'text-zinc-500 hover:text-zinc-900' }}"
                                 @if($item['active'] ?? false)
@@ -249,9 +249,9 @@
 
     {{-- Backdrop --}}
     <div
-        x-show="open !== null"
+        x-show="$store.nav.open !== null"
         x-cloak
-        x-on:click="close()"
+        x-on:click="$store.nav.close()"
         style="display:none"
         class="fixed inset-0 z-30 cursor-default"
     ></div>
@@ -328,23 +328,21 @@
 </style>
 
 <script>
+    // Alpine.store es global y persiste entre wire:navigate — sin problemas de timing
     document.addEventListener('alpine:init', () => {
-        Alpine.data('navRail', (initialOpen) => ({
-            open: initialOpen,
-            toggle(key) {
-                this.open = (this.open === key) ? null : key;
-            },
-            close() {
-                this.open = null;
-            },
-        }));
+        if (!Alpine.store('nav')) {
+            Alpine.store('nav', {
+                open: null,
+                toggle(key) { this.open = (this.open === key) ? null : key; },
+                close()     { this.open = null; },
+            });
+        }
     });
 
-    // Aplicar clase tab-open via Alpine (x-bind:class usa string 'tab-open')
-    document.addEventListener('alpine:initialized', () => {
-        document.querySelectorAll('.notebook-tab').forEach(btn => {
-            const key = btn.dataset.key;
-            // El icono toma el color del acento cuando está abierto (lo hace CSS via .tab-open)
-        });
+    // Al navegar con wire:navigate, resetear el flyout abierto
+    document.addEventListener('livewire:navigate', () => {
+        if (window.Alpine && Alpine.store('nav')) {
+            Alpine.store('nav').close();
+        }
     });
 </script>
