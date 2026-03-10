@@ -11,6 +11,7 @@
     $chapterAccents = [
         // viticulturist
         'campana'   => ['color' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.4)'],
+        'cuaderno'  => ['color' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.4)'],
         'parcelas'  => ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.4)'],
         'recursos'  => ['color' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.4)'],
         'normativa' => ['color' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.4)'],
@@ -58,10 +59,13 @@
     )) {
         $detectedChapter = 'pac';
     } elseif (request()->routeIs(
+        'viticulturist.digital-notebook.estimated-yields*',
+        'viticulturist.vendimia*',
         'viticulturist.residue*', 'viticulturist.energy*',
-        'viticulturist.cue*', 'viticulturist.official*'
+        'viticulturist.cue*', 'viticulturist.official*',
+        'viticulturist.pac-compliance*'
     )) {
-        $detectedChapter = 'campana';
+        $detectedChapter = 'cuaderno';
     } elseif (request()->routeIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',

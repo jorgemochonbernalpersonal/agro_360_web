@@ -47,71 +47,90 @@ class NavigationHelper
                 'active' => request()->routeIs('viticulturist.calendar'),
             ];
 
-            // GRUPO: CAMPAÑA Y CUADERNO
+            // GRUPO: CAMPAÑA (trabajo diario, sin submenus)
             $menu['operations'] = [
                 [
-                    'icon' => 'clipboard-document-list',
-                    'label' => 'Campaña',
-                    'route' => 'viticulturist.campaign.index',
-                    'active' => request()->routeIs('viticulturist.campaign*') || request()->routeIs('viticulturist.campaign-documents.*') || request()->routeIs('viticulturist.campaign-sign.*'),
-                    'submenu' => [
-                        ['label' => 'Campañas', 'route' => 'viticulturist.campaign.index', 'active' => request()->routeIs('viticulturist.campaign*') && !request()->routeIs('viticulturist.campaign-documents.*') && !request()->routeIs('viticulturist.campaign-sign.*')],
-                        ['label' => 'Documentos', 'route' => 'viticulturist.campaign-documents.index', 'active' => request()->routeIs('viticulturist.campaign-documents.*')],
-                        ['label' => 'Firma y Cierre', 'route' => 'viticulturist.campaign-sign.index', 'active' => request()->routeIs('viticulturist.campaign-sign.*')],
-                    ],
+                    'icon'   => 'clipboard-document-list',
+                    'label'  => 'Campañas',
+                    'route'  => 'viticulturist.campaign.index',
+                    'active' => request()->routeIs('viticulturist.campaign*') && !request()->routeIs('viticulturist.campaign-documents.*') && !request()->routeIs('viticulturist.campaign-sign.*'),
                 ],
                 [
-                    'icon' => 'pencil-square',
-                    'label' => 'Cuaderno Digital',
-                    'route' => 'viticulturist.digital-notebook',
-                    'active' => request()->routeIs('viticulturist.digital-notebook*') || request()->routeIs('viticulturist.vendimia.*'),
-                    'submenu' => [
-                        ['label' => 'Actividades', 'route' => 'viticulturist.digital-notebook', 'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*')],
-                        ['label' => 'Rendimientos', 'route' => 'viticulturist.digital-notebook.estimated-yields.index', 'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')],
-                        ['label' => 'Entregas a Bodega', 'route' => 'viticulturist.vendimia.index', 'active' => request()->routeIs('viticulturist.vendimia.*')],
-                    ],
+                    'icon'   => 'folder-open',
+                    'label'  => 'Documentos de Campaña',
+                    'route'  => 'viticulturist.campaign-documents.index',
+                    'active' => request()->routeIs('viticulturist.campaign-documents.*'),
                 ],
                 [
-                    'icon' => 'bug-ant',
-                    'label' => 'Gestión de Plagas',
-                    'route' => 'viticulturist.pest-management.index',
-                    'active' => request()->routeIs('viticulturist.pest-management.*'),
+                    'icon'   => 'check-badge',
+                    'label'  => 'Firma y Cierre',
+                    'route'  => 'viticulturist.campaign-sign.index',
+                    'active' => request()->routeIs('viticulturist.campaign-sign.*'),
                 ],
                 ['divider' => true],
                 [
-                    'icon' => 'chart-bar',
-                    'label' => 'Cumplimiento Cuaderno',
-                    'route' => 'viticulturist.pac-compliance',
+                    'icon'   => 'pencil-square',
+                    'label'  => 'Actividades de Campo',
+                    'route'  => 'viticulturist.digital-notebook',
+                    'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*'),
+                ],
+                [
+                    'icon'   => 'bug-ant',
+                    'label'  => 'Gestión de Plagas',
+                    'route'  => 'viticulturist.pest-management.index',
+                    'active' => request()->routeIs('viticulturist.pest-management.*'),
+                ],
+            ];
+
+            // GRUPO: CUADERNO (outputs y registros del cuaderno de campo)
+            $menu['notebook'] = [
+                [
+                    'icon'   => 'chart-bar-square',
+                    'label'  => 'Rendimientos Estimados',
+                    'route'  => 'viticulturist.digital-notebook.estimated-yields.index',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*'),
+                ],
+                [
+                    'icon'   => 'archive-box-arrow-down',
+                    'label'  => 'Entregas a Bodega',
+                    'route'  => 'viticulturist.vendimia.index',
+                    'active' => request()->routeIs('viticulturist.vendimia.*'),
+                ],
+                ['divider' => true],
+                [
+                    'icon'   => 'chart-bar',
+                    'label'  => 'Cumplimiento Cuaderno',
+                    'route'  => 'viticulturist.pac-compliance',
                     'active' => request()->routeIs('viticulturist.pac-compliance'),
                 ],
                 [
-                    'icon' => 'clipboard-document-check',
-                    'label' => 'Análisis de Residuos',
-                    'route' => 'viticulturist.residue-analyses.index',
+                    'icon'   => 'clipboard-document-check',
+                    'label'  => 'Análisis de Residuos',
+                    'route'  => 'viticulturist.residue-analyses.index',
                     'active' => request()->routeIs('viticulturist.residue-analyses.*'),
                 ],
                 [
-                    'icon' => 'trash',
-                    'label' => 'Gestión de Residuos',
-                    'route' => 'viticulturist.residue-managements.index',
+                    'icon'   => 'trash',
+                    'label'  => 'Gestión de Residuos',
+                    'route'  => 'viticulturist.residue-managements.index',
                     'active' => request()->routeIs('viticulturist.residue-managements.*'),
                 ],
                 [
-                    'icon' => 'bolt',
-                    'label' => 'Consumo Energético',
-                    'route' => 'viticulturist.energy-usages.index',
+                    'icon'   => 'bolt',
+                    'label'  => 'Consumo Energético',
+                    'route'  => 'viticulturist.energy-usages.index',
                     'active' => request()->routeIs('viticulturist.energy-usages.*'),
                 ],
                 [
-                    'icon' => 'arrow-up-tray',
-                    'label' => 'Exportaciones CUE',
-                    'route' => 'viticulturist.cue-exports.index',
+                    'icon'   => 'arrow-up-tray',
+                    'label'  => 'Exportaciones CUE',
+                    'route'  => 'viticulturist.cue-exports.index',
                     'active' => request()->routeIs('viticulturist.cue-exports.*'),
                 ],
                 [
-                    'icon' => 'document',
-                    'label' => 'Informes Oficiales',
-                    'route' => 'viticulturist.official-reports.index',
+                    'icon'   => 'document',
+                    'label'  => 'Informes Oficiales',
+                    'route'  => 'viticulturist.official-reports.index',
                     'active' => request()->routeIs('viticulturist.official-reports.*'),
                 ],
             ];

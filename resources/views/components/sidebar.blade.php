@@ -6,6 +6,7 @@
     // Paleta de colores por capítulo (accent RGB para usar en CSS inline)
     $chapterColors = [
         'campana'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // verde
+        'cuaderno'  => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
         'parcelas'  => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
         'recursos'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
         'normativa' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
@@ -22,6 +23,7 @@
     if ($user->role === 'viticulturist') {
         $chapters = [
             ['key' => 'campana',   'icon' => 'pencil-square',     'label' => 'Campaña',   'sections' => ['operations']],
+            ['key' => 'cuaderno',  'icon' => 'document-text',     'label' => 'Cuaderno',  'sections' => ['notebook']],
             ['key' => 'parcelas',  'icon' => 'map',                'label' => 'Parcelas',  'sections' => ['plots_analysis']],
             ['key' => 'recursos',  'icon' => 'wrench-screwdriver', 'label' => 'Recursos',  'sections' => ['resources']],
             ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance']],
