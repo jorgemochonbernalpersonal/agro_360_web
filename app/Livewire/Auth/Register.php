@@ -112,7 +112,7 @@ class Register extends Component
         
         $this->validate();
 
-        $this->email = User::canonicalizeEmail($this->email);
+        $this->email = strtolower(trim($this->email));
 
         $existing = User::where('email', $this->email)->first();
 
