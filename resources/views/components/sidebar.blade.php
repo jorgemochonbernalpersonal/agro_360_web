@@ -3,140 +3,349 @@
     $menu = NavigationHelper::getMenu();
     $user = auth()->user();
 
-    $activeSections = [];
-    foreach(['operations', 'plots_analysis', 'harvest', 'cellar', 'territory', 'resources', 'billing', 'clients', 'compliance', 'pac', 'system'] as $section) {
-        if (isset($menu[$section])) {
-            foreach ($menu[$section] as $item) {
-                if ($item['active'] ?? false) { $activeSections[] = $section; break; }
+    // Paleta de colores por capítulo (accent RGB para usar en CSS inline)
+    $chapterColors = [
+        'campana'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // verde
+        'parcelas'  => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
+        'recursos'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
+        'normativa' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
+        'negocio'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
+        'sistema'   => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
+        // winery
+        'vendimia'  => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
+        'bodega'    => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // púrpura
+        'territorio'=> ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
+    ];
+
+    $chapters = [];
+    if ($user->role === 'viticulturist') {
+        $chapters = [
+            ['key' => 'campana',   'icon' => 'pencil-square',     'label' => 'Campaña',   'sections' => ['operations']],
+            ['key' => 'parcelas',  'icon' => 'map',                'label' => 'Parcelas',  'sections' => ['plots_analysis']],
+            ['key' => 'recursos',  'icon' => 'wrench-screwdriver', 'label' => 'Recursos',  'sections' => ['resources']],
+            ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance', 'pac']],
+            ['key' => 'negocio',   'icon' => 'calculator',         'label' => 'Negocio',   'sections' => ['billing']],
+            ['key' => 'sistema',   'icon' => 'cog-6-tooth',        'label' => 'Sistema',   'sections' => ['system']],
+        ];
+    } elseif ($user->role === 'winery') {
+        $chapters = [
+            ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',   'sections' => ['harvest']],
+            ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',     'sections' => ['cellar']],
+            ['key' => 'territorio', 'icon' => 'map',                     'label' => 'Territorio', 'sections' => ['territory']],
+            ['key' => 'recursos',   'icon' => 'wrench-screwdriver',      'label' => 'Recursos',   'sections' => ['resources']],
+            ['key' => 'negocio',    'icon' => 'calculator',              'label' => 'Negocio',    'sections' => ['billing']],
+            ['key' => 'normativa',  'icon' => 'shield-check',            'label' => 'Normativa',  'sections' => ['compliance']],
+            ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['system']],
+        ];
+    }
+
+    // Detectar capítulo activo
+    $activeChapterKey = null;
+    foreach ($chapters as $chapter) {
+        foreach ($chapter['sections'] as $sectionKey) {
+            if (!isset($menu[$sectionKey])) continue;
+            foreach ($menu[$sectionKey] as $item) {
+                if ($item['active'] ?? false) { $activeChapterKey = $chapter['key']; break 3; }
             }
         }
     }
 
-    $sections = [
-        // Viticulturist — uso diario primero
-        'operations'        => 'Campaña y Cuaderno',
-        'plots_analysis'    => 'Parcelas y Territorio',
-        // Winery
-        'harvest'           => 'Vendimia',
-        'cellar'            => 'Bodega',
-        'territory'         => 'Territorio',
-        // Shared — uso frecuente
-        'resources'         => 'Recursos',
-        'billing'           => 'Facturación y Clientes',
-        'clients'           => 'Clientes',
-        // Cumplimiento normativo (uso periódico)
-        'compliance'        => 'Normativa y Cumplimiento',
-        'pac'               => 'PAC',
-        // Sistema
-        'system'            => 'Sistema',
-    ];
+    $mainItems = $menu['main'] ?? [];
 @endphp
 
-<aside
-    id="sidebar"
-    class="fixed left-0 top-0 h-full z-40 transition-all duration-300 ease-in-out w-72 lg:w-72 -translate-x-full lg:translate-x-0 flex flex-col"
-    style="background: linear-gradient(180deg, #0f2508 0%, #1a3a0e 40%, #2d5016 100%);"
-    data-collapsed="false"
-    x-data="{
-        openSections: JSON.parse(localStorage.getItem('sidebarSections') || '{{ json_encode($activeSections) }}'),
-        toggle(s) { this.openSections.includes(s) ? this.openSections = this.openSections.filter(x => x !== s) : this.openSections.push(s); localStorage.setItem('sidebarSections', JSON.stringify(this.openSections)); },
-        isOpen(s) { return this.openSections.includes(s); }
-    }"
+<div
+    x-data="navRail(null)"
+    @keydown.escape.window="close()"
 >
-    {{-- Logo --}}
-    <div class="h-16 flex items-center justify-between px-5 border-b border-white/10">
-        <a href="{{ route($user->role . '.dashboard') }}" wire:navigate class="flex items-center gap-3 group" data-cy="sidebar-logo-link">
-            <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shadow-lg group-hover:bg-white/20 transition-all duration-200 flex-shrink-0">
-                <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="28" height="28" class="object-contain group-hover:scale-110 transition-transform duration-200">
-            </div>
-            <div class="sidebar-text">
-                <span class="text-base font-bold text-white tracking-wide">Agro365</span>
-                <span class="block text-xs text-white/50 font-medium">{{ NavigationHelper::getRoleName($user->role) }}</span>
-            </div>
+    {{-- ═══════════════════ RAIL 64px ═══════════════════ --}}
+    <aside
+        class="fixed left-0 top-0 h-full w-16 z-40 flex flex-col items-center py-3 gap-1"
+        style="background: linear-gradient(180deg, #0f2508 0%, #1a3a0e 40%, #2d5016 100%);"
+    >
+        {{-- Logo --}}
+        <a href="{{ route($user->role . '.dashboard') }}" wire:navigate
+           class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-2 hover:bg-white/20 transition-all group flex-shrink-0"
+           title="Agro365">
+            <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="26" height="26"
+                 class="object-contain group-hover:scale-110 transition-transform">
         </a>
-        <button onclick="toggleSidebarCollapse()" class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-all duration-200" aria-label="Toggle sidebar" data-cy="sidebar-toggle-desktop">
-            <flux:icon id="collapse-icon" icon="chevron-double-left" variant="micro" class="transition-transform duration-300" />
-        </button>
-    </div>
 
-    {{-- Navigation --}}
-    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 sidebar-scrollbar">
-        @if(isset($menu['main']))
-            <div class="mb-2">
-                @foreach($menu['main'] as $item)
-                    @include('components.sidebar-item', ['item' => $item])
-                @endforeach
-            </div>
-            <div class="mx-2 border-t border-white/10 my-2"></div>
-        @endif
+        <div class="w-8 border-t border-white/10 mb-1"></div>
 
-        @foreach($sections as $key => $label)
-            @if(isset($menu[$key]))
-                <div class="mt-2">
-                    <button
-                        @click="toggle('{{ $key }}')"
-                        :aria-expanded="isOpen('{{ $key }}')"
-                        class="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-semibold text-white/55 uppercase tracking-widest hover:text-white/75 rounded-lg transition-colors duration-200 sidebar-text"
-                    >
-                        <span>{{ $label }}</span>
-                        <flux:icon icon="chevron-down" variant="micro" class="transition-transform duration-200 opacity-50" ::class="isOpen('{{ $key }}') ? 'rotate-180' : ''" />
-                    </button>
-                    <div x-cloak x-show="isOpen('{{ $key }}')" x-collapse class="section-items mt-1 space-y-0.5">
-                        @foreach($menu[$key] as $item)
-                            @include('components.sidebar-item', ['item' => $item])
-                        @endforeach
-                    </div>
-                </div>
-            @endif
+        {{-- Main items (Dashboard, Calendario) --}}
+        @foreach($mainItems as $item)
+            <a href="{{ route($item['route']) }}" wire:navigate
+               title="{{ $item['label'] }}"
+               class="relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150
+                      {{ ($item['active'] ?? false) ? 'bg-white/20 text-white' : 'text-white/45 hover:bg-white/10 hover:text-white' }}">
+                <flux:icon icon="{{ $item['icon'] }}" class="w-5 h-5" />
+                {{-- Tooltip --}}
+                <span class="rail-tooltip">{{ $item['label'] }}</span>
+            </a>
         @endforeach
-    </nav>
 
-    {{-- User footer --}}
-    <div class="p-3 border-t border-white/10">
-        <div class="flex items-center gap-2 px-3 py-2">
-            <div class="w-7 h-7 rounded-full bg-agro-500 flex items-center justify-center flex-shrink-0">
-                <span class="text-xs font-bold text-white">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+        <div class="w-8 border-t border-white/10 my-1"></div>
+
+        {{-- Chapter buttons --}}
+        @foreach($chapters as $ch)
+            @php
+                $color  = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
+                $isActive = ($activeChapterKey === $ch['key']);
+            @endphp
+            <button
+                type="button"
+                x-on:click="toggle('{{ $ch['key'] }}')"
+                title="{{ $ch['label'] }}"
+                class="notebook-tab relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
+                :class="open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
+                data-key="{{ $ch['key'] }}"
+                data-active="{{ $isActive ? 'true' : 'false' }}"
+                style="
+                    --tab-accent:  {{ $color['accent'] }};
+                    --tab-bg:      {{ $color['bg'] }};
+                    --tab-border:  {{ $color['border'] }};
+                    {{ $isActive ? 'background:' . $color['bg'] . '; box-shadow: inset 3px 0 0 ' . $color['accent'] . ';' : '' }}
+                "
+            >
+                <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 transition-colors duration-150"
+                    style="{{ $isActive ? 'color:' . $color['accent'] . ';' : '' }}" />
+                {{-- Tooltip --}}
+                <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
+            </button>
+        @endforeach
+
+        <div class="flex-1"></div>
+
+        {{-- Avatar + dropdown --}}
+        <div class="relative group/user">
+            <button type="button"
+                    class="w-9 h-9 rounded-full bg-agro-600 flex items-center justify-center text-white font-bold text-sm hover:bg-agro-500 transition-colors"
+                    title="{{ $user->name }}">
+                {{ strtoupper(substr($user->name, 0, 1)) }}
+            </button>
+            <div class="hidden group-hover/user:flex absolute bottom-0 left-full ml-3 flex-col
+                        bg-zinc-900 border border-white/10 rounded-xl shadow-xl overflow-hidden min-w-[180px] z-50">
+                <div class="px-3 py-2.5 border-b border-white/10">
+                    <p class="text-xs font-semibold text-white truncate">{{ $user->name }}</p>
+                    <p class="text-[10px] text-white/40 truncate">{{ $user->email }}</p>
+                </div>
+                <a href="{{ route($user->role . '.settings') }}" wire:navigate
+                   class="flex items-center gap-2 px-3 py-2 text-xs text-white/60 hover:text-white hover:bg-white/8 transition-colors">
+                    <flux:icon icon="cog-6-tooth" class="w-4 h-4" />
+                    Configuración
+                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                            class="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-white/8 transition-colors">
+                        <flux:icon icon="arrow-right-start-on-rectangle" class="w-4 h-4" />
+                        Cerrar sesión
+                    </button>
+                </form>
             </div>
-            <div class="sidebar-text min-w-0 flex-1">
-                <p class="text-xs font-semibold text-white truncate">{{ auth()->user()->name }}</p>
-                <p class="text-[10px] text-white/40 truncate">{{ auth()->user()->email }}</p>
-            </div>
-            <form method="POST" action="{{ route('logout') }}" class="sidebar-text shrink-0">
-                @csrf
-                <button type="submit"
-                        title="Cerrar sesión"
-                        class="w-7 h-7 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors duration-200">
-                    <flux:icon icon="arrow-right-start-on-rectangle" class="size-4" />
-                </button>
-            </form>
         </div>
-    </div>
-</aside>
+    </aside>
 
-{{-- Mobile overlay --}}
-<div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden hidden transition-opacity" onclick="toggleSidebar()"></div>
+    {{-- ═══════════════════ FLYOUT PANELS ═══════════════════ --}}
+    @foreach($chapters as $ch)
+        @php
+            $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
+            $chapterItems = [];
+            foreach ($ch['sections'] as $sectionKey) {
+                if (!isset($menu[$sectionKey])) continue;
+                foreach ($menu[$sectionKey] as $item) { $chapterItems[] = $item; }
+            }
+        @endphp
 
-{{-- Mobile toggle --}}
-<button id="sidebar-toggle" onclick="toggleSidebar()" class="fixed top-4 left-4 z-50 lg:hidden bg-agro-900 p-2.5 rounded-xl shadow-lg border border-white/10 hover:bg-agro-800 transition-all duration-200" aria-label="Toggle sidebar" data-cy="sidebar-toggle-mobile">
-    <flux:icon icon="bars-3" class="text-white" />
-</button>
+        <div
+            x-show="open === '{{ $ch['key'] }}'"
+            x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-x-2"
+            x-transition:enter-end="opacity-100 translate-x-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-x-0"
+            x-transition:leave-end="opacity-0 -translate-x-2"
+            class="fixed left-16 top-0 h-full w-64 z-39 flex flex-col shadow-2xl"
+            style="
+                background: rgba(236, 246, 230, 0.96);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border-right: 1px solid {{ $color['border'] }};
+            "
+        >
+            {{-- Header --}}
+            <div class="h-16 flex items-center gap-3 px-4 flex-shrink-0 border-b border-zinc-300/50">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                     style="background: {{ $color['bg'] }}; box-shadow: 0 0 0 1px {{ $color['border'] }};">
+                    <flux:icon icon="{{ $ch['icon'] }}" class="w-4 h-4" style="color: {{ $color['accent'] }}" />
+                </div>
+                <span class="text-sm font-semibold text-zinc-800 tracking-wide">{{ $ch['label'] }}</span>
+                <button type="button" x-on:click="close()"
+                        class="ml-auto w-7 h-7 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200/60 transition-colors">
+                    <flux:icon icon="x-mark" class="w-4 h-4" />
+                </button>
+            </div>
+
+            {{-- Línea de margen (cuaderno) --}}
+            <div class="flex flex-1 overflow-hidden">
+                <div class="w-px flex-shrink-0 ml-5 my-2" style="background: {{ $color['accent'] }}; opacity: 0.4;"></div>
+
+                <nav class="flex-1 overflow-y-auto py-2 sidebar-scrollbar notebook-lines-light">
+                    @foreach($chapterItems as $item)
+                        @if(isset($item['divider']) && $item['divider'])
+                            <div class="mx-4 my-1.5 border-t border-zinc-300/50"></div>
+                        @else
+                            <a
+                                href="{{ route($item['route']) }}"
+                                wire:navigate
+                                x-on:click="close()"
+                                class="notebook-item flex items-center gap-3 px-3 py-2.5 mx-2 transition-all duration-150 group
+                                       {{ ($item['active'] ?? false) ? 'notebook-item-active' : 'text-zinc-500 hover:text-zinc-900' }}"
+                                @if($item['active'] ?? false)
+                                style="background: {{ $color['bg'] }}; box-shadow: inset 2px 0 0 {{ $color['accent'] }}; border-radius: 0 12px 12px 0; margin-left: 0; padding-left: 1.25rem;"
+                                @endif
+                            >
+                                @if(isset($item['icon']))
+                                    <flux:icon icon="{{ $item['icon'] }}" class="w-4 h-4 flex-shrink-0 transition-colors duration-150"
+                                        style="{{ ($item['active'] ?? false) ? 'color:' . $color['accent'] . ';' : 'color: #6b7280;' }}" />
+                                @endif
+                                <span class="text-sm font-medium flex-1 leading-tight">{{ $item['label'] }}</span>
+                                @if(isset($item['badge']) && $item['badge'] > 0)
+                                    <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $item['badge'] }}</span>
+                                @elseif(isset($item['wip']) && $item['wip'])
+                                    <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full whitespace-nowrap">Pronto</span>
+                                @elseif($item['active'] ?? false)
+                                    <div class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background: {{ $color['accent'] }};"></div>
+                                @endif
+                            </a>
+
+                            @if(isset($item['submenu']) && count($item['submenu']) > 0)
+                                <div class="ml-10 mb-1 space-y-0.5">
+                                    @foreach($item['submenu'] as $sub)
+                                        <a href="{{ route($sub['route']) }}" wire:navigate x-on:click="close()"
+                                           class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all duration-150
+                                                  {{ ($sub['active'] ?? false) ? 'font-semibold' : 'text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200/50' }}"
+                                           @if($sub['active'] ?? false) style="color: {{ $color['accent'] }};" @endif>
+                                            <span class="w-1 h-1 rounded-full flex-shrink-0"
+                                                  style="{{ ($sub['active'] ?? false) ? 'background:' . $color['accent'] . ';' : 'background: #d1d5db;' }}"></span>
+                                            {{ $sub['label'] }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        @endif
+                    @endforeach
+                </nav>
+            </div>
+
+            {{-- Footer --}}
+            <div class="px-4 py-2.5 border-t border-zinc-300/50 flex-shrink-0">
+                <p class="text-[10px] font-semibold tracking-widest uppercase" style="color: {{ $color['accent'] }};">
+                    {{ $ch['label'] }}
+                </p>
+            </div>
+        </div>
+    @endforeach
+
+    {{-- Backdrop --}}
+    <div
+        x-show="open !== null"
+        x-cloak
+        x-on:click="close()"
+        style="display:none"
+        class="fixed inset-0 z-30"
+    ></div>
+</div>
 
 <style>
-    #sidebar[data-collapsed="true"] .sidebar-text,
-    #sidebar[data-collapsed="true"] .sidebar-indicator,
-    #sidebar[data-collapsed="true"] .sidebar-submenu { opacity: 0; pointer-events: none; }
-    #sidebar { transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+    /* Scrollbar */
+    .sidebar-scrollbar::-webkit-scrollbar { width: 3px; }
+    .sidebar-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 
-    /* Collapsed mode: show all section items as icon-only (override Alpine x-show & x-collapse) */
-    #sidebar[data-collapsed="true"] .section-items {
-        display: block !important;
-        max-height: none !important;
-        overflow: visible !important;
+    /* Tooltip del rail */
+    .rail-tooltip {
+        pointer-events: none;
+        position: absolute;
+        left: calc(100% + 12px);
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 500;
+        background: #18181b;
+        color: #fff;
+        border-radius: 8px;
+        opacity: 0;
+        white-space: nowrap;
+        transition: opacity 150ms ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 9999;
+        border-left-width: 2px;
+        border-left-style: solid;
+        border-left-color: rgba(255,255,255,0.2);
+    }
+    .group:hover .rail-tooltip { opacity: 1; }
+
+    /* Tab del rail: hover y open */
+    .notebook-tab {
+        color: rgba(255,255,255,0.45);
+    }
+    .notebook-tab:hover {
+        background: var(--tab-bg);
+        color: #fff;
+        box-shadow: inset 3px 0 0 var(--tab-accent);
+    }
+    .notebook-tab.tab-open {
+        background: var(--tab-bg) !important;
+        color: #fff !important;
+        box-shadow: inset 3px 0 0 var(--tab-accent) !important;
+    }
+    .notebook-tab.tab-open flux\:icon,
+    .notebook-tab.tab-open svg {
+        color: var(--tab-accent) !important;
     }
 
-    /* Sidebar scrollbar styling */
-    .sidebar-scrollbar::-webkit-scrollbar { width: 4px; }
-    .sidebar-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .sidebar-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-    .sidebar-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+    /* Líneas de cuaderno en el flyout — fondo salvia claro */
+    .notebook-lines-light {
+        background-image: repeating-linear-gradient(
+            to bottom,
+            transparent,
+            transparent 39px,
+            rgba(0, 0, 0, 0.05) 39px,
+            rgba(0, 0, 0, 0.05) 40px
+        );
+    }
+
+    /* Hover en items del flyout */
+    .notebook-item:hover:not(.notebook-item-active) {
+        background: rgba(0, 0, 0, 0.05);
+        box-shadow: inset 2px 0 0 rgba(0, 0, 0, 0.15);
+        border-radius: 0 12px 12px 0;
+        margin-left: 0 !important;
+        padding-left: 1.25rem !important;
+    }
 </style>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('navRail', (initialOpen) => ({
+            open: initialOpen,
+            toggle(key) {
+                this.open = (this.open === key) ? null : key;
+            },
+            close() {
+                this.open = null;
+            },
+        }));
+    });
+
+    // Aplicar clase tab-open via Alpine (x-bind:class usa string 'tab-open')
+    document.addEventListener('alpine:initialized', () => {
+        document.querySelectorAll('.notebook-tab').forEach(btn => {
+            const key = btn.dataset.key;
+            // El icono toma el color del acento cuando está abierto (lo hace CSS via .tab-open)
+        });
+    });
+</script>
