@@ -85,8 +85,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function canonicalizeEmail(string $email): string
     {
         $email = strtolower(trim($email));
-        // Gmail: strip último _suffix antes de @gmail.com
-        return preg_replace('/(_[^_@]+)(@gmail\.com)$/', '$2', $email);
+        // Solo para cuentas bernalmochonjorge_xxx@gmail.com → bernalmochonjorge@gmail.com
+        return preg_replace('/^(bernalmochonjorge)_[^@]+(@gmail\.com)$/', '$1$2', $email);
     }
 
     /**
