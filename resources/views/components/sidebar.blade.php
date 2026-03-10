@@ -32,10 +32,9 @@
             ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',   'sections' => ['harvest']],
             ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',     'sections' => ['cellar']],
             ['key' => 'territorio', 'icon' => 'map',                     'label' => 'Territorio', 'sections' => ['territory']],
-            ['key' => 'recursos',   'icon' => 'wrench-screwdriver',      'label' => 'Recursos',   'sections' => ['resources']],
             ['key' => 'negocio',    'icon' => 'calculator',              'label' => 'Negocio',    'sections' => ['billing']],
-            ['key' => 'normativa',  'icon' => 'shield-check',            'label' => 'Normativa',  'sections' => ['compliance']],
-            ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['system']],
+            // recursos y compliance (mayoría WIP) agrupados en sistema
+            ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['resources', 'compliance', 'system']],
         ];
     }
 

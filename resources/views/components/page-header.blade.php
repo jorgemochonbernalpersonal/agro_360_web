@@ -9,12 +9,17 @@
 @php
     // Auto-detectar capítulo activo y aplicar su color de acento
     $chapterAccents = [
+        // viticulturist
         'campana'   => ['color' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.4)'],
         'parcelas'  => ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.4)'],
         'recursos'  => ['color' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.4)'],
         'normativa' => ['color' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.4)'],
         'negocio'   => ['color' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.4)'],
         'sistema'   => ['color' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.4)'],
+        // winery
+        'vendimia'  => ['color' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.4)'],
+        'bodega'    => ['color' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.4)'],
+        'territorio'=> ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.4)'],
     ];
 
     $detectedChapter = 'campana'; // default
@@ -22,10 +27,22 @@
     if (request()->routeIs('plots.*', 'sigpac.*', 'remote-sensing.*', 'winery.plots.*')) {
         $detectedChapter = 'parcelas';
     } elseif (request()->routeIs(
+        'winery.harvest*', 'winery.grape-reception*',
+        'winery.vitic-estimates*', 'winery.harvest-summary*',
+        'winery.harvest-forecasts*', 'winery.harvest-quality*',
+        'winery.field-activities*', 'winery.campaigns*'
+    )) {
+        $detectedChapter = 'vendimia';
+    } elseif (request()->routeIs(
+        'winery.containers*', 'winery.wines*', 'winery.oenologists*',
+        'winery.wine-analysis*', 'winery.product-lots*',
+        'winery.external-grape*'
+    )) {
+        $detectedChapter = 'bodega';
+    } elseif (request()->routeIs(
         'viticulturist.personal*', 'viticulturist.machinery*',
         'viticulturist.containers*', 'viticulturist.almacen*',
-        'viticulturist.phytosanitary*', 'winery.containers*',
-        'winery.winery-supplies*', 'winery.suppliers*'
+        'viticulturist.phytosanitary*'
     )) {
         $detectedChapter = 'recursos';
     } elseif (request()->routeIs(
@@ -34,16 +51,20 @@
         'viticulturist.field-equipment*', 'viticulturist.residue*',
         'viticulturist.energy*', 'viticulturist.cue*',
         'viticulturist.pac*', 'viticulturist.official*',
-        'viticulturist.pac-compliance*', 'winery.silicie*', 'winery.documents*'
+        'viticulturist.pac-compliance*'
     )) {
         $detectedChapter = 'normativa';
     } elseif (request()->routeIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',
-        'winery.invoices*', 'winery.clients*'
+        'winery.invoices*', 'winery.clients*', 'winery.billing*'
     )) {
         $detectedChapter = 'negocio';
-    } elseif (request()->routeIs('viticulturist.settings*', 'viticulturist.support*', 'winery.settings*')) {
+    } elseif (request()->routeIs(
+        'viticulturist.settings*', 'viticulturist.support*',
+        'winery.settings*', 'winery.silicie*', 'winery.documents*',
+        'winery.winery-supplies*', 'winery.suppliers*'
+    )) {
         $detectedChapter = 'sistema';
     }
 
