@@ -99,50 +99,15 @@
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
                 data-key="{{ $ch['key'] }}"
                 data-active="{{ $isActive ? 'true' : 'false' }}"
-                style="
-                    --tab-accent:  {{ $color['accent'] }};
-                    --tab-bg:      {{ $color['bg'] }};
-                    --tab-border:  {{ $color['border'] }};
-                    {{ $isActive ? 'background:' . $color['bg'] . '; box-shadow: inset 3px 0 0 ' . $color['accent'] . ';' : '' }}
-                "
+                style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};"
             >
-                <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 transition-colors duration-150"
-                    style="{{ $isActive ? 'color:' . $color['accent'] . ';' : '' }}" />
+                <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
                 {{-- Tooltip --}}
                 <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
             </button>
         @endforeach
 
         <div class="flex-1"></div>
-
-        {{-- Avatar + dropdown --}}
-        <div class="relative group/user">
-            <button type="button"
-                    class="w-9 h-9 rounded-full bg-agro-600 flex items-center justify-center text-white font-bold text-sm hover:bg-agro-500 transition-colors"
-                    title="{{ $user->name }}">
-                {{ strtoupper(substr($user->name, 0, 1)) }}
-            </button>
-            <div class="hidden group-hover/user:flex absolute bottom-0 left-full ml-3 flex-col
-                        bg-zinc-900 border border-white/10 rounded-xl shadow-xl overflow-hidden min-w-[180px] z-50">
-                <div class="px-3 py-2.5 border-b border-white/10">
-                    <p class="text-xs font-semibold text-white truncate">{{ $user->name }}</p>
-                    <p class="text-[10px] text-white/40 truncate">{{ $user->email }}</p>
-                </div>
-                <a href="{{ route($user->role . '.settings') }}" wire:navigate
-                   class="flex items-center gap-2 px-3 py-2 text-xs text-white/60 hover:text-white hover:bg-white/8 transition-colors">
-                    <flux:icon icon="cog-6-tooth" class="w-4 h-4" />
-                    Configuración
-                </a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit"
-                            class="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-white/8 transition-colors">
-                        <flux:icon icon="arrow-right-start-on-rectangle" class="w-4 h-4" />
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        </div>
     </aside>
 
     {{-- ═══════════════════ FLYOUT PANELS ═══════════════════ --}}
@@ -287,22 +252,33 @@
     }
     .group:hover .rail-tooltip { opacity: 1; }
 
-    /* Tab del rail: hover y open */
+    /* Tab del rail */
     .notebook-tab {
         color: rgba(255,255,255,0.45);
     }
+    /* Hover */
     .notebook-tab:hover {
         background: var(--tab-bg);
+        box-shadow: inset 3px 0 0 var(--tab-accent);
         color: #fff;
+    }
+    .notebook-tab:hover .tab-icon {
+        color: #fff;
+    }
+    /* Página activa */
+    .notebook-tab[data-active="true"] {
+        background: var(--tab-bg);
         box-shadow: inset 3px 0 0 var(--tab-accent);
     }
+    .notebook-tab[data-active="true"] .tab-icon {
+        color: var(--tab-accent);
+    }
+    /* Flyout abierto */
     .notebook-tab.tab-open {
         background: var(--tab-bg) !important;
-        color: #fff !important;
         box-shadow: inset 3px 0 0 var(--tab-accent) !important;
     }
-    .notebook-tab.tab-open flux\:icon,
-    .notebook-tab.tab-open svg {
+    .notebook-tab.tab-open .tab-icon {
         color: var(--tab-accent) !important;
     }
 

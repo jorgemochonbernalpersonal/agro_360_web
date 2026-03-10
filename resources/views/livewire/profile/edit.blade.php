@@ -61,43 +61,32 @@
                                 </div>
 
                                 {{-- Imagen de Perfil --}}
-                                    <div class="mt-6">
+                                <div class="mt-6">
                                     <flux:label>Foto de Perfil</flux:label>
-                                    <div class="mt-2 flex items-center gap-6">
-                                        {{-- Preview con imagen temporal o actual --}}
+                                    <div class="mt-2 flex items-center gap-6"
+                                         x-data="{
+                                             preview: @js($current_profile_image ? Storage::disk('public')->url($current_profile_image) : ''),
+                                             handleFile(e) {
+                                                 const file = e.target.files[0];
+                                                 if (!file) return;
+                                                 const reader = new FileReader();
+                                                 reader.onload = (ev) => { this.preview = ev.target.result; };
+                                                 reader.readAsDataURL(file);
+                                             }
+                                         }"
+                                         x-on:profile-image-saved.window="preview = $event.detail.url"
+                                    >
+                                        {{-- Preview --}}
                                         <div class="flex-shrink-0 relative">
-                                            {{-- Imagen de preview (siempre presente para JavaScript) --}}
-                                            @if($current_profile_image)
-                                                <img 
-                                                    id="profile-preview-img" 
-                                                    src="{{ Storage::disk('public')->url($current_profile_image) }}" 
-                                                    data-original-src="{{ Storage::disk('public')->url($current_profile_image) }}"
-                                                    alt="Preview" 
-                                                    class="w-20 h-20 rounded-full object-cover border-4 border-zinc-200 shadow-lg"
-                                                    onerror="this.style.display='none'; const placeholder = document.getElementById('profile-preview-placeholder'); if(placeholder) placeholder.style.display='flex';"
-                                                    wire:ignore
-                                                >
-                                            @else
-                                                <img 
-                                                    id="profile-preview-img" 
-                                                    src="" 
-                                                    data-original-src=""
-                                                    alt="Preview" 
-                                                    class="w-20 h-20 rounded-full object-cover border-4 border-zinc-200 shadow-lg hidden"
-                                                    onerror="this.style.display='none'; const placeholder = document.getElementById('profile-preview-placeholder'); if(placeholder) placeholder.style.display='flex';"
-                                                    wire:ignore
-                                                >
-                                            @endif
-                                            {{-- Placeholder con inicial (visible solo si no hay imagen) --}}
-                                            <div 
-                                                id="profile-preview-placeholder"
-                                                class="w-20 h-20 rounded-full bg-gradient-to-br from-agro-500 to-agro-700 flex items-center justify-center text-white text-2xl font-bold shadow-md {{ $current_profile_image ? 'hidden' : '' }}"
-                                                wire:ignore
-                                            >
+                                            <img x-show="preview" :src="preview" alt="Preview"
+                                                 class="w-20 h-20 rounded-full object-cover border-4 border-agro-400 shadow-lg"
+                                                 x-cloak>
+                                            <div x-show="!preview"
+                                                 class="w-20 h-20 rounded-full bg-gradient-to-br from-agro-500 to-agro-700 flex items-center justify-center text-white text-2xl font-bold shadow-md">
                                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                             </div>
-                                            
-                                            {{-- Badge de nueva imagen --}}
+
+                                            {{-- Badge nueva imagen --}}
                                             @if($profile_image_preview)
                                                 <div class="absolute -top-1 -right-1 w-6 h-6 bg-agro-500 rounded-full flex items-center justify-center z-10">
                                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +94,7 @@
                                                     </svg>
                                                 </div>
                                             @endif
-                                            
+
                                             {{-- Indicador de carga --}}
                                             <div wire:loading wire:target="profile_image" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-full z-20">
                                                 <svg class="animate-spin h-6 w-6 text-agro-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -116,82 +105,12 @@
                                         </div>
 
                                         <div class="flex-1">
-                                            <input 
-                                                type="file" 
-                                                wire:model="profile_image" 
+                                            <input
+                                                type="file"
+                                                wire:model="profile_image"
                                                 id="profile_image"
                                                 accept="image/jpeg,image/png,image/gif,image/webp"
-                                                x-on:change="
-                                                    const file = $event.target.files[0];
-                                                    if (file) {
-                                                        const previewImg = document.getElementById('profile-preview-img');
-                                                        const placeholder = document.getElementById('profile-preview-placeholder');
-                                                        
-                                                        // Mostrar preview inmediatamente con FileReader
-                                                        const reader = new FileReader();
-                                                        reader.onload = function(e) {
-                                                            if (previewImg) {
-                                                                previewImg.src = e.target.result;
-                                                                previewImg.classList.remove('hidden');
-                                                                previewImg.style.display = 'block';
-                                                                previewImg.classList.remove('border-zinc-200');
-                                                                previewImg.classList.add('border-agro-500');
-                                                                previewImg.onerror = null; // Reset error handler
-                                                            }
-                                                            if (placeholder) {
-                                                                placeholder.classList.add('hidden');
-                                                                placeholder.style.display = 'none';
-                                                            }
-                                                        };
-                                                        reader.onerror = function() {
-                                                            console.error('Error al leer el archivo');
-                                                            if (previewImg) {
-                                                                previewImg.classList.add('hidden');
-                                                                previewImg.style.display = 'none';
-                                                            }
-                                                            if (placeholder) {
-                                                                placeholder.classList.remove('hidden');
-                                                                placeholder.style.display = 'flex';
-                                                            }
-                                                        };
-                                                        reader.onabort = function() {
-                                                            console.error('Lectura del archivo cancelada');
-                                                            if (previewImg && previewImg.dataset.originalSrc) {
-                                                                previewImg.src = previewImg.dataset.originalSrc;
-                                                                previewImg.classList.remove('hidden');
-                                                                previewImg.style.display = 'block';
-                                                                if (placeholder) {
-                                                                    placeholder.classList.add('hidden');
-                                                                    placeholder.style.display = 'none';
-                                                                }
-                                                            } else if (placeholder) {
-                                                                previewImg.classList.add('hidden');
-                                                                previewImg.style.display = 'none';
-                                                                placeholder.classList.remove('hidden');
-                                                                placeholder.style.display = 'flex';
-                                                            }
-                                                        };
-                                                        reader.readAsDataURL(file);
-                                                    } else {
-                                                        // Si no hay archivo, restaurar imagen original
-                                                        const previewImg = document.getElementById('profile-preview-img');
-                                                        const placeholder = document.getElementById('profile-preview-placeholder');
-                                                        if (previewImg && previewImg.dataset.originalSrc) {
-                                                            previewImg.src = previewImg.dataset.originalSrc;
-                                                            previewImg.classList.remove('hidden');
-                                                            previewImg.style.display = 'block';
-                                                            if (placeholder) {
-                                                                placeholder.classList.add('hidden');
-                                                                placeholder.style.display = 'none';
-                                                            }
-                                                        } else if (placeholder) {
-                                                            previewImg.classList.add('hidden');
-                                                            previewImg.style.display = 'none';
-                                                            placeholder.classList.remove('hidden');
-                                                            placeholder.style.display = 'flex';
-                                                        }
-                                                    }
-                                                "
+                                                x-on:change="handleFile($event)"
                                                 class="block w-full text-sm text-zinc-500
                                                     file:mr-4 file:py-2 file:px-4
                                                     file:rounded-lg file:border-0
@@ -202,26 +121,14 @@
                                                     @error('profile_image') border-red-300 @enderror"
                                             >
                                             <p class="mt-1 text-xs text-zinc-500">JPG, PNG, GIF o WEBP (Máx. 2MB)</p>
-                                            
+
                                             @if($profile_image_preview)
                                                 <p class="mt-1 text-xs text-agro-700 font-semibold flex items-center gap-1">
                                                     <flux:icon icon="check" class="size-4" />
                                                     Nueva imagen seleccionada. Click "Guardar Cambios" para confirmar.
                                                 </p>
                                             @endif
-                                            
-                                            @script
-                                            <script>
-                                                // Guardar la URL original de la imagen al cargar
-                                                document.addEventListener('DOMContentLoaded', () => {
-                                                    const previewImg = document.getElementById('profile-preview-img');
-                                                    if (previewImg && previewImg.src) {
-                                                        previewImg.dataset.originalSrc = previewImg.src;
-                                                    }
-                                                });
-                                            </script>
-                                            @endscript
-                                            
+
                                             @error('profile_image')
                                                 <flux:error>{{ $message }}</flux:error>
                                             @enderror
@@ -425,29 +332,16 @@
 
     @script
     <script>
-        // Escuchar cuando se actualiza la imagen de perfil
+        // Cuando el servidor confirma la imagen guardada, actualizar Alpine preview
         $wire.on('profile-image-updated', (event) => {
-            const previewImg = document.getElementById('profile-preview-img');
-            const placeholder = document.getElementById('profile-preview-placeholder');
             const fileInput = document.getElementById('profile_image');
-            
-            if (previewImg && event.imageUrl) {
-                // Actualizar la imagen con la nueva URL
-                previewImg.src = event.imageUrl;
-                previewImg.dataset.originalSrc = event.imageUrl;
-                // Asegurar que la imagen esté visible
-                previewImg.classList.remove('hidden');
-                previewImg.style.display = 'block';
-                previewImg.classList.remove('border-agro-500');
-                previewImg.classList.add('border-zinc-200');
-                
-                // Asegurar que el placeholder esté oculto
-                if (placeholder) {
-                    placeholder.classList.add('hidden');
-                    placeholder.style.display = 'none';
-                }
+
+            if (event.imageUrl) {
+                window.dispatchEvent(new CustomEvent('profile-image-saved', {
+                    detail: { url: event.imageUrl }
+                }));
             }
-            
+
             // Limpiar el input de archivo
             if (fileInput) {
                 fileInput.value = '';
