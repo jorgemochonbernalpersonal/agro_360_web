@@ -373,14 +373,18 @@ class NavigationHelper
                     'label'  => 'Uva / Mosto externo',
                     'route'  => 'winery.external-grape.index',
                     'active' => request()->routeIs('winery.external-grape*'),
-                    'wip'    => true,
                 ],
                 [
                     'icon'   => 'arrows-right-left',
                     'label'  => 'Vinos',
                     'route'  => 'winery.wines.index',
                     'active' => request()->routeIs('winery.wines*'),
-                    'wip'    => true,
+                ],
+                [
+                    'icon'   => 'user-circle',
+                    'label'  => 'Enólogos',
+                    'route'  => 'winery.oenologists.index',
+                    'active' => request()->routeIs('winery.oenologists*'),
                 ],
                 [
                     'icon'   => 'magnifying-glass',

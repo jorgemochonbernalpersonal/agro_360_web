@@ -86,12 +86,9 @@ Route::middleware(['role:winery'])
         Route::get('/wines/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('wines.process.create');
 
         // ── Uva / mosto / vino externo (en construcción) ─────────────
-        Route::get('/external-grape', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('external-grape.index')
-            ->defaults('module', 'Uva / Mosto externo')
-            ->defaults('icon', 'archive-box');
-        Route::get('/external-grape/create', fn() => redirect()->route('winery.external-grape.index'))->name('external-grape.create');
-        Route::get('/external-grape/{grape}/edit', fn() => redirect()->route('winery.external-grape.index'))->name('external-grape.edit');
+        Route::get('/external-grape', \App\Livewire\Winery\ExternalGrape\Index::class)->name('external-grape.index');
+        Route::get('/external-grape/create', \App\Livewire\Winery\ExternalGrape\Create::class)->name('external-grape.create');
+        Route::get('/external-grape/{externalGrape}/edit', \App\Livewire\Winery\ExternalGrape\Edit::class)->name('external-grape.edit');
 
         // ── Lotes de producto ─────────────────────────────────────────
         Route::get('/product-lots', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('product-lots.index');

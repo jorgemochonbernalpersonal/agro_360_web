@@ -42,6 +42,7 @@ class Show extends Component
     public string $tr_unit_id           = '';
     public string $tr_type              = 'racking';
     public string $tr_date              = '';
+    public string $tr_oenologist_id     = '';
     public string $tr_notes             = '';
 
     // ── Formulario: merma ─────────────────────────────────────────────────────
@@ -68,6 +69,7 @@ class Show extends Component
 
     // ── Formulario: análisis ──────────────────────────────────────────────────
     public string $an_container_id      = '';
+    public string $an_oenologist_id     = '';
     public string $an_date              = '';
     public string $an_type              = 'own';
     public string $an_laboratory        = '';
@@ -80,6 +82,8 @@ class Show extends Component
     public string $an_so2_total         = '';
     public string $an_density           = '';
     public string $an_turbidity         = '';
+    public string $an_color_intensity   = '';
+    public string $an_malic_acid        = '';
     public string $an_notes             = '';
 
     public function mount(Wine $wine): void
@@ -145,19 +149,21 @@ class Show extends Component
             'tr_unit_id'           => ['required', 'exists:units_of_measurement,id'],
             'tr_type'              => ['required', 'in:' . implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
             'tr_date'              => ['required', 'date'],
+            'tr_oenologist_id'     => ['nullable', 'exists:oenologists,id'],
             'tr_notes'             => ['nullable', 'string'],
         ]);
 
         WineTransfer::create([
-            'wine_id'              => $this->wine->id,
-            'from_container_id'    => $this->tr_from_container_id ?: null,
-            'to_container_id'      => $this->tr_to_container_id,
-            'quantity'             => $this->tr_quantity,
+            'wine_id'                => $this->wine->id,
+            'from_container_id'      => $this->tr_from_container_id ?: null,
+            'to_container_id'        => $this->tr_to_container_id,
+            'quantity'               => $this->tr_quantity,
             'unit_of_measurement_id' => $this->tr_unit_id,
-            'transfer_type'        => $this->tr_type,
-            'transfer_date'        => $this->tr_date,
-            'notes'                => $this->tr_notes ?: null,
-            'created_by'           => Auth::id(),
+            'transfer_type'          => $this->tr_type,
+            'transfer_date'          => $this->tr_date,
+            'oenologist_id'          => $this->tr_oenologist_id ?: null,
+            'notes'                  => $this->tr_notes ?: null,
+            'created_by'             => Auth::id(),
         ]);
 
         $this->resetTrForm();
@@ -212,6 +218,7 @@ class Show extends Component
     {
         $this->validate([
             'an_container_id'     => ['nullable', 'exists:containers,id'],
+            'an_oenologist_id'    => ['nullable', 'exists:oenologists,id'],
             'an_date'             => ['required', 'date'],
             'an_type'             => ['required', 'in:own,external'],
             'an_laboratory'       => ['nullable', 'string', 'max:200'],
@@ -224,12 +231,15 @@ class Show extends Component
             'an_so2_total'        => ['nullable', 'numeric', 'min:0'],
             'an_density'          => ['nullable', 'numeric', 'min:0.900', 'max:1.200'],
             'an_turbidity'        => ['nullable', 'numeric', 'min:0'],
+            'an_color_intensity'  => ['nullable', 'numeric', 'min:0'],
+            'an_malic_acid'       => ['nullable', 'numeric', 'min:0'],
             'an_notes'            => ['nullable', 'string'],
         ]);
 
         WineAnalysis::create([
             'wine_id'              => $this->wine->id,
             'container_id'         => $this->an_container_id ?: null,
+            'oenologist_id'        => $this->an_oenologist_id ?: null,
             'analysis_date'        => $this->an_date,
             'analysis_type'        => $this->an_type,
             'laboratory_name'      => $this->an_laboratory ?: null,
@@ -242,6 +252,8 @@ class Show extends Component
             'so2_total'            => $this->an_so2_total ?: null,
             'density'              => $this->an_density ?: null,
             'turbidity'            => $this->an_turbidity ?: null,
+            'color_intensity'      => $this->an_color_intensity ?: null,
+            'malic_acid'           => $this->an_malic_acid ?: null,
             'notes'                => $this->an_notes ?: null,
             'created_by'           => Auth::id(),
         ]);
@@ -392,7 +404,7 @@ class Show extends Component
             ->get();
 
         $transfers = $this->wine->transfers()
-            ->with(['fromContainer:id,name', 'toContainer:id,name', 'unitOfMeasurement:id,abbreviation'])
+            ->with(['fromContainer:id,name', 'toContainer:id,name', 'unitOfMeasurement:id,abbreviation', 'oenologist:id,name,surname'])
             ->get();
 
         $losses = $this->wine->losses()
@@ -400,7 +412,7 @@ class Show extends Component
             ->get();
 
         $analyses = $this->wine->analyses()
-            ->with('container:id,name')
+            ->with(['container:id,name', 'oenologist:id,name,surname'])
             ->get();
 
         $timeline = $this->buildTimeline($fermentationControls, $transfers, $losses, $analyses);
@@ -475,6 +487,7 @@ class Show extends Component
     {
         $this->tr_from_container_id = $this->tr_to_container_id = '';
         $this->tr_quantity = $this->tr_unit_id = $this->tr_notes = '';
+        $this->tr_oenologist_id = '';
         $this->tr_type = 'racking';
         $this->tr_date = now()->format('Y-m-d');
     }
@@ -502,11 +515,12 @@ class Show extends Component
 
     private function resetAnForm(): void
     {
-        $this->an_container_id = $this->an_date = $this->an_laboratory = '';
+        $this->an_container_id = $this->an_oenologist_id = $this->an_laboratory = '';
         $this->an_type = 'own';
         $this->an_alcohol = $this->an_residual_sugar = $this->an_total_acidity = '';
         $this->an_volatile_acidity = $this->an_ph = $this->an_so2_free = '';
-        $this->an_so2_total = $this->an_density = $this->an_turbidity = $this->an_notes = '';
+        $this->an_so2_total = $this->an_density = $this->an_turbidity = '';
+        $this->an_color_intensity = $this->an_malic_acid = $this->an_notes = '';
         $this->an_date = now()->format('Y-m-d');
     }
 }

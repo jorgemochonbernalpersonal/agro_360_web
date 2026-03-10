@@ -15,6 +15,7 @@ class WineAnalysis extends Model
     protected $fillable = [
         'wine_id',
         'container_id',
+        'oenologist_id',
         'analysis_date',
         'analysis_type',
         'laboratory_name',
@@ -57,6 +58,11 @@ class WineAnalysis extends Model
     public function container(): BelongsTo
     {
         return $this->belongsTo(Container::class);
+    }
+
+    public function oenologist(): BelongsTo
+    {
+        return $this->belongsTo(Oenologist::class);
     }
 
     public function creator(): BelongsTo

@@ -22,6 +22,7 @@ class WineTransfer extends Model
         'unit_of_measurement_id',
         'transfer_type',
         'transfer_date',
+        'oenologist_id',
         'notes',
         'created_by',
     ];
@@ -49,6 +50,11 @@ class WineTransfer extends Model
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
+    }
+
+    public function oenologist(): BelongsTo
+    {
+        return $this->belongsTo(Oenologist::class);
     }
 
     public function creator(): BelongsTo

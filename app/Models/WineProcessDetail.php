@@ -29,6 +29,7 @@ class WineProcessDetail extends Model
     protected $fillable = [
         'wine_id',
         'container_id',
+        'oenologist_id',
         'process_type',
         'start_date',
         'end_date',
@@ -57,6 +58,11 @@ class WineProcessDetail extends Model
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
+    }
+
+    public function oenologist(): BelongsTo
+    {
+        return $this->belongsTo(Oenologist::class);
     }
 
     public function creator(): BelongsTo

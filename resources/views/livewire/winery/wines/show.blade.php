@@ -300,6 +300,9 @@
                                             {{ $m->fromContainer?->name ?? 'Origen externo' }}
                                             <flux:icon icon="arrow-right" class="inline w-3 h-3 mx-1" />
                                             {{ $m->toContainer?->name }}
+                                            @if($m->oenologist)
+                                                <span class="ml-2 text-zinc-400">· {{ $m->oenologist->full_name }}</span>
+                                            @endif
                                         </p>
                                         @if($m->notes)
                                             <p class="mt-1 text-xs text-zinc-500 italic">{{ $m->notes }}</p>
@@ -342,6 +345,9 @@
                                                 <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">Análisis — {{ $m->analysis_type_label }}</span>
                                                 @if($m->laboratory_name)
                                                     <span class="ml-2 text-xs text-zinc-500">{{ $m->laboratory_name }}</span>
+                                                @endif
+                                                @if($m->oenologist)
+                                                    <span class="ml-2 text-xs text-zinc-400">· {{ $m->oenologist->full_name }}</span>
                                                 @endif
                                             </div>
                                             <flux:button size="xs" variant="ghost" icon="trash"
@@ -416,7 +422,7 @@
     ════════════════════════════════════════════════════════════════════════════ --}}
     <div x-show="tab === 'transfers'" x-cloak>
         <x-agro.card>
-            <x-agro.data-table :headers="['Fecha', 'Tipo', 'Origen', 'Destino', 'Cantidad', 'Notas', '']">
+            <x-agro.data-table :headers="['Fecha', 'Tipo', 'Origen', 'Destino', 'Cantidad', 'Enólogo', 'Notas', '']">
                 @forelse($transfers as $tr)
                     <x-agro.table-row>
                         <x-agro.table-cell>{{ $tr->transfer_date->format('d/m/Y') }}</x-agro.table-cell>
@@ -426,6 +432,7 @@
                         <x-agro.table-cell>{{ $tr->fromContainer?->name ?? 'Externo' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $tr->toContainer?->name ?? '—' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ number_format($tr->quantity, 1) }} {{ $tr->unitOfMeasurement?->abbreviation }}</x-agro.table-cell>
+                        <x-agro.table-cell>{{ $tr->oenologist?->full_name ?? '—' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $tr->notes ? \Str::limit($tr->notes, 40) : '—' }}</x-agro.table-cell>
                         <x-agro.table-cell align="right">
                             <flux:button size="sm" variant="ghost" icon="trash"
@@ -477,13 +484,14 @@
     ════════════════════════════════════════════════════════════════════════════ --}}
     <div x-show="tab === 'analyses'" x-cloak>
         <x-agro.card>
-            <x-agro.data-table :headers="['Fecha', 'Tipo', 'Alcohol', 'pH', 'AT', 'AV', 'SO₂ L', 'SO₂ T', 'Notas', '']">
+            <x-agro.data-table :headers="['Fecha', 'Tipo', 'Enólogo', 'Alcohol', 'pH', 'AT', 'AV', 'SO₂ L', 'SO₂ T', 'Ác. Málico', 'Notas', '']">
                 @forelse($analyses as $an)
                     <x-agro.table-row>
                         <x-agro.table-cell>{{ $an->analysis_date->format('d/m/Y') }}</x-agro.table-cell>
                         <x-agro.table-cell>
                             <x-agro.status-badge :label="$an->analysis_type_label" color="emerald" />
                         </x-agro.table-cell>
+                        <x-agro.table-cell>{{ $an->oenologist?->full_name ?? '—' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $an->alcohol !== null ? $an->alcohol . '%' : '—' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $an->ph ?? '—' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $an->total_acidity !== null ? $an->total_acidity . ' g/L' : '—' }}</x-agro.table-cell>
@@ -497,6 +505,7 @@
                             @endif
                         </x-agro.table-cell>
                         <x-agro.table-cell>{{ $an->so2_total ?? '—' }}</x-agro.table-cell>
+                        <x-agro.table-cell>{{ $an->malic_acid !== null ? $an->malic_acid . ' g/L' : '—' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $an->notes ? \Str::limit($an->notes, 30) : '—' }}</x-agro.table-cell>
                         <x-agro.table-cell align="right">
                             <flux:button size="sm" variant="ghost" icon="trash"
@@ -649,6 +658,17 @@
                 </flux:field>
 
                 <flux:field class="col-span-2">
+                    <flux:label>Enólogo responsable</flux:label>
+                    <flux:select wire:model="tr_oenologist_id">
+                        <option value="">Sin asignar</option>
+                        @foreach($oenologists as $oe)
+                            <option value="{{ $oe->id }}">{{ $oe->full_name }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="tr_oenologist_id" />
+                </flux:field>
+
+                <flux:field class="col-span-2">
                     <flux:label>Notas</flux:label>
                     <flux:textarea wire:model="tr_notes" rows="2" placeholder="Motivo del trasvase..." />
                 </flux:field>
@@ -764,7 +784,18 @@
                     <flux:input wire:model="an_laboratory" type="text" placeholder="Nombre del lab." />
                 </flux:field>
 
-                {{-- Parámetros --}}
+                <flux:field class="col-span-2 md:col-span-4">
+                    <flux:label>Enólogo responsable</flux:label>
+                    <flux:select wire:model="an_oenologist_id">
+                        <option value="">Sin asignar</option>
+                        @foreach($oenologists as $oe)
+                            <option value="{{ $oe->id }}">{{ $oe->full_name }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="an_oenologist_id" />
+                </flux:field>
+
+                {{-- Parámetros fisicoquímicos --}}
                 <flux:field>
                     <flux:label>Alcohol (% vol)</flux:label>
                     <flux:input wire:model="an_alcohol" type="number" step="0.01" placeholder="12.50" />
@@ -803,6 +834,22 @@
                 <flux:field>
                     <flux:label>Densidad (g/cm³)</flux:label>
                     <flux:input wire:model="an_density" type="number" step="0.0001" placeholder="0.9950" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Turbidez (NTU)</flux:label>
+                    <flux:input wire:model="an_turbidity" type="number" step="0.1" placeholder="0.5" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Intensidad color</flux:label>
+                    <flux:input wire:model="an_color_intensity" type="number" step="0.001" placeholder="0.850" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Ácido málico (g/L)</flux:label>
+                    <flux:input wire:model="an_malic_acid" type="number" step="0.01" placeholder="1.20" />
+                    <flux:description>Seguimiento FML</flux:description>
                 </flux:field>
 
                 <flux:field class="col-span-2 md:col-span-4">
