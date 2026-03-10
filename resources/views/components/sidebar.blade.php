@@ -58,7 +58,7 @@
 >
     {{-- ═══════════════════ RAIL 64px ═══════════════════ --}}
     <aside
-        class="fixed left-0 top-0 h-full w-16 z-40 flex flex-col items-center py-3 gap-1"
+        class="fixed left-0 top-0 h-full w-16 z-50 flex flex-col items-center py-3 gap-1"
         style="background: linear-gradient(180deg, #0f2508 0%, #1a3a0e 40%, #2d5016 100%);"
     >
         {{-- Logo --}}
@@ -165,7 +165,7 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 translate-x-0"
             x-transition:leave-end="opacity-0 -translate-x-2"
-            class="fixed left-16 top-0 h-full w-64 z-39 flex flex-col shadow-2xl"
+            class="fixed left-16 top-0 h-full w-64 z-40 flex flex-col shadow-2xl"
             style="
                 background: rgba(236, 246, 230, 0.96);
                 backdrop-filter: blur(14px);
@@ -253,7 +253,7 @@
         x-cloak
         x-on:click="close()"
         style="display:none"
-        class="fixed inset-0 z-30"
+        class="fixed inset-0 z-30 cursor-default"
     ></div>
 </div>
 
