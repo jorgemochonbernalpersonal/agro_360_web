@@ -84,7 +84,7 @@
         @endif
     @endauth
 
-    <main class="min-h-screen transition-all duration-300 @auth @if(session('impersonating')) pt-24 @else pt-16 @endif lg:pl-72 @endauth" id="main-content">
+    <main class="min-h-screen transition-all duration-300 @auth @if(session('impersonating')) pt-24 @else pt-16 @endif lg:pl-16 @endauth" id="main-content">
         <div class="@auth p-4 lg:p-8 @else p-0 @endauth">
             {{ $slot }}
         </div>
