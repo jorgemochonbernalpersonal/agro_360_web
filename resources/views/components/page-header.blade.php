@@ -14,6 +14,7 @@
         'parcelas'  => ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.4)'],
         'recursos'  => ['color' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.4)'],
         'normativa' => ['color' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.4)'],
+        'pac'       => ['color' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.4)'],
         'negocio'   => ['color' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.4)'],
         'sistema'   => ['color' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.4)'],
         // winery
@@ -49,12 +50,18 @@
     } elseif (request()->routeIs(
         'viticulturist.exploitations*', 'viticulturist.commercial-authorizations*',
         'viticulturist.advisory*', 'viticulturist.field-applicators*',
-        'viticulturist.field-equipment*', 'viticulturist.residue*',
-        'viticulturist.energy*', 'viticulturist.cue*',
-        'viticulturist.pac*', 'viticulturist.official*',
-        'viticulturist.pac-compliance*'
+        'viticulturist.field-equipment*'
     )) {
         $detectedChapter = 'normativa';
+    } elseif (request()->routeIs(
+        'viticulturist.pac.*', 'viticulturist.pac-compliance*'
+    )) {
+        $detectedChapter = 'pac';
+    } elseif (request()->routeIs(
+        'viticulturist.residue*', 'viticulturist.energy*',
+        'viticulturist.cue*', 'viticulturist.official*'
+    )) {
+        $detectedChapter = 'campana';
     } elseif (request()->routeIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',

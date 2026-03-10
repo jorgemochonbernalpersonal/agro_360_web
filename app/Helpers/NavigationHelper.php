@@ -77,74 +77,6 @@ class NavigationHelper
                     'route' => 'viticulturist.pest-management.index',
                     'active' => request()->routeIs('viticulturist.pest-management.*'),
                 ],
-            ];
-
-            // GRUPO: PARCELAS Y TERRITORIO
-            $menu['plots_analysis'] = [
-                [
-                    'icon' => 'map',
-                    'label' => 'Parcelas',
-                    'route' => 'plots.index',
-                    'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*'),
-                ],
-                [
-                    'icon' => 'book-open',
-                    'label' => 'Plantaciones',
-                    'route' => 'plots.plantings.index',
-                    'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('viticulturist.phenology.*'),
-                ],
-                [
-                    'icon' => 'map-pin',
-                    'label' => 'SIGPAC',
-                    'route' => 'sigpac.codes',
-                    'active' => request()->routeIs('sigpac.*'),
-                ],
-                [
-                    'icon' => 'globe-alt',
-                    'label' => 'Teledetección',
-                    'route' => 'remote-sensing.dashboard',
-                    'active' => request()->routeIs('remote-sensing.*'),
-                ],
-                [
-                    'icon' => 'globe-europe-africa',
-                    'label' => 'Gestión Territorial',
-                    'route' => 'plots.territory',
-                    'active' => request()->routeIs('plots.territory'),
-                ],
-            ];
-
-            // GRUPO: NORMATIVA Y CUMPLIMIENTO (registros legales + compliance del cuaderno)
-            $menu['compliance'] = [
-                [
-                    'icon' => 'building-office',
-                    'label' => 'Explotación SIEX/REA',
-                    'route' => 'viticulturist.exploitations.index',
-                    'active' => request()->routeIs('viticulturist.exploitations.*'),
-                ],
-                [
-                    'icon' => 'shield-check',
-                    'label' => 'Autorizaciones Comerciales',
-                    'route' => 'viticulturist.commercial-authorizations.index',
-                    'active' => request()->routeIs('viticulturist.commercial-authorizations.*'),
-                ],
-                [
-                    'icon' => 'user',
-                    'label' => 'Asesorías Técnicas',
-                    'route' => 'viticulturist.advisory-memberships.index',
-                    'active' => request()->routeIs('viticulturist.advisory-memberships.*'),
-                ],
-                [
-                    'icon' => 'identification',
-                    'label' => 'Aplicadores ROPO',
-                    'route' => 'viticulturist.field-applicators.index',
-                    'active' => request()->routeIs('viticulturist.field-applicators.*'),
-                ],
-                [
-                    'icon' => 'cog-6-tooth',
-                    'label' => 'Equipos ITB/ITEA',
-                    'route' => 'viticulturist.field-equipment.index',
-                    'active' => request()->routeIs('viticulturist.field-equipment.*'),
-                ],
                 ['divider' => true],
                 [
                     'icon' => 'chart-bar',
@@ -181,6 +113,74 @@ class NavigationHelper
                     'label' => 'Informes Oficiales',
                     'route' => 'viticulturist.official-reports.index',
                     'active' => request()->routeIs('viticulturist.official-reports.*'),
+                ],
+            ];
+
+            // GRUPO: PARCELAS Y TERRITORIO
+            $menu['plots_analysis'] = [
+                [
+                    'icon' => 'map',
+                    'label' => 'Parcelas',
+                    'route' => 'plots.index',
+                    'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*'),
+                ],
+                [
+                    'icon' => 'book-open',
+                    'label' => 'Plantaciones',
+                    'route' => 'plots.plantings.index',
+                    'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('viticulturist.phenology.*'),
+                ],
+                [
+                    'icon' => 'map-pin',
+                    'label' => 'SIGPAC',
+                    'route' => 'sigpac.codes',
+                    'active' => request()->routeIs('sigpac.*'),
+                ],
+                [
+                    'icon' => 'globe-alt',
+                    'label' => 'Teledetección',
+                    'route' => 'remote-sensing.dashboard',
+                    'active' => request()->routeIs('remote-sensing.*'),
+                ],
+                [
+                    'icon' => 'globe-europe-africa',
+                    'label' => 'Gestión Territorial',
+                    'route' => 'plots.territory',
+                    'active' => request()->routeIs('plots.territory'),
+                ],
+            ];
+
+            // GRUPO: NORMATIVA (solo registros legales fijos)
+            $menu['compliance'] = [
+                [
+                    'icon' => 'building-office',
+                    'label' => 'Explotación SIEX/REA',
+                    'route' => 'viticulturist.exploitations.index',
+                    'active' => request()->routeIs('viticulturist.exploitations.*'),
+                ],
+                [
+                    'icon' => 'shield-check',
+                    'label' => 'Autorizaciones Comerciales',
+                    'route' => 'viticulturist.commercial-authorizations.index',
+                    'active' => request()->routeIs('viticulturist.commercial-authorizations.*'),
+                ],
+                [
+                    'icon' => 'user',
+                    'label' => 'Asesorías Técnicas',
+                    'route' => 'viticulturist.advisory-memberships.index',
+                    'active' => request()->routeIs('viticulturist.advisory-memberships.*'),
+                ],
+                [
+                    'icon' => 'identification',
+                    'label' => 'Aplicadores ROPO',
+                    'route' => 'viticulturist.field-applicators.index',
+                    'active' => request()->routeIs('viticulturist.field-applicators.*'),
+                ],
+                [
+                    'icon' => 'cog-6-tooth',
+                    'label' => 'Equipos ITB/ITEA',
+                    'route' => 'viticulturist.field-equipment.index',
+                    'active' => request()->routeIs('viticulturist.field-equipment.*'),
                 ],
             ];
 

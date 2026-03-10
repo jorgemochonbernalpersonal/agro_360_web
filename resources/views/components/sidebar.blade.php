@@ -9,6 +9,7 @@
         'parcelas'  => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
         'recursos'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
         'normativa' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
+        'pac'       => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
         'negocio'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
         'sistema'   => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
         // winery
@@ -23,7 +24,8 @@
             ['key' => 'campana',   'icon' => 'pencil-square',     'label' => 'Campaña',   'sections' => ['operations']],
             ['key' => 'parcelas',  'icon' => 'map',                'label' => 'Parcelas',  'sections' => ['plots_analysis']],
             ['key' => 'recursos',  'icon' => 'wrench-screwdriver', 'label' => 'Recursos',  'sections' => ['resources']],
-            ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance', 'pac']],
+            ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance']],
+            ['key' => 'pac',       'icon' => 'banknotes',           'label' => 'PAC',       'sections' => ['pac']],
             ['key' => 'negocio',   'icon' => 'calculator',         'label' => 'Negocio',   'sections' => ['billing']],
             ['key' => 'sistema',   'icon' => 'cog-6-tooth',        'label' => 'Sistema',   'sections' => ['system']],
         ];
