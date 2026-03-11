@@ -141,16 +141,20 @@
                         <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-2">Descripción</p>
                         <p class="text-sm text-zinc-700 whitespace-pre-wrap">{{ $selectedTicket->description }}</p>
 
-                        @if($selectedTicket->image)
+                        @if(!empty($selectedTicket->image_urls))
                             <div class="mt-4">
-                                <p class="text-xs font-medium text-zinc-500 mb-2">Imagen adjunta</p>
-                                <a href="{{ $selectedTicket->image_url }}" target="_blank" class="block">
-                                    <img
-                                        src="{{ $selectedTicket->image_url }}"
-                                        alt="Imagen del ticket"
-                                        class="max-w-full h-auto max-h-80 rounded-lg border border-zinc-200 hover:opacity-90 transition cursor-pointer"
-                                    >
-                                </a>
+                                <p class="text-xs font-medium text-zinc-500 mb-2">Imágenes adjuntas ({{ count($selectedTicket->image_urls) }})</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    @foreach($selectedTicket->image_urls as $url)
+                                        <a href="{{ $url }}" target="_blank" class="block">
+                                            <img
+                                                src="{{ $url }}"
+                                                alt="Imagen del ticket"
+                                                class="w-full h-auto max-h-48 object-cover rounded-lg border border-zinc-200 hover:opacity-90 transition cursor-pointer"
+                                            >
+                                        </a>
+                                    @endforeach
+                                </div>
                             </div>
                         @endif
 

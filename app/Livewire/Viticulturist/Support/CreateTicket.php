@@ -15,41 +15,44 @@ class CreateTicket extends Component
 
     public $title = '';
     public $description = '';
-    public $image;
+    public array $images = [];
     public $type = 'question';
     public $priority = 'medium';
 
     protected function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'required|string|min:10',
-            'image' => 'nullable|image|max:5120',  // Max 5MB
-            'type' => 'required|in:bug,feature,improvement,question',
-            'priority' => 'required|in:low,medium,high,urgent',
+            'images'      => 'nullable|array|max:5',
+            'images.*'    => 'image|max:5120',
+            'type'        => 'required|in:bug,feature,improvement,question',
+            'priority'    => 'required|in:low,medium,high,urgent',
         ];
     }
 
     protected function messages(): array
     {
         return [
-            'title.required' => 'El título es obligatorio.',
-            'title.max' => 'El título no puede tener más de 255 caracteres.',
+            'title.required'       => 'El título es obligatorio.',
+            'title.max'            => 'El título no puede tener más de 255 caracteres.',
             'description.required' => 'La descripción es obligatoria.',
-            'description.min' => 'La descripción debe tener al menos 10 caracteres.',
-            'image.image' => 'El archivo debe ser una imagen válida.',
-            'image.max' => 'La imagen no puede ser mayor a 5MB.',
-            'type.required' => 'Debes seleccionar un tipo de ticket.',
-            'type.in' => 'El tipo de ticket seleccionado no es válido.',
-            'priority.required' => 'Debes seleccionar una prioridad.',
-            'priority.in' => 'La prioridad seleccionada no es válida.',
+            'description.min'      => 'La descripción debe tener al menos 10 caracteres.',
+            'images.max'           => 'Puedes adjuntar un máximo de 5 imágenes.',
+            'images.*.image'       => 'Cada archivo debe ser una imagen válida.',
+            'images.*.max'         => 'Cada imagen no puede superar 5MB.',
+            'type.required'        => 'Debes seleccionar un tipo de ticket.',
+            'type.in'              => 'El tipo de ticket seleccionado no es válido.',
+            'priority.required'    => 'Debes seleccionar una prioridad.',
+            'priority.in'          => 'La prioridad seleccionada no es válida.',
         ];
     }
 
-    public function updatedImage()
+    public function updatedImages()
     {
-        $this->validateOnly('image', [
-            'image' => 'nullable|image|max:5120',
+        $this->validateOnly('images', [
+            'images'   => 'nullable|array|max:5',
+            'images.*' => 'image|max:5120',
         ]);
     }
 
@@ -57,21 +60,19 @@ class CreateTicket extends Component
     {
         $this->validate();
 
-        $imagePath = null;
-
-        // Guardar imagen si existe
-        if ($this->image) {
-            $imagePath = $this->image->store('support-tickets', 'public');
+        $imagePaths = [];
+        foreach ($this->images as $image) {
+            $imagePaths[] = $image->store('support-tickets', 'public');
         }
 
         $ticket = SupportTicket::create([
-            'user_id' => Auth::id(),
-            'title' => $this->title,
+            'user_id'     => Auth::id(),
+            'title'       => $this->title,
             'description' => $this->description,
-            'image' => $imagePath,
-            'type' => $this->type,
-            'priority' => $this->priority,
-            'status' => 'open',
+            'images'      => $imagePaths ?: null,
+            'type'        => $this->type,
+            'priority'    => $this->priority,
+            'status'      => 'open',
         ]);
 
         // Cargar la relación del usuario para la notificación

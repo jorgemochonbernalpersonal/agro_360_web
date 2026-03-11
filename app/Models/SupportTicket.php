@@ -14,7 +14,7 @@ class SupportTicket extends Model
         'user_id',
         'title',
         'description',
-        'image',
+        'images',
         'type',
         'status',
         'priority',
@@ -24,8 +24,9 @@ class SupportTicket extends Model
     ];
 
     protected $casts = [
+        'images'      => 'array',
         'resolved_at' => 'datetime',
-        'closed_at' => 'datetime',
+        'closed_at'   => 'datetime',
     ];
 
     protected static function booted(): void
@@ -222,14 +223,17 @@ class SupportTicket extends Model
     }
 
     /**
-     * Obtener URL de la imagen
+     * Obtener URLs de todas las imágenes adjuntas
      */
-    public function getImageUrlAttribute(): ?string
+    public function getImageUrlsAttribute(): array
     {
-        if (!$this->image) {
-            return null;
+        if (empty($this->images)) {
+            return [];
         }
 
-        return Storage::disk('public')->url($this->image);
+        return array_map(
+            fn($path) => Storage::disk('public')->url($path),
+            $this->images
+        );
     }
 }

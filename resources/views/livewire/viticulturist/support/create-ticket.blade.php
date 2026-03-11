@@ -109,35 +109,47 @@
         </x-agro.form-section>
 
         <x-agro.form-section title="Archivos Adjuntos">
-            {{-- Imagen (Opcional) --}}
-            <div x-data="{ previewUrl: null }">
-                <flux:label for="image">Imagen (Opcional)</flux:label>
+            <div x-data="{ previews: [], addFiles(files) {
+                    const remaining = 5 - this.previews.length;
+                    const toAdd = Array.from(files).slice(0, remaining);
+                    toAdd.forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => this.previews.push({ src: e.target.result, name: file.name });
+                        reader.readAsDataURL(file);
+                    });
+                }, removePreview(index) {
+                    this.previews.splice(index, 1);
+                }
+            }">
+                <flux:label>Imágenes (Opcional, máx. 5)</flux:label>
                 <input
                     type="file"
-                    wire:model="image"
-                    id="image"
+                    wire:model="images"
+                    id="images"
                     accept="image/*"
-                    x-on:change="
-                        const file = $event.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => previewUrl = e.target.result;
-                            reader.readAsDataURL(file);
-                        } else {
-                            previewUrl = null;
-                        }
-                    "
+                    multiple
+                    x-on:change="addFiles($event.target.files); $event.target.value = '';"
                     class="mt-1 block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-agro-50 file:text-agro-700 hover:file:bg-agro-500 hover:file:text-white transition-colors"
                 >
-                @error('image')
-                    <flux:error>{{ $message }}</flux:error>
-                @enderror
-                <div x-show="previewUrl" wire:ignore class="mt-3">
-                    <p class="text-sm text-zinc-600 mb-2">Vista previa:</p>
-                    <img :src="previewUrl" alt="Vista previa" class="max-w-full h-auto max-h-64 rounded-lg border border-zinc-300">
+                @error('images') <flux:error>{{ $message }}</flux:error> @enderror
+                @error('images.*') <flux:error>{{ $message }}</flux:error> @enderror
+
+                {{-- Galería de previews --}}
+                <div wire:ignore class="mt-3 grid grid-cols-3 sm:grid-cols-5 gap-2" x-show="previews.length > 0">
+                    <template x-for="(preview, index) in previews" :key="index">
+                        <div class="relative group">
+                            <img :src="preview.src" :alt="preview.name" class="w-full h-20 object-cover rounded-lg border border-zinc-300">
+                            <button
+                                type="button"
+                                x-on:click="removePreview(index)"
+                                class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >&times;</button>
+                        </div>
+                    </template>
                 </div>
-                <p class="text-xs text-zinc-500 mt-1">
-                    Puedes adjuntar una imagen para ayudarnos a entender mejor tu consulta (máx. 5MB).
+
+                <p class="text-xs text-zinc-500 mt-2">
+                    Adjunta hasta 5 imágenes (máx. 5MB cada una) para ayudarnos a entender tu consulta.
                 </p>
             </div>
         </x-agro.form-section>
