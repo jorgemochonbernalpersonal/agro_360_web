@@ -157,6 +157,42 @@ Route::middleware(['role:winery'])
             ->defaults('module', 'Documentos Bodega')
             ->defaults('icon', 'folder-open');
 
+        // ── Resumen Económico (en construcción) ───────────────────────
+        Route::get('/financial-summary', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('financial-summary.index')
+            ->defaults('module', 'Resumen Económico')
+            ->defaults('icon', 'chart-bar-square');
+
+        // ── Estadísticas Financieras (en construcción) ────────────────
+        Route::get('/financial-stats', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('financial-stats.index')
+            ->defaults('module', 'Estadísticas Financieras')
+            ->defaults('icon', 'presentation-chart-bar');
+
+        // ── Embotellado y Expediciones (en construcción) ─────────────
+        Route::get('/bottling', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('bottling.index')
+            ->defaults('module', 'Embotellado y Expediciones')
+            ->defaults('icon', 'archive-box-arrow-down');
+
+        // ── Fichas Técnicas y Catas (en construcción) ─────────────────
+        Route::get('/product-sheets', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('product-sheets.index')
+            ->defaults('module', 'Fichas Técnicas y Catas')
+            ->defaults('icon', 'document-text');
+
+        // ── Exportación (en construcción) ─────────────────────────────
+        Route::get('/exports', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('exports.index')
+            ->defaults('module', 'Exportación')
+            ->defaults('icon', 'globe-alt');
+
+        // ── Enoturismo (en construcción) ──────────────────────────────
+        Route::get('/enotourism', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('enotourism.index')
+            ->defaults('module', 'Enoturismo')
+            ->defaults('icon', 'sparkles');
+
         // ── Trazabilidad (en construcción) ───────────────────────────
         Route::get('/traceability', \App\Livewire\Winery\UnderConstruction::class)
             ->name('traceability.index')

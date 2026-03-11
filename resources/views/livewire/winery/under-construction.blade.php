@@ -85,6 +85,36 @@
                         ['icon' => 'scale',               'label' => 'Control de stock', 'desc' => 'Seguimiento de kg disponibles por partida'],
                         ['icon' => 'arrows-right-left',   'label' => 'Vinculación',      'desc' => 'Asociación directa con contenedores y vinos'],
                     ],
+                    'Resumen Económico'             => [
+                        ['icon' => 'chart-bar-square',       'label' => 'KPIs financieros', 'desc' => 'Ingresos, costes, margen y cash flow del ejercicio'],
+                        ['icon' => 'arrows-right-left',      'label' => 'Por campaña',      'desc' => 'Comparativa económica entre añadas'],
+                        ['icon' => 'banknotes',              'label' => 'Rentabilidad',     'desc' => 'Margen por vino, lote y canal de venta'],
+                    ],
+                    'Estadísticas Financieras'      => [
+                        ['icon' => 'presentation-chart-bar', 'label' => 'Evolución',        'desc' => 'Tendencias de facturación y costes históricos'],
+                        ['icon' => 'chart-pie',              'label' => 'Por segmento',     'desc' => 'Distribución por vino, canal y mercado'],
+                        ['icon' => 'arrow-up-tray',          'label' => 'Exportación',      'desc' => 'Informes en PDF y Excel para dirección o inversores'],
+                    ],
+                    'Embotellado y Expediciones'    => [
+                        ['icon' => 'archive-box-arrow-down', 'label' => 'Embotellado',      'desc' => 'Llenado, etiquetado y paletizado por lote'],
+                        ['icon' => 'truck',                  'label' => 'Expediciones',     'desc' => 'Albaranes de salida y trazabilidad de envío'],
+                        ['icon' => 'archive-box',            'label' => 'Stock botellas',   'desc' => 'Inventario de producto terminado por referencia'],
+                    ],
+                    'Fichas Técnicas y Catas'       => [
+                        ['icon' => 'document-text',          'label' => 'Fichas técnicas',  'desc' => 'Descripción, maridaje y datos analíticos por vino'],
+                        ['icon' => 'star',                   'label' => 'Notas de cata',    'desc' => 'Puntuaciones, descriptores y guías especializadas'],
+                        ['icon' => 'arrow-up-tray',          'label' => 'Exportación',      'desc' => 'PDF y datos para uso comercial y exportación'],
+                    ],
+                    'Exportación'                   => [
+                        ['icon' => 'globe-alt',              'label' => 'Mercados destino', 'desc' => 'Gestión de países, importadores y volúmenes'],
+                        ['icon' => 'document-text',          'label' => 'Documentación',    'desc' => 'EUR1, CMR, certificados de origen y aranceles'],
+                        ['icon' => 'chart-bar',              'label' => 'Estadísticas',     'desc' => 'Volumen y valor exportado por mercado y añada'],
+                    ],
+                    'Enoturismo'                    => [
+                        ['icon' => 'calendar',               'label' => 'Reservas',         'desc' => 'Visitas, catas y experiencias con calendario'],
+                        ['icon' => 'user-group',             'label' => 'Grupos',           'desc' => 'Gestión de aforo, idiomas y guías disponibles'],
+                        ['icon' => 'banknotes',              'label' => 'Facturación',      'desc' => 'Tarifas, cobros y estadísticas de actividad'],
+                    ],
                     'Trazabilidad'                  => [
                         ['icon' => 'magnifying-glass-circle', 'label' => 'Origen por lote',    'desc' => 'De qué parcela y viticultor viene cada vino'],
                         ['icon' => 'arrows-right-left',       'label' => 'Cadena completa',    'desc' => 'Recepción → elaboración → embotellado → expedición'],

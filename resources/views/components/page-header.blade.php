@@ -20,7 +20,7 @@
         'sistema'   => ['color' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.4)'],
         // winery
         'vendimia'  => ['color' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.4)'],
-        'bodega'    => ['color' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.4)'],
+        'bodega'    => ['color' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.4)'],
         'territorio'=> ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.4)'],
     ];
 
@@ -39,7 +39,8 @@
     } elseif (request()->routeIs(
         'winery.containers*', 'winery.wines*', 'winery.oenologists*',
         'winery.wine-analysis*', 'winery.product-lots*',
-        'winery.external-grape*', 'winery.traceability*'
+        'winery.external-grape*', 'winery.traceability*',
+        'winery.bottling*', 'winery.product-sheets*'
     )) {
         $detectedChapter = 'bodega';
     } elseif (request()->routeIs(
@@ -70,7 +71,9 @@
     } elseif (request()->routeIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',
-        'winery.invoices*', 'winery.clients*', 'winery.billing*', 'winery.verifactu*'
+        'winery.invoices*', 'winery.clients*', 'winery.billing*',
+        'winery.verifactu*', 'winery.exports*', 'winery.enotourism*',
+        'winery.financial-summary*', 'winery.financial-stats*'
     )) {
         $detectedChapter = 'negocio';
     } elseif (request()->routeIs(

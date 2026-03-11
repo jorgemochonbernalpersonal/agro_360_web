@@ -417,6 +417,23 @@ class NavigationHelper
                     'route'  => 'winery.traceability.index',
                     'active' => request()->routeIs('winery.traceability*'),
                     'wip'    => true,
+                    'new'    => true,
+                ],
+                [
+                    'icon'   => 'archive-box-arrow-down',
+                    'label'  => 'Embotellado y Expediciones',
+                    'route'  => 'winery.bottling.index',
+                    'active' => request()->routeIs('winery.bottling*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
+                [
+                    'icon'   => 'document-text',
+                    'label'  => 'Fichas Técnicas y Catas',
+                    'route'  => 'winery.product-sheets.index',
+                    'active' => request()->routeIs('winery.product-sheets*'),
+                    'wip'    => true,
+                    'new'    => true,
                 ],
             ];
 
@@ -483,6 +500,23 @@ class NavigationHelper
             // ── FACTURACIÓN Y CLIENTES ───────────────────────────────
             $menu['billing'] = [
                 [
+                    'icon'   => 'chart-bar-square',
+                    'label'  => 'Resumen Económico',
+                    'route'  => 'winery.financial-summary.index',
+                    'active' => request()->routeIs('winery.financial-summary*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
+                [
+                    'icon'   => 'presentation-chart-bar',
+                    'label'  => 'Estadísticas Financieras',
+                    'route'  => 'winery.financial-stats.index',
+                    'active' => request()->routeIs('winery.financial-stats*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
+                ['divider' => true],
+                [
                     'icon'   => 'arrow-down-tray',
                     'label'  => 'Compra de Uva',
                     'route'  => 'winery.invoices.grape-purchase.index',
@@ -501,12 +535,29 @@ class NavigationHelper
                     'route'  => 'winery.verifactu.index',
                     'active' => request()->routeIs('winery.verifactu*'),
                     'wip'    => true,
+                    'new'    => true,
                 ],
                 [
                     'icon'   => 'users',
-                    'label'  => 'Clientes',
+                    'label'  => 'Clientes y Canales',
                     'route'  => 'winery.clients.index',
                     'active' => request()->routeIs('winery.clients*'),
+                ],
+                [
+                    'icon'   => 'globe-alt',
+                    'label'  => 'Exportación',
+                    'route'  => 'winery.exports.index',
+                    'active' => request()->routeIs('winery.exports*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
+                [
+                    'icon'   => 'sparkles',
+                    'label'  => 'Enoturismo',
+                    'route'  => 'winery.enotourism.index',
+                    'active' => request()->routeIs('winery.enotourism*'),
+                    'wip'    => true,
+                    'new'    => true,
                 ],
             ];
 
@@ -518,6 +569,7 @@ class NavigationHelper
                     'route'  => 'winery.aica.index',
                     'active' => request()->routeIs('winery.aica*'),
                     'wip'    => true,
+                    'new'    => true,
                 ],
                 [
                     'icon'   => 'shield-check',
@@ -525,6 +577,7 @@ class NavigationHelper
                     'route'  => 'winery.sanitary-registrations.index',
                     'active' => request()->routeIs('winery.sanitary-registrations*'),
                     'wip'    => true,
+                    'new'    => true,
                 ],
                 [
                     'icon'   => 'identification',
@@ -532,6 +585,7 @@ class NavigationHelper
                     'route'  => 'winery.bottling-authorizations.index',
                     'active' => request()->routeIs('winery.bottling-authorizations*'),
                     'wip'    => true,
+                    'new'    => true,
                 ],
                 [
                     'icon'   => 'sparkles',
@@ -539,6 +593,7 @@ class NavigationHelper
                     'route'  => 'winery.eco-certifications.index',
                     'active' => request()->routeIs('winery.eco-certifications*'),
                     'wip'    => true,
+                    'new'    => true,
                 ],
             ];
 
