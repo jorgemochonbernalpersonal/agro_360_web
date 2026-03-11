@@ -81,6 +81,11 @@
                class="relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150
                       {{ ($item['active'] ?? false) ? 'bg-white/20 text-white' : 'text-white/45 hover:bg-white/10 hover:text-white' }}">
                 <flux:icon icon="{{ $item['icon'] }}" class="w-5 h-5" />
+                @if(isset($item['new']) && $item['new'])
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full ring-1 ring-black/20"></span>
+                @elseif(!empty($item['badge']) && $item['badge'] > 0)
+                    <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{{ $item['badge'] }}</span>
+                @endif
                 {{-- Tooltip --}}
                 <span class="rail-tooltip">{{ $item['label'] }}</span>
             </a>
@@ -199,6 +204,8 @@
                                 <span class="text-sm font-medium flex-1 leading-tight">{{ $item['label'] }}</span>
                                 @if(isset($item['badge']) && $item['badge'] > 0)
                                     <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $item['badge'] }}</span>
+                                @elseif(isset($item['new']) && $item['new'])
+                                    <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-400 text-white rounded-full whitespace-nowrap">Nuevo</span>
                                 @elseif(isset($item['wip']) && $item['wip'])
                                     <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full whitespace-nowrap">Pronto</span>
                                 @elseif($item['active'] ?? false)
