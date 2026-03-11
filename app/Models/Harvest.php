@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 
 class Harvest extends Model
@@ -72,7 +73,7 @@ class Harvest extends Model
         'brix_degree' => 'decimal:3',
         'acidity_level' => 'decimal:3',
         'ph_level' => 'decimal:3',
-        'price_per_kg' => 'decimal:4',
+        'price_per_kg' => 'decimal:3',
         'total_value' => 'decimal:3',
         'edited_at' => 'datetime',
         'potential_alcohol' => 'decimal:2',
@@ -225,6 +226,14 @@ class Harvest extends Model
     public function hasContainer(): bool
     {
         return !is_null($this->container_id) && $this->container !== null;
+    }
+
+    /**
+     * Entrega declarada por el viticultor que se enlazó con esta recepción de bodega.
+     */
+    public function delivery(): HasOne
+    {
+        return $this->hasOne(HarvestDelivery::class, 'harvest_id');
     }
 
     /**

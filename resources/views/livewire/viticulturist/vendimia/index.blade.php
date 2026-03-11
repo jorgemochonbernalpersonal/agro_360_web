@@ -1,15 +1,15 @@
 <div class="space-y-6 animate-fade-in">
 
     <x-agro.page-header
-        title="Mis cosechas"
-        description="Consulta lo que has cosechado y registra tus entregas"
+        title="Mis vendimias"
+        description="Declara y gestiona tus entregas de uva por añada"
     />
 
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[
-            'pending'   => ['label' => 'Pendientes de entrega', 'count' => $stats['pending']],
-            'delivered' => ['label' => 'Entregadas',            'count' => $stats['delivered']],
+            'pending'   => ['label' => 'Sin entregar',  'count' => $stats['pending']],
+            'delivered' => ['label' => 'Con entregas', 'count' => $stats['delivered']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
@@ -47,8 +47,17 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
+        <a href="{{ route('viticulturist.vendimia.export-pdf', ['vintage' => $vintageYear]) }}"
+           target="_blank"
+           class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
+            <flux:icon icon="arrow-down-tray" class="size-4 text-zinc-500" />
+            Resumen PDF
+        </a>
+
+        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
         <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" variant="primary" icon="plus">
-            Nueva cosecha
+            Añadir al cuaderno
         </flux:button>
 
     </div>
@@ -71,8 +80,10 @@
                         'ok'            => 'Coincide',
                         'discrepancy'   => 'Con diferencia',
                         'not_delivered' => 'Sin entregar',
-                        'delivery_only' => 'Solo entrega',
+                        'delivery_only' => 'Sin cuaderno',
                         'pending'       => 'Pendiente',
+                        'has_dispute'   => 'Con disputa activa',
+                        'has_resolved'  => 'Con disputa resuelta',
                     ];
                 @endphp
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
@@ -149,27 +160,60 @@
                         <span class="ml-auto text-xs text-zinc-400">{{ $vintageYear }}</span>
                     </div>
 
-                    {{-- Tres pills: Aforo / Cosechado / Entregado --}}
-                    <div class="grid grid-cols-3 gap-2 mb-3">
+                    {{-- Pills: Aforo / Cosechado / Entregado / Cupo PAC --}}
+                    <div class="grid grid-cols-4 gap-1.5 mb-3">
                         <div class="bg-zinc-50 rounded-xl p-2 text-center">
-                            <p class="text-[10px] text-zinc-400 font-medium uppercase tracking-wide mb-0.5">Aforo</p>
+                            <p class="text-[9px] text-zinc-400 font-medium uppercase tracking-wide mb-0.5">Aforo</p>
                             <p class="text-xs font-bold text-violet-700">
-                                {{ $row['estimated_kg'] !== null ? number_format($row['estimated_kg'], 0) . ' kg' : '—' }}
+                                {{ $row['estimated_kg'] !== null ? number_format($row['estimated_kg'], 0) : '—' }}
                             </p>
                         </div>
                         <div class="bg-agro-50 rounded-xl p-2 text-center">
-                            <p class="text-[10px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Cosechado</p>
+                            <p class="text-[9px] text-agro-600 font-medium uppercase tracking-wide mb-0.5">Cosechado</p>
                             <p class="text-xs font-bold text-agro-700">
-                                {{ $row['harvest_kg'] > 0 ? number_format($row['harvest_kg'], 0) . ' kg' : '—' }}
+                                {{ $row['harvest_kg'] > 0 ? number_format($row['harvest_kg'], 0) : '—' }}
                             </p>
                         </div>
                         <div class="bg-blue-50 rounded-xl p-2 text-center">
-                            <p class="text-[10px] text-blue-500 font-medium uppercase tracking-wide mb-0.5">Entregado</p>
+                            <p class="text-[9px] text-blue-500 font-medium uppercase tracking-wide mb-0.5">Entregado</p>
                             <p class="text-xs font-bold text-blue-700">
-                                {{ $row['total_delivered_kg'] > 0 ? number_format($row['total_delivered_kg'], 0) . ' kg' : '—' }}
+                                {{ $row['total_delivered_kg'] > 0 ? number_format($row['total_delivered_kg'], 0) : '—' }}
+                            </p>
+                        </div>
+                        <div class="{{ $row['cupo_exceeded'] ? 'bg-red-50' : 'bg-zinc-50' }} rounded-xl p-2 text-center">
+                            <p class="text-[9px] font-medium uppercase tracking-wide mb-0.5 {{ $row['cupo_exceeded'] ? 'text-red-500' : 'text-zinc-400' }}">Cupo PAC</p>
+                            <p class="text-xs font-bold {{ $row['cupo_exceeded'] ? 'text-red-700' : ($row['cupo_kg'] ? 'text-zinc-700' : 'text-zinc-300') }}">
+                                {{ $row['cupo_kg'] ? number_format($row['cupo_kg'], 0) : '—' }}
                             </p>
                         </div>
                     </div>
+
+                    {{-- Barra de uso del cupo --}}
+                    @if($row['cupo_kg'] && $row['cupo_pct'] !== null)
+                        @php
+                            $pct  = min($row['cupo_pct'], 100);
+                            $barColor = $row['cupo_exceeded']
+                                ? 'bg-red-500'
+                                : ($row['cupo_pct'] >= 80 ? 'bg-amber-400' : 'bg-agro-500');
+                        @endphp
+                        <div class="mb-3">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-zinc-400">Uso del cupo</span>
+                                <span class="text-[10px] font-bold {{ $row['cupo_exceeded'] ? 'text-red-600' : ($row['cupo_pct'] >= 80 ? 'text-amber-600' : 'text-zinc-600') }}">
+                                    {{ $row['cupo_pct'] }}%
+                                    @if($row['cupo_exceeded'])
+                                        · <span class="text-red-600">EXCEDIDO</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="w-full bg-zinc-100 rounded-full h-1.5 overflow-hidden">
+                                <div class="{{ $barColor }} h-1.5 rounded-full transition-all"
+                                     style="width: {{ $pct }}%"></div>
+                            </div>
+                        </div>
+                    @elseif(!$row['cupo_kg'])
+                        <div class="mb-3"></div>
+                    @endif
 
                     {{-- Diferencia --}}
                     @if($row['status'] === 'ok')
@@ -191,6 +235,13 @@
 
                     {{-- Sección de entregas --}}
                     @if($row['has_delivery'])
+                        @php
+                            $deliveryStatuses = $row['manual_deliveries']->where('disqualified', false)->groupBy('status');
+                            $matchedCount  = $deliveryStatuses->get('matched',  collect())->count();
+                            $disputedCount = $deliveryStatuses->get('disputed', collect())->count();
+                            $resolvedCount = $deliveryStatuses->get('resolved', collect())->count();
+                            $pendingCount  = $deliveryStatuses->get('pending',  collect())->count();
+                        @endphp
                         <div class="space-y-1.5">
                             @foreach($row['winery_batches'] as $batch)
                                 <div class="flex items-center gap-2 px-3 py-2 bg-zinc-50 rounded-lg">
@@ -200,21 +251,75 @@
                                 </div>
                             @endforeach
                             @foreach($row['manual_deliveries'] as $delivery)
+                                @php
+                                    $dlvBadge = match(true) {
+                                        $delivery->disqualified          => ['color' => 'red',   'label' => 'Descartada'],
+                                        $delivery->status === 'matched'  => ['color' => 'green', 'label' => 'Confirmada'],
+                                        $delivery->status === 'resolved' => ['color' => 'blue',  'label' => 'Resuelta'],
+                                        $delivery->status === 'disputed' => ['color' => 'amber', 'label' => 'Diferencia'],
+                                        default                          => ['color' => null,     'label' => null],
+                                    };
+                                @endphp
                                 <div class="flex items-center gap-2 px-3 py-2 rounded-lg {{ $delivery->disqualified ? 'bg-red-50' : 'bg-zinc-50' }}">
                                     <flux:icon icon="user" class="size-3.5 {{ $delivery->disqualified ? 'text-red-300' : 'text-zinc-400' }} shrink-0" />
                                     <span class="text-xs font-medium truncate flex-1 {{ $delivery->disqualified ? 'text-red-400 line-through' : 'text-zinc-700' }}">{{ $delivery->buyer_name }}</span>
-                                    @if($delivery->disqualified)
-                                        <flux:badge color="red" size="sm" class="shrink-0">Descartado</flux:badge>
-                                    @else
+                                    @if($dlvBadge['label'])
+                                        <flux:badge color="{{ $dlvBadge['color'] }}" size="sm" class="shrink-0 text-[9px]">{{ $dlvBadge['label'] }}</flux:badge>
+                                    @endif
+                                    @if(!$delivery->disqualified)
                                         <span class="text-xs font-bold text-blue-700 shrink-0">{{ number_format($delivery->delivered_kg, 0) }} kg</span>
                                     @endif
+                                    <a href="{{ route('viticulturist.harvests.delivery.albaran', $delivery) }}"
+                                       target="_blank"
+                                       class="ml-1 p-1 rounded hover:bg-violet-100 text-zinc-400 hover:text-violet-600 transition-colors"
+                                       title="Descargar albarán PDF">
+                                        <flux:icon icon="document-arrow-down" class="size-3.5" />
+                                    </a>
                                     <a href="{{ route('viticulturist.harvests.delivery.edit', $delivery) }}"
-                                       class="ml-1 p-1 rounded hover:bg-zinc-200 text-zinc-400 hover:text-zinc-700 transition-colors"
+                                       class="p-1 rounded hover:bg-zinc-200 text-zinc-400 hover:text-zinc-700 transition-colors"
                                        title="Editar entrega">
                                         <flux:icon icon="pencil-square" class="size-3.5" />
                                     </a>
                                 </div>
                             @endforeach
+
+                            {{-- Añadir otra entrega --}}
+                            @if($row['planting_id'])
+                                <a href="{{ route('viticulturist.harvests.delivery.create', array_filter(['planting' => $row['planting_id'], 'vintage' => $vintageYear])) }}"
+                                   class="flex items-center justify-center gap-1.5 w-full px-3 py-1.5 border border-dashed border-zinc-200 rounded-lg text-zinc-400 hover:border-agro-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
+                                    <flux:icon icon="plus" class="size-3 shrink-0" />
+                                    <span class="text-[10px] font-medium">Añadir otra entrega</span>
+                                </a>
+                            @endif
+
+                            {{-- Resumen de estado de declaraciones --}}
+                            @if($matchedCount + $disputedCount + $resolvedCount + $pendingCount > 0)
+                                <div class="flex flex-wrap gap-1 pt-0.5">
+                                    @if($matchedCount > 0)
+                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-semibold text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">
+                                            <flux:icon icon="check-circle" class="size-2.5" />
+                                            {{ $matchedCount }} confirmada{{ $matchedCount > 1 ? 's' : '' }}
+                                        </span>
+                                    @endif
+                                    @if($resolvedCount > 0)
+                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">
+                                            <flux:icon icon="chat-bubble-left-right" class="size-2.5" />
+                                            {{ $resolvedCount }} resuelta{{ $resolvedCount > 1 ? 's' : '' }}
+                                        </span>
+                                    @endif
+                                    @if($disputedCount > 0)
+                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">
+                                            <flux:icon icon="exclamation-triangle" class="size-2.5" />
+                                            {{ $disputedCount }} en disputa
+                                        </span>
+                                    @endif
+                                    @if($pendingCount > 0)
+                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-medium text-zinc-500 bg-zinc-100 border border-zinc-200 rounded-full px-2 py-0.5">
+                                            {{ $pendingCount }} pendiente{{ $pendingCount > 1 ? 's' : '' }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     @else
                         <a href="{{ route('viticulturist.harvests.delivery.create', array_filter(['planting' => $row['planting_id'], 'vintage' => $vintageYear])) }}"
@@ -234,9 +339,18 @@
                                     Sin registros de cosecha
                                 @endif
                             </span>
-                            <a href="{{ route('viticulturist.digital-notebook.harvest.create') }}" class="{{ $btnBase }}" title="Añadir cosecha">
-                                <flux:icon icon="plus" class="size-4" />
-                            </a>
+                            <div class="flex items-center gap-1">
+                                @if($row['planting_id'])
+                                    <a href="{{ route('viticulturist.vendimia.show', ['planting' => $row['planting_id'], 'vintage' => $vintageYear]) }}"
+                                       wire:navigate
+                                       class="{{ $btnBase }}" title="Ver detalle">
+                                        <flux:icon icon="eye" class="size-4" />
+                                    </a>
+                                @endif
+                                <a href="{{ route('viticulturist.digital-notebook.harvest.create') }}" class="{{ $btnBase }}" title="Nuevo registro en el cuaderno">
+                                    <flux:icon icon="document-plus" class="size-4" />
+                                </a>
+                            </div>
                         </div>
                     </x-slot:footer>
                 </x-agro.card>
@@ -246,12 +360,12 @@
     @else
         <x-agro.empty-state
             icon="archive-box-arrow-down"
-            :message="$currentTab === 'delivered' ? 'No hay cosechas entregadas' : 'No hay cosechas pendientes de entrega'"
+            :message="$currentTab === 'delivered' ? 'No hay plantaciones con entregas' : 'Ninguna plantación pendiente de entregar'"
             :description="($search || $statusFilter)
                 ? 'Ningún resultado coincide con los filtros aplicados.'
                 : ($currentTab === 'delivered'
-                    ? 'Las cosechas que hayas entregado a bodega o comprador aparecerán aquí.'
-                    : 'Todas tus cosechas han sido entregadas. ¡Buen trabajo!')"
+                    ? 'Las plantaciones con al menos una entrega declarada aparecerán aquí.'
+                    : 'Todas tus plantaciones ya tienen alguna entrega declarada. ¡Buen trabajo!')"
         >
             @if($search || $statusFilter)
                 <x-slot:action>
@@ -260,7 +374,7 @@
             @else
                 <x-slot:action>
                     <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" variant="primary" icon="plus">
-                        Registrar cosecha
+                        Añadir al cuaderno
                     </flux:button>
                 </x-slot:action>
             @endif
@@ -299,8 +413,10 @@
                     <option value="ok">Coincide</option>
                     <option value="discrepancy">Con diferencia (&gt;5%)</option>
                     <option value="not_delivered">Sin entregar</option>
-                    <option value="delivery_only">Solo entrega (sin cosecha en cuaderno)</option>
+                    <option value="delivery_only">Sin cuaderno</option>
                     <option value="pending">Pendiente</option>
+                    <option value="has_dispute">Con disputa activa</option>
+                    <option value="has_resolved">Con disputa resuelta</option>
                 </select>
             </div>
         </div>

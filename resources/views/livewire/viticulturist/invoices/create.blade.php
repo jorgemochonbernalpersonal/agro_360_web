@@ -142,7 +142,7 @@
                                             @endif
                                             – Disp: {{ number_format($harvest->available_qty_computed, 0) }} kg
                                             @if($harvest->price_per_kg)
-                                                ({{ number_format($harvest->price_per_kg, 4) }} €/kg)
+                                                ({{ number_format($harvest->price_per_kg, 3) }} €/kg)
                                             @endif
                                         </option>
                                     @endforeach

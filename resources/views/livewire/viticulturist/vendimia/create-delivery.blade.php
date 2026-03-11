@@ -108,49 +108,59 @@
             </div>
         </x-agro.form-section>
 
-        {{-- Precio y albarán --}}
-        <x-agro.form-section title="Precio y documentación" color="amber">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {{-- Precio --}}
+        <x-agro.form-section title="Precio" color="amber">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <flux:field>
                     <flux:label>Precio / kg (€) <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
                     <flux:input
                         wire:model.live="price_per_kg"
                         type="number"
-                        step="0.0001"
+                        step="0.001"
                         min="0"
                         id="price_per_kg"
-                        placeholder="0.0000"
+                        placeholder="0.000"
                     />
                     <flux:error name="price_per_kg" />
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Importe total (€) — Calculado</flux:label>
+                    <flux:label>Importe total (€) <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
                     @php
                         $computedTotal = ($price_per_kg && $delivered_kg)
-                            ? number_format((float) $price_per_kg * (float) $delivered_kg, 2, ',', '.')
+                            ? number_format((float) $price_per_kg * (float) $delivered_kg, 3, '.', '')
                             : null;
                     @endphp
                     <flux:input
-                        type="text"
-                        value="{{ $computedTotal ?? '' }}"
-                        placeholder="Se calcula automáticamente"
-                        readonly
-                        class="bg-zinc-50 font-semibold"
+                        wire:model="total_price"
+                        type="number"
+                        step="0.001"
+                        min="0"
+                        id="total_price"
+                        placeholder="{{ $computedTotal ? number_format((float)$computedTotal, 3, '.', '') : 'Se calcula automáticamente' }}"
                     />
-                    <flux:description>Precio/kg × Kg entregados</flux:description>
+                    <flux:description>Se calcula desde precio × kg. Puedes introducir un importe pactado diferente.</flux:description>
+                    <flux:error name="total_price" />
                 </flux:field>
 
+            </div>
+        </x-agro.form-section>
+
+        {{-- Trazabilidad --}}
+        <x-agro.form-section title="Trazabilidad" color="zinc">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
                 <flux:field>
-                    <flux:label>Nº albarán <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:label>Nº ticket / pesada <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
                     <flux:input
                         wire:model="ticket_number"
                         type="text"
                         id="ticket_number"
-                        placeholder="Ej: ALB-2026-001"
+                        placeholder="Ej: 2026-00123"
                         maxlength="100"
                     />
+                    <flux:description>Número asignado por el comprador en báscula. Se usa para cruzar automáticamente con la recepción de bodega.</flux:description>
                     <flux:error name="ticket_number" />
                 </flux:field>
 
@@ -224,7 +234,8 @@
         <x-agro.form-section title="Descarte" color="red">
             <div class="space-y-4">
                 <flux:field>
-                    <flux:checkbox wire:model.live="disqualified" id="disqualified" label="El comprador ha descartado o rechazado parte de esta entrega" />
+                    <flux:checkbox wire:model.live="disqualified" id="disqualified" label="Esta entrega ha sido descartada o rechazada por el comprador" />
+                    <flux:description>Marca esta opción si el comprador rechaza la entrega completa. Si solo rechaza una parte, registra dos entregas separadas.</flux:description>
                 </flux:field>
                 @if($disqualified)
                     <flux:field>

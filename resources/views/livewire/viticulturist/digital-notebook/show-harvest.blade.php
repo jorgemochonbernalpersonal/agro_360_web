@@ -166,7 +166,7 @@
                         @if($harvest->price_per_kg)
                             <div>
                                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Precio por kg</p>
-                                <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ number_format($harvest->price_per_kg, 4) }} €/kg</p>
+                                <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ number_format($harvest->price_per_kg, 3) }} €/kg</p>
                             </div>
                         @endif
 

@@ -57,6 +57,13 @@ class NavigationHelper
             ];
 
             $menu['main'][] = [
+                'icon'   => 'calendar-days',
+                'label'  => 'Calendario',
+                'route'  => 'viticulturist.calendar',
+                'active' => request()->routeIs('viticulturist.calendar'),
+            ];
+
+            $menu['main'][] = [
                 'icon'   => 'bell',
                 'label'  => 'Notificaciones',
                 'route'  => 'viticulturist.notifications.index',
@@ -133,6 +140,12 @@ class NavigationHelper
                     'label'  => 'Observaciones',
                     'route'  => 'viticulturist.digital-notebook.observation.index',
                     'active' => request()->routeIs('viticulturist.digital-notebook.observation.*'),
+                ],
+                [
+                    'icon'   => 'sun',
+                    'label'  => 'Fenología',
+                    'route'  => 'viticulturist.phenology.index',
+                    'active' => request()->routeIs('viticulturist.phenology.*'),
                 ],
                 [
                     'icon'   => 'scissors',
@@ -213,7 +226,7 @@ class NavigationHelper
                     'icon' => 'book-open',
                     'label' => 'Plantaciones',
                     'route' => 'plots.plantings.index',
-                    'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('viticulturist.phenology.*'),
+                    'active' => request()->routeIs('plots.plantings.*'),
                 ],
                 [
                     'icon' => 'map-pin',
@@ -232,6 +245,12 @@ class NavigationHelper
                     'label' => 'Gestión Territorial',
                     'route' => 'plots.territory',
                     'active' => request()->routeIs('plots.territory'),
+                ],
+                [
+                    'icon' => 'beaker',
+                    'label' => 'Entorno de Parcelas',
+                    'route' => 'viticulturist.plot-environments.index',
+                    'active' => request()->routeIs('viticulturist.plot-environments.*'),
                 ],
             ];
 
@@ -462,6 +481,12 @@ class NavigationHelper
                     'label'  => 'Recepciones',
                     'route'  => 'winery.grape-reception.index',
                     'active' => request()->routeIs('winery.grape-reception*'),
+                ],
+                [
+                    'icon'   => 'exclamation-triangle',
+                    'label'  => 'Disputas',
+                    'route'  => 'winery.grape-reception.disputes',
+                    'active' => request()->routeIs('winery.grape-reception.disputes'),
                 ],
                 [
                     'icon'   => 'beaker',

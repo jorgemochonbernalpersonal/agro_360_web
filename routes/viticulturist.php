@@ -181,8 +181,11 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
 
         // Mis Entregas a Bodega (cuadro de vendimia del viticulturist)
         Route::get('/harvests', \App\Livewire\Viticulturist\Vendimia\Index::class)->name('vendimia.index');
+        Route::get('/harvests/export/pdf', \App\Http\Controllers\Viticulturist\VendimiaPdfController::class . '@export')->name('vendimia.export-pdf');
+        Route::get('/harvests/planting/{planting}', \App\Livewire\Viticulturist\Vendimia\Show::class)->name('vendimia.show');
         Route::get('/harvests/create-delivery', \App\Livewire\Viticulturist\Vendimia\CreateDelivery::class)->name('harvests.delivery.create');
         Route::get('/harvests/{delivery}/edit-delivery', \App\Livewire\Viticulturist\Vendimia\EditDelivery::class)->name('harvests.delivery.edit');
+        Route::get('/harvests/{delivery}/albaran', \App\Http\Controllers\Viticulturist\HarvestDeliveryAlbaranController::class)->name('harvests.delivery.albaran');
 
         // Aplicadores fitosanitarios (ROPO)
         Route::prefix('field-applicators')->name('field-applicators.')->group(function () {

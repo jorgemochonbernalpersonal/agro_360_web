@@ -81,7 +81,7 @@
             @if($harvest->total_value)
             <div class="col">
                 <div class="highlight-label">Valor total</div>
-                <div class="highlight-value" style="font-size:13pt;">{{ number_format($harvest->total_value, 2) }} €</div>
+                <div class="highlight-value" style="font-size:13pt;">{{ number_format($harvest->total_value, 3) }} €</div>
             </div>
             @endif
         </div>
@@ -113,7 +113,7 @@
                 <div class="field"><div class="field-label">Ticket / albarán</div><div class="field-value">{{ $harvest->harvest_ticket_number }}</div></div>
                 @endif
                 @if($harvest->price_per_kg)
-                <div class="field"><div class="field-label">Precio / kg</div><div class="field-value">{{ number_format($harvest->price_per_kg, 4) }} €</div></div>
+                <div class="field"><div class="field-label">Precio / kg</div><div class="field-value">{{ number_format($harvest->price_per_kg, 3) }} €</div></div>
                 @endif
                 @if($harvest->container)
                 <div class="field"><div class="field-label">Depósito destino</div><div class="field-value">{{ $harvest->container->name }}</div></div>

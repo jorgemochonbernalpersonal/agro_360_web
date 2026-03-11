@@ -112,7 +112,7 @@ class Index extends Component
 
         $allRows = $plantingIds->map(function ($plantingId) use (
             $plantings, $harvestsByPlanting, $batchesByPlanting,
-            $deliveriesByPlanting, $estimatedYields
+            $deliveriesByPlanting, $estimatedYields, $vintageYear
         ) {
             $planting = $plantings->get($plantingId);
 
@@ -126,12 +126,23 @@ class Index extends Component
             $plantingBatches   = $batchesByPlanting->get($plantingId, collect());
             $receivedKg        = (float) $plantingBatches->sum('total_weight_kg');
 
-            // Manual deliveries (disqualified ones excluded from totals)
+            // Manual deliveries (disqualified and already-linked ones excluded from totals
+            // to avoid double-counting with winery batches)
             $plantingDeliveries = $deliveriesByPlanting->get($plantingId, collect());
-            $manualKg           = (float) $plantingDeliveries->where('disqualified', false)->sum('delivered_kg');
+            $manualKg           = (float) $plantingDeliveries
+                ->where('disqualified', false)
+                ->filter(fn ($d) => $d->harvest_id === null)
+                ->sum('delivered_kg');
 
             $totalDeliveredKg  = $receivedKg + $manualKg;
             $hasDelivery       = $totalDeliveredKg > 0;
+
+            // Cupo PAC (límite regulatorio de la plantación)
+            $cupoKg       = $planting?->effectiveHarvestLimitKg($vintageYear);
+            $cupoPct      = ($cupoKg && $cupoKg > 0 && $totalDeliveredKg > 0)
+                ? round($totalDeliveredKg / $cupoKg * 100, 1)
+                : null;
+            $cupoExceeded = $cupoPct !== null && $cupoPct > 100;
 
             // Estimated yield (aforo)
             $estimatedYield    = $estimatedYields->get($plantingId);
@@ -173,6 +184,9 @@ class Index extends Component
                 'discrepancy_kg'    => $discrepancyKg,
                 'discrepancy_pct'   => $discrepancyPct,
                 'status'            => $status,
+                'cupo_kg'           => $cupoKg,
+                'cupo_pct'          => $cupoPct,
+                'cupo_exceeded'     => $cupoExceeded,
             ];
         })
         ->filter()
@@ -209,7 +223,19 @@ class Index extends Component
         // ── Apply status filter ───────────────────────────────────────────────
 
         if ($this->statusFilter) {
-            $rows = $rows->filter(fn ($row) => $row['status'] === $this->statusFilter);
+            $rows = match ($this->statusFilter) {
+                'has_dispute' => $rows->filter(fn ($row) =>
+                    $row['manual_deliveries']->contains(fn ($d) =>
+                        $d->status === 'disputed' && !$d->disqualified
+                    )
+                ),
+                'has_resolved' => $rows->filter(fn ($row) =>
+                    $row['manual_deliveries']->contains(fn ($d) =>
+                        $d->status === 'resolved' && !$d->disqualified
+                    )
+                ),
+                default => $rows->filter(fn ($row) => $row['status'] === $this->statusFilter),
+            };
         }
 
         $rows = $rows->values();

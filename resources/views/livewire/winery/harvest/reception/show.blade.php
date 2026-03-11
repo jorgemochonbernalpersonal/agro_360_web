@@ -117,13 +117,13 @@
                     @if($harvest->price_per_kg)
                         <div>
                             <dt class="text-zinc-500">Precio / kg</dt>
-                            <dd class="font-medium text-zinc-900">{{ number_format($harvest->price_per_kg, 4) }} €</dd>
+                            <dd class="font-medium text-zinc-900">{{ number_format($harvest->price_per_kg, 3) }} €</dd>
                         </div>
                     @endif
                     @if($harvest->total_value)
                         <div>
                             <dt class="text-zinc-500">Valor total</dt>
-                            <dd class="font-bold text-agro-700">{{ number_format($harvest->total_value, 2) }} €</dd>
+                            <dd class="font-bold text-agro-700">{{ number_format($harvest->total_value, 3) }} €</dd>
                         </div>
                     @endif
                     @if($harvest->vehicle_plate)
@@ -281,6 +281,140 @@
                         @endif
                     @endif
                 </div>
+            </x-agro.card>
+
+            {{-- Declaración del viticultor --}}
+            @php $delivery = $harvest->delivery; @endphp
+            <x-agro.card>
+                <x-slot:header>
+                    <div class="flex items-center gap-2">
+                        <flux:icon icon="truck" class="size-4 text-violet-500" />
+                        <span class="font-semibold text-zinc-900">Declaración del viticultor</span>
+                    </div>
+                </x-slot:header>
+
+                @if($delivery)
+                    @php
+                        $badgeColor = match($delivery->status) {
+                            'matched'  => 'green',
+                            'disputed' => 'amber',
+                            'resolved' => 'blue',
+                            default    => 'zinc',
+                        };
+                        $badgeLabel = match($delivery->status) {
+                            'matched'  => 'Coincide',
+                            'disputed' => 'En reclamación',
+                            'resolved' => 'Resuelta',
+                            default    => 'Pendiente',
+                        };
+                    @endphp
+
+                    <div class="space-y-2.5 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-zinc-500">Estado</span>
+                            <flux:badge color="{{ $badgeColor }}" size="sm">{{ $badgeLabel }}</flux:badge>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-zinc-500">Kg declarados</span>
+                            <span class="font-semibold text-zinc-800">{{ number_format($delivery->delivered_kg, 0) }} kg</span>
+                        </div>
+                        @if($delivery->discrepancy_kg && $delivery->discrepancy_kg > 0)
+                            <div class="flex justify-between">
+                                <span class="text-zinc-500">Diferencia</span>
+                                <span class="font-semibold {{ in_array($delivery->status, ['disputed','resolved']) ? 'text-amber-600' : 'text-zinc-600' }}">
+                                    {{ number_format($delivery->discrepancy_kg, 0) }} kg
+                                    @if($delivery->discrepancyPercentage())
+                                        ({{ $delivery->discrepancyPercentage() }}%)
+                                    @endif
+                                </span>
+                            </div>
+                        @endif
+                        @if($delivery->ticket_number)
+                            <div class="flex justify-between">
+                                <span class="text-zinc-500">Ticket declarado</span>
+                                <span class="font-mono text-xs text-zinc-600">{{ $delivery->ticket_number }}</span>
+                            </div>
+                        @endif
+                        @if($delivery->buyer_name)
+                            <div class="flex justify-between">
+                                <span class="text-zinc-500">Comprador</span>
+                                <span class="text-zinc-700">{{ $delivery->buyer_name }}</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Dispute thread --}}
+                    @if(in_array($delivery->status, ['disputed', 'resolved']))
+                        <div class="mt-3 pt-3 border-t border-zinc-100 space-y-2">
+
+                            {{-- Viticulturist note --}}
+                            @if($delivery->hasDisputeNote())
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+                                    <p class="text-xs font-semibold text-amber-700 mb-1">
+                                        Reclamación del viticultor
+                                        <span class="font-normal text-amber-600">· {{ $delivery->dispute_submitted_at->format('d/m/Y H:i') }}</span>
+                                    </p>
+                                    <p class="text-xs text-amber-800 whitespace-pre-line">{{ $delivery->dispute_note }}</p>
+                                </div>
+                            @else
+                                <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                                    Diferencia de {{ number_format($delivery->discrepancy_kg, 0) }} kg. El viticultor aún no ha enviado reclamación.
+                                </p>
+                            @endif
+
+                            {{-- Resolution --}}
+                            @if($delivery->isResolved())
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
+                                    <p class="text-xs font-semibold text-blue-700 mb-1">
+                                        Respuesta de bodega
+                                        <span class="font-normal text-blue-600">· {{ $delivery->dispute_resolved_at->format('d/m/Y H:i') }}</span>
+                                    </p>
+                                    <p class="text-xs text-blue-800 whitespace-pre-line">{{ $delivery->dispute_resolution_note }}</p>
+                                </div>
+
+                            @elseif($delivery->hasDisputeNote())
+                                {{-- Resolve form / button --}}
+                                @if($showResolveForm)
+                                    <div class="bg-blue-50 border border-blue-200 rounded-xl px-3 py-3 space-y-2.5">
+                                        <p class="text-xs font-semibold text-blue-700 flex items-center gap-1.5">
+                                            <flux:icon icon="chat-bubble-left-right" class="size-3.5" />
+                                            Escribe tu respuesta al viticultor
+                                        </p>
+                                        <textarea
+                                            wire:model="resolutionNote"
+                                            rows="3"
+                                            maxlength="1000"
+                                            placeholder="Explica el motivo de la diferencia: merma por transporte, corrección de pesaje, error de ticket..."
+                                            class="w-full text-xs rounded-lg border border-blue-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                                        ></textarea>
+                                        @error('resolutionNote')
+                                            <p class="text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                        <div class="flex gap-2 justify-end">
+                                            <flux:button wire:click="cancelResolveDispute" variant="ghost" size="sm">
+                                                Cancelar
+                                            </flux:button>
+                                            <flux:button wire:click="resolveDispute" variant="primary" size="sm" icon="check-circle">
+                                                Enviar respuesta
+                                            </flux:button>
+                                        </div>
+                                    </div>
+                                @else
+                                    <button
+                                        wire:click="openResolveDispute"
+                                        class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg px-3 py-1.5 transition-colors"
+                                    >
+                                        <flux:icon icon="chat-bubble-left-right" class="size-3.5" />
+                                        Responder reclamación
+                                    </button>
+                                @endif
+                            @endif
+
+                        </div>
+                    @endif
+                @else
+                    <p class="text-sm text-zinc-400">El viticultor no ha declarado ninguna entrega enlazada con esta recepción.</p>
+                @endif
             </x-agro.card>
 
             {{-- Acciones --}}

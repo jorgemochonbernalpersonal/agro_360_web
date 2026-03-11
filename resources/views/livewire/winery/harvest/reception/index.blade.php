@@ -242,6 +242,25 @@
                                     </div>
                                 @endif
 
+                                {{-- Estado declaración viticultor --}}
+                                @php $delivery = $reception->delivery; @endphp
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-zinc-400">Declaración vitic.</span>
+                                    @if(!$delivery)
+                                        <flux:badge color="zinc" size="sm">Sin declarar</flux:badge>
+                                    @elseif($delivery->status === 'matched')
+                                        <flux:badge color="green" size="sm">Coincide</flux:badge>
+                                    @elseif($delivery->status === 'resolved')
+                                        <flux:badge color="blue" size="sm">Resuelta</flux:badge>
+                                    @elseif($delivery->status === 'disputed')
+                                        <flux:badge color="amber" size="sm">
+                                            Dif. {{ number_format($delivery->discrepancy_kg, 0) }} kg
+                                        </flux:badge>
+                                    @else
+                                        <flux:badge color="zinc" size="sm">Pendiente</flux:badge>
+                                    @endif
+                                </div>
+
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="text-zinc-400">Contenedor</span>
                                     @if($reception->container_id)

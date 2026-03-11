@@ -64,6 +64,7 @@ class Index extends AbstractIndex
             'plotPlanting.plot',
             'batch.viticulturist',
             'container',
+            'delivery',
         ])->where('winery_id', $wineryId);
     }
 

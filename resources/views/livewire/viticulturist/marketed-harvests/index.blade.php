@@ -55,7 +55,7 @@
                             <x-agro.status-badge :status="$entry->destination_type" :label="$entry->destination_type_label" />
                         </x-agro.table-cell>
                         <x-agro.table-cell>{{ number_format($entry->quantity_kg, 0, ',', '.') }} kg</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->price_per_kg ? number_format($entry->price_per_kg, 4, ',', '.') . ' €' : '-' }}</x-agro.table-cell>
+                        <x-agro.table-cell>{{ $entry->price_per_kg ? number_format($entry->price_per_kg, 3, ',', '.') . ' €' : '-' }}</x-agro.table-cell>
                         <x-agro.table-cell>{{ $entry->total_value ? number_format($entry->total_value, 2, ',', '.') . ' €' : '-' }}</x-agro.table-cell>
                         <x-agro.table-cell>
                             @if($entry->destination_type === 'third_party')

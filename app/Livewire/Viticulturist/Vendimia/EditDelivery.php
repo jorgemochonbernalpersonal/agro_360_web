@@ -6,6 +6,8 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\HarvestDelivery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
+use App\Notifications\HarvestDeliveryDeletedNotification;
+use App\Notifications\HarvestDeliveryDelinkedNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -22,6 +24,7 @@ class EditDelivery extends Component
     public string $buyer_name            = '';
     public string $delivered_kg          = '';
     public string $price_per_kg          = '';
+    public string $total_price           = '';
     public string $delivery_date         = '';
     public string $ticket_number         = '';
     public string $destination_rega_code = '';
@@ -47,6 +50,7 @@ class EditDelivery extends Component
         $this->buyer_name            = $delivery->buyer_name;
         $this->delivered_kg          = (string) $delivery->delivered_kg;
         $this->price_per_kg          = (string) ($delivery->price_per_kg ?? '');
+        $this->total_price           = (string) ($delivery->total_price ?? '');
         $this->delivery_date         = $delivery->delivery_date->format('Y-m-d');
         $this->ticket_number         = $delivery->ticket_number ?? '';
         $this->destination_rega_code = $delivery->destination_rega_code ?? '';
@@ -81,6 +85,7 @@ class EditDelivery extends Component
             'buyer_name'             => 'required|string|max:255',
             'delivered_kg'           => 'required|numeric|min:0.01',
             'price_per_kg'           => 'nullable|numeric|min:0',
+            'total_price'            => 'nullable|numeric|min:0',
             'delivery_date'          => 'required|date',
             'ticket_number'          => 'nullable|string|max:100',
             'destination_rega_code'  => 'nullable|string|max:20',
@@ -101,12 +106,15 @@ class EditDelivery extends Component
     {
         $this->validate();
 
+        // Manual override takes precedence; otherwise compute from price × kg
         $totalPrice = null;
-        if ($this->price_per_kg && $this->delivered_kg) {
-            $totalPrice = round((float) $this->price_per_kg * (float) $this->delivered_kg, 2);
+        if ($this->total_price !== '') {
+            $totalPrice = round((float) $this->total_price, 3);
+        } elseif ($this->price_per_kg && $this->delivered_kg) {
+            $totalPrice = round((float) $this->price_per_kg * (float) $this->delivered_kg, 3);
         }
 
-        $this->delivery->update([
+        $data = [
             'plot_planting_id'      => $this->plot_planting_id ?: null,
             'vintage_year'          => (int) $this->vintage_year,
             'buyer_name'            => $this->buyer_name,
@@ -126,9 +134,45 @@ class EditDelivery extends Component
             'potential_alcohol'     => $this->potential_alcohol ?: null,
             'acidity_level'         => $this->acidity_level ?: null,
             'ph_level'              => $this->ph_level ?: null,
-        ]);
+        ];
 
-        $this->toastSuccess('Entrega actualizada correctamente.');
+        // If the delivery was linked and any field that affects matching changes,
+        // break the link so it returns to pending.
+        $isLinked         = $this->delivery->harvest_id !== null;
+        $oldKg            = (float) $this->delivery->delivered_kg;
+        $newKg            = (float) $this->delivered_kg;
+        $kgChanged        = $oldKg !== $newKg;
+        $vintageChanged   = (int) $this->vintage_year !== (int) $this->delivery->vintage_year;
+        $plantingChanged  = ((string) ($this->plot_planting_id ?: '')) !== ((string) ($this->delivery->plot_planting_id ?? ''));
+        $shouldDelink     = $isLinked && ($kgChanged || $vintageChanged || $plantingChanged);
+
+        if ($shouldDelink) {
+            $data['harvest_id']              = null;
+            $data['status']                  = 'pending';
+            $data['discrepancy_kg']          = null;
+            $data['dispute_note']            = null;
+            $data['dispute_submitted_at']    = null;
+            $data['dispute_resolution_note'] = null;
+            $data['dispute_resolved_at']     = null;
+        }
+
+        $this->delivery->update($data);
+
+        // Notify the winery that a previously confirmed delivery has been delinked
+        if ($shouldDelink) {
+            $harvest = $this->delivery->harvest()->first();
+            $winery  = $harvest?->winery;
+            if ($winery?->email) {
+                $this->delivery->load(['plotPlanting.grapeVariety', 'plotPlanting.plot', 'viticulturist']);
+                $winery->notify(new HarvestDeliveryDelinkedNotification($this->delivery, $oldKg, $newKg));
+            }
+        }
+
+        $message = $shouldDelink
+            ? 'Entrega actualizada. La confirmación de bodega ha sido desvinculada; quedará pendiente de re-confirmar.'
+            : 'Entrega actualizada correctamente.';
+
+        $this->toastSuccess($message);
 
         return redirect()->route('viticulturist.vendimia.index');
     }
@@ -137,7 +181,45 @@ class EditDelivery extends Component
     {
         abort_unless($this->delivery->viticulturist_id === Auth::id(), 403);
 
+        // Capture data needed for notification before deletion
+        $wasLinked = $this->delivery->harvest_id !== null;
+        $winery    = null;
+        $showUrl   = route('winery.grape-reception.index');
+
+        if ($wasLinked) {
+            $this->delivery->load([
+                'plotPlanting.grapeVariety',
+                'plotPlanting.plot',
+                'viticulturist',
+                'harvest.winery',
+            ]);
+            $winery = $this->delivery->harvest?->winery;
+
+            if (app()->environment('production')) {
+                $showUrl = str_replace('http://', 'https://', $showUrl);
+            }
+        }
+
+        $viticulturistName = $this->delivery->viticulturist?->name ?? '—';
+        $variety   = $this->delivery->plotPlanting?->grapeVariety?->name
+                  ?? $this->delivery->plotPlanting?->name
+                  ?? '—';
+        $plot      = $this->delivery->plotPlanting?->plot?->name ?? '—';
+        $vintageYear = $this->delivery->vintage_year;
+        $declaredKg  = (float) $this->delivery->delivered_kg;
+
         $this->delivery->delete();
+
+        if ($wasLinked && $winery?->email) {
+            $winery->notify(new HarvestDeliveryDeletedNotification(
+                viticulturistName: $viticulturistName,
+                variety:           $variety,
+                plot:              $plot,
+                vintageYear:       $vintageYear,
+                declaredKg:        $declaredKg,
+                wineryReceptionUrl: $showUrl,
+            ));
+        }
 
         $this->toastSuccess('Entrega eliminada.');
 
