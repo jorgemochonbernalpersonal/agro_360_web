@@ -47,6 +47,15 @@ class NavigationHelper
                 'active' => request()->routeIs('viticulturist.calendar'),
             ];
 
+            $menu['main'][] = [
+                'icon'  => 'bell',
+                'label' => 'Notificaciones',
+                'route' => 'viticulturist.notifications.index',
+                'active' => request()->routeIs('viticulturist.notifications*'),
+                'wip'   => true,
+                'new'   => true,
+            ];
+
             // GRUPO: CAMPAÑA (trabajo diario, sin submenus)
             $menu['operations'] = [
                 [
@@ -91,6 +100,14 @@ class NavigationHelper
                     'label'  => 'Entregas a Bodega',
                     'route'  => 'viticulturist.vendimia.index',
                     'active' => request()->routeIs('viticulturist.vendimia.*'),
+                ],
+                [
+                    'icon'   => 'chat-bubble-left-right',
+                    'label'  => 'Comunicación con Bodega',
+                    'route'  => 'viticulturist.bodega-messages.index',
+                    'active' => request()->routeIs('viticulturist.bodega-messages*'),
+                    'wip'    => true,
+                    'new'    => true,
                 ],
             ];
 
@@ -200,6 +217,14 @@ class NavigationHelper
                     'route' => 'viticulturist.field-equipment.index',
                     'active' => request()->routeIs('viticulturist.field-equipment.*'),
                 ],
+                [
+                    'icon'   => 'shield-exclamation',
+                    'label'  => 'Seguros Agrarios',
+                    'route'  => 'viticulturist.agri-insurance.index',
+                    'active' => request()->routeIs('viticulturist.agri-insurance*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
             ];
 
             // GRUPO: PAC — Política Agrícola Común
@@ -268,6 +293,14 @@ class NavigationHelper
                     'route' => 'viticulturist.phytosanitary-products.index',
                     'active' => request()->routeIs('viticulturist.phytosanitary-products.*'),
                 ],
+                [
+                    'icon'   => 'user-plus',
+                    'label'  => 'Subcontratación',
+                    'route'  => 'viticulturist.subcontracting.index',
+                    'active' => request()->routeIs('viticulturist.subcontracting*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
             ];
 
             // GRUPO: FACTURACIÓN Y CLIENTES
@@ -285,6 +318,14 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.marketed-harvests.*'),
                 ],
                 [
+                    'icon'   => 'table-cells',
+                    'label'  => 'Costes por Parcela',
+                    'route'  => 'viticulturist.plot-costs.index',
+                    'active' => request()->routeIs('viticulturist.plot-costs*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
+                [
                     'icon' => 'users',
                     'label' => 'Clientes',
                     'route' => 'viticulturist.clients.index',
@@ -298,20 +339,20 @@ class NavigationHelper
                 ],
             ];
 
-            // GRUPO: SISTEMA
-            $menu['system'] = [
+            // RAIL BOTTOM — acceso directo desde el rail (sin flyout)
+            $menu['rail_bottom'] = [
                 [
-                    'icon' => 'cog-6-tooth',
-                    'label' => 'Configuración',
-                    'route' => 'viticulturist.settings',
+                    'icon'   => 'cog-6-tooth',
+                    'label'  => 'Configuración',
+                    'route'  => 'viticulturist.settings',
                     'active' => request()->routeIs('viticulturist.settings'),
                 ],
                 [
-                    'icon' => 'question-mark-circle',
-                    'label' => 'Soporte',
-                    'route' => 'viticulturist.support.index',
+                    'icon'   => 'question-mark-circle',
+                    'label'  => 'Soporte',
+                    'route'  => 'viticulturist.support.index',
                     'active' => request()->routeIs('viticulturist.support.*'),
-                    'badge' => Cache::remember("nav_badge_support_{$user->id}", 120, fn() => $user->supportTickets()->open()->count()),
+                    'badge'  => Cache::remember("nav_badge_support_{$user->id}", 120, fn() => $user->supportTickets()->open()->count()),
                 ],
             ];
         }

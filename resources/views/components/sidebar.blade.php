@@ -6,7 +6,7 @@
     // Paleta de colores por capítulo (accent RGB para usar en CSS inline)
     $chapterColors = [
         'campana'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // verde
-        'cuaderno'  => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
+        'cuaderno'  => ['accent' => '#94aec8', 'bg' => 'rgba(148,174,200,0.12)', 'border' => 'rgba(148,174,200,0.5)'],   // gris azulado
         'parcelas'  => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
         'recursos'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
         'normativa' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
@@ -29,7 +29,6 @@
             ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance']],
             ['key' => 'pac',       'icon' => 'banknotes',           'label' => 'PAC',       'sections' => ['pac']],
             ['key' => 'negocio',   'icon' => 'calculator',         'label' => 'Negocio',   'sections' => ['billing']],
-            ['key' => 'sistema',   'icon' => 'cog-6-tooth',        'label' => 'Sistema',   'sections' => ['system']],
         ];
     } elseif ($user->role === 'winery') {
         $chapters = [
@@ -112,6 +111,25 @@
         @endforeach
 
         <div class="flex-1"></div>
+
+        {{-- Rail bottom: Config + Soporte (viticulturist) --}}
+        @if(!empty($menu['rail_bottom']))
+            <div class="w-8 border-t border-white/10 mb-1"></div>
+            @foreach($menu['rail_bottom'] as $item)
+                <a href="{{ route($item['route']) }}" wire:navigate
+                   title="{{ $item['label'] }}"
+                   class="relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150
+                          {{ ($item['active'] ?? false) ? 'bg-white/20 text-white' : 'text-white/45 hover:bg-white/10 hover:text-white' }}">
+                    <flux:icon icon="{{ $item['icon'] }}" class="w-5 h-5" />
+                    @if(!empty($item['badge']) && $item['badge'] > 0)
+                        <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                            {{ $item['badge'] }}
+                        </span>
+                    @endif
+                    <span class="rail-tooltip">{{ $item['label'] }}</span>
+                </a>
+            @endforeach
+        @endif
     </aside>
 
     {{-- ═══════════════════ FLYOUT PANELS ═══════════════════ --}}

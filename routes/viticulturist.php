@@ -436,5 +436,31 @@ Route::middleware(['role:viticulturist', 'check.beta'])
             ]);
         })->name('official-reports.preview');
 
+        // ── Módulos nuevos (en construcción) ─────────────────────────
+        Route::get('/notifications', \App\Livewire\Viticulturist\UnderConstruction::class)
+            ->name('notifications.index')
+            ->defaults('module', 'Notificaciones')
+            ->defaults('icon', 'bell');
+
+        Route::get('/bodega-messages', \App\Livewire\Viticulturist\UnderConstruction::class)
+            ->name('bodega-messages.index')
+            ->defaults('module', 'Comunicación con Bodega')
+            ->defaults('icon', 'chat-bubble-left-right');
+
+        Route::get('/subcontracting', \App\Livewire\Viticulturist\UnderConstruction::class)
+            ->name('subcontracting.index')
+            ->defaults('module', 'Subcontratación')
+            ->defaults('icon', 'user-plus');
+
+        Route::get('/agri-insurance', \App\Livewire\Viticulturist\UnderConstruction::class)
+            ->name('agri-insurance.index')
+            ->defaults('module', 'Seguros Agrarios')
+            ->defaults('icon', 'shield-exclamation');
+
+        Route::get('/plot-costs', \App\Livewire\Viticulturist\UnderConstruction::class)
+            ->name('plot-costs.index')
+            ->defaults('module', 'Costes por Parcela')
+            ->defaults('icon', 'table-cells');
+
         }); // end require.complete
     });

@@ -11,7 +11,7 @@
     $chapterAccents = [
         // viticulturist
         'campana'   => ['color' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.4)'],
-        'cuaderno'  => ['color' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.4)'],
+        'cuaderno'  => ['color' => '#94aec8', 'bg' => 'rgba(148,174,200,0.12)', 'border' => 'rgba(148,174,200,0.4)'],
         'parcelas'  => ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.4)'],
         'recursos'  => ['color' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.4)'],
         'normativa' => ['color' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.4)'],
@@ -57,7 +57,7 @@
     } elseif (request()->routeIs(
         'viticulturist.exploitations*', 'viticulturist.commercial-authorizations*',
         'viticulturist.advisory*', 'viticulturist.field-applicators*',
-        'viticulturist.field-equipment*'
+        'viticulturist.field-equipment*', 'viticulturist.agri-insurance*'
     )) {
         $detectedChapter = 'normativa';
     } elseif (request()->routeIs('viticulturist.pac.*')) {
@@ -65,12 +65,19 @@
     } elseif (request()->routeIs(
         'viticulturist.pac-compliance*',
         'viticulturist.residue*', 'viticulturist.energy*',
-        'viticulturist.cue*', 'viticulturist.official*'
+        'viticulturist.cue*', 'viticulturist.official*',
+        'viticulturist.bodega-messages*'
     )) {
         $detectedChapter = 'cuaderno';
     } elseif (request()->routeIs(
+        'viticulturist.notifications*',
+        'viticulturist.settings*', 'viticulturist.support*'
+    )) {
+        $detectedChapter = 'campana'; // rail items, default al capítulo activo o campana
+    } elseif (request()->routeIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',
+        'viticulturist.plot-costs*',
         'winery.invoices*', 'winery.clients*', 'winery.billing*',
         'winery.verifactu*', 'winery.exports*', 'winery.enotourism*',
         'winery.financial-summary*', 'winery.financial-stats*'
