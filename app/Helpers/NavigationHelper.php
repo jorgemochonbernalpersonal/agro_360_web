@@ -312,6 +312,14 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.invoices.*'),
                 ],
                 [
+                    'icon'   => 'document-check',
+                    'label'  => 'VeriFactu',
+                    'route'  => 'viticulturist.verifactu.index',
+                    'active' => request()->routeIs('viticulturist.verifactu*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
+                [
                     'icon' => 'shopping-cart',
                     'label' => 'Cosecha Comercializada',
                     'route' => 'viticulturist.marketed-harvests.index',

@@ -77,7 +77,7 @@
     } elseif (request()->routeIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',
-        'viticulturist.plot-costs*',
+        'viticulturist.plot-costs*', 'viticulturist.verifactu*',
         'winery.invoices*', 'winery.clients*', 'winery.billing*',
         'winery.verifactu*', 'winery.exports*', 'winery.enotourism*',
         'winery.financial-summary*', 'winery.financial-stats*'

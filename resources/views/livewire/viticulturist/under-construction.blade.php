@@ -65,6 +65,11 @@
                         ['icon' => 'chart-bar',              'label' => 'Rentabilidad',       'desc' => 'Margen por parcela comparado con ingresos de entrega'],
                         ['icon' => 'arrow-trending-down',    'label' => 'Optimización',       'desc' => 'Identifica qué parcelas son menos rentables'],
                     ],
+                    'VeriFactu'               => [
+                        ['icon' => 'document-check',         'label' => 'Facturas verificadas', 'desc' => 'Emisión de facturas con sello VeriFactu homologado por la AEAT'],
+                        ['icon' => 'arrow-up-tray',          'label' => 'Envío automático',     'desc' => 'Remisión automática al sistema de la Agencia Tributaria'],
+                        ['icon' => 'shield-check',           'label' => 'Trazabilidad fiscal',  'desc' => 'Registro inmutable de cada factura emitida o anulada'],
+                    ],
                     'Exportaciones CUE'       => [
                         ['icon' => 'arrow-up-tray',          'label' => 'CUE oficial',        'desc' => 'Exportación al formato del Cuaderno Único de Explotación'],
                         ['icon' => 'document-check',         'label' => 'Validación',         'desc' => 'Verificación previa de datos antes de envío'],
