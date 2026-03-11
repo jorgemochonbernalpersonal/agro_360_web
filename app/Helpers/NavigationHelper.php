@@ -97,7 +97,7 @@ class NavigationHelper
                 ],
                 [
                     'icon'   => 'archive-box-arrow-down',
-                    'label'  => 'Entregas a Bodega',
+                    'label'  => 'Vendimia',
                     'route'  => 'viticulturist.vendimia.index',
                     'active' => request()->routeIs('viticulturist.vendimia.*'),
                 ],
