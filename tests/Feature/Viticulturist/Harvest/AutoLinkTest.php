@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Viticulturist\Vendimia;
+namespace Tests\Feature\Viticulturist\Harvest;
 
 use App\Models\Harvest;
 use App\Models\HarvestDelivery;
