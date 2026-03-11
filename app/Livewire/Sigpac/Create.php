@@ -155,6 +155,22 @@ class Create extends Component
     }
 
     /**
+     * Rellenar todos los campos de un código SIGPAC desde Alpine (pegar referencia completa).
+     * Acepta 7 segmentos (PP-MMM-AAA-ZZZ-PPP-PPPPP-EEE, estándar SIGPAC)
+     * o 8 segmentos (CA-PP-MMM-AAA-ZZZ-PPP-PPPPP-EEE, formato interno).
+     */
+    public function fillSigpacCode(int $index, array $fields): void
+    {
+        if (!isset($this->sigpacCodes[$index])) {
+            return;
+        }
+
+        $codes = $this->sigpacCodes;
+        $codes[$index] = array_merge($codes[$index], array_intersect_key($fields, $codes[$index]));
+        $this->sigpacCodes = $codes;
+    }
+
+    /**
      * Auto-rellenar códigos cuando se selecciona una parcela
      */
     public function updatedPlotId($value)

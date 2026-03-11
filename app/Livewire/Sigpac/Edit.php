@@ -138,6 +138,20 @@ class Edit extends Component
     }
 
     /**
+     * Rellenar todos los campos de un código SIGPAC desde Alpine (pegar referencia completa).
+     */
+    public function fillSigpacCode(int $index, array $fields): void
+    {
+        if (!isset($this->sigpacCodes[$index])) {
+            return;
+        }
+
+        $codes = $this->sigpacCodes;
+        $codes[$index] = array_merge($codes[$index], array_intersect_key($fields, $codes[$index]));
+        $this->sigpacCodes = $codes;
+    }
+
+    /**
      * Verificar si un código está completo y válido
      */
     public function isCodeValid($index): bool
