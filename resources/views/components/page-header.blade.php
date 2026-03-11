@@ -11,8 +11,9 @@
     $chapterAccents = [
         // viticulturist
         'campana'   => ['color' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.4)'],
-        'cuaderno'  => ['color' => '#94aec8', 'bg' => 'rgba(148,174,200,0.12)', 'border' => 'rgba(148,174,200,0.4)'],
-        'parcelas'  => ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.4)'],
+        'cuaderno'  => ['color' => '#c2855a', 'bg' => 'rgba(194,133,90,0.12)',  'border' => 'rgba(194,133,90,0.4)'],   // tierra
+        'registros' => ['color' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)', 'border' => 'rgba(96,165,250,0.4)'],   // azul
+        'parcelas'  => ['color' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)', 'border' => 'rgba(34,211,238,0.4)'],   // cyan
         'recursos'  => ['color' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.4)'],
         'normativa' => ['color' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.4)'],
         'pac'       => ['color' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.4)'],
@@ -65,12 +66,16 @@
     } elseif (request()->routeIs(
         'viticulturist.digital-notebook*',
         'viticulturist.pest-management*',
-        'viticulturist.pac-compliance*',
-        'viticulturist.residue*', 'viticulturist.energy*',
-        'viticulturist.cue*', 'viticulturist.official*',
+        'viticulturist.vendimia*',
         'viticulturist.bodega-messages*'
     )) {
         $detectedChapter = 'cuaderno';
+    } elseif (request()->routeIs(
+        'viticulturist.pac-compliance*',
+        'viticulturist.residue*', 'viticulturist.energy*',
+        'viticulturist.cue*', 'viticulturist.official*'
+    )) {
+        $detectedChapter = 'registros';
     } elseif (request()->routeIs(
         'viticulturist.notifications*',
         'viticulturist.settings*', 'viticulturist.support*'

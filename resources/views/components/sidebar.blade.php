@@ -6,8 +6,9 @@
     // Paleta de colores por capítulo (accent RGB para usar en CSS inline)
     $chapterColors = [
         'campana'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // verde
-        'cuaderno'  => ['accent' => '#94aec8', 'bg' => 'rgba(148,174,200,0.12)', 'border' => 'rgba(148,174,200,0.5)'],   // gris azulado
-        'parcelas'  => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
+        'cuaderno'  => ['accent' => '#c2855a', 'bg' => 'rgba(194,133,90,0.12)', 'border' => 'rgba(194,133,90,0.5)'],   // tierra
+        'registros' => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)', 'border' => 'rgba(96,165,250,0.5)'],   // azul
+        'parcelas'  => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)', 'border' => 'rgba(34,211,238,0.5)'],   // cyan
         'recursos'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
         'normativa' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
         'pac'       => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
@@ -22,13 +23,14 @@
     $chapters = [];
     if ($user->role === 'viticulturist') {
         $chapters = [
-            ['key' => 'campana',   'icon' => 'pencil-square',     'label' => 'Campaña',         'sections' => ['operations']],
-            ['key' => 'cuaderno',  'icon' => 'document-text',     'label' => 'Cuaderno de Campo', 'sections' => ['notebook']],
-            ['key' => 'parcelas',  'icon' => 'map',                'label' => 'Parcelas',  'sections' => ['plots_analysis']],
-            ['key' => 'recursos',  'icon' => 'wrench-screwdriver', 'label' => 'Recursos',  'sections' => ['resources']],
-            ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance']],
-            ['key' => 'pac',       'icon' => 'banknotes',           'label' => 'PAC',       'sections' => ['pac']],
-            ['key' => 'negocio',   'icon' => 'calculator',         'label' => 'Negocio',   'sections' => ['billing']],
+            ['key' => 'campana',   'icon' => 'pencil-square',        'label' => 'Campaña',              'sections' => ['operations']],
+            ['key' => 'cuaderno',  'icon' => 'document-text',        'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
+            ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales', 'sections' => ['registros_oficiales']],
+            ['key' => 'parcelas',  'icon' => 'map',                  'label' => 'Parcelas',             'sections' => ['plots_analysis']],
+            ['key' => 'recursos',  'icon' => 'wrench-screwdriver',   'label' => 'Recursos',             'sections' => ['resources']],
+            ['key' => 'normativa', 'icon' => 'shield-check',         'label' => 'Normativa',            'sections' => ['compliance']],
+            ['key' => 'pac',       'icon' => 'banknotes',            'label' => 'PAC',                  'sections' => ['pac']],
+            ['key' => 'negocio',   'icon' => 'calculator',           'label' => 'Negocio',              'sections' => ['billing']],
         ];
     } elseif ($user->role === 'winery') {
         $chapters = [

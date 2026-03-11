@@ -41,22 +41,15 @@ class NavigationHelper
             ];
 
             $menu['main'][] = [
-                'icon' => 'calendar',
-                'label' => 'Calendario',
-                'route' => 'viticulturist.calendar',
-                'active' => request()->routeIs('viticulturist.calendar'),
-            ];
-
-            $menu['main'][] = [
-                'icon'  => 'bell',
-                'label' => 'Notificaciones',
-                'route' => 'viticulturist.notifications.index',
+                'icon'   => 'bell',
+                'label'  => 'Notificaciones',
+                'route'  => 'viticulturist.notifications.index',
                 'active' => request()->routeIs('viticulturist.notifications*'),
-                'wip'   => true,
-                'new'   => true,
+                'wip'    => true,
+                'new'    => true,
             ];
 
-            // GRUPO: CAMPAÑA — gestión de campaña + vendimia
+            // GRUPO: CAMPAÑA — gestión de campaña
             $menu['operations'] = [
                 [
                     'icon'   => 'clipboard-document-list',
@@ -78,12 +71,6 @@ class NavigationHelper
                 ],
                 ['divider' => true],
                 [
-                    'icon'   => 'archive-box-arrow-down',
-                    'label'  => 'Vendimia',
-                    'route'  => 'viticulturist.vendimia.index',
-                    'active' => request()->routeIs('viticulturist.vendimia.*'),
-                ],
-                [
                     'icon'   => 'chart-bar-square',
                     'label'  => 'Rendimientos Estimados',
                     'route'  => 'viticulturist.digital-notebook.estimated-yields.index',
@@ -99,8 +86,8 @@ class NavigationHelper
                 ],
             ];
 
-            // GRUPO: CUADERNO DE CAMPO — actividades + compliance
-            $menu['notebook'] = [
+            // GRUPO: CUADERNO DE CAMPO — entradas diarias
+            $menu['cuaderno_inputs'] = [
                 [
                     'icon'   => 'pencil-square',
                     'label'  => 'Cuaderno Digital',
@@ -139,10 +126,10 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.digital-notebook.observation.*'),
                 ],
                 [
-                    'icon'   => 'scissors',
-                    'label'  => 'Cosecha',
-                    'route'  => 'viticulturist.digital-notebook.harvest.create',
-                    'active' => request()->routeIs('viticulturist.digital-notebook.harvest.*'),
+                    'icon'   => 'archive-box-arrow-down',
+                    'label'  => 'Vendimia',
+                    'route'  => 'viticulturist.vendimia.index',
+                    'active' => request()->routeIs('viticulturist.vendimia.*'),
                 ],
                 [
                     'icon'   => 'sparkles',
@@ -162,7 +149,10 @@ class NavigationHelper
                     'route'  => 'viticulturist.pest-management.index',
                     'active' => request()->routeIs('viticulturist.pest-management.*'),
                 ],
-                ['divider' => true],
+            ];
+
+            // GRUPO: REGISTROS OFICIALES — outputs y compliance del cuaderno
+            $menu['registros_oficiales'] = [
                 [
                     'icon'   => 'chart-bar',
                     'label'  => 'Cumplimiento Cuaderno',
@@ -399,6 +389,12 @@ class NavigationHelper
 
             // RAIL BOTTOM — acceso directo desde el rail (sin flyout)
             $menu['rail_bottom'] = [
+                [
+                    'icon'   => 'cog-6-tooth',
+                    'label'  => 'Configuración',
+                    'route'  => 'viticulturist.settings',
+                    'active' => request()->routeIs('viticulturist.settings'),
+                ],
                 [
                     'icon'   => 'question-mark-circle',
                     'label'  => 'Soporte',
