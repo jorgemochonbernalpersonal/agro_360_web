@@ -37,7 +37,7 @@ trait WithRoleBasedFields
                 'sigpac_use',
                 'sigpac_code',
             ]),
-            'viticulturist' => array_merge($baseFields, [
+            'viticulturist', 'producer' => array_merge($baseFields, [
                 'viticulturist_id',
                 'autonomous_community_id',
                 'province_id',
@@ -64,12 +64,12 @@ trait WithRoleBasedFields
         $user = auth()->user();
         
         // Admin, supervisor y winery siempre pueden seleccionar
-        if (in_array($user->role, ['admin', 'supervisor', 'winery'])) {
+        if (in_array($user->role, ['admin', 'supervisor', 'winery', 'producer'])) {
             return true;
         }
         
         // Viticultores solo pueden seleccionar si tienen viticultores creados
-        if ($user->isViticulturist()) {
+        if ($user->hasViticulturistAccess()) {
             return \App\Models\WineryViticulturist::editableBy($user)->exists();
         }
         
@@ -78,11 +78,11 @@ trait WithRoleBasedFields
     
     public function canSelectLocation(): bool
     {
-        return in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']);
+        return in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer']);
     }
     
     public function canSelectSigpac(): bool
     {
-        return in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']);
+        return in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer']);
     }
 }

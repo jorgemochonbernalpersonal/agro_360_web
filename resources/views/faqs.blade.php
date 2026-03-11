@@ -196,7 +196,7 @@
                     'name' => '¿Puedo usar Agro365 desde el móvil en el viñedo?',
                     'acceptedAnswer' => [
                         '@type' => 'Answer',
-                        'text' => 'Sí. Agro365 está 100% optimizado para móviles y tablets. Funciona como aplicación web responsive desde cualquier navegador sin instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo, incluso con conexión limitada. Los datos se sincronizan automáticamente.'
+                        'text' => 'Sí. Agro365 está 100% optimizado para móviles y tablets. Funciona como aplicación web responsive desde cualquier navegador sin instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo con la cobertura de datos de tu móvil.'
                     ]
                 ],
                 [

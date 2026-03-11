@@ -10,7 +10,7 @@ class PlotPolicy
 {
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, ['admin', 'supervisor', 'winery', 'viticulturist']);
+        return in_array($user->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer']);
     }
 
     public function view(User $user, Plot $plot): bool
@@ -19,14 +19,14 @@ class PlotPolicy
             'admin' => true,
             'supervisor' => $this->canViewPlotAsSupervisor($user, $plot),
             'winery' => $this->canViewPlotAsWinery($user, $plot),
-            'viticulturist' => $this->canViewPlotAsViticulturist($user, $plot),
+            'viticulturist', 'producer' => $this->canViewPlotAsViticulturist($user, $plot),
             default => false,
         };
     }
 
     public function create(User $user): bool
     {
-        if (!in_array($user->role, ['admin', 'supervisor', 'winery', 'viticulturist'])) {
+        if (!in_array($user->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer'])) {
             return false;
         }
         
@@ -41,7 +41,7 @@ class PlotPolicy
             'admin' => true,
             'supervisor' => $this->canUpdatePlotAsSupervisor($user, $plot),
             'winery' => $this->canUpdatePlotAsWinery($user, $plot),
-            'viticulturist' => $this->canUpdatePlotAsViticulturist($user, $plot),
+            'viticulturist', 'producer' => $this->canUpdatePlotAsViticulturist($user, $plot),
             default => false,
         };
     }
@@ -153,12 +153,12 @@ class PlotPolicy
         }
         
         // Solo puede editar si el viticultor fue creado por el usuario
-        if ($user->isViticulturist()) {
+        if ($user->hasViticulturistAccess()) {
             return $user->canEditViticulturist($viticulturistId);
         }
         
         // Para winery: verificar si el viticultor fue creado por la winery
-        if ($user->isWinery()) {
+        if ($user->hasWineryAccess()) {
             return WineryViticulturist::where('viticulturist_id', $viticulturistId)
                 ->where('winery_id', $user->id)
                 ->where('source', WineryViticulturist::SOURCE_OWN)

@@ -38,6 +38,10 @@ class Index extends Component
         $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
             ->pluck('viticulturist_id');
 
+        if (Auth::user()->isProducer()) {
+            $viticulturistIds = $viticulturistIds->push($wineryId)->unique();
+        }
+
         $query = AgriculturalActivity::with([
                 'viticulturist:id,name',
                 'plot:id,name',
@@ -61,6 +65,10 @@ class Index extends Component
             ->filter()
             ->sortBy('name')
             ->values();
+
+        if (Auth::user()->isProducer()) {
+            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+        }
 
         $campaigns = Campaign::whereIn('viticulturist_id', $viticulturistIds)
             ->orderByDesc('year')

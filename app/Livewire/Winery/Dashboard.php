@@ -23,6 +23,9 @@ class Dashboard extends Component
 
         // Viticultores vinculados
         $viticulturistCount = WineryViticulturist::where('winery_id', $wineryId)->count();
+        if (Auth::user()->isProducer()) {
+            $viticulturistCount += 1; // producer counts as their own linked viticulturist
+        }
 
         // Batches de la campaña activa
         $activeBatches = GrapeReceptionBatch::where('winery_id', $wineryId)

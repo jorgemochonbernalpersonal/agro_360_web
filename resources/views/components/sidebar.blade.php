@@ -20,28 +20,42 @@
         'territorio'=> ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
     ];
 
+    $viticulturistChapters = [
+        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['operations']],
+        ['key' => 'cuaderno',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
+        ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['registros_oficiales']],
+        ['key' => 'parcelas',  'icon' => 'map',                      'label' => 'Parcelas',             'sections' => ['plots_analysis']],
+        ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
+        ['key' => 'normativa', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
+        ['key' => 'pac',       'icon' => 'banknotes',                'label' => 'PAC',                  'sections' => ['pac']],
+        ['key' => 'negocio',   'icon' => 'calculator',               'label' => 'Negocio',              'sections' => ['billing']],
+    ];
+
+    $wineryChapters = [
+        ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',   'sections' => ['harvest']],
+        ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',     'sections' => ['cellar']],
+        ['key' => 'territorio', 'icon' => 'map',                     'label' => 'Territorio', 'sections' => ['territory']],
+        ['key' => 'normativa',  'icon' => 'shield-check',            'label' => 'Normativa',  'sections' => ['winery_normativa']],
+        ['key' => 'negocio',    'icon' => 'calculator',              'label' => 'Negocio',    'sections' => ['billing']],
+        ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['resources', 'compliance', 'system']],
+    ];
+
+    $producerContext = session('producer_context', 'viticulturist');
+
     $chapters = [];
     if ($user->role === 'viticulturist') {
-        $chapters = [
-            ['key' => 'campana',   'icon' => 'pencil-square',        'label' => 'Campaña',              'sections' => ['operations']],
-            ['key' => 'cuaderno',  'icon' => 'document-text',        'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
-            ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales', 'sections' => ['registros_oficiales']],
-            ['key' => 'parcelas',  'icon' => 'map',                  'label' => 'Parcelas',             'sections' => ['plots_analysis']],
-            ['key' => 'recursos',  'icon' => 'wrench-screwdriver',   'label' => 'Recursos',             'sections' => ['resources']],
-            ['key' => 'normativa', 'icon' => 'shield-check',         'label' => 'Normativa',            'sections' => ['compliance']],
-            ['key' => 'pac',       'icon' => 'banknotes',            'label' => 'PAC',                  'sections' => ['pac']],
-            ['key' => 'negocio',   'icon' => 'calculator',           'label' => 'Negocio',              'sections' => ['billing']],
-        ];
+        $chapters = $viticulturistChapters;
     } elseif ($user->role === 'winery') {
-        $chapters = [
-            ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',   'sections' => ['harvest']],
-            ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',     'sections' => ['cellar']],
-            ['key' => 'territorio', 'icon' => 'map',                     'label' => 'Territorio', 'sections' => ['territory']],
-            ['key' => 'normativa',  'icon' => 'shield-check',            'label' => 'Normativa',  'sections' => ['winery_normativa']],
-            ['key' => 'negocio',    'icon' => 'calculator',              'label' => 'Negocio',    'sections' => ['billing']],
-            ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['resources', 'compliance', 'system']],
-        ];
+        $chapters = $wineryChapters;
+    } elseif ($user->role === 'producer') {
+        $chapters = $producerContext === 'winery' ? $wineryChapters : $viticulturistChapters;
     }
+
+    $dashboardRoute = match($user->role) {
+        'winery'    => 'winery.dashboard',
+        'producer'  => 'producer.dashboard',
+        default     => 'viticulturist.dashboard',
+    };
 
     // Detectar capítulo activo
     $activeChapterKey = null;
@@ -67,7 +81,7 @@
         style="background: linear-gradient(180deg, #0f2508 0%, #1a3a0e 40%, #2d5016 100%);"
     >
         {{-- Logo --}}
-        <a href="{{ route($user->role . '.dashboard') }}" wire:navigate
+        <a href="{{ route($dashboardRoute) }}" wire:navigate
            class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-2 hover:bg-white/20 transition-all group flex-shrink-0"
            title="Agro365">
             <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="26" height="26"
@@ -75,6 +89,31 @@
         </a>
 
         <div class="w-8 border-t border-white/10 mb-1"></div>
+
+        {{-- Context switcher (producer only) --}}
+        @if($user->isProducer())
+            <div class="flex flex-col gap-0.5 w-12 mb-1">
+                <form method="POST" action="{{ route('context.switch', 'viticulturist') }}">
+                    @csrf
+                    <button type="submit"
+                        title="Modo Campo"
+                        class="w-full flex items-center justify-center h-7 rounded-t-lg text-[9px] font-bold uppercase tracking-wide transition-all
+                            {{ $producerContext === 'viticulturist' ? 'bg-white/20 text-white' : 'text-white/35 hover:text-white/70 hover:bg-white/10' }}">
+                        🌿
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('context.switch', 'winery') }}">
+                    @csrf
+                    <button type="submit"
+                        title="Modo Bodega"
+                        class="w-full flex items-center justify-center h-7 rounded-b-lg text-[9px] font-bold uppercase tracking-wide transition-all
+                            {{ $producerContext === 'winery' ? 'bg-white/20 text-white' : 'text-white/35 hover:text-white/70 hover:bg-white/10' }}">
+                        🏛
+                    </button>
+                </form>
+            </div>
+            <div class="w-8 border-t border-white/10 mb-1"></div>
+        @endif
 
         {{-- Main items (Dashboard, Calendario) --}}
         @foreach($mainItems as $item)

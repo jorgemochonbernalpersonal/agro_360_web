@@ -35,7 +35,8 @@ Route::middleware('auth')->group(function () {
         if ($user && $user->hasVerifiedEmail()) {
             $dashboardRoute = $user->isAdmin() ? 'admin.dashboard'
                 : ($user->isSupervisor() ? 'supervisor.dashboard'
-                : ($user->isWinery() ? 'winery.dashboard' : 'viticulturist.dashboard'));
+                : ($user->isWinery() ? 'winery.dashboard'
+                : ($user->isProducer() ? 'producer.dashboard' : 'viticulturist.dashboard')));
 
             return redirect()->route($dashboardRoute);
         }
@@ -55,9 +56,10 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('verification.notice');
         }
         
-        $dashboardRoute = auth()->user()->isAdmin() ? 'admin.dashboard' : 
-            (auth()->user()->isSupervisor() ? 'supervisor.dashboard' : 
-            (auth()->user()->isWinery() ? 'winery.dashboard' : 'viticulturist.dashboard'));
+        $dashboardRoute = auth()->user()->isAdmin() ? 'admin.dashboard' :
+            (auth()->user()->isSupervisor() ? 'supervisor.dashboard' :
+            (auth()->user()->isWinery() ? 'winery.dashboard' :
+            (auth()->user()->isProducer() ? 'producer.dashboard' : 'viticulturist.dashboard')));
         
         return view('auth.email-verified', [
             'dashboardRoute' => $dashboardRoute,
@@ -75,9 +77,10 @@ Route::middleware('auth')->group(function () {
         $verified = $user->hasVerifiedEmail();
         
         if ($verified) {
-            $dashboardRoute = $user->isAdmin() ? 'admin.dashboard' : 
-                ($user->isSupervisor() ? 'supervisor.dashboard' : 
-                ($user->isWinery() ? 'winery.dashboard' : 'viticulturist.dashboard'));
+            $dashboardRoute = $user->isAdmin() ? 'admin.dashboard' :
+                ($user->isSupervisor() ? 'supervisor.dashboard' :
+                ($user->isWinery() ? 'winery.dashboard' :
+                ($user->isProducer() ? 'producer.dashboard' : 'viticulturist.dashboard')));
             
             return response()->json([
                 'verified' => true,

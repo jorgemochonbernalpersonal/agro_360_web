@@ -96,7 +96,7 @@ class WineryViticulturist extends Model
      */
     public function scopeVisibleTo($query, User $viticulturist, $wineryId = null)
     {
-        if (!$viticulturist->isViticulturist()) {
+        if (!$viticulturist->hasViticulturistAccess()) {
             return $query->whereRaw('1 = 0');
         }
         
@@ -153,7 +153,7 @@ class WineryViticulturist extends Model
      */
     public function scopeEditableBy($query, User $viticulturist)
     {
-        if (!$viticulturist->isViticulturist()) {
+        if (!$viticulturist->hasViticulturistAccess()) {
             return $query->whereRaw('1 = 0');
         }
         
@@ -166,7 +166,7 @@ class WineryViticulturist extends Model
      */
     public function isVisibleTo(User $viticulturist): bool
     {
-        if (!$viticulturist->isViticulturist()) {
+        if (!$viticulturist->hasViticulturistAccess()) {
             return false;
         }
         

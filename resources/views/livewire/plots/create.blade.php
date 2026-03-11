@@ -11,7 +11,7 @@
             <!-- 1. Datos Principales -->
             <x-agro.form-section title="Datos Principales">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist']))
+                    @if (in_array(auth()->user()->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer']))
                         <div class="md:col-span-2">
                             <flux:field>
                                 <flux:label for="viticulturist_id">Viticultor Asignado *</flux:label>

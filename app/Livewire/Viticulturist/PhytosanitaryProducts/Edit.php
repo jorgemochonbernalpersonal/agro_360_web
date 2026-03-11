@@ -26,7 +26,7 @@ class Edit extends Component
 
     public function mount(PhytosanitaryProduct $product): void
     {
-        if (! Auth::user()->isViticulturist()) {
+        if (! Auth::user()->hasViticulturistAccess()) {
             abort(403, 'No tienes permiso para editar productos fitosanitarios.');
         }
 

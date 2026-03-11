@@ -19,6 +19,7 @@ trait WithUserFilters
                 $user->supervisedWineries->pluck('winery_id')
             )->get(),
             'winery' => collect([$user]),
+            'producer' => collect([$user]),
             default => collect(),
         };
     }
@@ -43,7 +44,7 @@ trait WithUserFilters
             // - Viticultores they created
             // - Viticultores from their wineries (if associated with any)
             // - Viticultores from their supervisor pool (if they have a supervisor)
-            'viticulturist' => $this->getAllVisibleViticulturists($user),
+            'viticulturist', 'producer' => $this->getAllVisibleViticulturists($user),
             default => collect(),
         };
     }

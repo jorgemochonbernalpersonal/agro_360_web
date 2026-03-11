@@ -19,7 +19,7 @@ class Analytics extends Component
 
     public function mount()
     {
-        if (!Auth::user()->isViticulturist()) {
+        if (!Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
     }

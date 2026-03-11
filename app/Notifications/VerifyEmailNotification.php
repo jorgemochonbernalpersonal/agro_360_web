@@ -11,7 +11,7 @@ class VerifyEmailNotification extends VerifyEmail
     {
         $verificationUrl = $this->verificationUrl($notifiable);
 
-        $isWinery = $notifiable->role === 'winery';
+        $isWinery = $notifiable->hasWineryAccess();
 
         $roleLabel   = $isWinery ? 'bodega' : 'viticultor';
         $description = $isWinery

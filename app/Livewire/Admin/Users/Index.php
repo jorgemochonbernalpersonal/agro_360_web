@@ -94,6 +94,7 @@ class Index extends Component
             'supervisor' => 'supervisor.dashboard',
             'winery' => 'winery.dashboard',
             'viticulturist' => 'viticulturist.dashboard',
+            'producer'      => 'producer.dashboard',
             default => 'home',
         };
 
@@ -142,7 +143,7 @@ class Index extends Component
             $user->save();
 
             // When enabling beta for a winery, cascade to its linked viticultors
-            if ($enabling && $user->role === 'winery') {
+            if ($enabling && $user->hasWineryAccess()) {
                 $viticulturistIds = DB::table('winery_viticulturist')
                     ->where('winery_id', $user->id)
                     ->pluck('viticulturist_id');
@@ -226,10 +227,11 @@ class Index extends Component
         $stats = [
             'total' => User::count(),
             'by_role' => [
-                'admin' => User::where('role', 'admin')->count(),
-                'supervisor' => User::where('role', 'supervisor')->count(),
-                'winery' => User::where('role', 'winery')->count(),
+                'admin'         => User::where('role', 'admin')->count(),
+                'supervisor'    => User::where('role', 'supervisor')->count(),
+                'winery'        => User::where('role', 'winery')->count(),
                 'viticulturist' => User::where('role', 'viticulturist')->count(),
+                'producer'      => User::where('role', 'producer')->count(),
             ],
             'active' => User::where('can_login', true)->count(),
             'inactive' => User::where('can_login', false)->count(),

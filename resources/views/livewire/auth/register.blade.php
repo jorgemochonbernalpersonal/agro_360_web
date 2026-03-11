@@ -60,6 +60,7 @@
                                     'supervisor'    => 'Supervisor',
                                     'winery'        => 'Bodega',
                                     'viticulturist' => 'Viticultor',
+                                    'producer'      => 'Productor (viticultor + bodega)',
                                     default         => ucfirst($allowedRole),
                                 } }}
                             </flux:select.option>
@@ -67,6 +68,7 @@
                     @else
                         <flux:select.option value="viticulturist">Viticultor</flux:select.option>
                         <flux:select.option value="winery">Bodega</flux:select.option>
+                        <flux:select.option value="producer">Productor (viticultor + bodega)</flux:select.option>
                     @endif
                 </flux:select>
                 <flux:error name="role" />

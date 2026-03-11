@@ -22,6 +22,7 @@
                 'supervisor'    => ['label' => 'Supervisores', 'count' => $stats['by_role']['supervisor']],
                 'winery'        => ['label' => 'Bodegas',      'count' => $stats['by_role']['winery']],
                 'viticulturist' => ['label' => 'Viticultores', 'count' => $stats['by_role']['viticulturist']],
+                'producer'      => ['label' => 'Productores',  'count' => $stats['by_role']['producer']],
             ];
         @endphp
         <div class="px-6 pt-5">
@@ -72,6 +73,7 @@
                                 'supervisor'    => ['label' => 'Supervisor', 'color' => 'blue'],
                                 'winery'        => ['label' => 'Bodega',     'color' => 'violet'],
                                 'viticulturist' => ['label' => 'Viticultor', 'color' => 'green'],
+                                'producer'      => ['label' => 'Productor',  'color' => 'amber'],
                             ];
                             $roleInfo = $roleMap[$user->role] ?? ['label' => ucfirst($user->role), 'color' => null];
                         @endphp

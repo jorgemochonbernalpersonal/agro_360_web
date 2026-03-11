@@ -287,7 +287,7 @@
     </button>
     <div x-show="openIndexes.includes(6)" x-collapse class="px-8 pb-8 pt-2">
         <p class="text-gray-700 leading-relaxed">
-            ¡Por supuesto! Agro365 es una <strong><a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a></strong> <strong>100% optimizada para móviles y tablets</strong>. Funciona como una aplicación web responsive, por lo que puedes acceder desde cualquier navegador sin necesidad de instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo, incluso con conexión limitada. Los datos se sincronizan automáticamente cuando recuperas señal. Diseñado específicamente para funcionar en condiciones reales de campo.
+            ¡Por supuesto! Agro365 es una <strong><a href="{{ content_route('content.app-agricultura') }}" class="text-[var(--color-agro-green)] hover:underline">app de agricultura</a></strong> <strong>100% optimizada para móviles y tablets</strong>. Funciona como una aplicación web responsive, por lo que puedes acceder desde cualquier navegador sin necesidad de instalar apps. Registra tratamientos, riegos y actividades directamente desde el viñedo con la cobertura de datos de tu móvil. Diseñado específicamente para funcionar en condiciones reales de campo.
         </p>
     </div>
 </div>

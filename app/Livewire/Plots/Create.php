@@ -69,7 +69,7 @@ class Create extends Component
 
         // Auto-asignar viticultor si es viticulturist
         // Si es viticultor y no puede seleccionar otros viticultores, se auto-asigna
-        if (Auth::user()->isViticulturist()) {
+        if (Auth::user()->hasViticulturistAccess()) {
             if (!$this->canSelectViticulturist()) {
                 $this->viticulturist_id = Auth::id();
             }
@@ -82,7 +82,7 @@ class Create extends Component
         }
 
         // Si bodega navega desde el perfil de un viticultor, pre-seleccionar ese viticultor
-        if (Auth::user()->isWinery() && request()->filled('viticulturist_id')) {
+        if (Auth::user()->hasWineryAccess() && request()->filled('viticulturist_id')) {
             $this->viticulturist_id = request()->query('viticulturist_id');
         }
     }
@@ -176,13 +176,13 @@ class Create extends Component
                 $user = Auth::user();
                 $canAssign = false;
 
-                if ($user->isWinery()) {
+                if ($user->hasWineryAccess()) {
                     $canAssign = \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
                         ->where('winery_id', $user->id)
                         ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)
                         ->where('assigned_by', $user->id)
                         ->exists();
-                } elseif ($user->isViticulturist()) {
+                } elseif ($user->hasViticulturistAccess()) {
                     $canAssign = $user->canEditViticulturist($this->viticulturist_id);
                 } else {
                     $canAssign = true;  // Admin y supervisor
@@ -195,7 +195,7 @@ class Create extends Component
                 }
 
                 $data['viticulturist_id'] = $this->viticulturist_id;
-            } elseif (Auth::user()->isViticulturist()) {
+            } elseif (Auth::user()->hasViticulturistAccess()) {
                 // Auto-asignar viticultor si es viticulturist y no puede seleccionar o no seleccionó ninguno
                 $data['viticulturist_id'] = Auth::id();
             }
@@ -211,7 +211,7 @@ class Create extends Component
             DB::commit();
 
             $this->toastSuccess('Parcela creada correctamente.');
-            $indexRoute = Auth::user()->isWinery() ? 'winery.plots.index' : 'plots.index';
+            $indexRoute = Auth::user()->hasWineryAccess() ? 'winery.plots.index' : 'plots.index';
             return $this->redirect(route($indexRoute), navigate: true);
         } catch (\Exception $e) {
             DB::rollBack();

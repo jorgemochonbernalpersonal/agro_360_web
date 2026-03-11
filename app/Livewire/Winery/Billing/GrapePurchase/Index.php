@@ -114,6 +114,10 @@ class Index extends AbstractIndex
             ->where('source', 'own')
             ->pluck('viticulturist_id');
 
+        if (auth()->user()->isProducer()) {
+            $viticulturistIds = $viticulturistIds->push($this->wineryId())->unique();
+        }
+
         $viticulturists = User::whereIn('id', $viticulturistIds)
             ->orderBy('name')->get(['id', 'name']);
 

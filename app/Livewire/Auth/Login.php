@@ -189,6 +189,7 @@ class Login extends Component
             'supervisor' => 'supervisor.dashboard',
             'winery' => 'winery.dashboard',
             'viticulturist' => 'viticulturist.dashboard',
+            'producer'      => 'producer.dashboard',
             default => 'home',
         };
     }

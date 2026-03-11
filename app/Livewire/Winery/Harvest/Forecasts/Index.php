@@ -116,6 +116,10 @@ class Index extends AbstractIndex
             ->sortBy('name')
             ->values();
 
+        if (Auth::user()->isProducer()) {
+            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+        }
+
         // Cargar kg recibidos por batch para calcular ejecución en la vista
         $collection  = $entries->getCollection();
         $batchTotals = GrapeReceptionBatch::where('winery_id', $wineryId)

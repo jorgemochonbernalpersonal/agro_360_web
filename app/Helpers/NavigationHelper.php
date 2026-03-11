@@ -29,7 +29,23 @@ class NavigationHelper
     private static function buildMenu($user): array
     {
         $role = $user->role;
+
+        // Producer delegates to viticulturist or winery based on active context
+        if ($role === 'producer') {
+            $role = session('producer_context', 'viticulturist');
+        }
+
         $menu = [];
+
+        // Producer always gets a home item pointing to the combined dashboard
+        if ($user->role === 'producer') {
+            $menu['main'][] = [
+                'icon'   => 'squares-2x2',
+                'label'  => 'Vista general',
+                'route'  => 'producer.dashboard',
+                'active' => request()->routeIs('producer.dashboard'),
+            ];
+        }
 
         if ($role === 'viticulturist') {
             // DASHBOARD - Siempre visible
@@ -728,11 +744,14 @@ class NavigationHelper
     public static function getRoleName(string $role): string
     {
         return match($role) {
-            'admin' => 'Administrador',
-            'supervisor' => 'Supervisor',
-            'winery' => 'Bodega',
+            'admin'         => 'Administrador',
+            'supervisor'    => 'Supervisor',
+            'winery'        => 'Bodega',
             'viticulturist' => 'Viticultor',
-            default => ucfirst($role),
+            'producer'      => session('producer_context', 'viticulturist') === 'winery'
+                                ? 'Productor · Bodega'
+                                : 'Productor · Campo',
+            default         => ucfirst($role),
         };
     }
 }

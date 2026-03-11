@@ -101,10 +101,11 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Roles disponibles
      */
-    public const ROLE_ADMIN = 'admin';
-    public const ROLE_SUPERVISOR = 'supervisor';
-    public const ROLE_WINERY = 'winery';
+    public const ROLE_ADMIN         = 'admin';
+    public const ROLE_SUPERVISOR    = 'supervisor';
+    public const ROLE_WINERY        = 'winery';
     public const ROLE_VITICULTURIST = 'viticulturist';
+    public const ROLE_PRODUCER      = 'producer';
 
     /**
      * Verificar si el usuario es admin
@@ -136,6 +137,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isViticulturist(): bool
     {
         return $this->role === self::ROLE_VITICULTURIST;
+    }
+
+    public function isProducer(): bool
+    {
+        return $this->role === self::ROLE_PRODUCER;
+    }
+
+    public function hasViticulturistAccess(): bool
+    {
+        return in_array($this->role, [self::ROLE_VITICULTURIST, self::ROLE_PRODUCER]);
+    }
+
+    public function hasWineryAccess(): bool
+    {
+        return in_array($this->role, [self::ROLE_WINERY, self::ROLE_PRODUCER]);
     }
 
     /**

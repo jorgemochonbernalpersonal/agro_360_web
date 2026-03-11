@@ -73,6 +73,10 @@ class Show extends Component
             case 'admin':
                 $stats['admin'] = $this->getAdminStats($user);
                 break;
+            case 'producer':
+                $stats['viticulturist'] = $this->getViticulturistStats($user);
+                $stats['winery']        = $this->getWineryStats($user);
+                break;
         }
 
         return $stats;
@@ -181,6 +185,7 @@ class Show extends Component
             'supervisor' => 'supervisor.dashboard',
             'winery' => 'winery.dashboard',
             'viticulturist' => 'viticulturist.dashboard',
+            'producer'      => 'producer.dashboard',
             default => 'home',
         };
 

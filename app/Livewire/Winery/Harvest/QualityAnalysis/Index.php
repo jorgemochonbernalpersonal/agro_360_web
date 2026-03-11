@@ -41,6 +41,10 @@ class Index extends Component
             ->sortBy('name')
             ->values();
 
+        if (Auth::user()->isProducer()) {
+            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+        }
+
         $query = Harvest::with(['batch.viticulturist', 'plotPlanting.grapeVariety'])
             ->where('winery_id', $wineryId)
             ->where('status', 'active')

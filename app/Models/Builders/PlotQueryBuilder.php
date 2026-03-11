@@ -13,11 +13,12 @@ class PlotQueryBuilder extends Builder
     public function forUser(User $user): self
     {
         return match ($user->role) {
-            'admin' => $this,
-            'supervisor' => $this->forSupervisor($user),
-            'winery' => $this->forWinery($user),
+            'admin'         => $this,
+            'supervisor'    => $this->forSupervisor($user),
+            'winery'        => $this->forWinery($user),
             'viticulturist' => $this->forViticulturist($user),
-            default => $this->whereRaw('1 = 0'),
+            'producer'      => $this->forViticulturist($user),
+            default         => $this->whereRaw('1 = 0'),
         };
     }
 
@@ -55,7 +56,7 @@ class PlotQueryBuilder extends Builder
      */
     public function forViticulturist(User $user): self
     {
-        if (!$user->isViticulturist()) {
+        if (!$user->hasViticulturistAccess()) {
             return $this->whereRaw('1 = 0');
         }
 

@@ -49,7 +49,7 @@ class EditStock extends Component
 
     public function mount($stock)
     {
-        if (!Auth::user()->isViticulturist()) {
+        if (!Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
 

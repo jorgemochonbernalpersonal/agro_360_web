@@ -12,7 +12,7 @@ class CrewPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isViticulturist();
+        return $user->hasViticulturistAccess();
     }
 
     /**
@@ -29,7 +29,7 @@ class CrewPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isViticulturist();
+        return $user->hasViticulturistAccess();
     }
 
     /**

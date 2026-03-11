@@ -56,8 +56,8 @@ class Register extends Component
             $allowedRoles = $this->getAllowedRoles($user);
             $rules['role'] = 'required|in:' . implode(',', $allowedRoles);
         } else {
-            // Registro público: solo winery y viticulturist
-            $rules['role'] = 'required|in:winery,viticulturist';
+            // Registro público: viticulturist, winery y producer
+            $rules['role'] = 'required|in:viticulturist,winery,producer';
         }
 
         return $rules;
@@ -82,15 +82,15 @@ class Register extends Component
     public function getAllowedRoles(?User $user = null): array
     {
         if (!$user) {
-            return ['winery', 'viticulturist']; // Registro público
+            return ['viticulturist', 'winery', 'producer']; // Registro público
         }
 
         return match($user->role) {
-            'admin' => ['admin', 'supervisor', 'winery', 'viticulturist'],
-            'supervisor' => ['winery', 'viticulturist'],
-            'winery' => ['viticulturist'],
-            'viticulturist' => ['viticulturist'], // Viticultor puede crear otros viticultores
-            default => [],
+            'admin'         => ['admin', 'supervisor', 'winery', 'viticulturist', 'producer'],
+            'supervisor'    => ['winery', 'viticulturist', 'producer'],
+            'winery'        => ['viticulturist'],
+            'viticulturist' => ['viticulturist'],
+            default         => [],
         };
     }
 
@@ -157,7 +157,7 @@ class Register extends Component
 
         // Detectar si viticultor esta creando otro viticultor (requiere password temporal)
         $isViticulturistCreatingViticulturist = Auth::check() 
-            && Auth::user()->isViticulturist() 
+            && Auth::user()->hasViticulturistAccess() 
             && $this->role === 'viticulturist';
         
         // Generar contraseña temporal si es necesario
@@ -198,7 +198,7 @@ class Register extends Component
             }
 
             // Si winery crea viticulturist
-            if ($creator->isWinery() && $this->role === 'viticulturist') {
+            if ($creator->hasWineryAccess() && $this->role === 'viticulturist') {
                 WineryViticulturist::create([
                     'winery_id' => $creator->id,
                     'viticulturist_id' => $user->id,
@@ -208,7 +208,7 @@ class Register extends Component
             }
 
             // Si viticultor crea viticultor
-            if ($creator->isViticulturist() && $this->role === 'viticulturist') {
+            if ($creator->hasViticulturistAccess() && $this->role === 'viticulturist') {
                 // Obtener winery del viticultor creador (si tiene)
                 $creatorWinery = $creator->wineries->first();
                 
@@ -303,6 +303,7 @@ class Register extends Component
             'supervisor' => 'supervisor.dashboard',
             'winery' => 'winery.dashboard',
             'viticulturist' => 'viticulturist.dashboard',
+            'producer'      => 'producer.dashboard',
             default => 'home',
         };
     }
@@ -315,9 +316,10 @@ class Register extends Component
         return match($user->role) {
             'admin' => 'admin.dashboard',
             'supervisor' => 'supervisor.dashboard',
-            'winery' => 'winery.dashboard',
+            'winery'        => 'winery.dashboard',
             'viticulturist' => 'viticulturist.personal.index', // Redirigir a Personal después de crear viticultor
-            default => 'home',
+            'producer'      => 'producer.dashboard',
+            default         => 'home',
         };
     }
 

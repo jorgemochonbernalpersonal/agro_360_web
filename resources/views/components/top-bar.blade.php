@@ -58,7 +58,7 @@
                     </div>
                     <flux:menu.item href="{{ route('profile.show') }}" wire:navigate icon="user">Ver Perfil</flux:menu.item>
                     <flux:menu.item href="{{ route('profile.edit') }}" wire:navigate icon="pencil-square">Editar Perfil</flux:menu.item>
-                    @if($user->role === 'viticulturist')
+                    @if($user->hasViticulturistAccess())
                         <flux:menu.item href="{{ route('viticulturist.settings') }}" wire:navigate icon="cog-6-tooth">Configuración</flux:menu.item>
                     @endif
                     <flux:menu.item href="{{ route('subscription.manage') }}" wire:navigate icon="credit-card">Ver Suscripción</flux:menu.item>

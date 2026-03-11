@@ -51,7 +51,7 @@ trait HasBetaAccess
             'beta_access_granted' => true,
         ]);
 
-        if ($this->role === 'winery') {
+        if ($this->hasWineryAccess()) {
             $viticulturistIds = \Illuminate\Support\Facades\DB::table('winery_viticulturist')
                 ->where('winery_id', $this->id)
                 ->pluck('viticulturist_id');

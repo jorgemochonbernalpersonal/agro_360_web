@@ -52,7 +52,7 @@ class Show extends Component
             'multiplePlotSigpacs.plotGeometry',
         ]);
 
-        if (Auth::user()->isViticulturist()) {
+        if (Auth::user()->hasViticulturistAccess()) {
             $this->loadEnvironment();
         }
     }
@@ -92,7 +92,7 @@ class Show extends Component
 
     public function saveEnvironment(): void
     {
-        if (!Auth::user()->isViticulturist()) {
+        if (!Auth::user()->hasViticulturistAccess()) {
             return;
         }
 
@@ -222,7 +222,7 @@ class Show extends Component
 
     public function render()
     {
-        $isViticulturist = Auth::user()->isViticulturist();
+        $isViticulturist = Auth::user()->hasViticulturistAccess();
         $activeCampaign = $isViticulturist
             ? Campaign::getOrCreateActiveForYear(Auth::id())
             : null;

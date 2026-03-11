@@ -13,7 +13,7 @@ class CampaignPolicy
     public function viewAny(User $user): bool
     {
         // Solo viticultores pueden ver campañas
-        return $user->isViticulturist();
+        return $user->hasViticulturistAccess();
     }
 
     /**
@@ -31,7 +31,7 @@ class CampaignPolicy
     public function create(User $user): bool
     {
         // Solo viticultores pueden crear campañas
-        return $user->isViticulturist();
+        return $user->hasViticulturistAccess();
     }
 
     /**

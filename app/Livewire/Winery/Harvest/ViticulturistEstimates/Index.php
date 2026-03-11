@@ -50,6 +50,10 @@ class Index extends Component
         $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
             ->pluck('viticulturist_id');
 
+        if (Auth::user()->isProducer()) {
+            $viticulturistIds = $viticulturistIds->push($wineryId)->unique();
+        }
+
         $query = EstimatedYield::with([
                 'plotPlanting.grapeVariety',
                 'plotPlanting.plot',
@@ -95,6 +99,10 @@ class Index extends Component
             ->pluck('viticulturist')
             ->sortBy('name')
             ->values();
+
+        if (Auth::user()->isProducer()) {
+            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+        }
 
         $vintages = Campaign::whereIn('viticulturist_id', $viticulturistIds)
             ->orderByDesc('year')

@@ -74,6 +74,11 @@ class Index extends Component
             ->sortBy('name')
             ->values();
 
+        // Producer: include themselves so their own plots appear in all queries
+        if (Auth::user()->isProducer()) {
+            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+        }
+
         $campaign    = $this->campaignFilter ? $campaigns->firstWhere('id', $this->campaignFilter) : null;
         $vintageYear = $campaign?->year ?? now()->year;
 

@@ -53,6 +53,12 @@ class Create extends Component
             $this->campaign_id   = (string) $campaign->id;
             $this->vintage_year  = (string) $campaign->year;
         }
+
+        // Producer: pre-select themselves as the viticulturist
+        if (Auth::user()->isProducer()) {
+            $this->viticulturist_id = (string) Auth::id();
+            $this->updatedViticulturistId();
+        }
     }
 
     public function updatedViticulturistId(): void
@@ -199,9 +205,10 @@ class Create extends Component
 
         $wineryId = Auth::id();
 
-        // Guard: viticulturist must be linked
+        // Guard: viticulturist must be linked (bypass for producer using own plots)
+        $isSelfForecast = Auth::user()->isProducer() && (int) $this->viticulturist_id === $wineryId;
         abort_unless(
-            WineryViticulturist::where('winery_id', $wineryId)
+            $isSelfForecast || WineryViticulturist::where('winery_id', $wineryId)
                 ->where('viticulturist_id', $this->viticulturist_id)
                 ->exists(),
             403
@@ -249,6 +256,11 @@ class Create extends Component
             ->pluck('viticulturist')
             ->sortBy('name')
             ->values();
+
+        // Producer: add themselves to the viticulturist list
+        if (Auth::user()->isProducer()) {
+            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+        }
 
         $campaigns = Campaign::forViticulturist($wineryId)->orderBy('year', 'desc')->get();
 

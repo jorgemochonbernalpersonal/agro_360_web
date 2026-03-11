@@ -19,10 +19,11 @@ class Dashboard extends Component
             'users' => [
                 'total' => User::count(),
                 'by_role' => [
-                    'admin' => User::where('role', 'admin')->count(),
-                    'supervisor' => User::where('role', 'supervisor')->count(),
-                    'winery' => User::where('role', 'winery')->count(),
+                    'admin'         => User::where('role', 'admin')->count(),
+                    'supervisor'    => User::where('role', 'supervisor')->count(),
+                    'winery'        => User::where('role', 'winery')->count(),
                     'viticulturist' => User::where('role', 'viticulturist')->count(),
+                    'producer'      => User::where('role', 'producer')->count(),
                 ],
                 'active' => User::where('can_login', true)->count(),
                 'verified' => User::whereNotNull('email_verified_at')->count(),

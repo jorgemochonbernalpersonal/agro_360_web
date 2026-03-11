@@ -14,7 +14,7 @@ class AgriculturalActivityPolicy
     public function viewAny(User $user): bool
     {
         // Solo viticultores pueden ver actividades
-        return $user->isViticulturist();
+        return $user->hasViticulturistAccess();
     }
 
     /**
@@ -34,7 +34,7 @@ class AgriculturalActivityPolicy
     public function create(User $user, ?Plot $plot = null): bool
     {
         // Solo viticultores pueden crear actividades
-        if (!$user->isViticulturist()) {
+        if (!$user->hasViticulturistAccess()) {
             return false;
         }
 

@@ -76,6 +76,12 @@ class Create extends Component
         $this->harvest_start_date = now()->toDateString();
         $this->vintage_year       = now()->year;
 
+        // Producer: pre-select themselves as the viticulturist
+        if (Auth::user()->isProducer() && !request()->query('viticulturist_id')) {
+            $this->viticulturist_id = (string) Auth::id();
+            $this->updatedViticulturistId();
+        }
+
         // Pre-populate from previous reception (passed via query params)
         if ($preVitic = request()->query('viticulturist_id')) {
             $this->viticulturist_id = $preVitic;
@@ -307,8 +313,10 @@ class Create extends Component
         $wineryId = Auth::id();
 
         // Guard: viticulturist must be linked to this winery
+        // Exception: producer receiving their own grapes
+        $isSelfReception = Auth::user()->isProducer() && (int) $this->viticulturist_id === $wineryId;
         abort_unless(
-            WineryViticulturist::where('winery_id', $wineryId)
+            $isSelfReception || WineryViticulturist::where('winery_id', $wineryId)
                 ->where('viticulturist_id', $this->viticulturist_id)
                 ->exists(),
             403,
@@ -444,6 +452,11 @@ class Create extends Component
             ->pluck('viticulturist')
             ->sortBy('name')
             ->values();
+
+        // Producer: add themselves at the top of the viticulturist list
+        if (Auth::user()->isProducer()) {
+            $linkedViticulturists = collect([Auth::user()])->merge($linkedViticulturists);
+        }
 
         $availableContainers = Container::where('user_id', $wineryId)
             ->where('archived', false)

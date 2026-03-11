@@ -25,7 +25,7 @@ class Index extends Component
         $user = Auth::user();
         
         // Auto-registrar viticultor si no tiene registro en WineryViticulturist
-        if ($user && $user->isViticulturist()) {
+        if ($user && $user->hasViticulturistAccess()) {
             $hasRecord = \App\Models\WineryViticulturist::where('viticulturist_id', $user->id)->exists();
             
             if (!$hasRecord) {

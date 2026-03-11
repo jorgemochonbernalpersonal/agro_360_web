@@ -28,7 +28,7 @@ class ViticulturistCacheService
      */
     public function getVisibleViticulturistIds(User $viticulturist, ?int $wineryId = null): Collection
     {
-        if (!$viticulturist->isViticulturist()) {
+        if (!$viticulturist->hasViticulturistAccess()) {
             return collect();
         }
 
@@ -50,7 +50,7 @@ class ViticulturistCacheService
      */
     public function getEditableViticulturistIds(User $viticulturist): Collection
     {
-        if (!$viticulturist->isViticulturist()) {
+        if (!$viticulturist->hasViticulturistAccess()) {
             return collect();
         }
 
@@ -72,7 +72,7 @@ class ViticulturistCacheService
      */
     public function getVisiblePlotIds(User $viticulturist): Collection
     {
-        if (!$viticulturist->isViticulturist()) {
+        if (!$viticulturist->hasViticulturistAccess()) {
             return collect();
         }
 

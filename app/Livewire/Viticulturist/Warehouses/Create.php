@@ -17,7 +17,7 @@ class Create extends Component
 
     public function mount(): void
     {
-        if (!Auth::user()->isViticulturist()) {
+        if (!Auth::user()->hasViticulturistAccess()) {
             abort(403);
         }
     }

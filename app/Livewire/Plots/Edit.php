@@ -221,13 +221,13 @@ class Edit extends Component
                 $user = Auth::user();
                 $canAssign = false;
                 
-                if ($user->isWinery()) {
+                if ($user->hasWineryAccess()) {
                     $canAssign = \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
                         ->where('winery_id', $user->id)
                         ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)
                         ->where('assigned_by', $user->id)
                         ->exists();
-                } elseif ($user->isViticulturist()) {
+                } elseif ($user->hasViticulturistAccess()) {
                     $canAssign = $user->canEditViticulturist($this->viticulturist_id);
                 } else {
                     $canAssign = true; // Admin y supervisor

@@ -84,7 +84,7 @@ trait HasHierarchy
      */
     public function getSupervisorAttribute(): ?User
     {
-        if (!$this->isViticulturist()) {
+        if (!$this->hasViticulturistAccess()) {
             return null;
         }
 
@@ -110,7 +110,7 @@ trait HasHierarchy
      */
     public function hasSupervisor(): bool
     {
-        if (!$this->isViticulturist()) {
+        if (!$this->hasViticulturistAccess()) {
             return false;
         }
 
@@ -126,7 +126,7 @@ trait HasHierarchy
      */
     public function getWineriesAttribute()
     {
-        if (!$this->isViticulturist()) {
+        if (!$this->hasViticulturistAccess()) {
             return collect();
         }
 
@@ -158,7 +158,7 @@ trait HasHierarchy
      */
     public function hasWinery(): bool
     {
-        return $this->isViticulturist()
+        return $this->hasViticulturistAccess()
             && $this->wineryRelationsAsViticulturist()->whereNotNull('winery_id')->exists();
     }
 
@@ -167,7 +167,7 @@ trait HasHierarchy
      */
     public function canEditViticulturist($viticulturistId): bool
     {
-        if (!$this->isViticulturist()) {
+        if (!$this->hasViticulturistAccess()) {
             return false;
         }
 
@@ -182,11 +182,11 @@ trait HasHierarchy
      */
     public function canSelectViticulturist(): bool
     {
-        if (in_array($this->role, ['admin', 'supervisor', 'winery'])) {
+        if (in_array($this->role, ['admin', 'supervisor', 'winery', 'producer'])) {
             return true;
         }
 
-        if ($this->isViticulturist()) {
+        if ($this->hasViticulturistAccess()) {
             return WineryViticulturist::editableBy($this)->exists();
         }
 
@@ -198,7 +198,7 @@ trait HasHierarchy
      */
     public function wasCreatedByViticulturist(): bool
     {
-        if (!$this->isViticulturist()) {
+        if (!$this->hasViticulturistAccess()) {
             return false;
         }
 
@@ -216,7 +216,7 @@ trait HasHierarchy
         if (!isset($this->_was_created_by_another_cache)) {
             $result = false;
 
-            if ($this->isViticulturist()) {
+            if ($this->hasViticulturistAccess()) {
                 $result = WineryViticulturist::where('viticulturist_id', $this->id)
                     ->whereNotNull('assigned_by')
                     ->whereIn('source', [

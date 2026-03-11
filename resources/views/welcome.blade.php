@@ -487,7 +487,7 @@
                     </p>
                     
                     <!-- CTAs por rol -->
-                    <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="flex flex-wrap gap-3">
                         <a href="{{ route('register') }}" rel="nofollow" class="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base">
                             <span>🌿</span> Empezar gratis — Soy Viticultor
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -496,6 +496,9 @@
                         </a>
                         <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[var(--color-agro-green-dark)] text-[var(--color-agro-green-dark)] hover:bg-[var(--color-agro-green-dark)] hover:text-white transition-all duration-300 font-semibold text-base">
                             <span>🍷</span> Soy Bodega
+                        </a>
+                        <a href="#precios" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-violet-400 text-violet-700 hover:bg-violet-600 hover:text-white hover:border-violet-600 transition-all duration-300 font-semibold text-base">
+                            <span>🌿🍷</span> Soy Productor
                         </a>
                         <a href="#ecosistema" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-[var(--color-agro-green-light)]/60 text-[var(--color-agro-green-dark)] hover:border-[var(--color-agro-green-dark)] transition-all duration-300 font-semibold text-base">
                             <span>🏛️</span> Soy DO
@@ -567,7 +570,7 @@
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">1</div>
                     <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Crea tu cuenta gratis</h3>
                     <p class="text-gray-600 text-sm leading-relaxed">
-                        Sin tarjeta, sin llamadas. Regístrate como viticultor, bodega o DO y accede al panel en segundos.
+                        Sin tarjeta, sin llamadas. Regístrate como viticultor, productor, bodega o DO y accede al panel en segundos.
                     </p>
                 </div>
                 <!-- Paso 2 -->
@@ -583,7 +586,7 @@
                     <div class="w-10 h-10 rounded-full bg-[var(--color-agro-green-dark)] text-white flex items-center justify-center font-bold text-lg mb-5">3</div>
                     <h3 class="text-lg font-bold text-[var(--color-agro-green-dark)] mb-2">Registra desde el móvil</h3>
                     <p class="text-gray-600 text-sm leading-relaxed">
-                        Anota tratamientos, riegos y labores desde el campo. Sin conexión si no tienes cobertura — se sincroniza solo al recuperarla.
+                        Anota tratamientos, riegos y labores desde cualquier dispositivo. La web está optimizada para móvil — sin instalar nada.
                     </p>
                 </div>
             </div>
@@ -603,7 +606,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 space-y-4">
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Una sola plataforma. Tres roles. Todo conectado.
+                    Una sola plataforma. Cuatro roles. Todo conectado.
                 </h2>
                 <p class="text-xl text-zinc-600 max-w-3xl mx-auto">
                     Agro365 es la plataforma española que conecta toda la cadena del vino en un ecosistema compartido.
@@ -687,11 +690,25 @@
                         </div>
                     </div>
                     <p class="text-center text-xs text-zinc-400 mt-4">El viticultor independiente no necesita bodega ni DO para empezar</p>
+
+                    <!-- Productor: nodo standalone separado -->
+                    <div class="mt-6 flex flex-col items-center">
+                        <div class="text-xs text-zinc-400 font-semibold mb-2">o bien, todo en uno:</div>
+                        <div class="bg-gradient-to-br from-violet-50 to-violet-100 border-2 border-violet-300 rounded-2xl p-4 text-center w-56 shadow-md">
+                            <div class="text-2xl mb-1">🌿🍷</div>
+                            <div class="font-bold text-violet-900">Productor</div>
+                            <div class="text-violet-700 text-xs mt-1">Viñedo propio · Elaboración propia</div>
+                            <div class="mt-2">
+                                <span class="bg-violet-200/60 text-violet-800 text-xs px-2 py-0.5 rounded-full font-medium">Viticultor + Bodega en uno</span>
+                            </div>
+                        </div>
+                        <p class="text-center text-xs text-zinc-400 mt-2">Un solo panel · Una sola cuenta · Un precio bundle</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tres cards de rol -->
-            <div class="grid md:grid-cols-3 gap-8">
+            <!-- Cuatro cards de rol -->
+            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
                 <!-- Viticultor -->
                 <div class="glass-card rounded-2xl p-8 border-2 border-[var(--color-agro-green-light)]/30 hover:border-[var(--color-agro-green-light)] hover-lift transition-all duration-300">
                     <div class="w-14 h-14 rounded-xl bg-[var(--color-agro-green-bg)] flex items-center justify-center mb-5 text-3xl">
@@ -725,6 +742,25 @@
                         o completo por 9€/mes.
                     </p>
                     <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center gap-1.5 text-red-600 font-semibold text-sm hover:underline">
+                        Empezar gratis — 3 meses sin coste
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Productor -->
+                <div class="glass-card rounded-2xl p-8 border-2 border-violet-200/50 hover:border-violet-400 hover-lift transition-all duration-300">
+                    <div class="w-14 h-14 rounded-xl bg-violet-50 flex items-center justify-center mb-5 text-3xl">
+                        🌿🍷
+                    </div>
+                    <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-3">Productor</h3>
+                    <p class="text-zinc-600 text-sm mb-2 font-semibold">Viticultor y bodega en uno solo</p>
+                    <p class="text-zinc-600 text-sm mb-5">
+                        Cultivas tus propias uvas y elaboras tu vino. Un solo panel con contexto campo y bodega.
+                        <strong>Gestiona viñedo, vendimia y elaboración sin duplicar cuentas ni pagar dos planes separados.</strong>
+                    </p>
+                    <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-violet-600 font-semibold text-sm hover:underline">
                         Empezar gratis — 3 meses sin coste
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -867,7 +903,7 @@
     <section class="py-16 bg-gradient-to-b from-zinc-50 to-white border-t border-zinc-100">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <p class="text-center text-zinc-400 text-sm font-semibold uppercase tracking-widest mb-8">¿No eres viticultor?</p>
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid md:grid-cols-3 gap-6">
 
                 <!-- Bodega -->
                 <div class="bg-white rounded-2xl p-8 border-2 border-red-100 hover:border-red-300 transition-all duration-300 shadow-sm">
@@ -888,6 +924,29 @@
                     </ul>
                     <a href="{{ url('/software-bodegas') }}" class="inline-flex items-center gap-2 text-red-600 font-semibold text-sm hover:underline">
                         Ver todo lo que incluye para bodegas
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+
+                <!-- Productor -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-violet-100 hover:border-violet-300 transition-all duration-300 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-3xl">🌿🍷</span>
+                        <div>
+                            <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)]">¿Cultivas y elaboras?</h3>
+                            <p class="text-xs text-violet-700 font-semibold">19€/mes · <span class="line-through text-zinc-400">28€/mes</span> por separado</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-sm text-zinc-600 mb-6">
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo el cuaderno de campo del viticultor</li>
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> SIGPAC, teledetección NDVI y PAC</li>
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Gestión completa de vendimia propia</li>
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Depósitos, elaboración y lotes de vino</li>
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Trazabilidad viñedo → bodega → botella</li>
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Un solo panel. Una sola cuenta.</li>
+                    </ul>
+                    <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 text-violet-700 font-semibold text-sm hover:underline">
+                        Empezar como Productor
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 </div>
@@ -927,14 +986,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12 space-y-4">
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)]">
-                    Diseñado para los tres roles del vino
+                    Diseñado para los cuatro roles del vino
                 </h2>
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">
                     Un ecosistema conectado. Cada rol ve lo que necesita, cuando lo necesita.
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
                 <!-- Viticultor -->
                 <a href="{{ content_route('content.viticultores') }}" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-[var(--color-agro-green-light)]/30 hover:border-[var(--color-agro-green-light)] transition-all duration-300">
                     <div class="text-4xl mb-5">🌿</div>
@@ -967,6 +1026,24 @@
                     </ul>
                     <span class="text-red-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Ver más sobre Bodegas
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </span>
+                </a>
+
+                <!-- Productor -->
+                <a href="#precios" class="group glass-card rounded-2xl p-8 hover-lift border-2 border-violet-200/50 hover:border-violet-400 transition-all duration-300">
+                    <div class="text-4xl mb-5">🌿🍷</div>
+                    <h3 class="font-bold text-xl text-[var(--color-agro-green-dark)] mb-2">Productor</h3>
+                    <p class="text-zinc-500 text-xs font-semibold mb-3 uppercase tracking-wide">19€/mes · Bundle Viticultor + Bodega</p>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed">Viñedo propio, elaboración propia. Un solo panel con contexto campo y bodega. Sin duplicar cuentas ni pagar dos planes por separado.</p>
+                    <ul class="space-y-1.5 text-xs text-zinc-500 mb-5">
+                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Cuaderno de campo completo</li>
+                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Gestión de vendimia propia</li>
+                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Depósitos y elaboración</li>
+                        <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Trazabilidad cepa → botella</li>
+                    </ul>
+                    <span class="text-violet-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Ver precio Productor
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </span>
                 </a>
@@ -1057,7 +1134,7 @@
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
 
                 <!-- Viticultor -->
                 <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-[var(--color-agro-green)] relative overflow-hidden transition-all duration-300 shadow-xl">
@@ -1154,6 +1231,49 @@
                     <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
                 </div>
 
+                <!-- Productor -->
+                <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-violet-300 hover:border-violet-500 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0">
+                        <div class="bg-gradient-to-r from-violet-600 to-violet-400 text-white px-5 py-1.5 rounded-bl-2xl font-semibold text-sm">
+                            Bundle
+                        </div>
+                    </div>
+                    <div class="mb-5 pt-6">
+                        <div class="text-3xl mb-2">🌿🍷</div>
+                        <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)]">Productor</h3>
+                        <p class="text-zinc-500 text-sm mt-1">Cultivas y elaboras tu propio vino</p>
+                    </div>
+                    <div class="mb-6 space-y-2">
+                        <!-- Precio bundle -->
+                        <div class="p-3 bg-violet-50 rounded-xl border-2 border-violet-400">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-violet-700">Viticultor + Bodega</span>
+                                <span class="text-xl font-bold text-violet-700">19€/mes</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-0.5">o 175€/año — ~14,5€/mes</p>
+                        </div>
+                        <!-- Ahorro -->
+                        <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-center">
+                            <p class="text-xs text-zinc-500">Por separado: <span class="line-through text-zinc-400 font-semibold">28€/mes</span></p>
+                            <p class="text-xs font-semibold text-violet-600 mt-0.5">Ahorras 9€/mes · 32% de descuento</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm">
+                        @foreach(['Todo del plan Viticultor Independiente', 'Todo del plan Bodega', 'Cuaderno de campo digital (obligatorio 2027)', 'Gestión completa de vendimia propia', 'Trazabilidad viñedo → bodega → botella', 'Facturación agrícola + Verifactu', 'Gestión de vinos y elaboración', 'Soporte prioritario (24h)'] as $feature)
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-5 h-5 text-violet-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-zinc-700">{{ $feature }}</span>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-700 hover:to-violet-600 transition-all duration-300 shadow-lg font-semibold">
+                        Comenzar Gratis
+                    </a>
+                    <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
+                </div>
+
                 <!-- DO -->
                 <div class="glass-card rounded-2xl p-8 hover-lift border-2 border-amber-200 hover:border-amber-400 transition-all duration-300">
                     <div class="mb-5">
@@ -1202,13 +1322,22 @@
                 </div>
             </div>
 
-            <!-- Nota importante sobre viticultores en bodegas -->
-            <div class="mt-10 max-w-3xl mx-auto text-center p-5 bg-[var(--color-agro-green-bg)] rounded-2xl border border-[var(--color-agro-green-light)]/30">
-                <p class="text-zinc-700 text-sm">
-                    <strong>Cómo funciona con viticultores invitados:</strong> la bodega invita a sus proveedores.
-                    El viticultor accede en modo <strong>básico gratis</strong> o activa el <strong>plan completo por 9€/mes</strong>
-                    (SIGPAC, teledetección, PAC, facturación...). La bodega no paga por ello — el viticultor decide.
-                </p>
+            <!-- Notas explicativas -->
+            <div class="mt-10 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
+                <div class="text-center p-5 bg-[var(--color-agro-green-bg)] rounded-2xl border border-[var(--color-agro-green-light)]/30">
+                    <p class="text-zinc-700 text-sm">
+                        <strong>Cómo funciona con viticultores invitados:</strong> la bodega invita a sus proveedores.
+                        El viticultor accede en modo <strong>básico gratis</strong> o activa el <strong>plan completo por 9€/mes</strong>
+                        (SIGPAC, teledetección, PAC, facturación...). La bodega no paga por ello — el viticultor decide.
+                    </p>
+                </div>
+                <div class="text-center p-5 bg-violet-50 rounded-2xl border border-violet-200">
+                    <p class="text-zinc-700 text-sm">
+                        <strong>¿Cultivas y elaboras tu propio vino?</strong> El plan Productor incluye
+                        <strong>todo el cuaderno de campo más toda la gestión de bodega</strong> en una sola cuenta.
+                        <span class="text-violet-700 font-semibold">19€/mes</span> frente a los 28€/mes que costaría contratar los dos planes por separado.
+                    </p>
+                </div>
             </div>
 
             <p class="text-center text-zinc-500 mt-6 text-sm">
@@ -1239,6 +1368,10 @@
                         'Depende del perfil. Si tu bodega ya está en Agro365 y te invita, el uso básico (cuaderno de campo) es gratis. Si quieres funciones completas (SIGPAC, teledetección, PAC, facturación...) pagas 9€/mes o 85€/año. Si eres viticultor independiente sin bodega asociada, el plan completo cuesta 14€/mes o 130€/año. No se requiere tarjeta de crédito para empezar.',
                     ],
                     [
+                        '¿Qué es el plan Productor y para quién es?',
+                        'El plan Productor es un bundle diseñado para quien cultiva sus propias uvas y además elabora su propio vino. Incluye todo el plan Viticultor Independiente (cuaderno de campo, SIGPAC, teledetección, PAC, facturación agrícola) más todo el plan Bodega (gestión de vendimia, trazabilidad, depósitos, elaboración, facturación). Todo en una sola cuenta, con un panel unificado que permite cambiar entre contexto campo y contexto bodega. Cuesta 19€/mes o 175€/año — frente a los 28€/mes que costaría contratar los dos planes por separado.',
+                    ],
+                    [
                         '¿Puedo ser viticultor independiente y al mismo tiempo pertenecer a una bodega?',
                         'Sí. En Agro365 puedes gestionar tu cuaderno de campo de forma completamente independiente y compartirlo con una o varias bodegas simultáneamente. Tus datos son siempre tuyos: si te desconectas de una bodega, tu histórico permanece intacto.',
                     ],
@@ -1256,7 +1389,7 @@
                     ],
                     [
                         '¿Cuánto tiempo lleva configurar Agro365?',
-                        'Para un viticultor, menos de 5 minutos: creas tu cuenta, importas tus parcelas SIGPAC y empiezas a registrar. Para una bodega o DO, ofrecemos onboarding personalizado incluido en el plan.',
+                        'Para un viticultor o productor, menos de 5 minutos: creas tu cuenta, importas tus parcelas SIGPAC y empiezas a registrar. Para una bodega, productor o DO, ofrecemos onboarding personalizado incluido en el plan.',
                     ],
                     [
                         '¿Qué pasa con mis datos si cancelo la suscripción?',
@@ -1303,14 +1436,17 @@
             </h2>
             <p class="text-green-100 text-xl mb-10 max-w-2xl mx-auto">
                 Cuaderno básico obligatorio en 2027, completo en 2028.
-                Viticultor básico gratis · Bodega 14€/mes · DO desde 149€/mes.
+                Viticultor básico gratis · Bodega 14€/mes · Productor 19€/mes · DO desde 149€/mes.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="flex flex-wrap gap-4 justify-center">
                 <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[var(--color-agro-green-dark)] hover:bg-green-50 transition-all font-bold text-lg shadow-lg">
                     🌿 Empezar como Viticultor — Gratis
                 </a>
                 <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
                     🍷 Empezar Gratis — Bodega
+                </a>
+                <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-violet-500 hover:bg-violet-400 text-white transition-all font-semibold text-lg shadow-lg">
+                    🌿🍷 Empezar como Productor — 19€/mes
                 </a>
                 <a href="https://wa.me/34684217167?text=Hola%2C%20soy%20una%20Denominaci%C3%B3n%20de%20Origen%20y%20me%20interesa%20Agro365" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white/90 hover:bg-white/10 transition-all font-semibold text-lg">
                     🏛️ Solicitar Demo — DO

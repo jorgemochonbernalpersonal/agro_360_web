@@ -33,8 +33,8 @@ trait WithViticulturistValidation
 
         // Permitimos viticultores, bodegas, supervisores y admins
         if (
-            ! $user->isViticulturist() &&
-            ! $user->isWinery() &&
+            ! $user->hasViticulturistAccess() &&
+            ! $user->hasWineryAccess() &&
             ! $user->isSupervisor() &&
             ! $user->isAdmin()
         ) {

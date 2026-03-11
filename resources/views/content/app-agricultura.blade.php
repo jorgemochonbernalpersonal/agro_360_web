@@ -188,7 +188,7 @@
                                 <svg class="w-6 h-6 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span><strong>Funciona offline:</strong> Registra actividades sin conexión, se sincronizan automáticamente</span>
+                                <span><strong>Optimizada para móvil:</strong> Registra actividades desde el campo con cualquier smartphone o tablet</span>
                             </li>
                         </ul>
                     </div>
@@ -203,7 +203,7 @@
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Funciona sin conexión a internet?</h3>
-                            <p class="text-gray-700">Sí, Agro365 permite registrar actividades sin conexión. Los datos se guardan localmente y se sincronizan automáticamente cuando recuperas la conexión.</p>
+                            <p class="text-gray-700">Agro365 es una aplicación web y requiere conexión a internet para funcionar. Puedes usarla desde el campo con la cobertura de datos de tu móvil.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">¿Es segura mi información?</h3>

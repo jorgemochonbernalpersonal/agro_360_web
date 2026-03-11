@@ -83,7 +83,7 @@ class Edit extends Component
 
     protected function rules(): array
     {
-        $isWinery = Auth::user()->isWinery();
+        $isWinery = Auth::user()->hasWineryAccess();
 
         return [
             'name'               => 'nullable|string|max:255',
@@ -113,7 +113,7 @@ class Edit extends Component
     {
         $this->validate();
 
-        if (!Auth::user()->isWinery() && empty($this->vine_count) && empty($this->density)) {
+        if (!Auth::user()->hasWineryAccess() && empty($this->vine_count) && empty($this->density)) {
             $this->addError('vine_count', 'Debe indicar el número de cepas o la densidad de plantación.');
             return;
         }
@@ -143,7 +143,7 @@ class Edit extends Component
 
         $this->toastSuccess('Plantación actualizada correctamente.');
 
-        $showRoute = Auth::user()->isWinery()
+        $showRoute = Auth::user()->hasWineryAccess()
             ? route('winery.plots.show', $this->planting->plot_id)
             : route('plots.show', $this->planting->plot_id);
 

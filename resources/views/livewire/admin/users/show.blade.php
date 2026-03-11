@@ -27,6 +27,7 @@
             'supervisor'    => ['label' => 'Supervisor', 'color' => 'blue'],
             'winery'        => ['label' => 'Bodega',     'color' => 'violet'],
             'viticulturist' => ['label' => 'Viticultor', 'color' => 'green'],
+            'producer'      => ['label' => 'Productor',  'color' => 'amber'],
         ];
         $roleInfo = $roleMap[$user->role] ?? ['label' => ucfirst($user->role), 'color' => null];
     @endphp

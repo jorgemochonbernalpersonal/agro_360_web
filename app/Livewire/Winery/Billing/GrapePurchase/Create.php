@@ -69,7 +69,9 @@ class Create extends Component
             'viticulturist_id' => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    if ($value && !\App\Models\WineryViticulturist::where('winery_id', \Illuminate\Support\Facades\Auth::id())
+                    $wineryId   = \Illuminate\Support\Facades\Auth::id();
+                    $isSelf     = \Illuminate\Support\Facades\Auth::user()->isProducer() && (int) $value === $wineryId;
+                    if (!$isSelf && $value && !\App\Models\WineryViticulturist::where('winery_id', $wineryId)
                         ->where('viticulturist_id', $value)
                         ->where('source', 'own')
                         ->exists()) {
@@ -93,8 +95,9 @@ class Create extends Component
     {
         $this->validate();
 
-        // Guard: viticulturist must belong to this winery
-        $belongs = WineryViticulturist::where('winery_id', Auth::id())
+        // Guard: viticulturist must belong to this winery (bypass for producer using own plots)
+        $isSelfPurchase = Auth::user()->isProducer() && (int) $this->viticulturist_id === Auth::id();
+        $belongs = $isSelfPurchase || WineryViticulturist::where('winery_id', Auth::id())
             ->where('viticulturist_id', $this->viticulturist_id)
             ->where('source', 'own')
             ->exists();
@@ -163,7 +166,7 @@ class Create extends Component
                     );
                 }
 
-                $campaignBelongsToWinery = \App\Models\Campaign::where('id', $harvest->campaign_id)
+                $campaignBelongsToWinery = $isSelfPurchase || \App\Models\Campaign::where('id', $harvest->campaign_id)
                     ->where('winery_id', Auth::id())
                     ->exists();
 
@@ -233,6 +236,10 @@ class Create extends Component
         $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
             ->where('source', 'own')
             ->pluck('viticulturist_id');
+
+        if (Auth::user()->isProducer()) {
+            $viticulturistIds = $viticulturistIds->push($wineryId)->unique();
+        }
 
         $viticulturists = User::whereIn('id', $viticulturistIds)->orderBy('name')->get(['id', 'name']);
 

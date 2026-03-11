@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 // Ruta helper: redirige al dashboard (usada por stubs mientras se implementa el módulo)
 $stub = fn() => redirect()->route('winery.dashboard');
 
-Route::middleware(['role:winery'])
+Route::middleware(['role:winery,producer'])
     ->prefix('winery')
     ->name('winery.')
     ->group(function () use ($stub) {
