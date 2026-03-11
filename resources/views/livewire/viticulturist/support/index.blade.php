@@ -123,20 +123,22 @@
                             <div class="font-semibold text-zinc-900 mb-2">Descripción</div>
                             <p class="text-zinc-700 whitespace-pre-wrap">{{ $selectedTicket->description }}</p>
 
-                            {{-- Imagen si existe --}}
-                            @if($selectedTicket->image)
+                            {{-- Imágenes adjuntas --}}
+                            @if(!empty($selectedTicket->image_urls))
                                 <div class="mt-4">
-                                    <div class="text-sm font-medium text-zinc-700 mb-2">Imagen adjunta:</div>
-                                    <a href="{{ $selectedTicket->image_url }}" target="_blank" class="block">
-                                        <img
-                                            src="{{ $selectedTicket->image_url }}"
-                                            alt="Imagen del ticket"
-                                            loading="lazy"
-                                            decoding="async"
-                                            class="max-w-full h-auto max-h-96 rounded-lg border border-zinc-300 hover:opacity-90 transition cursor-pointer"
-                                        >
-                                    </a>
-                                    <p class="text-xs text-zinc-500 mt-1">Haz clic en la imagen para verla en tamaño completo</p>
+                                    <div class="text-sm font-medium text-zinc-700 mb-2">Imágenes adjuntas ({{ count($selectedTicket->image_urls) }}):</div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        @foreach($selectedTicket->image_urls as $url)
+                                            <a href="{{ $url }}" target="_blank" class="block">
+                                                <img
+                                                    src="{{ $url }}"
+                                                    alt="Imagen del ticket"
+                                                    loading="lazy"
+                                                    class="w-full h-40 object-cover rounded-lg border border-zinc-300 hover:opacity-90 transition cursor-pointer"
+                                                >
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
 
@@ -179,18 +181,7 @@
                     </div>
 
                     {{-- Footer --}}
-                    <div class="p-4 border-t border-zinc-200 flex justify-between">
-                        <div>
-                            @if($selectedTicket->isClosed())
-                                <flux:button wire:click="reopenTicket({{ $selectedTicket->id }})" variant="outline" size="sm">
-                                    Reabrir Ticket
-                                </flux:button>
-                            @else
-                                <flux:button wire:click="closeTicket({{ $selectedTicket->id }})" variant="outline" size="sm">
-                                    Cerrar Ticket
-                                </flux:button>
-                            @endif
-                        </div>
+                    <div class="p-4 border-t border-zinc-200 flex justify-end">
                         <flux:button wire:click="closeTicketDetail" variant="outline">
                             Cerrar
                         </flux:button>

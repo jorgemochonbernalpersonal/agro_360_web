@@ -60,34 +60,6 @@ class Index extends Component
         $this->toastSuccess('Comentario añadido.');
     }
 
-    public function closeTicket($ticketId)
-    {
-        $ticket = SupportTicket::findOrFail($ticketId);
-        
-        if ($ticket->user_id !== Auth::id()) {
-            $this->toastError('No tienes permiso para cerrar este ticket.');
-            return;
-        }
-
-        $ticket->close();
-        $this->toastSuccess('Ticket cerrado.');
-        $this->selectedTicket = null;
-    }
-
-    public function reopenTicket($ticketId)
-    {
-        $ticket = SupportTicket::findOrFail($ticketId);
-        
-        if ($ticket->user_id !== Auth::id()) {
-            $this->toastError('No tienes permiso para reabrir este ticket.');
-            return;
-        }
-
-        $ticket->reopen();
-        $this->toastSuccess('Ticket reabierto.');
-        $this->selectTicket($ticketId);
-    }
-
     public function render()
     {
         $user = Auth::user();

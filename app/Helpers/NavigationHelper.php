@@ -753,10 +753,17 @@ class NavigationHelper
 
         if ($role === 'admin') {
             $menu['main'][] = [
-                'icon' => 'user-group',
-                'label' => 'Usuarios',
-                'route' => 'admin.users.index',
+                'icon'   => 'user-group',
+                'label'  => 'Usuarios',
+                'route'  => 'admin.users.index',
                 'active' => request()->routeIs('admin.users.*'),
+            ];
+            $menu['main'][] = [
+                'icon'   => 'lifebuoy',
+                'label'  => 'Soporte',
+                'route'  => 'admin.support.index',
+                'active' => request()->routeIs('admin.support.*'),
+                'badge'  => Cache::remember('nav_badge_admin_support', 60, fn() => \App\Models\SupportTicket::open()->count()),
             ];
         }
 
