@@ -110,7 +110,7 @@
 
         <x-agro.form-section title="Archivos Adjuntos">
             {{-- Imagen (Opcional) --}}
-            <div>
+            <div x-data="{ previewUrl: null }">
                 <flux:label for="image">Imagen (Opcional)</flux:label>
                 <input
                     type="file"
@@ -121,18 +121,10 @@
                         const file = $event.target.files[0];
                         if (file) {
                             const reader = new FileReader();
-                            reader.onload = function(e) {
-                                const previewImg = document.getElementById('support-image-preview');
-                                const previewContainer = document.getElementById('support-image-preview-container');
-                                if (previewImg) {
-                                    previewImg.src = e.target.result;
-                                    previewImg.classList.remove('hidden');
-                                }
-                                if (previewContainer) {
-                                    previewContainer.classList.remove('hidden');
-                                }
-                            };
+                            reader.onload = (e) => previewUrl = e.target.result;
                             reader.readAsDataURL(file);
+                        } else {
+                            previewUrl = null;
                         }
                     "
                     class="mt-1 block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-agro-50 file:text-agro-700 hover:file:bg-agro-500 hover:file:text-white transition-colors"
@@ -140,15 +132,9 @@
                 @error('image')
                     <flux:error>{{ $message }}</flux:error>
                 @enderror
-                <div id="support-image-preview-container" class="mt-3 {{ $image_preview ? '' : 'hidden' }}">
+                <div x-show="previewUrl" wire:ignore class="mt-3">
                     <p class="text-sm text-zinc-600 mb-2">Vista previa:</p>
-                    <img
-                        id="support-image-preview"
-                        src="{{ $image_preview ? $image_preview : '' }}"
-                        alt="Vista previa"
-                        class="max-w-full h-auto max-h-64 rounded-lg border border-zinc-300 {{ $image_preview ? '' : 'hidden' }}"
-                        onerror="this.style.display='none'; document.getElementById('support-image-preview-container').classList.add('hidden');"
-                    >
+                    <img :src="previewUrl" alt="Vista previa" class="max-w-full h-auto max-h-64 rounded-lg border border-zinc-300">
                 </div>
                 <p class="text-xs text-zinc-500 mt-1">
                     Puedes adjuntar una imagen para ayudarnos a entender mejor tu consulta (máx. 5MB).

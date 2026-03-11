@@ -6,7 +6,6 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\SupportTicket;
 use App\Notifications\SupportTicketCreatedNotification;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -17,7 +16,6 @@ class CreateTicket extends Component
     public $title = '';
     public $description = '';
     public $image;
-    public $image_preview;
     public $type = 'question';
     public $priority = 'medium';
 
@@ -53,25 +51,6 @@ class CreateTicket extends Component
         $this->validateOnly('image', [
             'image' => 'nullable|image|max:5120',
         ]);
-
-        if ($this->image) {
-            try {
-                // Intentar usar temporaryUrl() para la previsualización
-                $this->image_preview = $this->image->temporaryUrl();
-            } catch (\Exception $e) {
-                // Si falla temporaryUrl (común en producción), intentar crear una URL local
-                try {
-                    $path = $this->image->store('temp', 'public');
-                    $this->image_preview = Storage::disk('public')->url($path);
-                } catch (\Exception $e2) {
-                    // Si también falla, no mostrar error - el preview de JavaScript funcionará
-                    // El usuario podrá ver el preview usando FileReader en el cliente
-                    $this->image_preview = null;
-                }
-            }
-        } else {
-            $this->image_preview = null;
-        }
     }
 
     public function save()
