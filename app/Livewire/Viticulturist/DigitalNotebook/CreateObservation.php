@@ -203,7 +203,7 @@ class CreateObservation extends Component
             });
 
             $this->toastSuccess('Observación registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.observation.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar observación', [
                 'error' => $e->getMessage(),

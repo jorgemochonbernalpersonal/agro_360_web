@@ -268,7 +268,7 @@ class CreatePhytosanitaryTreatment extends Component
             });
 
             $this->toastSuccess('Tratamiento fitosanitario registrado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.treatment.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar tratamiento fitosanitario', [
                 'error' => $e->getMessage(),

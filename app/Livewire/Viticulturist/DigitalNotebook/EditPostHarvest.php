@@ -51,7 +51,7 @@ class EditPostHarvest extends Component
 
         if ($this->activity->activity_type !== 'post_harvest') {
             $this->toastError('Esta actividad no es un tratamiento post-vendimia.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.post-harvest.index');
         }
 
         if (!Auth::user()->can('update', $this->activity)) {
@@ -60,7 +60,7 @@ class EditPostHarvest extends Component
 
         if ($this->activity->isLocked()) {
             $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.post-harvest.index');
         }
 
         $this->postHarvestTreatment = $this->activity->postHarvestTreatment;
@@ -199,7 +199,7 @@ class EditPostHarvest extends Component
             });
 
             $this->toastSuccess('Tratamiento post-vendimia actualizado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.post-harvest.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => $user->id, 'activity_id' => $this->activity->id]);
             $this->toastError('Error al actualizar el tratamiento. Por favor, intenta de nuevo.');

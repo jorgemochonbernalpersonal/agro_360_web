@@ -43,6 +43,7 @@ class CreateHarvest extends Component
     public $brix_degree = '';
     public $acidity_level = '';
     public $ph_level = '';
+    public $potential_alcohol = '';
     
     // Evaluación organoléptica (opcional)
     public $color_rating = '';
@@ -380,7 +381,8 @@ class CreateHarvest extends Component
             'brix_degree' => 'nullable|numeric|min:0|max:40',
             'acidity_level' => 'nullable|numeric|min:0|max:20',
             'ph_level' => 'nullable|numeric|min:0|max:14',
-            
+            'potential_alcohol' => 'nullable|numeric|min:0|max:25',
+
             'color_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'aroma_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'health_status' => 'nullable|in:sano,daño_leve,daño_moderado,daño_grave',
@@ -520,6 +522,7 @@ class CreateHarvest extends Component
                     'brix_degree' => $this->brix_degree ?: null,
                     'acidity_level' => $this->acidity_level ?: null,
                     'ph_level' => $this->ph_level ?: null,
+                    'potential_alcohol' => $this->potential_alcohol ?: null,
                     'color_rating' => $this->color_rating ?: null,
                     'aroma_rating' => $this->aroma_rating ?: null,
                     'health_status' => $this->health_status ?: null,
@@ -565,7 +568,7 @@ class CreateHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.vendimia.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar cosecha', [
                 'error' => $e->getMessage(),

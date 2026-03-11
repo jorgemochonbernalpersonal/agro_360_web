@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Tratamiento Fitosanitario"
     description="Registra un nuevo tratamiento fitosanitario en el cuaderno digital"
-    :back-url="route('viticulturist.digital-notebook')"
+    :back-url="route('viticulturist.digital-notebook.treatment.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="treatment-form">
         <x-agro.form-section title="Información Básica">
@@ -607,7 +607,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook')"
+            :cancel-url="route('viticulturist.digital-notebook.treatment.index')"
             submit-label="Registrar Tratamiento"
         />
     </form>

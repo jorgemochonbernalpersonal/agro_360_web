@@ -48,7 +48,7 @@ class EditObservation extends Component
         
         if ($this->activity->activity_type !== 'observation') {
             $this->toastError('Esta actividad no es una observación.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.observation.index');
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -57,7 +57,7 @@ class EditObservation extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError(' No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.observation.index');
         }
         
         $this->observation = $this->activity->observation;
@@ -214,7 +214,7 @@ class EditObservation extends Component
             });
 
             $this->toastSuccess('Observación actualizada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.observation.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar observación', [
                 'error' => $e->getMessage(),

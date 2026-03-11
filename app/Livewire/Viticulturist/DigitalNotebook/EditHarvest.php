@@ -127,7 +127,7 @@ class EditHarvest extends Component
 
         if ($activity->isLocked()) {
             $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            redirect()->route('viticulturist.digital-notebook');
+            redirect()->route('viticulturist.vendimia.index');
             return;
         }
 

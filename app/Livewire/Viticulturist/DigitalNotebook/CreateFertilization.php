@@ -233,7 +233,7 @@ class CreateFertilization extends Component
             });
 
             $this->toastSuccess('Fertilización registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.fertilization.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar fertilización', [
                 'error' => $e->getMessage(),

@@ -194,7 +194,7 @@ class CreateCulturalWork extends Component
             });
 
             $this->toastSuccess('Labor cultural registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.cultural.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar labor cultural', [
                 'error' => $e->getMessage(),

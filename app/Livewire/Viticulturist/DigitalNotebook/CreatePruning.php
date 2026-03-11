@@ -156,7 +156,7 @@ class CreatePruning extends Component
             });
 
             $this->toastSuccess('Poda registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.pruning.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar poda', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError('Error al registrar la poda. Por favor, intenta de nuevo.');

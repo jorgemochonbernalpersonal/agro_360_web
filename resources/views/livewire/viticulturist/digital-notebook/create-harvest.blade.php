@@ -3,7 +3,7 @@
     description="Registra una nueva cosecha (vendimia) en el cuaderno digital"
     icon="archive-box-arrow-down"
     icon-color="from-agro-500 to-agro-700"
-    :back-url="route('viticulturist.digital-notebook')"
+    :back-url="route('viticulturist.vendimia.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="harvest-form">
         
@@ -346,6 +346,11 @@
                     <flux:input wire:model="ph_level" type="number" step="0.001" min="0" max="14" id="ph_level" placeholder="0.00" />
                     <flux:error name="ph_level" />
                 </flux:field>
+                <flux:field>
+                    <flux:label>Alcohol potencial (%vol)</flux:label>
+                    <flux:input wire:model="potential_alcohol" type="number" step="0.01" min="0" max="25" id="potential_alcohol" placeholder="0.00" />
+                    <flux:error name="potential_alcohol" />
+                </flux:field>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
@@ -597,7 +602,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions 
-            :cancel-url="route('viticulturist.digital-notebook')"
+            :cancel-url="route('viticulturist.vendimia.index')"
             submit-label="Registrar Cosecha"
         />
     </form>

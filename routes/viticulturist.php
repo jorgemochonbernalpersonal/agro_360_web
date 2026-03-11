@@ -16,6 +16,13 @@ use App\Livewire\Viticulturist\DigitalNotebook\CreatePruning;
 use App\Livewire\Viticulturist\DigitalNotebook\EditPruning;
 use App\Livewire\Viticulturist\DigitalNotebook\CreatePostHarvest;
 use App\Livewire\Viticulturist\DigitalNotebook\EditPostHarvest;
+use App\Livewire\Viticulturist\DigitalNotebook\TreatmentIndex;
+use App\Livewire\Viticulturist\DigitalNotebook\FertilizationIndex;
+use App\Livewire\Viticulturist\DigitalNotebook\IrrigationIndex;
+use App\Livewire\Viticulturist\DigitalNotebook\CulturalWorkIndex;
+use App\Livewire\Viticulturist\DigitalNotebook\ObservationIndex;
+use App\Livewire\Viticulturist\DigitalNotebook\PruningIndex;
+use App\Livewire\Viticulturist\DigitalNotebook\PostHarvestIndex;
 use App\Livewire\Viticulturist\Machinery\Create as MachineryCreate;
 use App\Livewire\Viticulturist\Machinery\Edit as MachineryEdit;
 use App\Livewire\Viticulturist\Machinery\Index as MachineryIndex;
@@ -64,21 +71,28 @@ Route::middleware(['role:viticulturist', 'check.beta'])
 
         Route::get('/digital-notebook', DigitalNotebook::class)->name('digital-notebook');
         Route::prefix('digital-notebook')->name('digital-notebook.')->group(function () {
+            Route::get('/treatment', TreatmentIndex::class)->name('treatment.index');
             Route::get('/treatment/create', CreatePhytosanitaryTreatment::class)->name('treatment.create');
             Route::get('/treatment/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditPhytosanitaryTreatment::class)->name('treatment.edit');
+            Route::get('/fertilization', FertilizationIndex::class)->name('fertilization.index');
             Route::get('/fertilization/create', CreateFertilization::class)->name('fertilization.create');
             Route::get('/fertilization/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditFertilization::class)->name('fertilization.edit');
+            Route::get('/irrigation', IrrigationIndex::class)->name('irrigation.index');
             Route::get('/irrigation/create', CreateIrrigation::class)->name('irrigation.create');
             Route::get('/irrigation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditIrrigation::class)->name('irrigation.edit');
+            Route::get('/cultural', CulturalWorkIndex::class)->name('cultural.index');
             Route::get('/cultural/create', CreateCulturalWork::class)->name('cultural.create');
             Route::get('/cultural/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditCulturalWork::class)->name('cultural.edit');
+            Route::get('/observation', ObservationIndex::class)->name('observation.index');
             Route::get('/observation/create', CreateObservation::class)->name('observation.create');
             Route::get('/observation/{activity}/edit', \App\Livewire\Viticulturist\DigitalNotebook\EditObservation::class)->name('observation.edit');
             Route::get('/harvest/create', CreateHarvest::class)->name('harvest.create');
             Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
             Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');
+            Route::get('/pruning', PruningIndex::class)->name('pruning.index');
             Route::get('/pruning/create', CreatePruning::class)->name('pruning.create');
             Route::get('/pruning/{activity}/edit', EditPruning::class)->name('pruning.edit');
+            Route::get('/post-harvest', PostHarvestIndex::class)->name('post-harvest.index');
             Route::get('/post-harvest/create', CreatePostHarvest::class)->name('post-harvest.create');
             Route::get('/post-harvest/{activity}/edit', EditPostHarvest::class)->name('post-harvest.edit');
             Route::prefix('estimated-yields')->name('estimated-yields.')->group(function () {
@@ -166,7 +180,9 @@ Route::middleware(['role:viticulturist', 'check.beta'])
         });
 
         // Mis Entregas a Bodega (cuadro de vendimia del viticulturist)
-        Route::get('/vendimia', \App\Livewire\Viticulturist\Vendimia\Index::class)->name('vendimia.index');
+        Route::get('/harvests', \App\Livewire\Viticulturist\Vendimia\Index::class)->name('vendimia.index');
+        Route::get('/harvests/create-delivery', \App\Livewire\Viticulturist\Vendimia\CreateDelivery::class)->name('harvests.delivery.create');
+        Route::get('/harvests/{delivery}/edit-delivery', \App\Livewire\Viticulturist\Vendimia\EditDelivery::class)->name('harvests.delivery.edit');
 
         // Aplicadores fitosanitarios (ROPO)
         Route::prefix('field-applicators')->name('field-applicators.')->group(function () {

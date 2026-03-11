@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Livewire\Viticulturist\DigitalNotebook;
+
+class ObservationIndex extends AbstractActivityIndex
+{
+    protected function activityType(): string     { return 'observation'; }
+    protected function pageTitle(): string        { return 'Observaciones'; }
+    protected function pageDescription(): string  { return 'Registro de observaciones realizadas en tus parcelas'; }
+    protected function createRoute(): string      { return route('viticulturist.digital-notebook.observation.create'); }
+    protected function editRouteName(): string    { return 'viticulturist.digital-notebook.observation.edit'; }
+    protected function typeIcon(): string         { return 'eye'; }
+    protected function typeBadgeColor(): string   { return ''; }
+}

@@ -52,7 +52,7 @@ class EditIrrigation extends Component
         
         if ($this->activity->activity_type !== 'irrigation') {
             $this->toastError('Esta actividad no es un riego.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.irrigation.index');
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -61,7 +61,7 @@ class EditIrrigation extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError(' No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.irrigation.index');
         }
         
         $this->irrigation = $this->activity->irrigation;
@@ -230,7 +230,7 @@ class EditIrrigation extends Component
             });
 
             $this->toastSuccess('Riego actualizado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.irrigation.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar riego', [
                 'error' => $e->getMessage(),

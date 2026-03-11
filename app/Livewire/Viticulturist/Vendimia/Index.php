@@ -6,166 +6,222 @@ use App\Models\Campaign;
 use App\Models\EstimatedYield;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
-use App\Models\WineryViticulturist;
-use App\Models\WineryYieldForecast;
+use App\Models\HarvestDelivery;
+use App\Models\PlotPlanting;
+use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Index extends Component
 {
+    use WithToastNotifications;
+
+    public string $currentTab    = 'pending'; // 'delivered' | 'pending'
+    public string $search        = '';
     public string $vintageFilter = '';
+    public string $statusFilter  = '';
 
     protected $queryString = [
+        'currentTab'    => ['as' => 'tab',    'except' => 'pending'],
+        'search'        => ['except' => ''],
         'vintageFilter' => ['except' => ''],
+        'statusFilter'  => ['except' => ''],
     ];
 
     public function mount(): void
     {
         if (!$this->vintageFilter) {
-            $campaign = Campaign::forViticulturist(Auth::id())->where('active', true)->first();
-            if ($campaign) {
-                $this->vintageFilter = (string) $campaign->year;
-            } else {
-                $this->vintageFilter = (string) now()->year;
-            }
+            $campaign = Campaign::forViticulturist(Auth::id())
+                ->orderByDesc('year')
+                ->first();
+            $this->vintageFilter = (string) ($campaign?->year ?? now()->year);
         }
+    }
+
+    public function switchTab(string $tab): void
+    {
+        $this->currentTab = $tab;
+    }
+
+    public function updatingSearch(): void { }
+
+    public function clearFilters(): void
+    {
+        $this->search       = '';
+        $this->statusFilter = '';
     }
 
     public function render()
     {
         $viticulturistId = Auth::id();
+        $vintageYear     = (int) ($this->vintageFilter ?: now()->year);
 
-        // Campañas disponibles del viticulturist para el filtro
-        $campaigns = Campaign::forViticulturist($viticulturistId)
+        $campaignYears = Campaign::forViticulturist($viticulturistId)
             ->orderBy('year', 'desc')
-            ->get();
+            ->pluck('year')
+            ->push(now()->year)
+            ->unique()
+            ->sortDesc()
+            ->values();
 
-        $vintageYear = (int) ($this->vintageFilter ?: now()->year);
+        // ── Raw data ──────────────────────────────────────────────────────────
 
-        // 1. Batches de bodega (lo que cada bodega recibió de este viticulturist)
-        $batches = GrapeReceptionBatch::with([
-                'plotPlanting.grapeVariety',
-                'plotPlanting.plot',
-                'winery:id,name',
-            ])
+        // Harvest records from cuaderno (primary source)
+        $harvestsByPlanting = Harvest::with(['activity', 'plotPlanting'])
+            ->whereHas('activity', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
+            ->where('vintage', $vintageYear)
+            ->where('status', 'active')
+            ->get()
+            ->groupBy('plot_planting_id');
+
+        // Winery receptions grouped by plot_planting_id
+        $batchesByPlanting = GrapeReceptionBatch::with(['winery:id,name'])
             ->where('viticulturist_id', $viticulturistId)
             ->where('vintage_year', $vintageYear)
             ->get()
-            ->keyBy(fn($b) => $b->plot_planting_id . '_' . $b->winery_id);
+            ->groupBy('plot_planting_id');
 
-        // 2. Forecasts de bodega para este viticulturist
-        $forecasts = WineryYieldForecast::with([
-                'plotPlanting.grapeVariety',
-                'plotPlanting.plot',
-                'winery:id,name',
-            ])
-            ->where('viticulturist_id', $viticulturistId)
+        // Manual deliveries grouped by plot_planting_id
+        $deliveriesByPlanting = HarvestDelivery::forViticulturist($viticulturistId)
             ->where('vintage_year', $vintageYear)
             ->get()
-            ->keyBy(fn($f) => $f->plot_planting_id . '_' . $f->winery_id);
+            ->groupBy('plot_planting_id');
 
-        // Aforos propios del viticultor para la añada (confirmados, última ronda por plantación)
-        $plantingIds = $batches->pluck('plot_planting_id')
-            ->merge($forecasts->pluck('plot_planting_id'))
+        // Union of all planting IDs across all sources
+        $plantingIds = $harvestsByPlanting->keys()
+            ->merge($batchesByPlanting->keys())
+            ->merge($deliveriesByPlanting->keys())
+            ->filter()
             ->unique();
 
+        // Load plantings with relations
+        $plantings = PlotPlanting::with(['grapeVariety', 'plot'])
+            ->whereIn('id', $plantingIds)
+            ->get()
+            ->keyBy('id');
+
+        // Confirmed estimated yields (aforo)
         $estimatedYields = EstimatedYield::whereIn('plot_planting_id', $plantingIds)
-            ->whereHas('campaign', fn($q) => $q->where('year', $vintageYear)->where('viticulturist_id', $viticulturistId))
+            ->whereHas('campaign', fn ($q) => $q->where('year', $vintageYear)->where('viticulturist_id', $viticulturistId))
             ->where('status', 'confirmed')
             ->orderByDesc('estimation_round')
             ->get()
             ->keyBy('plot_planting_id');
 
-        // Precargar totales de cosecha del viticultor por plantación (evita N+1)
-        $allPlantingIds = $batches->pluck('plot_planting_id')
-            ->merge($forecasts->pluck('plot_planting_id'))
-            ->unique();
+        // ── Build rows (one per planting) ─────────────────────────────────────
 
-        $harvestTotals = Harvest::whereIn('plot_planting_id', $allPlantingIds)
-            ->whereHas('activity', fn($q) => $q->where('viticulturist_id', $viticulturistId))
-            ->where('vintage', $vintageYear)
-            ->where('status', 'active')
-            ->groupBy('plot_planting_id')
-            ->selectRaw('plot_planting_id, SUM(total_weight) as total')
-            ->pluck('total', 'plot_planting_id');
+        $allRows = $plantingIds->map(function ($plantingId) use (
+            $plantings, $harvestsByPlanting, $batchesByPlanting,
+            $deliveriesByPlanting, $estimatedYields
+        ) {
+            $planting = $plantings->get($plantingId);
 
-        // Unión de claves únicas
-        $keys = $batches->keys()->merge($forecasts->keys())->unique();
+            // Harvest totals from cuaderno
+            $plantingHarvests  = $harvestsByPlanting->get($plantingId, collect());
+            $harvestKg         = (float) $plantingHarvests->sum('total_weight');
+            $harvestCount      = $plantingHarvests->count();
+            $lastHarvestDate   = $plantingHarvests->max(fn ($h) => $h->activity?->activity_date);
 
-        $rows = $keys->map(function ($key) use ($batches, $forecasts, $estimatedYields, $harvestTotals, $viticulturistId, $vintageYear) {
-            $batch    = $batches->get($key);
-            $forecast = $forecasts->get($key);
-            $source   = $batch ?? $forecast;
+            // Winery receptions
+            $plantingBatches   = $batchesByPlanting->get($plantingId, collect());
+            $receivedKg        = (float) $plantingBatches->sum('total_weight_kg');
 
-            $planting = $source->plotPlanting;
-            $winery   = $source->winery;
+            // Manual deliveries (disqualified ones excluded from totals)
+            $plantingDeliveries = $deliveriesByPlanting->get($plantingId, collect());
+            $manualKg           = (float) $plantingDeliveries->where('disqualified', false)->sum('delivered_kg');
 
-            if (!$planting) return null;
+            $totalDeliveredKg  = $receivedKg + $manualKg;
+            $hasDelivery       = $totalDeliveredKg > 0;
 
-            $receivedKg   = $batch    ? (float) $batch->total_weight_kg   : 0.0;
-            $forecastKg   = ($forecast && $forecast->status === 'confirmed') ? (float) $forecast->estimated_kg : null;
-            $myHarvestKg  = (float) ($harvestTotals->get($planting->id) ?? 0);
-            $pacLimit     = $planting->effectiveHarvestLimitKg($vintageYear);
-            $estimatedYield = $estimatedYields->get($planting->id);
-            $estimatedKg  = $estimatedYield ? (float) $estimatedYield->estimated_total_yield : null;
+            // Estimated yield (aforo)
+            $estimatedYield    = $estimatedYields->get($plantingId);
+            $estimatedKg       = $estimatedYield ? (float) $estimatedYield->estimated_total_yield : null;
 
-            // Discrepancia cuaderno vs bodega
-            $discrepancyKg  = null;
-            $discrepancyPct = null;
-            if ($myHarvestKg > 0 || $receivedKg > 0) {
-                $discrepancyKg  = round(abs($myHarvestKg - $receivedKg), 1);
-                $discrepancyPct = $myHarvestKg > 0
-                    ? round($discrepancyKg / $myHarvestKg * 100, 1)
-                    : null;
+            // Discrepancy between cuaderno and total delivered
+            $discrepancyKg     = null;
+            $discrepancyPct    = null;
+            if ($harvestKg > 0 && $totalDeliveredKg > 0) {
+                $discrepancyKg  = round(abs($harvestKg - $totalDeliveredKg), 1);
+                $discrepancyPct = round($discrepancyKg / $harvestKg * 100, 1);
             }
 
-            // Estado
-            $status = match(true) {
-                $myHarvestKg === 0.0 && $receivedKg === 0.0 => 'pending',
-                $myHarvestKg > 0    && $receivedKg === 0.0  => 'not_received',
-                $myHarvestKg === 0.0 && $receivedKg > 0     => 'received_only',
-                $discrepancyPct !== null && $discrepancyPct > 5 => 'discrepancy',
-                default                                      => 'ok',
+            $status = match (true) {
+                $harvestKg === 0.0 && !$hasDelivery                         => 'pending',
+                $harvestKg > 0     && !$hasDelivery                         => 'not_delivered',
+                $harvestKg === 0.0 && $hasDelivery                          => 'delivery_only',
+                $discrepancyPct !== null && $discrepancyPct > 5             => 'discrepancy',
+                default                                                      => 'ok',
             };
 
             return [
-                'key'             => $key,
-                'planting'        => $planting,
-                'winery'          => $winery,
-                'variety'         => $planting->grapeVariety?->name ?? $planting->name ?? '—',
-                'plot'            => $planting->plot?->name ?? '—',
-                'area'            => $planting->area_planted ? (float) $planting->area_planted : null,
-                'pac_limit'       => $pacLimit,
-                'estimated_kg'    => $estimatedKg,
-                'forecast_kg'     => $forecastKg,
-                'forecast_status' => $forecast?->status,
-                'my_harvest_kg'   => $myHarvestKg,
-                'received_kg'     => $receivedKg,
-                'discrepancy_kg'  => $discrepancyKg,
-                'discrepancy_pct' => $discrepancyPct,
-                'status'          => $status,
+                'key'               => 'planting_' . $plantingId,
+                'planting_id'       => $plantingId,
+                'planting'          => $planting,
+                'variety'           => $planting?->grapeVariety?->name ?? $planting?->name ?? '—',
+                'plot'              => $planting?->plot?->name ?? '—',
+                'area'              => $planting?->area_planted ? (float) $planting->area_planted : null,
+                'harvest_kg'        => $harvestKg,
+                'harvest_count'     => $harvestCount,
+                'last_harvest_date' => $lastHarvestDate,
+                'estimated_kg'      => $estimatedKg,
+                'winery_batches'    => $plantingBatches,
+                'manual_deliveries' => $plantingDeliveries,
+                'received_kg'       => $receivedKg,
+                'manual_kg'         => $manualKg,
+                'total_delivered_kg' => $totalDeliveredKg,
+                'has_delivery'      => $hasDelivery,
+                'discrepancy_kg'    => $discrepancyKg,
+                'discrepancy_pct'   => $discrepancyPct,
+                'status'            => $status,
             ];
         })
         ->filter()
         ->values();
 
-        // Stats globales
+        // ── Tab counts ────────────────────────────────────────────────────────
+
         $stats = [
-            'total_plantings'   => $rows->count(),
-            'total_estimated'   => $rows->sum('estimated_kg'),
-            'total_my_harvest'  => $rows->sum('my_harvest_kg'),
-            'total_received'    => $rows->sum('received_kg'),
-            'total_forecast'    => $rows->sum('forecast_kg'),
-            'ok_count'          => $rows->where('status', 'ok')->count(),
-            'discrepancy_count' => $rows->where('status', 'discrepancy')->count(),
-            'not_received_count'=> $rows->where('status', 'not_received')->count(),
+            'delivered' => $allRows->where('has_delivery', true)->count(),
+            'pending'   => $allRows->where('has_delivery', false)->count(),
         ];
 
+        // ── Apply tab filter ──────────────────────────────────────────────────
+
+        $rows = $allRows->filter(fn ($row) =>
+            $this->currentTab === 'delivered'
+                ? $row['has_delivery']
+                : !$row['has_delivery']
+        );
+
+        // ── Apply search ──────────────────────────────────────────────────────
+
+        if ($this->search) {
+            $s = strtolower($this->search);
+            $rows = $rows->filter(function ($row) use ($s) {
+                if (str_contains(strtolower($row['variety']), $s)) return true;
+                if (str_contains(strtolower($row['plot']), $s)) return true;
+                if ($row['winery_batches']->contains(fn ($b) => str_contains(strtolower($b->winery?->name ?? ''), $s))) return true;
+                if ($row['manual_deliveries']->contains(fn ($d) => str_contains(strtolower($d->buyer_name), $s))) return true;
+                return false;
+            });
+        }
+
+        // ── Apply status filter ───────────────────────────────────────────────
+
+        if ($this->statusFilter) {
+            $rows = $rows->filter(fn ($row) => $row['status'] === $this->statusFilter);
+        }
+
+        $rows = $rows->values();
+
         return view('livewire.viticulturist.vendimia.index', [
-            'rows'        => $rows,
-            'stats'       => $stats,
-            'campaigns'   => $campaigns,
-            'vintageYear' => $vintageYear,
-        ])->layout('layouts.app');
+            'rows'          => $rows,
+            'stats'         => $stats,
+            'campaignYears' => $campaignYears,
+            'vintageYear'   => $vintageYear,
+        ])->layout('layouts.app', [
+            'title'       => 'Mis cosechas - Agro365',
+            'description' => 'Gestiona tus cosechas y entregas de uva.',
+        ]);
     }
 }

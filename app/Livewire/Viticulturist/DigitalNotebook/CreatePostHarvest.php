@@ -160,7 +160,7 @@ class CreatePostHarvest extends Component
             });
 
             $this->toastSuccess('Tratamiento post-vendimia registrado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.post-harvest.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError('Error al registrar el tratamiento. Por favor, intenta de nuevo.');

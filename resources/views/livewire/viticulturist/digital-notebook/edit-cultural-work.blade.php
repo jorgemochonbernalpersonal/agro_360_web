@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Labor Cultural"
     description="Modifica los datos de la labor cultural"
-    :back-url="route('viticulturist.digital-notebook')"
+    :back-url="route('viticulturist.digital-notebook.cultural.index')"
 >
     <form wire:submit="update" class="space-y-8" data-cy="cultural-work-form">
         <x-agro.form-section title="Información Básica">
@@ -175,7 +175,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook')"
+            :cancel-url="route('viticulturist.digital-notebook.cultural.index')"
             submit-label="Registrar Labor"
         />
     </form>

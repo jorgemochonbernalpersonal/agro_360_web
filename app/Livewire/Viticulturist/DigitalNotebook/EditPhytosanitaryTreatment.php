@@ -73,7 +73,7 @@ class EditPhytosanitaryTreatment extends Component
         // Validar que sea un tratamiento fitosanitario
         if ($this->activity->activity_type !== 'phytosanitary') {
             $this->toastError('Esta actividad no es un tratamiento fitosanitario.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.treatment.index');
         }
         
         // Validar autorización
@@ -84,7 +84,7 @@ class EditPhytosanitaryTreatment extends Component
         // Verificar si está bloqueada
         if ($this->activity->isLocked()) {
             $this->toastError('🔒 No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.treatment.index');
         }
         
         $this->treatment = $this->activity->phytosanitaryTreatment;
@@ -323,7 +323,7 @@ class EditPhytosanitaryTreatment extends Component
             });
 
             $this->toastSuccess('Tratamiento fitosanitario actualizado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.treatment.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar tratamiento fitosanitario', [
                 'error' => $e->getMessage(),

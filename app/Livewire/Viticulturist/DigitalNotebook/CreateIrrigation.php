@@ -205,7 +205,7 @@ class CreateIrrigation extends Component
             });
 
             $this->toastSuccess('Riego registrado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook');
+            return redirect()->route('viticulturist.digital-notebook.irrigation.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar riego', [
                 'error' => $e->getMessage(),

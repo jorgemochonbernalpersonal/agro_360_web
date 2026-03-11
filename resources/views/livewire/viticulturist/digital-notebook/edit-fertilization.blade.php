@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Fertilización"
     description="Modifica los datos de la fertilización"
-    :back-url="route('viticulturist.digital-notebook')"
+    :back-url="route('viticulturist.digital-notebook.fertilization.index')"
 >
     <form wire:submit="update" class="space-y-8" data-cy="fertilization-form">
         <x-agro.form-section title="Información Básica">
@@ -239,7 +239,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook')"
+            :cancel-url="route('viticulturist.digital-notebook.fertilization.index')"
             submit-label="Actualizar Fertilización"
         />
     </form>
