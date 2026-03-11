@@ -44,7 +44,7 @@
     )) {
         $detectedChapter = 'bodega';
     } elseif (request()->routeIs(
-        'winery.aica*', 'winery.sanitary-registrations*',
+        'winery.silicie*', 'winery.aica*', 'winery.sanitary-registrations*',
         'winery.bottling-authorizations*', 'winery.eco-certifications*'
     )) {
         $detectedChapter = 'normativa';
@@ -78,7 +78,7 @@
         $detectedChapter = 'negocio';
     } elseif (request()->routeIs(
         'viticulturist.settings*', 'viticulturist.support*',
-        'winery.settings*', 'winery.silicie*', 'winery.documents*',
+        'winery.settings*', 'winery.documents*',
         'winery.winery-supplies*', 'winery.suppliers*'
     )) {
         $detectedChapter = 'sistema';

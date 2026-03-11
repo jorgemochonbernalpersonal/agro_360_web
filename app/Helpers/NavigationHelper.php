@@ -564,6 +564,14 @@ class NavigationHelper
             // ── NORMATIVA BODEGA ─────────────────────────────────────
             $menu['winery_normativa'] = [
                 [
+                    'icon'   => 'document-chart-bar',
+                    'label'  => 'SILICIE',
+                    'route'  => 'winery.silicie.dashboard',
+                    'active' => request()->routeIs('winery.silicie*'),
+                    'wip'    => true,
+                ],
+                ['divider' => true],
+                [
                     'icon'   => 'document-text',
                     'label'  => 'AICA',
                     'route'  => 'winery.aica.index',
@@ -599,13 +607,6 @@ class NavigationHelper
 
             // ── REGISTRO OFICIAL (Sistema) ────────────────────────────
             $menu['compliance'] = [
-                [
-                    'icon'   => 'document-chart-bar',
-                    'label'  => 'SILICIE',
-                    'route'  => 'winery.silicie.dashboard',
-                    'active' => request()->routeIs('winery.silicie*'),
-                    'wip'    => true,
-                ],
                 [
                     'icon'   => 'folder-open',
                     'label'  => 'Documentos Bodega',
