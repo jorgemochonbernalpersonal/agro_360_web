@@ -85,6 +85,36 @@
                         ['icon' => 'scale',               'label' => 'Control de stock', 'desc' => 'Seguimiento de kg disponibles por partida'],
                         ['icon' => 'arrows-right-left',   'label' => 'Vinculación',      'desc' => 'Asociación directa con contenedores y vinos'],
                     ],
+                    'Trazabilidad'                  => [
+                        ['icon' => 'magnifying-glass-circle', 'label' => 'Origen por lote',    'desc' => 'De qué parcela y viticultor viene cada vino'],
+                        ['icon' => 'arrows-right-left',       'label' => 'Cadena completa',    'desc' => 'Recepción → elaboración → embotellado → expedición'],
+                        ['icon' => 'qr-code',                 'label' => 'Consulta rápida',    'desc' => 'Para importadores, DO y consumidores'],
+                    ],
+                    'VeriFactu'                     => [
+                        ['icon' => 'document-check',   'label' => 'Facturación electrónica', 'desc' => 'Cumplimiento obligatorio AEAT'],
+                        ['icon' => 'arrow-up-tray',    'label' => 'Envío automático',        'desc' => 'Registro en tiempo real a Hacienda'],
+                        ['icon' => 'shield-check',     'label' => 'Firma digital',           'desc' => 'Facturas verificables e inalterables'],
+                    ],
+                    'AICA'                          => [
+                        ['icon' => 'document-text',    'label' => 'Contratos de compra',     'desc' => 'Contratos AICA por viticultor y campaña'],
+                        ['icon' => 'scale',            'label' => 'Plazos de pago',          'desc' => 'Control de cumplimiento legal de plazos'],
+                        ['icon' => 'bell',             'label' => 'Alertas de incumplimiento','desc' => 'Avisos antes de superar los plazos legales'],
+                    ],
+                    'Registros Sanitarios'          => [
+                        ['icon' => 'shield-check',     'label' => 'Registro general',        'desc' => 'RGSA y registros autonómicos de instalaciones'],
+                        ['icon' => 'clock',            'label' => 'Vencimientos',            'desc' => 'Alertas de renovación de autorizaciones'],
+                        ['icon' => 'document-text',    'label' => 'Documentación',           'desc' => 'Almacén de certificados y actas de inspección'],
+                    ],
+                    'Autorizaciones de Embotellado' => [
+                        ['icon' => 'identification',   'label' => 'Autorizaciones DO',       'desc' => 'Permisos de embotellado por denominación'],
+                        ['icon' => 'archive-box',      'label' => 'Lotes autorizados',       'desc' => 'Vinculación con lotes de producto terminado'],
+                        ['icon' => 'bell',             'label' => 'Caducidades',             'desc' => 'Control de vigencia de cada autorización'],
+                    ],
+                    'Certificaciones Ecológicas'    => [
+                        ['icon' => 'sparkles',         'label' => 'Ecológico / BIO',         'desc' => 'Certificaciones de agricultura ecológica'],
+                        ['icon' => 'document-check',   'label' => 'Auditorías',              'desc' => 'Registro de controles de entidad certificadora'],
+                        ['icon' => 'globe-europe-africa','label'=> 'Mercados',               'desc' => 'Requisitos por país de destino (UE, EEUU, etc.)'],
+                    ],
                     default             => [
                         ['icon' => 'cog-6-tooth',   'label' => 'En desarrollo', 'desc' => 'Módulo en proceso de construcción'],
                         ['icon' => 'rocket-launch', 'label' => 'Próximamente',  'desc' => 'Estará disponible muy pronto'],

@@ -23,7 +23,7 @@
     if ($user->role === 'viticulturist') {
         $chapters = [
             ['key' => 'campana',   'icon' => 'pencil-square',     'label' => 'Campaña',   'sections' => ['operations']],
-            ['key' => 'cuaderno',  'icon' => 'document-text',     'label' => 'Cuaderno',  'sections' => ['notebook']],
+            ['key' => 'cuaderno',  'icon' => 'document-text',     'label' => 'Registros', 'sections' => ['notebook']],
             ['key' => 'parcelas',  'icon' => 'map',                'label' => 'Parcelas',  'sections' => ['plots_analysis']],
             ['key' => 'recursos',  'icon' => 'wrench-screwdriver', 'label' => 'Recursos',  'sections' => ['resources']],
             ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance']],
@@ -36,8 +36,8 @@
             ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',   'sections' => ['harvest']],
             ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',     'sections' => ['cellar']],
             ['key' => 'territorio', 'icon' => 'map',                     'label' => 'Territorio', 'sections' => ['territory']],
+            ['key' => 'normativa',  'icon' => 'shield-check',            'label' => 'Normativa',  'sections' => ['winery_normativa']],
             ['key' => 'negocio',    'icon' => 'calculator',              'label' => 'Negocio',    'sections' => ['billing']],
-            // recursos y compliance (mayoría WIP) agrupados en sistema
             ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['resources', 'compliance', 'system']],
         ];
     }

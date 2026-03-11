@@ -157,6 +157,39 @@ Route::middleware(['role:winery'])
             ->defaults('module', 'Documentos Bodega')
             ->defaults('icon', 'folder-open');
 
+        // ── Trazabilidad (en construcción) ───────────────────────────
+        Route::get('/traceability', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('traceability.index')
+            ->defaults('module', 'Trazabilidad')
+            ->defaults('icon', 'magnifying-glass-circle');
+
+        // ── VeriFactu / facturación electrónica (en construcción) ────
+        Route::get('/verifactu', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('verifactu.index')
+            ->defaults('module', 'VeriFactu')
+            ->defaults('icon', 'document-check');
+
+        // ── Normativa bodega ──────────────────────────────────────────
+        Route::get('/aica', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('aica.index')
+            ->defaults('module', 'AICA')
+            ->defaults('icon', 'document-text');
+
+        Route::get('/sanitary-registrations', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('sanitary-registrations.index')
+            ->defaults('module', 'Registros Sanitarios')
+            ->defaults('icon', 'shield-check');
+
+        Route::get('/bottling-authorizations', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('bottling-authorizations.index')
+            ->defaults('module', 'Autorizaciones de Embotellado')
+            ->defaults('icon', 'identification');
+
+        Route::get('/eco-certifications', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('eco-certifications.index')
+            ->defaults('module', 'Certificaciones Ecológicas')
+            ->defaults('icon', 'sparkles');
+
         // ── Configuración ─────────────────────────────────────────────
         Route::get('/settings', \App\Livewire\Winery\Settings::class)->name('settings');
     });

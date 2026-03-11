@@ -26,22 +26,27 @@
 
     $detectedChapter = 'campana'; // default
 
-    if (request()->routeIs('plots.*', 'sigpac.*', 'remote-sensing.*', 'winery.plots.*')) {
+    if (request()->routeIs('plots.*', 'sigpac.*', 'remote-sensing.*', 'winery.plots.*', 'winery.field-activities*', 'plots.territory')) {
         $detectedChapter = 'parcelas';
     } elseif (request()->routeIs(
         'winery.harvest*', 'winery.grape-reception*',
         'winery.vitic-estimates*', 'winery.harvest-summary*',
         'winery.harvest-forecasts*', 'winery.harvest-quality*',
-        'winery.field-activities*', 'winery.campaigns*',
+        'winery.campaigns*',
         'winery.viticulturists*'
     )) {
         $detectedChapter = 'vendimia';
     } elseif (request()->routeIs(
         'winery.containers*', 'winery.wines*', 'winery.oenologists*',
         'winery.wine-analysis*', 'winery.product-lots*',
-        'winery.external-grape*'
+        'winery.external-grape*', 'winery.traceability*'
     )) {
         $detectedChapter = 'bodega';
+    } elseif (request()->routeIs(
+        'winery.aica*', 'winery.sanitary-registrations*',
+        'winery.bottling-authorizations*', 'winery.eco-certifications*'
+    )) {
+        $detectedChapter = 'normativa';
     } elseif (request()->routeIs(
         'viticulturist.personal*', 'viticulturist.machinery*',
         'viticulturist.containers*', 'viticulturist.almacen*',
@@ -54,22 +59,18 @@
         'viticulturist.field-equipment*'
     )) {
         $detectedChapter = 'normativa';
-    } elseif (request()->routeIs(
-        'viticulturist.pac.*', 'viticulturist.pac-compliance*'
-    )) {
+    } elseif (request()->routeIs('viticulturist.pac.*')) {
         $detectedChapter = 'pac';
     } elseif (request()->routeIs(
-        'viticulturist.digital-notebook.estimated-yields*',
-        'viticulturist.vendimia*',
+        'viticulturist.pac-compliance*',
         'viticulturist.residue*', 'viticulturist.energy*',
-        'viticulturist.cue*', 'viticulturist.official*',
-        'viticulturist.pac-compliance*'
+        'viticulturist.cue*', 'viticulturist.official*'
     )) {
         $detectedChapter = 'cuaderno';
     } elseif (request()->routeIs(
         'viticulturist.invoices*', 'viticulturist.marketed*',
         'viticulturist.clients*', 'viticulturist.financial*',
-        'winery.invoices*', 'winery.clients*', 'winery.billing*'
+        'winery.invoices*', 'winery.clients*', 'winery.billing*', 'winery.verifactu*'
     )) {
         $detectedChapter = 'negocio';
     } elseif (request()->routeIs(

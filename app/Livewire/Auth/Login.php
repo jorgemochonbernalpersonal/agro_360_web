@@ -80,14 +80,14 @@ class Login extends Component
 
         $this->validate();
 
-        $this->email = \App\Models\User::canonicalizeEmail($this->email);
+        $loginEmail = \App\Models\User::canonicalizeEmail($this->email);
 
-        if (!Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (!Auth::attempt(['email' => $loginEmail, 'password' => $this->password], $this->remember)) {
             // Incrementar contador de intentos fallidos
             RateLimiter::hit($failedKey, 3600); // Expira en 1 hora
             
             // Loguear intento fallido
-            SecurityLogger::logFailedLogin($this->email, 'credenciales_incorrectas');
+            SecurityLogger::logFailedLogin($loginEmail, 'credenciales_incorrectas');
             
             // Mostrar CAPTCHA si ya hay 2+ intentos fallidos
             if (RateLimiter::attempts($failedKey) >= 3) {

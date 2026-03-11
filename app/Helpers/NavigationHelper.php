@@ -80,10 +80,6 @@ class NavigationHelper
                     'route'  => 'viticulturist.pest-management.index',
                     'active' => request()->routeIs('viticulturist.pest-management.*'),
                 ],
-            ];
-
-            // GRUPO: CUADERNO (outputs y registros del cuaderno de campo)
-            $menu['notebook'] = [
                 [
                     'icon'   => 'chart-bar-square',
                     'label'  => 'Rendimientos Estimados',
@@ -96,7 +92,10 @@ class NavigationHelper
                     'route'  => 'viticulturist.vendimia.index',
                     'active' => request()->routeIs('viticulturist.vendimia.*'),
                 ],
-                ['divider' => true],
+            ];
+
+            // GRUPO: REGISTROS (compliance y outputs obligatorios del cuaderno)
+            $menu['notebook'] = [
                 [
                     'icon'   => 'chart-bar',
                     'label'  => 'Cumplimiento Cuaderno',
@@ -241,7 +240,7 @@ class NavigationHelper
             $menu['resources'] = [
                 [
                     'icon' => 'user-group',
-                    'label' => 'Equipos y Personal',
+                    'label' => 'Personal',
                     'route' => 'viticulturist.personal.index',
                     'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*'),
                 ],
@@ -371,12 +370,6 @@ class NavigationHelper
                     'route'  => 'winery.harvest-quality.index',
                     'active' => request()->routeIs('winery.harvest-quality*'),
                 ],
-                [
-                    'icon'   => 'clipboard-document-list',
-                    'label'  => 'Actividades de campo',
-                    'route'  => 'winery.field-activities.index',
-                    'active' => request()->routeIs('winery.field-activities*'),
-                ],
             ];
 
             // ── BODEGA ───────────────────────────────────────────────
@@ -418,6 +411,13 @@ class NavigationHelper
                     'route'  => 'winery.product-lots.index',
                     'active' => request()->routeIs('winery.product-lots*'),
                 ],
+                [
+                    'icon'   => 'magnifying-glass-circle',
+                    'label'  => 'Trazabilidad',
+                    'route'  => 'winery.traceability.index',
+                    'active' => request()->routeIs('winery.traceability*'),
+                    'wip'    => true,
+                ],
             ];
 
 
@@ -452,6 +452,13 @@ class NavigationHelper
                     'label'  => 'Teledetección',
                     'route'  => 'remote-sensing.dashboard',
                     'active' => request()->routeIs('remote-sensing.*'),
+                ],
+                ['divider' => true],
+                [
+                    'icon'   => 'pencil-square',
+                    'label'  => 'Actividades de Campo',
+                    'route'  => 'winery.field-activities.index',
+                    'active' => request()->routeIs('winery.field-activities*'),
                 ],
             ];
 
@@ -489,6 +496,13 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.invoices.products*'),
                 ],
                 [
+                    'icon'   => 'document-check',
+                    'label'  => 'VeriFactu',
+                    'route'  => 'winery.verifactu.index',
+                    'active' => request()->routeIs('winery.verifactu*'),
+                    'wip'    => true,
+                ],
+                [
                     'icon'   => 'users',
                     'label'  => 'Clientes',
                     'route'  => 'winery.clients.index',
@@ -496,7 +510,39 @@ class NavigationHelper
                 ],
             ];
 
-            // ── REGISTRO OFICIAL ─────────────────────────────────────
+            // ── NORMATIVA BODEGA ─────────────────────────────────────
+            $menu['winery_normativa'] = [
+                [
+                    'icon'   => 'document-text',
+                    'label'  => 'AICA',
+                    'route'  => 'winery.aica.index',
+                    'active' => request()->routeIs('winery.aica*'),
+                    'wip'    => true,
+                ],
+                [
+                    'icon'   => 'shield-check',
+                    'label'  => 'Registros Sanitarios',
+                    'route'  => 'winery.sanitary-registrations.index',
+                    'active' => request()->routeIs('winery.sanitary-registrations*'),
+                    'wip'    => true,
+                ],
+                [
+                    'icon'   => 'identification',
+                    'label'  => 'Autorizaciones de Embotellado',
+                    'route'  => 'winery.bottling-authorizations.index',
+                    'active' => request()->routeIs('winery.bottling-authorizations*'),
+                    'wip'    => true,
+                ],
+                [
+                    'icon'   => 'sparkles',
+                    'label'  => 'Certificaciones Ecológicas',
+                    'route'  => 'winery.eco-certifications.index',
+                    'active' => request()->routeIs('winery.eco-certifications*'),
+                    'wip'    => true,
+                ],
+            ];
+
+            // ── REGISTRO OFICIAL (Sistema) ────────────────────────────
             $menu['compliance'] = [
                 [
                     'icon'   => 'document-chart-bar',
