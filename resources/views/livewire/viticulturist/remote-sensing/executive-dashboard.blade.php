@@ -1,5 +1,4 @@
-<div class="min-h-screen bg-gradient-to-br from-zinc-50 to-blue-50 relative"
-     @if($generatingData) wire:poll.8s="checkGeneratingData" @endif>
+<div class="min-h-screen bg-gradient-to-br from-zinc-50 to-blue-50 relative">
     <style>
         @keyframes fadeInUp {
             from {
@@ -22,25 +21,18 @@
         .delay-600 { animation-delay: 0.6s; opacity: 0; }
     </style>
 
-    {{-- Overlay bloqueante mientras se generan datos del satélite --}}
-    @if($generatingData)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 text-center">
-                <svg class="animate-spin h-16 w-16 text-green-600 mx-auto mb-6" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
-                <h3 class="text-xl font-bold text-zinc-900 mb-2">🛰️ Obteniendo datos del satélite</h3>
-                <p class="text-zinc-600 mb-4">Espera un momento. Los datos aparecerán automáticamente en 1-2 minutos.</p>
-                <p class="text-sm text-zinc-500">No cierres esta ventana para evitar interrumpir la generación.</p>
-                <p class="text-sm text-zinc-400 mt-4">Tiempo transcurrido: {{ $generatingElapsedSeconds < 60 ? $generatingElapsedSeconds . ' seg' : ceil($generatingElapsedSeconds / 60) . ' min' }}</p>
-                <button wire:click="$set('generatingData', false)"
-                        class="mt-6 px-6 py-2 text-sm text-zinc-500 hover:text-zinc-700 underline">
-                    Continuar en segundo plano
-                </button>
-            </div>
+    {{-- Overlay bloqueante mientras Livewire ejecuta generateData --}}
+    <div wire:loading wire:target="generateData"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 text-center">
+            <svg class="animate-spin h-16 w-16 text-green-600 mx-auto mb-6" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <h3 class="text-xl font-bold text-zinc-900 mb-2">🛰️ Obteniendo datos del satélite</h3>
+            <p class="text-zinc-600">Consultando NASA... unos segundos.</p>
         </div>
-    @endif
+    </div>
     
     <div class="container mx-auto px-4 py-6">
         {{-- Header --}}
@@ -428,45 +420,21 @@
                 @endif
                 
                 <div class="mt-8 max-w-md mx-auto">
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-left">
-                        <p class="text-blue-900 font-semibold mb-2">¿Cómo obtener datos?</p>
-                        <ol class="text-blue-800 text-sm space-y-2 list-decimal list-inside">
-                            <li>Asegúrate de que la parcela tenga coordenadas SIGPAC</li>
-                            <li>Haz click en "Generar Datos Ahora"</li>
-                            <li>Los datos aparecerán en 1-2 minutos</li>
-                        </ol>
-                    </div>
-                    
-                    <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                        <button wire:click="generateData" 
+                    <div class="mt-6 flex justify-center">
+                        <button wire:click="generateData"
                                 wire:loading.attr="disabled"
+                                wire:target="generateData"
                                 class="px-8 py-3 bg-green-600 hover:bg-green-700 disabled:bg-zinc-400 text-white rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
-                            <svg wire:loading.remove wire:target="generateData" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
-                            <svg wire:loading wire:target="generateData" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                            </svg>
-                            <span wire:loading.remove wire:target="generateData">🛰️ Generar Datos Ahora</span>
-                            <span wire:loading wire:target="generateData">Generando...</span>
-                        </button>
-                        
-                        <button wire:click="refreshData" 
-                                class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
-                            🔄 Verificar Datos
+                            🛰️ Generar Datos Ahora
                         </button>
                     </div>
-                    
-                    @if(session()->has('success'))
-                        <div class="mt-4 bg-green-50 border border-green-200 rounded-lg p-4 text-green-800 text-sm">
-                            ✅ {{ session('success') }}
-                        </div>
-                    @endif
-                    
-                    @if(session()->has('error'))
+
+                    @if($generateError)
                         <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-red-800 text-sm">
-                            ❌ {{ session('error') }}
+                            ❌ {{ $generateError }}
                         </div>
                     @endif
                 </div>

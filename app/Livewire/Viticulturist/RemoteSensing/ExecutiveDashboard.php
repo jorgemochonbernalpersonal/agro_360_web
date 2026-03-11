@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Viticulturist\RemoteSensing;
 
-use App\Jobs\GenerateRemoteSensingDataJob;
 use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
+use App\Services\RemoteSensing\NasaEarthdataService;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Cache;
@@ -19,11 +19,7 @@ class ExecutiveDashboard extends Component
     public ?Plot $selectedPlot = null;
     public array $summary = [];
     public bool $loading = false;
-    public bool $generatingData = false;
-    public int $generatingElapsedSeconds = 0;
-
-    private const GENERATING_POLL_INTERVAL = 8; // segundos
-    private const GENERATING_MAX_WAIT = 150; // 2.5 minutos
+    public string $generateError = '';
 
     public function mount()
     {
@@ -132,56 +128,26 @@ class ExecutiveDashboard extends Component
 
     public function generateData()
     {
-        if (!$this->selectedPlot) {
-            session()->flash('error', 'No hay parcela seleccionada.');
-            return;
-        }
+        if (!$this->selectedPlotId) return;
+
+        $this->generateError = '';
 
         try {
-            GenerateRemoteSensingDataJob::dispatch($this->selectedPlotId, true, $this->selectedRecintoId);
+            $plot = Plot::find($this->selectedPlotId);
+            if (!$plot) return;
 
-            $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
-            Cache::forget($cacheKey);
+            $service = app(NasaEarthdataService::class);
+            $service->clearCache($plot);
+            $service->getLatestData($plot, true);
 
-            $this->generatingData = true;
-            $this->generatingElapsedSeconds = 0;
-            session()->flash('success', '🛰️ Generación iniciada. Esperando datos del satélite...');
+            Cache::forget("executive_dashboard_summary_{$this->selectedPlotId}");
+            $this->loadSummary();
         } catch (\Exception $e) {
-            logger()->error('Generate data dispatch failed', [
+            $this->generateError = 'Error al obtener datos: ' . $e->getMessage();
+            logger()->error('generateData failed', [
                 'plot_id' => $this->selectedPlotId,
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ]);
-            session()->flash('error', 'Error al iniciar generación: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Llamado por wire:poll mientras se esperan los datos del satélite.
-     * Comprueba si ya hay datos y actualiza el estado.
-     */
-    public function checkGeneratingData(): void
-    {
-        if (!$this->generatingData || !$this->selectedPlotId) {
-            return;
-        }
-
-        $this->generatingElapsedSeconds += self::GENERATING_POLL_INTERVAL;
-
-        // Timeout: dejar de esperar
-        if ($this->generatingElapsedSeconds >= self::GENERATING_MAX_WAIT) {
-            $this->generatingData = false;
-            session()->flash('success', 'Si los datos no aparecen, usa "Verificar Datos" en unos minutos.');
-            return;
-        }
-
-        $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";
-        Cache::forget($cacheKey);
-        $this->loadSummary();
-
-        $vigorStatus = $this->summary['vigor']['status'] ?? 'no_data';
-        if ($vigorStatus !== 'no_data') {
-            $this->generatingData = false;
-            session()->flash('success', '✅ Datos satelitales recibidos correctamente.');
         }
     }
 
