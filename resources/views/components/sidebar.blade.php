@@ -22,8 +22,8 @@
     $chapters = [];
     if ($user->role === 'viticulturist') {
         $chapters = [
-            ['key' => 'campana',   'icon' => 'pencil-square',     'label' => 'Campaña',   'sections' => ['operations']],
-            ['key' => 'cuaderno',  'icon' => 'document-text',     'label' => 'Registros', 'sections' => ['notebook']],
+            ['key' => 'campana',   'icon' => 'pencil-square',     'label' => 'Campaña',         'sections' => ['operations']],
+            ['key' => 'cuaderno',  'icon' => 'document-text',     'label' => 'Cuaderno de Campo', 'sections' => ['notebook']],
             ['key' => 'parcelas',  'icon' => 'map',                'label' => 'Parcelas',  'sections' => ['plots_analysis']],
             ['key' => 'recursos',  'icon' => 'wrench-screwdriver', 'label' => 'Recursos',  'sections' => ['resources']],
             ['key' => 'normativa', 'icon' => 'shield-check',       'label' => 'Normativa', 'sections' => ['compliance']],

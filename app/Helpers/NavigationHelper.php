@@ -56,7 +56,7 @@ class NavigationHelper
                 'new'   => true,
             ];
 
-            // GRUPO: CAMPAÑA (trabajo diario, sin submenus)
+            // GRUPO: CAMPAÑA — gestión de campaña + vendimia
             $menu['operations'] = [
                 [
                     'icon'   => 'clipboard-document-list',
@@ -78,28 +78,16 @@ class NavigationHelper
                 ],
                 ['divider' => true],
                 [
-                    'icon'   => 'pencil-square',
-                    'label'  => 'Actividades de Campo',
-                    'route'  => 'viticulturist.digital-notebook',
-                    'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*'),
-                ],
-                [
-                    'icon'   => 'bug-ant',
-                    'label'  => 'Gestión de Plagas',
-                    'route'  => 'viticulturist.pest-management.index',
-                    'active' => request()->routeIs('viticulturist.pest-management.*'),
+                    'icon'   => 'archive-box-arrow-down',
+                    'label'  => 'Vendimia',
+                    'route'  => 'viticulturist.vendimia.index',
+                    'active' => request()->routeIs('viticulturist.vendimia.*'),
                 ],
                 [
                     'icon'   => 'chart-bar-square',
                     'label'  => 'Rendimientos Estimados',
                     'route'  => 'viticulturist.digital-notebook.estimated-yields.index',
                     'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*'),
-                ],
-                [
-                    'icon'   => 'archive-box-arrow-down',
-                    'label'  => 'Vendimia',
-                    'route'  => 'viticulturist.vendimia.index',
-                    'active' => request()->routeIs('viticulturist.vendimia.*'),
                 ],
                 [
                     'icon'   => 'chat-bubble-left-right',
@@ -111,8 +99,70 @@ class NavigationHelper
                 ],
             ];
 
-            // GRUPO: REGISTROS (compliance y outputs obligatorios del cuaderno)
+            // GRUPO: CUADERNO DE CAMPO — actividades + compliance
             $menu['notebook'] = [
+                [
+                    'icon'   => 'pencil-square',
+                    'label'  => 'Cuaderno Digital',
+                    'route'  => 'viticulturist.digital-notebook',
+                    'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*'),
+                ],
+                ['divider' => true],
+                [
+                    'icon'   => 'beaker',
+                    'label'  => 'Tratamiento',
+                    'route'  => 'viticulturist.digital-notebook.treatment.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.treatment.*'),
+                ],
+                [
+                    'icon'   => 'funnel',
+                    'label'  => 'Fertilización',
+                    'route'  => 'viticulturist.digital-notebook.fertilization.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.fertilization.*'),
+                ],
+                [
+                    'icon'   => 'cloud',
+                    'label'  => 'Riego',
+                    'route'  => 'viticulturist.digital-notebook.irrigation.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.irrigation.*'),
+                ],
+                [
+                    'icon'   => 'wrench-screwdriver',
+                    'label'  => 'Labor Cultural',
+                    'route'  => 'viticulturist.digital-notebook.cultural.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.cultural.*'),
+                ],
+                [
+                    'icon'   => 'eye',
+                    'label'  => 'Observación',
+                    'route'  => 'viticulturist.digital-notebook.observation.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.observation.*'),
+                ],
+                [
+                    'icon'   => 'scissors',
+                    'label'  => 'Cosecha',
+                    'route'  => 'viticulturist.digital-notebook.harvest.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.harvest.*'),
+                ],
+                [
+                    'icon'   => 'sparkles',
+                    'label'  => 'Poda',
+                    'route'  => 'viticulturist.digital-notebook.pruning.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.pruning.*'),
+                ],
+                [
+                    'icon'   => 'archive-box',
+                    'label'  => 'Post-vendimia',
+                    'route'  => 'viticulturist.digital-notebook.post-harvest.create',
+                    'active' => request()->routeIs('viticulturist.digital-notebook.post-harvest.*'),
+                ],
+                [
+                    'icon'   => 'bug-ant',
+                    'label'  => 'Gestión de Plagas',
+                    'route'  => 'viticulturist.pest-management.index',
+                    'active' => request()->routeIs('viticulturist.pest-management.*'),
+                ],
+                ['divider' => true],
                 [
                     'icon'   => 'chart-bar',
                     'label'  => 'Cumplimiento Cuaderno',

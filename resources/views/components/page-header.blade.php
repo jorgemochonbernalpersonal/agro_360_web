@@ -63,6 +63,8 @@
     } elseif (request()->routeIs('viticulturist.pac.*')) {
         $detectedChapter = 'pac';
     } elseif (request()->routeIs(
+        'viticulturist.digital-notebook*',
+        'viticulturist.pest-management*',
         'viticulturist.pac-compliance*',
         'viticulturist.residue*', 'viticulturist.energy*',
         'viticulturist.cue*', 'viticulturist.official*',
