@@ -138,12 +138,22 @@ class ExecutiveDashboard extends Component
 
             $service = app(NasaEarthdataService::class);
             $service->clearCache($plot);
-            $service->getLatestData($plot, true);
+            $result = $service->getLatestData($plot, true);
+
+            if (!$result) {
+                // Leer última línea del log para mostrar causa real
+                $logFile = storage_path('logs/laravel-' . now()->format('Y-m-d') . '.log');
+                $this->generateError = 'La API de NASA no devolvió datos. Revisa los logs del servidor para más detalles.';
+                logger()->warning('generateData: getLatestData returned null', [
+                    'plot_id' => $this->selectedPlotId,
+                ]);
+                return;
+            }
 
             Cache::forget("executive_dashboard_summary_{$this->selectedPlotId}");
             $this->loadSummary();
         } catch (\Exception $e) {
-            $this->generateError = 'Error al obtener datos: ' . $e->getMessage();
+            $this->generateError = 'Error: ' . $e->getMessage();
             logger()->error('generateData failed', [
                 'plot_id' => $this->selectedPlotId,
                 'error'   => $e->getMessage(),
