@@ -258,6 +258,76 @@
             // Escala
             L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
 
+            // Botón geolocalización
+            const LocateControl = L.Control.extend({
+                options: { position: 'topright' },
+                onAdd(map) {
+                    const btn = L.DomUtil.create('button', '');
+                    btn.title = '¿Dónde estoy?';
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="9" stroke-dasharray="4 2"/></svg>`;
+                    btn.style.cssText = 'width:34px;height:34px;background:#fff;border:2px solid rgba(0,0,0,.2);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;';
+
+                    let locMarker = null;
+                    let locCircle = null;
+                    let watching = false;
+                    let watchId = null;
+
+                    L.DomEvent.on(btn, 'click', function(e) {
+                        L.DomEvent.stopPropagation(e);
+
+                        if (watching) {
+                            // Desactivar
+                            navigator.geolocation.clearWatch(watchId);
+                            if (locMarker) { map.removeLayer(locMarker); locMarker = null; }
+                            if (locCircle) { map.removeLayer(locCircle); locCircle = null; }
+                            watching = false;
+                            btn.style.color = '#333';
+                            btn.style.background = '#fff';
+                            return;
+                        }
+
+                        if (!navigator.geolocation) {
+                            alert('Tu navegador no soporta geolocalización.');
+                            return;
+                        }
+
+                        btn.style.color = '#16a34a';
+                        btn.style.background = '#f0fdf4';
+
+                        watchId = navigator.geolocation.watchPosition(
+                            (pos) => {
+                                const latlng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+                                const accuracy = pos.coords.accuracy;
+
+                                if (!locMarker) {
+                                    locCircle = L.circle(latlng, { radius: accuracy, color: '#3b82f6', fillColor: '#93c5fd', fillOpacity: 0.2, weight: 1 }).addTo(map);
+                                    locMarker = L.circleMarker(latlng, { radius: 8, color: '#1d4ed8', fillColor: '#3b82f6', fillOpacity: 1, weight: 2 })
+                                        .bindTooltip('Tu posición', { permanent: false, direction: 'top' })
+                                        .addTo(map);
+                                    map.setView(latlng, 17);
+                                } else {
+                                    locMarker.setLatLng(latlng);
+                                    locCircle.setLatLng(latlng).setRadius(accuracy);
+                                }
+                                watching = true;
+                            },
+                            (err) => {
+                                btn.style.color = '#333';
+                                btn.style.background = '#fff';
+                                watching = false;
+                                if (err.code === err.PERMISSION_DENIED) {
+                                    alert('Permiso de ubicación denegado. Actívalo en la configuración del navegador.');
+                                }
+                            },
+                            { enableHighAccuracy: true, maximumAge: 5000 }
+                        );
+                    });
+
+                    return btn;
+                }
+            });
+            new LocateControl().addTo(map);
+
             // Renderizar todos los recintos
             renderAllPlots();
 
