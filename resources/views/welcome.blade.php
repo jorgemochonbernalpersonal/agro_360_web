@@ -477,6 +477,7 @@
                     <h1 class="text-5xl lg:text-6xl font-bold text-[var(--color-agro-green-dark)] leading-tight">
                         <span class="block">Cuaderno de Campo Digital</span>
                         <span class="block text-3xl lg:text-4xl text-[var(--color-agro-green)] mt-2">Para viticultores, bodegas y Denominaciones de Origen</span>
+                        <span class="block text-lg lg:text-xl font-normal text-gray-500 mt-3">Del viñedo a la botella — cumple normativa, gestiona parcelas y lleva la trazabilidad completa. Sin papel.</span>
                     </h1>
 
                     <p class="text-xl text-gray-600 leading-relaxed">
@@ -707,6 +708,8 @@
                 </div>
             </div>
 
+            <p class="text-center text-sm text-zinc-400 -mt-8 mb-16">Una bodega puede gestionar múltiples viticultores. Un viticultor puede trabajar con varias bodegas.</p>
+
             <!-- Cuatro cards de rol -->
             <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
                 <!-- Viticultor -->
@@ -722,7 +725,7 @@
                         <strong>Aunque cambies de bodega, tus datos siguen siendo tuyos.</strong>
                     </p>
                     <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-[var(--color-agro-green)] font-semibold text-sm hover:underline">
-                        Empezar gratis — 3 meses sin coste
+                        Empezar gratis — sin tarjeta
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -742,7 +745,7 @@
                         o completo por 9€/mes.
                     </p>
                     <a href="{{ content_route('content.bodegas') }}" class="inline-flex items-center gap-1.5 text-red-600 font-semibold text-sm hover:underline">
-                        Empezar gratis — 3 meses sin coste
+                        Empezar gratis — sin tarjeta
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -761,7 +764,7 @@
                         <strong>Gestiona viñedo, vendimia y elaboración sin duplicar cuentas ni pagar dos planes separados.</strong>
                     </p>
                     <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-1.5 text-violet-600 font-semibold text-sm hover:underline">
-                        Empezar gratis — 3 meses sin coste
+                        Empezar gratis — sin tarjeta
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -889,7 +892,7 @@
                         </svg>
                     </div>
                     <h3 class="font-bold text-lg text-[var(--color-agro-green-dark)] mb-2">Trazabilidad Completa</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">Desde la parcela hasta la botella. Cada lote sabe de dónde viene. Auditorías y DO en segundos.</p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">Desde la parcela hasta la entrega. Cada lote documentado para auditorías y DO.</p>
                     <span class="text-[var(--color-agro-green)] text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Saber más
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -922,10 +925,15 @@
                         <li class="flex items-center gap-2"><span class="text-red-400">✓</span> Panel de viticultores proveedores en tiempo real</li>
                         <li class="flex items-center gap-2"><span class="text-red-400">✓</span> Teledetección NDVI de las parcelas de tus proveedores</li>
                     </ul>
-                    <a href="{{ url('/software-bodegas') }}" class="inline-flex items-center gap-2 text-red-600 font-semibold text-sm hover:underline">
-                        Ver todo lo que incluye para bodegas
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </a>
+                    <div class="flex flex-col gap-3 mt-3">
+                        <a href="{{ url('/software-bodegas') }}" class="inline-flex items-center gap-2 text-red-600 font-semibold text-sm hover:underline">
+                            Ver todo lo que incluye para bodegas
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 text-white bg-red-600 hover:bg-red-700 transition-colors font-semibold text-sm px-4 py-2 rounded-lg self-start">
+                            Empezar como Bodega — Gratis
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Productor -->
@@ -938,12 +946,9 @@
                         </div>
                     </div>
                     <ul class="space-y-2 text-sm text-zinc-600 mb-6">
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo el cuaderno de campo del viticultor</li>
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> SIGPAC, teledetección NDVI y PAC</li>
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Gestión completa de vendimia propia</li>
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Depósitos, elaboración y lotes de vino</li>
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo del plan Viticultor Independiente</li>
+                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Todo del plan Bodega</li>
                         <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Trazabilidad viñedo → bodega → botella</li>
-                        <li class="flex items-center gap-2"><span class="text-violet-500">✓</span> Un solo panel. Una sola cuenta.</li>
                     </ul>
                     <a href="{{ route('register') }}" rel="nofollow" class="inline-flex items-center gap-2 text-violet-700 font-semibold text-sm hover:underline">
                         Empezar como Productor
@@ -1043,7 +1048,7 @@
                         <li class="flex items-center gap-1.5"><span class="text-violet-500">✓</span> Trazabilidad cepa → botella</li>
                     </ul>
                     <span class="text-violet-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Ver precio Productor
+                        Empezar como Productor
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </span>
                 </a>
@@ -1076,13 +1081,6 @@
                 <h2 class="text-4xl lg:text-5xl font-bold text-[var(--color-agro-green-dark)] mb-4">
                     ¿Por qué elegir Agro365?
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Diseñado para <strong><a href="{{ content_route('content.viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">viticultores</a></strong>,
-                    <strong><a href="{{ content_route('content.bodegas') }}" class="text-[var(--color-agro-green)] hover:underline">bodegas</a></strong>
-                    y Denominaciones de Origen en España. Cumplimiento normativo PAC,
-                    <a href="{{ content_route('content.cuaderno-digital-viticultores') }}" class="text-[var(--color-agro-green)] hover:underline">cuaderno de campo digital</a>
-                    obligatorio 2027 y trazabilidad completa desde el viñedo hasta la botella.
-                </p>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
@@ -1094,7 +1092,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">Ahorra Tiempo</h3>
-                    <p class="text-gray-600">Reduce el tiempo de gestión administrativa en un 70%. Más tiempo para lo que realmente importa: tu viñedo.</p>
+                    <p class="text-gray-600">Registra un tratamiento en menos de 2 minutos desde el móvil. Sin papel, sin Excel, sin volver a la oficina.</p>
                 </div>
                 
                 <!-- Beneficio 2 -->
@@ -1105,7 +1103,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">Cumplimiento Normativo</h3>
-                    <p class="text-gray-600">Cumple automáticamente con todas las normativas vigentes. Sin preocupaciones, sin multas.</p>
+                    <p class="text-gray-600">El cuaderno genera automáticamente los informes exigidos por PAC y la normativa 2027. Sin errores de formato, sin campos olvidados.</p>
                 </div>
                 
                 <!-- Beneficio 3 -->
@@ -1116,7 +1114,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-[var(--color-agro-green-dark)] mb-2">Mejora Rentabilidad</h3>
-                    <p class="text-gray-600">Controla ingresos, gastos y optimiza tu rentabilidad. Toma decisiones basadas en datos reales.</p>
+                    <p class="text-gray-600">Ve qué parcelas rinden más, qué costes se disparan y qué vendimias han sido más rentables. Decisiones con datos, no con intuición.</p>
                 </div>
             </div>
         </div>
@@ -1160,7 +1158,7 @@
                         <!-- Tier completo invitado -->
                         <div class="p-3 bg-[var(--color-agro-green-bg)] rounded-xl border border-[var(--color-agro-green-light)]/40">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-[var(--color-agro-green-dark)]">Completo (invitado por bodega)</span>
+                                <span class="text-xs font-semibold text-[var(--color-agro-green-dark)]">Completo — Lo pagas tú o te lo cubre tu bodega</span>
                                 <span class="text-base font-bold text-[var(--color-agro-green-dark)]">9€/mes</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">o 85€/año — SIGPAC, PAC, teledetección...</p>
@@ -1172,10 +1170,11 @@
                                 <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">14€/mes</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">o 130€/año — acceso completo</p>
+                            <p class="text-xs font-semibold text-[var(--color-agro-green-dark)] mt-1">✦ 3 meses gratis al registrarte</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
-                        @foreach(['Cuaderno de campo digital (obligatorio 2027)', 'SIGPAC y gestión de parcelas', 'Teledetección NDVI satelital', 'PAC y normativa vigente', 'Facturación agrícola + Verifactu', 'Vendimias y plantaciones', 'App móvil (funciona sin conexión)', 'Soporte por email (48h)'] as $feature)
+                        @foreach(['Cuaderno de campo digital (obligatorio 2027)', 'SIGPAC y gestión de parcelas', 'Teledetección NDVI satelital', 'PAC y normativa vigente', 'Facturación agrícola + Verifactu', 'Vendimias y plantaciones', 'Soporte por email (48h)'] as $feature)
                         <li class="flex items-start gap-2.5">
                             <svg class="w-5 h-5 text-[var(--color-agro-green)] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -1187,7 +1186,7 @@
                     <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:from-[var(--color-agro-green)] hover:to-[var(--color-agro-green-dark)] transition-all duration-300 shadow-lg font-semibold">
                         Comenzar Gratis
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">Básico gratis siempre · 3 meses gratis en planes de pago · Sin tarjeta</p>
                 </div>
 
                 <!-- Bodega -->
@@ -1213,6 +1212,7 @@
                                 <span class="text-xl font-bold text-red-700">14€/mes</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">o 130€/año · Onboarding incluido + migración gratuita</p>
+                            <p class="text-xs font-semibold text-red-700 mt-1">✦ 3 meses gratis al registrarte</p>
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
@@ -1228,7 +1228,7 @@
                     <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 transition-all duration-300 shadow-lg font-semibold">
                         Comenzar Gratis
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">3 meses gratis · Sin tarjeta requerida</p>
                 </div>
 
                 <!-- Productor -->
@@ -1251,6 +1251,7 @@
                                 <span class="text-xl font-bold text-violet-700">19€/mes</span>
                             </div>
                             <p class="text-xs text-zinc-500 mt-0.5">o 175€/año — ~14,5€/mes</p>
+                            <p class="text-xs font-semibold text-violet-700 mt-1">✦ 3 meses gratis al registrarte</p>
                         </div>
                         <!-- Ahorro -->
                         <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-center">
@@ -1259,7 +1260,7 @@
                         </div>
                     </div>
                     <ul class="space-y-3 mb-8 text-sm">
-                        @foreach(['Todo del plan Viticultor Independiente', 'Todo del plan Bodega', 'Cuaderno de campo digital (obligatorio 2027)', 'Gestión completa de vendimia propia', 'Trazabilidad viñedo → bodega → botella', 'Facturación agrícola + Verifactu', 'Gestión de vinos y elaboración', 'Soporte prioritario (24h)'] as $feature)
+                        @foreach(['Todo del plan Viticultor Independiente', 'Todo del plan Bodega', 'Trazabilidad viñedo → bodega → botella'] as $feature)
                         <li class="flex items-start gap-2.5">
                             <svg class="w-5 h-5 text-violet-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -1271,7 +1272,7 @@
                     <a href="{{ route('register') }}" class="block w-full text-center px-6 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-700 hover:to-violet-600 transition-all duration-300 shadow-lg font-semibold">
                         Comenzar Gratis
                     </a>
-                    <p class="text-center text-xs text-zinc-400 mt-3">Sin tarjeta requerida</p>
+                    <p class="text-center text-xs text-zinc-400 mt-3">3 meses gratis · Sin tarjeta requerida</p>
                 </div>
 
                 <!-- DO -->
@@ -1333,7 +1334,7 @@
                 </div>
                 <div class="text-center p-5 bg-violet-50 rounded-2xl border border-violet-200">
                     <p class="text-zinc-700 text-sm">
-                        <strong>¿Cultivas y elaboras tu propio vino?</strong> El plan Productor incluye
+                        <strong>¿Eres viticultor y bodega a la vez?</strong> El plan Productor incluye
                         <strong>todo el cuaderno de campo más toda la gestión de bodega</strong> en una sola cuenta.
                         <span class="text-violet-700 font-semibold">19€/mes</span> frente a los 28€/mes que costaría contratar los dos planes por separado.
                     </p>
@@ -1382,10 +1383,6 @@
                     [
                         '¿Los informes que genera Agro365 son válidos para inspecciones PAC?',
                         'Sí. Los informes se generan con firma electrónica SHA-256 y código QR de verificación, cumpliendo con los requisitos de las inspecciones PAC y con la normativa de cuaderno de campo digital 2027.',
-                    ],
-                    [
-                        '¿Funciona sin conexión a internet en el campo?',
-                        'Sí. La app móvil permite registrar actividades sin conexión. Los datos se sincronizan automáticamente cuando recuperas cobertura.',
                     ],
                     [
                         '¿Cuánto tiempo lleva configurar Agro365?',
@@ -1443,7 +1440,7 @@
                     🌿 Empezar como Viticultor — Gratis
                 </a>
                 <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/70 text-white hover:bg-white/10 transition-all font-semibold text-lg">
-                    🍷 Empezar Gratis — Bodega
+                    🍷 Empezar como Bodega — Gratis
                 </a>
                 <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-violet-500 hover:bg-violet-400 text-white transition-all font-semibold text-lg shadow-lg">
                     🌿🍷 Empezar como Productor — 19€/mes
