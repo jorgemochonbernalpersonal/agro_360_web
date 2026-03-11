@@ -171,6 +171,23 @@
         let polygonLayers = [];
         let originalStyles = [];
 
+        // Área geodésica aproximada (m²) desde array de LatLng
+        function geodesicArea(latLngs) {
+            const R = 6378137;
+            let area = 0;
+            const pts = Array.isArray(latLngs[0]) ? latLngs : latLngs.map(p => [p.lat, p.lng]);
+            const n = pts.length;
+            for (let i = 0; i < n; i++) {
+                const [lat1, lng1] = pts[i];
+                const [lat2, lng2] = pts[(i + 1) % n];
+                const dLng = (lng2 - lng1) * Math.PI / 180;
+                const a1 = lat1 * Math.PI / 180;
+                const a2 = lat2 * Math.PI / 180;
+                area += dLng * (2 + Math.sin(a1) + Math.sin(a2));
+            }
+            return Math.abs(area * R * R / 2);
+        }
+
         // Inicializar mapa con lazy loading de Leaflet
         async function initMap() {
             // ✅ Cargar Leaflet de forma lazy
@@ -184,7 +201,7 @@
             // Capas base
             const streetMap = L.tileLayer(
                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                { 
+                {
                     attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
                     maxZoom: 19
                 }
@@ -192,18 +209,54 @@
 
             const satelliteMap = L.tileLayer(
                 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                { 
+                {
                     attribution: '© <a href="https://www.esri.com/">Esri</a>',
                     maxZoom: 19
                 }
             );
 
+            // Ortofoto PNOA (IGN España) — máxima resolución en rural
+            const pnoaMap = L.tileLayer.wms(
+                'https://www.ign.es/wms-inspire/pnoa-ma',
+                {
+                    layers: 'OI.OrthoimageCoverage',
+                    format: 'image/jpeg',
+                    transparent: false,
+                    attribution: '© <a href="https://www.ign.es">IGN España – PNOA</a>',
+                    maxZoom: 20,
+                    version: '1.3.0',
+                }
+            );
+
+            // Catastro (DGC) — parcelas catastrales oficiales (capa de superposición)
+            const catastroLayer = L.tileLayer.wms(
+                'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx',
+                {
+                    layers: 'Catastro',
+                    format: 'image/png',
+                    transparent: true,
+                    attribution: '© <a href="https://www.catastro.meh.es">Dirección General del Catastro</a>',
+                    maxZoom: 20,
+                    opacity: 0.7,
+                }
+            );
+
             satelliteMap.addTo(map);
 
-            L.control.layers({
-                "🗺️ Mapa": streetMap,
-                "🛰️ Satélite": satelliteMap
-            }, null, { position: 'topright' }).addTo(map);
+            L.control.layers(
+                {
+                    "🗺️ Mapa": streetMap,
+                    "🛰️ Satélite": satelliteMap,
+                    "📷 PNOA (IGN)": pnoaMap,
+                },
+                {
+                    "🏛️ Catastro": catastroLayer,
+                },
+                { position: 'topright' }
+            ).addTo(map);
+
+            // Escala
+            L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
 
             // Renderizar todos los recintos
             renderAllPlots();
@@ -240,24 +293,38 @@
                 // Crear polígono
                 const polygon = L.polygon(coords, style);
 
+                // Área aproximada en ha desde el polígono Leaflet
+                const rawLatLngs = polygon.getLatLngs()[0];
+                const areaM2 = rawLatLngs && rawLatLngs.length > 2 ? geodesicArea(rawLatLngs) : 0;
+                const areaHa = areaM2 > 0 ? (areaM2 / 10000).toFixed(2) : null;
+
                 // Popup con información
                 polygon.bindPopup(`
-                    <div class="p-3">
-                        <h3 class="font-bold text-lg mb-2" style="color: ${geometry.color.line}">
-                            ${geometry.sigpac_formatted}
-                        </h3>
-                        <div class="space-y-1 text-sm">
-                            <p><strong>Recinto:</strong> ${geometry.index}</p>
-                            <p><strong>Código:</strong> ${geometry.sigpac_code}</p>
+                    <div style="min-width:200px">
+                        <div style="border-left:4px solid ${geometry.color.line}; padding-left:10px; margin-bottom:10px">
+                            <div style="font-weight:700; font-size:15px; color:${geometry.color.line}">
+                                Recinto ${geometry.index}
+                            </div>
+                            <div style="font-family:monospace; font-size:12px; color:#555; margin-top:2px">
+                                ${geometry.sigpac_formatted}
+                            </div>
                         </div>
+                        <table style="width:100%; font-size:12px; border-collapse:collapse">
+                            <tr><td style="color:#888; padding:2px 0">Polígono</td><td style="font-weight:600; text-align:right">${geometry.polygon || '—'}</td></tr>
+                            <tr><td style="color:#888; padding:2px 0">Recinto</td><td style="font-weight:600; text-align:right">${geometry.enclosure || '—'}</td></tr>
+                            ${areaHa ? `<tr><td style="color:#888; padding:2px 0">Área aprox.</td><td style="font-weight:600; text-align:right">${areaHa} ha</td></tr>` : ''}
+                            <tr><td style="color:#888; padding:2px 0">Código</td><td style="font-family:monospace; font-size:11px; text-align:right">${geometry.sigpac_code}</td></tr>
+                        </table>
                     </div>
-                `, { maxWidth: 300 });
+                `, { maxWidth: 280 });
 
                 // Tooltip al hover
-                polygon.bindTooltip(`Recinto ${geometry.index}`, { 
-                    sticky: true,
-                    direction: 'top'
-                });
+                const polygonLabel = geometry.polygon ? ` · Pol. ${geometry.polygon}` : '';
+                const enclosureLabel = geometry.enclosure ? ` · Rec. ${geometry.enclosure}` : '';
+                polygon.bindTooltip(
+                    `<strong>Recinto ${geometry.index}</strong>${polygonLabel}${enclosureLabel}`,
+                    { sticky: true, direction: 'top' }
+                );
 
                 // Highlight al hover
                 polygon.on('mouseover', function() {

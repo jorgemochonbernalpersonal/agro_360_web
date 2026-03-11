@@ -94,6 +94,13 @@
                         x-data="{
                             parseError: '',
                             pasteRef: '',
+                            padField(el) {
+                                const len = parseInt(el.maxLength);
+                                if (el.value.length > 0 && el.value.length < len) {
+                                    el.value = el.value.padStart(len, '0');
+                                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                                }
+                            },
                             advance(el) {
                                 if (el.value.length >= parseInt(el.maxLength)) {
                                     const inputs = el.closest('.sigpac-fields').querySelectorAll('input[maxlength]');
@@ -241,6 +248,7 @@
                                             placeholder="{{ $field['placeholder'] }}"
                                             maxlength="{{ $field['max'] }}"
                                             x-on:input="advance($el)"
+                                            x-on:blur="padField($el)"
                                             class="w-full font-mono text-center text-sm border rounded-lg px-2 py-2 focus:outline-none focus:ring-2 transition-colors
                                                 {{ $hasFieldError || $isDupField ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-zinc-300 focus:ring-agro-500 focus:border-agro-500' }}"
                                         >

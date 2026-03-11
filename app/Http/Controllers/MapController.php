@@ -184,6 +184,8 @@ class MapController extends Controller
                     'sigpac_code' => $rel->sigpacCode?->code ?? 'N/A',
                     'sigpac_formatted' => $rel->sigpacCode?->formatted_code ?? 'Sin código',
                     'sigpac_id' => $rel->sigpac_code_id,
+                    'polygon' => $rel->sigpacCode?->code_polygon ?? '',
+                    'enclosure' => $rel->sigpacCode?->code_enclosure ?? '',
                     'wkt' => $wkt,
                     'color' => $this->getColorForIndex($index),
                     'highlight' => $highlightSigpacId && $rel->sigpac_code_id == $highlightSigpacId,
