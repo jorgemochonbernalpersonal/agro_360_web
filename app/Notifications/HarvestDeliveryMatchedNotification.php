@@ -30,7 +30,7 @@ class HarvestDeliveryMatchedNotification extends Notification
         $variety = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
         $plot    = $planting?->plot?->name ?? '—';
         $winery  = $harvest?->winery?->name ?? '—';
-        $showUrl = route('viticulturist.vendimia.show', [
+        $showUrl = route('viticulturist.harvests.show', [
             'planting' => $delivery->plot_planting_id,
             'vintage'  => $delivery->vintage_year,
         ]);

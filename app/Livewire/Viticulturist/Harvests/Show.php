@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Viticulturist\Vendimia;
+namespace App\Livewire\Viticulturist\Harvests;
 
 use App\Models\Harvest;
 use App\Models\HarvestDelivery;
@@ -120,7 +120,7 @@ class Show extends Component
             : null;
         $cupoExceeded = $cupoPct !== null && $cupoPct > 100;
 
-        return view('livewire.viticulturist.vendimia.show', [
+        return view('livewire.viticulturist.harvests.show', [
             'cuadernoHarvests'   => $cuadernoHarvests,
             'wineryReceptions'   => $wineryReceptions,
             'declaredDeliveries' => $declaredDeliveries,

@@ -3,7 +3,7 @@
     description="Registra una nueva cosecha (vendimia) en el cuaderno digital"
     icon="archive-box-arrow-down"
     icon-color="from-agro-500 to-agro-700"
-    :back-url="route('viticulturist.vendimia.index')"
+    :back-url="route('viticulturist.harvests.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="harvest-form">
         
@@ -179,7 +179,7 @@
                                 <span class="text-blue-700 font-medium">Recibido por bodega esta añada:</span>
                                 <span class="text-blue-800 font-bold ml-1">{{ number_format($wineryReceivedKg, 0) }} kg</span>
                             </div>
-                            <a href="{{ route('viticulturist.vendimia.index') }}" wire:navigate class="ml-auto text-xs text-blue-600 hover:underline">Ver detalle →</a>
+                            <a href="{{ route('viticulturist.harvests.index') }}" wire:navigate class="ml-auto text-xs text-blue-600 hover:underline">Ver detalle →</a>
                         </div>
                     @endif
 
@@ -602,7 +602,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions 
-            :cancel-url="route('viticulturist.vendimia.index')"
+            :cancel-url="route('viticulturist.harvests.index')"
             submit-label="Registrar Cosecha"
         />
     </form>

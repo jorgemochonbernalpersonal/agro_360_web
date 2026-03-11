@@ -200,7 +200,7 @@
                                 <span class="text-blue-700 font-medium">Recibido por bodega esta añada:</span>
                                 <span class="text-blue-800 font-bold ml-1">{{ number_format($wineryReceivedKg, 0) }} kg</span>
                             </div>
-                            <a href="{{ route('viticulturist.vendimia.index') }}" wire:navigate class="ml-auto text-xs text-blue-600 hover:underline">Ver detalle →</a>
+                            <a href="{{ route('viticulturist.harvests.index') }}" wire:navigate class="ml-auto text-xs text-blue-600 hover:underline">Ver detalle →</a>
                         </div>
                     @endif
 

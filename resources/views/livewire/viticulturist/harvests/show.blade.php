@@ -3,7 +3,7 @@
     <x-agro.page-header
         :title="($planting->grapeVariety?->name ?? $planting->name) . ' · ' . $vintageYear"
         :description="'Parcela: ' . ($planting->plot?->name ?? '—') . ' · ' . number_format($planting->area_planted, 2) . ' ha'"
-        :back="route('viticulturist.vendimia.index')"
+        :back="route('viticulturist.harvests.index')"
     />
 
     {{-- Resumen global --}}

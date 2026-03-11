@@ -12,7 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class VendimiaPdfController extends Controller
+class HarvestsPdfController extends Controller
 {
     public function export(Request $request)
     {

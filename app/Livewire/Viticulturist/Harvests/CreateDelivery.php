@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Viticulturist\Vendimia;
+namespace App\Livewire\Viticulturist\Harvests;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
@@ -164,7 +164,7 @@ class CreateDelivery extends Component
             $this->toastSuccess('Entrega registrada correctamente.');
         }
 
-        return redirect()->route('viticulturist.vendimia.index');
+        return redirect()->route('viticulturist.harvests.index');
     }
 
     /**
@@ -243,7 +243,7 @@ class CreateDelivery extends Component
                 ->get();
         }
 
-        return view('livewire.viticulturist.vendimia.create-delivery', [
+        return view('livewire.viticulturist.harvests.create-delivery', [
             'plots'              => $plots,
             'availablePlantings' => $availablePlantings,
         ])->layout('layouts.app', ['title' => 'Registrar entrega - Agro365']);

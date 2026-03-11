@@ -1,35 +1,10 @@
 <x-agro.form-card
-    title="Editar entrega de uva"
-    description="Modifica los datos de esta entrega manual"
+    title="Registrar entrega de uva"
+    description="Anota una entrega manual a cooperativa, almacenista u otro comprador"
     icon="truck"
     icon-color="from-blue-500 to-blue-700"
-    :back-url="route('viticulturist.vendimia.index')"
+    :back-url="route('viticulturist.harvests.index')"
 >
-    @if($delivery->harvest_id)
-        @if($delivery->isResolved())
-            <flux:callout variant="info" icon="check-circle" class="mb-6">
-                <flux:callout.heading>Disputa resuelta por la bodega</flux:callout.heading>
-                <flux:callout.text>
-                    Esta entrega tiene una disputa ya resuelta. Si modificas los kg declarados, la plantación o la añada, se perderá la vinculación con la recepción de bodega y quedará pendiente de re-confirmar.
-                </flux:callout.text>
-            </flux:callout>
-        @elseif($delivery->isMatched())
-            <flux:callout variant="success" icon="check-circle" class="mb-6">
-                <flux:callout.heading>Entrega confirmada por la bodega</flux:callout.heading>
-                <flux:callout.text>
-                    Esta entrega ya fue confirmada. Si modificas los kg declarados, la plantación o la añada, se perderá la confirmación y quedará pendiente de re-confirmar.
-                </flux:callout.text>
-            </flux:callout>
-        @elseif($delivery->isDisputed())
-            <flux:callout variant="warning" icon="exclamation-triangle" class="mb-6">
-                <flux:callout.heading>Entrega en reclamación</flux:callout.heading>
-                <flux:callout.text>
-                    Esta entrega tiene una diferencia en curso con la bodega. Si modificas los kg, la plantación o la añada, se perderá la vinculación y la reclamación quedará sin efecto.
-                </flux:callout.text>
-            </flux:callout>
-        @endif
-    @endif
-
     <form wire:submit="save" class="space-y-8">
 
         {{-- Parcela y plantación --}}
@@ -292,29 +267,9 @@
             </flux:field>
         </x-agro.form-section>
 
-        <div class="flex items-center justify-between pt-6 border-t border-zinc-200">
-            <flux:button
-                wire:click="delete"
-                wire:confirm="¿Eliminar esta entrega? Esta acción no se puede deshacer."
-                variant="danger"
-                icon="trash"
-                type="button"
-            >
-                Eliminar entrega
-            </flux:button>
-
-            <div class="flex items-center gap-3">
-                <flux:button href="{{ route('viticulturist.vendimia.index') }}" variant="outline">
-                    Cancelar
-                </flux:button>
-                <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed">
-                    <span wire:loading.remove>Guardar cambios</span>
-                    <span wire:loading class="flex items-center gap-2">
-                        <flux:icon icon="arrow-path" class="w-4 h-4 animate-spin" />
-                        Guardando...
-                    </span>
-                </flux:button>
-            </div>
-        </div>
+        <x-agro.form-actions
+            :cancel-url="route('viticulturist.harvests.index')"
+            submit-label="Registrar entrega"
+        />
     </form>
 </x-agro.form-card>

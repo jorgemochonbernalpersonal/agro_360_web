@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Viticulturist\Harvest;
 
-use App\Livewire\Viticulturist\Vendimia\CreateDelivery;
+use App\Livewire\Viticulturist\Harvests\CreateDelivery;
 use App\Models\HarvestDelivery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
@@ -33,7 +33,7 @@ class CreateDeliveryTest extends ViticulturistTestCase
             ->set('delivery_date', '2024-09-15')
             ->call('save')
             ->assertHasNoErrors()
-            ->assertRedirect(route('viticulturist.vendimia.index'));
+            ->assertRedirect(route('viticulturist.harvests.index'));
 
         $this->assertDatabaseHas('harvest_deliveries', [
             'viticulturist_id' => $this->viticulturist->id,

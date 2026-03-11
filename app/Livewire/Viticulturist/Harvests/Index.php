@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Viticulturist\Vendimia;
+namespace App\Livewire\Viticulturist\Harvests;
 
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
@@ -240,7 +240,7 @@ class Index extends Component
 
         $rows = $rows->values();
 
-        return view('livewire.viticulturist.vendimia.index', [
+        return view('livewire.viticulturist.harvests.index', [
             'rows'          => $rows,
             'stats'         => $stats,
             'campaignYears' => $campaignYears,

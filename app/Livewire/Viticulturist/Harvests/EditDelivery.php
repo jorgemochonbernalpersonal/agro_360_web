@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Viticulturist\Vendimia;
+namespace App\Livewire\Viticulturist\Harvests;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\HarvestDelivery;
@@ -174,7 +174,7 @@ class EditDelivery extends Component
 
         $this->toastSuccess($message);
 
-        return redirect()->route('viticulturist.vendimia.index');
+        return redirect()->route('viticulturist.harvests.index');
     }
 
     public function delete(): mixed
@@ -223,7 +223,7 @@ class EditDelivery extends Component
 
         $this->toastSuccess('Entrega eliminada.');
 
-        return redirect()->route('viticulturist.vendimia.index');
+        return redirect()->route('viticulturist.harvests.index');
     }
 
     public function render()
@@ -244,7 +244,7 @@ class EditDelivery extends Component
                 ->get();
         }
 
-        return view('livewire.viticulturist.vendimia.edit-delivery', [
+        return view('livewire.viticulturist.harvests.edit-delivery', [
             'plots'              => $plots,
             'availablePlantings' => $availablePlantings,
         ])->layout('layouts.app', ['title' => 'Editar entrega - Agro365']);

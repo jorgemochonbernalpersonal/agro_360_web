@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Viticulturist\Harvest;
 
-use App\Livewire\Viticulturist\Vendimia\EditDelivery;
+use App\Livewire\Viticulturist\Harvests\EditDelivery;
 use App\Models\HarvestDelivery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
@@ -33,7 +33,7 @@ class EditDeliveryTest extends ViticulturistTestCase
             ->set('notes', 'Nota nueva')
             ->call('save')
             ->assertHasNoErrors()
-            ->assertRedirect(route('viticulturist.vendimia.index'));
+            ->assertRedirect(route('viticulturist.harvests.index'));
 
         $this->assertDatabaseHas('harvest_deliveries', [
             'id'         => $delivery->id,
@@ -178,7 +178,7 @@ class EditDeliveryTest extends ViticulturistTestCase
 
         Livewire::test(EditDelivery::class, ['delivery' => $delivery])
             ->call('delete')
-            ->assertRedirect(route('viticulturist.vendimia.index'));
+            ->assertRedirect(route('viticulturist.harvests.index'));
 
         $this->assertDatabaseMissing('harvest_deliveries', ['id' => $delivery->id]);
     }
@@ -198,7 +198,7 @@ class EditDeliveryTest extends ViticulturistTestCase
 
         Livewire::test(EditDelivery::class, ['delivery' => $delivery])
             ->call('delete')
-            ->assertRedirect(route('viticulturist.vendimia.index'));
+            ->assertRedirect(route('viticulturist.harvests.index'));
 
         $this->assertDatabaseMissing('harvest_deliveries', ['id' => $delivery->id]);
         Notification::assertSentTo(

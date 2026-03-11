@@ -163,8 +163,8 @@ class NavigationHelper
                 [
                     'icon'   => 'archive-box-arrow-down',
                     'label'  => 'Vendimia',
-                    'route'  => 'viticulturist.vendimia.index',
-                    'active' => request()->routeIs('viticulturist.vendimia.*'),
+                    'route'  => 'viticulturist.harvests.index',
+                    'active' => request()->routeIs('viticulturist.harvests.*'),
                 ],
                 [
                     'icon'   => 'bug-ant',

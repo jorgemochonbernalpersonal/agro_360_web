@@ -568,7 +568,7 @@ class CreateHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha registrada correctamente.');
-            return redirect()->route('viticulturist.vendimia.index');
+            return redirect()->route('viticulturist.harvests.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar cosecha', [
                 'error' => $e->getMessage(),

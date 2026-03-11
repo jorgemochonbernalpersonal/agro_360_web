@@ -47,7 +47,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <a href="{{ route('viticulturist.vendimia.export-pdf', ['vintage' => $vintageYear]) }}"
+        <a href="{{ route('viticulturist.harvests.export-pdf', ['vintage' => $vintageYear]) }}"
            target="_blank"
            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
             <flux:icon icon="arrow-down-tray" class="size-4 text-zinc-500" />
@@ -341,7 +341,7 @@
                             </span>
                             <div class="flex items-center gap-1">
                                 @if($row['planting_id'])
-                                    <a href="{{ route('viticulturist.vendimia.show', ['planting' => $row['planting_id'], 'vintage' => $vintageYear]) }}"
+                                    <a href="{{ route('viticulturist.harvests.show', ['planting' => $row['planting_id'], 'vintage' => $vintageYear]) }}"
                                        wire:navigate
                                        class="{{ $btnBase }}" title="Ver detalle">
                                         <flux:icon icon="eye" class="size-4" />
