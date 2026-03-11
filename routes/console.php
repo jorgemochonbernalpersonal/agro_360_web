@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
 // Ejecutar cola automáticamente cada minuto (para producción con Cron)
-Schedule::command('queue:work --stop-when-empty --max-time=50')
+// Escucha remote-sensing y default para procesar todos los jobs
+Schedule::command('queue:work --stop-when-empty --max-time=50 --queue=remote-sensing,default')
     ->everyMinute()
     ->withoutOverlapping()
     ->runInBackground();
@@ -17,28 +18,23 @@ Artisan::command('inspire', function () {
 // Programar eliminación de usuarios no verificados diariamente a las 3 AM
 Schedule::command('users:delete-unverified', ['--hours' => 24])
     ->dailyAt('03:00')
-    ->withoutOverlapping()
-    ->onOneServer();
+    ->withoutOverlapping();
 
-// Programar limpieza de logs antiguos diariamente a las 2 AM
 Schedule::command('logs:cleanup')
     ->dailyAt('02:00')
-    ->withoutOverlapping()
-    ->onOneServer();
+    ->withoutOverlapping();
 
 // 🛰️ Actualizar NDVI de todas las parcelas diariamente a las 2 AM
 // Usa queue para no bloquear, con delay entre requests para respetar rate limits
 Schedule::command('remote-sensing:update-all', [
     '--queue' => 'remote-sensing',
-    '--delay' => 2, // 2 segundos entre cada plot
+    '--delay' => 2,
 ])
     ->dailyAt('02:00')
-    ->withoutOverlapping()
-    ->onOneServer();
+    ->withoutOverlapping();
 
-// 📊 Limpiar datos antiguos de remote sensing (opcional - cada lunes)
+// 📊 Limpiar datos antiguos de remote sensing (cada lunes)
 Schedule::command('remote-sensing:clean-old-data', ['--days' => 365])
     ->weeklyOn(1, '03:00')
-    ->withoutOverlapping()
-    ->onOneServer();
+    ->withoutOverlapping();
 
