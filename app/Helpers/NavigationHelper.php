@@ -400,12 +400,6 @@ class NavigationHelper
             // RAIL BOTTOM — acceso directo desde el rail (sin flyout)
             $menu['rail_bottom'] = [
                 [
-                    'icon'   => 'cog-6-tooth',
-                    'label'  => 'Configuración',
-                    'route'  => 'viticulturist.settings',
-                    'active' => request()->routeIs('viticulturist.settings'),
-                ],
-                [
                     'icon'   => 'question-mark-circle',
                     'label'  => 'Soporte',
                     'route'  => 'viticulturist.support.index',
