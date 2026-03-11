@@ -83,6 +83,8 @@ class MunicipalityMapController extends Controller
                             'wkt' => $wkt,
                             'sigpac_code' => $rel->sigpacCode->code ?? 'Sin código',
                             'sigpac_formatted' => $rel->sigpacCode->formatted_code ?? 'Sin código',
+                            'polygon' => $rel->sigpacCode->code_polygon ?? '',
+                            'enclosure' => $rel->sigpacCode->code_enclosure ?? '',
                             'plot_name' => $rel->plot->name ?? 'Sin parcela',
                             'color' => [
                                 'fill' => "hsla({$hue}, 70%, 50%, 0.3)",
