@@ -49,10 +49,11 @@
                 <flux:error name="email" />
             </flux:field>
 
-            <flux:field>
-                <flux:label>Tipo de Cuenta</flux:label>
-                <flux:select wire:model="role" required>
-                    @if(auth()->check())
+            @if(auth()->check())
+                {{-- Selector interno (admin/supervisor): select plano sin decoración --}}
+                <flux:field>
+                    <flux:label>Tipo de Cuenta</flux:label>
+                    <flux:select wire:model="role" required>
                         @foreach($this->getAllowedRoles(auth()->user()) as $allowedRole)
                             <flux:select.option value="{{ $allowedRole }}">
                                 {{ match($allowedRole) {
@@ -65,17 +66,71 @@
                                 } }}
                             </flux:select.option>
                         @endforeach
-                    @else
-                        <flux:select.option value="viticulturist">Viticultor</flux:select.option>
-                        <flux:select.option value="winery">Bodega</flux:select.option>
-                        <flux:select.option value="producer">Productor (viticultor + bodega)</flux:select.option>
-                    @endif
-                </flux:select>
-                <flux:error name="role" />
-                @if(!auth()->check())
-                    <flux:description>Selecciona tu perfil de usuario</flux:description>
-                @endif
-            </flux:field>
+                    </flux:select>
+                    <flux:error name="role" />
+                </flux:field>
+            @else
+                {{-- Selector público: tarjetas de rol con descripción clara --}}
+                <div x-data>
+                    <flux:label class="mb-2 block">¿Cómo vas a usar Agro365?</flux:label>
+                    <div class="grid gap-3">
+
+                        {{-- Viticultor --}}
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="role" value="viticulturist" class="sr-only peer">
+                            <div class="flex items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200
+                                        border-zinc-200 hover:border-green-300
+                                        peer-checked:border-green-500 peer-checked:bg-green-50">
+                                <span class="text-2xl leading-none mt-0.5">🌿</span>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-zinc-800 text-sm">Viticultor</p>
+                                    <p class="text-xs text-zinc-500 mt-0.5">Cultivo uva y la vendo o entrego a una bodega. Gestiono mis parcelas, cuaderno de campo y entregas.</p>
+                                    <p class="text-xs text-green-700 font-medium mt-1.5">✓ Plan básico gratis · Completo desde 9€/mes</p>
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Bodega --}}
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="role" value="winery" class="sr-only peer">
+                            <div class="flex items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200
+                                        border-zinc-200 hover:border-red-300
+                                        peer-checked:border-red-500 peer-checked:bg-red-50">
+                                <span class="text-2xl leading-none mt-0.5">🍷</span>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-zinc-800 text-sm">Bodega</p>
+                                    <p class="text-xs text-zinc-500 mt-0.5">Recibo uva de viticultores y gestiono la elaboración. Controlo depósitos, vendimia y facturación a mis proveedores.</p>
+                                    <p class="text-xs text-red-700 font-medium mt-1.5">✓ Desde 14€/mes · Incluye gestión de viticultores</p>
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Productor --}}
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="role" value="producer" class="sr-only peer">
+                            <div class="flex items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200
+                                        border-zinc-200 hover:border-violet-300
+                                        peer-checked:border-violet-500 peer-checked:bg-violet-50">
+                                <span class="text-2xl leading-none mt-0.5">🌿🍷</span>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-zinc-800 text-sm">
+                                        Productor
+                                        <span class="text-xs font-normal text-violet-600 ml-1">Viticultor + Bodega en uno</span>
+                                    </p>
+                                    <p class="text-xs text-zinc-500 mt-0.5">
+                                        Cultivo mis propias uvas <strong>y</strong> elaboro mi propio vino.
+                                        No vendo la uva — la vinifco yo mismo. Soy viñedo y bodega en uno.
+                                    </p>
+                                    <p class="text-xs text-zinc-400 mt-1 italic">Solo si elaboras tu propio vino. Si vendes la uva a una bodega, selecciona Viticultor.</p>
+                                    <p class="text-xs text-violet-700 font-medium mt-1.5">✓ Bundle 19€/mes · Acceso completo a viñedo y bodega</p>
+                                </div>
+                            </div>
+                        </label>
+
+                    </div>
+                    <flux:error name="role" class="mt-1" />
+                </div>
+            @endif
 
             <flux:field>
                 <flux:label>Contraseña</flux:label>

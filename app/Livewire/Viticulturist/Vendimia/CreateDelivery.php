@@ -8,6 +8,8 @@ use App\Models\HarvestDelivery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Notifications\HarvestDeliveryAutoDisputedNotification;
+use App\Notifications\HarvestDeliveryCreatedNotification;
+use App\Models\WineryViticulturist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -134,6 +136,15 @@ class CreateDelivery extends Component
             'acidity_level'         => $this->acidity_level ?: null,
             'ph_level'              => $this->ph_level ?: null,
         ]);
+
+        // Notify all linked wineries that a new delivery has been declared
+        $delivery->load(['plotPlanting.grapeVariety', 'plotPlanting.plot', 'viticulturist']);
+        WineryViticulturist::where('viticulturist_id', Auth::id())
+            ->with('winery')
+            ->get()
+            ->pluck('winery')
+            ->filter(fn ($w) => $w?->email)
+            ->each(fn ($winery) => $winery->notify(new HarvestDeliveryCreatedNotification($delivery)));
 
         // Try to link with an existing unlinked winery reception (reverse auto-link)
         // This handles the case where the winery recorded the harvest before the

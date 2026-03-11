@@ -3,6 +3,7 @@
 namespace Tests\Traits;
 
 use App\Models\Campaign;
+use App\Models\Container;
 use App\Models\GrapeReceptionBatch;
 use App\Models\GrapeVariety;
 use App\Models\Harvest;
@@ -83,6 +84,20 @@ trait CreatesDeliveryScenario
             'delivered_kg'     => 1000,
             'delivery_date'    => '2024-09-15',
             'status'           => 'pending',
+        ], $attrs));
+    }
+
+    /**
+     * Create a Container owned by the winery.
+     */
+    protected function makeContainer(array $attrs = []): Container
+    {
+        return Container::create(array_merge([
+            'user_id'       => $this->winery->id,
+            'name'          => 'Depósito Test',
+            'capacity'      => 5000,
+            'used_capacity' => 0,
+            'archived'      => false,
         ], $attrs));
     }
 

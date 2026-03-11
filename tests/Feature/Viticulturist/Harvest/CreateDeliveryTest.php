@@ -6,6 +6,7 @@ use App\Livewire\Viticulturist\Vendimia\CreateDelivery;
 use App\Models\HarvestDelivery;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\Feature\ViticulturistTestCase;
 use Tests\Traits\CreatesDeliveryScenario;
@@ -277,5 +278,52 @@ class CreateDeliveryTest extends ViticulturistTestCase
         $delivery = HarvestDelivery::where('viticulturist_id', $this->viticulturist->id)->first();
         $this->assertEquals('pending', $delivery->status);
         $this->assertNull($delivery->harvest_id);
+    }
+
+    // ── Winery notification ───────────────────────────────────────────────────
+
+    public function test_creating_delivery_notifies_linked_winery(): void
+    {
+        Notification::fake();
+
+        Livewire::test(CreateDelivery::class)
+            ->set('plot_id', (string) $this->plot->id)
+            ->set('plot_planting_id', (string) $this->planting->id)
+            ->set('buyer_name', 'Bodega Test')
+            ->set('vintage_year', '2024')
+            ->set('delivered_kg', '1000')
+            ->set('delivery_date', '2024-09-15')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        Notification::assertSentTo(
+            $this->winery,
+            \App\Notifications\HarvestDeliveryCreatedNotification::class
+        );
+    }
+
+    public function test_creating_delivery_does_not_notify_unlinked_winery(): void
+    {
+        Notification::fake();
+
+        $otherWinery = \App\Models\User::factory()->create([
+            'role'              => 'winery',
+            'email_verified_at' => now(),
+        ]);
+
+        Livewire::test(CreateDelivery::class)
+            ->set('plot_id', (string) $this->plot->id)
+            ->set('plot_planting_id', (string) $this->planting->id)
+            ->set('buyer_name', 'Otra Bodega')
+            ->set('vintage_year', '2024')
+            ->set('delivered_kg', '1000')
+            ->set('delivery_date', '2024-09-15')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        Notification::assertNotSentTo(
+            $otherWinery,
+            \App\Notifications\HarvestDeliveryCreatedNotification::class
+        );
     }
 }
