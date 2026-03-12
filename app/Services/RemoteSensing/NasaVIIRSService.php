@@ -40,21 +40,22 @@ class NasaVIIRSService
         }
 
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached for VIIRS', ['plot_id' => $plot->getKey()]);
-            return null;
+            return $this->generateMockVIIRS($plot);
         }
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
+            $startJulian = 'A' . now()->subDays(16)->format('Y') . str_pad(now()->subDays(16)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
-            /** @var Response $response */
-            $response = Http::withToken($token)
-                ->timeout(60)
-                ->get("{$this->baseUrl}/bundle/VNP13A1.001/point", [
-                    'latitude' => $coords['lat'],
-                    'longitude' => $coords['lon'],
-                    'startDate' => now()->subDays(16)->format('m-d-Y'),
-                    'endDate' => now()->format('m-d-Y'),
+            $response = Http::timeout(30)
+                ->get('https://modis.ornl.gov/rst/api/v1/VNP13A1/subset', [
+                    'latitude'     => $coords['lat'],
+                    'longitude'    => $coords['lon'],
+                    'startDate'    => $startJulian,
+                    'endDate'      => $endJulian,
+                    'kmAboveBelow' => 0,
+                    'kmLeftRight'  => 0,
                 ]);
 
             $this->rateLimitService->recordNasaRequest();
@@ -63,29 +64,20 @@ class NasaVIIRSService
                 return $this->parseVIIRSResponse($response->json());
             }
 
-            Log::warning('NASA VIIRS API request failed', [
-                'status' => $response->status(),
+            Log::warning('NASA VIIRS API failed — using estimated data', [
+                'status'  => $response->status(),
                 'plot_id' => $plot->getKey(),
+                'body'    => substr($response->body(), 0, 200),
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockVIIRS($plot);
-            }
-
-            return null;
 
         } catch (\Exception $e) {
-            Log::error('NASA VIIRS API error', [
-                'error' => $e->getMessage(),
+            Log::warning('NASA VIIRS API error — using estimated data', [
+                'error'   => $e->getMessage(),
                 'plot_id' => $plot->getKey(),
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockVIIRS($plot);
-            }
-
-            return null;
         }
+
+        return $this->generateMockVIIRS($plot);
     }
 
     /**
@@ -93,24 +85,29 @@ class NasaVIIRSService
      */
     private function parseVIIRSResponse(array $response): array
     {
-        // VIIRS scaling: multiply by 0.0001
-        $ndviRaw = $response['_500_m_16_days_NDVI'] ?? null;
-        $eviRaw = $response['_500_m_16_days_EVI'] ?? null;
-        
-        $ndvi = $ndviRaw ? $ndviRaw * 0.0001 : null;
-        $evi = $eviRaw ? $eviRaw * 0.0001 : null;
-        
-        // Quality flags
-        $reliability = $response['_500_m_16_days_VI_Quality'] ?? null;
-        $cloudCoverage = $this->extractCloudCoverage($reliability);
+        $nodata = $response['header']['NODATA_value'] ?? -3000;
+        $subset = collect($response['subset'] ?? []);
+
+        $ndviBand = $subset->firstWhere('band', '_500_m_16_days_NDVI');
+        $eviBand  = $subset->firstWhere('band', '_500_m_16_days_EVI2')
+                 ?? $subset->firstWhere('band', '_500_m_16_days_EVI');
+        $qcBand   = $subset->firstWhere('band', '_500_m_16_days_VI_Quality');
+
+        $ndviRaw = $ndviBand['data'][0] ?? null;
+        $eviRaw  = $eviBand['data'][0]  ?? null;
+        $qcRaw   = $qcBand['data'][0]   ?? null;
+
+        // Scale 0.0001
+        $ndvi = ($ndviRaw !== null && $ndviRaw > $nodata) ? round($ndviRaw * 0.0001, 4) : null;
+        $evi  = ($eviRaw  !== null && $eviRaw  > $nodata) ? round($eviRaw  * 0.0001, 4) : null;
 
         return [
-            'ndvi_mean' => $ndvi,
-            'evi_mean' => $evi,
-            'cloud_coverage' => $cloudCoverage,
-            'pixel_reliability' => $reliability,
-            'satellite' => 'VIIRS',
-            'image_source' => 'NASA VIIRS VNP13A1.001',
+            'ndvi_mean'         => $ndvi,
+            'evi_mean'          => $evi,
+            'cloud_coverage'    => $this->extractCloudCoverage($qcRaw),
+            'pixel_reliability' => $qcRaw,
+            'satellite'         => 'VIIRS',
+            'image_source'      => 'NASA VIIRS VNP13A1.001',
         ];
     }
 

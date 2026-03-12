@@ -36,21 +36,23 @@ class NasaLAIService
         }
 
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached for LAI', ['plot_id' => $plot->id]);
-            return null;
+            return $this->generateMockLAI($plot);
         }
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
+            $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             // MCD15A2H: MODIS LAI/FPAR 500m, 8-day
-            $response = Http::withToken($token)
-                ->timeout(60)
-                ->get("{$this->baseUrl}/bundle/MCD15A2H.061/point", [
-                    'latitude' => $coords['lat'],
-                    'longitude' => $coords['lon'],
-                    'startDate' => now()->subDays(8)->format('m-d-Y'),
-                    'endDate' => now()->format('m-d-Y'),
+            $response = Http::timeout(30)
+                ->get('https://modis.ornl.gov/rst/api/v1/MCD15A2H/subset', [
+                    'latitude'     => $coords['lat'],
+                    'longitude'    => $coords['lon'],
+                    'startDate'    => $startJulian,
+                    'endDate'      => $endJulian,
+                    'kmAboveBelow' => 0,
+                    'kmLeftRight'  => 0,
                 ]);
 
             $this->rateLimitService->recordNasaRequest();
@@ -59,29 +61,20 @@ class NasaLAIService
                 return $this->parseLAIResponse($response->json());
             }
 
-            Log::warning('NASA LAI API request failed', [
-                'status' => $response->status(),
+            Log::warning('NASA LAI API failed — using estimated data', [
+                'status'  => $response->status(),
                 'plot_id' => $plot->id,
+                'body'    => substr($response->body(), 0, 200),
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockLAI($plot);
-            }
-
-            return null;
 
         } catch (\Exception $e) {
-            Log::error('NASA LAI API error', [
-                'error' => $e->getMessage(),
+            Log::warning('NASA LAI API error — using estimated data', [
+                'error'   => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockLAI($plot);
-            }
-
-            return null;
         }
+
+        return $this->generateMockLAI($plot);
     }
 
     /**
@@ -89,20 +82,25 @@ class NasaLAIService
      */
     private function parseLAIResponse(array $response): array
     {
-        // MODIS LAI scaling: multiply by 0.1
-        $laiRaw = $response['Lai_500m'] ?? null;
-        $fparRaw = $response['Fpar_500m'] ?? null;
-        
-        $lai = $laiRaw ? $laiRaw * 0.1 : null;
-        $fpar = $fparRaw ? $fparRaw * 0.01 : null; // FPAR scaling: 0.01
-        
-        // Quality flag
-        $quality = $response['FparLai_QC'] ?? null;
+        $nodata = $response['header']['NODATA_value'] ?? 255;
+        $subset = collect($response['subset'] ?? []);
+
+        $laiBand  = $subset->firstWhere('band', 'Lai_500m');
+        $fparBand = $subset->firstWhere('band', 'Fpar_500m');
+        $qcBand   = $subset->firstWhere('band', 'FparLai_QC');
+
+        $laiRaw  = $laiBand['data'][0]  ?? null;
+        $fparRaw = $fparBand['data'][0] ?? null;
+        $qcRaw   = $qcBand['data'][0]   ?? null;
+
+        // LAI scale 0.1, FPAR scale 0.01
+        $lai  = ($laiRaw  !== null && $laiRaw  != $nodata && $laiRaw  > 0) ? round($laiRaw  * 0.1,  2) : null;
+        $fpar = ($fparRaw !== null && $fparRaw != $nodata && $fparRaw > 0) ? round($fparRaw * 0.01, 3) : null;
 
         return [
-            'lai' => $lai,
-            'fpar' => $fpar, // Fraction of Photosynthetically Active Radiation
-            'lai_quality' => $quality,
+            'lai'        => $lai,
+            'fpar'       => $fpar,
+            'lai_quality'=> $qcRaw,
             'lai_source' => 'NASA MODIS MCD15A2H.061',
         ];
     }

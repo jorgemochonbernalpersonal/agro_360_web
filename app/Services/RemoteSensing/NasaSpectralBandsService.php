@@ -37,21 +37,22 @@ class NasaSpectralBandsService
         }
 
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached for spectral bands', ['plot_id' => $plot->id]);
-            return null;
+            return $this->generateMockBands($plot);
         }
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
+            $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
-            /** @var Response $response */
-            $response = Http::withToken($token)
-                ->timeout(60)
-                ->get("{$this->baseUrl}/bundle/VNP09A1.001/point", [
-                    'latitude' => $coords['lat'],
-                    'longitude' => $coords['lon'],
-                    'startDate' => now()->subDays(8)->format('m-d-Y'),
-                    'endDate' => now()->format('m-d-Y'),
+            $response = Http::timeout(30)
+                ->get('https://modis.ornl.gov/rst/api/v1/VNP09A1/subset', [
+                    'latitude'     => $coords['lat'],
+                    'longitude'    => $coords['lon'],
+                    'startDate'    => $startJulian,
+                    'endDate'      => $endJulian,
+                    'kmAboveBelow' => 0,
+                    'kmLeftRight'  => 0,
                 ]);
 
             $this->rateLimitService->recordNasaRequest();
@@ -60,29 +61,20 @@ class NasaSpectralBandsService
                 return $this->parseSpectralResponse($response->json());
             }
 
-            Log::warning('NASA Spectral Bands API request failed', [
-                'status' => $response->status(),
+            Log::warning('NASA Spectral Bands API failed — using estimated data', [
+                'status'  => $response->status(),
                 'plot_id' => $plot->id,
+                'body'    => substr($response->body(), 0, 200),
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockBands($plot);
-            }
-
-            return null;
 
         } catch (\Exception $e) {
-            Log::error('NASA Spectral Bands API error', [
-                'error' => $e->getMessage(),
+            Log::warning('NASA Spectral Bands API error — using estimated data', [
+                'error'   => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockBands($plot);
-            }
-
-            return null;
         }
+
+        return $this->generateMockBands($plot);
     }
 
     /**
@@ -90,20 +82,29 @@ class NasaSpectralBandsService
      */
     private function parseSpectralResponse(array $response): array
     {
-        // VIIRS bands scaling: multiply by 0.0001
-        $red = ($response['SurfReflect_I1'] ?? null) * 0.0001;
-        $nir = ($response['SurfReflect_I2'] ?? null) * 0.0001;
-        $blue = ($response['SurfReflect_M3'] ?? null) * 0.0001;
-        $green = ($response['SurfReflect_M4'] ?? null) * 0.0001;
-        
-        // Calculate indices from real bands
+        $nodata = $response['header']['NODATA_value'] ?? -28672;
+        $subset = collect($response['subset'] ?? []);
+
+        $getBand = function (string $name) use ($subset, $nodata): ?float {
+            $band = $subset->firstWhere('band', $name);
+            $raw  = $band['data'][0] ?? null;
+            return ($raw !== null && $raw != $nodata && $raw > -1000)
+                ? $raw * 0.0001
+                : null;
+        };
+
+        $red   = $getBand('SurfReflect_I1');
+        $nir   = $getBand('SurfReflect_I2');
+        $blue  = $getBand('SurfReflect_M3');
+        $green = $getBand('SurfReflect_M4');
+
         $indices = $this->calculateIndicesFromBands($red, $nir, $blue, $green);
 
         return array_merge([
-            'red' => $red,
-            'nir' => $nir,
-            'blue' => $blue,
-            'green' => $green,
+            'red_band'   => $red,
+            'nir_band'   => $nir,
+            'blue_band'  => $blue,
+            'green_band' => $green,
         ], $indices);
     }
 

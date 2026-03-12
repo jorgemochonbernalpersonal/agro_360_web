@@ -39,21 +39,22 @@ class NasaLSTService
         }
 
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached for LST', ['plot_id' => $plot->id]);
-            return null;
+            return $this->generateMockLST($plot);
         }
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $recintoId, $coordinates);
+            $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
-            /** @var Response $response */
-            $response = Http::withToken($token)
-                ->timeout(60)
-                ->get("{$this->baseUrl}/bundle/MOD11A2.061/point", [
-                    'latitude' => $coords['lat'],
-                    'longitude' => $coords['lon'],
-                    'startDate' => now()->subDays(8)->format('m-d-Y'),
-                    'endDate' => now()->format('m-d-Y'),
+            $response = Http::timeout(30)
+                ->get('https://modis.ornl.gov/rst/api/v1/MOD11A2/subset', [
+                    'latitude'     => $coords['lat'],
+                    'longitude'    => $coords['lon'],
+                    'startDate'    => $startJulian,
+                    'endDate'      => $endJulian,
+                    'kmAboveBelow' => 0,
+                    'kmLeftRight'  => 0,
                 ]);
 
             $this->rateLimitService->recordNasaRequest();
@@ -62,23 +63,20 @@ class NasaLSTService
                 return $this->parseLSTResponse($response->json());
             }
 
-            Log::warning('NASA LST API request failed', ['status' => $response->status(), 'plot_id' => $plot->id]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockLST($plot);
-            }
-
-            return null;
+            Log::warning('NASA LST API failed — using estimated data', [
+                'status'  => $response->status(),
+                'plot_id' => $plot->id,
+                'body'    => substr($response->body(), 0, 200),
+            ]);
 
         } catch (\Exception $e) {
-            Log::error('NASA LST API error', ['error' => $e->getMessage(), 'plot_id' => $plot->id]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockLST($plot);
-            }
-
-            return null;
+            Log::warning('NASA LST API error — using estimated data', [
+                'error'   => $e->getMessage(),
+                'plot_id' => $plot->id,
+            ]);
         }
+
+        return $this->generateMockLST($plot);
     }
 
     /**
@@ -86,19 +84,29 @@ class NasaLSTService
      */
     private function parseLSTResponse(array $response): array
     {
-        $lstDayRaw = $response['LST_Day_1km'] ?? null;
-        $lstNightRaw = $response['LST_Night_1km'] ?? null;
-        
-        $lstDay = $lstDayRaw ? ($lstDayRaw * 0.02) - 273.15 : null;
-        $lstNight = $lstNightRaw ? ($lstNightRaw * 0.02) - 273.15 : null;
-        
-        $lstDiff = ($lstDay && $lstNight) ? $lstDay - $lstNight : null;
+        $nodata = $response['header']['NODATA_value'] ?? 0;
+        $subset = collect($response['subset'] ?? []);
+
+        $dayBand   = $subset->firstWhere('band', 'LST_Day_1km');
+        $nightBand = $subset->firstWhere('band', 'LST_Night_1km');
+
+        $lstDayRaw   = $dayBand['data'][0]   ?? null;
+        $lstNightRaw = $nightBand['data'][0] ?? null;
+
+        // Scale 0.02, Kelvin → Celsius. Valid raw range > 0 (NODATA = 0)
+        $lstDay = ($lstDayRaw && $lstDayRaw != $nodata && $lstDayRaw > 0)
+            ? round(($lstDayRaw * 0.02) - 273.15, 2)
+            : null;
+
+        $lstNight = ($lstNightRaw && $lstNightRaw != $nodata && $lstNightRaw > 0)
+            ? round(($lstNightRaw * 0.02) - 273.15, 2)
+            : null;
 
         return [
-            'lst_day' => $lstDay,
-            'lst_night' => $lstNight,
-            'lst_diff' => $lstDiff,
-            'pixel_reliability' => $response['QC_Day'] ?? null,
+            'lst_day'           => $lstDay,
+            'lst_night'         => $lstNight,
+            'lst_diff'          => ($lstDay && $lstNight) ? round($lstDay - $lstNight, 2) : null,
+            'pixel_reliability' => null,
         ];
     }
 

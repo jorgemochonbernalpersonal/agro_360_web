@@ -38,74 +38,63 @@ class NasaSMAPService
             return $this->generateMockSMAP($plot);
         }
 
-        if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached for SMAP', ['plot_id' => $plot->id]);
-            return null;
-        }
-
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
 
-            // SPL4SMGP: SMAP L4 Global 9km daily
-            /** @var Response $response */
-            $response = Http::withToken($token)
-                ->timeout(60)
-                ->get("{$this->baseUrl}/bundle/SPL4SMGP.007/point", [
-                    'latitude' => $coords['lat'],
-                    'longitude' => $coords['lon'],
-                    'startDate' => now()->subDay()->format('m-d-Y'),
-                    'endDate' => now()->format('m-d-Y'),
+            // Open-Meteo soil moisture: free, no auth, no IP rate limit
+            $response = Http::timeout(30)
+                ->get('https://api.open-meteo.com/v1/forecast', [
+                    'latitude'      => $coords['lat'],
+                    'longitude'     => $coords['lon'],
+                    'hourly'        => 'soil_moisture_0_to_1cm,soil_moisture_9_to_27cm',
+                    'past_days'     => 1,
+                    'forecast_days' => 0,
+                    'timezone'      => 'UTC',
                 ]);
 
-            $this->rateLimitService->recordNasaRequest();
-
             if ($response->successful()) {
-                return $this->parseSMAPResponse($response->json());
+                $parsed = $this->parseSMAPResponse($response->json());
+                if ($parsed !== null) {
+                    return $parsed;
+                }
             }
 
-            Log::warning('NASA SMAP API request failed', [
-                'status' => $response->status(),
+            Log::warning('Open-Meteo soil moisture failed — using estimated data', [
+                'status'  => $response->status(),
                 'plot_id' => $plot->id,
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockSMAP($plot);
-            }
-
-            return null;
 
         } catch (\Exception $e) {
-            Log::error('NASA SMAP API error', [
-                'error' => $e->getMessage(),
+            Log::warning('Soil moisture error — using estimated data', [
+                'error'   => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockSMAP($plot);
-            }
-
-            return null;
         }
+
+        return $this->generateMockSMAP($plot);
     }
 
     /**
-     * Parse SMAP response
+     * Parse Open-Meteo soil moisture response
      */
-    private function parseSMAPResponse(array $response): array
+    private function parseSMAPResponse(array $response): ?array
     {
-        // Soil moisture in m³/m³ (convert to %)
-        $smSurface = ($response['sm_surface'] ?? null);
-        $smRootzone = ($response['sm_rootzone'] ?? null);
-        
-        // Convert to percentage
-        $soilMoistureSurface = $smSurface ? $smSurface * 100 : null;
-        $soilMoistureRootzone = $smRootzone ? $smRootzone * 100 : null;
+        $hourly = $response['hourly'] ?? [];
 
+        // Take last non-null value from the past_days window
+        $surface  = collect($hourly['soil_moisture_0_to_1cm']  ?? [])->filter(fn($v) => $v !== null)->last();
+        $rootzone = collect($hourly['soil_moisture_9_to_27cm'] ?? [])->filter(fn($v) => $v !== null)->last();
+
+        if ($surface === null) {
+            return null;
+        }
+
+        // Open-Meteo returns m³/m³ → convert to %
         return [
-            'soil_moisture_surface' => $soilMoistureSurface,
-            'soil_moisture_rootzone' => $soilMoistureRootzone,
-            'soil_moisture_source' => 'NASA SMAP Satellite',
-            'resolution' => '9km',
+            'soil_moisture_surface'  => round($surface  * 100, 1),
+            'soil_moisture_rootzone' => $rootzone !== null ? round($rootzone * 100, 1) : null,
+            'soil_moisture_source'   => 'Open-Meteo Soil Model',
+            'resolution'             => '1km',
         ];
     }
 

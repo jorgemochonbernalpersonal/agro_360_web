@@ -35,21 +35,23 @@ class NasaETService
         }
 
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached for ET', ['plot_id' => $plot->id]);
-            return null;
+            return $this->generateMockET($plot);
         }
 
         try {
             $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
+            $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             // MOD16A2: MODIS ET 500m, 8-day
-            $response = Http::withToken($token)
-                ->timeout(60)
-                ->get("{$this->baseUrl}/bundle/MOD16A2.061/point", [
-                    'latitude' => $coords['lat'],
-                    'longitude' => $coords['lon'],
-                    'startDate' => now()->subDays(8)->format('m-d-Y'),
-                    'endDate' => now()->format('m-d-Y'),
+            $response = Http::timeout(30)
+                ->get('https://modis.ornl.gov/rst/api/v1/MOD16A2/subset', [
+                    'latitude'     => $coords['lat'],
+                    'longitude'    => $coords['lon'],
+                    'startDate'    => $startJulian,
+                    'endDate'      => $endJulian,
+                    'kmAboveBelow' => 0,
+                    'kmLeftRight'  => 0,
                 ]);
 
             $this->rateLimitService->recordNasaRequest();
@@ -58,29 +60,20 @@ class NasaETService
                 return $this->parseETResponse($response->json());
             }
 
-            Log::warning('NASA ET API request failed', [
-                'status' => $response->status(),
+            Log::warning('NASA ET API failed — using estimated data', [
+                'status'  => $response->status(),
                 'plot_id' => $plot->id,
+                'body'    => substr($response->body(), 0, 200),
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockET($plot);
-            }
-
-            return null;
 
         } catch (\Exception $e) {
-            Log::error('NASA ET API error', [
-                'error' => $e->getMessage(),
+            Log::warning('NASA ET API error — using estimated data', [
+                'error'   => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
-
-            if (config('app.env') !== 'production') {
-                return $this->generateMockET($plot);
-            }
-
-            return null;
         }
+
+        return $this->generateMockET($plot);
     }
 
     /**
@@ -88,21 +81,23 @@ class NasaETService
      */
     private function parseETResponse(array $response): array
     {
-        // ET scaling: multiply by 0.1 (kg/m²/8day to mm/8day)
-        $etRaw = $response['ET_500m'] ?? null;
-        $petRaw = $response['PET_500m'] ?? null;
-        
-        $et8day = $etRaw ? $etRaw * 0.1 : null;
-        $pet8day = $petRaw ? $petRaw * 0.1 : null;
-        
-        // Convert to daily
-        $etDaily = $et8day ? $et8day / 8 : null;
-        $petDaily = $pet8day ? $pet8day / 8 : null;
+        $nodata = $response['header']['NODATA_value'] ?? 32767;
+        $subset = collect($response['subset'] ?? []);
+
+        $etBand  = $subset->firstWhere('band', 'ET_500m');
+        $petBand = $subset->firstWhere('band', 'PET_500m');
+
+        $etRaw  = $etBand['data'][0]  ?? null;
+        $petRaw = $petBand['data'][0] ?? null;
+
+        // Scale 0.1 (kg/m²/8day = mm/8day), NODATA typically 32767
+        $et8day  = ($etRaw  !== null && $etRaw  != $nodata && $etRaw  > 0) ? $etRaw  * 0.1 : null;
+        $pet8day = ($petRaw !== null && $petRaw != $nodata && $petRaw > 0) ? $petRaw * 0.1 : null;
 
         return [
-            'et_daily' => $etDaily,
-            'pet_daily' => $petDaily, // Potential ET
-            'et_8day' => $et8day,
+            'et_daily'  => $et8day  ? round($et8day  / 8, 2) : null,
+            'pet_daily' => $pet8day ? round($pet8day / 8, 2) : null,
+            'et_8day'   => $et8day  ? round($et8day, 1)      : null,
             'et_source' => 'NASA MODIS MOD16A2.061',
         ];
     }

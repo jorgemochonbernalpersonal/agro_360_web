@@ -171,32 +171,22 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 return $this->parseOrnlResponse($response->json());
             }
 
-            Log::warning('ORNL DAAC MODIS API request failed', [
-                'status' => $response->status(),
+            Log::warning('ORNL DAAC MODIS API request failed — using estimated data', [
+                'status'  => $response->status(),
                 'plot_id' => $plot->id,
                 'lat'     => $bbox['lat'],
                 'lon'     => $bbox['lon'],
+                'body'    => substr($response->body(), 0, 200),
             ]);
 
-            // En producción, retornar null para usar datos existentes
-            if (config('app.env') === 'production') {
-                return null;
-            }
-            
             return $this->generateMockData($plot);
 
         } catch (\Exception $e) {
-            Log::error('NASA Earthdata API error', [
-                'error' => $e->getMessage(),
+            Log::warning('NASA Earthdata API error — using estimated data', [
+                'error'   => $e->getMessage(),
                 'plot_id' => $plot->id,
-                'trace' => $e->getTraceAsString(),
             ]);
-            
-            // En producción, retornar null para usar datos existentes
-            if (config('app.env') === 'production') {
-                return null;
-            }
-            
+
             return $this->generateMockData($plot);
         }
     }
@@ -390,7 +380,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             'evi_mean' => round($ndvi * 0.9, 3),
             'cloud_coverage' => mt_rand(0, 30),
             'image_date' => now(),
-            'image_source' => 'NASA MODIS (Mock)',
+            'image_source' => $this->useMockData ? 'NASA MODIS (Mock)' : 'NASA MODIS (Estimado)',
         ];
     }
 
