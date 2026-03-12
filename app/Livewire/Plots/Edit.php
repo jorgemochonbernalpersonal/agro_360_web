@@ -253,7 +253,8 @@ class Edit extends Component
             DB::commit();
 
             $this->toastSuccess('Parcela actualizada correctamente.');
-            return $this->redirect(route('plots.index'), navigate: true);
+            $indexRoute = Auth::user()->isProducer() ? 'producer.plots.index' : 'plots.index';
+            return $this->redirect(route($indexRoute), navigate: true);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al actualizar parcela: ' . $e->getMessage(), [

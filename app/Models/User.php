@@ -37,6 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_beta_user',
         'beta_ends_at',
         'beta_access_granted',
+        'compra_uva_externa',
     ];
 
     /**
@@ -66,6 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_beta_user' => 'boolean',
             'beta_ends_at' => 'datetime',
             'beta_access_granted' => 'boolean',
+            'compra_uva_externa' => 'boolean',
         ];
     }
 

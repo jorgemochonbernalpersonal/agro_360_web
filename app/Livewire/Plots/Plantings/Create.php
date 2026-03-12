@@ -123,9 +123,10 @@ class Create extends Component
 
         $this->toastSuccess('Plantación creada correctamente.');
 
-        $indexRoute = Auth::user()->hasWineryAccess()
-            ? route('winery.plots.index')
-            : route('plots.plantings.index');
+        $user = Auth::user();
+        $indexRoute = $user->isProducer()
+            ? route('producer.plots.index')
+            : ($user->hasWineryAccess() ? route('winery.plots.index') : route('plots.plantings.index'));
 
         return $this->redirect($indexRoute, navigate: true);
     }
