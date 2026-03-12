@@ -134,22 +134,38 @@ class NasaVIIRSService
     /**
      * Generate mock VIIRS data (slightly better than MODIS mock)
      */
-    private function generateMockVIIRS(Plot $plot): array
+    private function generateMockVIIRS(Plot $plot, ?array $coords = null): array
     {
         $month = now()->month;
         $seed = (int) $plot->getKey() * 1500 + now()->dayOfYear;
         mt_srand($seed);
 
+        $lat = $coords['lat'] ?? CoordinatesHelper::getCoordinates($plot)['lat'];
+        $isCanary = $lat < 30.0;
+
         // VIIRS has better sensitivity, so slightly higher precision
-        if ($month >= 4 && $month <= 10) {
-            $ndviBase = 0.65;
-            $cloudBase = 15;
-        } elseif ($month >= 11 || $month <= 2) {
-            $ndviBase = 0.35;
-            $cloudBase = 40;
+        if ($isCanary) {
+            if ($month >= 6 && $month <= 9) {
+                $ndviBase  = 0.65;
+                $cloudBase = 10;
+            } elseif ($month >= 10 || $month <= 2) {
+                $ndviBase  = 0.50;
+                $cloudBase = 20;
+            } else {
+                $ndviBase  = 0.58;
+                $cloudBase = 15;
+            }
         } else {
-            $ndviBase = 0.50;
-            $cloudBase = 25;
+            if ($month >= 4 && $month <= 10) {
+                $ndviBase  = 0.65;
+                $cloudBase = 15;
+            } elseif ($month >= 11 || $month <= 2) {
+                $ndviBase  = 0.35;
+                $cloudBase = 40;
+            } else {
+                $ndviBase  = 0.50;
+                $cloudBase = 25;
+            }
         }
 
         $ndvi = $ndviBase + (mt_rand(-100, 100) / 1000);

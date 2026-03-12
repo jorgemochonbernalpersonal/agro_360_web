@@ -226,23 +226,41 @@ class NasaSpectralBandsService
     /**
      * Generate mock spectral bands
      */
-    private function generateMockBands(Plot $plot): array
+    private function generateMockBands(Plot $plot, ?array $coords = null): array
     {
         $month = now()->month;
         $seed = $plot->id * 2500 + now()->dayOfYear;
         mt_srand($seed);
 
+        $lat = $coords['lat'] ?? CoordinatesHelper::getCoordinates($plot)['lat'];
+        $isCanary = $lat < 30.0;
+
         // Typical vineyard reflectances
-        if ($month >= 4 && $month <= 10) {
-            $red = 0.03 + (mt_rand(0, 20) / 1000);
-            $nir = 0.45 + (mt_rand(0, 30) / 1000);
-            $green = 0.08 + (mt_rand(0, 20) / 1000);
-            $blue = 0.02 + (mt_rand(0, 10) / 1000);
+        if ($isCanary) {
+            if ($month >= 4 && $month <= 10) {
+                $red   = 0.025 + (mt_rand(0, 15) / 1000);
+                $nir   = 0.48  + (mt_rand(0, 30) / 1000);
+                $green = 0.07  + (mt_rand(0, 15) / 1000);
+                $blue  = 0.015 + (mt_rand(0, 8)  / 1000);
+            } else {
+                // Canary winter: still active, not dormant
+                $red   = 0.04  + (mt_rand(0, 15) / 1000);
+                $nir   = 0.35  + (mt_rand(0, 30) / 1000);
+                $green = 0.09  + (mt_rand(0, 15) / 1000);
+                $blue  = 0.025 + (mt_rand(0, 8)  / 1000);
+            }
         } else {
-            $red = 0.08 + (mt_rand(0, 20) / 1000);
-            $nir = 0.25 + (mt_rand(0, 30) / 1000);
-            $green = 0.10 + (mt_rand(0, 20) / 1000);
-            $blue = 0.04 + (mt_rand(0, 10) / 1000);
+            if ($month >= 4 && $month <= 10) {
+                $red   = 0.03  + (mt_rand(0, 20) / 1000);
+                $nir   = 0.45  + (mt_rand(0, 30) / 1000);
+                $green = 0.08  + (mt_rand(0, 20) / 1000);
+                $blue  = 0.02  + (mt_rand(0, 10) / 1000);
+            } else {
+                $red   = 0.08  + (mt_rand(0, 20) / 1000);
+                $nir   = 0.25  + (mt_rand(0, 30) / 1000);
+                $green = 0.10  + (mt_rand(0, 20) / 1000);
+                $blue  = 0.04  + (mt_rand(0, 10) / 1000);
+            }
         }
 
         mt_srand();

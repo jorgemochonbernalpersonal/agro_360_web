@@ -199,19 +199,33 @@ class NasaSMAPService
     /**
      * Generate mock SMAP data
      */
-    private function generateMockSMAP(Plot $plot): array
+    private function generateMockSMAP(Plot $plot, ?array $coords = null): array
     {
         $month = now()->month;
         $seed = $plot->id * 4500 + now()->dayOfYear;
         mt_srand($seed);
 
+        $lat = $coords['lat'] ?? CoordinatesHelper::getCoordinates($plot)['lat'];
+        $isCanary = $lat < 30.0;
+
         // Seasonal soil moisture
-        if ($month >= 5 && $month <= 9) {
-            $smBase = 15; // Summer: dry
-        } elseif ($month >= 10 || $month <= 2) {
-            $smBase = 30; // Winter: wet
+        if ($isCanary) {
+            // Canary Islands: semi-arid, drier overall
+            if ($month >= 5 && $month <= 9) {
+                $smBase = 8;   // Very dry summer
+            } elseif ($month >= 10 || $month <= 2) {
+                $smBase = 18;  // Wetter winter
+            } else {
+                $smBase = 12;
+            }
         } else {
-            $smBase = 22; // Spring: moderate
+            if ($month >= 5 && $month <= 9) {
+                $smBase = 15;
+            } elseif ($month >= 10 || $month <= 2) {
+                $smBase = 30;
+            } else {
+                $smBase = 22;
+            }
         }
 
         $smSurface = $smBase + mt_rand(-5, 5);

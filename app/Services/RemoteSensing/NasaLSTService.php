@@ -198,35 +198,47 @@ class NasaLSTService
      */
     private function generateMockLST(Plot $plot): array
     {
-        $month = now()->month;
-        $seed = (int) $plot->getKey() * 2000 + now()->dayOfYear;
+        $month    = now()->month;
+        $seed     = (int) $plot->getKey() * 2000 + now()->dayOfYear;
         mt_srand($seed);
 
-        // Seasonal LST for Spain
-        if ($month >= 6 && $month <= 8) {
-            $lstDayBase = 38;
-            $lstNightBase = 22;
-        } elseif ($month >= 4 && $month <= 5) {
-            $lstDayBase = 28;
-            $lstNightBase = 15;
-        } elseif ($month >= 9 && $month <= 10) {
-            $lstDayBase = 25;
-            $lstNightBase = 13;
+        $lat      = CoordinatesHelper::getCoordinates($plot)['lat'];
+        $isCanary = $lat < 30.0;
+
+        if ($isCanary) {
+            // Canary Islands: subtropical, mild year-round
+            $lstDayBase = match (true) {
+                $month >= 6 && $month <= 9  => 32,
+                $month >= 10 || $month <= 2 => 22,
+                default                     => 26,
+            };
+            $lstNightBase = $lstDayBase - 8;
         } else {
-            $lstDayBase = 12;
-            $lstNightBase = 2;
+            // Peninsula
+            $lstDayBase = match (true) {
+                $month >= 6 && $month <= 8  => 38,
+                $month >= 4 && $month <= 5  => 28,
+                $month >= 9 && $month <= 10 => 25,
+                default                     => 12,
+            };
+            $lstNightBase = match (true) {
+                $month >= 6 && $month <= 8  => 22,
+                $month >= 4 && $month <= 5  => 15,
+                $month >= 9 && $month <= 10 => 13,
+                default                     => 2,
+            };
         }
 
-        $lstDay = $lstDayBase + mt_rand(-5, 5);
+        $lstDay   = $lstDayBase + mt_rand(-5, 5);
         $lstNight = $lstNightBase + mt_rand(-3, 3);
-        $lstDiff = $lstDay - $lstNight;
+        $lstDiff  = $lstDay - $lstNight;
 
         mt_srand();
 
         return [
-            'lst_day' => round($lstDay, 2),
-            'lst_night' => round($lstNight, 2),
-            'lst_diff' => round($lstDiff, 2),
+            'lst_day'           => round($lstDay, 2),
+            'lst_night'         => round($lstNight, 2),
+            'lst_diff'          => round($lstDiff, 2),
             'pixel_reliability' => 0,
         ];
     }

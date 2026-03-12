@@ -180,25 +180,41 @@ class NasaETService
     /**
      * Generate mock ET
      */
-    private function generateMockET(Plot $plot): array
+    private function generateMockET(Plot $plot, ?array $coords = null): array
     {
         $month = now()->month;
         $seed = $plot->id * 5500 + now()->dayOfYear;
         mt_srand($seed);
 
+        $lat = $coords['lat'] ?? CoordinatesHelper::getCoordinates($plot)['lat'];
+        $isCanary = $lat < 30.0;
+
         // Seasonal ET for vineyards (mm/day)
-        if ($month >= 6 && $month <= 8) {
-            $etBase = 4.5; // Summer: high
-            $petBase = 6.0;
-        } elseif ($month >= 4 && $month <= 5) {
-            $etBase = 2.8;
-            $petBase = 4.5;
-        } elseif ($month >= 9 && $month <= 10) {
-            $etBase = 2.0;
-            $petBase = 3.5;
+        if ($isCanary) {
+            if ($month >= 6 && $month <= 9) {
+                $etBase  = 5.0;
+                $petBase = 7.0;
+            } elseif ($month >= 10 || $month <= 2) {
+                $etBase  = 2.5;
+                $petBase = 4.0;
+            } else {
+                $etBase  = 3.5;
+                $petBase = 5.5;
+            }
         } else {
-            $etBase = 0.8; // Winter: low
-            $petBase = 1.5;
+            if ($month >= 6 && $month <= 8) {
+                $etBase  = 4.5;
+                $petBase = 6.0;
+            } elseif ($month >= 4 && $month <= 5) {
+                $etBase  = 2.8;
+                $petBase = 4.5;
+            } elseif ($month >= 9 && $month <= 10) {
+                $etBase  = 2.0;
+                $petBase = 3.5;
+            } else {
+                $etBase  = 0.8;
+                $petBase = 1.5;
+            }
         }
 
         $etDaily = $etBase + (mt_rand(-50, 50) / 100);

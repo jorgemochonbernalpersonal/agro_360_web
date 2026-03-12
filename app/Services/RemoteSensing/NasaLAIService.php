@@ -242,25 +242,41 @@ class NasaLAIService
     /**
      * Generate mock LAI (realistic for vineyards)
      */
-    private function generateMockLAI(Plot $plot): array
+    private function generateMockLAI(Plot $plot, ?array $coords = null): array
     {
         $month = now()->month;
         $seed = $plot->id * 3500 + now()->dayOfYear;
         mt_srand($seed);
 
+        $lat = $coords['lat'] ?? CoordinatesHelper::getCoordinates($plot)['lat'];
+        $isCanary = $lat < 30.0;
+
         // Seasonal LAI for vineyards
-        if ($month >= 5 && $month <= 9) {
-            $laiBase = 2.5; // Growing season
-            $fparBase = 0.65;
-        } elseif ($month >= 3 && $month <= 4) {
-            $laiBase = 1.2; // Early growth
-            $fparBase = 0.40;
-        } elseif ($month >= 10 && $month <= 11) {
-            $laiBase = 1.5; // Senescence
-            $fparBase = 0.45;
+        if ($isCanary) {
+            if ($month >= 5 && $month <= 9) {
+                $laiBase  = 2.8;
+                $fparBase = 0.70;
+            } elseif ($month >= 10 || $month <= 2) {
+                $laiBase  = 1.5;  // Never truly dormant
+                $fparBase = 0.48;
+            } else {
+                $laiBase  = 2.2;
+                $fparBase = 0.60;
+            }
         } else {
-            $laiBase = 0.3; // Dormant
-            $fparBase = 0.15;
+            if ($month >= 5 && $month <= 9) {
+                $laiBase  = 2.5;
+                $fparBase = 0.65;
+            } elseif ($month >= 3 && $month <= 4) {
+                $laiBase  = 1.2;
+                $fparBase = 0.40;
+            } elseif ($month >= 10 && $month <= 11) {
+                $laiBase  = 1.5;
+                $fparBase = 0.45;
+            } else {
+                $laiBase  = 0.3;
+                $fparBase = 0.15;
+            }
         }
 
         $lai = $laiBase + (mt_rand(-30, 30) / 100);
@@ -272,7 +288,7 @@ class NasaLAIService
             'lai' => round(max(0, $lai), 2),
             'fpar' => round(max(0, min(1, $fpar)), 3),
             'lai_quality' => 0,
-            'lai_source' => 'NASA MODIS MCD15A2H.061 (Mock)',
+            'lai_source' => 'NASA MODIS MCD15A2H.061 (Estimado)',
         ];
     }
 

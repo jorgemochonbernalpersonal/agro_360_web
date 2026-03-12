@@ -136,13 +136,12 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
         // Check rate limit before making request
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            Log::warning('NASA API rate limit reached', [
+            Log::warning('NASA API rate limit reached — using estimated data', [
                 'plot_id' => $plot->id,
                 'usage' => $this->rateLimitService->getUsage('nasa'),
             ]);
-            
-            // Return null to use existing data from database
-            return null;
+
+            return $this->generateMockData($plot);
         }
 
         try {
@@ -335,22 +334,31 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
      * Generate realistic mock data for development
      * Uses plot_id as seed for consistency
      */
-    private function generateMockData(Plot $plot): array
+    private function generateMockData(Plot $plot, ?array $coords = null): array
     {
         $month = now()->month;
         $day = now()->day;
-        
+
         // Use plot ID as seed for consistent data per plot
         $seed = $plot->id * 1000 + ($month * 100) + $day;
         mt_srand($seed);
-        
+
+        $lat = $coords['lat'] ?? CoordinatesHelper::getCoordinates($plot)['lat'];
+        $isCanary = $lat < 30.0;
+
         // Seasonal NDVI for vineyards
-        $seasonalBase = match (true) {
-            $month >= 6 && $month <= 8 => 0.75,   // Summer: high
-            $month >= 4 && $month <= 5 => 0.60,   // Spring: growing
-            $month >= 9 && $month <= 10 => 0.55, // Autumn: harvest
-            default => 0.25,                      // Winter: dormant
-        };
+        $seasonalBase = $isCanary
+            ? match (true) {
+                $month >= 6 && $month <= 9  => 0.68,  // Verano subtropical
+                $month >= 10 || $month <= 2 => 0.48,  // Invierno suave (sin dormancia real)
+                default                     => 0.58,  // Primavera/Otoño
+            }
+            : match (true) {
+                $month >= 6 && $month <= 8  => 0.75,
+                $month >= 4 && $month <= 5  => 0.60,
+                $month >= 9 && $month <= 10 => 0.55,
+                default                     => 0.25,
+            };
 
         // Add some randomness (but consistent for the same day)
         $variation = (mt_rand(-10, 10) / 100);
@@ -359,12 +367,18 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
         // NDWI typically ranges from -1 to 1
         // Healthy vegetation with good water: 0.2 to 0.4
         // Stressed vegetation: -0.2 to 0.1
-        $ndwiBase = match (true) {
-            $month >= 6 && $month <= 8 => 0.25,   // Summer: moderate water
-            $month >= 4 && $month <= 5 => 0.35,   // Spring: high water
-            $month >= 9 && $month <= 10 => 0.15, // Autumn: drying
-            default => 0.05,                      // Winter: low
-        };
+        $ndwiBase = $isCanary
+            ? match (true) {
+                $month >= 6 && $month <= 9  => 0.10,  // Verano seco
+                $month >= 10 || $month <= 2 => 0.20,  // Invierno más húmedo
+                default                     => 0.15,
+            }
+            : match (true) {
+                $month >= 6 && $month <= 8  => 0.25,
+                $month >= 4 && $month <= 5  => 0.35,
+                $month >= 9 && $month <= 10 => 0.15,
+                default                     => 0.05,
+            };
         $ndwi = $ndwiBase + (mt_rand(-15, 15) / 100);
         
         // Reset random seed
@@ -391,11 +405,13 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     private function generateAndPersistMockHistorical(Plot $plot): void
     {
         $currentDate = now();
+        $plotCoords = CoordinatesHelper::getCoordinates($plot);
+        $isCanary = $plotCoords['lat'] < 30.0;
 
         for ($i = 0; $i < 20; $i++) { // Generate 20 data points (every 16 days for ~1 year)
             $date = $currentDate->copy()->subDays($i * 16);
             $month = $date->month;
-            
+
             // Skip if data already exists for this date
             if ($this->repository->existsForDate($plot, $date)) {
                 continue;
@@ -405,32 +421,50 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             $seed = $plot->id * 10000 + ($date->year * 100) + $date->dayOfYear;
             mt_srand($seed);
 
-            $seasonalBase = match (true) {
-                $month >= 6 && $month <= 8 => 0.75,
-                $month >= 4 && $month <= 5 => 0.60,
-                $month >= 9 && $month <= 10 => 0.55,
-                default => 0.25,
-            };
+            $seasonalBase = $isCanary
+                ? match (true) {
+                    $month >= 6 && $month <= 9  => 0.68,
+                    $month >= 10 || $month <= 2 => 0.48,
+                    default                     => 0.58,
+                }
+                : match (true) {
+                    $month >= 6 && $month <= 8  => 0.75,
+                    $month >= 4 && $month <= 5  => 0.60,
+                    $month >= 9 && $month <= 10 => 0.55,
+                    default                     => 0.25,
+                };
 
             $variation = (mt_rand(-8, 8) / 100);
             $ndvi = max(0.1, min(0.9, $seasonalBase + $variation));
 
             // NDWI varies with season
-            $ndwiBase = match (true) {
-                $month >= 6 && $month <= 8 => 0.25,
-                $month >= 4 && $month <= 5 => 0.35,
-                $month >= 9 && $month <= 10 => 0.15,
-                default => 0.05,
-            };
+            $ndwiBase = $isCanary
+                ? match (true) {
+                    $month >= 6 && $month <= 9  => 0.10,
+                    $month >= 10 || $month <= 2 => 0.20,
+                    default                     => 0.15,
+                }
+                : match (true) {
+                    $month >= 6 && $month <= 8  => 0.25,
+                    $month >= 4 && $month <= 5  => 0.35,
+                    $month >= 9 && $month <= 10 => 0.15,
+                    default                     => 0.05,
+                };
             $ndwi = $ndwiBase + (mt_rand(-15, 15) / 100);
 
             // Temperature varies with season (Spain)
-            $tempBase = match (true) {
-                $month >= 6 && $month <= 8 => 32,
-                $month >= 4 && $month <= 5 => 20,
-                $month >= 9 && $month <= 10 => 18,
-                default => 8,
-            };
+            $tempBase = $isCanary
+                ? match (true) {
+                    $month >= 6 && $month <= 9  => 28,
+                    $month >= 10 || $month <= 2 => 18,
+                    default                     => 22,
+                }
+                : match (true) {
+                    $month >= 6 && $month <= 8  => 32,
+                    $month >= 4 && $month <= 5  => 20,
+                    $month >= 9 && $month <= 10 => 18,
+                    default                     => 8,
+                };
             $temp = $tempBase + mt_rand(-5, 5);
             
             // Calculate trend from previous data
