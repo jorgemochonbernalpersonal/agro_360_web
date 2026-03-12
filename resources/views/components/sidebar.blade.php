@@ -115,7 +115,8 @@
 
         <div class="w-8 border-t border-white/10 my-1"></div>
 
-        {{-- Chapter buttons --}}
+        {{-- Chapter buttons — scrollable para roles con muchos capítulos (producer) --}}
+        <div class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
         @foreach($chapters as $ch)
             @php
                 $color  = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
@@ -125,7 +126,7 @@
                 type="button"
                 x-on:click="$store.nav.toggle('{{ $ch['key'] }}')"
                 title="{{ $ch['label'] }}"
-                class="notebook-tab relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
+                class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
                 data-key="{{ $ch['key'] }}"
                 data-active="{{ $isActive ? 'true' : 'false' }}"
@@ -136,8 +137,7 @@
                 <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
             </button>
         @endforeach
-
-        <div class="flex-1"></div>
+        </div>
 
         {{-- Rail bottom: Config + Soporte (viticulturist) --}}
         @if(!empty($menu['rail_bottom']))
@@ -274,8 +274,12 @@
 </div>
 
 <style>
-    /* Scrollbar */
+    /* Scrollbar flyout */
     .sidebar-scrollbar::-webkit-scrollbar { width: 3px; }
+
+    /* Scrollbar oculto en la zona de capítulos del rail */
+    .rail-chapters-scroll::-webkit-scrollbar { display: none; }
+    .rail-chapters-scroll { scrollbar-width: none; -ms-overflow-style: none; }
     .sidebar-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .sidebar-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 
