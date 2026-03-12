@@ -135,6 +135,10 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/create', \App\Livewire\Winery\Harvest\Reception\Create::class)->name('create');
             Route::get('/export/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdf'])->name('export-pdf');
             Route::get('/export/excel', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportExcel'])->name('export-excel');
+            // disputes antes del wildcard {harvest}
+            Route::get('/disputes', \App\Livewire\Winery\Harvest\Reception\Disputes::class)
+                ->middleware(\App\Http\Middleware\EnsureProducerBuysExternalGrape::class)
+                ->name('disputes');
             Route::get('/{harvest}', \App\Livewire\Winery\Harvest\Reception\Show::class)->name('show');
             Route::get('/{harvest}/edit', \App\Livewire\Winery\Harvest\Reception\Edit::class)->name('edit');
             Route::get('/{harvest}/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdfSingle'])->name('export-pdf-single');
@@ -263,8 +267,6 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/viticulturists/{viticulturist}/edit', \App\Livewire\Winery\Viticulturists\Edit::class)->name('viticulturists.edit');
 
             Route::get('/vitic-estimates', \App\Livewire\Winery\Harvest\ViticulturistEstimates\Index::class)->name('vitic-estimates.index');
-
-            Route::get('/grape-reception/disputes', \App\Livewire\Winery\Harvest\Reception\Disputes::class)->name('grape-reception.disputes');
 
             Route::prefix('invoices/grape-purchase')->name('invoices.grape-purchase.')->group(function () {
                 Route::get('/', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('index');
