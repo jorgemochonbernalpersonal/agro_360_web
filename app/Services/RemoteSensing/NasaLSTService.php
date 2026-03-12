@@ -38,12 +38,13 @@ class NasaLSTService
             return $this->generateMockLST($plot);
         }
 
+        $coords = CoordinatesHelper::getCoordinates($plot, $recintoId, $coordinates);
+
         if (!$this->rateLimitService->canMakeNasaRequest()) {
-            return $this->generateMockLST($plot);
+            return $this->fetchFromOpenMeteo($coords, $plot->id);
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId, $coordinates);
             $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
             $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
@@ -63,20 +64,19 @@ class NasaLSTService
                 return $this->parseLSTResponse($response->json());
             }
 
-            Log::warning('NASA LST API failed — using estimated data', [
+            Log::warning('NASA LST API failed — falling back to Open-Meteo', [
                 'status'  => $response->status(),
                 'plot_id' => $plot->id,
-                'body'    => substr($response->body(), 0, 200),
             ]);
 
         } catch (\Exception $e) {
-            Log::warning('NASA LST API error — using estimated data', [
+            Log::warning('NASA LST API error — falling back to Open-Meteo', [
                 'error'   => $e->getMessage(),
                 'plot_id' => $plot->id,
             ]);
         }
 
-        return $this->generateMockLST($plot);
+        return $this->fetchFromOpenMeteo($coords, $plot->id);
     }
 
     /**
@@ -106,6 +106,89 @@ class NasaLSTService
             'lst_day'           => $lstDay,
             'lst_night'         => $lstNight,
             'lst_diff'          => ($lstDay && $lstNight) ? round($lstDay - $lstNight, 2) : null,
+            'pixel_reliability' => null,
+        ];
+    }
+
+    /**
+     * Fetch real temperature data from Open-Meteo as LST fallback
+     * Free, no auth, no IP rate limit, covers Canary Islands and all Spain
+     */
+    private function fetchFromOpenMeteo(array $coords, int $plotId): array
+    {
+        try {
+            $response = Http::timeout(15)
+                ->get('https://api.open-meteo.com/v1/forecast', [
+                    'latitude'      => $coords['lat'],
+                    'longitude'     => $coords['lon'],
+                    'daily'         => 'temperature_2m_max,temperature_2m_min',
+                    'past_days'     => 1,
+                    'forecast_days' => 0,
+                    'timezone'      => 'auto',
+                ]);
+
+            if ($response->successful()) {
+                $daily   = $response->json('daily') ?? [];
+                $tMax    = collect($daily['temperature_2m_max'] ?? [])->filter(fn($v) => $v !== null)->last();
+                $tMin    = collect($daily['temperature_2m_min'] ?? [])->filter(fn($v) => $v !== null)->last();
+
+                if ($tMax !== null && $tMin !== null) {
+                    // LST day is ~4-7°C warmer than 2m air temp on sunny days
+                    $lstDay   = round($tMax + 5.0, 2);
+                    $lstNight = round($tMin, 2);
+
+                    return [
+                        'lst_day'           => $lstDay,
+                        'lst_night'         => $lstNight,
+                        'lst_diff'          => round($lstDay - $lstNight, 2),
+                        'pixel_reliability' => null,
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning('Open-Meteo LST fallback failed', ['error' => $e->getMessage(), 'plot_id' => $plotId]);
+        }
+
+        // Last resort: static seasonal mock (should rarely reach here)
+        return $this->generateMockLSTForCoords($coords);
+    }
+
+    /**
+     * Coordinate-aware mock: uses latitude to distinguish Canary Islands from peninsula
+     */
+    private function generateMockLSTForCoords(array $coords): array
+    {
+        $month    = now()->month;
+        $isCanary = $coords['lat'] < 30.0;
+
+        if ($isCanary) {
+            // Canary Islands: subtropical, mild year-round
+            $lstDayBase   = match (true) {
+                $month >= 6 && $month <= 9  => 32,
+                $month >= 10 || $month <= 2 => 22,
+                default                     => 26,
+            };
+            $lstNightBase = $lstDayBase - 8;
+        } else {
+            // Peninsula
+            $lstDayBase = match (true) {
+                $month >= 6 && $month <= 8  => 38,
+                $month >= 4 && $month <= 5  => 28,
+                $month >= 9 && $month <= 10 => 25,
+                default                     => 12,
+            };
+            $lstNightBase = match (true) {
+                $month >= 6 && $month <= 8  => 22,
+                $month >= 4 && $month <= 5  => 15,
+                $month >= 9 && $month <= 10 => 13,
+                default                     => 2,
+            };
+        }
+
+        return [
+            'lst_day'           => round($lstDayBase + mt_rand(-3, 3), 2),
+            'lst_night'         => round($lstNightBase + mt_rand(-2, 2), 2),
+            'lst_diff'          => round($lstDayBase - $lstNightBase, 2),
             'pixel_reliability' => null,
         ];
     }

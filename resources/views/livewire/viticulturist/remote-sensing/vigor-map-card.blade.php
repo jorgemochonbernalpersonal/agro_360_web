@@ -27,7 +27,7 @@
             
             @if($areaStats)
                 <button 
-                    wire:click="refresh" 
+                    wire:click="reloadData" 
                     wire:loading.attr="disabled"
                     class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
                 >

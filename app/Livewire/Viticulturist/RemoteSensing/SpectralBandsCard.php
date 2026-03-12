@@ -129,7 +129,7 @@ class SpectralBandsCard extends Component
         }
     }
 
-    public function refresh()
+    public function reloadData()
     {
         $this->loadData();
         

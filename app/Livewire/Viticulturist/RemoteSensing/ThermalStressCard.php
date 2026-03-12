@@ -112,7 +112,7 @@ class ThermalStressCard extends Component
         }
     }
 
-    public function refresh()
+    public function reloadData()
     {
         try {
             $this->loading = true;

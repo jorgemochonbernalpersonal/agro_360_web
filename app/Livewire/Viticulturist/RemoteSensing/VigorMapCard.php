@@ -111,7 +111,7 @@ class VigorMapCard extends Component
         }
     }
 
-    public function refresh()
+    public function reloadData()
     {
         $this->loadData();
     }

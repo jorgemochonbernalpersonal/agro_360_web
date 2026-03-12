@@ -25,7 +25,7 @@ class AlertsWidget extends Component
         $this->totalCount = $service->getAlertCountForUser($user);
     }
 
-    public function refresh()
+    public function reloadData()
     {
         $this->loadAlerts();
     }

@@ -23,7 +23,7 @@ class PlotIrrigationCard extends Component
         $this->recommendation = $service->getRecommendation($this->plot);
     }
 
-    public function refresh()
+    public function reloadData()
     {
         $this->loadRecommendation();
     }

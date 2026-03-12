@@ -100,7 +100,7 @@ class SMAPSoilCard extends Component
         }
     }
 
-    public function refresh()
+    public function reloadData()
     {
         $this->loadData();
         
