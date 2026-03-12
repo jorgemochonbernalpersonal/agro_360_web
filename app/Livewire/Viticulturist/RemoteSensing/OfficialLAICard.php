@@ -103,10 +103,10 @@ class OfficialLAICard extends Component
         }
     }
 
-    public function refresh()
+    public function reloadLAI()
     {
         $this->loadData();
-        
+
         $this->dispatch('notify', [
             'type' => 'success',
             'message' => 'Datos de LAI actualizados',
