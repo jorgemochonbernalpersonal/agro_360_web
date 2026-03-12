@@ -92,7 +92,25 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{client}/edit', \App\Livewire\Viticulturist\Clients\Edit::class)->name('edit');
         });
 
-        // ── Facturas ──────────────────────────────────────────────────────
+        // ── Facturas — sub-rutas específicas ANTES del wildcard {invoice} ─
+        Route::prefix('invoices/products')->name('invoices.products.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\Billing\ProductSale\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\Billing\ProductSale\Create::class)->name('create');
+            Route::get('/{id}/edit', \App\Livewire\Winery\Billing\ProductSale\Edit::class)->name('edit');
+            Route::get('/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('pdf');
+            Route::get('/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
+        });
+
+        Route::prefix('invoices/grape-purchase')->name('invoices.grape-purchase.')
+            ->middleware(\App\Http\Middleware\EnsureProducerBuysExternalGrape::class)
+            ->group(function () {
+                Route::get('/', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('index');
+                Route::get('/create', \App\Livewire\Winery\Billing\GrapePurchase\Create::class)->name('create');
+                Route::get('/{id}/edit', \App\Livewire\Winery\Billing\GrapePurchase\Edit::class)->name('edit');
+                Route::get('/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('pdf');
+            });
+
+        // ── Facturas viticultor (wildcard al final) ────────────────────────
         Route::prefix('invoices')->name('invoices.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Invoices\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Viticulturist\Invoices\Create::class)->name('create');
@@ -229,13 +247,6 @@ Route::middleware(['role:producer', 'check.beta'])
             ->defaults('icon', 'sparkles');
 
         // ── Negocio bodega ────────────────────────────────────────────────
-        Route::prefix('invoices/products')->name('invoices.products.')->group(function () {
-            Route::get('/', \App\Livewire\Winery\Billing\ProductSale\Index::class)->name('index');
-            Route::get('/create', \App\Livewire\Winery\Billing\ProductSale\Create::class)->name('create');
-            Route::get('/{id}/edit', \App\Livewire\Winery\Billing\ProductSale\Edit::class)->name('edit');
-            Route::get('/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('pdf');
-            Route::get('/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
-        });
 
         Route::get('/exports', \App\Livewire\Winery\UnderConstruction::class)
             ->name('exports.index')
@@ -267,13 +278,6 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/viticulturists/{viticulturist}/edit', \App\Livewire\Winery\Viticulturists\Edit::class)->name('viticulturists.edit');
 
             Route::get('/vitic-estimates', \App\Livewire\Winery\Harvest\ViticulturistEstimates\Index::class)->name('vitic-estimates.index');
-
-            Route::prefix('invoices/grape-purchase')->name('invoices.grape-purchase.')->group(function () {
-                Route::get('/', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('index');
-                Route::get('/create', \App\Livewire\Winery\Billing\GrapePurchase\Create::class)->name('create');
-                Route::get('/{id}/edit', \App\Livewire\Winery\Billing\GrapePurchase\Edit::class)->name('edit');
-                Route::get('/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('pdf');
-            });
         });
 
 
