@@ -147,6 +147,19 @@ class Show extends Component
         ];
     }
 
+    public function toggleCompraUvaExterna()
+    {
+        if (!$this->user->isProducer()) {
+            return;
+        }
+
+        $this->user->update(['compra_uva_externa' => !$this->user->compra_uva_externa]);
+        $this->user->refresh();
+
+        $estado = $this->user->compra_uva_externa ? 'activada' : 'desactivada';
+        $this->toastSuccess("Compra de uva externa {$estado}.");
+    }
+
     public function impersonate()
     {
         // Solo admins pueden impersonar

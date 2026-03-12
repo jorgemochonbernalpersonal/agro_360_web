@@ -57,15 +57,6 @@
         default         => [],
     };
 
-    // Para producer: detectar en qué tab está el capítulo activo
-    $activeProducerTab = 'vineyard';
-    if ($user->role === 'producer') {
-        $bodegaKeys = array_column($producerWineryChapters, 'key');
-        if ($activeChapterKey && in_array($activeChapterKey, $bodegaKeys)) {
-            $activeProducerTab = 'bodega';
-        }
-    }
-
     $dashboardRoute = match($user->role) {
         'winery'    => 'winery.dashboard',
         'producer'  => 'producer.dashboard',
@@ -80,6 +71,15 @@
             foreach ($menu[$sectionKey] as $item) {
                 if ($item['active'] ?? false) { $activeChapterKey = $chapter['key']; break 3; }
             }
+        }
+    }
+
+    // Para producer: detectar en qué tab (vineyard/bodega) está el capítulo activo
+    $activeProducerTab = 'vineyard';
+    if ($user->role === 'producer') {
+        $bodegaKeys = array_column($producerWineryChapters, 'key');
+        if ($activeChapterKey && in_array($activeChapterKey, $bodegaKeys)) {
+            $activeProducerTab = 'bodega';
         }
     }
 

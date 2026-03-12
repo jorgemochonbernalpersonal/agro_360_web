@@ -94,6 +94,22 @@
                     @endif
                 </div>
             </div>
+            @if($user->isProducer())
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Compra Uva Externa</p>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <x-agro.status-badge :active="$user->compra_uva_externa"
+                        label="{{ $user->compra_uva_externa ? 'Activada' : 'Desactivada' }}" />
+                    <flux:button
+                        wire:click="toggleCompraUvaExterna"
+                        variant="ghost"
+                        size="xs"
+                        icon="{{ $user->compra_uva_externa ? 'x-mark' : 'check' }}"
+                    >{{ $user->compra_uva_externa ? 'Desactivar' : 'Activar' }}</flux:button>
+                </div>
+                <p class="text-xs text-zinc-400 mt-1">Módulos: viticultores externos, aforos, disputas, facturas de uva</p>
+            </div>
+            @endif
             <div>
                 <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide">Fecha de Registro</p>
                 <p class="text-sm font-semibold text-zinc-900 mt-0.5">{{ $user->created_at->format('d/m/Y H:i') }}</p>
