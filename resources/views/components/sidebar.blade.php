@@ -53,9 +53,18 @@
     $chapters = match($user->role) {
         'viticulturist' => $viticulturistChapters,
         'winery'        => $wineryChapters,
-        'producer'      => array_merge($viticulturistChapters, $producerWineryChapters),
+        'producer'      => array_merge($viticulturistChapters, $producerWineryChapters), // para flyouts
         default         => [],
     };
+
+    // Para producer: detectar en qué tab está el capítulo activo
+    $activeProducerTab = 'vineyard';
+    if ($user->role === 'producer') {
+        $bodegaKeys = array_column($producerWineryChapters, 'key');
+        if ($activeChapterKey && in_array($activeChapterKey, $bodegaKeys)) {
+            $activeProducerTab = 'bodega';
+        }
+    }
 
     $dashboardRoute = match($user->role) {
         'winery'    => 'winery.dashboard',
@@ -78,7 +87,7 @@
 @endphp
 
 <div
-    x-data="{}"
+    x-data="{ producerTab: '{{ $activeProducerTab }}' }"
     @keydown.escape.window="$store.nav.close()"
 >
     {{-- ═══════════════════ RAIL 64px ═══════════════════ --}}
@@ -115,29 +124,66 @@
 
         <div class="w-8 border-t border-white/10 my-1"></div>
 
-        {{-- Chapter buttons — scrollable para roles con muchos capítulos (producer) --}}
-        <div class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
-        @foreach($chapters as $ch)
-            @php
-                $color  = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
-                $isActive = ($activeChapterKey === $ch['key']);
-            @endphp
-            <button
-                type="button"
-                x-on:click="$store.nav.toggle('{{ $ch['key'] }}')"
-                title="{{ $ch['label'] }}"
+        @if($user->role === 'producer')
+        {{-- Producer: tab switcher Viñedo / Bodega --}}
+        <div class="flex w-full px-2 gap-1 mb-0.5 flex-shrink-0">
+            <button type="button"
+                x-on:click="producerTab = 'vineyard'; $store.nav.close()"
+                :class="producerTab === 'vineyard' ? 'bg-green-500/20 text-green-400 ring-1 ring-inset ring-green-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10'"
+                class="flex-1 h-7 rounded-lg text-[10px] font-bold transition-all leading-none"
+                title="Viñedo">🌿</button>
+            <button type="button"
+                x-on:click="producerTab = 'bodega'; $store.nav.close()"
+                :class="producerTab === 'bodega' ? 'bg-red-500/20 text-red-400 ring-1 ring-inset ring-red-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10'"
+                class="flex-1 h-7 rounded-lg text-[10px] font-bold transition-all leading-none"
+                title="Bodega">🏛</button>
+        </div>
+        {{-- Producer: Viñedo chapters --}}
+        <div x-show="producerTab === 'vineyard'"
+             class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
+        @foreach($viticulturistChapters as $ch)
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
-                data-key="{{ $ch['key'] }}"
-                data-active="{{ $isActive ? 'true' : 'false' }}"
-                style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};"
-            >
+                data-key="{{ $ch['key'] }}" data-active="{{ $isActive ? 'true' : 'false' }}"
+                style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};">
                 <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
-                {{-- Tooltip --}}
                 <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
             </button>
         @endforeach
         </div>
+        {{-- Producer: Bodega chapters --}}
+        <div x-show="producerTab === 'bodega'"
+             class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
+        @foreach($producerWineryChapters as $ch)
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
+                class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
+                :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
+                data-key="{{ $ch['key'] }}" data-active="{{ $isActive ? 'true' : 'false' }}"
+                style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};">
+                <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
+                <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
+            </button>
+        @endforeach
+        </div>
+        @else
+        {{-- Otros roles: capítulos directos --}}
+        <div class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
+        @foreach($chapters as $ch)
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
+                class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
+                :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
+                data-key="{{ $ch['key'] }}" data-active="{{ $isActive ? 'true' : 'false' }}"
+                style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};">
+                <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
+                <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
+            </button>
+        @endforeach
+        </div>
+        @endif
 
         {{-- Rail bottom: Config + Soporte (viticulturist) --}}
         @if(!empty($menu['rail_bottom']))
