@@ -20,14 +20,32 @@ Route::middleware(['role:winery,producer'])
         Route::get('/viticulturists/{viticulturist}/edit', \App\Livewire\Winery\Viticulturists\Edit::class)->name('viticulturists.edit');
 
         // ── Parcelas (gestión completa de viticultores propios) ───────────
-        Route::get('/plots', \App\Livewire\Plots\Index::class)->name('plots.index');
-        Route::get('/plots/create', \App\Livewire\Plots\Create::class)->name('plots.create');
-        Route::get('/plots/{plot}', \App\Livewire\Plots\Show::class)->name('plots.show');
-        Route::get('/plots/{plot}/edit', \App\Livewire\Plots\Edit::class)->name('plots.edit');
+        // Producer usa siempre el flujo viticultor (con cuaderno, fenología, etc.)
+        Route::middleware(function ($request, $next) {
+            if (auth()->user()->isProducer()) {
+                // Extraer el segmento de ruta tras /winery/plots para redirigir al equivalente viticulturist
+                $path = ltrim(str_replace('/winery', '', $request->getPathInfo()), '/');
+                return redirect('/' . $path);
+            }
+            return $next($request);
+        })->group(function () {
+            Route::get('/plots', \App\Livewire\Plots\Index::class)->name('plots.index');
+            Route::get('/plots/create', \App\Livewire\Plots\Create::class)->name('plots.create');
+            Route::get('/plots/{plot}', \App\Livewire\Plots\Show::class)->name('plots.show');
+            Route::get('/plots/{plot}/edit', \App\Livewire\Plots\Edit::class)->name('plots.edit');
+        });
 
         // ── Plantaciones de parcelas (gestión por bodega) ─────────────────
-        Route::get('/plots/{plot}/plantings/create', \App\Livewire\Plots\Plantings\Create::class)->name('plots.plantings.create');
-        Route::get('/plots/{plot}/plantings/{planting}/edit', \App\Livewire\Plots\Plantings\Edit::class)->name('plots.plantings.edit');
+        Route::middleware(function ($request, $next) {
+            if (auth()->user()->isProducer()) {
+                $path = ltrim(str_replace('/winery', '', $request->getPathInfo()), '/');
+                return redirect('/' . $path);
+            }
+            return $next($request);
+        })->group(function () {
+            Route::get('/plots/{plot}/plantings/create', \App\Livewire\Plots\Plantings\Create::class)->name('plots.plantings.create');
+            Route::get('/plots/{plot}/plantings/{planting}/edit', \App\Livewire\Plots\Plantings\Edit::class)->name('plots.plantings.edit');
+        });
 
         // ── Campañas (gestionadas automáticamente por añada) ──────────
         Route::get('/campaigns', fn() => redirect()->route('winery.grape-reception.index'))->name('campaigns.index');
