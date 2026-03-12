@@ -100,17 +100,6 @@ Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
     require __DIR__ . '/subscription.php';
     require __DIR__ . '/payment.php';
 
-    // Context switcher para productores (viticulturist + winery)
-    Route::post('/context/{context}', function (string $context) {
-        abort_unless(in_array($context, ['viticulturist', 'winery']), 422);
-        abort_unless(auth()->user()->isProducer(), 403);
-        session(['producer_context' => $context]);
-        return redirect($context === 'winery'
-            ? route('winery.dashboard')
-            : route('viticulturist.dashboard')
-        );
-    })->middleware('auth')->name('context.switch');
-
     // Dashboard combinado para productor
     Route::middleware(['role:producer', 'check.beta'])
         ->get('/producer/dashboard', \App\Livewire\Producer\Dashboard::class)

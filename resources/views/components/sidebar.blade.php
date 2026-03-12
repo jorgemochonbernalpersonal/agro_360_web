@@ -40,16 +40,22 @@
         ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['resources', 'compliance', 'system']],
     ];
 
-    $producerContext = session('producer_context', 'viticulturist');
+    // Capítulos winery específicos para el producer (sin territorio — cubierto por parcelas de campo)
+    $producerWineryChapters = [
+        ['key' => 'vendimia',    'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',          'sections' => ['harvest']],
+        ['key' => 'bodega',      'icon' => 'beaker',                  'label' => 'Bodega',            'sections' => ['cellar']],
+        ['key' => 'normativa_w', 'icon' => 'shield-check',            'label' => 'Normativa Bodega',  'sections' => ['winery_normativa']],
+        ['key' => 'negocio_w',   'icon' => 'calculator',              'label' => 'Negocio Bodega',    'sections' => ['winery_billing']],
+    ];
+    $chapterColors['normativa_w'] = $chapterColors['normativa'];
+    $chapterColors['negocio_w']   = $chapterColors['negocio'];
 
-    $chapters = [];
-    if ($user->role === 'viticulturist') {
-        $chapters = $viticulturistChapters;
-    } elseif ($user->role === 'winery') {
-        $chapters = $wineryChapters;
-    } elseif ($user->role === 'producer') {
-        $chapters = $producerContext === 'winery' ? $wineryChapters : $viticulturistChapters;
-    }
+    $chapters = match($user->role) {
+        'viticulturist' => $viticulturistChapters,
+        'winery'        => $wineryChapters,
+        'producer'      => array_merge($viticulturistChapters, $producerWineryChapters),
+        default         => [],
+    };
 
     $dashboardRoute = match($user->role) {
         'winery'    => 'winery.dashboard',
@@ -89,31 +95,6 @@
         </a>
 
         <div class="w-8 border-t border-white/10 mb-1"></div>
-
-        {{-- Context switcher (producer only) --}}
-        @if($user->isProducer())
-            <div class="flex flex-col gap-0.5 w-12 mb-1">
-                <form method="POST" action="{{ route('context.switch', 'viticulturist') }}">
-                    @csrf
-                    <button type="submit"
-                        title="Modo Campo"
-                        class="w-full flex items-center justify-center h-7 rounded-t-lg text-[9px] font-bold uppercase tracking-wide transition-all
-                            {{ $producerContext === 'viticulturist' ? 'bg-white/20 text-white' : 'text-white/35 hover:text-white/70 hover:bg-white/10' }}">
-                        🌿
-                    </button>
-                </form>
-                <form method="POST" action="{{ route('context.switch', 'winery') }}">
-                    @csrf
-                    <button type="submit"
-                        title="Modo Bodega"
-                        class="w-full flex items-center justify-center h-7 rounded-b-lg text-[9px] font-bold uppercase tracking-wide transition-all
-                            {{ $producerContext === 'winery' ? 'bg-white/20 text-white' : 'text-white/35 hover:text-white/70 hover:bg-white/10' }}">
-                        🏛
-                    </button>
-                </form>
-            </div>
-            <div class="w-8 border-t border-white/10 mb-1"></div>
-        @endif
 
         {{-- Main items (Dashboard, Calendario) --}}
         @foreach($mainItems as $item)

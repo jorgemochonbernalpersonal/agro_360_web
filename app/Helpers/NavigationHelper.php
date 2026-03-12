@@ -30,31 +30,25 @@ class NavigationHelper
     {
         $role = $user->role;
 
-        // Producer delegates to viticulturist or winery based on active context
-        if ($role === 'producer') {
-            $role = session('producer_context', 'viticulturist');
-        }
-
         $menu = [];
 
-        // Producer always gets a home item pointing to the combined dashboard
-        if ($user->role === 'producer') {
-            $menu['main'][] = [
-                'icon'   => 'squares-2x2',
-                'label'  => 'Vista general',
-                'route'  => 'producer.dashboard',
-                'active' => request()->routeIs('producer.dashboard'),
-            ];
-        }
-
-        if ($role === 'viticulturist') {
-            // DASHBOARD - Siempre visible
-            $menu['main'][] = [
-                'icon' => 'home',
-                'label' => 'Dashboard',
-                'route' => 'viticulturist.dashboard',
-                'active' => request()->routeIs('viticulturist.dashboard'),
-            ];
+        if (in_array($role, ['viticulturist', 'producer'])) {
+            // DASHBOARD - viticulturist ve su dashboard; producer ve la vista general combinada
+            if ($role === 'producer') {
+                $menu['main'][] = [
+                    'icon'   => 'squares-2x2',
+                    'label'  => 'Vista general',
+                    'route'  => 'producer.dashboard',
+                    'active' => request()->routeIs('producer.dashboard'),
+                ];
+            } else {
+                $menu['main'][] = [
+                    'icon'   => 'home',
+                    'label'  => 'Dashboard',
+                    'route'  => 'viticulturist.dashboard',
+                    'active' => request()->routeIs('viticulturist.dashboard'),
+                ];
+            }
 
             $menu['main'][] = [
                 'icon'   => 'calendar-days',
@@ -434,14 +428,17 @@ class NavigationHelper
             ];
         }
 
-        if ($role === 'winery') {
+        if (in_array($role, ['winery', 'producer'])) {
             // ── MAIN ─────────────────────────────────────────────────
-            $menu['main'][] = [
-                'icon'   => 'home',
-                'label'  => 'Dashboard',
-                'route'  => 'winery.dashboard',
-                'active' => request()->routeIs('winery.dashboard'),
-            ];
+            // Producer ya tiene su dashboard combinado; solo winery pura añade aquí
+            if ($role !== 'producer') {
+                $menu['main'][] = [
+                    'icon'   => 'home',
+                    'label'  => 'Dashboard',
+                    'route'  => 'winery.dashboard',
+                    'active' => request()->routeIs('winery.dashboard'),
+                ];
+            }
 
             // ── VENDIMIA ─────────────────────────────────────────────
             $menu['harvest'] = [
@@ -562,8 +559,8 @@ class NavigationHelper
             ];
 
 
-            // ── TERRITORIO ───────────────────────────────────────────
-            $menu['territory'] = [
+            // ── TERRITORIO ─── solo para winery pura; producer gestiona parcelas desde el lado campo
+            if ($role !== 'producer') $menu['territory'] = [
                 [
                     'icon'   => 'map',
                     'label'  => 'Parcelas',
@@ -603,8 +600,9 @@ class NavigationHelper
                 ],
             ];
 
-            // ── RECURSOS ─────────────────────────────────────────────
-            $menu['resources'] = [
+            // ── RECURSOS ─── prefijo winery_ para producer (evita solapar recursos del viticultor)
+            $wineryResourcesKey = $role === 'producer' ? 'winery_resources' : 'resources';
+            $menu[$wineryResourcesKey] = [
                 [
                     'icon'   => 'building-storefront',
                     'label'  => 'Insumos de Bodega',
@@ -621,8 +619,9 @@ class NavigationHelper
                 ],
             ];
 
-            // ── FACTURACIÓN Y CLIENTES ───────────────────────────────
-            $menu['billing'] = [
+            // ── FACTURACIÓN Y CLIENTES ─── prefijo winery_ para producer
+            $wineryBillingKey = $role === 'producer' ? 'winery_billing' : 'billing';
+            $menu[$wineryBillingKey] = [
                 [
                     'icon'   => 'chart-bar-square',
                     'label'  => 'Resumen Económico',
@@ -729,8 +728,9 @@ class NavigationHelper
                 ],
             ];
 
-            // ── REGISTRO OFICIAL (Sistema) ────────────────────────────
-            $menu['compliance'] = [
+            // ── REGISTRO OFICIAL (Sistema) ─── prefijo winery_ para producer
+            $wineryComplianceKey = $role === 'producer' ? 'winery_compliance' : 'compliance';
+            $menu[$wineryComplianceKey] = [
                 [
                     'icon'   => 'folder-open',
                     'label'  => 'Documentos Bodega',
@@ -780,9 +780,7 @@ class NavigationHelper
             'supervisor'    => 'Supervisor',
             'winery'        => 'Bodega',
             'viticulturist' => 'Viticultor',
-            'producer'      => session('producer_context', 'viticulturist') === 'winery'
-                                ? 'Productor · Bodega'
-                                : 'Productor · Campo',
+            'producer'      => 'Productor',
             default         => ucfirst($role),
         };
     }
