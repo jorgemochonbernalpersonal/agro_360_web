@@ -13,8 +13,10 @@ use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\WineLoss;
+use App\Models\PlotRemoteSensing;
 use App\Models\WineTransfer;
 use App\Observers\AgriculturalActivityObserver;
+use App\Observers\PlotRemoteSensingObserver;
 use App\Observers\CampaignObserver;
 use App\Observers\HarvestObserver;
 use App\Observers\InvoiceItemObserver;
@@ -121,6 +123,7 @@ class AppServiceProvider extends ServiceProvider
         PhytosanitaryTreatment::observe(PhytosanitaryTreatmentObserver::class);
         WineTransfer::observe(WineTransferObserver::class);
         WineLoss::observe(WineLossObserver::class);
+        PlotRemoteSensing::observe(PlotRemoteSensingObserver::class);
     }
 
     private function registerEmailRedirect(): void

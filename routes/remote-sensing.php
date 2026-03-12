@@ -34,7 +34,8 @@ Route::middleware(['auth', 'verified', 'check.beta'])->group(function () {
         
         // API endpoints para datos de teledetección
         Route::get('/api/plot/{plot}/ndvi-colors', [RemoteSensingController::class, 'getPlotNdviColors'])
-            ->name('api.plot.ndvi-colors');
+            ->name('api.plot.ndvi-colors')
+            ->can('view', 'plot');
         Route::get('/api/plots/ndvi', [RemoteSensingController::class, 'getAllPlotsNdvi'])
             ->name('api.plots.ndvi');
         
@@ -65,9 +66,11 @@ Route::middleware(['auth', 'verified', 'check.beta'])->group(function () {
         
         // Export routes (PDF/Excel)
         Route::get('/export/{plot}/pdf', [RemoteSensingExportController::class, 'exportPdf'])
-            ->name('export.pdf');
+            ->name('export.pdf')
+            ->can('view', 'plot');
         Route::get('/export/{plot}/excel', [RemoteSensingExportController::class, 'exportExcel'])
-            ->name('export.excel');
+            ->name('export.excel')
+            ->can('view', 'plot');
     });
 });
 

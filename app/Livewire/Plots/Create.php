@@ -117,7 +117,7 @@ class Create extends Component
         ];
 
         // Viticultor es requerido si el usuario tiene rol que puede seleccionar viticultores
-        if (in_array(Auth::user()->role, ['admin', 'supervisor', 'winery', 'viticulturist'])) {
+        if (in_array(Auth::user()->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer'])) {
             $rules['viticulturist_id'] = 'required|exists:users,id';
         }
 

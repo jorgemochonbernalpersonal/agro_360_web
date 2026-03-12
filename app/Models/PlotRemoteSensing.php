@@ -200,6 +200,30 @@ class PlotRemoteSensing extends Model
     }
 
     /**
+     * Returns true when cloud coverage exceeds the quality threshold (>60 %).
+     * Above this value NDVI readings are considered unreliable.
+     */
+    public function hasHighCloudCoverage(): bool
+    {
+        return ($this->cloud_coverage ?? 0) > 60;
+    }
+
+    /**
+     * Human-readable cloud quality label in Spanish.
+     */
+    public function getCloudQualityLabelAttribute(): string
+    {
+        $coverage = $this->cloud_coverage ?? 0;
+
+        return match (true) {
+            $coverage <= 20 => 'Excelente',
+            $coverage <= 40 => 'Buena',
+            $coverage <= 60 => 'Aceptable',
+            default         => 'Baja calidad',
+        };
+    }
+
+    /**
      * Obtener el icono de tendencia
      */
     public function getTrendIconAttribute(): string

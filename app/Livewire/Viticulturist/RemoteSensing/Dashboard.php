@@ -96,9 +96,15 @@ class Dashboard extends Component
             ->get();
         
         $this->loadStats();
-        
-        // Load first plot if none selected
+
         $plots = collect($this->plots);
+
+        // Validate URL-injected selectedPlotId belongs to user's authorized plots
+        if ($this->selectedPlotId && !$plots->contains('id', $this->selectedPlotId)) {
+            $this->selectedPlotId = null;
+        }
+
+        // Auto-select first plot if none set
         if (!$this->selectedPlotId && $plots->isNotEmpty()) {
             $this->selectedPlotId = $plots->first()->id;
         }
@@ -110,8 +116,13 @@ class Dashboard extends Component
         }
     }
 
-    public function updatedSelectedPlotId()
+    public function updatedSelectedPlotId(): void
     {
+        // Prevent IDOR: verify the new plot is within the user's authorized scope
+        if (!collect($this->plots)->contains('id', $this->selectedPlotId)) {
+            abort(403);
+        }
+
         $this->selectedPlot = Plot::find($this->selectedPlotId);
         $this->loadAvailableRecintos();
         $this->autoSelectRecinto();
@@ -123,12 +134,17 @@ class Dashboard extends Component
         $this->loadPlotData(forceRefresh: true);
     }
 
-    public function setTab(string $tab)
+    public function setTab(string $tab): void
     {
-        $this->activeTab = $tab;
-        
-        // Load comparison data when switching to compare tab
-        if ($tab === 'compare' && $this->comparePlotId) {
+        // Normalize tabs that were merged into parent tabs
+        $this->activeTab = match($tab) {
+            'spectral', 'lai-official', 'vigor-map' => 'satellite',
+            'smap-soil' => 'soil',
+            'solar' => 'weather',
+            default => $tab,
+        };
+
+        if ($this->activeTab === 'compare' && $this->comparePlotId) {
             $this->loadComparisonData();
         }
     }
@@ -563,10 +579,12 @@ class Dashboard extends Component
         }
         
         $this->historicalData = $historical->map(fn($item) => [
-            'date' => $item->image_date->format('d/m'),
-            'ndvi' => $item->ndvi_mean,
-            'fullDate' => $item->image_date->format('d/m/Y'),
-            'health_status' => $item->health_status,
+            'date'           => $item->image_date->format('d/m'),
+            'ndvi'           => $item->ndvi_mean,
+            'fullDate'       => $item->image_date->format('d/m/Y'),
+            'health_status'  => $item->health_status,
+            'cloud_coverage' => $item->cloud_coverage ?? 0,
+            'high_clouds'    => $item->hasHighCloudCoverage(),
         ])->values()->toArray();
         
         // Detect alerts and calculate predictions

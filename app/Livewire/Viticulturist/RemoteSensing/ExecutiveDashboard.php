@@ -8,6 +8,7 @@ use App\Services\RemoteSensing\NasaEarthdataService;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 #[Layout('components.app-layout')]
 class ExecutiveDashboard extends Component
@@ -20,6 +21,13 @@ class ExecutiveDashboard extends Component
     public array $summary = [];
     public bool $loading = false;
     public string $generateError = '';
+
+    // Vigor map data (all plots with geometries + NDVI color)
+    public array $mapData = [];
+
+    // Per-plot alert settings
+    public float $ndviThreshold = 0.30;
+    public bool $alertEmailEnabled = false;
 
     public function mount()
     {
@@ -38,7 +46,7 @@ class ExecutiveDashboard extends Component
         // Cargar plots con geometría para el usuario
         $this->plots = Plot::forUser(auth()->user())
             ->whereHas('plotGeometries')
-            ->select('id', 'name', 'area', 'viticulturist_id')
+            ->select('id', 'name', 'area', 'viticulturist_id', 'ndvi_alert_threshold', 'alert_email_enabled')
             ->orderBy('name')
             ->get();
 
@@ -56,6 +64,82 @@ class ExecutiveDashboard extends Component
                     'display_name' => $plot->name . ' — ' . ($mps->sigpacCode?->formatted_code ?? 'Recinto ' . $mps->id),
                 ]);
         });
+
+        $this->loadMapData();
+    }
+
+    /**
+     * Build map data: WKT geometries + NDVI colors for all user plots.
+     * Uses a single spatial query to avoid N+1.
+     */
+    private function loadMapData(): void
+    {
+        if ($this->plots->isEmpty()) {
+            return;
+        }
+
+        $plotIds = $this->plots->pluck('id')->toArray();
+
+        // One query: all WKT geometries for user's plots
+        $geometries = DB::table('multipart_plot_sigpac as mps')
+            ->join('plot_geometry as pg', 'pg.id', '=', 'mps.plot_geometry_id')
+            ->whereIn('mps.plot_id', $plotIds)
+            ->whereNotNull('mps.plot_geometry_id')
+            ->selectRaw('mps.plot_id, ST_AsText(pg.coordinates) as wkt')
+            ->get()
+            ->groupBy('plot_id');
+
+        // Latest NDVI per plot
+        $latestNdvi = PlotRemoteSensing::whereIn('plot_id', $plotIds)
+            ->whereIn('id', function ($q) use ($plotIds) {
+                $q->selectRaw('MAX(id)')
+                    ->from('plot_remote_sensing')
+                    ->whereIn('plot_id', $plotIds)
+                    ->groupBy('plot_id');
+            })
+            ->get()
+            ->keyBy('plot_id');
+
+        $this->mapData = $this->plots
+            ->map(function (Plot $plot) use ($geometries, $latestNdvi) {
+                $plotGeoms = $geometries->get($plot->id, collect());
+
+                if ($plotGeoms->isEmpty()) {
+                    return null;
+                }
+
+                $latest = $latestNdvi->get($plot->id);
+                $ndvi   = $latest?->ndvi_mean !== null ? (float) $latest->ndvi_mean : null;
+                $color  = $this->getNdviColor($ndvi);
+
+                return [
+                    'plot_id'       => $plot->id,
+                    'plot_name'     => $plot->name,
+                    'ndvi'          => $ndvi !== null ? round($ndvi, 3) : null,
+                    'health_status' => $latest?->health_status ?? 'no_data',
+                    'fill'          => $color['fill'],
+                    'line'          => $color['line'],
+                    'wkts'          => $plotGeoms->pluck('wkt')->filter()->values()->toArray(),
+                ];
+            })
+            ->filter()
+            ->values()
+            ->toArray();
+    }
+
+    private function getNdviColor(?float $ndvi): array
+    {
+        if ($ndvi === null) {
+            return ['fill' => 'rgba(156, 163, 175, 0.5)', 'line' => '#6b7280'];
+        }
+
+        return match (true) {
+            $ndvi >= 0.7  => ['fill' => 'rgba(34, 197, 94, 0.6)',  'line' => '#16a34a'],
+            $ndvi >= 0.5  => ['fill' => 'rgba(52, 211, 153, 0.6)', 'line' => '#10b981'],
+            $ndvi >= 0.3  => ['fill' => 'rgba(250, 204, 21, 0.6)', 'line' => '#ca8a04'],
+            $ndvi >= 0.15 => ['fill' => 'rgba(251, 146, 60, 0.6)', 'line' => '#ea580c'],
+            default       => ['fill' => 'rgba(239, 68, 68, 0.6)',  'line' => '#dc2626'],
+        };
     }
 
     public function updatedSelectedRecintoId(): void
@@ -70,18 +154,75 @@ class ExecutiveDashboard extends Component
         $this->loadSummary();
     }
 
+    /**
+     * Called from the Leaflet map when the user clicks a plot polygon.
+     */
+    public function selectPlot(int $plotId): void
+    {
+        if (!collect($this->plots)->contains('id', $plotId)) {
+            return; // unauthorized or unknown plot
+        }
+
+        $this->selectedPlotId = $plotId;
+
+        // Sync the recinto selector to the first recinto of this plot
+        $recinto = $this->recintos->firstWhere('plot_id', $plotId);
+        if ($recinto) {
+            $this->selectedRecintoId = $recinto['id'];
+        }
+
+        $this->loadSummary();
+    }
+
+    /**
+     * Save NDVI alert threshold and email toggle for the selected plot.
+     */
+    public function saveAlertSettings(): void
+    {
+        $this->validate([
+            'ndviThreshold' => ['required', 'numeric', 'min:0', 'max:1'],
+        ]);
+
+        $plot = Plot::find($this->selectedPlotId);
+        if (!$plot) {
+            return;
+        }
+
+        $this->authorize('update', $plot);
+
+        $plot->update([
+            'ndvi_alert_threshold' => $this->ndviThreshold,
+            'alert_email_enabled'  => $this->alertEmailEnabled,
+        ]);
+
+        // Refresh the in-memory plots list so mapData stays consistent
+        $this->plots = $this->plots->map(function (Plot $p) use ($plot) {
+            if ($p->id === $plot->id) {
+                $p->ndvi_alert_threshold = $plot->ndvi_alert_threshold;
+                $p->alert_email_enabled  = $plot->alert_email_enabled;
+            }
+            return $p;
+        });
+
+        $this->dispatch('notify', message: 'Configuración de alertas guardada.');
+    }
+
     public function loadSummary()
     {
         $this->loading = true;
 
         try {
-            $this->selectedPlot = Plot::select('id', 'name', 'area', 'viticulturist_id')
+            $this->selectedPlot = Plot::select('id', 'name', 'area', 'viticulturist_id', 'ndvi_alert_threshold', 'alert_email_enabled')
                 ->find($this->selectedPlotId);
             
             if (!$this->selectedPlot) {
                 $this->summary = [];
                 return;
             }
+
+            // Sync alert settings with the selected plot
+            $this->ndviThreshold    = (float) ($this->selectedPlot->ndvi_alert_threshold ?? 0.30);
+            $this->alertEmailEnabled = (bool) $this->selectedPlot->alert_email_enabled;
 
             // Usar caché de 5 minutos para el resumen
             $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";

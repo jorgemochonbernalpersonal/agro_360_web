@@ -39,6 +39,7 @@ class PlotAnalysis extends Component
 
     public function mount(Plot $plot)
     {
+        $this->authorize('view', $plot);
         $this->plot = $plot;
         $this->loadAllData();
     }

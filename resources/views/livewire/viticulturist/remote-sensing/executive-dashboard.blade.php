@@ -1,455 +1,557 @@
-<div class="min-h-screen bg-gradient-to-br from-zinc-50 to-blue-50 relative">
-    <style>
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
-        .delay-100 { animation-delay: 0.1s; opacity: 0; }
-        .delay-200 { animation-delay: 0.2s; opacity: 0; }
-        .delay-300 { animation-delay: 0.3s; opacity: 0; }
-        .delay-400 { animation-delay: 0.4s; opacity: 0; }
-        .delay-500 { animation-delay: 0.5s; opacity: 0; }
-        .delay-600 { animation-delay: 0.6s; opacity: 0; }
-    </style>
-
-    {{-- Overlay bloqueante mientras Livewire ejecuta generateData --}}
+<div>
+    {{-- Overlay: generando datos --}}
     <div wire:loading wire:target="generateData"
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 text-center">
-            <svg class="animate-spin h-16 w-16 text-green-600 mx-auto mb-6" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
-            <h3 class="text-xl font-bold text-zinc-900 mb-2">🛰️ Obteniendo datos del satélite</h3>
-            <p class="text-zinc-600">Consultando NASA... unos segundos.</p>
-        </div>
+        <x-agro.card class="max-w-sm mx-4 text-center">
+            <flux:icon icon="signal" class="size-16 text-green-600 mx-auto mb-4 animate-pulse" />
+            <p class="text-lg font-bold text-zinc-900 mb-1">Obteniendo datos del satélite</p>
+            <p class="text-zinc-500 text-sm">Consultando NASA... unos segundos.</p>
+        </x-agro.card>
     </div>
-    
+
     <div class="container mx-auto px-4 py-6">
-        {{-- Header --}}
-        <div class="mb-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        {{-- Banner de datos simulados --}}
+        @if(config('services.nasa_earthdata.mock'))
+            <div class="mb-4 flex items-center gap-3 px-4 py-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-800 text-sm">
+                <flux:icon icon="beaker" class="size-5 shrink-0 text-amber-600" />
                 <div>
-                    <h1 class="text-4xl font-bold text-zinc-900 flex items-center gap-3">
-                        🛰️ Dashboard Teledetección
-                    </h1>
-                    <p class="text-zinc-600 mt-2">Vista ejecutiva de salud y estado de tus parcelas</p>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    {{-- Recinto Selector (parcela + SIGPAC) --}}
-                    <flux:select wire:model.live="selectedRecintoId">
-                        @foreach($recintos as $recinto)
-                            <option value="{{ $recinto['id'] }}">{{ $recinto['display_name'] }}</option>
-                        @endforeach
-                    </flux:select>
-                    
-                    <button wire:click="refreshData" 
-                            wire:loading.attr="disabled"
-                            class="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg transition-all disabled:opacity-50 flex items-center gap-2">
-                        <svg wire:loading.remove wire:target="refreshData" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                        </svg>
-                        <svg wire:loading wire:target="refreshData" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                        </svg>
-                        Actualizar
-                    </button>
+                    <span class="font-semibold">Modo demo activo</span>
+                    — Los datos mostrados son simulados, no proceden de la API de NASA.
+                    Configura <code class="bg-amber-100 px-1 rounded text-xs">NASA_EARTHDATA_MOCK=false</code> en <code class="bg-amber-100 px-1 rounded text-xs">.env</code> para usar datos reales.
                 </div>
             </div>
-            
-            @if($selectedPlot && !empty($summary))
-                <div class="mt-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-                    <div class="flex items-center gap-4 text-sm text-zinc-600">
-                        <span class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            Última actualización: {{ $summary['last_update'] }}
-                        </span>
-                        <span>•</span>
-                        <span>Satélite: {{ $summary['satellite'] }}</span>
-                        @if($selectedPlot->area)
-                            <span>•</span>
-                            <span class="flex items-center gap-1">
-                                📐 {{ number_format($selectedPlot->area, 2) }} ha
-                            </span>
-                        @endif
+        @endif
+
+        <x-agro.page-header title="Teledetección" description="Estado satelital de tus parcelas">
+            <x-slot:actions>
+                <flux:select wire:model.live="selectedRecintoId">
+                    @foreach($recintos as $recinto)
+                        <option value="{{ $recinto['id'] }}">{{ $recinto['display_name'] }}</option>
+                    @endforeach
+                </flux:select>
+
+                <flux:button wire:click="refreshData" wire:loading.attr="disabled" variant="primary">
+                    <svg wire:loading.remove wire:target="refreshData" class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <svg wire:loading wire:target="refreshData" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                    Actualizar
+                </flux:button>
+            </x-slot:actions>
+        </x-agro.page-header>
+
+        {{-- Metadata de última actualización --}}
+        @if($selectedPlot && !empty($summary))
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-500 mb-6 -mt-2">
+                <span class="flex items-center gap-1.5">
+                    <span class="size-2 bg-green-500 rounded-full animate-pulse inline-block"></span>
+                    Última actualización: {{ $summary['last_update'] }}
+                </span>
+                <span class="hidden md:inline">•</span>
+                <span>{{ $summary['satellite'] }}</span>
+                @if($selectedPlot->area)
+                    <span class="hidden md:inline">•</span>
+                    <span>{{ number_format($selectedPlot->area, 2) }} ha</span>
+                @endif
+                <a href="{{ route('remote-sensing.report.plot', $selectedPlot) }}"
+                   class="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg transition-colors">
+                    <flux:icon icon="document-arrow-down" variant="micro" />
+                    Descargar PDF
+                </a>
+            </div>
+        @endif
+
+        {{-- ── Mapa de Vigor NDVI (todas las parcelas) ── --}}
+        @if(!empty($mapData))
+            <x-agro.card class="mb-6">
+                <x-slot:header>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="font-bold text-zinc-900">Mapa de Vigor NDVI</h2>
+                            <p class="text-sm text-zinc-500 mt-0.5">Estado satelital de todas tus parcelas · haz clic para seleccionar</p>
+                        </div>
                     </div>
-                    
-                    <a href="{{ route('remote-sensing.report.plot', $selectedPlot) }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold shadow-lg transition-all text-sm">
-                        📄 Descargar PDF
-                    </a>
+                </x-slot:header>
+
+                <div wire:ignore>
+                    <div x-data="execNdviMap()" x-init="init()" x-ref="root">
+                        <div x-ref="mapEl" class="h-72 rounded-lg z-0"></div>
+                    </div>
                 </div>
-            @endif
-        </div>
+
+                {{-- Leyenda --}}
+                <div class="flex flex-wrap gap-x-5 gap-y-1 mt-3 text-xs text-zinc-500">
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-green-500 inline-block"></span>Excelente ≥0.7</span>
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-emerald-400 inline-block"></span>Bueno ≥0.5</span>
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-yellow-400 inline-block"></span>Moderado ≥0.3</span>
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-orange-400 inline-block"></span>Bajo ≥0.15</span>
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-red-500 inline-block"></span>Crítico</span>
+                    <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-gray-400 inline-block"></span>Sin datos</span>
+                </div>
+            </x-agro.card>
+
+            <script>
+                function execNdviMap() {
+                    return {
+                        mapData: @json($mapData),
+                        map: null,
+                        init() {
+                            if (!window.loadLeaflet || !window.parseWKT) return;
+
+                            window.loadLeaflet().then(() => {
+                                this.map = window.L.map(this.$refs.mapEl);
+
+                                window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: '© OpenStreetMap',
+                                    maxZoom: 18,
+                                }).addTo(this.map);
+
+                                const bounds = [];
+                                const wire = this.$wire;
+
+                                this.mapData.forEach(plot => {
+                                    if (!plot.wkts || !plot.wkts.length) return;
+
+                                    plot.wkts.forEach(wkt => {
+                                        const coords = window.parseWKT(wkt);
+                                        if (!coords || !coords.length) return;
+
+                                        const poly = window.L.polygon(coords, {
+                                            fillColor: plot.fill,
+                                            fillOpacity: 0.7,
+                                            color: plot.line,
+                                            weight: 2,
+                                        });
+
+                                        const ndviLabel = plot.ndvi !== null
+                                            ? parseFloat(plot.ndvi).toFixed(3)
+                                            : 'Sin datos';
+
+                                        poly.bindTooltip(
+                                            '<strong>' + plot.plot_name + '</strong><br>NDVI: ' + ndviLabel,
+                                            { sticky: true }
+                                        );
+
+                                        poly.on('click', () => {
+                                            wire.call('selectPlot', plot.plot_id);
+                                        });
+
+                                        poly.addTo(this.map);
+                                        coords.forEach(c => bounds.push(c));
+                                    });
+                                });
+
+                                if (bounds.length > 0) {
+                                    this.map.fitBounds(bounds, { padding: [20, 20] });
+                                } else {
+                                    this.map.setView([40.4, -3.7], 6);
+                                }
+                            });
+                        }
+                    };
+                }
+            </script>
+        @endif
 
         @if($loading)
-            <div class="flex items-center justify-center py-24">
-                <div class="text-center">
-                    <svg class="animate-spin h-16 w-16 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    <p class="text-zinc-600 text-lg">Cargando datos...</p>
-                </div>
+            {{-- Skeleton cargando --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for($i = 0; $i < 6; $i++)
+                    <x-agro.skeleton-card />
+                @endfor
             </div>
+
         @elseif($selectedPlot && !empty($summary) && isset($summary['vigor']['status']) && $summary['vigor']['status'] !== 'no_data')
-            {{-- Main Dashboard Cards --}}
+            @php
+                $colorRemap = [
+                    'emerald' => 'green', 'teal' => 'green',
+                    'amber' => 'yellow',
+                    'sky' => 'blue', 'cyan' => 'blue', 'indigo' => 'blue',
+                    'rose' => 'red', 'pink' => 'red',
+                    'violet' => 'purple',
+                ];
+                $validColors = ['agro', 'blue', 'purple', 'orange', 'red', 'green', 'yellow'];
+                $toColor = fn($c) => in_array($c ?? '', $validColors) ? ($c ?? 'agro') : ($colorRemap[$c ?? ''] ?? 'agro');
+                $vigorColor     = $toColor($summary['vigor']['color'] ?? null);
+                $waterColor     = $toColor($summary['water']['color'] ?? null);
+                $tempColor      = $toColor($summary['temperature']['color'] ?? null);
+                $harvestColor   = $toColor($summary['harvest']['color'] ?? null);
+                $nutritionColor = $toColor($summary['nutrition']['color'] ?? null);
+                $alertsColor    = $toColor($summary['alerts']['color'] ?? null);
+            @endphp
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {{-- Card 1: Vigor --}}
-                <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group animate-fade-in-up delay-100">
-                    <div class="bg-gradient-to-br from-{{ $summary['vigor']['color'] }}-50 to-{{ $summary['vigor']['color'] }}-100 p-6 border-b-4 border-{{ $summary['vigor']['color'] }}-400">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-lg font-bold text-zinc-900">🌱 VIGOR VEGETATIVO</h3>
-                            <span class="text-4xl">{{ $summary['vigor']['icon'] }}</span>
+
+                {{-- Vigor Vegetativo --}}
+                <x-agro.card :color="$vigorColor">
+                    <x-slot:header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-zinc-900">Vigor Vegetativo</h3>
+                            <span class="text-3xl">{{ $summary['vigor']['icon'] }}</span>
                         </div>
-                        <div class="text-{{ $summary['vigor']['color'] }}-700 font-semibold text-sm">{{ $summary['vigor']['label'] }}</div>
-                    </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-3">
+                        <p class="text-sm font-medium text-zinc-700 mt-1">{{ $summary['vigor']['label'] }}</p>
+                    </x-slot:header>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-zinc-500 flex items-center gap-1">
+                                NDVI
+                                <span title="Índice de Vegetación: 0-1, valores altos = mayor vigor" class="cursor-help text-zinc-400 text-xs">ⓘ</span>
+                            </span>
+                            <span class="text-2xl font-bold">{{ number_format($summary['vigor']['ndvi'], 2) }}</span>
+                        </div>
+                        @if($summary['vigor']['gndvi'])
                             <div class="flex justify-between items-center">
-                                <span class="text-zinc-600 text-sm flex items-center gap-1">
-                                    NDVI
-                                    <span class="cursor-help text-zinc-400" title="Índice de Vegetación: 0-1, valores más altos indican mayor vigor vegetativo">ℹ️</span>
+                                <span class="text-sm text-zinc-500 flex items-center gap-1">
+                                    GNDVI
+                                    <span title="Indicador de Nitrógeno foliar" class="cursor-help text-zinc-400 text-xs">ⓘ</span>
                                 </span>
-                                <span class="text-2xl font-bold text-{{ $summary['vigor']['color'] }}-700">{{ number_format($summary['vigor']['ndvi'], 2) }}</span>
+                                <span class="text-lg font-semibold">{{ number_format($summary['vigor']['gndvi'], 2) }}</span>
                             </div>
-                            
-                            @if($summary['vigor']['gndvi'])
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm flex items-center gap-1">
-                                        GNDVI
-                                        <span class="cursor-help text-zinc-400" title="Indicador de Nitrógeno: detecta deficiencias nutricionales">ℹ️</span>
-                                    </span>
-                                    <span class="text-xl font-bold text-{{ $summary['vigor']['color'] }}-700">{{ number_format($summary['vigor']['gndvi'], 2) }}</span>
-                                </div>
-                            @endif
-                            
-                            @if($summary['vigor']['lai'])
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm flex items-center gap-1">
-                                        LAI
-                                        <span class="cursor-help text-zinc-400" title="Índice de Área Foliar: superficie de hojas por unidad de suelo">ℹ️</span>
-                                    </span>
-                                    <span class="text-xl font-bold text-{{ $summary['vigor']['color'] }}-700">{{ number_format($summary['vigor']['lai'], 2) }}</span>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <a href="{{ $summary['vigor']['detail_route'] }}" 
-                           class="mt-6 w-full bg-{{ $summary['vigor']['color'] }}-100 hover:bg-{{ $summary['vigor']['color'] }}-200 text-{{ $summary['vigor']['color'] }}-800 py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 group-hover:scale-105">
-                            <span>📊 Ver Análisis Completo</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </a>
+                        @endif
+                        @if($summary['vigor']['lai'])
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500 flex items-center gap-1">
+                                    LAI
+                                    <span title="Índice de Área Foliar" class="cursor-help text-zinc-400 text-xs">ⓘ</span>
+                                </span>
+                                <span class="text-lg font-semibold">{{ number_format($summary['vigor']['lai'], 2) }}</span>
+                            </div>
+                        @endif
                     </div>
-                </div>
 
-                {{-- Card 2: Agua --}}
-                <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group animate-fade-in-up delay-200">
-                    <div class="bg-gradient-to-br from-{{ $summary['water']['color'] }}-50 to-{{ $summary['water']['color'] }}-100 p-6 border-b-4 border-{{ $summary['water']['color'] }}-400">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-lg font-bold text-zinc-900">💧 ESTADO HÍDRICO</h3>
-                            <span class="text-4xl">{{ $summary['water']['icon'] }}</span>
-                        </div>
-                        <div class="text-{{ $summary['water']['color'] }}-700 font-semibold text-sm">{{ $summary['water']['label'] }}</div>
-                    </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-3">
-                            @if(isset($summary['water']['cwsi']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm flex items-center gap-1">
-                                        CWSI
-                                        <span class="cursor-help text-zinc-400" title="Índice de Estrés Hídrico: 0-1, valores bajos son mejores">ℹ️</span>
-                                    </span>
-                                    <span class="text-2xl font-bold text-{{ $summary['water']['color'] }}-700">{{ number_format($summary['water']['cwsi'], 2) }}</span>
-                                </div>
-                            @endif
-                            
-                            @if(isset($summary['water']['soil_moisture']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm flex items-center gap-1">
-                                        Humedad Suelo
-                                        <span class="cursor-help text-zinc-400" title="Porcentaje de humedad en el suelo">ℹ️</span>
-                                    </span>
-                                    <span class="text-xl font-bold text-{{ $summary['water']['color'] }}-700">{{ number_format($summary['water']['soil_moisture'], 1) }}%</span>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <a href="{{ $summary['water']['detail_route'] }}" 
-                           class="mt-6 w-full bg-{{ $summary['water']['color'] }}-100 hover:bg-{{ $summary['water']['color'] }}-200 text-{{ $summary['water']['color'] }}-800 py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 group-hover:scale-105">
-                            <span>📊 Ver Análisis Completo</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+                    <x-slot:footer>
+                        <a href="{{ $summary['vigor']['detail_route'] }}" class="flex items-center justify-between text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+                            <span>Ver análisis completo</span>
+                            <flux:icon icon="chevron-right" variant="micro" />
                         </a>
-                    </div>
-                </div>
+                    </x-slot:footer>
+                </x-agro.card>
 
-                {{-- Card 3: Temperatura --}}
-                <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group animate-fade-in-up delay-300">
-                    <div class="bg-gradient-to-br from-{{ $summary['temperature']['color'] }}-50 to-{{ $summary['temperature']['color'] }}-100 p-6 border-b-4 border-{{ $summary['temperature']['color'] }}-400">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-lg font-bold text-zinc-900">🌡️ TEMPERATURA</h3>
-                            <span class="text-4xl">{{ $summary['temperature']['icon'] }}</span>
+                {{-- Estado Hídrico --}}
+                <x-agro.card :color="$waterColor">
+                    <x-slot:header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-zinc-900">Estado Hídrico</h3>
+                            <span class="text-3xl">{{ $summary['water']['icon'] }}</span>
                         </div>
-                        <div class="text-{{ $summary['temperature']['color'] }}-700 font-semibold text-sm">{{ $summary['temperature']['label'] }}</div>
+                        <p class="text-sm font-medium text-zinc-700 mt-1">{{ $summary['water']['label'] }}</p>
+                    </x-slot:header>
+
+                    <div class="space-y-3">
+                        @if(isset($summary['water']['cwsi']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500 flex items-center gap-1">
+                                    CWSI
+                                    <span title="Índice de Estrés Hídrico: 0-1, valores bajos son mejores" class="cursor-help text-zinc-400 text-xs">ⓘ</span>
+                                </span>
+                                <span class="text-2xl font-bold">{{ number_format($summary['water']['cwsi'], 2) }}</span>
+                            </div>
+                        @endif
+                        @if(isset($summary['water']['soil_moisture']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Humedad Suelo</span>
+                                <span class="text-lg font-semibold">{{ number_format($summary['water']['soil_moisture'], 1) }}%</span>
+                            </div>
+                        @endif
                     </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-3">
-                            @if(isset($summary['temperature']['lst_day']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">LST Día</span>
-                                    <span class="text-2xl font-bold text-{{ $summary['temperature']['color'] }}-700">{{ number_format($summary['temperature']['lst_day'], 1) }}°C</span>
-                                </div>
-                            @endif
-                            
-                            @if(isset($summary['temperature']['lst_night']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">LST Noche</span>
-                                    <span class="text-xl font-bold text-{{ $summary['temperature']['color'] }}-700">{{ number_format($summary['temperature']['lst_night'], 1) }}°C</span>
-                                </div>
-                            @endif
-                            
-                            @if(isset($summary['temperature']['lst_diff']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">Amplitud</span>
-                                    <span class="text-xl font-bold text-{{ $summary['temperature']['color'] }}-700">{{ number_format($summary['temperature']['lst_diff'], 1) }}°C</span>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <a href="{{ $summary['temperature']['detail_route'] }}" 
-                           class="mt-6 w-full bg-{{ $summary['temperature']['color'] }}-100 hover:bg-{{ $summary['temperature']['color'] }}-200 text-{{ $summary['temperature']['color'] }}-800 py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 group-hover:scale-105">
-                            <span>📊 Ver Análisis Completo</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+
+                    <x-slot:footer>
+                        <a href="{{ $summary['water']['detail_route'] }}" class="flex items-center justify-between text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+                            <span>Ver análisis completo</span>
+                            <flux:icon icon="chevron-right" variant="micro" />
                         </a>
-                    </div>
-                </div>
+                    </x-slot:footer>
+                </x-agro.card>
 
-                {{-- Card 4: Cosecha --}}
-                <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group animate-fade-in-up delay-400">
-                    <div class="bg-gradient-to-br from-{{ $summary['harvest']['color'] }}-50 to-{{ $summary['harvest']['color'] }}-100 p-6 border-b-4 border-{{ $summary['harvest']['color'] }}-400">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-lg font-bold text-zinc-900">🍇 RENDIMIENTO</h3>
-                            <span class="text-4xl">{{ $summary['harvest']['icon'] }}</span>
+                {{-- Temperatura --}}
+                <x-agro.card :color="$tempColor">
+                    <x-slot:header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-zinc-900">Temperatura</h3>
+                            <span class="text-3xl">{{ $summary['temperature']['icon'] }}</span>
                         </div>
-                        <div class="text-{{ $summary['harvest']['color'] }}-700 font-semibold text-sm">Predicción</div>
+                        <p class="text-sm font-medium text-zinc-700 mt-1">{{ $summary['temperature']['label'] }}</p>
+                    </x-slot:header>
+
+                    <div class="space-y-3">
+                        @if(isset($summary['temperature']['lst_day']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">LST Día</span>
+                                <span class="text-2xl font-bold">{{ number_format($summary['temperature']['lst_day'], 1) }}°C</span>
+                            </div>
+                        @endif
+                        @if(isset($summary['temperature']['lst_night']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">LST Noche</span>
+                                <span class="text-lg font-semibold">{{ number_format($summary['temperature']['lst_night'], 1) }}°C</span>
+                            </div>
+                        @endif
+                        @if(isset($summary['temperature']['lst_diff']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Amplitud térmica</span>
+                                <span class="text-lg font-semibold">{{ number_format($summary['temperature']['lst_diff'], 1) }}°C</span>
+                            </div>
+                        @endif
                     </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-3">
-                            @if(isset($summary['harvest']['yield_per_ha']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">Por Hectárea</span>
-                                    <span class="text-2xl font-bold text-{{ $summary['harvest']['color'] }}-700">{{ number_format($summary['harvest']['yield_per_ha'], 1) }} t/ha</span>
-                                </div>
-                            @endif
-                            
-                            @if(isset($summary['harvest']['total_yield']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">Total</span>
-                                    <span class="text-xl font-bold text-{{ $summary['harvest']['color'] }}-700">{{ number_format($summary['harvest']['total_yield'] * 1000, 0) }} kg</span>
-                                </div>
-                            @endif
-                            
-                            @if(isset($summary['harvest']['confidence_label']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">Confianza</span>
-                                    <span class="text-sm font-semibold text-{{ $summary['harvest']['color'] }}-700">{{ $summary['harvest']['confidence_label'] }}</span>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <a href="{{ $summary['harvest']['detail_route'] }}" 
-                           class="mt-6 w-full bg-{{ $summary['harvest']['color'] }}-100 hover:bg-{{ $summary['harvest']['color'] }}-200 text-{{ $summary['harvest']['color'] }}-800 py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 group-hover:scale-105">
-                            <span>📈 Ver Pronóstico</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+
+                    <x-slot:footer>
+                        <a href="{{ $summary['temperature']['detail_route'] }}" class="flex items-center justify-between text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+                            <span>Ver análisis completo</span>
+                            <flux:icon icon="chevron-right" variant="micro" />
                         </a>
-                    </div>
-                </div>
+                    </x-slot:footer>
+                </x-agro.card>
 
-                {{-- Card 5: Nutrición --}}
-                <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group animate-fade-in-up delay-500">
-                    <div class="bg-gradient-to-br from-{{ $summary['nutrition']['color'] }}-50 to-{{ $summary['nutrition']['color'] }}-100 p-6 border-b-4 border-{{ $summary['nutrition']['color'] }}-400">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-lg font-bold text-zinc-900">🌈 NUTRICIÓN</h3>
-                            <span class="text-4xl">{{ $summary['nutrition']['icon'] }}</span>
+                {{-- Rendimiento / Cosecha --}}
+                <x-agro.card :color="$harvestColor">
+                    <x-slot:header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-zinc-900">Rendimiento</h3>
+                            <span class="text-3xl">{{ $summary['harvest']['icon'] }}</span>
                         </div>
-                        <div class="text-{{ $summary['nutrition']['color'] }}-700 font-semibold text-sm">{{ $summary['nutrition']['label'] }}</div>
+                        <p class="text-sm font-medium text-zinc-700 mt-1">Predicción de cosecha</p>
+                    </x-slot:header>
+
+                    <div class="space-y-3">
+                        @if(isset($summary['harvest']['yield_per_ha']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Por hectárea</span>
+                                <span class="text-2xl font-bold">{{ number_format($summary['harvest']['yield_per_ha'], 1) }} t/ha</span>
+                            </div>
+                        @endif
+                        @if(isset($summary['harvest']['total_yield']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Total estimado</span>
+                                <span class="text-lg font-semibold">{{ number_format($summary['harvest']['total_yield'] * 1000, 0) }} kg</span>
+                            </div>
+                        @endif
+                        @if(isset($summary['harvest']['confidence_label']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Confianza</span>
+                                <span class="text-sm font-semibold">{{ $summary['harvest']['confidence_label'] }}</span>
+                            </div>
+                        @endif
                     </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-3">
-                            @if(isset($summary['nutrition']['gndvi']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">GNDVI (N)</span>
-                                    <span class="text-2xl font-bold text-{{ $summary['nutrition']['color'] }}-700">{{ number_format($summary['nutrition']['gndvi'], 2) }}</span>
-                                </div>
-                            @endif
-                            
-                            @if(isset($summary['nutrition']['chlorophyll']))
-                                <div class="flex justify-between items-center">
-                                    <span class="text-zinc-600 text-sm">Clorofila</span>
-                                    <span class="text-xl font-bold text-{{ $summary['nutrition']['color'] }}-700">{{ number_format($summary['nutrition']['chlorophyll'], 0) }}</span>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <a href="{{ $summary['nutrition']['detail_route'] }}" 
-                           class="mt-6 w-full bg-{{ $summary['nutrition']['color'] }}-100 hover:bg-{{ $summary['nutrition']['color'] }}-200 text-{{ $summary['nutrition']['color'] }}-800 py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 group-hover:scale-105">
-                            <span>📊 Ver Análisis</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+
+                    <x-slot:footer>
+                        <a href="{{ $summary['harvest']['detail_route'] }}" class="flex items-center justify-between text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+                            <span>Ver pronóstico</span>
+                            <flux:icon icon="chevron-right" variant="micro" />
                         </a>
-                    </div>
-                </div>
+                    </x-slot:footer>
+                </x-agro.card>
 
-                {{-- Card 6: Alertas --}}
-                <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group animate-fade-in-up delay-600">
-                    <div class="bg-gradient-to-br from-{{ $summary['alerts']['color'] }}-50 to-{{ $summary['alerts']['color'] }}-100 p-6 border-b-4 border-{{ $summary['alerts']['color'] }}-400">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-lg font-bold text-zinc-900">⚠️ ALERTAS</h3>
-                            <span class="text-4xl">{{ $summary['alerts']['icon'] }}</span>
+                {{-- Nutrición --}}
+                <x-agro.card :color="$nutritionColor">
+                    <x-slot:header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-zinc-900">Nutrición</h3>
+                            <span class="text-3xl">{{ $summary['nutrition']['icon'] }}</span>
                         </div>
-                        <div class="text-{{ $summary['alerts']['color'] }}-700 font-semibold text-sm">
+                        <p class="text-sm font-medium text-zinc-700 mt-1">{{ $summary['nutrition']['label'] }}</p>
+                    </x-slot:header>
+
+                    <div class="space-y-3">
+                        @if(isset($summary['nutrition']['gndvi']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500 flex items-center gap-1">
+                                    GNDVI
+                                    <span title="Índice verde de nitrógeno foliar" class="cursor-help text-zinc-400 text-xs">ⓘ</span>
+                                </span>
+                                <span class="text-2xl font-bold">{{ number_format($summary['nutrition']['gndvi'], 2) }}</span>
+                            </div>
+                        @endif
+                        @if(isset($summary['nutrition']['chlorophyll']))
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Clorofila</span>
+                                <span class="text-lg font-semibold">{{ number_format($summary['nutrition']['chlorophyll'], 0) }}</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <x-slot:footer>
+                        <a href="{{ $summary['nutrition']['detail_route'] }}" class="flex items-center justify-between text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+                            <span>Ver análisis</span>
+                            <flux:icon icon="chevron-right" variant="micro" />
+                        </a>
+                    </x-slot:footer>
+                </x-agro.card>
+
+                {{-- Alertas --}}
+                <x-agro.card :color="$alertsColor">
+                    <x-slot:header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-zinc-900">Alertas</h3>
+                            <span class="text-3xl">{{ $summary['alerts']['icon'] }}</span>
+                        </div>
+                        <p class="text-sm font-medium text-zinc-700 mt-1">
                             @if($summary['alerts']['total'] == 0)
-                                Sin alertas
+                                Sin alertas activas
                             @else
-                                {{ $summary['alerts']['total'] }} {{ $summary['alerts']['total'] == 1 ? 'alerta' : 'alertas' }}
+                                {{ $summary['alerts']['total'] }} {{ $summary['alerts']['total'] == 1 ? 'alerta activa' : 'alertas activas' }}
                             @endif
+                        </p>
+                    </x-slot:header>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-zinc-500">Críticas</span>
+                            <span class="text-2xl font-bold text-red-600">{{ $summary['alerts']['critical'] }}</span>
                         </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-zinc-500">Avisos</span>
+                            <span class="text-lg font-semibold text-yellow-600">{{ $summary['alerts']['warnings'] }}</span>
+                        </div>
+                        @if(!empty($summary['alerts']['list']))
+                            <div class="space-y-1 pt-1">
+                                @foreach(array_slice($summary['alerts']['list'], 0, 2) as $alert)
+                                    <p class="text-xs px-2 py-1.5 rounded {{ $alert['type'] === 'critical' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                        {{ $alert['message'] }}
+                                    </p>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center">
-                                <span class="text-zinc-600 text-sm">🚨 Críticas</span>
-                                <span class="text-2xl font-bold text-red-700">{{ $summary['alerts']['critical'] }}</span>
-                            </div>
-                            
-                            <div class="flex justify-between items-center">
-                                <span class="text-zinc-600 text-sm">⚠️ Avisos</span>
-                                <span class="text-xl font-bold text-yellow-700">{{ $summary['alerts']['warnings'] }}</span>
-                            </div>
-                            
-                            @if(!empty($summary['alerts']['list']))
-                                <div class="mt-3 space-y-2">
-                                    @foreach(array_slice($summary['alerts']['list'], 0, 2) as $alert)
-                                        <div class="text-xs px-3 py-2 rounded-lg 
-                                            {{ $alert['type'] === 'critical' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                            • {{ $alert['message'] }}
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <a href="{{ $summary['alerts']['detail_route'] }}" 
-                           class="mt-6 w-full bg-{{ $summary['alerts']['color'] }}-100 hover:bg-{{ $summary['alerts']['color'] }}-200 text-{{ $summary['alerts']['color'] }}-800 py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 group-hover:scale-105">
-                            <span>🔔 Ver Todas</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+
+                    <x-slot:footer>
+                        <a href="{{ $summary['alerts']['detail_route'] }}" class="flex items-center justify-between text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+                            <span>Ver todas las alertas</span>
+                            <flux:icon icon="chevron-right" variant="micro" />
+                        </a>
+                    </x-slot:footer>
+                </x-agro.card>
+
+            </div>
+
+            {{-- CTA hacia análisis avanzado --}}
+            <x-agro.card>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-base font-bold text-zinc-900 mb-0.5">¿Necesitas más detalle?</h2>
+                        <p class="text-sm text-zinc-500">Historial, riego, GDD, espectral y comparación entre parcelas</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        <a href="{{ route('remote-sensing.advanced') }}"
+                           class="px-4 py-2 bg-agro-600 hover:bg-agro-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                            Análisis avanzado
+                        </a>
+                        <a href="{{ route('remote-sensing.advanced', ['tab' => 'history']) }}"
+                           class="px-4 py-2 bg-white border border-zinc-300 hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-lg transition-colors">
+                            Histórico
+                        </a>
+                        <a href="{{ route('remote-sensing.advanced', ['tab' => 'compare']) }}"
+                           class="px-4 py-2 bg-white border border-zinc-300 hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-lg transition-colors">
+                            Comparar parcelas
                         </a>
                     </div>
                 </div>
-            </div>
+                <x-slot:footer>
+                    <p class="text-xs text-zinc-400">Datos NASA • VIIRS + MODIS + SMAP • 100% Gratuito</p>
+                </x-slot:footer>
+            </x-agro.card>
 
-            {{-- Advanced Analysis Section --}}
-            <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl shadow-lg p-8 border-2 border-purple-200">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-zinc-900 mb-2">🔍 ¿Necesitas Análisis Más Detallado?</h2>
-                    <p class="text-zinc-600">Accede al dashboard avanzado con todas las métricas y gráficos históricos</p>
-                </div>
-                
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="{{ route('remote-sensing.advanced') }}" 
-                       class="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-bold shadow-xl transition-all transform hover:scale-105 flex items-center gap-3">
-                        <span>📊 Análisis Completo (13 Pestañas)</span>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                        </svg>
-                    </a>
-                    
-                    <a href="{{ route('remote-sensing.advanced', ['tab' => 'history']) }}" 
-                       class="px-8 py-4 bg-white hover:bg-zinc-50 text-zinc-800 border-2 border-purple-300 rounded-xl font-bold shadow-lg transition-all flex items-center gap-3">
-                        <span>📈 Ver Histórico</span>
-                    </a>
-                    
-                    <a href="{{ route('remote-sensing.advanced', ['tab' => 'compare']) }}" 
-                       class="px-8 py-4 bg-white hover:bg-zinc-50 text-zinc-800 border-2 border-blue-300 rounded-xl font-bold shadow-lg transition-all flex items-center gap-3">
-                        <span>⚖️ Comparar Parcelas</span>
-                    </a>
-                </div>
-            </div>
+            {{-- ── Configuración de alertas NDVI ── --}}
+            <x-agro.card class="mt-6">
+                <x-slot:header>
+                    <div class="flex items-center gap-2">
+                        <flux:icon icon="bell-alert" class="size-5 text-zinc-500" />
+                        <div>
+                            <h2 class="font-bold text-zinc-900">Alertas NDVI</h2>
+                            <p class="text-sm text-zinc-500 mt-0.5">Notificaciones para {{ $selectedPlot->name }}</p>
+                        </div>
+                    </div>
+                </x-slot:header>
 
-            {{-- Footer --}}
-            <div class="mt-8 text-center text-sm text-zinc-500">
-                <p>🛰️ Datos NASA • VIIRS + MODIS + SMAP • 100% Gratuito</p>
-            </div>
+                <div class="flex flex-col sm:flex-row items-start sm:items-end gap-5">
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Umbral NDVI
+                            <span title="Recibirás una alerta cuando el NDVI caiga por debajo de este valor" class="cursor-help text-zinc-400 ml-1">ⓘ</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <flux:input
+                                type="number"
+                                wire:model="ndviThreshold"
+                                step="0.05"
+                                min="0"
+                                max="1"
+                                class="w-28"
+                            />
+                            <span class="text-sm text-zinc-400">de 0 a 1</span>
+                        </div>
+                        @error('ndviThreshold')
+                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="flex items-center gap-2.5 pb-1">
+                        <flux:checkbox wire:model="alertEmailEnabled" id="exec-alert-email" />
+                        <label for="exec-alert-email" class="text-sm font-medium text-zinc-700 cursor-pointer select-none">
+                            Enviar alerta por email
+                        </label>
+                    </div>
+
+                    <flux:button wire:click="saveAlertSettings" variant="primary" class="shrink-0">
+                        Guardar configuración
+                    </flux:button>
+                </div>
+
+                <p class="text-xs text-zinc-400 mt-4">
+                    Las alertas se guardan siempre en las notificaciones del sistema. El email solo se envía si está habilitado.
+                    Máximo 1 alerta cada 24 horas por parcela.
+                </p>
+            </x-agro.card>
+
         @elseif($selectedPlot && !empty($summary))
-            {{-- No hay datos de teledetección --}}
-            <div class="text-center py-24 bg-white rounded-2xl shadow-lg">
-                <span class="text-8xl">📡</span>
-                <p class="text-zinc-900 mt-6 text-2xl font-bold">Sin datos de teledetección</p>
-                <p class="text-zinc-600 mt-3 text-lg">La parcela "{{ $selectedPlot->name }}" aún no tiene datos satelitales</p>
-                
-                @if($selectedPlot->area)
-                    <p class="text-zinc-500 mt-2">📐 Superficie: {{ number_format($selectedPlot->area, 2) }} ha</p>
-                @endif
-                
-                <div class="mt-8 max-w-md mx-auto">
-                    <div class="mt-6 flex justify-center">
+            {{-- Parcela sin datos --}}
+            <x-agro.card>
+                <x-agro.empty-state
+                    icon="signal"
+                    title="Sin datos de teledetección"
+                    description="La parcela &quot;{{ $selectedPlot->name }}&quot; aún no tiene datos satelitales">
+                    <x-slot:action>
                         <button wire:click="generateData"
                                 wire:loading.attr="disabled"
                                 wire:target="generateData"
-                                class="px-8 py-3 bg-green-600 hover:bg-green-700 disabled:bg-zinc-400 text-white rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-zinc-400 text-white text-sm font-semibold rounded-lg transition-colors inline-flex items-center gap-2">
+                            <svg wire:loading.remove wire:target="generateData" class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
-                            🛰️ Generar Datos Ahora
+                            <svg wire:loading wire:target="generateData" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                            </svg>
+                            Generar datos ahora
                         </button>
-                    </div>
+                        @if($generateError)
+                            <p class="mt-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
+                                {{ $generateError }}
+                            </p>
+                        @endif
+                    </x-slot:action>
+                </x-agro.empty-state>
+            </x-agro.card>
 
-                    @if($generateError)
-                        <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-red-800 text-sm">
-                            ❌ {{ $generateError }}
-                        </div>
-                    @endif
-                </div>
-            </div>
         @else
-            <div class="text-center py-24 bg-white rounded-2xl shadow-lg">
-                <span class="text-8xl">🛰️</span>
-                <p class="text-zinc-600 mt-6 text-xl">Selecciona una parcela para ver el análisis</p>
-                @if(count($plots) === 0)
-                    <div class="mt-8 max-w-md mx-auto bg-yellow-50 border border-yellow-200 rounded-xl p-6">
-                        <p class="text-yellow-900 font-semibold mb-2">⚠️ No tienes parcelas</p>
-                        <p class="text-yellow-800 text-sm">Crea tu primera parcela para empezar a ver datos de teledetección</p>
-                    </div>
-                @endif
-            </div>
+            {{-- Sin parcela seleccionada --}}
+            <x-agro.card>
+                <x-agro.empty-state
+                    icon="signal"
+                    title="Selecciona una parcela"
+                    description="Elige una parcela para ver sus datos de teledetección">
+                    @if(count($plots) === 0)
+                        <x-slot:action>
+                            <p class="text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3">
+                                Aún no tienes parcelas creadas. Crea tu primera parcela para comenzar.
+                            </p>
+                        </x-slot:action>
+                    @endif
+                </x-agro.empty-state>
+            </x-agro.card>
         @endif
     </div>
 </div>
