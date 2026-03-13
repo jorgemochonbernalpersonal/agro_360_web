@@ -20,6 +20,7 @@ class ProductLot extends Model
         'agingtime',
         'alcohol',
         'quantity',
+        'initial_quantity',
         'unit',
         'available_quantity',
         'reserved_quantity',
@@ -75,6 +76,7 @@ class ProductLot extends Model
         'agingtime'          => 'integer',
         'alcohol'            => 'decimal:2',
         'quantity'           => 'decimal:3',
+        'initial_quantity'   => 'decimal:3',
         'available_quantity' => 'decimal:3',
         'reserved_quantity'  => 'decimal:3',
         'sold_quantity'      => 'decimal:3',
@@ -140,6 +142,28 @@ class ProductLot extends Model
     {
         if ($this->quantity <= 0) return 0;
         return round((float) $this->sold_quantity / (float) $this->quantity * 100, 1);
+    }
+
+    /**
+     * Returns true when available + reserved + sold == quantity.
+     * Any deviation indicates a billing bug or manual inconsistency.
+     */
+    public function isBalanced(): bool
+    {
+        return abs($this->stockDrift()) < 0.001;
+    }
+
+    /**
+     * quantity − (available + reserved + sold).
+     * Should always be 0. Positive means unaccounted stock; negative means over-committed.
+     */
+    public function stockDrift(): float
+    {
+        $sum = (float) $this->available_quantity
+             + (float) $this->reserved_quantity
+             + (float) $this->sold_quantity;
+
+        return round((float) $this->quantity - $sum, 3);
     }
 
     public function scopeForUser($query, int $userId)

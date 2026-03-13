@@ -195,6 +195,7 @@ class Create extends Component
                 'alcohol'             => $data['alcohol'] ?: null,
                 'sku'                 => $data['sku'] ?: null,
                 'quantity'            => $data['quantity'],
+                'initial_quantity'    => $data['quantity'],
                 'unit'                => $data['unit'],
                 'available_quantity'  => $data['available_quantity'],
                 'price_per_unit'      => $data['price_per_unit'] ?: 0,

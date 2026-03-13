@@ -249,6 +249,13 @@ class Edit extends Component
             return;
         }
 
+        // If quantity increased, add the increment directly to available
+        $increment = max(0.0, $newQuantity - (float) $this->lot->quantity);
+        if ($increment > 0) {
+            $data['available_quantity'] = round((float) $this->lot->available_quantity + $increment, 3);
+            $this->available_quantity   = (string) $data['available_quantity'];
+        }
+
         if ((float) $data['available_quantity'] > $newQuantity - $committed) {
             $this->addError('available_quantity', 'La cantidad disponible no puede superar la cantidad libre (total − reservado − vendido).');
             return;

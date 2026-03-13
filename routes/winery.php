@@ -60,6 +60,7 @@ Route::middleware(['role:winery,producer'])
         Route::get('/grape-reception/export/excel', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportExcel'])->name('grape-reception.export-excel');
         Route::get('/grape-reception/{harvest}', \App\Livewire\Winery\Harvest\Reception\Show::class)->name('grape-reception.show');
         Route::get('/grape-reception/{harvest}/edit', \App\Livewire\Winery\Harvest\Reception\Edit::class)->name('grape-reception.edit');
+        Route::get('/grape-reception/{harvest}/assign', \App\Livewire\Winery\Harvest\Reception\Assign::class)->name('grape-reception.assign');
         Route::get('/grape-reception/{harvest}/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdfSingle'])->name('grape-reception.export-pdf-single');
 
         // ── Contenedores de bodega ────────────────────────────────────
