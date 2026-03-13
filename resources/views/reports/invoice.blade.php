@@ -553,10 +553,48 @@
     </tr>
 </table>
 
+{{-- ══ VERI*FACTU ══ --}}
+@if($invoice->is_verified_aet)
+@php
+    $verifactuService = app(\App\Services\VerifactuService::class);
+    $verifactuUrl     = $verifactuService->buildQrUrl($invoice);
+    $verifactuQrSvg   = $verifactuService->buildQrSvg($invoice);
+@endphp
+<table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:10pt; margin-top:8pt; border-top:0.5pt solid #e5e7eb; padding-top:8pt;">
+    <tr>
+        <td valign="top" width="72%">
+            <div style="font-size:7.5pt; font-weight:bold; color:#15803d; letter-spacing:0.5pt; margin-bottom:2pt;">
+                VERI*FACTU — Factura verificable en la sede electrónica de la AEAT
+            </div>
+            @if($invoice->sif_uuid)
+                <div style="font-size:7pt; color:#4b5563; margin-bottom:2pt;">
+                    CSV: <span style="font-family:monospace; color:#1d4ed8;">{{ $invoice->sif_uuid }}</span>
+                </div>
+            @endif
+            <div style="font-size:6.5pt; color:#6b7280; word-break:break-all;">
+                Verificar en: {{ $verifactuUrl }}
+            </div>
+        </td>
+        <td width="2%">&nbsp;</td>
+        <td valign="top" width="26%" align="right">
+            {{-- QR code: 30x30mm mínimo por normativa Verifactu --}}
+            @if($verifactuQrSvg)
+                {!! $verifactuQrSvg !!}
+            @else
+                <div style="width:85pt; height:85pt; border:1pt solid #d1d5db; display:inline-block; text-align:center; padding:4pt; font-size:5.5pt; color:#9ca3af;">
+                    <div style="font-size:7pt; color:#9ca3af; margin-top:20pt;">QR no disponible</div>
+                    <div style="margin-top:2pt; word-break:break-all;">Ver URL adjunta</div>
+                </div>
+            @endif
+        </td>
+    </tr>
+</table>
+@endif
+
 {{-- ══ PIE LEGAL ══ --}}
 <div class="footer">
     Documento generado el {{ now()->format('d/m/Y \a \l\a\s H:i') }}
-    &middot; Agro360 &middot; Plataforma de gestión vitivinícola
+    &middot; Agro365 &middot; Plataforma de gestión vitivinícola
     @if($invoice->invoice_number)
         &middot; {{ $isGrape ? 'Liquidación' : 'Factura' }} {{ $invoice->invoice_number }}
     @endif

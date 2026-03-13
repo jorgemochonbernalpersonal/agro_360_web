@@ -126,6 +126,26 @@ class Wine extends Model
         return $this->hasMany(WineAdditive::class)->orderByDesc('application_date');
     }
 
+    public function bottlings(): HasMany
+    {
+        return $this->hasMany(WineBottling::class)->orderByDesc('bottling_date');
+    }
+
+    public function labelings(): HasMany
+    {
+        return $this->hasMany(WineLabeling::class)->orderByDesc('labeling_date');
+    }
+
+    public function tastingNotes(): HasMany
+    {
+        return $this->hasMany(WineTastingNote::class)->orderByDesc('evaluation_date');
+    }
+
+    public function subproducts(): HasMany
+    {
+        return $this->hasMany(WineSubproduct::class)->orderByDesc('subproduct_date');
+    }
+
     // ─── Helpers de contenedores ───────────────────────────────────────────────
 
     /**

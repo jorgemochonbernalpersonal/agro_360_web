@@ -69,6 +69,11 @@ class WinerySupply extends Model
         return $this->hasMany(ContainerAdditiveSupply::class);
     }
 
+    public function bottlingSupplies(): HasMany
+    {
+        return $this->hasMany(WineBottlingSupply::class);
+    }
+
     public function getTypeLabelAttribute(): string
     {
         return self::SUPPLY_TYPES[$this->supply_type] ?? $this->supply_type;

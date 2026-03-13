@@ -481,10 +481,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             ->defaults('module', 'Costes por Parcela')
             ->defaults('icon', 'table-cells');
 
-        Route::get('/verifactu', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('verifactu.index')
-            ->defaults('module', 'VeriFactu')
-            ->defaults('icon', 'document-check');
+        Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
 
         }); // end require.complete
     });

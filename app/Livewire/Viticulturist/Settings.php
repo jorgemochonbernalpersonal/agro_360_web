@@ -6,6 +6,7 @@ use App\Models\Tax;
 use App\Models\UserTax;
 use App\Models\InvoicingSetting;
 use App\Models\DigitalSignature;
+use App\Models\UserProfile;
 use App\Models\ViticulturistSetting;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,14 @@ class Settings extends Component
     public $notify_harvest_alerts = true;
     public $notify_activity_alerts = true;
 
+    // === FISCAL TAB ===
+    public $fiscal_nif          = '';
+    public $fiscal_legal_name   = '';
+    public $fiscal_address      = '';
+    public $fiscal_city         = '';
+    public $fiscal_postal_code  = '';
+    public $fiscal_phone        = '';
+
     // === SIGNATURE TAB ===
     public $signaturePassword = '';
     public $signaturePassword_confirmation = '';
@@ -57,6 +66,7 @@ class Settings extends Component
     {
         $this->loadTaxes();
         $this->loadInvoicing();
+        $this->loadFiscal();
         $this->loadDigitalSignature();
         $this->loadFieldbook();
     }
@@ -197,6 +207,56 @@ class Settings extends Component
         $this->delivery_note_counter = 1;
         $this->updatePreviews();
         $this->toastInfo('Contador de albaranes resetado. Haz clic en Guardar para aplicar.');
+    }
+
+    // ==========================================
+    // FISCAL TAB METHODS
+    // ==========================================
+
+    public function loadFiscal(): void
+    {
+        $user    = Auth::user();
+        $profile = UserProfile::where('user_id', $user->id)->first();
+        $inv     = InvoicingSetting::forUser($user->id)->first();
+
+        $this->fiscal_nif         = $user->dni ?? '';
+        $this->fiscal_legal_name  = $inv?->issuer_legal_name ?? '';
+        $this->fiscal_address     = $profile?->address ?? '';
+        $this->fiscal_city        = $profile?->city ?? '';
+        $this->fiscal_postal_code = $profile?->postal_code ?? '';
+        $this->fiscal_phone       = $profile?->phone ?? '';
+    }
+
+    public function saveFiscal(): void
+    {
+        $this->validate([
+            'fiscal_nif'         => 'nullable|string|max:20',
+            'fiscal_legal_name'  => 'nullable|string|max:150',
+            'fiscal_address'     => 'nullable|string|max:255',
+            'fiscal_city'        => 'nullable|string|max:100',
+            'fiscal_postal_code' => 'nullable|string|max:10',
+            'fiscal_phone'       => 'nullable|string|max:20',
+        ]);
+
+        $user = Auth::user();
+
+        $user->update(['dni' => $this->fiscal_nif ?: null]);
+
+        $inv = InvoicingSetting::forUser($user->id)->first()
+            ?? InvoicingSetting::createDefaultForUser($user->id);
+        $inv->update(['issuer_legal_name' => $this->fiscal_legal_name ?: null]);
+
+        UserProfile::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'address'     => $this->fiscal_address ?: null,
+                'city'        => $this->fiscal_city ?: null,
+                'postal_code' => $this->fiscal_postal_code ?: null,
+                'phone'       => $this->fiscal_phone ?: null,
+            ]
+        );
+
+        $this->toastSuccess('Datos fiscales guardados correctamente');
     }
 
     // ==========================================

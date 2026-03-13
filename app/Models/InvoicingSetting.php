@@ -9,6 +9,7 @@ class InvoicingSetting extends Model
 {
     protected $fillable = [
         'user_id',
+        'issuer_legal_name',
         'invoice_prefix',
         'invoice_padding',
         'invoice_counter',

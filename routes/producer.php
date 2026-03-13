@@ -121,10 +121,7 @@ Route::middleware(['role:producer', 'check.beta'])
         });
 
         // ── VeriFactu ─────────────────────────────────────────────────────
-        Route::get('/verifactu', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('verifactu.index')
-            ->defaults('module', 'VeriFactu')
-            ->defaults('icon', 'document-check');
+        Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
 
         // ── Estadísticas Financieras ──────────────────────────────────────
         Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
@@ -201,17 +198,31 @@ Route::middleware(['role:producer', 'check.beta'])
             ->defaults('module', 'Trazabilidad')
             ->defaults('icon', 'magnifying-glass-circle');
 
-        // ── Embotellado y Expediciones ────────────────────────────────────
-        Route::get('/bottling', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('bottling.index')
-            ->defaults('module', 'Embotellado y Expediciones')
-            ->defaults('icon', 'archive-box-arrow-down');
+        // ── Embotellado ───────────────────────────────────────────────────
+        Route::get('/bottling', \App\Livewire\Winery\Bottling\Index::class)->name('bottling.index');
+        Route::get('/bottling/create', \App\Livewire\Winery\Bottling\Create::class)->name('bottling.create');
+        Route::get('/bottling/{bottling}/edit', \App\Livewire\Winery\Bottling\Edit::class)->name('bottling.edit');
+
+        // ── Lotes de etiquetas ────────────────────────────────────────────
+        Route::get('/label-batches', \App\Livewire\Winery\LabelBatches\Index::class)->name('label-batches.index');
+        Route::get('/label-batches/create', \App\Livewire\Winery\LabelBatches\Create::class)->name('label-batches.create');
+        Route::get('/label-batches/{labelBatch}/edit', \App\Livewire\Winery\LabelBatches\Edit::class)->name('label-batches.edit');
+
+        // ── Etiquetado ────────────────────────────────────────────────────
+        Route::get('/labeling', \App\Livewire\Winery\Labeling\Index::class)->name('labeling.index');
+        Route::get('/labeling/create', \App\Livewire\Winery\Labeling\Create::class)->name('labeling.create');
+        Route::get('/labeling/{labeling}/edit', \App\Livewire\Winery\Labeling\Edit::class)->name('labeling.edit');
 
         // ── Fichas Técnicas y Catas ───────────────────────────────────────
-        Route::get('/product-sheets', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('product-sheets.index')
-            ->defaults('module', 'Fichas Técnicas y Catas')
-            ->defaults('icon', 'document-text');
+        Route::get('/product-sheets', \App\Livewire\Winery\ProductSheets\Index::class)->name('product-sheets.index');
+        Route::get('/tasting-notes', \App\Livewire\Winery\TastingNotes\Index::class)->name('tasting-notes.index');
+        Route::get('/tasting-notes/create', \App\Livewire\Winery\TastingNotes\Create::class)->name('tasting-notes.create');
+        Route::get('/tasting-notes/{tastingNote}/edit', \App\Livewire\Winery\TastingNotes\Edit::class)->name('tasting-notes.edit');
+
+        // ── Subproductos ──────────────────────────────────────────────────
+        Route::get('/subproducts', \App\Livewire\Winery\Subproducts\Index::class)->name('subproducts.index');
+        Route::get('/subproducts/create', \App\Livewire\Winery\Subproducts\Create::class)->name('subproducts.create');
+        Route::get('/subproducts/{subproduct}/edit', \App\Livewire\Winery\Subproducts\Edit::class)->name('subproducts.edit');
 
         // ── Uva / Mosto externo ───────────────────────────────────────────
         Route::prefix('external-grape')->name('external-grape.')->group(function () {

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\SifRecord;
 
 class Invoice extends Model
 {
@@ -209,6 +210,14 @@ class Invoice extends Model
     public function stockMovements(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(InvoiceStockMovement::class)->orderByDesc('created_at');
+    }
+
+    /**
+     * Registros de envío a Verifactu/AEAT
+     */
+    public function sifRecords(): HasMany
+    {
+        return $this->hasMany(SifRecord::class)->orderByDesc('created_at');
     }
 
     /**

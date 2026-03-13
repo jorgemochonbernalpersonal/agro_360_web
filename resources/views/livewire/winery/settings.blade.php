@@ -7,7 +7,7 @@
     <x-agro.card :padding="false">
         <div class="px-6 py-5">
             <x-agro.tabs
-                :tabs="['taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'plots' => 'Parcelas y Vendimia']"
+                :tabs="['taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'plots' => 'Parcelas y Vendimia', 'fiscal' => 'Datos Fiscales']"
                 :active="$currentTab"
                 wireMethod="switchTab"
             />
@@ -205,6 +205,103 @@
                     <div class="flex justify-end">
                         <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="savePlots">
                             Guardar Configuración
+                        </flux:button>
+                    </div>
+                </form>
+            @endif
+            {{-- FISCAL TAB --}}
+            @if($currentTab === 'fiscal')
+                <form wire:submit="saveFiscal" class="space-y-6">
+                    @if(empty($fiscal_nif))
+                        <flux:callout variant="warning" icon="exclamation-triangle">
+                            <flux:callout.heading>NIF/CIF no configurado</flux:callout.heading>
+                            <flux:callout.text>
+                                Tu NIF o CIF es obligatorio para emitir facturas y para el sistema VERI*FACTU (AEAT).
+                                Sin este dato no podrás verificar facturas en la Agencia Tributaria.
+                            </flux:callout.text>
+                        </flux:callout>
+                    @endif
+
+                    {{-- Identificación fiscal --}}
+                    <x-agro.card>
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <flux:icon icon="identification" class="size-5 text-agro-600" />
+                                <div>
+                                    <p class="font-bold text-zinc-900">Identificación fiscal</p>
+                                    <p class="text-sm text-zinc-500">Datos que aparecerán en tus facturas como emisor</p>
+                                </div>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <flux:field>
+                                <flux:label>NIF / CIF <span class="text-red-500">*</span></flux:label>
+                                <flux:input wire:model="fiscal_nif" placeholder="Ej: B12345678" maxlength="20" />
+                                <flux:description>Número de Identificación Fiscal de la empresa o autónomo. Obligatorio para Verifactu.</flux:description>
+                                <flux:error name="fiscal_nif" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label>Nombre / Razón social fiscal</flux:label>
+                                <flux:input wire:model="fiscal_legal_name" placeholder="Ej: Bodegas Ejemplo, S.L." maxlength="150" />
+                                <flux:description>Nombre legal que aparece en facturas. Si se deja vacío se usa el nombre de tu cuenta.</flux:description>
+                                <flux:error name="fiscal_legal_name" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label>Teléfono de contacto</flux:label>
+                                <flux:input wire:model="fiscal_phone" placeholder="Ej: +34 600 000 000" maxlength="20" />
+                                <flux:error name="fiscal_phone" />
+                            </flux:field>
+                        </div>
+                    </x-agro.card>
+
+                    {{-- Dirección fiscal --}}
+                    <x-agro.card>
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <flux:icon icon="map-pin" class="size-5 text-blue-600" />
+                                <div>
+                                    <p class="font-bold text-zinc-900">Dirección fiscal</p>
+                                    <p class="text-sm text-zinc-500">Aparece en el encabezado de las facturas emitidas</p>
+                                </div>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <flux:field>
+                                    <flux:label>Dirección</flux:label>
+                                    <flux:input wire:model="fiscal_address" placeholder="Ej: Calle Mayor, 12" maxlength="255" />
+                                    <flux:error name="fiscal_address" />
+                                </flux:field>
+                            </div>
+
+                            <flux:field>
+                                <flux:label>Población</flux:label>
+                                <flux:input wire:model="fiscal_city" placeholder="Ej: Haro" maxlength="100" />
+                                <flux:error name="fiscal_city" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label>Código postal</flux:label>
+                                <flux:input wire:model="fiscal_postal_code" placeholder="Ej: 26200" maxlength="10" />
+                                <flux:error name="fiscal_postal_code" />
+                            </flux:field>
+                        </div>
+                    </x-agro.card>
+
+                    <flux:callout variant="info" icon="information-circle">
+                        <flux:callout.text>
+                            El <strong>NIF/CIF</strong> y el <strong>nombre fiscal</strong> son los datos que la AEAT utiliza para identificarte
+                            en el sistema VERI*FACTU. El resto de la dirección aparece en el encabezado de los PDFs de factura.
+                        </flux:callout.text>
+                    </flux:callout>
+
+                    <div class="flex justify-end">
+                        <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="saveFiscal">
+                            Guardar Datos Fiscales
                         </flux:button>
                     </div>
                 </form>
