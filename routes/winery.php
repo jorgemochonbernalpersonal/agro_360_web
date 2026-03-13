@@ -33,6 +33,7 @@ Route::middleware(['role:winery,producer'])
         // ── Campañas ──────────────────────────────────────────────────
         Route::get('/campaigns', \App\Livewire\Winery\Harvest\Campaigns\Index::class)->name('campaigns.index');
         Route::get('/campaigns/create', \App\Livewire\Winery\Harvest\Campaigns\Create::class)->name('campaigns.create');
+        Route::get('/campaigns/{campaign}/edit', \App\Livewire\Winery\Harvest\Campaigns\Edit::class)->name('campaigns.edit');
 
         // ── Cuadro de mando vendimia ──────────────────────────────────
         Route::get('/harvest-summary', \App\Livewire\Winery\Harvest\Summary\Index::class)->name('harvest-summary.index');

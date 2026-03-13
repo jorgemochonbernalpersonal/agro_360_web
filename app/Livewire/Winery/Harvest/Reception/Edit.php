@@ -280,7 +280,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Recepción actualizada correctamente.');
-            redirect()->route('winery.grape-reception.index');
+            $this->redirect(route('winery.grape-reception.index'), navigate: true);
 
         } catch (\Exception $e) {
             \Log::error('Error al actualizar recepción de uva', [

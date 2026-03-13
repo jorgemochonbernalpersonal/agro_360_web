@@ -119,38 +119,43 @@
     {{-- Historial de operaciones --}}
     @php $processes = $wine->processDetails()->with(['container', 'unitOfMeasurement'])->get(); @endphp
     @if($processes->count())
-        <div class="mt-10 border-t border-zinc-200 dark:border-zinc-700 pt-6">
-            <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4">Historial de operaciones</h3>
-            <div class="space-y-3">
+        <x-agro.card class="mt-6">
+            <x-slot:header>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-zinc-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="list-bullet" class="size-4 text-zinc-500" />
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-700">Historial de operaciones</h3>
+                </div>
+            </x-slot:header>
+            <div class="space-y-2">
                 @foreach($processes as $p)
-                    <div class="flex items-start gap-4 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
-                        <div class="text-xs text-zinc-500 w-24 shrink-0 pt-0.5">
+                    <div class="flex items-start gap-4 p-3 rounded-lg bg-zinc-50 hover:bg-zinc-100 transition-colors">
+                        <div class="text-xs text-zinc-400 w-20 shrink-0 pt-0.5">
                             {{ $p->start_date->format('d/m/Y') }}
                         </div>
-                        <div class="flex-1">
-                            <div class="font-medium text-sm text-zinc-900 dark:text-zinc-100">
-                                {{ $p->process_type_label }}
-                            </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-sm text-zinc-900">{{ $p->process_type_label }}</div>
                             @if($p->container)
                                 <div class="text-xs text-zinc-500">{{ $p->container->name }}</div>
                             @endif
                             @if($p->observations)
-                                <div class="text-xs text-zinc-400 mt-1">{{ $p->observations }}</div>
+                                <div class="text-xs text-zinc-400 mt-0.5 truncate">{{ $p->observations }}</div>
                             @endif
                         </div>
                         @if($p->quantity)
-                            <div class="text-xs text-zinc-600 dark:text-zinc-400 shrink-0">
+                            <div class="text-xs text-zinc-600 shrink-0 font-medium">
                                 {{ number_format($p->quantity, 0) }} {{ $p->unitOfMeasurement?->symbol }}
                             </div>
                         @endif
                         @if($p->end_date)
-                            <div class="text-xs text-green-600 shrink-0">✓ {{ $p->end_date->format('d/m/Y') }}</div>
+                            <flux:badge color="green" size="sm">✓ {{ $p->end_date->format('d/m/Y') }}</flux:badge>
                         @else
-                            <div class="text-xs text-blue-500 shrink-0">En curso</div>
+                            <flux:badge color="blue" size="sm">En curso</flux:badge>
                         @endif
                     </div>
                 @endforeach
             </div>
-        </div>
+        </x-agro.card>
     @endif
 </x-agro.form-card>

@@ -55,7 +55,6 @@
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
                         <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
                     </a>
-                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700 border border-blue-300">BETA</span>
                 </div>
                 <div class="flex items-center gap-4">
                     <a href="{{ url('/') }}" class="text-gray-600 hover:text-[var(--color-agro-green)] transition-colors text-sm">Inicio</a>
@@ -212,7 +211,7 @@
                     <!-- Próximamente -->
                     <div class="mb-12 not-prose">
                         <h2 class="text-3xl font-bold text-[var(--color-agro-green-dark)] mb-2">En desarrollo</h2>
-                        <p class="text-zinc-600 mb-6 leading-relaxed">Agro365 está en beta activa. Estas funcionalidades están en hoja de ruta confirmada para 2025–2026.</p>
+                        <p class="text-zinc-600 mb-6 leading-relaxed">Estas funcionalidades están en hoja de ruta confirmada para 2025–2026.</p>
                         <div class="grid md:grid-cols-3 gap-4">
                             @php $roadmap = [
                                 ['🔬', 'Análisis de laboratorio', 'Registro de analíticas enológicas — acidez, pH, azúcares residuales — vinculadas a cada depósito o lote.'],

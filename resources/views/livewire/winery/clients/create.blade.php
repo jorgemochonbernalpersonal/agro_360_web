@@ -122,24 +122,15 @@
 
                                 <div class="flex gap-2">
                                     @if(!$address['is_default'])
-                                        <button
-                                            type="button"
-                                            wire:click="setDefaultAddress({{ $index }})"
-                                            class="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                                        >
+                                        <flux:button type="button" wire:click="setDefaultAddress({{ $index }})" variant="ghost" size="sm">
                                             Marcar por defecto
-                                        </button>
+                                        </flux:button>
                                     @endif
 
                                     @if(count($addresses) > 1)
-                                        <button
-                                            type="button"
-                                            wire:click="removeAddress({{ $index }})"
-                                            class="text-red-600 hover:text-red-800 text-xs font-medium flex items-center gap-1"
-                                        >
-                                            <flux:icon icon="trash" class="size-4" />
+                                        <flux:button type="button" wire:click="removeAddress({{ $index }})" variant="ghost" size="sm" icon="trash" class="text-red-500 hover:text-red-700">
                                             Eliminar
-                                        </button>
+                                        </flux:button>
                                     @endif
                                 </div>
                             </div>
@@ -218,14 +209,10 @@
                         </div>
                     @endforeach
 
-                    <button
-                        type="button"
-                        wire:click="addAddress"
-                        class="w-full py-3 border-2 border-dashed border-zinc-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-zinc-600 hover:text-blue-600 font-semibold flex items-center justify-center gap-2"
-                    >
-                        <flux:icon icon="plus" class="size-5" />
+                    <flux:button type="button" wire:click="addAddress" variant="ghost" icon="plus"
+                        class="w-full border-2 border-dashed border-zinc-300 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 py-3">
                         Añadir otra dirección
-                    </button>
+                    </flux:button>
                 </div>
             </x-agro.form-section>
 

@@ -66,7 +66,6 @@
                         >
                         <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
                     </a>
-                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700 border border-blue-300">BETA</span>
                 </div>
                 <div class="flex items-center gap-4">
                     <a href="{{ url('/') }}" class="text-gray-600 hover:text-[var(--color-agro-green)] transition-colors">Inicio</a>

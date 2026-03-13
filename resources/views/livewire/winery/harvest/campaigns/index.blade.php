@@ -77,6 +77,13 @@
 
                         <x-agro.table-cell align="right">
                             <div class="flex items-center justify-end gap-1">
+                                @if(!$campaign->locked_at)
+                                    <flux:button size="sm" variant="ghost" icon="pencil-square"
+                                        href="{{ route('winery.campaigns.edit', $campaign) }}"
+                                        wire:navigate
+                                        title="Editar campaña"
+                                    />
+                                @endif
                                 <flux:button size="sm" variant="ghost"
                                     :icon="$campaign->active ? 'lock-closed' : 'lock-open'"
                                     wire:click="toggleActive({{ $campaign->id }})"

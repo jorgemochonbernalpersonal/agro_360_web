@@ -35,11 +35,9 @@
                 @endif
             </button>
 
-            <button wire:click="openExportModal"
-                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
-                <flux:icon icon="arrow-down-tray" class="size-4 text-zinc-500" />
+            <flux:button wire:click="openExportModal" variant="outline" icon="arrow-down-tray">
                 Exportar
-            </button>
+            </flux:button>
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -97,21 +95,18 @@
                     </span>
                 @endif
 
-                <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">Limpiar todo</button>
+                <flux:button wire:click="clearFilters" variant="ghost" size="sm">Limpiar todo</flux:button>
             </div>
         @endif
     </div>
 
     {{-- Gift counter --}}
     @if($giftCount > 0 && !$filterGift)
-        <button
-            wire:click="$set('filterGift', true)"
-            class="inline-flex items-center gap-2 px-3 py-1.5 bg-pink-50 border border-pink-200 rounded-full text-xs font-medium text-pink-700 hover:bg-pink-100 transition-colors"
-        >
-            <flux:icon icon="gift" class="size-3.5" />
+        <flux:button wire:click="$set('filterGift', true)" variant="ghost" size="sm" icon="gift"
+            class="bg-pink-50 border border-pink-200 text-pink-700 hover:bg-pink-100 rounded-full">
             {{ $giftCount }} {{ $giftCount === 1 ? 'factura regalo' : 'facturas regalo' }}
-            <span class="text-pink-400">· ver solo estas</span>
-        </button>
+            <span class="text-pink-400 ml-1">· ver solo estas</span>
+        </flux:button>
     @endif
 
     {{-- Card grid --}}
@@ -579,8 +574,7 @@
             </div>
         </div>
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'products-invoice-filters')"
-                class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">Limpiar filtros</button>
+            <flux:button wire:click="clearFilters" x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="ghost" size="sm">Limpiar filtros</flux:button>
             <flux:button x-on:click="$dispatch('close-modal', 'products-invoice-filters')" variant="primary" size="sm">Aplicar</flux:button>
         </div>
     </x-agro.modal>

@@ -77,7 +77,7 @@ class Create extends Component
 
         $this->toastSuccess("Campaña {$campaign->year} creada correctamente.");
 
-        redirect()->route('winery.campaigns.index');
+        $this->redirect(route('winery.campaigns.index'), navigate: true);
     }
 
     public function render()

@@ -289,7 +289,14 @@ class Show extends Component
             'ad_quantity'          => ['required', 'numeric', 'min:0.001'],
             'ad_unit_id'           => ['required', 'exists:units_of_measurement,id'],
             'ad_date'              => ['required', 'date'],
-            'ad_supply_id'         => ['nullable', 'exists:winery_supplies,id'],
+            'ad_supply_id'         => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    if ($value && !\App\Models\WinerySupply::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                        $fail('El insumo seleccionado no es válido.');
+                    }
+                },
+            ],
             'ad_process_detail_id' => ['nullable', 'exists:wine_process_details,id'],
             'ad_oenologist_id'     => ['nullable', 'exists:oenologists,id'],
             'ad_notes'             => ['nullable', 'string'],
@@ -311,7 +318,7 @@ class Show extends Component
 
             // Descuenta stock del insumo si está vinculado
             if ($this->ad_supply_id) {
-                $supply = WinerySupply::where('user_id', Auth::id())->find($this->ad_supply_id);
+                $supply = WinerySupply::where('user_id', Auth::id())->lockForUpdate()->find($this->ad_supply_id);
                 if ($supply) {
                     $supply->decrement('current_stock', (float) $this->ad_quantity);
                 }
@@ -330,7 +337,7 @@ class Show extends Component
         DB::transaction(function () use ($additive) {
             // Restaura stock si tenía supply vinculado
             if ($additive->winery_supply_id) {
-                $supply = WinerySupply::where('user_id', Auth::id())->find($additive->winery_supply_id);
+                $supply = WinerySupply::where('user_id', Auth::id())->lockForUpdate()->find($additive->winery_supply_id);
                 if ($supply) {
                     $supply->increment('current_stock', (float) $additive->quantity);
                 }

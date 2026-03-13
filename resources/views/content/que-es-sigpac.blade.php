@@ -54,7 +54,6 @@
                         <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="120" height="40" loading="eager" fetchpriority="high" decoding="async" class="h-10 w-auto">
                         <span class="text-xl font-bold text-[var(--color-agro-green-dark)]">Agro365</span>
                     </a>
-                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700 border border-blue-300">BETA</span>
                 </div>
                 <div class="flex items-center gap-4">
                     <a href="{{ url('/') }}" class="text-gray-600 hover:text-[var(--color-agro-green)] transition-colors">Inicio</a>
@@ -179,7 +178,7 @@
                     <div class="bg-gradient-to-r from-[var(--color-agro-green-bg)] to-[var(--color-agro-green-light)]/30 p-8 rounded-xl border border-[var(--color-agro-green)]/20">
                         <h3 class="text-2xl font-bold text-[var(--color-agro-green-dark)] mb-4">¿Listo para Digitalizar tu Gestión SIGPAC?</h3>
                         <p class="text-gray-700 mb-6">
-                            Comienza a gestionar tus parcelas SIGPAC de forma profesional con Agro365. <strong>3 meses gratis</strong> para beta testers.
+                            Comienza a gestionar tus parcelas SIGPAC de forma profesional con Agro365. <strong>3 meses gratis</strong> al registrarte.
                         </p>
                         @guest
                             <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-agro-green-dark)] to-[var(--color-agro-green)] text-white hover:shadow-lg transition-all font-semibold">

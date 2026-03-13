@@ -95,7 +95,9 @@
       "Bash(do echo:*)",
       "Bash(done)",
       "Bash(git pull:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(find /c/Users/dispo/Desktop/personal/agro_360_web/resources/views/livewire -type d -name winery | xargs -I {} find {} -type f -name \"*.blade.php\" | wc -l)",
+      "Bash(cd /c/Users/dispo/Desktop/personal/agro_360_web\n\nsed -i 's/\\\\. <strong>3 meses gratis<\\\\/strong> para beta testers\\\\./. <strong>3 meses gratis<\\\\/strong> al registrarte./g' resources/views/content/gestion-vendimia.blade.php\nsed -i 's/<strong>3 meses gratis<\\\\/strong> para beta testers\\\\./<strong>3 meses gratis<\\\\/strong> al registrarte./g' resources/views/content/que-es-sigpac.blade.php\nsed -i 's/Agro365 está en beta activa\\\\. Estas funcionalidades están en hoja de ruta confirmada para 2025–2026\\\\./Estas funcionalidades están en hoja de ruta confirmada para 2025–2026./g' resources/views/content/software-bodegas.blade.php\n\necho \"Verificando:\"\ngrep -n \"beta\" resources/views/content/gestion-vendimia.blade.php resources/views/content/que-es-sigpac.blade.php resources/views/content/software-bodegas.blade.php -i)"
     ]
   }
 }

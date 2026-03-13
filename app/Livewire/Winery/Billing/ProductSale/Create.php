@@ -211,7 +211,7 @@ class Create extends Component
             'items.*.wine_lot_id' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
-                    if ($value && !\App\Models\ProductLot::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+                    if ($value && !\App\Models\ProductLot::where('id', $value)->where('user_id', \Illuminate\Support\Facades\Auth::id())->where('archived', false)->exists()) {
                         $fail('El lote de vino seleccionado no es válido.');
                     }
                 },
