@@ -90,7 +90,12 @@
       "Bash(cd \"C:\\\\Users\\\\dispo\\\\Desktop\\\\personal\\\\agro_360_web\" && sed -i 's/wire:click=\"refresh\"/wire:click=\"reloadData\"/g; s/wire:target=\"refresh\"/wire:target=\"reloadData\"/g; s/wire:loading.attr=\"refresh\"/wire:loading.attr=\"reloadData\"/g' \\\\\n  resources/views/livewire/viticulturist/remote-sensing/spectral-bands-card.blade.php \\\\\n  resources/views/livewire/viticulturist/remote-sensing/thermal-stress-card.blade.php \\\\\n  resources/views/livewire/viticulturist/remote-sensing/vigor-map-card.blade.php \\\\\n  resources/views/livewire/viticulturist/remote-sensing/smap-soil-card.blade.php \\\\\n  resources/views/livewire/viticulturist/remote-sensing/plot-irrigation-card.blade.php \\\\\n  resources/views/livewire/viticulturist/remote-sensing/advanced-analysis-card.blade.php \\\\\n  resources/views/livewire/viticulturist/remote-sensing/alerts-widget.blade.php && echo \"Blade done\")",
       "Bash(cd C:/Users/dispo/Desktop/personal/agro_360_web && rm app/Livewire/Plots/CreateWizard.php && rm resources/views/livewire/plots/create-wizard.blade.php && echo \"OK\")",
       "Bash(git stash:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(for file:*)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(git pull:*)",
+      "Bash(git push:*)"
     ]
   }
 }

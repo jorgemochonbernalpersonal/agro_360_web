@@ -30,9 +30,9 @@ Route::middleware(['role:winery,producer'])
             Route::get('/plots/{plot}/plantings/{planting}/edit', \App\Livewire\Plots\Plantings\Edit::class)->name('plots.plantings.edit');
         });
 
-        // ── Campañas (gestionadas automáticamente por añada) ──────────
-        Route::get('/campaigns', fn() => redirect()->route('winery.grape-reception.index'))->name('campaigns.index');
-        Route::get('/campaigns/create', fn() => redirect()->route('winery.grape-reception.index'))->name('campaigns.create');
+        // ── Campañas ──────────────────────────────────────────────────
+        Route::get('/campaigns', \App\Livewire\Winery\Harvest\Campaigns\Index::class)->name('campaigns.index');
+        Route::get('/campaigns/create', \App\Livewire\Winery\Harvest\Campaigns\Create::class)->name('campaigns.create');
 
         // ── Cuadro de mando vendimia ──────────────────────────────────
         Route::get('/harvest-summary', \App\Livewire\Winery\Harvest\Summary\Index::class)->name('harvest-summary.index');
@@ -73,13 +73,10 @@ Route::middleware(['role:winery,producer'])
         Route::get('/containers/{container}/additives', \App\Livewire\Winery\Cellar\Containers\Additives\Index::class)->name('containers.additives.index');
         Route::get('/containers/{container}/additives/create', \App\Livewire\Winery\Cellar\Containers\Additives\Create::class)->name('containers.additives.create');
 
-        // ── Insumos de bodega (en construcción) ──────────────────────
-        Route::get('/winery-supplies', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('winery-supplies.index')
-            ->defaults('module', 'Insumos de Bodega')
-            ->defaults('icon', 'building-storefront');
-        Route::get('/winery-supplies/create', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.create');
-        Route::get('/winery-supplies/{winerySupply}/edit', fn() => redirect()->route('winery.winery-supplies.index'))->name('winery-supplies.edit');
+        // ── Insumos de bodega ─────────────────────────────────────────
+        Route::get('/winery-supplies', \App\Livewire\Winery\WinerySupplies\Index::class)->name('winery-supplies.index');
+        Route::get('/winery-supplies/create', \App\Livewire\Winery\WinerySupplies\Create::class)->name('winery-supplies.create');
+        Route::get('/winery-supplies/{winerySupply}/edit', \App\Livewire\Winery\WinerySupplies\Edit::class)->name('winery-supplies.edit');
 
         // ── Vinos ─────────────────────────────────────────────────────────────
         Route::get('/wines', \App\Livewire\Winery\Wines\Index::class)->name('wines.index');
