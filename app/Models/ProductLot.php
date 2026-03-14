@@ -13,6 +13,7 @@ class ProductLot extends Model
 
     protected $fillable = [
         'user_id',
+        'wine_id',
         'name',
         'vintage',
         'wine_type',
@@ -113,6 +114,11 @@ class ProductLot extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function wine(): BelongsTo
+    {
+        return $this->belongsTo(Wine::class);
     }
 
     public function invoiceItems(): HasMany

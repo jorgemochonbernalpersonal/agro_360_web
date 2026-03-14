@@ -33,6 +33,21 @@
                     <x-agro.form-section title="Información básica">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <flux:field class="md:col-span-2">
+                                <flux:label for="wine_id">Vino de origen</flux:label>
+                                <flux:select wire:model="wine_id" id="wine_id">
+                                    <flux:select.option value="">Sin vincular (externo / legacy)</flux:select.option>
+                                    @foreach($wines as $wine)
+                                        <flux:select.option value="{{ $wine->id }}">
+                                            {{ $wine->name }}{{ $wine->vintage ? ' · ' . $wine->vintage : '' }}
+                                            · {{ $wine->typeLabel }}
+                                        </flux:select.option>
+                                    @endforeach
+                                </flux:select>
+                                <flux:description>Opcional. Vincula este producto con el vino elaborado en bodega para trazabilidad.</flux:description>
+                                <flux:error name="wine_id" />
+                            </flux:field>
+
+                            <flux:field class="md:col-span-2">
                                 <flux:label for="name">Nombre del producto *</flux:label>
                                 <flux:input wire:model="name" type="text" id="name" required />
                                 <flux:error name="name" />

@@ -146,6 +146,11 @@ class Wine extends Model
         return $this->hasMany(WineSubproduct::class)->orderByDesc('subproduct_date');
     }
 
+    public function productLots(): HasMany
+    {
+        return $this->hasMany(ProductLot::class);
+    }
+
     // ─── Helpers de contenedores ───────────────────────────────────────────────
 
     /**

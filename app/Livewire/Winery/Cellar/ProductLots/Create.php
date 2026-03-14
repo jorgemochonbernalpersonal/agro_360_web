@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Cellar\ProductLots;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\ProductLot;
+use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -15,6 +16,7 @@ class Create extends Component
     use WithToastNotifications;
 
     // ── Básico ──────────────────────────────────────────────────────
+    public string $wine_id    = '';
     public string $name       = '';
     public string $vintage    = '';
     public string $wine_type  = 'tinto';
@@ -86,6 +88,12 @@ class Create extends Component
     }
 
     #[Computed]
+    public function wines()
+    {
+        return Wine::where('user_id', Auth::id())->active()->orderBy('name')->get();
+    }
+
+    #[Computed]
     public function grapeVarieties()
     {
         return GrapeVariety::active()->orderBy('name')->get();
@@ -119,6 +127,7 @@ class Create extends Component
     protected function rules(): array
     {
         return [
+            'wine_id'            => 'nullable|exists:wines,id',
             'name'               => 'required|string|max:255',
             'vintage'            => 'nullable|integer|min:1900|max:' . (now()->year + 1),
             'wine_type'          => 'required|in:tinto,blanco,rosado,espumoso,otro',
@@ -187,6 +196,7 @@ class Create extends Component
         DB::transaction(function () use ($data, $validGrapes) {
             $lot = ProductLot::create([
                 'user_id'             => Auth::id(),
+                'wine_id'             => $data['wine_id'] ?: null,
                 'name'                => $data['name'],
                 'vintage'             => $data['vintage'] ?: null,
                 'wine_type'           => $data['wine_type'],
@@ -247,6 +257,7 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.cellar.product-lots.create', [
+            'wines'          => $this->wines,
             'grapeVarieties' => $this->grapeVarieties,
             'grapeTotal'     => $this->grapeTotal,
         ])->layout('layouts.app');

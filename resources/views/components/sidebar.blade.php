@@ -87,12 +87,13 @@
 @endphp
 
 <div
-    x-data="{ producerTab: '{{ $activeProducerTab }}' }"
-    @keydown.escape.window="$store.nav.close()"
+    x-data="{ producerTab: '{{ $activeProducerTab }}', mobileOpen: false, mobileChapter: '{{ $activeChapterKey }}' }"
+    @keydown.escape.window="$store.nav.close(); mobileOpen = false"
+    @mobile-nav-toggle.window="mobileOpen = !mobileOpen"
 >
-    {{-- ═══════════════════ RAIL 64px ═══════════════════ --}}
+    {{-- ═══════════════════ RAIL 64px (solo lg+) ═══════════════════ --}}
     <aside
-        class="fixed left-0 top-0 h-full w-16 z-50 flex flex-col items-center py-3 gap-1"
+        class="hidden lg:flex fixed left-0 top-0 h-full w-16 z-50 flex-col items-center py-3 gap-1"
         style="background: linear-gradient(180deg, #0f2508 0%, #1a3a0e 40%, #2d5016 100%);"
     >
         {{-- Logo --}}
@@ -205,7 +206,8 @@
         @endif
     </aside>
 
-    {{-- ═══════════════════ FLYOUT PANELS ═══════════════════ --}}
+    {{-- ═══════════════════ FLYOUT PANELS (solo lg+) ═══════════════════ --}}
+    <div class="hidden lg:block">
     @foreach($chapters as $ch)
         @php
             $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
@@ -309,7 +311,7 @@
         </div>
     @endforeach
 
-    {{-- Backdrop --}}
+    {{-- Backdrop flyout --}}
     <div
         x-show="$store.nav.open !== null"
         x-cloak
@@ -317,6 +319,165 @@
         style="display:none"
         class="fixed inset-0 z-30 cursor-default"
     ></div>
+    </div>{{-- /hidden lg:block --}}
+
+    {{-- ═══════════════════ MOBILE DRAWER (solo < lg) ═══════════════════ --}}
+    <div class="lg:hidden">
+
+        {{-- Backdrop --}}
+        <div
+            x-show="mobileOpen"
+            x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="mobileOpen = false"
+            class="fixed inset-0 z-50 bg-black/60"
+        ></div>
+
+        {{-- Panel --}}
+        <div
+            x-show="mobileOpen"
+            x-cloak
+            x-transition:enter="transition-transform ease-out duration-250"
+            x-transition:enter-start="-translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition-transform ease-in duration-200"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="-translate-x-full"
+            class="fixed left-0 top-0 h-full w-72 max-w-[85vw] z-50 flex flex-col overflow-hidden shadow-2xl"
+            style="background: linear-gradient(180deg, #0f2508 0%, #1a3a0e 40%, #2d5016 100%);"
+        >
+            {{-- Header --}}
+            <div class="h-16 flex items-center gap-3 px-4 flex-shrink-0 border-b border-white/10">
+                <a href="{{ route($dashboardRoute) }}" wire:navigate @click="mobileOpen = false"
+                   class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <img src="{{ asset('images/logo.png') }}" alt="Agro365" width="22" height="22" class="object-contain">
+                </a>
+                <span class="text-white font-semibold text-sm tracking-wide flex-1">Agro365</span>
+                <button type="button" @click="mobileOpen = false"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition">
+                    <flux:icon icon="x-mark" class="w-4 h-4" />
+                </button>
+            </div>
+
+            {{-- Main items (Dashboard, Calendario) --}}
+            @foreach($mainItems as $item)
+            <a href="{{ route($item['route']) }}" wire:navigate @click="mobileOpen = false"
+               class="flex items-center gap-3 px-4 py-3 border-b border-white/5 transition
+                      {{ ($item['active'] ?? false) ? 'bg-white/15 text-white' : 'text-white/60 hover:text-white hover:bg-white/8' }}">
+                <flux:icon icon="{{ $item['icon'] }}" class="w-5 h-5 flex-shrink-0" />
+                <span class="text-sm font-medium">{{ $item['label'] }}</span>
+            </a>
+            @endforeach
+
+            {{-- Producer: tab switcher --}}
+            @if($user->role === 'producer')
+            <div class="flex px-3 py-2 gap-2 border-b border-white/10 flex-shrink-0">
+                <button type="button"
+                    @click="producerTab = 'vineyard'; mobileChapter = null"
+                    :class="producerTab === 'vineyard' ? 'bg-green-500/20 text-green-400 ring-1 ring-inset ring-green-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/8'"
+                    class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🌿 Viñedo</button>
+                <button type="button"
+                    @click="producerTab = 'bodega'; mobileChapter = null"
+                    :class="producerTab === 'bodega' ? 'bg-red-500/20 text-red-400 ring-1 ring-inset ring-red-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/8'"
+                    class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🏛 Bodega</button>
+            </div>
+            @endif
+
+            {{-- Chapters accordion --}}
+            <nav class="flex-1 overflow-y-auto py-1">
+                @foreach($chapters as $ch)
+                    @php
+                        $color  = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
+                        $chItems = [];
+                        foreach ($ch['sections'] as $sk) {
+                            if (!isset($menu[$sk])) continue;
+                            foreach ($menu[$sk] as $itm) { $chItems[] = $itm; }
+                        }
+                        $chTab = 'vineyard';
+                        if ($user->role === 'producer') {
+                            $bodegaKeys = array_column($producerWineryChapters, 'key');
+                            if (in_array($ch['key'], $bodegaKeys)) $chTab = 'bodega';
+                        }
+                    @endphp
+
+                    @if($user->role === 'producer')
+                    <div x-show="producerTab === '{{ $chTab }}'">
+                    @endif
+
+                    {{-- Chapter header --}}
+                    <button type="button"
+                        @click="mobileChapter = (mobileChapter === '{{ $ch['key'] }}') ? null : '{{ $ch['key'] }}'"
+                        class="w-full flex items-center gap-3 px-4 py-2.5 text-left transition hover:bg-white/5"
+                        :class="mobileChapter === '{{ $ch['key'] }}' ? 'bg-white/8' : ''">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                             style="background: {{ $color['bg'] }}; box-shadow: 0 0 0 1px {{ $color['border'] }};">
+                            <flux:icon icon="{{ $ch['icon'] }}" class="w-3.5 h-3.5" style="color: {{ $color['accent'] }}" />
+                        </div>
+                        <span class="text-sm font-medium flex-1"
+                              :class="mobileChapter === '{{ $ch['key'] }}' ? 'text-white' : 'text-white/70'">
+                            {{ $ch['label'] }}
+                        </span>
+                        <flux:icon icon="chevron-right" class="w-4 h-4 text-white/30 transition-transform duration-200"
+                                   :class="mobileChapter === '{{ $ch['key'] }}' ? 'rotate-90' : ''" />
+                    </button>
+
+                    {{-- Chapter items --}}
+                    <div x-show="mobileChapter === '{{ $ch['key'] }}'" x-cloak class="pb-1">
+                        <div class="ml-4 border-l pl-3" style="border-color: {{ $color['accent'] }}50;">
+                            @foreach($chItems as $item)
+                                @if(isset($item['divider']) && $item['divider'])
+                                    <div class="my-1 border-t border-white/10"></div>
+                                @else
+                                    <a href="{{ route($item['route']) }}" wire:navigate
+                                       @click="mobileOpen = false"
+                                       class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition my-0.5
+                                              {{ ($item['active'] ?? false) ? 'text-white font-medium' : 'text-white/55 hover:text-white/90 hover:bg-white/5' }}"
+                                       @if($item['active'] ?? false) style="background: {{ $color['bg'] }};" @endif>
+                                        @if(isset($item['icon']))
+                                            <flux:icon icon="{{ $item['icon'] }}" class="w-4 h-4 flex-shrink-0"
+                                                style="{{ ($item['active'] ?? false) ? 'color:' . $color['accent'] . ';' : 'color: rgba(255,255,255,0.35);' }}" />
+                                        @endif
+                                        <span class="flex-1 leading-tight">{{ $item['label'] }}</span>
+                                        @if(isset($item['badge']) && $item['badge'] > 0)
+                                            <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $item['badge'] }}</span>
+                                        @elseif(isset($item['new']) && $item['new'])
+                                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-400 text-white rounded-full">Nuevo</span>
+                                        @elseif(isset($item['wip']) && $item['wip'])
+                                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full">Pronto</span>
+                                        @endif
+                                    </a>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+
+                    @if($user->role === 'producer')
+                    </div>
+                    @endif
+                @endforeach
+            </nav>
+
+            {{-- Rail bottom items --}}
+            @if(!empty($menu['rail_bottom']))
+            <div class="border-t border-white/10 py-1 flex-shrink-0">
+                @foreach($menu['rail_bottom'] as $item)
+                <a href="{{ route($item['route']) }}" wire:navigate @click="mobileOpen = false"
+                   class="flex items-center gap-3 px-4 py-2.5 transition
+                          {{ ($item['active'] ?? false) ? 'text-white bg-white/10' : 'text-white/50 hover:text-white hover:bg-white/5' }}">
+                    <flux:icon icon="{{ $item['icon'] }}" class="w-4 h-4 flex-shrink-0" />
+                    <span class="text-sm">{{ $item['label'] }}</span>
+                </a>
+                @endforeach
+            </div>
+            @endif
+        </div>{{-- /panel --}}
+    </div>{{-- /mobile drawer --}}
+
 </div>
 
 <style>
@@ -405,3 +566,9 @@
 </style>
 
 {{-- Alpine.store('nav') initialized in resources/js/sidebar.js (via app.js) --}}
+
+<script>
+    function toggleSidebar() {
+        window.dispatchEvent(new CustomEvent('mobile-nav-toggle'));
+    }
+</script>

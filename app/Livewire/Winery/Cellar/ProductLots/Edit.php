@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Cellar\ProductLots;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\ProductLot;
+use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -17,6 +18,7 @@ class Edit extends Component
     public ProductLot $lot;
 
     // ── Básico ──────────────────────────────────────────────────────
+    public string $wine_id    = '';
     public string $name       = '';
     public string $vintage    = '';
     public string $wine_type  = 'tinto';
@@ -89,6 +91,7 @@ class Edit extends Component
         $this->lot = $lot;
 
         // Básico
+        $this->wine_id    = (string) ($lot->wine_id ?? '');
         $this->name       = $lot->name;
         $this->vintage    = (string) ($lot->vintage ?? '');
         $this->wine_type  = $lot->wine_type;
@@ -162,6 +165,12 @@ class Edit extends Component
     }
 
     #[Computed]
+    public function wines()
+    {
+        return Wine::where('user_id', Auth::id())->active()->orderBy('name')->get();
+    }
+
+    #[Computed]
     public function grapeVarieties()
     {
         return GrapeVariety::active()->orderBy('name')->get();
@@ -188,6 +197,7 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
+            'wine_id'            => 'nullable|exists:wines,id',
             'name'               => 'required|string|max:255',
             'vintage'            => 'nullable|integer|min:1900|max:' . (now()->year + 1),
             'wine_type'          => 'required|in:tinto,blanco,rosado,espumoso,otro',
@@ -270,6 +280,7 @@ class Edit extends Component
 
         DB::transaction(function () use ($data, $validGrapes) {
             $this->lot->update([
+                'wine_id'             => $data['wine_id'] ?: null,
                 'name'                => $data['name'],
                 'vintage'             => $data['vintage'] ?: null,
                 'wine_type'           => $data['wine_type'],
@@ -329,6 +340,7 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.winery.cellar.product-lots.edit', [
+            'wines'          => $this->wines,
             'grapeVarieties' => $this->grapeVarieties,
             'grapeTotal'     => $this->grapeTotal,
         ])->layout('layouts.app');
