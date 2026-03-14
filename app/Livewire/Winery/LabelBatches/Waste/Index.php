@@ -29,7 +29,6 @@ class Index extends Component
         $waste->delete();
 
         $this->labelBatch->decrement('wasted_quantity', $qty);
-        $this->labelBatch->increment('available_quantity', $qty);
 
         $this->toastSuccess('Merma eliminada correctamente.');
     }

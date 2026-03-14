@@ -506,6 +506,12 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.containers*'),
                 ],
                 [
+                    'icon'   => 'building-office',
+                    'label'  => 'Salas de Bodega',
+                    'route'  => 'winery.container-rooms.index',
+                    'active' => request()->routeIs('winery.container-rooms*'),
+                ],
+                [
                     'icon'   => 'archive-box',
                     'label'  => 'Uva / Mosto externo',
                     'route'  => 'winery.external-grape.index',
@@ -528,7 +534,6 @@ class NavigationHelper
                     'label'  => 'Análisis de Lab.',
                     'route'  => 'winery.wine-analysis.index',
                     'active' => request()->routeIs('winery.wine-analysis*'),
-                    'wip'    => true,
                 ],
                 [
                     'icon'   => 'archive-box',
@@ -537,41 +542,41 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.product-lots*'),
                 ],
                 [
+                    'icon'   => 'shield-check',
+                    'label'  => 'Auditoría de Stock',
+                    'route'  => 'winery.product-lots.audit',
+                    'active' => request()->routeIs('winery.product-lots.audit'),
+                ],
+                [
                     'icon'   => 'magnifying-glass-circle',
                     'label'  => 'Trazabilidad',
                     'route'  => 'winery.traceability.index',
                     'active' => request()->routeIs('winery.traceability*'),
                     'wip'    => true,
-                    'new'    => true,
                 ],
                 [
                     'icon'   => 'archive-box-arrow-down',
-                    'label'  => 'Embotellado y Expediciones',
+                    'label'  => 'Embotellado',
                     'route'  => 'winery.bottling.index',
                     'active' => request()->routeIs('winery.bottling*'),
-                    'wip'    => true,
-                    'new'    => true,
                 ],
                 [
                     'icon'   => 'tag',
                     'label'  => 'Etiquetado',
                     'route'  => 'winery.label-batches.index',
                     'active' => request()->routeIs('winery.label-batches*') || request()->routeIs('winery.labeling*'),
-                    'new'    => true,
                 ],
                 [
                     'icon'   => 'document-text',
                     'label'  => 'Fichas Técnicas y Catas',
                     'route'  => 'winery.product-sheets.index',
                     'active' => request()->routeIs('winery.product-sheets*') || request()->routeIs('winery.tasting-notes*'),
-                    'new'    => true,
                 ],
                 [
                     'icon'   => 'archive-box-x-mark',
                     'label'  => 'Subproductos',
                     'route'  => 'winery.subproducts.index',
                     'active' => request()->routeIs('winery.subproducts*'),
-                    'new'    => true,
                 ],
             ];
 
@@ -625,7 +630,6 @@ class NavigationHelper
                     'label'  => 'Insumos de Bodega',
                     'route'  => 'winery.winery-supplies.index',
                     'active' => request()->routeIs('winery.winery-supplies*'),
-                    'wip'    => true,
                 ],
                 [
                     'icon'   => 'truck',
@@ -764,6 +768,18 @@ class NavigationHelper
                     'label'  => 'Configuración',
                     'route'  => 'winery.settings',
                     'active' => request()->routeIs('winery.settings'),
+                ],
+                [
+                    'icon'   => 'building-office',
+                    'label'  => 'Salas de Bodega',
+                    'route'  => 'winery.container-rooms.index',
+                    'active' => request()->routeIs('winery.container-rooms*'),
+                ],
+                [
+                    'icon'   => 'building-storefront',
+                    'label'  => 'Insumos de Bodega',
+                    'route'  => 'winery.winery-supplies.index',
+                    'active' => request()->routeIs('winery.winery-supplies*'),
                 ],
             ];
         }
