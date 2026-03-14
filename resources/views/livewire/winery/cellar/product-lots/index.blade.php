@@ -35,6 +35,10 @@
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
+        <flux:button href="{{ route('winery.product-lots.insights') }}" wire:navigate variant="ghost" icon="chart-bar">
+            Insights
+        </flux:button>
+
         {{-- Nuevo Producto --}}
         <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
             Nuevo
@@ -201,12 +205,22 @@
                                 $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
                             @endphp
                             <div class="flex items-center justify-between">
-                                {{-- Grupo izquierdo: editar --}}
+                                {{-- Grupo izquierdo: editar + duplicar + ventas --}}
                                 <div class="flex items-center gap-0.5">
                                     <a href="{{ route('winery.product-lots.edit', $lot) }}" wire:navigate
                                         class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
+                                    <a href="{{ route('winery.product-lots.sales', $lot) }}" wire:navigate
+                                        class="{{ $btnBase }}" title="Ver ventas">
+                                        <flux:icon icon="shopping-cart" class="size-4" />
+                                    </a>
+                                    <button wire:click="duplicate({{ $lot->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:confirm="¿Duplicar «{{ $lot->name }}»? Se creará una copia con stock en cero."
+                                        class="{{ $btnBase }}" title="Duplicar">
+                                        <flux:icon icon="document-duplicate" class="size-4" />
+                                    </button>
                                 </div>
 
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>

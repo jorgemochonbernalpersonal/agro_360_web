@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Cellar\ProductLots;
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\ProductLot;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class Index extends AbstractIndex
 {
@@ -26,6 +27,32 @@ class Index extends AbstractIndex
     {
         $this->currentTab = $tab;
         $this->resetPage();
+    }
+
+    public function duplicate(int $id): void
+    {
+        $original = ProductLot::where('user_id', $this->wineryId())->findOrFail($id);
+
+        DB::transaction(function () use ($original) {
+            $clone = $original->replicate();
+            $clone->name               = $original->name . ' (Copia)';
+            $clone->sku                = null;
+            $clone->quantity           = 0;
+            $clone->initial_quantity   = 0;
+            $clone->available_quantity = 0;
+            $clone->reserved_quantity  = 0;
+            $clone->sold_quantity      = 0;
+            $clone->archived           = false;
+            $clone->save();
+
+            // Copiar variedades de uva y taxes
+            $clone->grapeVarieties()->sync(
+                $original->grapeVarieties->pluck('pivot.percentage', 'id')->toArray()
+            );
+            $clone->taxes()->sync($original->taxes->pluck('id')->toArray());
+        });
+
+        $this->toastSuccess("«{$original->name}» duplicado correctamente.");
     }
 
     public function toggleActive(int $id): void

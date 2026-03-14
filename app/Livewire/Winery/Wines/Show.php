@@ -449,15 +449,102 @@ class Show extends Component
             ->orderByDesc('harvest_start_date')
             ->get(['id', 'harvest_start_date', 'total_weight', 'plot_planting_id', 'vintage']);
 
+        $diagram = $this->buildDiagram($composition, $processes, $transfers, $losses, $analyses);
+
         return view('livewire.winery.wines.show', compact(
             'containers', 'units',
             'fermentationControls', 'transfers', 'losses', 'analyses',
             'timeline', 'composition', 'availableHarvests',
-            'additives', 'supplies', 'oenologists', 'processes'
+            'additives', 'supplies', 'oenologists', 'processes',
+            'diagram'
         ))->layout('layouts.app');
     }
 
     // ─── Helpers privados ─────────────────────────────────────────────────────
+
+    private function buildDiagram($composition, $processes, $transfers, $losses, $analyses): string
+    {
+        $lines = ['graph LR'];
+
+        // ── Inputs: recepciones de uva ────────────────────────────────────────
+        foreach ($composition as $i => $entry) {
+            $variety = $entry->harvest->plotPlanting?->plotVariety?->grapeVariety?->name ?? 'Uva';
+            $kg      = number_format($entry->quantity_kg ?? 0, 0);
+            $nodeId  = 'grape_' . $i;
+            $label   = addslashes("{$variety}\n{$kg} kg");
+            $lines[] = "    {$nodeId}([\"🍇 {$label}\"])";
+            $lines[] = "    style {$nodeId} fill:#d1fae5,stroke:#059669,color:#065f46";
+            $lines[] = "    {$nodeId} --> wine";
+        }
+
+        // ── Nodo central: el vino ─────────────────────────────────────────────
+        $wineName = addslashes($this->wine->name);
+        $lines[]  = "    wine[\"🍷 {$wineName}\"]";
+        $lines[]  = "    style wine fill:#ede9fe,stroke:#7c3aed,color:#4c1d95,font-weight:bold";
+
+        // ── Etapas de proceso ─────────────────────────────────────────────────
+        $processLabels = [
+            'destemming_crushing' => 'Despalillado/Estrujado',
+            'pressing'            => 'Prensado',
+            'settling'            => 'Desfangado',
+            'fermentation'        => 'Fermentación',
+            'maceration'          => 'Maceración',
+            'malolactic'          => 'Maloláctica',
+            'aging'               => 'Crianza',
+            'racking'             => 'Trasiego',
+            'blending'            => 'Coupage',
+            'fining'              => 'Clarificación',
+            'filtration'          => 'Filtración',
+            'cold_stabilization'  => 'Est. en frío',
+            'bottling'            => 'Embotellado',
+            'other'               => 'Otro',
+        ];
+
+        $prevNode = 'wine';
+        foreach ($processes as $i => $proc) {
+            $nodeId  = 'proc_' . $i;
+            $label   = $processLabels[$proc->process_type] ?? $proc->process_type;
+            $date    = $proc->start_date ? \Carbon\Carbon::parse($proc->start_date)->format('d/m') : '';
+            $lines[] = "    {$nodeId}[\"⚙️ {$label}" . ($date ? "\n{$date}" : '') . "\"]";
+            $lines[] = "    style {$nodeId} fill:#dbeafe,stroke:#2563eb,color:#1e3a8a";
+            $lines[] = "    {$prevNode} --> {$nodeId}";
+            $prevNode = $nodeId;
+        }
+
+        // ── Trasvases ─────────────────────────────────────────────────────────
+        foreach ($transfers as $i => $tr) {
+            $from    = $tr->fromContainer?->name ?? '?';
+            $to      = $tr->toContainer?->name ?? '?';
+            $nodeId  = 'tr_' . $i;
+            $label   = addslashes("Trasvase\n{$from} → {$to}");
+            $lines[] = "    {$nodeId}[\"↔️ {$label}\"]";
+            $lines[] = "    style {$nodeId} fill:#fef9c3,stroke:#ca8a04,color:#78350f";
+            $lines[] = "    wine --> {$nodeId}";
+        }
+
+        // ── Mermas ────────────────────────────────────────────────────────────
+        foreach ($losses as $i => $lo) {
+            $nodeId  = 'loss_' . $i;
+            $qty     = number_format($lo->quantity ?? 0, 1);
+            $unit    = $lo->unitOfMeasurement?->abbreviation ?? '';
+            $label   = addslashes("Merma\n{$qty} {$unit}");
+            $lines[] = "    {$nodeId}([\"⚠️ {$label}\"])";
+            $lines[] = "    style {$nodeId} fill:#fee2e2,stroke:#dc2626,color:#7f1d1d";
+            $lines[] = "    wine -.-> {$nodeId}";
+        }
+
+        // ── Análisis ──────────────────────────────────────────────────────────
+        foreach ($analyses as $i => $an) {
+            $nodeId  = 'an_' . $i;
+            $date    = $an->analysis_date ? $an->analysis_date->format('d/m/y') : '';
+            $label   = addslashes("Análisis\n{$date}");
+            $lines[] = "    {$nodeId}([\"🔬 {$label}\"])";
+            $lines[] = "    style {$nodeId} fill:#fef3c7,stroke:#d97706,color:#78350f";
+            $lines[] = "    wine -.-> {$nodeId}";
+        }
+
+        return implode("\n", $lines);
+    }
 
     private function buildTimeline($fermentationControls, $transfers, $losses, $analyses): array
     {

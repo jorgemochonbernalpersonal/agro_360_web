@@ -17,6 +17,11 @@
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
+        {{-- Exportar Excel --}}
+        <flux:button wire:click="export" variant="ghost" icon="arrow-down-tray">
+            Exportar
+        </flux:button>
+
         {{-- Invitar existente --}}
         <flux:button href="{{ route('winery.viticulturists.invite') }}" variant="ghost" icon="link">
             Invitar existente

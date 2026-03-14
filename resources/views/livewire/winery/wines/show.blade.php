@@ -70,6 +70,7 @@
                 ['id' => 'transfers',    'label' => 'Trasvases',      'icon' => 'arrows-right-left'],
                 ['id' => 'losses',       'label' => 'Mermas',         'icon' => 'minus-circle'],
                 ['id' => 'analyses',     'label' => 'Análisis',       'icon' => 'document-magnifying-glass'],
+                ['id' => 'diagram',      'label' => 'Diagrama',       'icon' => 'share'],
             ] as $t)
             <button
                 @click="tab = '{{ $t['id'] }}'"
@@ -1002,5 +1003,53 @@
             </div>
         </div>
     </flux:modal>
+
+    {{-- ════════════════════════════════════════════════════════════════════════
+         TAB: DIAGRAMA
+    ════════════════════════════════════════════════════════════════════════════ --}}
+    <div x-show="tab === 'diagram'" x-cloak
+        x-effect="if (tab === 'diagram') { $nextTick(() => { if (window.mermaid) window.mermaid.run({ nodes: $el.querySelectorAll('.mermaid') }) }) }">
+
+        @if(empty(trim($diagram)))
+            <x-agro.empty-state icon="share" title="Sin datos para el diagrama"
+                description="Añade etapas de proceso, trasvases o recepciones de uva para ver el diagrama." />
+        @else
+            <x-agro.card>
+                <div class="overflow-x-auto">
+                    <div class="mermaid text-center py-4">{{ $diagram }}</div>
+                </div>
+
+                {{-- Leyenda --}}
+                <div class="mt-4 flex flex-wrap gap-3 text-xs text-zinc-500">
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-emerald-200 border border-emerald-500 inline-block"></span> Uva / Recepción
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-violet-200 border border-violet-500 inline-block"></span> Vino
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-blue-200 border border-blue-500 inline-block"></span> Etapa proceso
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-yellow-200 border border-yellow-500 inline-block"></span> Trasvase
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-red-200 border border-red-500 inline-block"></span> Merma
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-amber-100 border border-amber-500 inline-block"></span> Análisis
+                    </span>
+                </div>
+            </x-agro.card>
+        @endif
+    </div>
+
+    @once
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { fontFamily: 'inherit' } });
+        window.mermaid = mermaid;
+    </script>
+    @endonce
 
 </div>

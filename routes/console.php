@@ -38,3 +38,8 @@ Schedule::command('remote-sensing:clean-old-data', ['--days' => 365])
     ->weeklyOn(1, '03:00')
     ->withoutOverlapping();
 
+// 🛢️ Alertas de mantenimiento de contenedores (diario a las 8 AM)
+Schedule::command('containers:check-maintenance', ['--days' => 7])
+    ->dailyAt('08:00')
+    ->withoutOverlapping();
+

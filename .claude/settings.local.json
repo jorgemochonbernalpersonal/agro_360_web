@@ -122,7 +122,8 @@
       "Bash(cd C:/Users/dispo/Desktop/personal/agro_360_web && composer require bacon/bacon-qr-code --ignore-platform-req=php --dry-run 2>&1 | tail -10)",
       "Bash(cd C:/Users/dispo/Desktop/personal/agro_360_web && composer require bacon/bacon-qr-code --ignore-platform-reqs --dry-run 2>&1 | tail -10)",
       "Bash(cd C:/Users/dispo/Desktop/personal/agro_360_web && composer require bacon/bacon-qr-code --ignore-platform-reqs 2>&1 | tail -15)",
-      "Bash(composer require:*)"
+      "Bash(composer require:*)",
+      "Bash(grep -l \"class.*extends\" \"/c/Users/jorge/Desktop/vinai2 \\(1\\)/vinai2/app/Http/Controllers/Seller\"/*.php | wc -l)"
     ]
   }
 }

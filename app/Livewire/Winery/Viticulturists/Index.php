@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Winery\Viticulturists;
 
+use App\Exports\ViticulturistExport;
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\WineryViticulturist;
 use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends AbstractIndex
 {
@@ -38,6 +40,14 @@ class Index extends AbstractIndex
     protected function defaultOrderBy(): array
     {
         return ['created_at', 'desc'];
+    }
+
+    public function export()
+    {
+        return Excel::download(
+            new ViticulturistExport($this->wineryId()),
+            'viticultores_' . now()->format('Y-m-d') . '.xlsx'
+        );
     }
 
     protected function viewData(mixed $entries): array

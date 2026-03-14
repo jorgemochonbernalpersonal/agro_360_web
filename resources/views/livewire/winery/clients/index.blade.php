@@ -47,6 +47,10 @@
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
+            <flux:button href="{{ route('winery.clients.insights') }}" wire:navigate variant="ghost" icon="chart-bar">
+                Insights
+            </flux:button>
+
             <flux:button href="{{ route('winery.clients.create') }}" wire:navigate variant="primary" icon="plus">
                 Nuevo Cliente
             </flux:button>

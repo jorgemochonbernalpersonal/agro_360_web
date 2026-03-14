@@ -93,7 +93,9 @@ Route::middleware(['role:winery,producer'])
 
         // ── Lotes de producto ─────────────────────────────────────────
         Route::get('/product-lots', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('product-lots.index');
+        Route::get('/product-lots/insights', \App\Livewire\Winery\Cellar\ProductLots\Insights::class)->name('product-lots.insights');
         Route::get('/product-lots/create', \App\Livewire\Winery\Cellar\ProductLots\Create::class)->name('product-lots.create');
+        Route::get('/product-lots/{lot}/sales', \App\Livewire\Winery\Cellar\ProductLots\Sales::class)->name('product-lots.sales');
         Route::get('/product-lots/{lot}/edit', \App\Livewire\Winery\Cellar\ProductLots\Edit::class)->name('product-lots.edit');
         // Compatibilidad URLs antiguas (wine-lots → product-lots)
         Route::redirect('/wine-lots', '/winery/product-lots')->name('wine-lots.index');
@@ -106,6 +108,7 @@ Route::middleware(['role:winery,producer'])
 
         // ── Clientes ──────────────────────────────────────────────────
         Route::get('/clients', \App\Livewire\Winery\Clients\Index::class)->name('clients.index');
+        Route::get('/clients/insights', \App\Livewire\Winery\Clients\Insights::class)->name('clients.insights');
         Route::get('/clients/create', \App\Livewire\Winery\Clients\Create::class)->name('clients.create');
         Route::get('/clients/{client}/edit', \App\Livewire\Winery\Clients\Edit::class)->name('clients.edit');
 
