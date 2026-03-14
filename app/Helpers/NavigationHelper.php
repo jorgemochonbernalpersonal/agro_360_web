@@ -497,8 +497,8 @@ class NavigationHelper
                 ],
             ];
 
-            // ── BODEGA ───────────────────────────────────────────────
-            $menu['cellar'] = [
+            // ── BODEGA — ELABORACIÓN ──────────────────────────────────
+            $menu['cellar_elab'] = [
                 [
                     'icon'   => 'beaker',
                     'label'  => 'Contenedores',
@@ -517,6 +517,7 @@ class NavigationHelper
                     'route'  => 'winery.external-grape.index',
                     'active' => request()->routeIs('winery.external-grape*'),
                 ],
+                ['divider' => true],
                 [
                     'icon'   => 'arrows-right-left',
                     'label'  => 'Vinos',
@@ -536,10 +537,22 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.wine-analysis*'),
                 ],
                 [
+                    'icon'   => 'calendar-days',
+                    'label'  => 'Operaciones de Bodega',
+                    'route'  => 'winery.cellar-operations.index',
+                    'active' => request()->routeIs('winery.cellar-operations*'),
+                    'wip'    => true,
+                    'new'    => true,
+                ],
+            ];
+
+            // ── BODEGA — SALIDA ───────────────────────────────────────
+            $menu['cellar_salida'] = [
+                [
                     'icon'   => 'archive-box',
                     'label'  => 'Productos',
                     'route'  => 'winery.product-lots.index',
-                    'active' => request()->routeIs('winery.product-lots*'),
+                    'active' => request()->routeIs('winery.product-lots*') && !request()->routeIs('winery.product-lots.audit'),
                 ],
                 [
                     'icon'   => 'shield-check',
@@ -554,17 +567,12 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.traceability*'),
                     'wip'    => true,
                 ],
+                ['divider' => true],
                 [
                     'icon'   => 'archive-box-arrow-down',
-                    'label'  => 'Embotellado',
+                    'label'  => 'Embotellado y Etiquetado',
                     'route'  => 'winery.bottling.index',
-                    'active' => request()->routeIs('winery.bottling*'),
-                ],
-                [
-                    'icon'   => 'tag',
-                    'label'  => 'Etiquetado',
-                    'route'  => 'winery.label-batches.index',
-                    'active' => request()->routeIs('winery.label-batches*') || request()->routeIs('winery.labeling*'),
+                    'active' => request()->routeIs('winery.bottling*') || request()->routeIs('winery.label-batches*') || request()->routeIs('winery.labeling*'),
                 ],
                 [
                     'icon'   => 'document-text',
@@ -587,7 +595,7 @@ class NavigationHelper
                     'icon'   => 'map',
                     'label'  => 'Parcelas',
                     'route'  => 'winery.plots.index',
-                    'active' => request()->routeIs('winery.plots*') && !request()->routeIs('plots.plantings.*'),
+                    'active' => request()->routeIs('winery.plots*') && !request()->routeIs('plots.plantings.*') || request()->routeIs('sigpac.*'),
                 ],
                 [
                     'icon'   => 'book-open',
@@ -596,22 +604,25 @@ class NavigationHelper
                     'active' => request()->routeIs('plots.plantings.*'),
                 ],
                 [
-                    'icon'   => 'map-pin',
-                    'label'  => 'SIGPAC',
-                    'route'  => 'sigpac.codes',
-                    'active' => request()->routeIs('sigpac.*'),
-                ],
-                [
                     'icon'   => 'globe-europe-africa',
                     'label'  => 'Gestión Territorial',
                     'route'  => 'plots.territory',
                     'active' => request()->routeIs('plots.territory'),
                 ],
+                ['divider' => true],
                 [
                     'icon'   => 'globe-alt',
                     'label'  => 'Teledetección',
                     'route'  => 'remote-sensing.dashboard',
                     'active' => request()->routeIs('remote-sensing.*'),
+                ],
+                [
+                    'icon'   => 'cloud',
+                    'label'  => 'Meteorología',
+                    'route'  => 'winery.meteorology.index',
+                    'active' => request()->routeIs('winery.meteorology*'),
+                    'wip'    => true,
+                    'new'    => true,
                 ],
                 ['divider' => true],
                 [
@@ -770,16 +781,12 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.settings'),
                 ],
                 [
-                    'icon'   => 'building-office',
-                    'label'  => 'Salas de Bodega',
-                    'route'  => 'winery.container-rooms.index',
-                    'active' => request()->routeIs('winery.container-rooms*'),
-                ],
-                [
-                    'icon'   => 'building-storefront',
-                    'label'  => 'Insumos de Bodega',
-                    'route'  => 'winery.winery-supplies.index',
-                    'active' => request()->routeIs('winery.winery-supplies*'),
+                    'icon'   => 'bell-alert',
+                    'label'  => 'Centro de Alertas',
+                    'route'  => 'winery.alerts.index',
+                    'active' => request()->routeIs('winery.alerts*'),
+                    'wip'    => true,
+                    'new'    => true,
                 ],
             ];
         }

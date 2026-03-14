@@ -15,9 +15,10 @@
         'negocio'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
         'sistema'   => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
         // winery
-        'vendimia'  => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
-        'bodega'    => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino
-        'territorio'=> ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
+        'vendimia'      => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
+        'bodega_elab'   => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino
+        'bodega_salida' => ['accent' => '#d97706', 'bg' => 'rgba(217,119,6,0.12)',   'border' => 'rgba(217,119,6,0.5)'],    // ámbar/marrón
+        'territorio'    => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
     ];
 
     $viticulturistChapters = [
@@ -32,23 +33,26 @@
     ];
 
     $wineryChapters = [
-        ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',   'sections' => ['harvest']],
-        ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',     'sections' => ['cellar']],
-        ['key' => 'territorio', 'icon' => 'map',                     'label' => 'Territorio', 'sections' => ['territory']],
-        ['key' => 'normativa',  'icon' => 'shield-check',            'label' => 'Normativa',  'sections' => ['winery_normativa']],
-        ['key' => 'negocio',    'icon' => 'calculator',              'label' => 'Negocio',    'sections' => ['billing']],
-        ['key' => 'sistema',    'icon' => 'cog-6-tooth',             'label' => 'Sistema',    'sections' => ['resources', 'compliance', 'system']],
+        ['key' => 'vendimia',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',          'sections' => ['harvest']],
+        ['key' => 'bodega_elab',   'icon' => 'beaker',                 'label' => 'Bodega — Elab.',    'sections' => ['cellar_elab']],
+        ['key' => 'bodega_salida', 'icon' => 'cube',                   'label' => 'Bodega — Salida',   'sections' => ['cellar_salida']],
+        ['key' => 'territorio',    'icon' => 'map',                    'label' => 'Territorio',        'sections' => ['territory']],
+        ['key' => 'normativa',     'icon' => 'shield-check',           'label' => 'Normativa',         'sections' => ['winery_normativa']],
+        ['key' => 'negocio',       'icon' => 'calculator',             'label' => 'Negocio',           'sections' => ['billing']],
+        ['key' => 'sistema',       'icon' => 'cog-6-tooth',            'label' => 'Sistema',           'sections' => ['resources', 'compliance', 'system']],
     ];
 
     // Capítulos winery específicos para el producer (sin territorio — cubierto por parcelas de campo)
     $producerWineryChapters = [
-        ['key' => 'vendimia',    'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',          'sections' => ['harvest']],
-        ['key' => 'bodega',      'icon' => 'beaker',                  'label' => 'Bodega',            'sections' => ['cellar']],
-        ['key' => 'normativa_w', 'icon' => 'shield-check',            'label' => 'Normativa Bodega',  'sections' => ['winery_normativa']],
-        ['key' => 'negocio_w',   'icon' => 'calculator',              'label' => 'Negocio Bodega',    'sections' => ['winery_billing']],
+        ['key' => 'vendimia',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',          'sections' => ['harvest']],
+        ['key' => 'bodega_elab',   'icon' => 'beaker',                 'label' => 'Bodega — Elab.',    'sections' => ['cellar_elab']],
+        ['key' => 'bodega_salida', 'icon' => 'cube',                   'label' => 'Bodega — Salida',   'sections' => ['cellar_salida']],
+        ['key' => 'normativa_w',   'icon' => 'shield-check',           'label' => 'Normativa Bodega',  'sections' => ['winery_normativa']],
+        ['key' => 'negocio_w',     'icon' => 'calculator',             'label' => 'Negocio Bodega',    'sections' => ['winery_billing']],
     ];
     $chapterColors['normativa_w'] = $chapterColors['normativa'];
     $chapterColors['negocio_w']   = $chapterColors['negocio'];
+    // bodega_elab y bodega_salida ya están definidos en $chapterColors
 
     $chapters = match($user->role) {
         'viticulturist' => $viticulturistChapters,
