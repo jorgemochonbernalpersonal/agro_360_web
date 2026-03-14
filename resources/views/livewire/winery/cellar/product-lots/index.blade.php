@@ -39,6 +39,10 @@
             Insights
         </flux:button>
 
+        <flux:button href="{{ route('winery.product-lots.audit') }}" wire:navigate variant="ghost" icon="shield-check">
+            Auditoría
+        </flux:button>
+
         {{-- Nuevo Producto --}}
         <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
             Nuevo

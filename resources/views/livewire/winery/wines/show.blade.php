@@ -71,6 +71,7 @@
                 ['id' => 'losses',       'label' => 'Mermas',         'icon' => 'minus-circle'],
                 ['id' => 'analyses',     'label' => 'Análisis',       'icon' => 'document-magnifying-glass'],
                 ['id' => 'diagram',      'label' => 'Diagrama',       'icon' => 'share'],
+                ['id' => 'qr',           'label' => 'QR',             'icon' => 'qr-code'],
             ] as $t)
             <button
                 @click="tab = '{{ $t['id'] }}'"
@@ -1042,6 +1043,57 @@
                 </div>
             </x-agro.card>
         @endif
+    </div>
+
+    {{-- ════════════════════════════════════════════════════════════════════════
+         TAB: QR TRAZABILIDAD
+    ════════════════════════════════════════════════════════════════════════════ --}}
+    <div x-show="tab === 'qr'" x-cloak>
+        <x-agro.card>
+            <div class="flex flex-col items-center gap-6 py-4">
+
+                {{-- QR SVG --}}
+                <div class="p-3 bg-white rounded-2xl border border-zinc-200 shadow-sm">
+                    {!! $qrSvg !!}
+                </div>
+
+                {{-- Info --}}
+                <div class="text-center space-y-2 max-w-sm">
+                    <p class="text-sm font-semibold text-zinc-800">Ficha pública de trazabilidad</p>
+                    <p class="text-xs text-zinc-500">
+                        Escanea este código para ver la información pública de <strong>{{ $wine->name }}</strong>:
+                        composición varietal, análisis enológicos y datos de elaboración.
+                    </p>
+                    <a href="{{ $traceUrl }}" target="_blank"
+                        class="inline-flex items-center gap-1.5 text-xs font-mono text-violet-600 hover:underline break-all">
+                        <flux:icon icon="arrow-top-right-on-square" class="size-3.5 shrink-0" />
+                        {{ $traceUrl }}
+                    </a>
+                </div>
+
+                {{-- Acciones --}}
+                <div class="flex gap-3">
+                    <a href="{{ $traceUrl }}" target="_blank">
+                        <flux:button variant="ghost" icon="arrow-top-right-on-square" size="sm">
+                            Ver ficha pública
+                        </flux:button>
+                    </a>
+                    <flux:button
+                        x-on:click="
+                            const svg = $el.closest('[x-show]').querySelector('svg');
+                            const blob = new Blob([svg.outerHTML], {type: 'image/svg+xml'});
+                            const a = document.createElement('a');
+                            a.href = URL.createObjectURL(blob);
+                            a.download = '{{ Str::slug($wine->name) }}_qr.svg';
+                            a.click();
+                        "
+                        variant="outline" icon="arrow-down-tray" size="sm">
+                        Descargar QR
+                    </flux:button>
+                </div>
+
+            </div>
+        </x-agro.card>
     </div>
 
     @once

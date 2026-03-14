@@ -94,6 +94,7 @@ Route::middleware(['role:winery,producer'])
         // ── Lotes de producto ─────────────────────────────────────────
         Route::get('/product-lots', \App\Livewire\Winery\Cellar\ProductLots\Index::class)->name('product-lots.index');
         Route::get('/product-lots/insights', \App\Livewire\Winery\Cellar\ProductLots\Insights::class)->name('product-lots.insights');
+        Route::get('/product-lots/audit', \App\Livewire\Winery\Cellar\ProductLots\Audit::class)->name('product-lots.audit');
         Route::get('/product-lots/create', \App\Livewire\Winery\Cellar\ProductLots\Create::class)->name('product-lots.create');
         Route::get('/product-lots/{lot}/sales', \App\Livewire\Winery\Cellar\ProductLots\Sales::class)->name('product-lots.sales');
         Route::get('/product-lots/{lot}/edit', \App\Livewire\Winery\Cellar\ProductLots\Edit::class)->name('product-lots.edit');

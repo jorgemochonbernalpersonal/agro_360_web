@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Wine extends Model
 {
@@ -45,6 +46,13 @@ class Wine extends Model
         'vino_de_pago'=> 'Vino de Pago',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Wine $wine) {
+            $wine->trace_token ??= (string) Str::uuid();
+        });
+    }
+
     protected $fillable = [
         'user_id',
         'oenologist_id',
@@ -58,6 +66,7 @@ class Wine extends Model
         'volume_liters',
         'initial_quantity_kg',
         'internal_code',
+        'trace_token',
         'is_must',
         'is_organic',
         'notes',

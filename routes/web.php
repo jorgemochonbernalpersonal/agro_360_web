@@ -64,6 +64,10 @@ Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'inde
 Route::get('/verify-report/{code}', [App\Http\Controllers\ReportVerificationController::class, 'verify'])
     ->name('reports.verify');
 
+// Trazabilidad pública de vinos (sin auth, por token UUID)
+Route::get('/vino/{token}', [App\Http\Controllers\WineTraceController::class, 'show'])
+    ->name('wine.trace');
+
 // Ruta de beta expirada (requiere auth)
 Route::middleware('auth')->get('/beta/expired', \App\Livewire\Beta\Expired::class)->name('beta.expired');
 

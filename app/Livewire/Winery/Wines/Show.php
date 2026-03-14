@@ -15,8 +15,13 @@ use App\Models\WineHarvest;
 use App\Models\WineLoss;
 use App\Models\WineTransfer;
 use App\Models\WinerySupply;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Show extends Component
@@ -449,18 +454,37 @@ class Show extends Component
             ->orderByDesc('harvest_start_date')
             ->get(['id', 'harvest_start_date', 'total_weight', 'plot_planting_id', 'vintage']);
 
-        $diagram = $this->buildDiagram($composition, $processes, $transfers, $losses, $analyses);
+        $diagram  = $this->buildDiagram($composition, $processes, $transfers, $losses, $analyses);
+        $qrSvg    = $this->generateQrSvg();
+        $traceUrl = route('wine.trace', $this->wine->trace_token);
 
         return view('livewire.winery.wines.show', compact(
             'containers', 'units',
             'fermentationControls', 'transfers', 'losses', 'analyses',
             'timeline', 'composition', 'availableHarvests',
             'additives', 'supplies', 'oenologists', 'processes',
-            'diagram'
+            'diagram', 'qrSvg', 'traceUrl'
         ))->layout('layouts.app');
     }
 
     // ─── Helpers privados ─────────────────────────────────────────────────────
+
+    private function generateQrSvg(): string
+    {
+        if (! $this->wine->trace_token) {
+            $this->wine->trace_token = (string) Str::uuid();
+            $this->wine->saveQuietly();
+        }
+
+        $url = route('wine.trace', $this->wine->trace_token);
+
+        $renderer = new ImageRenderer(
+            new RendererStyle(280),
+            new SvgImageBackEnd()
+        );
+
+        return (new Writer($renderer))->writeString($url);
+    }
 
     private function buildDiagram($composition, $processes, $transfers, $losses, $analyses): string
     {

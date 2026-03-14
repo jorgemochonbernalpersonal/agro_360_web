@@ -1,0 +1,191 @@
+<div class="space-y-6 animate-fade-in">
+
+    <x-agro.page-header
+        title="Auditoría de stock"
+        description="Verificación y reconstrucción de stock por movimientos registrados"
+    >
+        <x-slot:actions>
+            <flux:button :href="route('winery.product-lots.index')" icon="arrow-left" variant="ghost" wire:navigate>
+                Volver a productos
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
+
+    {{-- KPIs --}}
+    <div class="grid grid-cols-3 gap-4">
+        <x-agro.stat-card
+            label="Total lotes"
+            :value="$stats['total']"
+            icon="archive-box"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Sin discrepancias"
+            :value="$stats['ok']"
+            icon="check-circle"
+            color="green"
+        />
+        <x-agro.stat-card
+            label="Con discrepancias"
+            :value="$stats['drifted']"
+            icon="exclamation-triangle"
+            color="{{ $stats['drifted'] > 0 ? 'red' : 'green' }}"
+        />
+    </div>
+
+    {{-- Toolbar --}}
+    <div class="flex items-center justify-between gap-3">
+        <label class="flex items-center gap-2 text-sm text-zinc-600 cursor-pointer select-none">
+            <input wire:model.live="onlyDrifted" type="checkbox"
+                class="rounded border-zinc-300 text-red-500 focus:ring-red-400" />
+            Solo lotes con discrepancias
+        </label>
+
+        @if($stats['drifted'] > 0)
+            <flux:button
+                wire:click="recalculateAll"
+                wire:loading.attr="disabled"
+                wire:confirm="¿Recalcular los {{ $stats['drifted'] }} lotes con discrepancias? Se sobreescribirán sus cantidades actuales con los valores reconstruidos desde los movimientos."
+                variant="danger"
+                icon="arrow-path"
+                size="sm"
+            >
+                Recalcular todos ({{ $stats['drifted'] }})
+            </flux:button>
+        @endif
+    </div>
+
+    {{-- Tabla --}}
+    @if($rows->isEmpty())
+        <x-agro.empty-state
+            icon="check-circle"
+            title="Todo en orden"
+            description="No hay discrepancias de stock en ningún lote."
+        />
+    @else
+        <x-agro.card>
+            <x-agro.data-table>
+                <x-slot:head>
+                    <x-agro.table-cell header>Producto</x-agro.table-cell>
+                    <x-agro.table-cell header align="center">Movimientos</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">Stock actual</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">Esperado (movimientos)</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">Disp. actual / esp.</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">Res. actual / esp.</x-agro.table-cell>
+                    <x-agro.table-cell header align="right">Vend. actual / esp.</x-agro.table-cell>
+                    <x-agro.table-cell header align="center">Estado</x-agro.table-cell>
+                    <x-agro.table-cell header align="center">Acción</x-agro.table-cell>
+                </x-slot:head>
+
+                @foreach($rows as $row)
+                    @php
+                        $lot      = $row['lot'];
+                        $hasDrift = $row['hasDrift'];
+                        $rowBg    = $hasDrift ? 'bg-red-50' : '';
+                    @endphp
+                    <x-agro.table-row class="{{ $rowBg }}">
+
+                        {{-- Nombre --}}
+                        <x-agro.table-cell>
+                            <div class="font-medium text-zinc-900">{{ $lot->name }}</div>
+                            @if($lot->vintage)
+                                <div class="text-xs text-zinc-400">{{ $lot->vintage }}</div>
+                            @endif
+                        </x-agro.table-cell>
+
+                        {{-- Movimientos --}}
+                        <x-agro.table-cell align="center">
+                            <span class="text-zinc-500 text-sm">{{ $row['movCount'] }}</span>
+                        </x-agro.table-cell>
+
+                        {{-- Total actual vs esperado --}}
+                        <x-agro.table-cell align="right">
+                            <span class="font-semibold text-zinc-800">
+                                {{ number_format((float) $lot->quantity, 3) }}
+                            </span>
+                        </x-agro.table-cell>
+                        <x-agro.table-cell align="right">
+                            <span class="font-semibold {{ abs($row['driftTotal']) >= 0.001 ? 'text-red-600' : 'text-zinc-800' }}">
+                                {{ number_format($row['expTotal'], 3) }}
+                                @if(abs($row['driftTotal']) >= 0.001)
+                                    <span class="text-xs">({{ $row['driftTotal'] > 0 ? '+' : '' }}{{ number_format($row['driftTotal'], 3) }})</span>
+                                @endif
+                            </span>
+                        </x-agro.table-cell>
+
+                        {{-- Disp --}}
+                        <x-agro.table-cell align="right">
+                            @php $da = abs($row['driftAvail']) >= 0.001; @endphp
+                            <span class="text-sm {{ $da ? 'text-red-600 font-semibold' : 'text-zinc-600' }}">
+                                {{ number_format((float) $lot->available_quantity, 3) }}
+                                @if($da) / {{ number_format($row['expAvail'], 3) }} @endif
+                            </span>
+                        </x-agro.table-cell>
+
+                        {{-- Res --}}
+                        <x-agro.table-cell align="right">
+                            @php $dr = abs($row['driftRes']) >= 0.001; @endphp
+                            <span class="text-sm {{ $dr ? 'text-red-600 font-semibold' : 'text-zinc-600' }}">
+                                {{ number_format((float) $lot->reserved_quantity, 3) }}
+                                @if($dr) / {{ number_format($row['expRes'], 3) }} @endif
+                            </span>
+                        </x-agro.table-cell>
+
+                        {{-- Sold --}}
+                        <x-agro.table-cell align="right">
+                            @php $ds = abs($row['driftSold']) >= 0.001; @endphp
+                            <span class="text-sm {{ $ds ? 'text-red-600 font-semibold' : 'text-zinc-600' }}">
+                                {{ number_format((float) $lot->sold_quantity, 3) }}
+                                @if($ds) / {{ number_format($row['expSold'], 3) }} @endif
+                            </span>
+                        </x-agro.table-cell>
+
+                        {{-- Estado --}}
+                        <x-agro.table-cell align="center">
+                            @if($hasDrift)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                                    <flux:icon icon="exclamation-triangle" class="size-3" />
+                                    Discrepancia
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                    <flux:icon icon="check-circle" class="size-3" />
+                                    OK
+                                </span>
+                            @endif
+                        </x-agro.table-cell>
+
+                        {{-- Acción --}}
+                        <x-agro.table-cell align="center">
+                            @if($hasDrift)
+                                <flux:button
+                                    wire:click="recalculate({{ $lot->id }})"
+                                    wire:loading.attr="disabled"
+                                    wire:confirm="¿Recalcular stock de «{{ $lot->name }}»? Se sobreescribirán las cantidades actuales con los valores reconstruidos desde los movimientos."
+                                    variant="ghost"
+                                    icon="arrow-path"
+                                    size="xs"
+                                >
+                                    Recalcular
+                                </flux:button>
+                            @else
+                                <span class="text-zinc-300 text-xs">—</span>
+                            @endif
+                        </x-agro.table-cell>
+
+                    </x-agro.table-row>
+                @endforeach
+            </x-agro.data-table>
+        </x-agro.card>
+    @endif
+
+    {{-- Nota informativa --}}
+    <flux:callout variant="info" icon="information-circle">
+        <p class="text-sm">
+            La columna <strong>Esperado</strong> replica todos los movimientos registrados desde el stock inicial del lote.
+            Si hay discrepancia, significa que alguna cantidad fue modificada manualmente o que ocurrió un error en una transacción.
+            <strong>Recalcular</strong> sobreescribe los valores actuales con los reconstruidos desde movimientos.
+        </p>
+    </flux:callout>
+
+</div>
