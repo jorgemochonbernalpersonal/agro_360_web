@@ -73,6 +73,12 @@ Route::middleware(['role:winery,producer'])
         Route::get('/containers/{container}/maintenance/{maintenance}/edit', \App\Livewire\Winery\Cellar\Containers\Maintenance\Edit::class)->name('containers.maintenance.edit');
         Route::get('/containers/{container}/additives', \App\Livewire\Winery\Cellar\Containers\Additives\Index::class)->name('containers.additives.index');
         Route::get('/containers/{container}/additives/create', \App\Livewire\Winery\Cellar\Containers\Additives\Create::class)->name('containers.additives.create');
+        Route::get('/containers/{container}/additives/{additive}/edit', \App\Livewire\Winery\Cellar\Containers\Additives\Edit::class)->name('containers.additives.edit');
+
+        // ── Salas de bodega ───────────────────────────────────────────
+        Route::get('/container-rooms', \App\Livewire\Winery\Cellar\ContainerRooms\Index::class)->name('container-rooms.index');
+        Route::get('/container-rooms/create', \App\Livewire\Winery\Cellar\ContainerRooms\Create::class)->name('container-rooms.create');
+        Route::get('/container-rooms/{room}/edit', \App\Livewire\Winery\Cellar\ContainerRooms\Edit::class)->name('container-rooms.edit');
 
         // ── Insumos de bodega ─────────────────────────────────────────
         Route::get('/winery-supplies', \App\Livewire\Winery\WinerySupplies\Index::class)->name('winery-supplies.index');
@@ -85,6 +91,7 @@ Route::middleware(['role:winery,producer'])
         Route::get('/wines/{wine}', \App\Livewire\Winery\Wines\Show::class)->name('wines.show');
         Route::get('/wines/{wine}/edit', \App\Livewire\Winery\Wines\Edit::class)->name('wines.edit');
         Route::get('/wines/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('wines.process.create');
+        Route::get('/wines/{wine}/process/{process}/edit', \App\Livewire\Winery\Wines\Process\Edit::class)->name('wines.process.edit');
 
         // ── Uva / mosto / vino externo (en construcción) ─────────────
         Route::get('/external-grape', \App\Livewire\Winery\ExternalGrape\Index::class)->name('external-grape.index');
@@ -183,6 +190,8 @@ Route::middleware(['role:winery,producer'])
         Route::get('/label-batches', \App\Livewire\Winery\LabelBatches\Index::class)->name('label-batches.index');
         Route::get('/label-batches/create', \App\Livewire\Winery\LabelBatches\Create::class)->name('label-batches.create');
         Route::get('/label-batches/{labelBatch}/edit', \App\Livewire\Winery\LabelBatches\Edit::class)->name('label-batches.edit');
+        Route::get('/label-batches/{labelBatch}/waste', \App\Livewire\Winery\LabelBatches\Waste\Index::class)->name('label-batches.waste.index');
+        Route::get('/label-batches/{labelBatch}/waste/create', \App\Livewire\Winery\LabelBatches\Waste\Create::class)->name('label-batches.waste.create');
 
         // ── Etiquetado ────────────────────────────────────────────────
         Route::get('/labeling', \App\Livewire\Winery\Labeling\Index::class)->name('labeling.index');

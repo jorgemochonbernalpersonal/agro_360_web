@@ -32,10 +32,16 @@
                 <x-agro.table-cell>{{ $additive->additive_date->format('d/m/Y') }}</x-agro.table-cell>
                 <x-agro.table-cell>{{ $additive->creator?->name ?? '—' }}</x-agro.table-cell>
                 <x-agro.table-cell align="right">
-                    <flux:button size="sm" variant="ghost" icon="trash"
-                        wire:click="delete({{ $additive->id }})"
-                        wire:loading.attr="disabled"
-                        wire:confirm="¿Eliminar este registro de aditivo?" />
+                    <div class="flex items-center justify-end gap-1">
+                        <a href="{{ route('winery.containers.additives.edit', [$container, $additive]) }}" wire:navigate
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Editar">
+                            <flux:icon icon="pencil-square" class="size-4" />
+                        </a>
+                        <flux:button size="sm" variant="ghost" icon="trash"
+                            wire:click="delete({{ $additive->id }})"
+                            wire:loading.attr="disabled"
+                            wire:confirm="¿Eliminar este registro de aditivo?" />
+                    </div>
                 </x-agro.table-cell>
             </x-agro.table-row>
         @empty
