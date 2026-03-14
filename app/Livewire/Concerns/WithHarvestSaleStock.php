@@ -16,7 +16,7 @@ trait WithHarvestSaleStock
     {
         $latest = HarvestStock::where('harvest_id', $harvestId)
             ->whereNull('container_id')
-            ->latest()
+            ->orderByDesc('id')
             ->first();
 
         if (!$latest) {

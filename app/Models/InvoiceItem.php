@@ -77,6 +77,14 @@ class InvoiceItem extends Model
     }
 
     /**
+     * Albarán de venta de cosecha relacionado (si aplica)
+     */
+    public function marketedHarvest(): BelongsTo
+    {
+        return $this->belongsTo(MarketedHarvest::class, 'marketed_harvest_id');
+    }
+
+    /**
      * Impuesto aplicado
      */
     public function tax(): BelongsTo

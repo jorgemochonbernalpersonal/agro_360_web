@@ -212,8 +212,6 @@ class Edit extends Component
                         $harvest->harvest_start_date?->format('d/m/Y') ?? '—'
                     );
 
-                    $this->reserveHarvestStock($harvest->id, $qty, $this->invoice->id);
-
                     $item = InvoiceItem::create([
                         'invoice_id'      => $this->invoice->id,
                         'harvest_id'      => $harvest->id,
@@ -313,6 +311,7 @@ class Edit extends Component
         return view('livewire.viticulturist.billing.harvest-sale.edit', [
             'availableHarvests' => $availableHarvests,
             'selectedIds'       => $selectedIds,
+            'isLocked'          => $this->isLocked,
         ])->layout('layouts.app');
     }
 }

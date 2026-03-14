@@ -942,7 +942,7 @@ class ContainerStockService
     {
         return HarvestStock::where('harvest_id', $harvest->id)
             ->lockForUpdate()
-            ->latest()
+            ->orderByDesc('id')
             ->first();
     }
 

@@ -102,6 +102,11 @@
                             if (!window.loadLeaflet || !window.parseWKT) return;
 
                             window.loadLeaflet().then(() => {
+                                if (this.map) {
+                                    this.map.remove();
+                                    this.map = null;
+                                }
+
                                 this.map = window.L.map(this.$refs.mapEl);
 
                                 window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -150,6 +155,12 @@
                                     this.map.setView([40.4, -3.7], 6);
                                 }
                             });
+                        },
+                        destroy() {
+                            if (this.map) {
+                                this.map.remove();
+                                this.map = null;
+                            }
                         }
                     };
                 }
