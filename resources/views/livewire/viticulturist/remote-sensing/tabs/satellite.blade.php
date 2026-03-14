@@ -165,7 +165,7 @@
                 @elseif($yearChange < 0) bg-red-100 text-red-700
                 @else bg-zinc-100 text-zinc-700
                 @endif">
-                @if($yearChange > 0)↑@elseif($yearChange < 0)↓@else=@endif
+                {{ $yearChange > 0 ? '↑' : ($yearChange < 0 ? '↓' : '=') }}
                 {{ number_format(abs(($yearChange ?? 0) * 100), 1) }}%
             </div>
         </div>
