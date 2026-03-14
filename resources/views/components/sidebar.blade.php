@@ -422,8 +422,10 @@
                               :class="mobileChapter === '{{ $ch['key'] }}' ? 'text-white' : 'text-white/70'">
                             {{ $ch['label'] }}
                         </span>
-                        <flux:icon icon="chevron-right" class="w-4 h-4 text-white/30 transition-transform duration-200"
-                                   :class="mobileChapter === '{{ $ch['key'] }}' ? 'rotate-90' : ''" />
+                        <span class="transition-transform duration-200"
+                              :class="mobileChapter === '{{ $ch['key'] }}' ? 'rotate-90' : ''">
+                            <flux:icon icon="chevron-right" class="w-4 h-4 text-white/30" />
+                        </span>
                     </button>
 
                     {{-- Chapter items --}}
