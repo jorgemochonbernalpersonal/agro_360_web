@@ -16,6 +16,14 @@ abstract class WineryTestCase extends TestCase
 {
     use RefreshDatabase;
 
+    protected function makeWinery(): User
+    {
+        return User::factory()->create([
+            'role'              => 'winery',
+            'email_verified_at' => now(),
+        ]);
+    }
+
     protected function makeOtherWinery(): User
     {
         return User::factory()->create([

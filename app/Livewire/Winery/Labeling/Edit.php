@@ -75,8 +75,8 @@ class Edit extends Component
     public function updatedWineId(): void
     {
         $this->wine_bottling_id = '';
-        $this->unsetComputedProperty('wineBottlings');
-        $this->unsetComputedProperty('labelBatches');
+        unset($this->wineBottlings);
+        unset($this->labelBatches);
     }
 
     protected function rules(): array

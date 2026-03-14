@@ -139,7 +139,7 @@ class Edit extends Component
             return;
         }
 
-        $this->unsetComputedProperty('wastes');
+        unset($this->wastes);
         $this->showWasteForm = false;
         $this->resetWasteForm();
         $this->toastSuccess('Merma registrada correctamente.');
@@ -158,7 +158,7 @@ class Edit extends Component
             $this->batch->refresh();
         });
 
-        $this->unsetComputedProperty('wastes');
+        unset($this->wastes);
         $this->toastSuccess('Merma eliminada.');
     }
 

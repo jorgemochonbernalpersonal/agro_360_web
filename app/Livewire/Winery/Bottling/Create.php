@@ -116,14 +116,14 @@ class Create extends Component
     {
         $this->wine_process_detail_id = '';
         $this->container_id           = '';
-        $this->unsetComputedProperty('bottlingProcessDetails');
-        $this->unsetComputedProperty('containers');
+        unset($this->bottlingProcessDetails);
+        unset($this->containers);
     }
 
     public function updatedWineProcessDetailId(): void
     {
         $this->container_id = '';
-        $this->unsetComputedProperty('containers');
+        unset($this->containers);
     }
 
     public function addSupply(): void

@@ -1,3 +1,4 @@
+<div class="space-y-6 animate-fade-in">
 <x-agro.page-header
     title="Insumos de Bodega"
     description="Catálogo de productos usados en mantenimiento y elaboración."
@@ -67,3 +68,4 @@
 
     {{ $supplies->links() }}
 </x-agro.card>
+</div>

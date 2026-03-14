@@ -64,7 +64,7 @@ class Create extends Component
 
     public function updatedWineId(): void
     {
-        $this->unsetComputedProperty('selectedWine');
+        unset($this->selectedWine);
     }
 
     protected function rules(): array

@@ -120,7 +120,7 @@ class Edit extends Component
     public function updatedWineId(): void
     {
         $this->wine_process_detail_id = '';
-        $this->unsetComputedProperty('bottlingProcessDetails');
+        unset($this->bottlingProcessDetails);
     }
 
     public function addSupply(): void

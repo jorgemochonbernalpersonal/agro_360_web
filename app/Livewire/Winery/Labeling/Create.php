@@ -67,14 +67,14 @@ class Create extends Component
     public function updatedWineId(): void
     {
         $this->wine_bottling_id = '';
-        $this->unsetComputedProperty('wineBottlings');
-        $this->unsetComputedProperty('labelBatches');
-        $this->unsetComputedProperty('selectedBatch');
+        unset($this->wineBottlings);
+        unset($this->labelBatches);
+        unset($this->selectedBatch);
     }
 
     public function updatedLabelBatchId(): void
     {
-        $this->unsetComputedProperty('selectedBatch');
+        unset($this->selectedBatch);
         // Auto-fill from_number if batch selected and from_number empty
         if ($this->label_batch_id) {
             $batch = LabelBatch::find($this->label_batch_id);
