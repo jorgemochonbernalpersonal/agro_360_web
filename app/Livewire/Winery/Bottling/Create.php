@@ -203,7 +203,12 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.bottling.create', [
-            'bottleFormats' => WineBottling::BOTTLE_FORMATS,
+            'bottleFormats'          => WineBottling::BOTTLE_FORMATS,
+            'wines'                  => $this->wines,
+            'oenologists'            => $this->oenologists,
+            'winerySupplies'         => $this->winerySupplies,
+            'units'                  => $this->units,
+            'bottlingProcessDetails' => $this->bottlingProcessDetails,
         ])->layout('layouts.app');
     }
 }

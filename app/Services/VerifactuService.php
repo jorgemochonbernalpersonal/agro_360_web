@@ -237,7 +237,7 @@ class VerifactuService
         $swName        = config('services.sif_software.name', 'Agro365');
         $swId          = config('services.sif_software.id', 'A3');           // max 2 chars
         $swVersion     = config('services.sif_software.version', '1.0.0');
-        $swInstall     = config('services.sif_software.install_id', 'AGR001'); // max 100
+        $swInstall     = 'AGR-' . $invoice->user->id; // una instalación por usuario (max 100)
 
         // ── Build XML ────────────────────────────────────────────────────────
         $ns   = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroLR.xsd';
@@ -353,6 +353,7 @@ class VerifactuService
         // Huella
         $x .= '<T:TipoHuella>01</T:TipoHuella>';
         $x .= '<T:Huella>' . $huella . '</T:Huella>';
+        $x .= '<T:GeneradoPor>E</T:GeneradoPor>';
 
         $x .= '</T:RegistroAlta>';
         $x .= '</RegistroFactura>';
@@ -431,14 +432,21 @@ class VerifactuService
             . '<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
             . '<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>'
             . '<ds:Reference URI="">'
-            . '<ds:Transforms><ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/></ds:Transforms>'
+            . '<ds:Transforms>'
+            . '<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>'
+            . '<ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
+            . '</ds:Transforms>'
             . '<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>'
             . '<ds:DigestValue>' . $digestValue . '</ds:DigestValue>'
             . '</ds:Reference>'
             . '</ds:SignedInfo>';
 
+        $signedInfoDom = new \DOMDocument();
+        $signedInfoDom->loadXML($signedInfo);
+        $signedInfoCanonical = $signedInfoDom->C14N();
+
         $signature = null;
-        openssl_sign($signedInfo, $signature, $certs['pkey'], OPENSSL_ALGO_SHA256);
+        openssl_sign($signedInfoCanonical, $signature, $certs['pkey'], OPENSSL_ALGO_SHA256);
 
         $certClean = str_replace(
             ['-----BEGIN CERTIFICATE-----', '-----END CERTIFICATE-----', "\n", "\r"],
@@ -543,7 +551,7 @@ class VerifactuService
         $swName       = config('services.sif_software.name', 'Agro365');
         $swId         = config('services.sif_software.id', 'A3');
         $swVersion    = config('services.sif_software.version', '1.0.0');
-        $swInstall    = config('services.sif_software.install_id', 'AGR001');
+        $swInstall    = 'AGR-' . $invoice->user->id;
 
         $ns  = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroLR.xsd';
         $nsT = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroInformacion.xsd';
@@ -602,6 +610,7 @@ class VerifactuService
         $x .= '<T:FechaHoraHusoGenRegistro>' . $this->e($fechaHoraGen) . '</T:FechaHoraHusoGenRegistro>';
         $x .= '<T:TipoHuella>01</T:TipoHuella>';
         $x .= '<T:Huella>' . $huella . '</T:Huella>';
+        $x .= '<T:GeneradoPor>E</T:GeneradoPor>';
 
         $x .= '</T:RegistroAnulacion>';
         $x .= '</RegistroFactura>';
