@@ -227,6 +227,24 @@ Route::middleware(['role:winery,producer'])
             ->defaults('module', 'Trazabilidad')
             ->defaults('icon', 'magnifying-glass-circle');
 
+        // ── Operaciones de Bodega (en construcción) ───────────────────
+        Route::get('/cellar-operations', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('cellar-operations.index')
+            ->defaults('module', 'Operaciones de Bodega')
+            ->defaults('icon', 'calendar-days');
+
+        // ── Meteorología (en construcción) ────────────────────────────
+        Route::get('/meteorology', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('meteorology.index')
+            ->defaults('module', 'Meteorología')
+            ->defaults('icon', 'cloud');
+
+        // ── Centro de Alertas (en construcción) ───────────────────────
+        Route::get('/alerts', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('alerts.index')
+            ->defaults('module', 'Centro de Alertas')
+            ->defaults('icon', 'bell-alert');
+
         // ── VeriFactu / facturación electrónica ───────────────────────
         Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
 
