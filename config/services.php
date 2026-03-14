@@ -53,13 +53,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Copernicus Data Space API
+    | Copernicus Data Space — Sentinel-2 L2A (100% GRATIS)
     |--------------------------------------------------------------------------
     |
-    | Configuración para acceder a datos de Sentinel-2 via Copernicus.
-    | Regístrate en: https://dataspace.copernicus.eu/ (DEPRECATED)
+    | Proporciona imágenes Sentinel-2 a 10m de resolución cada 5 días.
+    | Regístrate gratis en: https://dataspace.copernicus.eu/ → Register
     |
     */
+
+    'copernicus' => [
+        'username' => env('COPERNICUS_USERNAME'),
+        'password' => env('COPERNICUS_PASSWORD'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

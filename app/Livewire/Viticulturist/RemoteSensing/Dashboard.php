@@ -342,7 +342,7 @@ class Dashboard extends Component
     }
     
     /**
-     * Request data for a specific date from NASA
+     * Request data for a specific date from NASA (via queue job)
      */
     public function requestDataForDate(?string $date = null)
     {
@@ -353,51 +353,14 @@ class Dashboard extends Component
             ]);
             return;
         }
-        
-        $this->loadingDataForDate = true;
-        $this->dataLoadError = null;
-        
-        try {
-            $nasaService = app(NasaEarthdataService::class);
-            
-            // For now, fetch latest data (NASA API doesn't easily support specific historical dates)
-            // In future, this could be enhanced to request specific dates via AppEEARS task
-            $result = $nasaService->fetchEnrichedData(
-                $this->selectedPlot,
-                includeArea: false,
-                coordinates: $this->getSelectedRecintoCoordinates(),
-                recintoId: $this->selectedRecintoId
-            );
-            
-            if ($result) {
-                // Reload available dates and data
-                $this->loadSatelliteAvailableDates();
-                $this->loadSatelliteData();
-                $this->calculateYearComparison();
-                $this->generateRecommendations();
-                
-                $this->dispatch('notify', [
-                    'type' => 'success',
-                    'message' => 'Datos satelitales cargados correctamente',
-                ]);
-            } else {
-                throw new \Exception('No se pudieron obtener datos satelitales. Verifica las credenciales NASA en el servidor.');
-            }
-            
-        } catch (\Exception $e) {
-            $this->dataLoadError = $e->getMessage();
-            Log::error('Error requesting satellite data', [
-                'plot_id' => $this->selectedPlot->id,
-                'error' => $e->getMessage(),
-            ]);
-            
-            $this->dispatch('notify', [
-                'type' => 'error',
-                'message' => 'Error al cargar datos: ' . $e->getMessage(),
-            ]);
-        } finally {
-            $this->loadingDataForDate = false;
-        }
+
+        \App\Jobs\UpdatePlotSentinel2Job::dispatch($this->selectedPlot)
+            ->onQueue('remote-sensing');
+
+        $this->dispatch('notify', [
+            'type' => 'info',
+            'message' => 'Solicitud enviada. Los datos estarán disponibles en ~1 minuto. Recarga la página para verlos.',
+        ]);
     }
     
     /**

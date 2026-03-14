@@ -33,6 +33,12 @@ Schedule::command('remote-sensing:update-all', [
     ->dailyAt('02:00')
     ->withoutOverlapping();
 
+// 🌌 Actualizar datos enriquecidos (GNDVI, LAI, SMAP, ET) a las 2:30 AM
+// Se ejecuta 30 min después del update-all para que el NDVI básico ya esté guardado
+Schedule::command('remote-sensing:update-enriched --ultra')
+    ->dailyAt('02:30')
+    ->withoutOverlapping();
+
 // 📊 Limpiar datos antiguos de remote sensing (cada lunes)
 Schedule::command('remote-sensing:clean-old-data', ['--days' => 365])
     ->weeklyOn(1, '03:00')

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\UpdatePlotNdviJob;
+use App\Jobs\UpdatePlotSentinel2Job;
 use App\Models\Plot;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -68,7 +68,7 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
         foreach ($plots as $plot) {
             try {
                 // Dispatch job to queue
-                UpdatePlotNdviJob::dispatch($plot)
+                UpdatePlotSentinel2Job::dispatch($plot)
                     ->onQueue($queueName)
                     ->delay(now()->addSeconds($delay * $queued));
                 
