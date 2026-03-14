@@ -410,7 +410,7 @@ class ExecutiveDashboard extends Component
             $label = 'Calor Alto';
             $color = 'orange';
             $icon = '⚠️';
-        } elseif ($lstNight < 3 && $month >= 3 && $month <= 5) {
+        } elseif ($lstNight !== null && $lstNight < 3 && $month >= 3 && $month <= 5) {
             $status = 'warning';
             $label = 'Riesgo Helada';
             $color = 'blue';
@@ -577,12 +577,12 @@ class ExecutiveDashboard extends Component
         switch ($type) {
             case 'vigor':
                 $base['ndvi'] = 0;
-                $base['gndvi'] = 0;
-                $base['lai'] = 0;
+                $base['gndvi'] = null;
+                $base['lai'] = null;
                 break;
             case 'water':
                 $base['cwsi'] = null;
-                $base['soil_moisture'] = 0;
+                $base['soil_moisture'] = null;
                 break;
             case 'temperature':
                 $base['lst_day'] = null;
@@ -590,14 +590,14 @@ class ExecutiveDashboard extends Component
                 $base['lst_diff'] = null;
                 break;
             case 'harvest':
-                $base['lai'] = 0;
-                $base['yield_per_ha'] = 0;
-                $base['total_yield'] = 0;
+                $base['lai'] = null;
+                $base['yield_per_ha'] = null;
+                $base['total_yield'] = null;
                 $base['confidence'] = 'low';
                 $base['confidence_label'] = 'Sin datos';
                 break;
             case 'nutrition':
-                $base['gndvi'] = 0;
+                $base['gndvi'] = null;
                 $base['chlorophyll'] = null;
                 break;
         }
