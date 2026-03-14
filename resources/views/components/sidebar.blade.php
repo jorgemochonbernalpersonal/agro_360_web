@@ -14,6 +14,20 @@
         'pac'       => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
         'negocio'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
         'sistema'   => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
+        // do
+        'do_censo'        => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // indigo
+        'do_viticultores' => ['accent' => '#34d399', 'bg' => 'rgba(52,211,153,0.12)',  'border' => 'rgba(52,211,153,0.5)'],   // emerald
+        'do_campanas'     => ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'],   // amber
+        'do_sup_bodegas'  => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // blue
+        'do_sup_vitic'    => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
+        'do_calificacion' => ['accent' => '#facc15', 'bg' => 'rgba(250,204,21,0.12)',  'border' => 'rgba(250,204,21,0.5)'],   // yellow
+        'do_etiquetas'    => ['accent' => '#fb7185', 'bg' => 'rgba(251,113,133,0.12)', 'border' => 'rgba(251,113,133,0.5)'],  // rose
+        'do_control'      => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // red
+        'do_normativa_do' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violet
+        'do_territorio'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
+        'do_estadisticas' => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
+        'do_negocio_do'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // green
+        'do_sistema'      => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
         // winery
         'vendimia'      => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
         'bodega_elab'   => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino
@@ -54,16 +68,34 @@
     $chapterColors['negocio_w']   = $chapterColors['negocio'];
     // bodega_elab y bodega_salida ya están definidos en $chapterColors
 
+    $doChapters = [
+        ['key' => 'do_censo',        'icon' => 'users',              'label' => 'Censo',              'sections' => ['do_census']],
+        ['key' => 'do_viticultores', 'icon' => 'leaf',               'label' => 'Viticultores DO',    'sections' => ['do_growers']],
+        ['key' => 'do_campanas',     'icon' => 'flag',               'label' => 'Campañas',           'sections' => ['do_campaigns']],
+        ['key' => 'do_sup_bodegas',  'icon' => 'building-office-2',  'label' => 'Bodegas',            'sections' => ['do_oversight_wineries']],
+        ['key' => 'do_sup_vitic',    'icon' => 'eye',                'label' => 'Viticultores',       'sections' => ['do_oversight_growers']],
+        ['key' => 'do_calificacion', 'icon' => 'star',               'label' => 'Calificación',       'sections' => ['do_qualification']],
+        ['key' => 'do_etiquetas',    'icon' => 'tag',                'label' => 'Contraetiquetas',    'sections' => ['do_labels']],
+        ['key' => 'do_control',      'icon' => 'shield-check',       'label' => 'Control',            'sections' => ['do_inspection']],
+        ['key' => 'do_normativa_do', 'icon' => 'document-text',      'label' => 'Normativa',          'sections' => ['do_regulation']],
+        ['key' => 'do_territorio',   'icon' => 'map',                'label' => 'Territorio',         'sections' => ['do_territory']],
+        ['key' => 'do_estadisticas', 'icon' => 'chart-bar',          'label' => 'Estadísticas',       'sections' => ['do_statistics']],
+        ['key' => 'do_negocio_do',   'icon' => 'calculator',         'label' => 'Negocio DO',         'sections' => ['do_finance']],
+        ['key' => 'do_sistema',      'icon' => 'cog-6-tooth',        'label' => 'Sistema',            'sections' => ['do_settings']],
+    ];
+
     $chapters = match($user->role) {
         'viticulturist' => $viticulturistChapters,
         'winery'        => $wineryChapters,
         'producer'      => array_merge($viticulturistChapters, $producerWineryChapters), // para flyouts
+        'supervisor'    => $doChapters,
         default         => [],
     };
 
     $dashboardRoute = match($user->role) {
         'winery'    => 'winery.dashboard',
         'producer'  => 'producer.dashboard',
+        'supervisor' => 'supervisor.dashboard',
         default     => 'viticulturist.dashboard',
     };
 

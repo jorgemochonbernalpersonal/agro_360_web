@@ -64,20 +64,20 @@ describe('Winery Invoices - Grape Purchase', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/invoices/grape-purchase/create')
     })
 
     it('selecciona viticultor y carga recepciones si hay datos', () => {
-      cy.get('[wire\\:model="viticulturist_id"]').then(($sel) => {
+      cy.getByWireModel('viticulturist_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No viticulturists available - skipping cascade test')
           return
         }
 
-        cy.get('[wire\\:model="viticulturist_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('viticulturist_id').select(opts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(1000)
 
@@ -86,14 +86,14 @@ describe('Winery Invoices - Grape Purchase', () => {
     })
 
     it('crea liquidación completa si hay viticultor con recepciones', () => {
-      cy.get('[wire\\:model="viticulturist_id"]').then(($vitSel) => {
+      cy.getByWireModel('viticulturist_id').then(($vitSel) => {
         const vitOpts = $vitSel.find('option').filter((i, el) => el.value !== '')
         if (vitOpts.length === 0) {
           cy.log('No viticulturists - skipping')
           return
         }
 
-        cy.get('[wire\\:model="viticulturist_id"]').select(vitOpts.first().val(), { force: true })
+        cy.getByWireModel('viticulturist_id').select(vitOpts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(1000)
 
@@ -115,10 +115,10 @@ describe('Winery Invoices - Grape Purchase', () => {
             cy.waitForLivewire()
             cy.wait(500)
 
-            cy.get('[wire\\:model="lines.0.unit_price"]').clear().type('0.45')
-            cy.get('[wire\\:model="lines.0.tax_rate"]').clear().type('2')
+            cy.getByWireModel('lines.0.unit_price').clear().type('0.45')
+            cy.getByWireModel('lines.0.tax_rate').clear().type('2')
 
-            cy.get('button[type="submit"]').click({ force: true })
+            cy.get('[data-cy="submit-button"]').click({ force: true })
             cy.wait(5000)
 
             cy.url().should('include', '/winery/invoices/grape-purchase')
@@ -143,7 +143,7 @@ describe('Winery Invoices - Grape Purchase', () => {
 
         cy.get('[wire\\:model="observations"]').clear().type('Observaciones actualizadas en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/invoices/grape-purchase')
@@ -163,7 +163,7 @@ describe('Winery Invoices - Grape Purchase', () => {
 
         cy.get('[wire\\:model="payment_type"]').select('check', { force: true })
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/invoices/grape-purchase')

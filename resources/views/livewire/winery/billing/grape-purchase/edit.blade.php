@@ -67,11 +67,11 @@
                                 <div class="flex-1 grid grid-cols-4 gap-2 text-sm">
                                     <span class="font-medium">Recepción #{{ $harvest->id }}</span>
                                     <span class="text-zinc-600 dark:text-zinc-400">
-                                        {{ $harvest->harvest_date ? \Carbon\Carbon::parse($harvest->harvest_date)->format('d/m/Y') : '—' }}
+                                        {{ $harvest->harvest_start_date?->format('d/m/Y') ?? '—' }}
                                     </span>
-                                    <span>{{ $harvest->variety ?? '—' }}</span>
+                                    <span>{{ $harvest->plotPlanting?->grapeVariety?->name ?? '—' }}</span>
                                     <span class="font-medium text-right">
-                                        {{ number_format($harvest->net_weight ?? $harvest->gross_weight ?? 0, 0) }} kg
+                                        {{ number_format($harvest->total_weight ?? 0, 0) }} kg
                                     </span>
                                 </div>
                             </div>

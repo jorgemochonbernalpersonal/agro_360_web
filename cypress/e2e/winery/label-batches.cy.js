@@ -43,21 +43,21 @@ describe('Winery Label Batches', () => {
 
     it('muestra el formulario', () => {
       cy.url().should('include', '/winery/label-batches/create')
-      cy.get('[wire\\:model="name"]').should('exist')
-      cy.get('[wire\\:model="start_number"]').should('exist')
-      cy.get('[wire\\:model="end_number"]').should('exist')
+      cy.getByWireModel('name').should('exist')
+      cy.getByWireModel('start_number').should('exist')
+      cy.getByWireModel('end_number').should('exist')
     })
 
     it('crea lote de etiquetas básico', () => {
       const id = uniqueId()
       const start = Math.floor(id / 1000) * 1000
 
-      cy.get('[wire\\:model="name"]').clear().type(`Lote Etiquetas ${id}`)
-      cy.get('[wire\\:model="source"]').select('own', { force: true })
-      cy.get('[wire\\:model="start_number"]').clear().type(start.toString())
-      cy.get('[wire\\:model="end_number"]').clear().type((start + 999).toString())
+      cy.getByWireModel('name').clear().type(`Lote Etiquetas ${id}`)
+      cy.getByWireModel('source').select('own', { force: true })
+      cy.getByWireModel('start_number').clear().type(start.toString())
+      cy.getByWireModel('end_number').clear().type((start + 999).toString())
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/label-batches')
@@ -68,13 +68,13 @@ describe('Winery Label Batches', () => {
       const id = uniqueId()
       const start = Math.floor(id / 100) * 100
 
-      cy.get('[wire\\:model="name"]').clear().type(`DO Etiquetas ${id}`)
-      cy.get('[wire\\:model="source"]').select('do_assigned', { force: true })
-      cy.get('[wire\\:model="start_number"]').clear().type(start.toString())
-      cy.get('[wire\\:model="end_number"]').clear().type((start + 499).toString())
-      cy.get('[wire\\:model="notes"]').clear().type('Lote asignado por denominación de origen - E2E')
+      cy.getByWireModel('name').clear().type(`DO Etiquetas ${id}`)
+      cy.getByWireModel('source').select('do_assigned', { force: true })
+      cy.getByWireModel('start_number').clear().type(start.toString())
+      cy.getByWireModel('end_number').clear().type((start + 499).toString())
+      cy.getByWireModel('notes').clear().type('Lote asignado por denominación de origen - E2E')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/label-batches')
@@ -82,18 +82,18 @@ describe('Winery Label Batches', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/label-batches/create')
     })
 
     it('valida end_number >= start_number', () => {
-      cy.get('[wire\\:model="name"]').clear().type('Lote Inválido')
-      cy.get('[wire\\:model="source"]').select('own', { force: true })
-      cy.get('[wire\\:model="start_number"]').clear().type('5000')
-      cy.get('[wire\\:model="end_number"]').clear().type('1000')
+      cy.getByWireModel('name').clear().type('Lote Inválido')
+      cy.getByWireModel('source').select('own', { force: true })
+      cy.getByWireModel('start_number').clear().type('5000')
+      cy.getByWireModel('end_number').clear().type('1000')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/label-batches/create')
     })
@@ -109,11 +109,11 @@ describe('Winery Label Batches', () => {
           cy.waitForLivewire()
           const id = uniqueId()
           const start = Math.floor(id / 1000) * 1000
-          cy.get('[wire\\:model="name"]').clear().type(`Edit Test ${id}`)
-          cy.get('[wire\\:model="source"]').select('own', { force: true })
-          cy.get('[wire\\:model="start_number"]').clear().type(start.toString())
-          cy.get('[wire\\:model="end_number"]').clear().type((start + 99).toString())
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.getByWireModel('name').clear().type(`Edit Test ${id}`)
+          cy.getByWireModel('source').select('own', { force: true })
+          cy.getByWireModel('start_number').clear().type(start.toString())
+          cy.getByWireModel('end_number').clear().type((start + 99).toString())
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
           cy.visit('/winery/label-batches')
           cy.waitForLivewire()
@@ -124,10 +124,10 @@ describe('Winery Label Batches', () => {
         cy.url().should('include', '/edit')
 
         const id = uniqueId()
-        cy.get('[wire\\:model="name"]').clear().type(`Actualizado ${id}`)
-        cy.get('[wire\\:model="notes"]').clear().type('Actualizado en test E2E')
+        cy.getByWireModel('name').clear().type(`Actualizado ${id}`)
+        cy.getByWireModel('notes').clear().type('Actualizado en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/label-batches')

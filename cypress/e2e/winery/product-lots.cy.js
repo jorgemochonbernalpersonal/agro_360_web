@@ -75,7 +75,7 @@ describe('Winery Product Lots', () => {
     it('muestra el formulario con tabs', () => {
       cy.url().should('include', '/winery/product-lots/create')
       cy.get('[wire\\:model="name"]').should('exist')
-      cy.get('[wire\\:model="quantity"]').should('exist')
+      cy.getByWireModel('quantity').should('exist')
     })
 
     it('crea un lote básico (tab General + Stock)', () => {
@@ -98,12 +98,12 @@ describe('Winery Product Lots', () => {
         }
       })
 
-      cy.get('[wire\\:model="quantity"]').clear().type('1000')
+      cy.getByWireModel('quantity').clear().type('1000')
       cy.get('[wire\\:model="available_quantity"]').clear().type('1000')
       cy.get('[wire\\:model="unit"]').select('botellas', { force: true })
       cy.get('[wire\\:model="price_per_unit"]').clear().type('12.50')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/product-lots')
@@ -115,14 +115,14 @@ describe('Winery Product Lots', () => {
 
       cy.get('[wire\\:model="name"]').clear().type(`Orgánico ${id}`)
       cy.get('[wire\\:model="wine_type"]').select('blanco', { force: true })
-      cy.get('[wire\\:model="quantity"]').clear().type('500')
+      cy.getByWireModel('quantity').clear().type('500')
       cy.get('[wire\\:model="available_quantity"]').clear().type('500')
 
       // Certificaciones
       cy.get('[wire\\:model="ecological"]').check({ force: true })
       cy.get('[wire\\:model="is_vegan"]').check({ force: true })
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/product-lots')
@@ -134,7 +134,7 @@ describe('Winery Product Lots', () => {
 
       cy.get('[wire\\:model="name"]').clear().type(`Rosado ${id}`)
       cy.get('[wire\\:model="wine_type"]').select('rosado', { force: true })
-      cy.get('[wire\\:model="quantity"]').clear().type('300')
+      cy.getByWireModel('quantity').clear().type('300')
       cy.get('[wire\\:model="available_quantity"]').clear().type('300')
 
       // Tab Descripción
@@ -157,7 +157,7 @@ describe('Winery Product Lots', () => {
         }
       })
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/product-lots')
@@ -165,7 +165,7 @@ describe('Winery Product Lots', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/product-lots/create')
     })
@@ -173,10 +173,10 @@ describe('Winery Product Lots', () => {
     it('valida que available_quantity no supere quantity', () => {
       cy.get('[wire\\:model="name"]').clear().type('Lote Inválido')
       cy.get('[wire\\:model="wine_type"]').select('tinto', { force: true })
-      cy.get('[wire\\:model="quantity"]').clear().type('100')
+      cy.getByWireModel('quantity').clear().type('100')
       cy.get('[wire\\:model="available_quantity"]').clear().type('200')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/product-lots/create')
     })
@@ -201,9 +201,9 @@ describe('Winery Product Lots', () => {
           const id = uniqueId()
           cy.get('[wire\\:model="name"]').clear().type(`Edit Test ${id}`)
           cy.get('[wire\\:model="wine_type"]').select('tinto', { force: true })
-          cy.get('[wire\\:model="quantity"]').clear().type('200')
+          cy.getByWireModel('quantity').clear().type('200')
           cy.get('[wire\\:model="available_quantity"]').clear().type('200')
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
 
           cy.get('a[href*="/winery/product-lots/"][href*="/edit"]').first().click({ force: true })
@@ -226,7 +226,7 @@ describe('Winery Product Lots', () => {
         const id = uniqueId()
         cy.get('[wire\\:model="name"]').clear().type(`Actualizado ${id}`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/product-lots')
@@ -255,7 +255,7 @@ describe('Winery Product Lots', () => {
 
         cy.get('[wire\\:model="price_per_unit"]').clear().type('15.00')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/product-lots')
@@ -275,7 +275,7 @@ describe('Winery Product Lots', () => {
 
         cy.get('[wire\\:model="notes"]').clear().type('Notas actualizadas en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/product-lots')

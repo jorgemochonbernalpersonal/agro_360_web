@@ -49,20 +49,20 @@ describe('Winery Bottling', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/bottling/create')
     })
 
     it('crea embotellado si hay vinos', () => {
-      cy.get('[wire\\:model="wine_id"]').then(($sel) => {
+      cy.getByWireModel('wine_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No wines available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="wine_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('wine_id').select(opts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(500)
 
@@ -72,7 +72,7 @@ describe('Winery Bottling', () => {
         cy.get('[wire\\:model="quantity_liters"]').clear().type('375')
         cy.get('[wire\\:model="lot_number"]').clear().type(`LOT-${uniqueId()}`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/bottling')
@@ -81,14 +81,14 @@ describe('Winery Bottling', () => {
     })
 
     it('crea embotellado con notas', () => {
-      cy.get('[wire\\:model="wine_id"]').then(($sel) => {
+      cy.getByWireModel('wine_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No wines available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="wine_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('wine_id').select(opts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(500)
 
@@ -98,7 +98,7 @@ describe('Winery Bottling', () => {
         cy.get('[wire\\:model="quantity_liters"]').clear().type('75')
         cy.get('[wire\\:model="notes"]').clear().type('Embotellado de prueba E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/bottling')
@@ -121,7 +121,7 @@ describe('Winery Bottling', () => {
 
         cy.get('[wire\\:model="notes"]').clear().type('Notas actualizadas en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/bottling')
@@ -143,7 +143,7 @@ describe('Winery Bottling', () => {
         cy.get('[wire\\:model="lot_number"]').clear().type(`UPD-${id}`)
         cy.get('[wire\\:model="bottle_format"]').clear().type('750')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/bottling')

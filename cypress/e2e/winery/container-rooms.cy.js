@@ -57,7 +57,7 @@ describe('Winery Container Rooms', () => {
       cy.get('[wire\\:model="description"]').clear().type('Sala de prueba E2E')
       cy.get('[wire\\:model="capacity"]').clear().type('20')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/container-rooms')
@@ -72,7 +72,7 @@ describe('Winery Container Rooms', () => {
       cy.get('[wire\\:model="temperature"]').clear().type('14.5')
       cy.get('[wire\\:model="humidity"]').clear().type('75')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/container-rooms')
@@ -80,7 +80,7 @@ describe('Winery Container Rooms', () => {
     })
 
     it('valida nombre requerido', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/container-rooms/create')
     })
@@ -89,7 +89,7 @@ describe('Winery Container Rooms', () => {
       cy.get('[wire\\:model="name"]').clear().type('Sala Inválida')
       cy.get('[wire\\:model="temperature"]').clear().type('999')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/container-rooms/create')
     })
@@ -98,7 +98,7 @@ describe('Winery Container Rooms', () => {
       cy.get('[wire\\:model="name"]').clear().type('Sala Inválida')
       cy.get('[wire\\:model="humidity"]').clear().type('200')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/container-rooms/create')
     })
@@ -122,7 +122,7 @@ describe('Winery Container Rooms', () => {
           cy.waitForLivewire()
           const id = uniqueId()
           cy.get('[wire\\:model="name"]').clear().type(`Edit Test ${id}`)
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
 
           cy.get('a[href*="/winery/container-rooms/"][href*="/edit"]').first().click({ force: true })
@@ -145,7 +145,7 @@ describe('Winery Container Rooms', () => {
         const id = uniqueId()
         cy.get('[wire\\:model="name"]').clear().type(`Actualizada ${id}`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/container-rooms')
@@ -166,7 +166,7 @@ describe('Winery Container Rooms', () => {
         cy.get('[wire\\:model="temperature"]').clear().type('16')
         cy.get('[wire\\:model="humidity"]').clear().type('80')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/container-rooms')

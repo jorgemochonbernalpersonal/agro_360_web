@@ -52,7 +52,7 @@ describe('Winery Viticulturists', () => {
       cy.get('[wire\\:model="name"]').clear().type(`Viticultor Test ${id}`)
       cy.get('[wire\\:model="email"]').clear().type(`vit${id}@test.com`)
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/viticulturists')
@@ -68,7 +68,7 @@ describe('Winery Viticulturists', () => {
       cy.get('[wire\\:model="phone"]').clear().type('655444333')
       cy.get('[wire\\:model="notes"]').clear().type('Viticultor de prueba E2E completo')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/viticulturists')
@@ -76,7 +76,7 @@ describe('Winery Viticulturists', () => {
     })
 
     it('valida nombre requerido', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/viticulturists/create')
     })
@@ -85,7 +85,7 @@ describe('Winery Viticulturists', () => {
       cy.get('[wire\\:model="name"]').clear().type('Test Viticultor')
       cy.get('[wire\\:model="email"]').clear().type('email-invalido')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/viticulturists/create')
     })
@@ -125,7 +125,7 @@ describe('Winery Viticulturists', () => {
           const id = uniqueId()
           cy.get('[wire\\:model="name"]').clear().type(`Edit Test ${id}`)
           cy.get('[wire\\:model="email"]').clear().type(`edit${id}@test.com`)
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
           cy.visit('/winery/viticulturists')
           cy.waitForLivewire()
@@ -137,7 +137,7 @@ describe('Winery Viticulturists', () => {
 
         cy.get('[wire\\:model="phone"]').clear().type('622111000')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/viticulturists')
@@ -158,7 +158,7 @@ describe('Winery Viticulturists', () => {
         const id = uniqueId()
         cy.get('[wire\\:model="name"]').clear().type(`Actualizado ${id}`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/viticulturists')

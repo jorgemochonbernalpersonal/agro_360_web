@@ -45,31 +45,31 @@ describe('Winery Labeling', () => {
     it('muestra el formulario', () => {
       cy.url().should('include', '/winery/labeling/create')
       cy.get('[wire\\:model="labeling_date"]').should('exist')
-      cy.get('[wire\\:model="quantity_labeled"]').should('exist')
+      cy.getByWireModel('quantity_labeled').should('exist')
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/labeling/create')
     })
 
     it('crea etiquetado si hay vinos', () => {
-      cy.get('[wire\\:model="wine_id"]').then(($sel) => {
+      cy.getByWireModel('wine_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No wines available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="wine_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('wine_id').select(opts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(500)
 
         cy.get('[wire\\:model="labeling_date"]').type('2024-12-01')
-        cy.get('[wire\\:model="quantity_labeled"]').clear().type('200')
+        cy.getByWireModel('quantity_labeled').clear().type('200')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/labeling')
@@ -78,24 +78,24 @@ describe('Winery Labeling', () => {
     })
 
     it('crea etiquetado con rango de números', () => {
-      cy.get('[wire\\:model="wine_id"]').then(($sel) => {
+      cy.getByWireModel('wine_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No wines available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="wine_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('wine_id').select(opts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(500)
 
         cy.get('[wire\\:model="labeling_date"]').type('2024-12-15')
-        cy.get('[wire\\:model="quantity_labeled"]').clear().type('100')
-        cy.get('[wire\\:model="from_number"]').clear().type('1001')
+        cy.getByWireModel('quantity_labeled').clear().type('100')
+        cy.getByWireModel('from_number').clear().type('1001')
         cy.get('[wire\\:model="to_number"]').clear().type('1100')
         cy.get('[wire\\:model="notes"]').clear().type('Etiquetado de prueba E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/labeling')
@@ -116,10 +116,10 @@ describe('Winery Labeling', () => {
         cy.waitForLivewire()
         cy.url().should('include', '/edit')
 
-        cy.get('[wire\\:model="quantity_labeled"]').clear().type('150')
+        cy.getByWireModel('quantity_labeled').clear().type('150')
         cy.get('[wire\\:model="notes"]').clear().type('Actualizado en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/labeling')

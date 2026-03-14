@@ -18,7 +18,7 @@ class HarvestDeliveryMatchedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -59,10 +59,21 @@ class HarvestDeliveryMatchedNotification extends Notification
 
     public function toArray(object $notifiable): array
     {
+        $delivery = $this->delivery;
+        $variety  = $delivery->plotPlanting?->grapeVariety?->name ?? $delivery->plotPlanting?->name ?? '—';
+        $winery   = $delivery->harvest?->winery?->name ?? '—';
+
         return [
-            'delivery_id'      => $this->delivery->id,
-            'viticulturist_id' => $this->delivery->viticulturist_id,
-            'harvest_id'       => $this->delivery->harvest_id,
+            'type'        => 'delivery_matched',
+            'icon'        => 'check-circle',
+            'color'       => 'green',
+            'title'       => 'Entrega confirmada por la bodega',
+            'body'        => "La bodega {$winery} ha confirmado tu entrega de {$variety} ({$delivery->vintage_year}).",
+            'link'        => route('viticulturist.harvests.show', [
+                'planting' => $delivery->plot_planting_id,
+                'vintage'  => $delivery->vintage_year,
+            ]),
+            'delivery_id' => $delivery->id,
         ];
     }
 }

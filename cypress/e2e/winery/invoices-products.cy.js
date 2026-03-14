@@ -64,20 +64,20 @@ describe('Winery Invoices - Product Sales', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/invoices/products/create')
     })
 
     it('crea factura básica si hay clientes', () => {
-      cy.get('[wire\\:model="client_id"]').then(($sel) => {
+      cy.getByWireModel('client_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No clients available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="client_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('client_id').select(opts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(1000)
 
@@ -92,11 +92,11 @@ describe('Winery Invoices - Product Sales', () => {
         cy.get('[wire\\:model="order_date"]').type('2024-11-01')
 
         // Primera línea de producto (libre, sin lote)
-        cy.get('[wire\\:model="items.0.name"]').clear().type('Producto Test E2E')
-        cy.get('[wire\\:model="items.0.quantity"]').clear().type('10')
-        cy.get('[wire\\:model="items.0.unit_price"]').clear().type('15.00')
+        cy.getByWireModel('items.0.name').clear().type('Producto Test E2E')
+        cy.getByWireModel('items.0.quantity').clear().type('10')
+        cy.getByWireModel('items.0.unit_price').clear().type('15.00')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/invoices/products')
@@ -105,14 +105,14 @@ describe('Winery Invoices - Product Sales', () => {
     })
 
     it('crea factura con método de pago', () => {
-      cy.get('[wire\\:model="client_id"]').then(($sel) => {
+      cy.getByWireModel('client_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No clients available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="client_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('client_id').select(opts.first().val(), { force: true })
         cy.waitForLivewire()
         cy.wait(1000)
 
@@ -127,11 +127,11 @@ describe('Winery Invoices - Product Sales', () => {
         cy.get('[wire\\:model="payment_type"]').select('transfer', { force: true })
         cy.get('[wire\\:model="observations"]').clear().type('Factura de prueba E2E')
 
-        cy.get('[wire\\:model="items.0.name"]').clear().type('Vino Reserva Test')
-        cy.get('[wire\\:model="items.0.quantity"]').clear().type('24')
-        cy.get('[wire\\:model="items.0.unit_price"]').clear().type('12.50')
+        cy.getByWireModel('items.0.name').clear().type('Vino Reserva Test')
+        cy.getByWireModel('items.0.quantity').clear().type('24')
+        cy.getByWireModel('items.0.unit_price').clear().type('12.50')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/invoices/products')
@@ -154,7 +154,7 @@ describe('Winery Invoices - Product Sales', () => {
 
         cy.get('[wire\\:model="observations"]').clear().type('Observaciones actualizadas en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/invoices/products')
@@ -174,7 +174,7 @@ describe('Winery Invoices - Product Sales', () => {
 
         cy.get('[wire\\:model="payment_type"]').select('cash', { force: true })
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/invoices/products')

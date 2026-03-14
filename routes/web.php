@@ -116,4 +116,5 @@ Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
     require __DIR__ . '/viticulturist.php';
     require __DIR__ . '/producer.php';
     require __DIR__ . '/remote-sensing.php';
+    require __DIR__ . '/do.php';
 });

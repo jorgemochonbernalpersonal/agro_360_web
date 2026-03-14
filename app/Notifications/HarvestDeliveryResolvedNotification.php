@@ -18,7 +18,7 @@ class HarvestDeliveryResolvedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -63,11 +63,21 @@ class HarvestDeliveryResolvedNotification extends Notification
 
     public function toArray(object $notifiable): array
     {
+        $delivery = $this->delivery;
+        $variety  = $delivery->plotPlanting?->grapeVariety?->name ?? $delivery->plotPlanting?->name ?? '—';
+        $winery   = $delivery->harvest?->winery?->name ?? '—';
+
         return [
-            'delivery_id'      => $this->delivery->id,
-            'viticulturist_id' => $this->delivery->viticulturist_id,
-            'harvest_id'       => $this->delivery->harvest_id,
-            'discrepancy_kg'   => $this->delivery->discrepancy_kg,
+            'type'        => 'delivery_resolved',
+            'icon'        => 'shield-check',
+            'color'       => 'blue',
+            'title'       => 'Reclamación resuelta',
+            'body'        => "La bodega {$winery} ha respondido a tu reclamación sobre la entrega de {$variety} ({$delivery->vintage_year}).",
+            'link'        => route('viticulturist.harvests.show', [
+                'planting' => $delivery->plot_planting_id,
+                'vintage'  => $delivery->vintage_year,
+            ]),
+            'delivery_id' => $delivery->id,
         ];
     }
 }

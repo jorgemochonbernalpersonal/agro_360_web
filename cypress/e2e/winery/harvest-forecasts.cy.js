@@ -49,7 +49,7 @@ describe('Winery Harvest Forecasts', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/harvest-forecasts/create')
     })
@@ -104,14 +104,14 @@ describe('Winery Harvest Forecasts', () => {
             cy.waitForLivewire()
             cy.wait(500)
 
-            cy.get('[wire\\:model="campaign_id"]').then(($campSel) => {
+            cy.getByWireModel('campaign_id').then(($campSel) => {
               const campOpts = $campSel.find('option').filter((i, el) => el.value !== '')
               if (campOpts.length === 0) {
                 cy.log('No campaigns - skipping')
                 return
               }
 
-              cy.get('[wire\\:model="campaign_id"]').select(campOpts.first().val(), { force: true })
+              cy.getByWireModel('campaign_id').select(campOpts.first().val(), { force: true })
               cy.waitForLivewire()
               cy.wait(500)
 
@@ -119,7 +119,7 @@ describe('Winery Harvest Forecasts', () => {
               cy.get('[wire\\:model="estimation_date"]').type('2024-07-15')
               cy.get('[wire\\:model="status"]').select('draft', { force: true })
 
-              cy.get('button[type="submit"]').click({ force: true })
+              cy.get('[data-cy="submit-button"]').click({ force: true })
               cy.wait(5000)
 
               cy.url().should('include', '/winery/harvest-forecasts')
@@ -146,7 +146,7 @@ describe('Winery Harvest Forecasts', () => {
         cy.get('[wire\\:model="estimated_kg"]').clear().type('9500')
         cy.get('[wire\\:model="status"]').select('confirmed', { force: true })
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/harvest-forecasts')
@@ -167,7 +167,7 @@ describe('Winery Harvest Forecasts', () => {
         cy.get('[wire\\:model="estimation_date"]').clear().type('2024-08-01')
         cy.get('[wire\\:model="notes"]').clear().type('Actualizado en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/harvest-forecasts')

@@ -48,25 +48,25 @@ describe('Winery Tasting Notes', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/tasting-notes/create')
     })
 
     it('crea nota de cata básica si hay vinos', () => {
-      cy.get('[wire\\:model="wine_id"]').then(($sel) => {
+      cy.getByWireModel('wine_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No wines available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="wine_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('wine_id').select(opts.first().val(), { force: true })
         cy.get('[wire\\:model="evaluation_date"]').type('2024-10-15')
         cy.get('[wire\\:model="evaluator_name"]').clear().type('Evaluador Test')
         cy.get('[wire\\:model="overall_score"]').clear().type('88')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/tasting-notes')
@@ -75,14 +75,14 @@ describe('Winery Tasting Notes', () => {
     })
 
     it('crea nota de cata completa si hay vinos', () => {
-      cy.get('[wire\\:model="wine_id"]').then(($sel) => {
+      cy.getByWireModel('wine_id').then(($sel) => {
         const opts = $sel.find('option').filter((i, el) => el.value !== '')
         if (opts.length === 0) {
           cy.log('No wines available - skipping')
           return
         }
 
-        cy.get('[wire\\:model="wine_id"]').select(opts.first().val(), { force: true })
+        cy.getByWireModel('wine_id').select(opts.first().val(), { force: true })
         cy.get('[wire\\:model="evaluation_date"]').type('2024-11-01')
         cy.get('[wire\\:model="evaluator_name"]').clear().type('Catador E2E')
         cy.get('[wire\\:model="overall_score"]').clear().type('92')
@@ -101,7 +101,7 @@ describe('Winery Tasting Notes', () => {
 
         cy.get('[wire\\:model="notes"]').clear().type('Nota de cata E2E completa')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/tasting-notes')
@@ -125,7 +125,7 @@ describe('Winery Tasting Notes', () => {
         cy.get('[wire\\:model="overall_score"]').clear().type('90')
         cy.get('[wire\\:model="overall_conclusion"]').clear().type('Conclusión actualizada E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/tasting-notes')
@@ -147,7 +147,7 @@ describe('Winery Tasting Notes', () => {
         cy.get('[wire\\:model="evaluator_name"]').clear().type(`Catador ${id}`)
         cy.get('[wire\\:model="notes"]').clear().type('Notas actualizadas en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/tasting-notes')

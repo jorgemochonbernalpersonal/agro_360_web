@@ -3,7 +3,6 @@
 namespace App\Livewire\Winery\Billing\GrapePurchase;
 
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Models\Campaign;
 use App\Models\Harvest;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -78,7 +77,7 @@ class Edit extends Component
 
         $this->lines[] = [
             'harvest_id'  => $harvestId,
-            'quantity'    => (string) ($harvest->net_weight ?? $harvest->gross_weight ?? 0),
+            'quantity'    => (string) ($harvest->total_weight ?? 0),
             'unit_price'  => '',
             'tax_rate'    => '0',
             'description' => '',
@@ -106,8 +105,8 @@ class Edit extends Component
                     $wineryId        = \Illuminate\Support\Facades\Auth::id();
                     $viticulturistId = $this->invoice->viticulturist_id;
                     if ($value && !\App\Models\Harvest::where('id', $value)
-                        ->where('viticulturist_id', $viticulturistId)
-                        ->whereIn('campaign_id', fn($q) => $q->select('id')->from('campaigns')->where('winery_id', $wineryId))
+                        ->where('winery_id', $wineryId)
+                        ->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
                         ->exists()) {
                         $fail('La recepción seleccionada no pertenece a esta liquidación.');
                     }
@@ -179,15 +178,16 @@ class Edit extends Component
                 foreach ($this->lines as $line) {
                     $harvest = Harvest::lockForUpdate()->find($line['harvest_id']);
 
-                    if (!$harvest || (string) $harvest->viticulturist_id !== (string) $viticulturistId) {
+                    if (!$harvest || $harvest->winery_id !== $wineryId) {
                         throw new \RuntimeException(
-                            "La recepción #{$line['harvest_id']} no pertenece al viticultor de esta liquidación."
+                            "La recepción #{$line['harvest_id']} no pertenece a esta bodega."
                         );
                     }
 
-                    if (!Campaign::where('id', $harvest->campaign_id)->where('winery_id', $wineryId)->exists()) {
+                    $harvest->loadMissing('batch');
+                    if ((string) $harvest->batch?->viticulturist_id !== (string) $viticulturistId) {
                         throw new \RuntimeException(
-                            "La recepción #{$harvest->id} no pertenece a una campaña de esta bodega."
+                            "La recepción #{$harvest->id} no pertenece al viticultor de esta liquidación."
                         );
                     }
 
@@ -210,7 +210,8 @@ class Edit extends Component
                     $subtotalLine  = round($qty * $unitPrice, 3);
                     $taxAmountLine = round($subtotalLine * ($taxRate / 100), 3);
 
-                    $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$harvest->variety}";
+                    $variety     = $harvest->plotPlanting?->grapeVariety?->name ?? 'uva';
+                    $description = $line['description'] ?: "Vendimia #{$harvest->id} - {$variety}";
 
                     InvoiceItem::create([
                         'invoice_id'   => $this->invoice->id,
@@ -250,10 +251,8 @@ class Edit extends Component
         $selectedIds     = array_column($this->lines, 'harvest_id');
 
         // Available harvests = free + those already in THIS invoice
-        $availableHarvests = Harvest::where('viticulturist_id', $viticulturistId)
-            ->whereIn('campaign_id', fn ($q) =>
-                $q->select('id')->from('campaigns')->where('winery_id', $wineryId)
-            )
+        $availableHarvests = Harvest::where('winery_id', $wineryId)
+            ->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
             ->where(function ($q) {
                 $q->whereDoesntHave('invoiceItems', function ($q2) {
                     $q2->where('concept_type', 'harvest')
@@ -263,13 +262,14 @@ class Edit extends Component
                        );
                 });
             })
-            ->with('plot:id,name')
-            ->orderByDesc('harvest_date')
-            ->get(['id', 'harvest_date', 'variety', 'net_weight', 'gross_weight', 'plot_id', 'viticulturist_id', 'campaign_id']);
+            ->with(['plotPlanting.grapeVariety'])
+            ->orderByDesc('harvest_start_date')
+            ->get();
 
         return view('livewire.winery.billing.grape-purchase.edit', [
             'availableHarvests' => $availableHarvests,
             'selectedIds'       => $selectedIds,
+            'isLocked'          => $this->isLocked,
         ])->layout('layouts.app');
     }
 }

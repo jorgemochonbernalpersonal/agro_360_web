@@ -88,20 +88,20 @@ describe('Winery Grape Reception', () => {
 
     it('muestra el formulario de recepción', () => {
       cy.url().should('include', '/winery/grape-reception/create')
-      cy.get('[wire\\:model="total_weight"]').should('exist')
+      cy.getByWireModel('total_weight').should('exist')
       cy.get('[wire\\:model="harvest_start_date"]').should('exist')
     })
 
     it('valida campos requeridos al enviar vacío', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/grape-reception/create')
     })
 
     it('rellena datos básicos de la recepción', () => {
       // Rellena campos que no dependen de selects dinámicos
-      cy.get('[wire\\:model="vintage_year"]').clear().type('2024')
-      cy.get('[wire\\:model="total_weight"]').clear().type('500')
+      cy.getByWireModel('vintage_year').select('2024', { force: true })
+      cy.getByWireModel('total_weight').clear().type('500')
       cy.get('[wire\\:model="harvest_start_date"]').type('2024-09-15')
       cy.get('[wire\\:model="price_per_kg"]').clear().type('0.45')
       cy.get('[wire\\:model="harvest_ticket_number"]').clear().type(`TK-${uniqueId()}`)
@@ -174,11 +174,11 @@ describe('Winery Grape Reception', () => {
 
               cy.get('[wire\\:model="container_id"]').select(contOptions.first().val(), { force: true })
 
-              cy.get('[wire\\:model="vintage_year"]').clear().type('2024')
-              cy.get('[wire\\:model="total_weight"]').clear().type('500')
+              cy.getByWireModel('vintage_year').select('2024', { force: true })
+              cy.getByWireModel('total_weight').clear().type('500')
               cy.get('[wire\\:model="harvest_start_date"]').type('2024-09-15')
 
-              cy.get('button[type="submit"]').click({ force: true })
+              cy.get('[data-cy="submit-button"]').click({ force: true })
               cy.wait(5000)
 
               cy.url().should('include', '/winery/grape-reception')
@@ -247,7 +247,7 @@ describe('Winery Grape Reception', () => {
           cy.wrap(editLinks.first()).click({ force: true })
           cy.waitForLivewire()
           cy.url().should('include', '/edit')
-          cy.get('[wire\\:model="total_weight"]').should('exist')
+          cy.getByWireModel('total_weight').should('exist')
         } else {
           cy.log('No receptions to edit - skipping')
         }
@@ -266,9 +266,9 @@ describe('Winery Grape Reception', () => {
         cy.wrap(editLinks.first()).click({ force: true })
         cy.waitForLivewire()
 
-        cy.get('[wire\\:model="total_weight"]').clear().type('750')
+        cy.getByWireModel('total_weight').clear().type('750')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/grape-reception')
@@ -293,7 +293,7 @@ describe('Winery Grape Reception', () => {
         cy.get('[wire\\:model="ph_level"]').clear().type('3.5')
         cy.get('[wire\\:model="price_per_kg"]').clear().type('0.50')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/grape-reception')
@@ -313,9 +313,9 @@ describe('Winery Grape Reception', () => {
         cy.wrap(editLinks.first()).click({ force: true })
         cy.waitForLivewire()
 
-        cy.get('[wire\\:model="total_weight"]').clear()
+        cy.getByWireModel('total_weight').clear()
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(2000)
 
         cy.url().should('include', '/edit')

@@ -72,7 +72,7 @@ describe('Winery External Grape', () => {
       cy.get('[wire\\:model="entry_date"]').type('2024-09-20')
       cy.get('[wire\\:model="status"]').select('available', { force: true })
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/external-grape')
@@ -93,7 +93,7 @@ describe('Winery External Grape', () => {
       cy.get('[wire\\:model="status"]').select('available', { force: true })
       cy.get('[wire\\:model="notes"]').clear().type('Mosto de prueba E2E')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/external-grape')
@@ -110,7 +110,7 @@ describe('Winery External Grape', () => {
       cy.get('[wire\\:model="protection_level"]').clear().type('DOCa Rioja')
       cy.get('[wire\\:model="status"]').select('available', { force: true })
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/external-grape')
@@ -118,7 +118,7 @@ describe('Winery External Grape', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/external-grape/create')
     })
@@ -138,7 +138,7 @@ describe('Winery External Grape', () => {
           cy.get('[wire\\:model="total_weight_kg"]').clear().type('1000')
           cy.get('[wire\\:model="entry_date"]').type('2024-09-01')
           cy.get('[wire\\:model="status"]').select('available', { force: true })
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
           cy.visit('/winery/external-grape')
           cy.waitForLivewire()
@@ -151,7 +151,7 @@ describe('Winery External Grape', () => {
         cy.get('[wire\\:model="total_weight_kg"]').clear().type('3000')
         cy.get('[wire\\:model="status"]').select('used', { force: true })
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/external-grape')
@@ -172,7 +172,7 @@ describe('Winery External Grape', () => {
         cy.get('[wire\\:model="geographic_origin"]').clear().type('Actualizado E2E')
         cy.get('[wire\\:model="notes"]').clear().type('Notas actualizadas en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/external-grape')

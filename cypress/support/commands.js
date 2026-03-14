@@ -31,7 +31,7 @@ Cypress.Commands.add('loginAsViticulturist', (email = 'viticulturist@test.com', 
     cy.wait(200)
     
     // Click submit button
-    cy.get('button[type="submit"]').click({ force: true })
+    cy.get('button[type="submit"]').first().click({ force: true })
     
     // Wait for Livewire to process the request
     cy.wait(3000) // Give Livewire time to process
@@ -91,7 +91,7 @@ Cypress.Commands.add('loginAsWinery', (email = 'winery@test.com', password = 'pa
     cy.wait(200)
     cy.get('input[wire\\:model="password"]').clear({ force: true }).type(password, { force: true })
     cy.wait(200)
-    cy.get('button[type="submit"]').click({ force: true })
+    cy.get('button[type="submit"]').first().click({ force: true })
     cy.wait(3000)
     cy.url({ timeout: 15000 }).then((url) => {
       if (url.includes('/login')) {
@@ -106,6 +106,11 @@ Cypress.Commands.add('loginAsWinery', (email = 'winery@test.com', password = 'pa
         cy.log('✓ Login winery successful')
       }
     })
+  }, {
+    validate: () => {
+      cy.visit('/winery/dashboard')
+      cy.url().should('include', '/winery/')
+    }
   })
 
   cy.visit('/winery/dashboard')
@@ -127,7 +132,7 @@ Cypress.Commands.add('loginAs', (role, email, password) => {
   cy.visit('/login')
   cy.get('input[wire\\:model="email"]').type(email)
   cy.get('input[wire\\:model="password"]').type(password)
-  cy.get('button[type="submit"]').click()
+  cy.get('button[type="submit"]').first().click()
   cy.waitForLivewire()
   cy.url().should('include', `/${role}/dashboard`)
 })
@@ -158,10 +163,24 @@ Cypress.Commands.add('clickLivewire', (selector) => {
 })
 
 /**
+ * Get a Livewire-bound element by wire:model name.
+ * Matches wire:model, wire:model.live, and wire:model.live.debounce.*
+ * regardless of which modifier the view uses.
+ */
+Cypress.Commands.add('getByWireModel', (name) => {
+  return cy.get(
+    `[wire\\:model="${name}"],` +
+    `[wire\\:model\\.live="${name}"],` +
+    `[wire\\:model\\.live\\.debounce\\.300ms="${name}"],` +
+    `[wire\\:model\\.live\\.debounce\\.500ms="${name}"]`
+  )
+})
+
+/**
  * Fill a Livewire form field
  */
 Cypress.Commands.add('fillLivewireField', (name, value) => {
-  cy.get(`[wire\\:model="${name}"]`).clear().type(value)
+  cy.getByWireModel(name).clear().type(value)
   cy.waitForLivewire()
 })
 
@@ -169,7 +188,7 @@ Cypress.Commands.add('fillLivewireField', (name, value) => {
  * Select from a Livewire select field
  */
 Cypress.Commands.add('selectLivewireOption', (name, value) => {
-  cy.get(`[wire\\:model="${name}"]`).select(value)
+  cy.getByWireModel(name).select(value)
   cy.waitForLivewire()
 })
 

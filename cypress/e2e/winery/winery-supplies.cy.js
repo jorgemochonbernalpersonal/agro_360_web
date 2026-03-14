@@ -56,7 +56,7 @@ describe('Winery Supplies', () => {
       })
       cy.get('[wire\\:model="current_stock"]').clear().type('50')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/winery-supplies')
@@ -76,7 +76,7 @@ describe('Winery Supplies', () => {
       cy.get('[wire\\:model="expiry_date"]').type('2025-12-31')
       cy.get('[wire\\:model="notes"]').clear().type('Material de prueba E2E')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/winery-supplies')
@@ -84,7 +84,7 @@ describe('Winery Supplies', () => {
     })
 
     it('valida nombre y tipo requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/winery-supplies/create')
     })
@@ -103,7 +103,7 @@ describe('Winery Supplies', () => {
           cy.get('[wire\\:model="supply_type"]').find('option').eq(1).then(($opt) => {
             cy.get('[wire\\:model="supply_type"]').select($opt.val(), { force: true })
           })
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
           cy.visit('/winery/winery-supplies')
           cy.waitForLivewire()
@@ -116,7 +116,7 @@ describe('Winery Supplies', () => {
         cy.get('[wire\\:model="current_stock"]').clear().type('75')
         cy.get('[wire\\:model="min_stock_alert"]').clear().type('15')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/winery-supplies')
@@ -138,7 +138,7 @@ describe('Winery Supplies', () => {
         cy.get('[wire\\:model="name"]').clear().type(`Actualizado ${id}`)
         cy.get('[wire\\:model="notes"]').clear().type('Actualizado en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/winery-supplies')

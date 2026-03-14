@@ -127,7 +127,19 @@
       "Bash(cd \"C:/Users/jorge/Desktop/agro365\" && php artisan config:clear 2>&1 && php -r \"require 'vendor/autoload.php'; \\\\$app = require 'bootstrap/app.php';\" 2>&1 | head -5)",
       "Bash(cd \"C:\\\\Users\\\\jorge\\\\Desktop\\\\agro365\" && npm audit 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\jorge\\\\Desktop\\\\agro365\" && npm show cypress version 2>&1)",
-      "Bash(cd \"C:\\\\Users\\\\jorge\\\\Desktop\\\\agro365\" && npm list cypress 2>&1)"
+      "Bash(cd \"C:\\\\Users\\\\jorge\\\\Desktop\\\\agro365\" && npm list cypress 2>&1)",
+      "Bash(sleep:*)",
+      "Bash(cd:*)",
+      "Bash(pkill:*)",
+      "Bash(curl:*)",
+      "Bash(npx cypress:*)",
+      "Bash(for dir:*)",
+      "Bash(for f:*)",
+      "Bash(net start:*)",
+      "Bash(sc query:*)",
+      "Read(//c/Users/jorge/AppData/Local/Programs//**)",
+      "Read(//c/xampp//**)",
+      "Read(//c/laragon/bin/**)"
     ]
   }
 }

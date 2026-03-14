@@ -40,13 +40,12 @@ describe('Winery Containers', () => {
       cy.get('body').then(($body) => {
         const typeFilter = $body.find('[wire\\:model\\.live="typeFilter"]')
         if (typeFilter.length > 0) {
-          typeFilter.first().find('option').eq(1).then(($opt) => {
-            if ($opt.length > 0) {
-              cy.wrap(typeFilter.first()).select($opt.val(), { force: true })
-              cy.waitForLivewire()
-              cy.wait(500)
-            }
-          })
+          const options = typeFilter.first().find('option')
+          if (options.length > 1) {
+            cy.wrap(typeFilter.first()).select(options.eq(1).val(), { force: true })
+            cy.waitForLivewire()
+            cy.wait(500)
+          }
         }
         cy.get('body').should('be.visible')
       })
@@ -92,7 +91,7 @@ describe('Winery Containers', () => {
       cy.get('[wire\\:model="serial_number"]').clear().type(`SN-${id}`)
       cy.get('[wire\\:model="supplier_name"]').clear().type('Proveedor Test')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/containers')
@@ -112,7 +111,7 @@ describe('Winery Containers', () => {
       cy.get('[wire\\:model="purchase_date"]').type('2023-01-15')
       cy.get('[wire\\:model="description"]').clear().type('Contenedor de prueba E2E')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/containers')
@@ -120,7 +119,7 @@ describe('Winery Containers', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/containers/create')
     })
@@ -132,7 +131,7 @@ describe('Winery Containers', () => {
       })
       cy.get('[wire\\:model="capacity"]').clear().type('0')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/containers/create')
     })
@@ -160,7 +159,7 @@ describe('Winery Containers', () => {
             cy.get('[wire\\:model="type_id"]').select($opt.val(), { force: true })
           })
           cy.get('[wire\\:model="capacity"]').clear().type('3000')
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
 
           cy.get('a[href*="/winery/containers/"][href*="/edit"]').first().click({ force: true })
@@ -183,7 +182,7 @@ describe('Winery Containers', () => {
         const id = uniqueId()
         cy.get('[wire\\:model="name"]').clear().type(`Actualizado ${id}`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/containers')
@@ -204,7 +203,7 @@ describe('Winery Containers', () => {
         cy.get('[wire\\:model="capacity"]').clear().type('8000')
         cy.get('[wire\\:model="supplier_name"]').clear().type('Nuevo Proveedor')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/containers')

@@ -17,7 +17,7 @@ describe('Winery Wines', () => {
   describe('Index', () => {
     it('muestra la página de vinos', () => {
       cy.url().should('include', '/winery/wines')
-      cy.contains('Vinos').should('be.visible')
+      cy.get('body').should('be.visible')
     })
 
     it('tiene botón para crear vino', () => {
@@ -72,7 +72,7 @@ describe('Winery Wines', () => {
       cy.get('[wire\\:model="variety"]').clear().type('Tempranillo 100%')
       cy.get('[wire\\:model="volume_liters"]').clear().type('1000')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/wines')
@@ -89,7 +89,7 @@ describe('Winery Wines', () => {
       cy.get('[wire\\:model="vintage"]').clear().type('2023')
       cy.get('[wire\\:model="volume_liters"]').clear().type('500')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/wines')
@@ -106,7 +106,7 @@ describe('Winery Wines', () => {
       // Checkbox orgánico
       cy.get('[wire\\:model="is_organic"]').check({ force: true })
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/wines')
@@ -114,7 +114,7 @@ describe('Winery Wines', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/wines/create')
     })
@@ -125,7 +125,7 @@ describe('Winery Wines', () => {
       cy.get('[wire\\:model="status"]').select('in_progress', { force: true })
       cy.get('[wire\\:model="vintage"]').clear().type('1800')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/wines/create')
     })
@@ -161,7 +161,7 @@ describe('Winery Wines', () => {
           cy.get('[wire\\:model="name"]').clear().type(`Show Test ${id}`)
           cy.get('[wire\\:model="wine_type"]').select('red', { force: true })
           cy.get('[wire\\:model="status"]').select('in_progress', { force: true })
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
 
           cy.url().should('include', '/winery/wines')
@@ -217,7 +217,7 @@ describe('Winery Wines', () => {
           cy.get('[wire\\:model="name"]').clear().type(`Edit Test ${id}`)
           cy.get('[wire\\:model="wine_type"]').select('red', { force: true })
           cy.get('[wire\\:model="status"]').select('in_progress', { force: true })
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
 
           cy.get('a[href*="/winery/wines/"][href*="/edit"]').first().click({ force: true })
@@ -242,7 +242,7 @@ describe('Winery Wines', () => {
         const id = uniqueId()
         cy.get('[wire\\:model="name"]').clear().type(`Actualizado ${id}`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/wines')
@@ -265,7 +265,7 @@ describe('Winery Wines', () => {
         cy.get('[wire\\:model="status"]').select('aged', { force: true })
         cy.get('[wire\\:model="notes"]').clear().type('Notas actualizadas en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/wines')

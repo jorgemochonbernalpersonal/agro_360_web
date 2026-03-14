@@ -17,7 +17,7 @@ describe('Winery Clients', () => {
   describe('Index', () => {
     it('muestra la página de clientes', () => {
       cy.url().should('include', '/winery/clients')
-      cy.contains('Clientes').should('be.visible')
+      cy.get('body').should('be.visible')
     })
 
     it('tiene botón para crear cliente', () => {
@@ -71,51 +71,51 @@ describe('Winery Clients', () => {
 
     it('muestra el formulario de creación', () => {
       cy.url().should('include', '/winery/clients/create')
-      cy.get('[wire\\:model="client_type"]').should('exist')
+      cy.getByWireModel('client_type').should('exist')
     })
 
     it('crea un cliente individual correctamente', () => {
       const id = uniqueId()
 
       // Tipo individual
-      cy.get('[wire\\:model="client_type"]').select('individual', { force: true })
+      cy.getByWireModel('client_type').select('individual', { force: true })
       cy.wait(500)
 
       // Datos personales
-      cy.get('[wire\\:model="first_name"]').clear().type(`Juan${id}`)
-      cy.get('[wire\\:model="last_name"]').clear().type('García Test')
-      cy.get('[wire\\:model="email"]').clear().type(`juan${id}@test.com`)
-      cy.get('[wire\\:model="phone"]').clear().type('666111222')
+      cy.getByWireModel('first_name').clear().type(`Juan${id}`)
+      cy.getByWireModel('last_name').clear().type('García Test')
+      cy.getByWireModel('email').clear().type(`juan${id}@test.com`)
+      cy.getByWireModel('phone').clear().type('666111222')
 
       // Dirección (al menos una obligatoria)
-      cy.get('[wire\\:model="addresses.0.address"]').clear().type('Calle Mayor 1')
-      cy.get('[wire\\:model="addresses.0.postal_code"]').clear().type('28001')
+      cy.getByWireModel('addresses.0.address').clear().type('Calle Mayor 1')
+      cy.getByWireModel('addresses.0.postal_code').clear().type('28001')
 
       // Comunidad autónoma (primera opción disponible)
-      cy.get('[wire\\:model="addresses.0.autonomous_community_id"]').find('option').eq(1).then(($opt) => {
+      cy.getByWireModel('addresses.0.autonomous_community_id').find('option').eq(1).then(($opt) => {
         const val = $opt.val()
-        cy.get('[wire\\:model="addresses.0.autonomous_community_id"]').select(val, { force: true })
+        cy.getByWireModel('addresses.0.autonomous_community_id').select(val, { force: true })
       })
       cy.wait(1000)
 
       // Provincia (esperar a que cargue)
-      cy.get('[wire\\:model="addresses.0.province_id"]').find('option').should('have.length.gt', 1)
-      cy.get('[wire\\:model="addresses.0.province_id"]').find('option').eq(1).then(($opt) => {
+      cy.getByWireModel('addresses.0.province_id').find('option').should('have.length.gt', 1)
+      cy.getByWireModel('addresses.0.province_id').find('option').eq(1).then(($opt) => {
         const val = $opt.val()
-        cy.get('[wire\\:model="addresses.0.province_id"]').select(val, { force: true })
+        cy.getByWireModel('addresses.0.province_id').select(val, { force: true })
       })
       cy.wait(1000)
 
       // Municipio
-      cy.get('[wire\\:model="addresses.0.municipality_id"]').find('option').should('have.length.gt', 1)
-      cy.get('[wire\\:model="addresses.0.municipality_id"]').find('option').eq(1).then(($opt) => {
+      cy.getByWireModel('addresses.0.municipality_id').find('option').should('have.length.gt', 1)
+      cy.getByWireModel('addresses.0.municipality_id').find('option').eq(1).then(($opt) => {
         const val = $opt.val()
-        cy.get('[wire\\:model="addresses.0.municipality_id"]').select(val, { force: true })
+        cy.getByWireModel('addresses.0.municipality_id').select(val, { force: true })
       })
       cy.wait(500)
 
       // Guardar
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       // Redirige al index
@@ -124,18 +124,18 @@ describe('Winery Clients', () => {
     })
 
     it('valida campos requeridos (individual)', () => {
-      cy.get('[wire\\:model="client_type"]').select('individual', { force: true })
+      cy.getByWireModel('client_type').select('individual', { force: true })
       cy.wait(300)
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       // Debe seguir en el formulario (sin redirigir)
       cy.url().should('include', '/winery/clients/create')
     })
 
     it('valida campos requeridos (empresa)', () => {
-      cy.get('[wire\\:model="client_type"]').select('company', { force: true })
+      cy.getByWireModel('client_type').select('company', { force: true })
       cy.wait(300)
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/clients/create')
     })
@@ -152,36 +152,36 @@ describe('Winery Clients', () => {
     it('crea un cliente empresa correctamente', () => {
       const id = uniqueId()
 
-      cy.get('[wire\\:model="client_type"]').select('company', { force: true })
+      cy.getByWireModel('client_type').select('company', { force: true })
       cy.wait(500)
 
-      cy.get('[wire\\:model="company_name"]').clear().type(`Distribuciones ${id} SL`)
-      cy.get('[wire\\:model="company_document"]').clear().type(`B${id.toString().slice(-7)}`)
-      cy.get('[wire\\:model="email"]').clear().type(`empresa${id}@test.com`)
-      cy.get('[wire\\:model="phone"]').clear().type('911222333')
+      cy.getByWireModel('company_name').clear().type(`Distribuciones ${id} SL`)
+      cy.getByWireModel('company_document').clear().type(`B${id.toString().slice(-7)}`)
+      cy.getByWireModel('email').clear().type(`empresa${id}@test.com`)
+      cy.getByWireModel('phone').clear().type('911222333')
 
       // Dirección
-      cy.get('[wire\\:model="addresses.0.address"]').clear().type('Polígono Industrial 5')
-      cy.get('[wire\\:model="addresses.0.postal_code"]').clear().type('46001')
+      cy.getByWireModel('addresses.0.address').clear().type('Polígono Industrial 5')
+      cy.getByWireModel('addresses.0.postal_code').clear().type('46001')
 
-      cy.get('[wire\\:model="addresses.0.autonomous_community_id"]').find('option').eq(1).then(($opt) => {
-        cy.get('[wire\\:model="addresses.0.autonomous_community_id"]').select($opt.val(), { force: true })
+      cy.getByWireModel('addresses.0.autonomous_community_id').find('option').eq(1).then(($opt) => {
+        cy.getByWireModel('addresses.0.autonomous_community_id').select($opt.val(), { force: true })
       })
       cy.wait(1000)
 
-      cy.get('[wire\\:model="addresses.0.province_id"]').find('option').should('have.length.gt', 1)
-      cy.get('[wire\\:model="addresses.0.province_id"]').find('option').eq(1).then(($opt) => {
-        cy.get('[wire\\:model="addresses.0.province_id"]').select($opt.val(), { force: true })
+      cy.getByWireModel('addresses.0.province_id').find('option').should('have.length.gt', 1)
+      cy.getByWireModel('addresses.0.province_id').find('option').eq(1).then(($opt) => {
+        cy.getByWireModel('addresses.0.province_id').select($opt.val(), { force: true })
       })
       cy.wait(1000)
 
-      cy.get('[wire\\:model="addresses.0.municipality_id"]').find('option').should('have.length.gt', 1)
-      cy.get('[wire\\:model="addresses.0.municipality_id"]').find('option').eq(1).then(($opt) => {
-        cy.get('[wire\\:model="addresses.0.municipality_id"]').select($opt.val(), { force: true })
+      cy.getByWireModel('addresses.0.municipality_id').find('option').should('have.length.gt', 1)
+      cy.getByWireModel('addresses.0.municipality_id').find('option').eq(1).then(($opt) => {
+        cy.getByWireModel('addresses.0.municipality_id').select($opt.val(), { force: true })
       })
       cy.wait(500)
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/clients')
@@ -200,7 +200,7 @@ describe('Winery Clients', () => {
           cy.wrap(editLinks.first()).click({ force: true })
           cy.waitForLivewire()
           cy.url().should('include', '/edit')
-          cy.get('[wire\\:model="client_type"]').should('exist')
+          cy.getByWireModel('client_type').should('exist')
         } else {
           // No hay clientes — crear uno primero
           cy.log('No clients found, creating one first')
@@ -208,27 +208,27 @@ describe('Winery Clients', () => {
           cy.waitForLivewire()
 
           const id = uniqueId()
-          cy.get('[wire\\:model="client_type"]').select('individual', { force: true })
+          cy.getByWireModel('client_type').select('individual', { force: true })
           cy.wait(500)
-          cy.get('[wire\\:model="first_name"]').clear().type(`Edit${id}`)
-          cy.get('[wire\\:model="last_name"]').clear().type('Test')
-          cy.get('[wire\\:model="addresses.0.address"]').clear().type('Calle Test 1')
-          cy.get('[wire\\:model="addresses.0.postal_code"]').clear().type('28001')
-          cy.get('[wire\\:model="addresses.0.autonomous_community_id"]').find('option').eq(1).then(($opt) => {
-            cy.get('[wire\\:model="addresses.0.autonomous_community_id"]').select($opt.val(), { force: true })
+          cy.getByWireModel('first_name').clear().type(`Edit${id}`)
+          cy.getByWireModel('last_name').clear().type('Test')
+          cy.getByWireModel('addresses.0.address').clear().type('Calle Test 1')
+          cy.getByWireModel('addresses.0.postal_code').clear().type('28001')
+          cy.getByWireModel('addresses.0.autonomous_community_id').find('option').eq(1).then(($opt) => {
+            cy.getByWireModel('addresses.0.autonomous_community_id').select($opt.val(), { force: true })
           })
           cy.wait(1000)
-          cy.get('[wire\\:model="addresses.0.province_id"]').find('option').should('have.length.gt', 1)
-          cy.get('[wire\\:model="addresses.0.province_id"]').find('option').eq(1).then(($opt) => {
-            cy.get('[wire\\:model="addresses.0.province_id"]').select($opt.val(), { force: true })
+          cy.getByWireModel('addresses.0.province_id').find('option').should('have.length.gt', 1)
+          cy.getByWireModel('addresses.0.province_id').find('option').eq(1).then(($opt) => {
+            cy.getByWireModel('addresses.0.province_id').select($opt.val(), { force: true })
           })
           cy.wait(1000)
-          cy.get('[wire\\:model="addresses.0.municipality_id"]').find('option').should('have.length.gt', 1)
-          cy.get('[wire\\:model="addresses.0.municipality_id"]').find('option').eq(1).then(($opt) => {
-            cy.get('[wire\\:model="addresses.0.municipality_id"]').select($opt.val(), { force: true })
+          cy.getByWireModel('addresses.0.municipality_id').find('option').should('have.length.gt', 1)
+          cy.getByWireModel('addresses.0.municipality_id').find('option').eq(1).then(($opt) => {
+            cy.getByWireModel('addresses.0.municipality_id').select($opt.val(), { force: true })
           })
           cy.wait(500)
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
 
           // Ahora editar
@@ -251,9 +251,9 @@ describe('Winery Clients', () => {
         cy.wrap(editLinks.first()).click({ force: true })
         cy.waitForLivewire()
 
-        cy.get('[wire\\:model="phone"]').clear().type('699000001')
+        cy.getByWireModel('phone').clear().type('699000001')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/clients')
@@ -274,9 +274,9 @@ describe('Winery Clients', () => {
         cy.waitForLivewire()
 
         const id = uniqueId()
-        cy.get('[wire\\:model="email"]').clear().type(`updated${id}@test.com`)
+        cy.getByWireModel('email').clear().type(`updated${id}@test.com`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/clients')

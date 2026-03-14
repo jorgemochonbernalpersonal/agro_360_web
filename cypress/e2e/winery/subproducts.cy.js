@@ -59,7 +59,7 @@ describe('Winery Subproducts', () => {
         cy.get('[wire\\:model="destination"]').select($opt.val(), { force: true })
       })
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/subproducts')
@@ -82,7 +82,7 @@ describe('Winery Subproducts', () => {
       cy.get('[wire\\:model="lot_number"]').clear().type(`LOT-${uniqueId()}`)
       cy.get('[wire\\:model="notes"]').clear().type('Subproducto de prueba E2E')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/subproducts')
@@ -90,7 +90,7 @@ describe('Winery Subproducts', () => {
     })
 
     it('valida campos requeridos', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/subproducts/create')
     })
@@ -112,7 +112,7 @@ describe('Winery Subproducts', () => {
           cy.get('[wire\\:model="destination"]').find('option').eq(1).then(($opt) => {
             cy.get('[wire\\:model="destination"]').select($opt.val(), { force: true })
           })
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
           cy.visit('/winery/subproducts')
           cy.waitForLivewire()
@@ -125,7 +125,7 @@ describe('Winery Subproducts', () => {
         cy.get('[wire\\:model="quantity"]').clear().type('350')
         cy.get('[wire\\:model="notes"]').clear().type('Actualizado en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/subproducts')

@@ -405,6 +405,9 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             // Rutas estáticas primero (antes de rutas dinámicas)
             Route::get('/harvest', \App\Livewire\Viticulturist\Invoices\Harvest\Index::class)->name('harvest.index');
 
+            // ── Liquidaciones de la bodega (solo lectura) ─────────────────────────
+            Route::get('/grape-purchase', \App\Livewire\Viticulturist\Invoices\GrapePurchase\Index::class)->name('grape-purchase.index');
+
             // ── Facturación de Vendimia (Cosecha Comercializada) ──────────────────────
             Route::prefix('harvest-sale')->name('harvest-sale.')->group(function () {
                 Route::get('/', \App\Livewire\Viticulturist\Billing\HarvestSale\Index::class)->name('index');
@@ -461,10 +464,8 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             ->defaults('module', 'Notificaciones')
             ->defaults('icon', 'bell');
 
-        Route::get('/bodega-messages', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('bodega-messages.index')
-            ->defaults('module', 'Comunicación con Bodega')
-            ->defaults('icon', 'chat-bubble-left-right');
+        Route::get('/bodega-messages', \App\Livewire\Viticulturist\BodegaMessages\Index::class)
+            ->name('bodega-messages.index');
 
         Route::get('/subcontracting', \App\Livewire\Viticulturist\UnderConstruction::class)
             ->name('subcontracting.index')

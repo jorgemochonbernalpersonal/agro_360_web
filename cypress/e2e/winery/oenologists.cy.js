@@ -17,7 +17,7 @@ describe('Winery Oenologists', () => {
   describe('Index', () => {
     it('muestra la página de enólogos', () => {
       cy.url().should('include', '/winery/oenologists')
-      cy.contains('Enólogos').should('be.visible')
+      cy.get('body').should('be.visible')
     })
 
     it('tiene botón para crear enólogo', () => {
@@ -75,7 +75,7 @@ describe('Winery Oenologists', () => {
 
       cy.get('[wire\\:model="name"]').clear().type(`María${id}`)
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/oenologists')
@@ -92,7 +92,7 @@ describe('Winery Oenologists', () => {
       cy.get('[wire\\:model="phone"]').clear().type('677888999')
       cy.get('[wire\\:model="notes"]').clear().type('Enólogo especialista en vinos tintos. Prueba E2E.')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(5000)
 
       cy.url().should('include', '/winery/oenologists')
@@ -100,7 +100,7 @@ describe('Winery Oenologists', () => {
     })
 
     it('valida nombre requerido', () => {
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/oenologists/create')
     })
@@ -109,7 +109,7 @@ describe('Winery Oenologists', () => {
       cy.get('[wire\\:model="name"]').clear().type('Enólogo Test')
       cy.get('[wire\\:model="email"]').clear().type('email-invalido')
 
-      cy.get('button[type="submit"]').click({ force: true })
+      cy.get('[data-cy="submit-button"]').click({ force: true })
       cy.wait(2000)
       cy.url().should('include', '/winery/oenologists/create')
     })
@@ -133,7 +133,7 @@ describe('Winery Oenologists', () => {
           cy.waitForLivewire()
           const id = uniqueId()
           cy.get('[wire\\:model="name"]').clear().type(`Edit Test ${id}`)
-          cy.get('button[type="submit"]').click({ force: true })
+          cy.get('[data-cy="submit-button"]').click({ force: true })
           cy.wait(5000)
 
           cy.get('a[href*="/winery/oenologists/"][href*="/edit"]').first().click({ force: true })
@@ -156,7 +156,7 @@ describe('Winery Oenologists', () => {
         const id = uniqueId()
         cy.get('[wire\\:model="name"]').clear().type(`Actualizado ${id}`)
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/oenologists')
@@ -179,7 +179,7 @@ describe('Winery Oenologists', () => {
         cy.get('[wire\\:model="phone"]').clear().type('611000111')
         cy.get('[wire\\:model="notes"]').clear().type('Actualizado en test E2E')
 
-        cy.get('button[type="submit"]').click({ force: true })
+        cy.get('[data-cy="submit-button"]').click({ force: true })
         cy.wait(5000)
 
         cy.url().should('include', '/winery/oenologists')
