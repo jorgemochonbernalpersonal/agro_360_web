@@ -152,6 +152,10 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.winery.labeling.edit')->layout('layouts.app');
+        return view('livewire.winery.labeling.edit', [
+            'wines'         => $this->wines,
+            'wineBottlings' => $this->wineBottlings,
+            'labelBatches'  => $this->labelBatches,
+        ])->layout('layouts.app');
     }
 }

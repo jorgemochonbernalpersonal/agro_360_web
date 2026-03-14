@@ -112,6 +112,8 @@ class Edit extends Component
         return view('livewire.winery.subproducts.edit', [
             'types'        => WineSubproduct::TYPES,
             'destinations' => WineSubproduct::DESTINATIONS,
+            'wines'        => $this->wines,
+            'units'        => $this->units,
         ])->layout('layouts.app');
     }
 }

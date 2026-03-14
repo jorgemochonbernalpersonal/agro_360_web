@@ -85,7 +85,9 @@ class Create extends Component
     public function render()
     {
         return view('livewire.winery.label-batches.create', [
-            'sources' => LabelBatch::SOURCES,
+            'sources'      => LabelBatch::SOURCES,
+            'wines'        => $this->wines,
+            'totalPreview' => $this->totalPreview,
         ])->layout('layouts.app');
     }
 }

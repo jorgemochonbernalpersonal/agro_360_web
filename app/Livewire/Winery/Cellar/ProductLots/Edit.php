@@ -328,6 +328,9 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.winery.cellar.product-lots.edit')->layout('layouts.app');
+        return view('livewire.winery.cellar.product-lots.edit', [
+            'grapeVarieties' => $this->grapeVarieties,
+            'grapeTotal'     => $this->grapeTotal,
+        ])->layout('layouts.app');
     }
 }

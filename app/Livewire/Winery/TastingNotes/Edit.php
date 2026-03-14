@@ -135,6 +135,9 @@ class Edit extends Component
             'palateLevelOptions'    => WineTastingNote::PALATE_LEVEL,
             'palateBodyOptions'     => WineTastingNote::PALATE_BODY,
             'palateFinishOptions'   => WineTastingNote::PALATE_FINISH,
+            'wines'                 => $this->wines,
+            'oenologists'           => $this->oenologists,
+            'selectedWine'          => $this->selectedWine,
         ])->layout('layouts.app');
     }
 }

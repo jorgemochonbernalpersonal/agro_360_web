@@ -175,6 +175,8 @@ class Edit extends Component
     {
         return view('livewire.winery.label-batches.edit', [
             'sources' => LabelBatch::SOURCES,
+            'wines'   => $this->wines,
+            'wastes'  => $this->wastes,
         ])->layout('layouts.app');
     }
 }

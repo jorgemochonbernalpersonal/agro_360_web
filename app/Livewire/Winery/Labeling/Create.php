@@ -157,6 +157,11 @@ class Create extends Component
 
     public function render()
     {
-        return view('livewire.winery.labeling.create')->layout('layouts.app');
+        return view('livewire.winery.labeling.create', [
+            'wines'          => $this->wines,
+            'wineBottlings'  => $this->wineBottlings,
+            'labelBatches'   => $this->labelBatches,
+            'selectedBatch'  => $this->selectedBatch,
+        ])->layout('layouts.app');
     }
 }

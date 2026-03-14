@@ -100,6 +100,8 @@ class Create extends Component
         return view('livewire.winery.subproducts.create', [
             'types'        => WineSubproduct::TYPES,
             'destinations' => WineSubproduct::DESTINATIONS,
+            'wines'        => $this->wines,
+            'units'        => $this->units,
         ])->layout('layouts.app');
     }
 }
