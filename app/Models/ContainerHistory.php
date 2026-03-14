@@ -98,6 +98,7 @@ class ContainerHistory extends Model
             'sale' => 'Venta',
             'adjustment' => 'Ajuste',
             'maintenance' => 'Mantenimiento',
+            'bottling' => 'Embotellado',
             default => 'Operación desconocida',
         };
     }

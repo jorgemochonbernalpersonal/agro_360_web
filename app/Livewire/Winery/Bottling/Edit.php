@@ -3,6 +3,7 @@
 namespace App\Livewire\Winery\Bottling;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Container;
 use App\Models\Oenologist;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
@@ -21,6 +22,7 @@ class Edit extends Component
     public WineBottling $bottling;
 
     public string $wine_id                   = '';
+    public string $container_id              = '';
     public string $bottling_date             = '';
     public string $bottle_format             = '750';
     public string $quantity_bottles          = '';
@@ -40,6 +42,7 @@ class Edit extends Component
         $this->bottling = $bottling;
 
         $this->wine_id                = (string) $bottling->wine_id;
+        $this->container_id           = (string) ($bottling->container_id ?? '');
         $this->bottling_date          = $bottling->bottling_date->toDateString();
         $this->bottle_format          = $bottling->bottle_format;
         $this->quantity_bottles       = (string) $bottling->quantity_bottles;
@@ -103,6 +106,15 @@ class Edit extends Component
     public function units()
     {
         return UnitOfMeasurement::orderBy('name')->get();
+    }
+
+    #[Computed]
+    public function originContainer()
+    {
+        if (! $this->container_id) {
+            return null;
+        }
+        return Container::find($this->container_id);
     }
 
     public function updatedWineId(): void
@@ -213,6 +225,7 @@ class Edit extends Component
         return view('livewire.winery.bottling.edit', [
             'bottleFormats'          => WineBottling::BOTTLE_FORMATS,
             'wines'                  => $this->wines,
+            'originContainer'        => $this->originContainer,
             'oenologists'            => $this->oenologists,
             'winerySupplies'         => $this->winerySupplies,
             'units'                  => $this->units,

@@ -59,6 +59,20 @@
                     </flux:field>
                 @endif
 
+                @if($originContainer)
+                    <div class="lg:col-span-3">
+                        <flux:callout variant="info" icon="cube">
+                            <flux:callout.heading>Contenedor de origen</flux:callout.heading>
+                            <flux:callout.text>
+                                <strong>{{ $originContainer->name }}</strong>
+                                @if($originContainer->containerType) · {{ $originContainer->containerType->name }}@endif
+                                — El inventario de este contenedor ya fue descontado al registrar el embotellado.
+                                Para corregirlo, elimina este registro y vuelve a crearlo.
+                            </flux:callout.text>
+                        </flux:callout>
+                    </div>
+                @endif
+
             </div>
         </x-agro.form-section>
 

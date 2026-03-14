@@ -23,6 +23,7 @@ class WineBottling extends Model
     protected $fillable = [
         'user_id',
         'wine_id',
+        'container_id',
         'wine_process_detail_id',
         'product_lot_id',
         'oenologist_id',
@@ -48,6 +49,11 @@ class WineBottling extends Model
     public function wine(): BelongsTo
     {
         return $this->belongsTo(Wine::class);
+    }
+
+    public function container(): BelongsTo
+    {
+        return $this->belongsTo(Container::class);
     }
 
     public function processDetail(): BelongsTo

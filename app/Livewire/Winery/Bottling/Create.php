@@ -3,6 +3,8 @@
 namespace App\Livewire\Winery\Bottling;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Container;
+use App\Models\ContainerHistory;
 use App\Models\Oenologist;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
@@ -20,6 +22,7 @@ class Create extends Component
 
     // ── Datos principales ─────────────────────────────────────────────────────
     public string $wine_id                   = '';
+    public string $container_id              = '';
     public string $bottling_date             = '';
     public string $bottle_format             = '750';
     public string $quantity_bottles          = '';
@@ -84,10 +87,43 @@ class Create extends Component
         return UnitOfMeasurement::orderBy('name')->get();
     }
 
+    #[Computed]
+    public function containers()
+    {
+        if (! $this->wine_id) {
+            return collect();
+        }
+
+        // Contenedores que tienen este vino en su estado actual
+        $fromState = Container::where('user_id', Auth::id())
+            ->whereHas('currentStates', fn($q) => $q->where('wine_id', $this->wine_id))
+            ->where('archived', false)
+            ->get();
+
+        // Contenedores enlazados al proceso seleccionado (si lo hay)
+        if ($this->wine_process_detail_id) {
+            $fromProcess = Container::whereHas('wineProcessDetails',
+                fn($q) => $q->where('wine_process_details.id', $this->wine_process_detail_id)
+            )->get();
+
+            return $fromState->merge($fromProcess)->unique('id')->values();
+        }
+
+        return $fromState;
+    }
+
     public function updatedWineId(): void
     {
         $this->wine_process_detail_id = '';
+        $this->container_id           = '';
         $this->unsetComputedProperty('bottlingProcessDetails');
+        $this->unsetComputedProperty('containers');
+    }
+
+    public function updatedWineProcessDetailId(): void
+    {
+        $this->container_id = '';
+        $this->unsetComputedProperty('containers');
     }
 
     public function addSupply(): void
@@ -129,6 +165,7 @@ class Create extends Component
     {
         return [
             'wine_id'                => ['required', 'exists:wines,id'],
+            'container_id'           => ['nullable', 'exists:containers,id'],
             'bottling_date'          => ['required', 'date'],
             'bottle_format'          => ['required', 'string', 'max:20'],
             'quantity_bottles'       => ['required', 'integer', 'min:1'],
@@ -169,6 +206,7 @@ class Create extends Component
             $bottling = WineBottling::create([
                 'user_id'                => Auth::id(),
                 'wine_id'                => $wine->id,
+                'container_id'           => $data['container_id'] ?: null,
                 'wine_process_detail_id' => $data['wine_process_detail_id'] ?: null,
                 'product_lot_id'         => $data['product_lot_id'] ?: null,
                 'oenologist_id'          => $data['oenologist_id'] ?: null,
@@ -180,6 +218,24 @@ class Create extends Component
                 'notes'                  => $data['notes'] ?: null,
                 'created_by'             => Auth::id(),
             ]);
+
+            // Decrementar inventario del contenedor de origen
+            if ($data['container_id']) {
+                $container = Container::lockForUpdate()->find($data['container_id']);
+                if ($container) {
+                    $container->decrementUsedCapacity((float) $data['quantity_liters']);
+
+                    ContainerHistory::create([
+                        'container_id'           => $container->id,
+                        'wine_id'                => $wine->id,
+                        'wine_process_detail_id' => $data['wine_process_detail_id'] ?: null,
+                        'operation_type'         => 'bottling',
+                        'quantity'               => -(float) $data['quantity_liters'],
+                        'start_date'             => $data['bottling_date'],
+                        'created_by'             => Auth::id(),
+                    ]);
+                }
+            }
 
             foreach ($this->supplies as $row) {
                 if (empty($row['supply_name']) && empty($row['winery_supply_id'])) {
@@ -205,6 +261,7 @@ class Create extends Component
         return view('livewire.winery.bottling.create', [
             'bottleFormats'          => WineBottling::BOTTLE_FORMATS,
             'wines'                  => $this->wines,
+            'containers'             => $this->containers,
             'oenologists'            => $this->oenologists,
             'winerySupplies'         => $this->winerySupplies,
             'units'                  => $this->units,

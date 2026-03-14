@@ -46,7 +46,7 @@
                 @if($wine_id && $bottlingProcessDetails->isNotEmpty())
                     <flux:field class="lg:col-span-3">
                         <flux:label>Operación de proceso vinculada</flux:label>
-                        <flux:select wire:model="wine_process_detail_id">
+                        <flux:select wire:model.live="wine_process_detail_id">
                             <flux:select.option value="">Sin vincular</flux:select.option>
                             @foreach($bottlingProcessDetails as $detail)
                                 <flux:select.option value="{{ $detail->id }}">
@@ -57,6 +57,28 @@
                         </flux:select>
                         <flux:description>Vincula con un paso del proceso de vinificación registrado previamente.</flux:description>
                         <flux:error name="wine_process_detail_id" />
+                    </flux:field>
+                @endif
+
+                @if($wine_id && $containers->isNotEmpty())
+                    <flux:field class="lg:col-span-3">
+                        <flux:label>Contenedor de origen</flux:label>
+                        <flux:select wire:model="container_id">
+                            <flux:select.option value="">Sin especificar</flux:select.option>
+                            @foreach($containers as $container)
+                                <flux:select.option value="{{ $container->id }}">
+                                    {{ $container->name }}
+                                    @if($container->used_capacity)
+                                        · {{ number_format($container->used_capacity, 0) }} L disponibles
+                                    @endif
+                                    @if($container->containerType)
+                                        · {{ $container->containerType->name }}
+                                    @endif
+                                </flux:select.option>
+                            @endforeach
+                        </flux:select>
+                        <flux:description>Depósito o barrica del que se extrae el vino. Se descontará la cantidad de litros embotellados.</flux:description>
+                        <flux:error name="container_id" />
                     </flux:field>
                 @endif
 
