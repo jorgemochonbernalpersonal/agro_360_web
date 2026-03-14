@@ -1,0 +1,23 @@
+{
+  "user": {
+    "email": "winery@test.com",
+    "password": "password",
+    "name": "Test Winery",
+    "role": "winery"
+  },
+  "client": {
+    "individual": {
+      "first_name": "Juan",
+      "last_name": "García",
+      "particular_document": "12345678A",
+      "email": "juan.garcia@test.com",
+      "phone": "666111222"
+    },
+    "company": {
+      "company_name": "Distribuciones Test SL",
+      "company_document": "B12345678",
+      "email": "info@distribuciones-test.com",
+      "phone": "911222333"
+    }
+  }
+}
