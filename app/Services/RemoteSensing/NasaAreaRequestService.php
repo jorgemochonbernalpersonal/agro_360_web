@@ -78,6 +78,10 @@ class NasaAreaRequestService
                                 'layer' => '_250m_16_days_NDVI',
                             ]
                         ],
+                        'output' => [
+                            'format'     => ['type' => 'geotiff'],
+                            'projection' => 'native',
+                        ],
                         'coordinates' => $polygon,
                     ]
                 ]);

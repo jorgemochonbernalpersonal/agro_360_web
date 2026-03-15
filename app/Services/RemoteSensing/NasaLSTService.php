@@ -67,6 +67,7 @@ class NasaLSTService
             Log::warning('NASA LST API failed — falling back to Open-Meteo', [
                 'status'  => $response->status(),
                 'plot_id' => $plot->id,
+                'body'    => substr($response->body(), 0, 300),
             ]);
 
         } catch (\Exception $e) {
