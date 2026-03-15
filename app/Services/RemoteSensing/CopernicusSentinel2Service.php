@@ -74,7 +74,8 @@ class CopernicusSentinel2Service
             $this->rateLimitService->incrementCopernicusUsage($estimatedUnits);
 
             // Use the end of the interval as the image date
-            $imageDate = Carbon::parse($best['interval']['to'])->subDay();
+            // $best['interval'] is the full API interval object (has ['interval']['to'])
+            $imageDate = Carbon::parse($best['interval']['interval']['to'])->subDay();
             $data      = $this->mapToStorageData($best['interval'], $imageDate, $plot, $plotSigpacId, $best['validCount'], $best['sampleCount']);
 
             $result = $this->repository->createOrUpdate($plot, $imageDate, $data, $plotSigpacId);
