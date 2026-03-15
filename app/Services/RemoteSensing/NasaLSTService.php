@@ -40,6 +40,13 @@ class NasaLSTService
 
         $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId, $coordinates);
 
+        // Cache 24h — MODIS LST updates every 8 days
+        $cacheKey = "nasa_lst_{$plot->id}_" . ($plotSigpacId ?? 0);
+        $cached = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         if (!$this->rateLimitService->canMakeNasaRequest()) {
             return $this->fetchFromOpenMeteo($coords, $plot->id);
         }
@@ -61,7 +68,9 @@ class NasaLSTService
             $this->rateLimitService->recordNasaRequest();
 
             if ($response->successful()) {
-                return $this->parseLSTResponse($response->json());
+                $result = $this->parseLSTResponse($response->json());
+                \Illuminate\Support\Facades\Cache::put($cacheKey, $result, now()->addHours(24));
+                return $result;
             }
 
             Log::warning('NASA LST API failed — falling back to Open-Meteo', [

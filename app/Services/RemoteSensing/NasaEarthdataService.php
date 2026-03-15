@@ -148,6 +148,13 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             // Get plot coordinates from geometry centroid (or override)
             $bbox = $this->getPlotBoundingBox($plot, $coordinates);
 
+            // Cache 24h — MODIS updates every 16 days
+            $cacheKey = "ornl_modis_{$plot->id}";
+            $cached   = Cache::get($cacheKey);
+            if ($cached !== null) {
+                return $cached;
+            }
+
             // ORNL DAAC MODIS Subset API (synchronous, no auth required)
             // Endpoint: /MOD13Q1/subset?latitude=&longitude=&startDate=A{YYYYDOY}&endDate=A{YYYYDOY}
             $startJulian = 'A' . now()->subDays(16)->format('Y') . str_pad(now()->subDays(16)->dayOfYear, 3, '0', STR_PAD_LEFT);
@@ -167,7 +174,9 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             $this->rateLimitService->recordNasaRequest();
 
             if ($response->successful()) {
-                return $this->parseOrnlResponse($response->json());
+                $result = $this->parseOrnlResponse($response->json());
+                Cache::put($cacheKey, $result, now()->addHours(24));
+                return $result;
             }
 
             Log::warning('ORNL DAAC MODIS API request failed — using estimated data', [
