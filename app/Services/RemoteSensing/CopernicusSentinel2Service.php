@@ -256,10 +256,7 @@ class CopernicusSentinel2Service
         return '//VERSION=3
 function setup() {
     return {
-        input: [
-            { bands: ["B03","B04","B05","B08","B11"], units: "REFLECTANCE" },
-            { bands: ["SCL"], units: "DN" }
-        ],
+        input: [{ bands: ["B03","B04","B05","B08","B11","SCL"], units: ["REFLECTANCE","REFLECTANCE","REFLECTANCE","REFLECTANCE","REFLECTANCE","DN"] }],
         output: [
             { id: "ndvi",  bands: 1, sampleType: "FLOAT32" },
             { id: "gndvi", bands: 1, sampleType: "FLOAT32" },
