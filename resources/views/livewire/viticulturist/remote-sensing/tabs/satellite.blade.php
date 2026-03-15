@@ -52,42 +52,20 @@
                 </svg>
             </div>
             <div class="ml-4 flex-1">
-                <h4 class="text-base font-semibold text-yellow-900 mb-2">📡 Sin datos satelitales para esta parcela</h4>
-                <div class="text-sm text-yellow-800 space-y-2 mb-3">
-                    <p>Esta parcela <strong>{{ $selectedPlot->name }}</strong> no tiene datos de Remote Sensing cargados
-                    @if($satelliteSelectedDate)
-                        para la fecha <strong>{{ \Carbon\Carbon::parse($satelliteSelectedDate)->format('d/m/Y') }}</strong>
-                    @endif.</p>
-                    <p class="font-medium">🎯 ¿Qué hacer?</p>
-                    <ul class="list-disc list-inside space-y-1 ml-2">
-                        <li>Haz clic en <strong>"🛰️ Cargar Datos Sentinel-2"</strong> para obtener datos satelitales actuales</li>
-                        <li>Los datos se cargarán desde Copernicus/Sentinel-2 a 10m de resolución (gratuito)</li>
-                        <li>Verás NDVI, NDWI, GNDVI y más indicadores en 30-60 segundos</li>
-                    </ul>
+                <h4 class="text-base font-semibold text-yellow-900 mb-2">📡 Sin datos para este recinto</h4>
+                <div class="text-sm text-yellow-800 mb-3">
+                    <p class="mb-2">El recinto <strong>{{ collect($allSigpacs)->firstWhere('id', $selectedSigpacId)['display_name'] ?? $selectedPlot->name }}</strong> aún no tiene imágenes Sentinel-2 cargadas.</p>
+                    <p>Haz clic en <strong>"🛰️ Actualizar Sentinel-2"</strong> — se descargará la imagen más reciente en 30-60 segundos directamente desde Copernicus.</p>
                 </div>
 
                 <div class="bg-white rounded-lg p-3 text-xs border border-yellow-200">
-                    <p class="font-semibold text-zinc-800 mb-2">📋 Verifica que:</p>
-                    <div class="space-y-1 text-zinc-700">
-                        <div class="flex items-center gap-2">
-                            @php $sigpacCoords = $this->getSelectedSigpacCoordinates(); @endphp
-                            @if($sigpacCoords)
-                                <span class="text-green-600">✓</span>
-                                <span>El recinto tiene coordenadas (Lat: {{ number_format($sigpacCoords['lat'], 4) }}°, Lon: {{ number_format($sigpacCoords['lng'], 4) }}°)</span>
-                            @else
-                                <span class="text-red-600">✗</span>
-                                <span class="text-red-600 font-semibold">⚠️ El recinto seleccionado NO tiene geometría configurada</span>
-                            @endif
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-blue-600">ℹ️</span>
-                            <span>Las credenciales NASA están configuradas en el servidor</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-blue-600">ℹ️</span>
-                            <span>La cola de trabajos está procesándose</span>
-                        </div>
-                    </div>
+                    @php $sigpacCoords = $this->getSelectedSigpacCoordinates(); @endphp
+                    @if($sigpacCoords)
+                        <span class="text-green-600 font-medium">✓ Geometría OK</span>
+                        <span class="text-zinc-500 ml-1">(Lat: {{ number_format($sigpacCoords['lat'], 4) }}°, Lon: {{ number_format($sigpacCoords['lng'], 4) }}°)</span>
+                    @else
+                        <span class="text-red-600 font-semibold">✗ Este recinto no tiene geometría configurada — no se pueden obtener datos satelitales</span>
+                    @endif
                 </div>
 
                 @if($dataLoadError)
