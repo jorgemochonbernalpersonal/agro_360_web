@@ -68,9 +68,12 @@ class SpectralBandsCard extends Component
 
             $metadata = $remoteSensing->metadata ?? [];
             $this->spectralData = [
-                'date'               => $remoteSensing->image_date->format('d/m/Y'),
-                'satellite'          => $remoteSensing->satellite ?? 'Sentinel-2',
-                'valid_pixel_ratio'  => $metadata['valid_pixel_ratio'] ?? null,
+                'date'              => $remoteSensing->image_date->format('d/m/Y'),
+                'satellite'         => $remoteSensing->satellite ?? 'Sentinel-2',
+                'valid_pixel_ratio' => $metadata['valid_pixel_ratio'] ?? null,
+                'red_band'          => $remoteSensing->red_band,
+                'nir_band'          => $remoteSensing->nir_band,
+                'green_band'        => $remoteSensing->green_band,
             ];
 
             // Índices derivados de bandas espectrales Sentinel-2

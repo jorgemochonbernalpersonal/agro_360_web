@@ -1,138 +1,123 @@
 @php
     $spectralData = $spectralData ?? null;
-    $indices = $indices ?? null;
-    $loading = $loading ?? false;
-    $error = $error ?? null;
+    $indices      = $indices ?? null;
+    $loading      = $loading ?? false;
+    $error        = $error ?? null;
     $availableDates = $availableDates ?? [];
+
+    // Rangos agronómicos por índice para colorear el valor
+    $ranges = [
+        'ndvi'  => ['bad' => 0.2,  'ok' => 0.4,  'good' => 0.6,  'max' => 1.0],
+        'gndvi' => ['bad' => 0.2,  'ok' => 0.4,  'good' => 0.6,  'max' => 1.0],
+        'ndwi'  => ['bad' => -0.3, 'ok' => 0.0,  'good' => 0.2,  'max' => 1.0],
+        'ndre'  => ['bad' => 0.1,  'ok' => 0.3,  'good' => 0.5,  'max' => 1.0],
+    ];
 @endphp
+
 <div class="bg-white rounded-lg shadow-md p-6">
-    {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
-        <div class="flex-1">
-            <h3 class="text-xl font-bold text-zinc-900">🌈 Bandas Espectrales</h3>
-            <p class="text-sm text-zinc-500 mt-1">
-                Reflectancias reales del satélite
-                @if($spectralData)
-                    - {{ $spectralData['date'] }} ({{ $spectralData['satellite'] }})
-                @endif
-            </p>
+
+    {{-- Header: título + selector de fecha en una sola línea --}}
+    <div class="flex items-center justify-between mb-5">
+        <div>
+            <h3 class="text-lg font-bold text-zinc-900">Índices espectrales</h3>
+            <p class="text-xs text-zinc-400 mt-0.5">Sentinel-2 · resolución 10 m</p>
         </div>
-        
+
         <div class="flex items-center gap-2">
-            @if(count($availableDates) > 0)
-                <flux:select wire:model.live="selectedDate" 
-                        >
-                    <option value="">Último dato</option>
+            {{-- Cobertura útil --}}
+            @if($spectralData && isset($spectralData['valid_pixel_ratio']) && $spectralData['valid_pixel_ratio'] !== null)
+                @php $ratio = $spectralData['valid_pixel_ratio']; @endphp
+                <span class="text-xs px-2 py-1 rounded-full font-medium
+                    {{ $ratio >= 70 ? 'bg-green-100 text-green-700' : ($ratio >= 40 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
+                    {{ $ratio }}% sin nubes
+                </span>
+            @endif
+
+            {{-- Selector de fecha — el cambio recarga automáticamente (wire:model.live) --}}
+            @if(count($availableDates) > 1)
+                <flux:select wire:model.live="selectedDate" class="text-sm">
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
                     @endforeach
                 </flux:select>
+            @elseif($spectralData)
+                <span class="text-sm text-zinc-500">{{ $spectralData['date'] }}</span>
             @endif
-            
-            <button 
-                wire:click="loadData" 
-                wire:loading.attr="disabled"
-                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
-            >
-            <svg wire:loading.remove wire:target="loadData" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-            </svg>
-            <svg wire:loading wire:target="loadData" class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Actualizar
-        </button>
+        </div>
     </div>
 
     {{-- Loading --}}
     @if($loading && !$spectralData)
-        <div class="flex items-center justify-center py-12">
-            <div class="text-center">
-                <svg class="animate-spin h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <p class="text-zinc-600">Cargando bandas espectrales...</p>
-            </div>
+        <div class="flex items-center justify-center py-10 text-zinc-400">
+            <svg class="animate-spin w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            Cargando...
         </div>
     @endif
 
     {{-- Error --}}
-    @if($error)
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-yellow-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
-                </svg>
-                <p class="text-sm text-yellow-800">{{ $error }}</p>
-            </div>
-        </div>
+    @if($error && !$loading)
+        <flux:callout variant="warning" icon="exclamation-triangle">
+            {{ $error }}
+        </flux:callout>
     @endif
 
-    {{-- Content --}}
-    @if($spectralData)
-        <div class="mb-4 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-            <span>{{ $spectralData['satellite'] }} · {{ $spectralData['date'] }}</span>
-            {{-- Improvement #3: valid pixel coverage badge --}}
-            @php $ratio = $spectralData['valid_pixel_ratio'] ?? null; @endphp
-            @if($ratio !== null)
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                    {{ $ratio >= 70 ? 'bg-green-100 text-green-800' : ($ratio >= 40 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                    📡 Cobertura útil: {{ $ratio }}% del recinto
-                </span>
-            @endif
-        </div>
-
-        {{-- Índices Vegetación --}}
-        <div>
-            <h4 class="text-lg font-semibold text-zinc-800 mb-3">📈 Índices de Vegetación</h4>
-            <div class="space-y-3">
-                @foreach($indices as $key => $index)
-                    @if($index['value'])
-                        <div class="bg-{{ $index['color'] }}-50 border border-{{ $index['color'] }}-200 rounded-lg p-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-lg font-bold text-{{ $index['color'] }}-900">{{ $index['label'] }}</span>
-                                        @if(isset($index['is_real']) && $index['is_real'])
-                                            <span class="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-semibold rounded">
-                                                ✓ REAL
-                                            </span>
-                                        @endif
-                                    </div>
-                                    <p class="text-sm text-{{ $index['color'] }}-700 mt-1">{{ $index['description'] }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-3xl font-bold text-{{ $index['color'] }}-900">
-                                        {{ number_format($index['value'], 3) }}
-                                    </div>
-                                </div>
+    {{-- Índices en grid compacto --}}
+    @if($spectralData && $indices)
+        <div class="grid grid-cols-2 gap-3">
+            @foreach($indices as $key => $index)
+                @if($index['value'] !== null)
+                    @php
+                        $v   = (float) $index['value'];
+                        $r   = $ranges[$key] ?? null;
+                        $pct = $r ? min(100, max(0, ($v - ($r['bad'] - 0.2)) / ($r['max'] - ($r['bad'] - 0.2)) * 100)) : 50;
+                        $barColor = !$r ? 'bg-zinc-400'
+                            : ($v >= $r['good'] ? 'bg-green-500'
+                            : ($v >= $r['ok']   ? 'bg-yellow-400'
+                            :                     'bg-red-400'));
+                        $textColor = !$r ? 'text-zinc-700'
+                            : ($v >= $r['good'] ? 'text-green-700'
+                            : ($v >= $r['ok']   ? 'text-yellow-700'
+                            :                     'text-red-600'));
+                    @endphp
+                    <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
+                        <div class="flex items-start justify-between mb-2">
+                            <div>
+                                <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{{ $index['label'] }}</div>
+                                <div class="text-xs text-zinc-400 mt-0.5">{{ $index['description'] }}</div>
                             </div>
-                            
-                            {{-- Progress bar --}}
-                            <div class="mt-3 relative h-2 bg-zinc-200 rounded-full overflow-hidden">
-                                <div class="absolute top-0 left-0 h-full bg-{{ $index['color'] }}-500" 
-                                     style="width: {{ min(100, max(0, (($index['value'] + 1) / 2) * 100)) }}%"></div>
+                            <div class="text-2xl font-bold {{ $textColor }}">
+                                {{ number_format($v, 3) }}
                             </div>
                         </div>
-                    @endif
-                @endforeach
-            </div>
+                        {{-- Barra en escala agronómica del índice --}}
+                        <div class="h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+                            <div class="{{ $barColor }} h-full rounded-full transition-all"
+                                 style="width: {{ $pct }}%"></div>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
         </div>
 
-        {{-- Info Box --}}
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div class="flex items-start">
-                <span class="text-2xl mr-3">ℹ️</span>
-                <div class="flex-1">
-                    <h4 class="text-sm font-semibold text-blue-900">Datos 100% Reales</h4>
-                    <p class="text-xs text-blue-700 mt-1">
-                        Las bandas espectrales provienen directamente del satélite {{ $spectralData['satellite'] }}.
-                        Los índices marcados como "REAL" se calculan desde bandas satelitales (no estimaciones).
-                    </p>
+        {{-- Bandas crudas (si disponibles desde Sentinel-2) --}}
+        @if(isset($spectralData['red_band']) || isset($spectralData['nir_band']) || isset($spectralData['green_band']))
+            <div class="mt-4 pt-4 border-t border-zinc-100">
+                <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">Reflectancias brutas</p>
+                <div class="flex gap-4 text-xs text-zinc-600">
+                    @if(isset($spectralData['red_band']))
+                        <span><span class="font-semibold text-red-500">Rojo</span> {{ number_format($spectralData['red_band'], 4) }}</span>
+                    @endif
+                    @if(isset($spectralData['nir_band']))
+                        <span><span class="font-semibold text-purple-500">NIR</span> {{ number_format($spectralData['nir_band'], 4) }}</span>
+                    @endif
+                    @if(isset($spectralData['green_band']))
+                        <span><span class="font-semibold text-green-500">Verde</span> {{ number_format($spectralData['green_band'], 4) }}</span>
+                    @endif
                 </div>
             </div>
-        </div>
+        @endif
     @endif
 </div>
