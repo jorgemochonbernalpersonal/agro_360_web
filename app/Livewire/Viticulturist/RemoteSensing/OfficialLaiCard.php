@@ -6,7 +6,7 @@ use App\Models\Plot;
 use App\Services\RemoteSensing\NasaLAIService;
 use Livewire\Component;
 
-class OfficialLAICard extends Component
+class OfficialLaiCard extends Component
 {
     public Plot $plot;
     public ?array $laiData = null;
