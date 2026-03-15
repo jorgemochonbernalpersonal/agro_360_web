@@ -72,34 +72,8 @@
 
     {{-- Content --}}
     @if($spectralData)
-        {{-- Bandas Crudas --}}
-        <div class="mb-6">
-            <h4 class="text-lg font-semibold text-zinc-800 mb-3">📊 Reflectancias por Banda</h4>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                    <div class="text-xs text-red-600 font-medium mb-1">RED</div>
-                    <div class="text-2xl font-bold text-red-900">{{ number_format($spectralData['red'], 4) }}</div>
-                    <div class="text-xs text-red-600 mt-1">640nm</div>
-                </div>
-
-                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
-                    <div class="text-xs text-purple-600 font-medium mb-1">NIR</div>
-                    <div class="text-2xl font-bold text-purple-900">{{ number_format($spectralData['nir'], 4) }}</div>
-                    <div class="text-xs text-purple-600 mt-1">865nm</div>
-                </div>
-
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                    <div class="text-xs text-green-600 font-medium mb-1">GREEN</div>
-                    <div class="text-2xl font-bold text-green-900">{{ number_format($spectralData['green'], 4) }}</div>
-                    <div class="text-xs text-green-600 mt-1">555nm</div>
-                </div>
-
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                    <div class="text-xs text-blue-600 font-medium mb-1">BLUE</div>
-                    <div class="text-2xl font-bold text-blue-900">{{ number_format($spectralData['blue'], 4) }}</div>
-                    <div class="text-xs text-blue-600 mt-1">488nm</div>
-                </div>
-            </div>
+        <div class="mb-4 text-xs text-zinc-500">
+            {{ $spectralData['satellite'] }} · {{ $spectralData['date'] }}
         </div>
 
         {{-- Índices Vegetación --}}
