@@ -3,42 +3,48 @@
 namespace App\Livewire\Viticulturist\RemoteSensing;
 
 use App\Models\Plot;
-use App\Services\RemoteSensing\NasaEarthdataService;
 use Livewire\Component;
 
 class ThermalStressCard extends Component
 {
     public Plot $plot;
+    public ?int $sigpacId = null;
     public ?array $lstData = null;
     public ?array $cwsiData = null;
     public ?array $heatStress = null;
     public ?array $frostRisk = null;
     public bool $loading = false;
     public ?string $error = null;
-    
+
     // Historical date selector
     public ?string $selectedDate = null;
     public array $availableDates = [];
 
-    public function mount(Plot $plot)
+    public function mount(Plot $plot, ?int $sigpacId = null)
     {
-        $this->plot = $plot;
+        $this->plot     = $plot;
+        $this->sigpacId = $sigpacId;
         $this->loadAvailableDates();
         $this->loadData();
     }
 
     public function loadAvailableDates()
     {
-        $dates = $this->plot->remoteSensingData()
-            ->whereNotNull('lst_day')
-            ->orderBy('image_date', 'desc')
+        $query = $this->plot->remoteSensingData()
+            ->whereNotNull('lst_day');
+
+        if ($this->sigpacId) {
+            $query->where('multipart_plot_sigpac_id', $this->sigpacId);
+        }
+
+        $dates = $query->orderBy('image_date', 'desc')
             ->limit(30)
             ->pluck('image_date')
             ->map(fn($date) => $date->format('Y-m-d'))
             ->toArray();
-        
+
         $this->availableDates = $dates;
-        
+
         if (empty($this->selectedDate) && !empty($dates)) {
             $this->selectedDate = $dates[0];
         }
@@ -53,60 +59,55 @@ class ThermalStressCard extends Component
     {
         try {
             $this->loading = true;
-            $this->error = null;
+            $this->error   = null;
 
             $query = $this->plot->remoteSensingData()
                 ->whereNotNull('lst_day');
-            
+
+            if ($this->sigpacId) {
+                $query->where('multipart_plot_sigpac_id', $this->sigpacId);
+            }
+
             if ($this->selectedDate) {
                 $query->whereDate('image_date', $this->selectedDate);
             }
-            
+
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos de temperatura disponibles para esta fecha';
+                $this->error = 'Sin datos térmicos para este recinto. Pulsa el botón de actualizar.';
                 return;
             }
 
             $this->lstData = [
-                'day' => $remoteSensing->lst_day,
+                'day'   => $remoteSensing->lst_day,
                 'night' => $remoteSensing->lst_night,
-                'diff' => $remoteSensing->lst_diff,
-                'date' => $remoteSensing->image_date->format('d/m/Y'),
+                'diff'  => $remoteSensing->lst_diff,
+                'date'  => $remoteSensing->image_date->format('d/m/Y'),
             ];
-
-            // CWSI data
-            if ($remoteSensing->cwsi !== null) {
-                $lstService = app(\App\Services\RemoteSensing\NasaLSTService::class);
-                $this->cwsiData = $lstService->classifyCWSI($remoteSensing->cwsi);
-                $this->cwsiData['value'] = $remoteSensing->cwsi;
-            }
 
             $recordMonth = $remoteSensing->image_date->month;
             $lstService  = app(\App\Services\RemoteSensing\NasaLSTService::class);
 
-            // Check heat stress using the record's own month, not today's
-            if ($remoteSensing->lst_day) {
-                $this->heatStress = $lstService->detectHeatStress(
-                    $remoteSensing->lst_day,
-                    $recordMonth
-                );
+            if ($remoteSensing->cwsi !== null) {
+                $this->cwsiData          = $lstService->classifyCWSI($remoteSensing->cwsi);
+                $this->cwsiData['value'] = $remoteSensing->cwsi;
             }
 
-            // Check frost risk using the record's own month, not today's
+            if ($remoteSensing->lst_day) {
+                $this->heatStress = $lstService->detectHeatStress($remoteSensing->lst_day, $recordMonth);
+            }
+
             if ($remoteSensing->lst_night) {
-                $this->frostRisk = $lstService->detectFrostRisk(
-                    $remoteSensing->lst_night,
-                    $recordMonth
-                );
+                $this->frostRisk = $lstService->detectFrostRisk($remoteSensing->lst_night, $recordMonth);
             }
 
         } catch (\Exception $e) {
             $this->error = 'Error al cargar datos térmicos';
             logger()->error('LST data load failed', [
-                'plot_id' => $this->plot->id,
-                'error' => $e->getMessage(),
+                'plot_id'   => $this->plot->id,
+                'sigpac_id' => $this->sigpacId,
+                'error'     => $e->getMessage(),
             ]);
         } finally {
             $this->loading = false;
@@ -117,24 +118,24 @@ class ThermalStressCard extends Component
     {
         try {
             $this->loading = true;
-            $this->error = null;
+            $this->error   = null;
 
-            // Trigger enriched data fetch
-            $service = app(NasaEarthdataService::class);
-            $service->fetchEnrichedData($this->plot, includeArea: false);
+            $service = app(\App\Services\RemoteSensing\NasaEarthdataService::class);
+            $service->fetchEnrichedData($this->plot, includeArea: false, plotSigpacId: $this->sigpacId);
 
+            $this->loadAvailableDates();
             $this->loadData();
 
             $this->dispatch('notify', [
-                'type' => 'success',
+                'type'    => 'success',
                 'message' => 'Datos térmicos actualizados',
             ]);
 
         } catch (\Exception $e) {
-            $this->error = 'Error al actualizar';
-            
+            $this->error = 'Error al actualizar datos térmicos';
+
             $this->dispatch('notify', [
-                'type' => 'error',
+                'type'    => 'error',
                 'message' => 'Error al actualizar datos térmicos',
             ]);
         } finally {
@@ -145,11 +146,11 @@ class ThermalStressCard extends Component
     public function render()
     {
         return view('livewire.viticulturist.remote-sensing.thermal-stress-card', [
-            'lstData' => $this->lstData,
-            'cwsiData' => $this->cwsiData,
-            'heatStress' => $this->heatStress,
-            'frostRisk' => $this->frostRisk,
-            'error' => $this->error,
+            'lstData'        => $this->lstData,
+            'cwsiData'       => $this->cwsiData,
+            'heatStress'     => $this->heatStress,
+            'frostRisk'      => $this->frostRisk,
+            'error'          => $this->error,
             'availableDates' => $this->availableDates,
         ]);
     }

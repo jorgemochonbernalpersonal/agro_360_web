@@ -31,5 +31,5 @@
 {{-- Humedad de Suelo (Open-Meteo) --}}
 <div class="mt-6 pt-6 border-t border-zinc-100">
     <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-4">Humedad de Suelo · Open-Meteo</p>
-    @livewire('viticulturist.remote-sensing.smap-soil-card', ['plot' => $selectedPlot], key('smap-'.$selectedPlot->id))
+    @livewire('viticulturist.remote-sensing.smap-soil-card', ['plot' => $selectedPlot, 'sigpacId' => $selectedSigpacId], key('smap-'.$selectedPlot->id.'-'.$selectedSigpacId))
 </div>
