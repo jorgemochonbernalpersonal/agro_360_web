@@ -195,8 +195,3 @@
     @livewire('viticulturist.remote-sensing.official-lai-card', ['plot' => $selectedPlot], key('lai-official-'.$selectedPlot->id))
 </div>
 
-{{-- Mapa de Vigor intra-parcela --}}
-<div class="mt-6 pt-6 border-t border-zinc-100">
-    <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">Mapa de Vigor</h3>
-    @livewire('viticulturist.remote-sensing.vigor-map-card', ['plot' => $selectedPlot], key('vigor-'.$selectedPlot->id))
-</div>
