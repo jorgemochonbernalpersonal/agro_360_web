@@ -29,9 +29,7 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
 
         // One job per sigpac parcel (multipart_plot_sigpac row with geometry) for plots with active subs
         $query = MultipartPlotSigpac::whereNotNull('plot_geometry_id')
-            ->whereHas('plot.viticulturist.subscription', function ($sq) {
-                $sq->where('status', 'active')->where('ends_at', '>', now());
-            })
+            ->whereHas('plot.viticulturist.activeSubscription')
             ->with('plot')
             ->orderBy('plot_id')
             ->orderBy('id');
