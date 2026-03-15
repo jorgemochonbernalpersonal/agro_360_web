@@ -45,7 +45,7 @@ class CopernicusSentinel2Service
             $geometry = $this->getPlotGeometry($plot, $plotSigpacId);
 
             $to   = Carbon::now();
-            $from = $to->copy()->subDays(30);
+            $from = $to->copy()->subDays(60);
 
             $rawData = $this->fetchStatistics($token, $geometry, $from, $to);
 
@@ -294,10 +294,13 @@ function evaluatePixel(sample) {
         // Most recent first
         usort($intervals, fn($a, $b) => strcmp($b['interval']['to'], $a['interval']['to']));
 
+        $debugIntervals = [];
+
         foreach ($intervals as $interval) {
             $stats = $interval['outputs']['ndvi']['bands']['B0']['stats'] ?? null;
 
             if (!$stats) {
+                $debugIntervals[] = ['interval' => $interval['interval'], 'reason' => 'no_stats'];
                 continue;
             }
 
@@ -306,11 +309,22 @@ function evaluatePixel(sample) {
             $validCount  = $sampleCount - $noDataCount;
             $mean        = $stats['mean'] ?? null;
 
-            // At least 10 valid 10m pixels; mean must be a real number (not NaN/null)
-            if ($validCount >= 10 && $mean !== null && !is_nan((float) $mean)) {
+            $debugIntervals[] = [
+                'interval'    => $interval['interval'],
+                'sampleCount' => $sampleCount,
+                'noDataCount' => $noDataCount,
+                'validCount'  => $validCount,
+                'mean'        => $mean,
+            ];
+
+            // At least 1 valid 10m pixel; mean must be a real number (not NaN/null)
+            if ($validCount >= 1 && $mean !== null && !is_nan((float) $mean)) {
+                Log::info('Sentinel-2: best interval selected', ['interval' => $interval['interval'], 'validCount' => $validCount, 'mean' => $mean]);
                 return $interval;
             }
         }
+
+        Log::warning('Sentinel-2: no valid interval found', ['intervals' => $debugIntervals]);
 
         return null;
     }
