@@ -102,12 +102,31 @@ class SmapSoilCard extends Component
 
     public function reloadData()
     {
-        $this->loadData();
-        
-        $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => 'Datos SMAP actualizados',
-        ]);
+        try {
+            $this->loading = true;
+            $this->error   = null;
+
+            $service = app(\App\Services\RemoteSensing\NasaEarthdataService::class);
+            $service->fetchEnrichedData($this->plot, includeArea: false);
+
+            $this->loadAvailableDates();
+            $this->loadData();
+
+            $this->dispatch('notify', [
+                'type'    => 'success',
+                'message' => 'Datos de humedad actualizados',
+            ]);
+
+        } catch (\Exception $e) {
+            $this->error = 'Error al actualizar datos de humedad';
+
+            $this->dispatch('notify', [
+                'type'    => 'error',
+                'message' => 'Error al actualizar datos de humedad',
+            ]);
+        } finally {
+            $this->loading = false;
+        }
     }
 
     public function render()

@@ -36,6 +36,18 @@
             @elseif($smapData)
                 <span class="text-sm text-zinc-500">{{ $smapData['date'] }}</span>
             @endif
+
+            <flux:button wire:click="reloadData" variant="ghost" size="sm"
+                wire:loading.attr="disabled" wire:target="reloadData"
+                title="Actualizar datos de humedad desde Open-Meteo">
+                <svg wire:loading.remove wire:target="reloadData" class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <svg wire:loading wire:target="reloadData" class="animate-spin w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+            </flux:button>
         </div>
     </div>
 
