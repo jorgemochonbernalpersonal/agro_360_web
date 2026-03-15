@@ -237,11 +237,10 @@ class Dashboard extends Component
 
     public function loadPlotData(bool $forceRefresh = false)
     {
-        if (!$this->selectedPlotId) return;
-        
+        if (!$this->selectedSigpacId) return;
+
         $this->isLoading = true;
-        $this->selectedPlot = Plot::find($this->selectedPlotId);
-        
+
         if (!$this->selectedPlot) {
             $this->isLoading = false;
             return;
@@ -481,11 +480,11 @@ class Dashboard extends Component
      */
     public function getSelectedSigpacCoordinates(): ?array
     {
-        if (!$this->selectedSigpacId || empty($this->availableSigpacs)) {
+        if (!$this->selectedSigpacId || empty($this->allSigpacs)) {
             return null;
         }
 
-        $sigpac = collect($this->availableSigpacs)
+        $sigpac = collect($this->allSigpacs)
             ->firstWhere('id', $this->selectedSigpacId);
 
         return $sigpac['centroid'] ?? null;
@@ -908,7 +907,7 @@ class Dashboard extends Component
     {
         if (!$this->ndviData) return;
         
-        $lastYearData = PlotRemoteSensing::where('plot_id', $this->selectedPlotId)
+        $lastYearData = PlotRemoteSensing::where('plot_id', $this->selectedPlot->id)
             ->whereMonth('image_date', now()->month)
             ->whereYear('image_date', now()->year - 1)
             ->first();
@@ -1005,10 +1004,11 @@ class Dashboard extends Component
         $nasaService->clearCache($this->selectedPlot);
         
         $weatherService = new WeatherService();
-        Cache::forget("weather_{$this->selectedPlotId}");
-        Cache::forget("forecast_{$this->selectedPlotId}_7");
-        Cache::forget("soil_{$this->selectedPlotId}");
-        Cache::forget("solar_{$this->selectedPlotId}");
+        $plotId = $this->selectedPlot?->id;
+        Cache::forget("weather_{$plotId}");
+        Cache::forget("forecast_{$plotId}_7");
+        Cache::forget("soil_{$plotId}");
+        Cache::forget("solar_{$plotId}");
         
         $this->loadPlotData(true);
         $this->dispatch('notify', [
@@ -1131,7 +1131,7 @@ class Dashboard extends Component
 
     public function downloadReport()
     {
-        if (!$this->selectedPlotId) return;
+        if (!$this->selectedPlot) return;
         
         try {
             $service = new \App\Services\RemoteSensing\RemoteSensingReportService();
