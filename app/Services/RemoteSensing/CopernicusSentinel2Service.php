@@ -258,24 +258,26 @@ function setup() {
     return {
         input: [{ bands: ["B03","B04","B05","B08","B11","SCL"], units: ["REFLECTANCE","REFLECTANCE","REFLECTANCE","REFLECTANCE","REFLECTANCE","DN"] }],
         output: [
-            { id: "ndvi",  bands: 1, sampleType: "FLOAT32" },
-            { id: "gndvi", bands: 1, sampleType: "FLOAT32" },
-            { id: "ndwi",  bands: 1, sampleType: "FLOAT32" },
-            { id: "ndre",  bands: 1, sampleType: "FLOAT32" }
+            { id: "ndvi",     bands: 1, sampleType: "FLOAT32" },
+            { id: "gndvi",    bands: 1, sampleType: "FLOAT32" },
+            { id: "ndwi",     bands: 1, sampleType: "FLOAT32" },
+            { id: "ndre",     bands: 1, sampleType: "FLOAT32" },
+            { id: "dataMask", bands: 1, sampleType: "UINT8"   }
         ]
     };
 }
 function evaluatePixel(sample) {
     // SCL cloud mask: 3=shadow 8=medium cloud 9=high cloud 10=thin cirrus
     if (sample.SCL==3||sample.SCL==8||sample.SCL==9||sample.SCL==10) {
-        return { ndvi:[NaN], gndvi:[NaN], ndwi:[NaN], ndre:[NaN] };
+        return { ndvi:[NaN], gndvi:[NaN], ndwi:[NaN], ndre:[NaN], dataMask:[0] };
     }
     var eps=1e-10, b03=sample.B03, b04=sample.B04, b05=sample.B05, b08=sample.B08, b11=sample.B11;
     return {
-        ndvi:  [(b08-b04)/(b08+b04+eps)],
-        gndvi: [(b08-b03)/(b08+b03+eps)],
-        ndwi:  [(b08-b11)/(b08+b11+eps)],
-        ndre:  [(b08-b05)/(b08+b05+eps)]
+        ndvi:     [(b08-b04)/(b08+b04+eps)],
+        gndvi:    [(b08-b03)/(b08+b03+eps)],
+        ndwi:     [(b08-b11)/(b08+b11+eps)],
+        ndre:     [(b08-b05)/(b08+b05+eps)],
+        dataMask: [1]
     };
 }';
     }
