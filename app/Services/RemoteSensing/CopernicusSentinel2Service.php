@@ -338,9 +338,9 @@ function evaluatePixel(sample) {
      */
     private function findBestInterval(array $intervals, ?float $areaHa = null): ?array
     {
-        // Adaptive minimum: 5% of estimated pixels at 10m resolution, min 5
-        $estimatedPixels = max(1, (int) round(($areaHa ?? 0.5) * 10000)); // ha → m², each pixel = 100m²
-        $minPixels = max(5, (int) round($estimatedPixels * 0.05));
+        // Base minimum from estimated area at 10m resolution (5% of expected pixel count)
+        $estimatedPixels  = max(1, (int) round(($areaHa ?? 0.5) * 10000)); // ha → m², each pixel = 100m²
+        $minFromArea      = max(5, (int) round($estimatedPixels * 0.05));
 
         // Most recent first
         usort($intervals, fn($a, $b) => strcmp($b['interval']['to'], $a['interval']['to']));
@@ -359,6 +359,11 @@ function evaluatePixel(sample) {
             $noDataCount = (int) ($stats['noDataCount'] ?? $sampleCount);
             $validCount  = $sampleCount - $noDataCount;
             $mean        = $stats['mean'] ?? null;
+
+            // Cap minPixels by 50% of actual coverage so tiny parcels (sampleCount=1,2...)
+            // are never blocked by an unreachable threshold based on area estimate alone.
+            $minFromSample = max(1, (int) floor($sampleCount * 0.5));
+            $minPixels     = min($minFromArea, $minFromSample);
 
             $debugIntervals[] = [
                 'interval'    => $interval['interval'],
