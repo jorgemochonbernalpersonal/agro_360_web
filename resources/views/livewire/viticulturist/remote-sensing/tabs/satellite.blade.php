@@ -26,21 +26,19 @@
             </button>
         @endif
 
-        @if(!$ndviData || ($ndviData->ndvi_mean ?? 0) == 0)
-            <button wire:click="requestDataForDate"
-                    wire:loading.attr="disabled"
-                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-medium rounded-lg transition-all shadow-md disabled:opacity-50">
-                <svg wire:loading.remove wire:target="requestDataForDate" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-                <svg wire:loading wire:target="requestDataForDate" class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
-                <span wire:loading.remove wire:target="requestDataForDate">🛰️ Cargar Datos NASA</span>
-                <span wire:loading wire:target="requestDataForDate">Cargando...</span>
-            </button>
-        @endif
+        <button wire:click="requestDataForDate"
+                wire:loading.attr="disabled"
+                class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-medium rounded-lg transition-all shadow-md disabled:opacity-50">
+            <svg wire:loading.remove wire:target="requestDataForDate" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            <svg wire:loading wire:target="requestDataForDate" class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span wire:loading.remove wire:target="requestDataForDate">🛰️ {{ $ndviData && ($ndviData->ndvi_mean ?? 0) > 0 ? 'Actualizar Sentinel-2' : 'Cargar Datos Sentinel-2' }}</span>
+            <span wire:loading wire:target="requestDataForDate">Cargando...</span>
+        </button>
     </div>
 </div>
 
@@ -62,9 +60,9 @@
                     @endif.</p>
                     <p class="font-medium">🎯 ¿Qué hacer?</p>
                     <ul class="list-disc list-inside space-y-1 ml-2">
-                        <li>Haz clic en <strong>"🛰️ Cargar Datos NASA"</strong> para obtener datos satelitales actuales</li>
-                        <li>Los datos se cargarán directamente desde NASA Earthdata (gratuito)</li>
-                        <li>Verás NDVI, humedad, temperatura y más indicadores en 30-60 segundos</li>
+                        <li>Haz clic en <strong>"🛰️ Cargar Datos Sentinel-2"</strong> para obtener datos satelitales actuales</li>
+                        <li>Los datos se cargarán desde Copernicus/Sentinel-2 a 10m de resolución (gratuito)</li>
+                        <li>Verás NDVI, NDWI, GNDVI y más indicadores en 30-60 segundos</li>
                     </ul>
                 </div>
 
