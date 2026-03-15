@@ -220,10 +220,10 @@ class CopernicusSentinel2Service
                     'resy'                => 10,
                 ],
                 'calculations' => [
-                    'ndvi'  => ['statistics' => []],
-                    'gndvi' => ['statistics' => []],
-                    'ndwi'  => ['statistics' => []],
-                    'ndre'  => ['statistics' => []],
+                    'ndvi'  => ['statistics' => new \stdClass()],
+                    'gndvi' => ['statistics' => new \stdClass()],
+                    'ndwi'  => ['statistics' => new \stdClass()],
+                    'ndre'  => ['statistics' => new \stdClass()],
                 ],
             ]);
 
