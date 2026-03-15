@@ -170,32 +170,22 @@
                         <label class="block text-sm font-semibold text-zinc-800 mb-3">📍 Selecciona recinto a analizar:</label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             @foreach($availableSigpacs as $sigpac)
+                                @php $isSelected = $selectedSigpacId == $sigpac['id']; @endphp
                                 <button wire:click="$set('selectedSigpacId', {{ $sigpac['id'] }})"
                                         wire:key="sigpac-btn-{{ $sigpac['id'] }}"
-                                        class="text-left p-3 rounded-lg border-2 transition-all
-                                            {{ $selectedSigpacId == $sigpac['id']
-                                                ? 'border-green-500 bg-green-50 shadow-md'
-                                                : 'border-zinc-300 bg-white hover:border-blue-400' }}">
+                                        class="text-left p-3 rounded-lg border-2 transition-all {{ $isSelected ? 'border-green-500 bg-green-50 shadow-md' : 'border-zinc-300 bg-white hover:border-blue-400' }}">
                                     <div class="flex items-start gap-2">
-                                        <div class="mt-0.5">
-                                            @if($selectedSigpacId == $sigpac['id'])
-                                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                                                </svg>
-                                            @else
-                                                <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 20 20">
-                                                    <circle cx="10" cy="10" r="8" stroke-width="2"/>
-                                                </svg>
-                                            @endif
-                                        </div>
+                                        <flux:icon wire:ignore
+                                            icon="{{ $isSelected ? 'check-circle' : 'circle' }}"
+                                            class="w-5 h-5 mt-0.5 shrink-0 {{ $isSelected ? 'text-green-600' : 'text-zinc-400' }}" />
                                         <div class="flex-1">
-                                            <div class="text-sm font-semibold {{ $selectedSigpacId == $sigpac['id'] ? 'text-green-900' : 'text-zinc-900' }}">
+                                            <div class="text-sm font-semibold {{ $isSelected ? 'text-green-900' : 'text-zinc-900' }}">
                                                 {{ $sigpac['display_name'] }}
                                             </div>
-                                            <div class="text-xs {{ $selectedSigpacId == $sigpac['id'] ? 'text-green-700' : 'text-zinc-600' }} mt-1">
+                                            <div class="text-xs {{ $isSelected ? 'text-green-700' : 'text-zinc-600' }} mt-1">
                                                 📏 {{ number_format($sigpac['area_ha'], 2) }} ha
                                                 @if($sigpac['centroid'])
-                                                    <br>📍 {{ number_format($sigpac['centroid']['lat'], 4) }}°, {{ number_format($sigpac['centroid']['lng'], 4) }}°
+                                                    · {{ number_format($sigpac['centroid']['lat'], 4) }}°, {{ number_format($sigpac['centroid']['lng'], 4) }}°
                                                 @endif
                                             </div>
                                         </div>
