@@ -1,36 +1,35 @@
-{{-- Tab Suelo: humedad, temperatura y SMAP NASA --}}
+{{-- Tab Suelo: humedad, temperatura y Open-Meteo --}}
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-5 border border-amber-200">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold text-zinc-600">Humedad Suelo</span>
-            <span class="text-2xl">🌱</span>
+<div class="grid grid-cols-3 gap-3">
+    {{-- Humedad Suelo --}}
+    <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
+        <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">Humedad Suelo</div>
+        <div class="text-2xl font-bold text-amber-600">{{ $soil['soil_moisture'] ?? '—' }}%</div>
+        <div class="mt-2 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+            <div class="bg-amber-400 h-full rounded-full" style="width: {{ min(100, $soil['soil_moisture'] ?? 0) }}%"></div>
         </div>
-        <div class="text-4xl font-bold text-amber-700">{{ $soil['soil_moisture'] ?? '--' }}%</div>
-        <div class="w-full bg-zinc-200 rounded-full h-3 mt-2">
-            <div class="h-3 rounded-full bg-gradient-to-r from-amber-300 to-amber-600" style="width: {{ min(100, $soil['soil_moisture'] ?? 0) }}%"></div>
-        </div>
+        <div class="text-xs text-zinc-400 mt-1">volumétrico</div>
     </div>
 
-    <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-5 border border-orange-200">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold text-zinc-600">Temp. Suelo</span>
-            <span class="text-2xl">🌡️</span>
+    {{-- Temp. Suelo --}}
+    <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
+        <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">Temp. Suelo</div>
+        <div class="text-2xl font-bold text-orange-600">
+            {{ $soil['soil_temperature'] !== null ? number_format($soil['soil_temperature'], 1).'°C' : '—' }}
         </div>
-        <div class="text-4xl font-bold text-orange-700">{{ $soil['soil_temperature'] ?? '--' }}°C</div>
+        <div class="text-xs text-zinc-400 mt-1">superficie</div>
     </div>
 
-    <div class="bg-gradient-to-br {{ $waterStress['bg'] }} rounded-lg p-5 border border-green-200">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold text-zinc-600">Estrés Hídrico</span>
-            <span class="text-2xl">{{ $waterStress['emoji'] }}</span>
-        </div>
-        <div class="text-4xl font-bold {{ $waterStress['color'] }}">{{ $waterStress['text'] }}</div>
+    {{-- Estrés Hídrico --}}
+    <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
+        <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">Estrés Hídrico</div>
+        <div class="text-2xl font-bold {{ $waterStress['color'] }}">{{ $waterStress['text'] }}</div>
+        <div class="text-xs text-zinc-400 mt-1">índice calculado</div>
     </div>
 </div>
 
-{{-- Humedad SMAP (NASA) --}}
+{{-- Humedad de Suelo (Open-Meteo) --}}
 <div class="mt-6 pt-6 border-t border-zinc-100">
-    <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">Humedad SMAP (NASA)</h3>
+    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-4">Humedad de Suelo · Open-Meteo</p>
     @livewire('viticulturist.remote-sensing.smap-soil-card', ['plot' => $selectedPlot], key('smap-'.$selectedPlot->id))
 </div>
