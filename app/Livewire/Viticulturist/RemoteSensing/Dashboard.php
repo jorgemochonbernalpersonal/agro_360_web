@@ -358,13 +358,33 @@ class Dashboard extends Component
             return;
         }
 
-        \App\Jobs\UpdatePlotSentinel2Job::dispatch($this->selectedPlot, $this->selectedSigpacId)
-            ->onQueue('remote-sensing');
+        try {
+            $service = app(\App\Services\RemoteSensing\CopernicusSentinel2Service::class);
+            $result = $service->fetchAndStore($this->selectedPlot, $this->selectedSigpacId);
 
-        $this->dispatch('notify', [
-            'type' => 'info',
-            'message' => 'Solicitud enviada. Los datos estarán disponibles en ~1 minuto. Recarga la página para verlos.',
-        ]);
+            if ($result) {
+                $this->loadSatelliteData();
+                $this->loadSatelliteAvailableDates();
+                $this->dispatch('notify', [
+                    'type' => 'success',
+                    'message' => 'Datos Sentinel-2 actualizados correctamente.',
+                ]);
+            } else {
+                $this->dispatch('notify', [
+                    'type' => 'warning',
+                    'message' => 'No se pudieron obtener datos Sentinel-2 para esta parcela.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Sentinel-2 manual fetch failed', [
+                'plot_id' => $this->selectedPlot->id,
+                'error' => $e->getMessage(),
+            ]);
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al obtener datos: ' . $e->getMessage(),
+            ]);
+        }
     }
     
     /**
