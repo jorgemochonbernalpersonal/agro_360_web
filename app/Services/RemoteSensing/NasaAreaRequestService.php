@@ -34,10 +34,10 @@ class NasaAreaRequestService
      *
      * @param Plot $plot
      * @param string $token NASA auth token
-     * @param int|null $recintoId MultipartPlotSigpac (recinto) para usar su geometría
+     * @param int|null $plotSigpacId MultipartPlotSigpac (sigpac parcel) para usar su geometría
      * @return array|null Task info or null
      */
-    public function requestAreaData(Plot $plot, string $token, ?int $recintoId = null): ?array
+    public function requestAreaData(Plot $plot, string $token, ?int $plotSigpacId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockAreaStatistics($plot);
@@ -51,7 +51,7 @@ class NasaAreaRequestService
         }
 
         try {
-            $polygon = $this->getPlotPolygon($plot, $recintoId);
+            $polygon = $this->getPlotPolygon($plot, $plotSigpacId);
             
             if (!$polygon) {
                 Log::warning('Plot has no polygon geometry', ['plot_id' => $plot->getKey()]);
@@ -248,16 +248,16 @@ class NasaAreaRequestService
     }
 
     /**
-     * Get plot polygon from SIGPAC geometry (usa recinto seleccionado si se pasa recintoId)
+     * Get plot polygon from SIGPAC geometry (uses selected sigpac parcel if plotSigpacId is passed)
      */
-    private function getPlotPolygon(Plot $plot, ?int $recintoId = null): ?array
+    private function getPlotPolygon(Plot $plot, ?int $plotSigpacId = null): ?array
     {
         $query = $plot->multiplePlotSigpacs()
             ->whereNotNull('plot_geometry_id')
             ->with('plotGeometry');
 
-        if ($recintoId) {
-            $query->where('id', $recintoId);
+        if ($plotSigpacId) {
+            $query->where('id', $plotSigpacId);
         }
 
         $multipart = $query->first();

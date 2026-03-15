@@ -25,8 +25,8 @@ class Dashboard extends Component
     #[Url(as: 'tab')]
     public string $activeTab = 'satellite';
     
-    #[Url(as: 'recinto')]
-    public ?int $selectedRecintoId = null;
+    #[Url(as: 'sigpac')]
+    public ?int $selectedSigpacId = null;
     
     // All plots for selector
     public $plots = [];
@@ -34,7 +34,7 @@ class Dashboard extends Component
     
     // Selected plot data
     public ?Plot $selectedPlot = null;
-    public array $availableRecintos = [];
+    public array $availableSigpacs = [];
     public ?PlotRemoteSensing $ndviData = null;
     public array $historicalData = [];
     public ?float $lastYearNdvi = null;
@@ -110,8 +110,8 @@ class Dashboard extends Component
         }
         
         if ($this->selectedPlotId) {
-            $this->loadAvailableRecintos();
-            $this->autoSelectRecinto();
+            $this->loadAvailableSigpacs();
+            $this->autoSelectSigpac();
             $this->loadPlotData();
         }
     }
@@ -124,12 +124,12 @@ class Dashboard extends Component
         }
 
         $this->selectedPlot = Plot::find($this->selectedPlotId);
-        $this->loadAvailableRecintos();
-        $this->autoSelectRecinto();
+        $this->loadAvailableSigpacs();
+        $this->autoSelectSigpac();
         $this->loadPlotData();
     }
     
-    public function updatedSelectedRecintoId()
+    public function updatedSelectedSigpacId()
     {
         $this->loadPlotData(forceRefresh: true);
     }
@@ -292,21 +292,24 @@ class Dashboard extends Component
     private function loadSatelliteAvailableDates()
     {
         if (!$this->selectedPlot) return;
-        
-        $dates = $this->selectedPlot->remoteSensingData()
-            ->whereNotNull('ndvi_mean')
-            ->orderBy('image_date', 'desc')
+
+        $query = $this->selectedPlot->remoteSensingData()
+            ->whereNotNull('ndvi_mean');
+
+        if ($this->selectedSigpacId) {
+            $query->where('multipart_plot_sigpac_id', $this->selectedSigpacId);
+        }
+
+        $dates = $query->orderBy('image_date', 'desc')
             ->limit(30)
             ->pluck('image_date')
             ->map(fn($date) => $date->format('Y-m-d'))
             ->toArray();
-        
+
         $this->satelliteAvailableDates = $dates;
-        
-        // Set default to latest if not selected
-        if (empty($this->satelliteSelectedDate) && !empty($dates)) {
-            $this->satelliteSelectedDate = $dates[0];
-        }
+
+        // Reset date selection when sigpac changes so we show latest for the new sigpac parcel
+        $this->satelliteSelectedDate = $dates[0] ?? null;
     }
     
     /**
@@ -315,19 +318,20 @@ class Dashboard extends Component
     private function loadSatelliteData(bool $forceRefresh = false)
     {
         if (!$this->selectedPlot) return;
-        
-        $nasaService = app(NasaEarthdataService::class);
-        
-        // If specific date selected, load that date
+
+        $query = $this->selectedPlot->remoteSensingData()
+            ->whereNotNull('ndvi_mean');
+
+        if ($this->selectedSigpacId) {
+            $query->where('multipart_plot_sigpac_id', $this->selectedSigpacId);
+        }
+
         if ($this->satelliteSelectedDate) {
-            $this->ndviData = $this->selectedPlot->remoteSensingData()
-                ->whereDate('image_date', $this->satelliteSelectedDate)
-                ->whereNotNull('ndvi_mean')
+            $this->ndviData = $query->whereDate('image_date', $this->satelliteSelectedDate)
                 ->orderBy('image_date', 'desc')
                 ->first();
         } else {
-            // Load latest data
-            $this->ndviData = $nasaService->getLatestData($this->selectedPlot, $forceRefresh);
+            $this->ndviData = $query->orderBy('image_date', 'desc')->first();
         }
     }
     
@@ -354,7 +358,7 @@ class Dashboard extends Component
             return;
         }
 
-        \App\Jobs\UpdatePlotSentinel2Job::dispatch($this->selectedPlot)
+        \App\Jobs\UpdatePlotSentinel2Job::dispatch($this->selectedPlot, $this->selectedSigpacId)
             ->onQueue('remote-sensing');
 
         $this->dispatch('notify', [
@@ -405,16 +409,16 @@ class Dashboard extends Component
     }
     
     /**
-     * Load available recintos for selected plot
+     * Load available sigpac parcels for selected plot
      */
-    private function loadAvailableRecintos()
+    private function loadAvailableSigpacs()
     {
         if (!$this->selectedPlot) {
-            $this->availableRecintos = [];
+            $this->availableSigpacs = [];
             return;
         }
-        
-        $this->availableRecintos = $this->selectedPlot->multiplePlotSigpacs()
+
+        $this->availableSigpacs = $this->selectedPlot->multiplePlotSigpacs()
             ->whereNotNull('plot_geometry_id')
             ->with(['sigpacCode', 'plotGeometry'])
             ->get()
@@ -444,34 +448,34 @@ class Dashboard extends Component
     }
     
     /**
-     * Auto-select first recinto
+     * Auto-select first sigpac parcel
      */
-    private function autoSelectRecinto()
+    private function autoSelectSigpac()
     {
-        if (empty($this->availableRecintos)) {
-            $this->selectedRecintoId = null;
+        if (empty($this->availableSigpacs)) {
+            $this->selectedSigpacId = null;
             return;
         }
-        
+
         // Auto-select first if none selected
-        if (!$this->selectedRecintoId || !collect($this->availableRecintos)->contains('id', $this->selectedRecintoId)) {
-            $this->selectedRecintoId = $this->availableRecintos[0]['id'];
+        if (!$this->selectedSigpacId || !collect($this->availableSigpacs)->contains('id', $this->selectedSigpacId)) {
+            $this->selectedSigpacId = $this->availableSigpacs[0]['id'];
         }
     }
     
     /**
-     * Get coordinates of selected recinto (usado por vista y para pasar a NASA)
+     * Get coordinates of selected sigpac parcel (usado por vista y para pasar a NASA)
      */
-    public function getSelectedRecintoCoordinates(): ?array
+    public function getSelectedSigpacCoordinates(): ?array
     {
-        if (!$this->selectedRecintoId || empty($this->availableRecintos)) {
+        if (!$this->selectedSigpacId || empty($this->availableSigpacs)) {
             return null;
         }
-        
-        $recinto = collect($this->availableRecintos)
-            ->firstWhere('id', $this->selectedRecintoId);
-        
-        return $recinto['centroid'] ?? null;
+
+        $sigpac = collect($this->availableSigpacs)
+            ->firstWhere('id', $this->selectedSigpacId);
+
+        return $sigpac['centroid'] ?? null;
     }
 
     /**

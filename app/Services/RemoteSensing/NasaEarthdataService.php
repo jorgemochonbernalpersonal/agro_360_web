@@ -57,7 +57,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     /**
      * Get the latest NDVI data for a plot
      * 
-     * @param array|null $coordinates Override ['lat'=>x,'lon'=>y] del recinto seleccionado (MultipartPlotSigpac)
+     * @param array|null $coordinates Override ['lat'=>x,'lon'=>y] of the selected sigpac parcel (MultipartPlotSigpac)
      */
     public function getLatestData(Plot $plot, bool $forceRefresh = false, ?array $coordinates = null): ?PlotRemoteSensing
     {
@@ -126,7 +126,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     /**
      * Fetch NDVI data from NASA API or generate mock
      * 
-     * @param array|null $coordinates Override del recinto seleccionado ['lat','lng'|'lon']
+     * @param array|null $coordinates Override for the selected sigpac parcel ['lat','lng'|'lon']
      */
     private function fetchNdviData(Plot $plot, ?array $coordinates = null): ?array
     {
@@ -262,7 +262,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
     }
 
     /**
-     * Get plot center coordinates (usa recinto seleccionado si se pasan coordinates)
+     * Get plot center coordinates (uses selected sigpac parcel if coordinates are passed)
      */
     private function getPlotBoundingBox(Plot $plot, ?array $coordinates = null): array
     {
@@ -506,11 +506,11 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
      *
      * @param Plot $plot
      * @param bool $includeArea Whether to include area statistics
-     * @param array|null $coordinates Coordenadas del recinto seleccionado ['lat','lng']
-     * @param int|null $recintoId ID de MultipartPlotSigpac para polygon area
+     * @param array|null $coordinates Coordinates of the selected sigpac parcel ['lat','lng']
+     * @param int|null $plotSigpacId ID of MultipartPlotSigpac for polygon area
      * @return PlotRemoteSensing|null
      */
-    public function fetchEnrichedData(Plot $plot, bool $includeArea = false, ?array $coordinates = null, ?int $recintoId = null): ?PlotRemoteSensing
+    public function fetchEnrichedData(Plot $plot, bool $includeArea = false, ?array $coordinates = null, ?int $plotSigpacId = null): ?PlotRemoteSensing
     {
         $result = $this->getLatestData($plot, true, $coordinates);
 
@@ -544,7 +544,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             }
 
             if ($includeArea) {
-                $areaStats = $this->areaService->requestAreaData($plot, $token, $recintoId);
+                $areaStats = $this->areaService->requestAreaData($plot, $token, $plotSigpacId);
                 
                 if ($areaStats && isset($areaStats['task_id'])) {
                     // Store task ID in metadata for later retrieval
@@ -599,7 +599,7 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
      * @param bool $includeArea Whether to include area statistics
      * @return PlotRemoteSensing|null
      */
-    public function fetchUltraEnrichedData(Plot $plot, bool $includeArea = false, ?int $recintoId = null): ?PlotRemoteSensing
+    public function fetchUltraEnrichedData(Plot $plot, bool $includeArea = false, ?int $plotSigpacId = null): ?PlotRemoteSensing
     {
         $token = $this->getAuthToken();
 
@@ -610,22 +610,22 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
 
         try {
             // Start with VIIRS NDVI (better than MODIS)
-            $viirsData = $this->viirsService->fetchVIIRSNDVI($plot, $token, $recintoId);
+            $viirsData = $this->viirsService->fetchVIIRSNDVI($plot, $token, $plotSigpacId);
 
             // Fetch spectral bands for real indices
-            $spectralData = $this->spectralService->fetchSpectralBands($plot, $token, $recintoId);
+            $spectralData = $this->spectralService->fetchSpectralBands($plot, $token, $plotSigpacId);
 
             // Fetch official LAI
-            $laiData = $this->laiService->fetchOfficialLAI($plot, $token, $recintoId);
+            $laiData = $this->laiService->fetchOfficialLAI($plot, $token, $plotSigpacId);
 
             // Fetch LST
-            $lstData = $this->lstService->fetchLSTData($plot, $token, null, $recintoId);
+            $lstData = $this->lstService->fetchLSTData($plot, $token, null, $plotSigpacId);
 
             // Fetch SMAP soil moisture
-            $smapData = $this->smapService->fetchSoilMoisture($plot, $token, $recintoId);
+            $smapData = $this->smapService->fetchSoilMoisture($plot, $token, $plotSigpacId);
 
             // Fetch official ET
-            $etData = $this->etService->fetchEvapotranspiration($plot, $token, $recintoId);
+            $etData = $this->etService->fetchEvapotranspiration($plot, $token, $plotSigpacId);
 
             // Merge all data
             $mergedData = array_merge(

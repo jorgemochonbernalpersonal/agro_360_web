@@ -21,15 +21,14 @@ class MapController extends Controller
         // Verificar si se debe mostrar todo el municipio
         $municipalityId = $request->query('municipality');
         
-        // Verificar si es un recinto específico (MultipartPlotSigpac)
-        $recintoId = $request->query('recinto');
-        
-        // Verificar si es un código SIGPAC individual
+        // Check if a specific sigpac parcel (MultipartPlotSigpac) is requested
+        $plotSigpacId = $request->query('recinto'); // URL param kept as 'recinto' for backwards compat
+
+        // Check if it is an individual SIGPAC code lookup
         $isSigpac = $request->query('sigpac');
-        
-        // Si es recinto específico, mostrar solo ese recinto
-        if ($recintoId) {
-            return $this->showRecinto($recintoId);
+
+        if ($plotSigpacId) {
+            return $this->showRecinto($plotSigpacId);
         }
         
         // Si es código SIGPAC, intentar primero como SigpacCode

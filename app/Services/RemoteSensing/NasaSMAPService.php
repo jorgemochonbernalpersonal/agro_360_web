@@ -32,14 +32,14 @@ class NasaSMAPService
     /**
      * Fetch SMAP soil moisture
      */
-    public function fetchSoilMoisture(Plot $plot, string $token, ?int $recintoId = null): ?array
+    public function fetchSoilMoisture(Plot $plot, string $token, ?int $plotSigpacId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockSMAP($plot);
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
+            $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId);
 
             // Open-Meteo soil moisture: free, no auth, no IP rate limit
             $response = Http::timeout(30)

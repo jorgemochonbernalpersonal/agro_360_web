@@ -33,7 +33,7 @@ class NasaVIIRSService
     /**
      * Fetch VIIRS NDVI (better than MODIS for small plots)
      */
-    public function fetchVIIRSNDVI(Plot $plot, string $token, ?int $recintoId = null): ?array
+    public function fetchVIIRSNDVI(Plot $plot, string $token, ?int $plotSigpacId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockVIIRS($plot);
@@ -44,7 +44,7 @@ class NasaVIIRSService
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
+            $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId);
             $startJulian = 'A' . now()->subDays(16)->format('Y') . str_pad(now()->subDays(16)->dayOfYear, 3, '0', STR_PAD_LEFT);
             $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 

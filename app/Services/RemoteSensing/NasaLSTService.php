@@ -30,15 +30,15 @@ class NasaLSTService
     /**
      * Fetch LST data for a plot
      *
-     * @param array|null $coordinates Override del recinto ['lat','lng'|'lon']
+     * @param array|null $coordinates Override for sigpac parcel ['lat','lng'|'lon']
      */
-    public function fetchLSTData(Plot $plot, string $token, ?array $coordinates = null, ?int $recintoId = null): ?array
+    public function fetchLSTData(Plot $plot, string $token, ?array $coordinates = null, ?int $plotSigpacId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockLST($plot);
         }
 
-        $coords = CoordinatesHelper::getCoordinates($plot, $recintoId, $coordinates);
+        $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId, $coordinates);
 
         if (!$this->rateLimitService->canMakeNasaRequest()) {
             return $this->fetchFromOpenMeteo($coords, $plot->id);

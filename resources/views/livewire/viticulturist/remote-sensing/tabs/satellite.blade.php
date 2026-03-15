@@ -70,10 +70,10 @@
                     <p class="font-semibold text-zinc-800 mb-2">📋 Verifica que:</p>
                     <div class="space-y-1 text-zinc-700">
                         <div class="flex items-center gap-2">
-                            @php $recintoCoords = $this->getSelectedRecintoCoordinates(); @endphp
-                            @if($recintoCoords)
+                            @php $sigpacCoords = $this->getSelectedSigpacCoordinates(); @endphp
+                            @if($sigpacCoords)
                                 <span class="text-green-600">✓</span>
-                                <span>El recinto tiene coordenadas (Lat: {{ number_format($recintoCoords['lat'], 4) }}°, Lon: {{ number_format($recintoCoords['lng'], 4) }}°)</span>
+                                <span>El recinto tiene coordenadas (Lat: {{ number_format($sigpacCoords['lat'], 4) }}°, Lon: {{ number_format($sigpacCoords['lng'], 4) }}°)</span>
                             @else
                                 <span class="text-red-600">✗</span>
                                 <span class="text-red-600 font-semibold">⚠️ El recinto seleccionado NO tiene geometría configurada</span>

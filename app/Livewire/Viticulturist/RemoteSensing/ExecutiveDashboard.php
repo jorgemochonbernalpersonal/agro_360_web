@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\DB;
 class ExecutiveDashboard extends Component
 {
     public ?int $selectedPlotId = null;
-    public ?int $selectedRecintoId = null;
+    public ?int $selectedSigpacId = null;
     public $plots = [];
-    public $recintos = [];
+    public $sigpacs = [];
     public ?Plot $selectedPlot = null;
     public array $summary = [];
     public bool $loading = false;
@@ -31,17 +31,17 @@ class ExecutiveDashboard extends Component
 
     public function mount()
     {
-        $this->loadRecintos();
+        $this->loadSigpacs();
 
-        if ($this->recintos->isNotEmpty()) {
-            $first = $this->recintos->first();
-            $this->selectedRecintoId = $first['id'];
+        if ($this->sigpacs->isNotEmpty()) {
+            $first = $this->sigpacs->first();
+            $this->selectedSigpacId = $first['id'];
             $this->selectedPlotId    = $first['plot_id'];
             $this->loadSummary();
         }
     }
 
-    private function loadRecintos(): void
+    private function loadSigpacs(): void
     {
         // Cargar plots con geometría para el usuario
         $this->plots = Plot::forUser(auth()->user())
@@ -50,8 +50,8 @@ class ExecutiveDashboard extends Component
             ->orderBy('name')
             ->get();
 
-        // Construir lista plana de recintos: un item por MultipartPlotSigpac con geometría
-        $this->recintos = $this->plots->flatMap(function (Plot $plot) {
+        // Build flat list of sigpac parcels: one item per MultipartPlotSigpac with geometry
+        $this->sigpacs = $this->plots->flatMap(function (Plot $plot) {
             return $plot->multiplePlotSigpacs()
                 ->whereNotNull('plot_geometry_id')
                 ->with('sigpacCode')
@@ -142,10 +142,10 @@ class ExecutiveDashboard extends Component
         };
     }
 
-    public function updatedSelectedRecintoId(): void
+    public function updatedSelectedSigpacId(): void
     {
-        $recinto = $this->recintos->firstWhere('id', $this->selectedRecintoId);
-        $this->selectedPlotId = $recinto['plot_id'] ?? null;
+        $sigpac = $this->sigpacs->firstWhere('id', $this->selectedSigpacId);
+        $this->selectedPlotId = $sigpac['plot_id'] ?? null;
         $this->loadSummary();
     }
 
@@ -165,10 +165,10 @@ class ExecutiveDashboard extends Component
 
         $this->selectedPlotId = $plotId;
 
-        // Sync the recinto selector to the first recinto of this plot
-        $recinto = $this->recintos->firstWhere('plot_id', $plotId);
-        if ($recinto) {
-            $this->selectedRecintoId = $recinto['id'];
+        // Sync the sigpac selector to the first sigpac parcel of this plot
+        $sigpac = $this->sigpacs->firstWhere('plot_id', $plotId);
+        if ($sigpac) {
+            $this->selectedSigpacId = $sigpac['id'];
         }
 
         $this->loadSummary();

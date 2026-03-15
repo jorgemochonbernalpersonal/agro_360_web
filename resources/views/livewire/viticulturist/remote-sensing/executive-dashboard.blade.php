@@ -24,9 +24,9 @@
 
         <x-agro.page-header title="Teledetección" description="Estado satelital de tus parcelas">
             <x-slot:actions>
-                <flux:select wire:model.live="selectedRecintoId">
-                    @foreach($recintos as $recinto)
-                        <option value="{{ $recinto['id'] }}">{{ $recinto['display_name'] }}</option>
+                <flux:select wire:model.live="selectedSigpacId">
+                    @foreach($sigpacs as $sigpac)
+                        <option value="{{ $sigpac['id'] }}">{{ $sigpac['display_name'] }}</option>
                     @endforeach
                 </flux:select>
 

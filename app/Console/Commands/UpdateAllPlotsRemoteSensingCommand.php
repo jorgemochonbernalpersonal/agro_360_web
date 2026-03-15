@@ -3,81 +3,74 @@
 namespace App\Console\Commands;
 
 use App\Jobs\UpdatePlotSentinel2Job;
+use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Update remote sensing data for all active plots
- * Typically run via scheduled task (cron)
+ * Update remote sensing data for all active plots.
+ * Dispatches one job per sigpac parcel (MultipartPlotSigpac with geometry),
+ * so each SIGPAC polygon is analysed independently via Sentinel-2.
  */
 class UpdateAllPlotsRemoteSensingCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     */
     protected $signature = 'remote-sensing:update-all
-                            {--limit= : Limit number of plots to update}
+                            {--limit= : Limit number of sigpac parcels to update}
                             {--queue= : Queue name to use (default: default)}
                             {--delay= : Delay between jobs in seconds (default: 0)}';
 
-    /**
-     * The console command description.
-     */
-    protected $description = 'Update remote sensing data for all active plots';
+    protected $description = 'Update Sentinel-2 remote sensing data for all sigpac parcels of active plots';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(): int
     {
-        $this->info('🛰️  Starting remote sensing update for all plots...');
+        $this->info('🛰️  Starting Sentinel-2 update for all sigpac parcels...');
         $this->newLine();
 
-        // Get all plots with active subscriptions
-        $query = Plot::whereHas('viticulturist', function ($q) {
-            $q->whereHas('subscription', function ($sq) {
-                $sq->where('status', 'active')
-                    ->where('ends_at', '>', now());
-            });
-        })->orderBy('id');
+        // One job per sigpac parcel (multipart_plot_sigpac row with geometry) for plots with active subs
+        $query = MultipartPlotSigpac::whereNotNull('plot_geometry_id')
+            ->whereHas('plot.viticulturist.subscription', function ($sq) {
+                $sq->where('status', 'active')->where('ends_at', '>', now());
+            })
+            ->with('plot')
+            ->orderBy('plot_id')
+            ->orderBy('id');
 
-        // Apply limit if specified
         if ($limit = $this->option('limit')) {
             $query->limit((int) $limit);
         }
 
-        $plots = $query->get();
+        $plotSigpacs = $query->get();
 
-        if ($plots->isEmpty()) {
-            $this->warn('No plots found with active subscriptions.');
+        if ($plotSigpacs->isEmpty()) {
+            $this->warn('No sigpac parcels found for plots with active subscriptions.');
             return self::SUCCESS;
         }
 
-        $this->info("Found {$plots->count()} plots to update");
+        $this->info("Found {$plotSigpacs->count()} sigpac parcels to update");
         $this->newLine();
 
-        $bar = $this->output->createProgressBar($plots->count());
+        $bar      = $this->output->createProgressBar($plotSigpacs->count());
         $bar->start();
 
-        $queued = 0;
-        $skipped = 0;
+        $queued    = 0;
+        $skipped   = 0;
         $queueName = $this->option('queue') ?? 'default';
-        $delay = (int) ($this->option('delay') ?? 0);
+        $delay     = (int) ($this->option('delay') ?? 0);
 
-        foreach ($plots as $plot) {
+        foreach ($plotSigpacs as $plotSigpac) {
             try {
-                // Dispatch job to queue
-                UpdatePlotSentinel2Job::dispatch($plot)
+                UpdatePlotSentinel2Job::dispatch($plotSigpac->plot, $plotSigpac->id)
                     ->onQueue($queueName)
                     ->delay(now()->addSeconds($delay * $queued));
-                
+
                 $queued++;
             } catch (\Exception $e) {
                 $skipped++;
-                Log::error('Failed to queue plot update', [
-                    'plot_id' => $plot->id,
-                    'error' => $e->getMessage(),
+                Log::error('Failed to queue sigpac parcel update', [
+                    'plot_id'        => $plotSigpac->plot_id,
+                    'plot_sigpac_id' => $plotSigpac->id,
+                    'error'          => $e->getMessage(),
                 ]);
             }
 
@@ -87,24 +80,23 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
         $bar->finish();
         $this->newLine(2);
 
-        // Summary
-        $this->info("✅ Update jobs queued successfully!");
+        $this->info('✅ Update jobs queued successfully!');
         $this->table(
             ['Metric', 'Count'],
             [
-                ['Total plots', $plots->count()],
-                ['Jobs queued', $queued],
-                ['Skipped', $skipped],
-                ['Queue', $queueName],
-                ['Delay per job', $delay . 's'],
+                ['Total sigpac parcels', $plotSigpacs->count()],
+                ['Jobs queued',          $queued],
+                ['Skipped',              $skipped],
+                ['Queue',                $queueName],
+                ['Delay per job',        $delay . 's'],
             ]
         );
 
-        Log::info('Remote sensing update queued', [
-            'total' => $plots->count(),
-            'queued' => $queued,
+        Log::info('Remote sensing update queued (per sigpac parcel)', [
+            'total'   => $plotSigpacs->count(),
+            'queued'  => $queued,
             'skipped' => $skipped,
-            'queue' => $queueName,
+            'queue'   => $queueName,
         ]);
 
         return self::SUCCESS;

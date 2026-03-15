@@ -20,13 +20,13 @@ class CoordinatesHelper
      * Obtener coordenadas de una parcela desde su geometría
      * 
      * @param Plot $plot
-     * @param int|null $recintoId ID de MultipartPlotSigpac (recinto) para usar su PlotGeometry
+     * @param int|null $plotSigpacId ID de MultipartPlotSigpac (sigpac parcel) para usar su PlotGeometry
      * @param array|null $overrideCoords ['lat' => float, 'lng'|'lon' => float] para forzar coordenadas
      * @return array ['lat' => float, 'lon' => float]
      */
-    public static function getCoordinates(Plot $plot, ?int $recintoId = null, ?array $overrideCoords = null): array
+    public static function getCoordinates(Plot $plot, ?int $plotSigpacId = null, ?array $overrideCoords = null): array
     {
-        // 1. Override explícito (p.ej. desde recinto seleccionado en Dashboard)
+        // 1. Override explícito (p.ej. desde sigpac parcel seleccionado en Dashboard)
         if ($overrideCoords && isset($overrideCoords['lat'])) {
             $lon = $overrideCoords['lng'] ?? $overrideCoords['lon'] ?? self::DEFAULT_LON;
             if (self::isValidCoordinate($overrideCoords['lat'], $lon)) {
@@ -34,9 +34,9 @@ class CoordinatesHelper
             }
         }
 
-        // 2. Coordenadas del recinto seleccionado (MultipartPlotSigpac → PlotGeometry)
-        if ($recintoId) {
-            $mps = $plot->multiplePlotSigpacs()->with('plotGeometry')->find($recintoId);
+        // 2. Coordenadas del sigpac parcel seleccionado (MultipartPlotSigpac → PlotGeometry)
+        if ($plotSigpacId) {
+            $mps = $plot->multiplePlotSigpacs()->with('plotGeometry')->find($plotSigpacId);
             if ($mps?->plotGeometry) {
                 $centroid = $mps->plotGeometry->getCentroidAsArray();
                 if ($centroid && self::isValidCoordinate($centroid['lat'], $centroid['lng'])) {

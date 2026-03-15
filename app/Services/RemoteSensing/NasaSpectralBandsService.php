@@ -30,7 +30,7 @@ class NasaSpectralBandsService
     /**
      * Fetch spectral bands from VIIRS Surface Reflectance
      */
-    public function fetchSpectralBands(Plot $plot, string $token, ?int $recintoId = null): ?array
+    public function fetchSpectralBands(Plot $plot, string $token, ?int $plotSigpacId = null): ?array
     {
         if ($this->useMockData) {
             return $this->generateMockBands($plot);
@@ -41,7 +41,7 @@ class NasaSpectralBandsService
         }
 
         try {
-            $coords = CoordinatesHelper::getCoordinates($plot, $recintoId);
+            $coords = CoordinatesHelper::getCoordinates($plot, $plotSigpacId);
             $startJulian = 'A' . now()->subDays(8)->format('Y') . str_pad(now()->subDays(8)->dayOfYear, 3, '0', STR_PAD_LEFT);
             $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 

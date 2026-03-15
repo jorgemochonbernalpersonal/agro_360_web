@@ -96,11 +96,11 @@ class UpdateEnrichedRemoteSensingData extends Command
                 }
 
                 // Fetch data (ultra or standard enriched)
-                $recintoId = $this->option('recinto-id') ? (int) $this->option('recinto-id') : null;
+                $plotSigpacId = $this->option('recinto-id') ? (int) $this->option('recinto-id') : null;
                 if ($ultra) {
-                    $result = $this->service->fetchUltraEnrichedData($plot, $includeArea, $recintoId);
+                    $result = $this->service->fetchUltraEnrichedData($plot, $includeArea, $plotSigpacId);
                 } else {
-                    $result = $this->service->fetchEnrichedData($plot, $includeArea, null, $recintoId);
+                    $result = $this->service->fetchEnrichedData($plot, $includeArea, null, $plotSigpacId);
                 }
 
                 if ($result) {

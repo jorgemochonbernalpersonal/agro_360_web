@@ -14,6 +14,7 @@ class PlotRemoteSensing extends Model
 
     protected $fillable = [
         'plot_id',
+        'multipart_plot_sigpac_id',
         'image_date',
         'ndvi_mean',
         'ndvi_min',

@@ -23,29 +23,37 @@ class UpdatePlotSentinel2Job implements ShouldQueue
     public int $timeout = 90;
     public int $backoff = 120;
 
-    public function __construct(public readonly Plot $plot) {}
+    public function __construct(
+        public readonly Plot $plot,
+        public readonly ?int $plotSigpacId = null,
+    ) {}
 
     public function handle(CopernicusSentinel2Service $service): void
     {
-        $result = $service->fetchAndStore($this->plot);
+        $result = $service->fetchAndStore($this->plot, $this->plotSigpacId);
 
         if ($result) {
             Log::info('UpdatePlotSentinel2Job completed', [
                 'plot_id'    => $this->plot->id,
+                'plot_sigpac_id' => $this->plotSigpacId,
                 'ndvi'       => $result->ndvi_mean,
                 'gndvi'      => $result->gndvi,
                 'image_date' => $result->image_date?->toDateString(),
             ]);
         } else {
-            Log::warning('UpdatePlotSentinel2Job: no data returned', ['plot_id' => $this->plot->id]);
+            Log::warning('UpdatePlotSentinel2Job: no data returned', [
+                'plot_id'    => $this->plot->id,
+                'plot_sigpac_id' => $this->plotSigpacId,
+            ]);
         }
     }
 
     public function failed(\Throwable $e): void
     {
         Log::error('UpdatePlotSentinel2Job permanently failed', [
-            'plot_id' => $this->plot->id,
-            'error'   => $e->getMessage(),
+            'plot_id'    => $this->plot->id,
+            'plot_sigpac_id' => $this->plotSigpacId,
+            'error'      => $e->getMessage(),
         ]);
     }
 }

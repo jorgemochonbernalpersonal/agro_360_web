@@ -38,11 +38,11 @@ class CopernicusSentinel2Service
      * Fetch Sentinel-2 vegetation indices and store them.
      * Called by UpdatePlotSentinel2Job.
      */
-    public function fetchAndStore(Plot $plot): ?PlotRemoteSensing
+    public function fetchAndStore(Plot $plot, ?int $plotSigpacId = null): ?PlotRemoteSensing
     {
         try {
             $token    = $this->authenticate();
-            $geometry = $this->getPlotGeometry($plot);
+            $geometry = $this->getPlotGeometry($plot, $plotSigpacId);
 
             $to   = Carbon::now();
             $from = $to->copy()->subDays(30);
@@ -50,25 +50,26 @@ class CopernicusSentinel2Service
             $rawData = $this->fetchStatistics($token, $geometry, $from, $to);
 
             if (!$rawData) {
-                Log::warning('Sentinel-2: no data returned from Statistical API', ['plot_id' => $plot->id]);
-                return $this->repository->getLatestForPlot($plot);
+                Log::warning('Sentinel-2: no data returned from Statistical API', ['plot_id' => $plot->id, 'plot_sigpac_id' => $plotSigpacId]);
+                return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
             $best = $this->findBestInterval($rawData['data'] ?? []);
 
             if (!$best) {
-                Log::warning('Sentinel-2: no valid (cloud-free) interval found in last 30 days', ['plot_id' => $plot->id]);
-                return $this->repository->getLatestForPlot($plot);
+                Log::warning('Sentinel-2: no valid (cloud-free) interval found in last 30 days', ['plot_id' => $plot->id, 'plot_sigpac_id' => $plotSigpacId]);
+                return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
             // Use the end of the interval as the image date
             $imageDate = Carbon::parse($best['interval']['to'])->subDay();
-            $data      = $this->mapToStorageData($best, $imageDate, $plot);
+            $data      = $this->mapToStorageData($best, $imageDate, $plot, $plotSigpacId);
 
-            $result = $this->repository->createOrUpdate($plot, $imageDate, $data);
+            $result = $this->repository->createOrUpdate($plot, $imageDate, $data, $plotSigpacId);
 
             Log::info('Sentinel-2 data stored', [
                 'plot_id'    => $plot->id,
+                'plot_sigpac_id' => $plotSigpacId,
                 'image_date' => $imageDate->toDateString(),
                 'ndvi'       => $data['ndvi_mean'],
                 'gndvi'      => $data['gndvi'],
@@ -129,11 +130,20 @@ class CopernicusSentinel2Service
 
     /**
      * Build a GeoJSON geometry for the plot.
-     * Uses the stored polygon when available; falls back to a 200m bounding box.
+     * If $plotSigpacId (MultipartPlotSigpac.id) is provided, uses that specific sigpac parcel's polygon.
+     * Otherwise falls back to the first geometry, then a 200m bounding box.
      */
-    private function getPlotGeometry(Plot $plot): array
+    private function getPlotGeometry(Plot $plot, ?int $plotSigpacId = null): array
     {
-        $plotGeometry = $plot->plotGeometries()->first();
+        if ($plotSigpacId) {
+            $mps = \App\Models\MultipartPlotSigpac::where('id', $plotSigpacId)
+                ->where('plot_id', $plot->id)
+                ->with('plotGeometry')
+                ->first();
+            $plotGeometry = $mps?->plotGeometry;
+        } else {
+            $plotGeometry = $plot->plotGeometries()->first();
+        }
 
         if ($plotGeometry) {
             $points = $plotGeometry->getCoordinatesAsArray();
@@ -302,7 +312,7 @@ function evaluatePixel(sample) {
     /**
      * Map the API interval to PlotRemoteSensing column values.
      */
-    private function mapToStorageData(array $interval, Carbon $imageDate, Plot $plot): array
+    private function mapToStorageData(array $interval, Carbon $imageDate, Plot $plot, ?int $plotSigpacId = null): array
     {
         $outputs = $interval['outputs'];
 
@@ -336,7 +346,7 @@ function evaluatePixel(sample) {
             'satellite'      => 'SENTINEL-2',
             'data_source'    => 'copernicus',
             'health_status'  => $this->healthStatus($ndviFloat),
-            'trend'          => $this->trend($plot, $ndviFloat, $imageDate),
+            'trend'          => $this->trend($plot, $ndviFloat, $imageDate, $plotSigpacId),
         ];
     }
 
@@ -363,9 +373,9 @@ function evaluatePixel(sample) {
         };
     }
 
-    private function trend(Plot $plot, float $currentNdvi, Carbon $currentDate): string
+    private function trend(Plot $plot, float $currentNdvi, Carbon $currentDate, ?int $plotSigpacId = null): string
     {
-        $previous = $this->repository->getPreviousData($plot, $currentDate);
+        $previous = $this->repository->getPreviousData($plot, $currentDate, $plotSigpacId);
 
         if (!$previous) {
             return 'stable';
