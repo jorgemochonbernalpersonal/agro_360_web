@@ -155,8 +155,12 @@
             <div class="flex items-center">
                 <span class="text-lg mr-2">🛰️</span>
                 <div class="text-xs text-blue-700">
-                    <strong>Fuente:</strong> {{ $laiData['source'] }} - Algoritmo calibrado específicamente para vegetación.
-                    <strong>+15% más preciso</strong> que cálculos desde NDVI.
+                    <strong>Fuente:</strong> {{ $laiData['source'] }}
+                    @if(str_contains($laiData['source'], 'MODIS'))
+                        — Algoritmo calibrado específicamente para vegetación. <strong>+15% más preciso</strong> que estimaciones desde NDVI.
+                    @else
+                        — Estimación empírica basada en NDVI Sentinel-2 (fórmula LAI = -ln(1-NDVI) × 0.9).
+                    @endif
                 </div>
             </div>
         </div>
