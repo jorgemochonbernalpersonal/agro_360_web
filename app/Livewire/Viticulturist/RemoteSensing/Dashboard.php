@@ -441,11 +441,8 @@ class Dashboard extends Component
 
                 $area = null;
                 if ($geometry) {
-                    $result = \DB::selectOne(
-                        'SELECT ST_Area(coordinates) / 10000 as area_ha FROM plot_geometry WHERE id = ?',
-                        [$geometry->id]
-                    );
-                    $area = $result?->area_ha;
+                    $points = $geometry->getCoordinatesAsArray();
+                    $area   = $this->polygonAreaHa($points);
                 }
 
                 return [
@@ -1152,6 +1149,34 @@ class Dashboard extends Component
                 'message' => 'Error al generar el informe: ' . $e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Shoelace formula with per-latitude metre correction.
+     * Returns area in hectares from an array of ['lat'=>..., 'lng'=>...] points.
+     */
+    private function polygonAreaHa(array $points): float
+    {
+        $n = count($points);
+        if ($n < 3) return 0.0;
+
+        $latSum = array_sum(array_column($points, 'lat'));
+        $latRad = deg2rad($latSum / $n);
+
+        $mLat = 111320.0;
+        $mLng = 111320.0 * cos($latRad);
+
+        $area = 0.0;
+        for ($i = 0; $i < $n; $i++) {
+            $j    = ($i + 1) % $n;
+            $xi   = $points[$i]['lng'] * $mLng;
+            $yi   = $points[$i]['lat'] * $mLat;
+            $xj   = $points[$j]['lng'] * $mLng;
+            $yj   = $points[$j]['lat'] * $mLat;
+            $area += $xi * $yj - $xj * $yi;
+        }
+
+        return round(abs($area) / 2 / 10000, 2); // m² → ha
     }
 
     public function render()
