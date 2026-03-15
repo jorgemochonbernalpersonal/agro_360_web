@@ -9,6 +9,7 @@ use Livewire\Component;
 class OfficialLaiCard extends Component
 {
     public Plot $plot;
+    public ?int $sigpacId = null;
     public ?array $laiData = null;
     public ?array $fparData = null;
     public ?array $yieldEstimate = null;
@@ -19,25 +20,24 @@ class OfficialLaiCard extends Component
     public ?string $selectedDate = null;
     public array $availableDates = [];
 
-    public function mount(Plot $plot)
+    public function mount(Plot $plot, ?int $sigpacId = null)
     {
-        $this->plot = $plot;
+        $this->plot     = $plot;
+        $this->sigpacId = $sigpacId;
         $this->loadAvailableDates();
         $this->loadData();
     }
 
     public function loadAvailableDates()
     {
-        $dates = $this->plot->remoteSensingData()
-            ->whereNotNull('ndvi_mean')
-            ->orderBy('image_date', 'desc')
-            ->limit(30)
-            ->pluck('image_date')
-            ->map(fn($date) => $date->format('Y-m-d'))
-            ->toArray();
+        $query = $this->plot->remoteSensingData()->whereNotNull('ndvi_mean');
+        if ($this->sigpacId) {
+            $query->where('multipart_plot_sigpac_id', $this->sigpacId);
+        }
+        $dates = $query->orderBy('image_date', 'desc')->limit(30)
+            ->pluck('image_date')->map(fn($d) => $d->format('Y-m-d'))->toArray();
 
         $this->availableDates = $dates;
-
         if (empty($this->selectedDate) && !empty($dates)) {
             $this->selectedDate = $dates[0];
         }
@@ -54,9 +54,10 @@ class OfficialLaiCard extends Component
             $this->loading = true;
             $this->error = null;
 
-            $query = $this->plot->remoteSensingData()
-                ->whereNotNull('ndvi_mean');
-
+            $query = $this->plot->remoteSensingData()->whereNotNull('ndvi_mean');
+            if ($this->sigpacId) {
+                $query->where('multipart_plot_sigpac_id', $this->sigpacId);
+            }
             if ($this->selectedDate) {
                 $query->whereDate('image_date', $this->selectedDate);
             }
@@ -64,7 +65,7 @@ class OfficialLaiCard extends Component
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos disponibles para esta fecha';
+                $this->error = 'Sin datos para este recinto. Haz clic en "Actualizar Sentinel-2" para cargarlos.';
                 return;
             }
 

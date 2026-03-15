@@ -186,12 +186,12 @@
 {{-- Bandas Espectrales --}}
 <div class="mt-6 pt-6 border-t border-zinc-100">
     <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">Bandas Espectrales</h3>
-    @livewire('viticulturist.remote-sensing.spectral-bands-card', ['plot' => $selectedPlot], key('spectral-'.$selectedPlot->id))
+    @livewire('viticulturist.remote-sensing.spectral-bands-card', ['plot' => $selectedPlot, 'sigpacId' => $selectedSigpacId], key('spectral-'.$selectedPlot->id.'-'.$selectedSigpacId))
 </div>
 
 {{-- LAI Oficial NASA --}}
 <div class="mt-6 pt-6 border-t border-zinc-100">
     <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-4">LAI Oficial NASA</h3>
-    @livewire('viticulturist.remote-sensing.official-lai-card', ['plot' => $selectedPlot], key('lai-official-'.$selectedPlot->id))
+    @livewire('viticulturist.remote-sensing.official-lai-card', ['plot' => $selectedPlot, 'sigpacId' => $selectedSigpacId], key('lai-official-'.$selectedPlot->id.'-'.$selectedSigpacId))
 </div>
 
