@@ -236,7 +236,15 @@ class CopernicusSentinel2Service
             return null;
         }
 
-        return $response->json();
+        $json = $response->json();
+
+        Log::info('Sentinel-2 Statistical API response', [
+            'status'         => $response->status(),
+            'interval_count' => count($json['data'] ?? []),
+            'first_interval' => isset($json['data'][0]) ? json_encode($json['data'][0]) : null,
+        ]);
+
+        return $json;
     }
 
     /**
