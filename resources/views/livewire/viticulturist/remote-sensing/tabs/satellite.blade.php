@@ -177,8 +177,8 @@
     <div class="mt-4 bg-zinc-50 rounded-lg p-3 text-sm text-zinc-600 flex flex-wrap gap-4 items-center">
         <span>📡 NASA MODIS</span>
         <span>📅 {{ $ndviData?->image_date?->format('d/m/Y') ?? 'N/A' }}</span>
-        <span class="flex items-center gap-1 @if($ndviData->hasHighCloudCoverage()) text-orange-600 font-semibold @endif">
-            <flux:icon icon="cloud" variant="micro" class="@if($ndviData->hasHighCloudCoverage()) text-orange-500 @else text-zinc-400 @endif" />
+        <span class="flex items-center gap-1 {{ $ndviData->hasHighCloudCoverage() ? 'text-orange-600 font-semibold' : '' }}">
+            <flux:icon icon="cloud" variant="micro" class="{{ $ndviData->hasHighCloudCoverage() ? 'text-orange-500' : 'text-zinc-400' }}" />
             {{ $ndviData?->cloud_coverage ?? 0 }}% nubes
             &nbsp;·&nbsp; {{ $ndviData?->cloud_quality_label }}
         </span>
