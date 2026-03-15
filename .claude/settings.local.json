@@ -139,7 +139,10 @@
       "Bash(sc query:*)",
       "Read(//c/Users/jorge/AppData/Local/Programs//**)",
       "Read(//c/xampp//**)",
-      "Read(//c/laragon/bin/**)"
+      "Read(//c/laragon/bin/**)",
+      "Bash(ssh:*)",
+      "Bash(git mv:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

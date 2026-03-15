@@ -6,6 +6,7 @@ use App\Models\Plot;
 use App\Models\PlotRemoteSensing;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Repository for PlotRemoteSensing database operations.
@@ -177,6 +178,25 @@ class PlotRemoteSensingRepository
             })
             ->with('plot')
             ->get();
+    }
+
+    /**
+     * Get weekly NDVI baseline (mean ± stddev) across all available years.
+     * Returns array keyed by ISO week (1–53):
+     *   ['week' => int, 'mean' => float, 'stddev' => float, 'count' => int]
+     *
+     * Used by the history chart to draw a historical normality band.
+     */
+    public function getNdviWeeklyBaseline(Plot $plot, ?int $plotSigpacId = null): array
+    {
+        return $this->baseQuery($plot, $plotSigpacId)
+            ->whereNotNull('ndvi_mean')
+            ->selectRaw('WEEK(image_date, 3) as week, AVG(ndvi_mean) as mean, STDDEV(ndvi_mean) as stddev, COUNT(*) as count')
+            ->groupBy(DB::raw('WEEK(image_date, 3)'))
+            ->orderBy('week')
+            ->get()
+            ->keyBy('week')
+            ->toArray();
     }
 
     /**

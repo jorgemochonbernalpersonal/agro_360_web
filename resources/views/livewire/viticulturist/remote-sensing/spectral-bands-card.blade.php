@@ -72,8 +72,16 @@
 
     {{-- Content --}}
     @if($spectralData)
-        <div class="mb-4 text-xs text-zinc-500">
-            {{ $spectralData['satellite'] }} · {{ $spectralData['date'] }}
+        <div class="mb-4 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+            <span>{{ $spectralData['satellite'] }} · {{ $spectralData['date'] }}</span>
+            {{-- Improvement #3: valid pixel coverage badge --}}
+            @php $ratio = $spectralData['valid_pixel_ratio'] ?? null; @endphp
+            @if($ratio !== null)
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+                    {{ $ratio >= 70 ? 'bg-green-100 text-green-800' : ($ratio >= 40 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                    📡 Cobertura útil: {{ $ratio }}% del recinto
+                </span>
+            @endif
         </div>
 
         {{-- Índices Vegetación --}}

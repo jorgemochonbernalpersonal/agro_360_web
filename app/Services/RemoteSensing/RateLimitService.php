@@ -14,10 +14,13 @@ class RateLimitService
     // NASA AppEEARS rate limits (conservative approach)
     private const MAX_REQUESTS_PER_HOUR = 50;
     private const MAX_REQUESTS_PER_DAY = 500;
-    
+
     // Open-Meteo rate limits (they're more permissive but we limit anyway)
     private const OPEN_METEO_MAX_PER_HOUR = 100;
     private const OPEN_METEO_MAX_PER_DAY = 1000;
+
+    // Copernicus Sentinel Hub free tier — approx. 30,000 processing units/month
+    private const COPERNICUS_MONTHLY_LIMIT = 30000;
 
     /**
      * Check if we can make a request to NASA API
@@ -184,6 +187,46 @@ class RateLimitService
                 'day' => 100,
             ],
         };
+    }
+
+    // -------------------------------------------------------------------------
+    // Copernicus processing unit tracking (improvement #12)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Increment the Copernicus processing unit counter for the current month.
+     */
+    public function incrementCopernicusUsage(int $units = 1): void
+    {
+        $key = 'copernicus_usage_' . now()->format('Y_m');
+        if (!Cache::has($key)) {
+            Cache::put($key, 0, now()->endOfMonth());
+        }
+        Cache::increment($key, $units);
+    }
+
+    /**
+     * Get total Copernicus processing units consumed this month.
+     */
+    public function getCopernicusMonthlyUsage(): int
+    {
+        return (int) Cache::get('copernicus_usage_' . now()->format('Y_m'), 0);
+    }
+
+    /**
+     * Returns true when >= 80% of monthly budget is consumed.
+     */
+    public function isCopernicusLimitApproaching(): bool
+    {
+        return $this->getCopernicusMonthlyUsage() >= (int) round(self::COPERNICUS_MONTHLY_LIMIT * 0.8);
+    }
+
+    /**
+     * Returns false when the monthly hard cap is reached.
+     */
+    public function canUseCopernicus(): bool
+    {
+        return $this->getCopernicusMonthlyUsage() < self::COPERNICUS_MONTHLY_LIMIT;
     }
 
     /**

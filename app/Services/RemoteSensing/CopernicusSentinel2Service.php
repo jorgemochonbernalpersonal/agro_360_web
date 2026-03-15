@@ -27,7 +27,8 @@ class CopernicusSentinel2Service
     private const TOKEN_TTL = 540; // 9 min — token expires in 10
 
     public function __construct(
-        private PlotRemoteSensingRepository $repository
+        private PlotRemoteSensingRepository $repository,
+        private RateLimitService $rateLimitService,
     ) {}
 
     // -------------------------------------------------------------------------
@@ -41,8 +42,15 @@ class CopernicusSentinel2Service
     public function fetchAndStore(Plot $plot, ?int $plotSigpacId = null): ?PlotRemoteSensing
     {
         try {
+            // Check monthly Copernicus processing unit budget (improvement #12)
+            if (!$this->rateLimitService->canUseCopernicus()) {
+                Log::warning('Sentinel-2: monthly processing unit limit reached', ['plot_id' => $plot->id]);
+                return $this->repository->getLatestForPlot($plot, $plotSigpacId);
+            }
+
             $token    = $this->authenticate();
             $geometry = $this->getPlotGeometry($plot, $plotSigpacId);
+            $areaHa   = (float) ($plot->area ?? 0.5);
 
             $to   = Carbon::now();
             $from = $to->copy()->subDays(60);
@@ -54,26 +62,32 @@ class CopernicusSentinel2Service
                 return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
-            $best = $this->findBestInterval($rawData['data'] ?? []);
+            $best = $this->findBestInterval($rawData['data'] ?? [], $areaHa);
 
             if (!$best) {
-                Log::warning('Sentinel-2: no valid (cloud-free) interval found in last 30 days', ['plot_id' => $plot->id, 'plot_sigpac_id' => $plotSigpacId]);
+                Log::warning('Sentinel-2: no valid (cloud-free) interval found in last 60 days', ['plot_id' => $plot->id, 'plot_sigpac_id' => $plotSigpacId]);
                 return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
+            // Track Copernicus processing unit usage (estimate: ~1000 units per ha)
+            $estimatedUnits = (int) ceil($areaHa * 1000);
+            $this->rateLimitService->incrementCopernicusUsage($estimatedUnits);
+
             // Use the end of the interval as the image date
             $imageDate = Carbon::parse($best['interval']['to'])->subDay();
-            $data      = $this->mapToStorageData($best, $imageDate, $plot, $plotSigpacId);
+            $data      = $this->mapToStorageData($best['interval'], $imageDate, $plot, $plotSigpacId, $best['validCount'], $best['sampleCount']);
 
             $result = $this->repository->createOrUpdate($plot, $imageDate, $data, $plotSigpacId);
 
             Log::info('Sentinel-2 data stored', [
-                'plot_id'    => $plot->id,
-                'plot_sigpac_id' => $plotSigpacId,
-                'image_date' => $imageDate->toDateString(),
-                'ndvi'       => $data['ndvi_mean'],
-                'gndvi'      => $data['gndvi'],
-                'cloud_pct'  => $data['cloud_coverage'],
+                'plot_id'           => $plot->id,
+                'plot_sigpac_id'    => $plotSigpacId,
+                'image_date'        => $imageDate->toDateString(),
+                'ndvi'              => $data['ndvi_mean'],
+                'gndvi'             => $data['gndvi'],
+                'cloud_pct'         => $data['cloud_coverage'],
+                'validCount'        => $best['validCount'],
+                'valid_pixel_ratio' => $data['metadata']['valid_pixel_ratio'] ?? null,
             ]);
 
             return $result;
@@ -220,10 +234,18 @@ class CopernicusSentinel2Service
                     'resy'                => 10,
                 ],
                 'calculations' => [
-                    'ndvi'  => ['statistics' => new \stdClass()],
-                    'gndvi' => ['statistics' => new \stdClass()],
-                    'ndwi'  => ['statistics' => new \stdClass()],
-                    'ndre'  => ['statistics' => new \stdClass()],
+                    'ndvi'          => ['statistics' => new \stdClass()],
+                    'gndvi'         => ['statistics' => new \stdClass()],
+                    'ndwi'          => ['statistics' => new \stdClass()],
+                    'ndre'          => ['statistics' => new \stdClass()],
+                    'red'           => ['statistics' => new \stdClass()],
+                    'nir'           => ['statistics' => new \stdClass()],
+                    'green'         => ['statistics' => new \stdClass()],
+                    'zone_critical' => ['statistics' => new \stdClass()],
+                    'zone_low'      => ['statistics' => new \stdClass()],
+                    'zone_moderate' => ['statistics' => new \stdClass()],
+                    'zone_good'     => ['statistics' => new \stdClass()],
+                    'zone_excellent'=> ['statistics' => new \stdClass()],
                 ],
             ]);
 
@@ -248,7 +270,8 @@ class CopernicusSentinel2Service
     }
 
     /**
-     * Evalscript that computes NDVI, GNDVI, NDWI, NDRE per pixel.
+     * Evalscript that computes NDVI, GNDVI, NDWI, NDRE, raw bands (B03/B04/B08),
+     * and NDVI-based vigor zone classification per pixel.
      * Clouds/shadows masked via the SCL band.
      */
     private function buildEvalscript(): string
@@ -258,26 +281,46 @@ function setup() {
     return {
         input: [{ bands: ["B03","B04","B05","B08","B11","SCL"], units: ["REFLECTANCE","REFLECTANCE","REFLECTANCE","REFLECTANCE","REFLECTANCE","DN"] }],
         output: [
-            { id: "ndvi",     bands: 1, sampleType: "FLOAT32" },
-            { id: "gndvi",    bands: 1, sampleType: "FLOAT32" },
-            { id: "ndwi",     bands: 1, sampleType: "FLOAT32" },
-            { id: "ndre",     bands: 1, sampleType: "FLOAT32" },
-            { id: "dataMask", bands: 1, sampleType: "UINT8"   }
+            { id: "ndvi",          bands: 1, sampleType: "FLOAT32" },
+            { id: "gndvi",         bands: 1, sampleType: "FLOAT32" },
+            { id: "ndwi",          bands: 1, sampleType: "FLOAT32" },
+            { id: "ndre",          bands: 1, sampleType: "FLOAT32" },
+            { id: "red",           bands: 1, sampleType: "FLOAT32" },
+            { id: "nir",           bands: 1, sampleType: "FLOAT32" },
+            { id: "green",         bands: 1, sampleType: "FLOAT32" },
+            { id: "zone_critical", bands: 1, sampleType: "UINT8"   },
+            { id: "zone_low",      bands: 1, sampleType: "UINT8"   },
+            { id: "zone_moderate", bands: 1, sampleType: "UINT8"   },
+            { id: "zone_good",     bands: 1, sampleType: "UINT8"   },
+            { id: "zone_excellent",bands: 1, sampleType: "UINT8"   },
+            { id: "dataMask",      bands: 1, sampleType: "UINT8"   }
         ]
     };
 }
 function evaluatePixel(sample) {
     // SCL cloud mask: 3=shadow 8=medium cloud 9=high cloud 10=thin cirrus
     if (sample.SCL==3||sample.SCL==8||sample.SCL==9||sample.SCL==10) {
-        return { ndvi:[NaN], gndvi:[NaN], ndwi:[NaN], ndre:[NaN], dataMask:[0] };
+        return { ndvi:[NaN], gndvi:[NaN], ndwi:[NaN], ndre:[NaN],
+                 red:[NaN], nir:[NaN], green:[NaN],
+                 zone_critical:[0], zone_low:[0], zone_moderate:[0], zone_good:[0], zone_excellent:[0],
+                 dataMask:[0] };
     }
     var eps=1e-10, b03=sample.B03, b04=sample.B04, b05=sample.B05, b08=sample.B08, b11=sample.B11;
+    var ndvi=(b08-b04)/(b08+b04+eps);
     return {
-        ndvi:     [(b08-b04)/(b08+b04+eps)],
-        gndvi:    [(b08-b03)/(b08+b03+eps)],
-        ndwi:     [(b08-b11)/(b08+b11+eps)],
-        ndre:     [(b08-b05)/(b08+b05+eps)],
-        dataMask: [1]
+        ndvi:          [ndvi],
+        gndvi:         [(b08-b03)/(b08+b03+eps)],
+        ndwi:          [(b08-b11)/(b08+b11+eps)],
+        ndre:          [(b08-b05)/(b08+b05+eps)],
+        red:           [b04],
+        nir:           [b08],
+        green:         [b03],
+        zone_critical: [ndvi < 0.2 ? 1 : 0],
+        zone_low:      [(ndvi >= 0.2 && ndvi < 0.35) ? 1 : 0],
+        zone_moderate: [(ndvi >= 0.35 && ndvi < 0.5) ? 1 : 0],
+        zone_good:     [(ndvi >= 0.5 && ndvi < 0.65) ? 1 : 0],
+        zone_excellent:[ndvi >= 0.65 ? 1 : 0],
+        dataMask:      [1]
     };
 }';
     }
@@ -288,9 +331,17 @@ function evaluatePixel(sample) {
 
     /**
      * Pick the most recent 5-day interval that has enough valid (non-cloudy) pixels.
+     * Returns ['interval' => $interval, 'validCount' => int, 'sampleCount' => int] or null.
+     *
+     * Improvement #2: minimum pixel threshold is adaptive — at least 5% of estimated
+     * pixel count for the parcel area, with a hard minimum of 5 pixels.
      */
-    private function findBestInterval(array $intervals): ?array
+    private function findBestInterval(array $intervals, ?float $areaHa = null): ?array
     {
+        // Adaptive minimum: 5% of estimated pixels at 10m resolution, min 5
+        $estimatedPixels = max(1, (int) round(($areaHa ?? 0.5) * 10000)); // ha → m², each pixel = 100m²
+        $minPixels = max(5, (int) round($estimatedPixels * 0.05));
+
         // Most recent first
         usort($intervals, fn($a, $b) => strcmp($b['interval']['to'], $a['interval']['to']));
 
@@ -314,13 +365,22 @@ function evaluatePixel(sample) {
                 'sampleCount' => $sampleCount,
                 'noDataCount' => $noDataCount,
                 'validCount'  => $validCount,
+                'minPixels'   => $minPixels,
                 'mean'        => $mean,
             ];
 
-            // At least 1 valid 10m pixel; mean must be a real number (not NaN/null)
-            if ($validCount >= 1 && $mean !== null && !is_nan((float) $mean)) {
-                Log::info('Sentinel-2: best interval selected', ['interval' => $interval['interval'], 'validCount' => $validCount, 'mean' => $mean]);
-                return $interval;
+            if ($validCount >= $minPixels && $mean !== null && !is_nan((float) $mean)) {
+                Log::info('Sentinel-2: best interval selected', [
+                    'interval'   => $interval['interval'],
+                    'validCount' => $validCount,
+                    'minPixels'  => $minPixels,
+                    'mean'       => $mean,
+                ]);
+                return [
+                    'interval'    => $interval,
+                    'validCount'  => $validCount,
+                    'sampleCount' => $sampleCount,
+                ];
             }
         }
 
@@ -335,9 +395,16 @@ function evaluatePixel(sample) {
 
     /**
      * Map the API interval to PlotRemoteSensing column values.
+     * Improvements #3, #4, #5: adds metadata (valid_pixel_ratio), raw bands, zone stats.
      */
-    private function mapToStorageData(array $interval, Carbon $imageDate, Plot $plot, ?int $plotSigpacId = null): array
-    {
+    private function mapToStorageData(
+        array $interval,
+        Carbon $imageDate,
+        Plot $plot,
+        ?int $plotSigpacId = null,
+        int $validCount = 0,
+        int $sampleCount = 0
+    ): array {
         $outputs = $interval['outputs'];
 
         $ndvi   = $this->stat($outputs, 'ndvi', 'mean');
@@ -350,12 +417,28 @@ function evaluatePixel(sample) {
         $ndviStdev = $this->stat($outputs, 'ndvi', 'stDev');
 
         // Cloud coverage estimate: fraction of masked pixels
-        $ndviStats   = $outputs['ndvi']['bands']['B0']['stats'] ?? [];
-        $sampleCount = max(1, (int) ($ndviStats['sampleCount'] ?? 1));
-        $noDataCount = (int) ($ndviStats['noDataCount'] ?? 0);
-        $cloudPct    = (int) round(($noDataCount / $sampleCount) * 100);
+        $ndviStats    = $outputs['ndvi']['bands']['B0']['stats'] ?? [];
+        $totalPixels  = max(1, (int) ($ndviStats['sampleCount'] ?? 1));
+        $noDataCount  = (int) ($ndviStats['noDataCount'] ?? 0);
+        $cloudPct     = (int) round(($noDataCount / $totalPixels) * 100);
 
         $ndviFloat = is_numeric($ndvi) ? max(-1.0, min(1.0, (float) $ndvi)) : 0.0;
+
+        // Improvement #3: valid pixel ratio in metadata
+        $validPixelRatio = $sampleCount > 0
+            ? round($validCount / $sampleCount * 100, 1)
+            : null;
+
+        // Improvement #5: vigor zone percentages from per-pixel zone outputs
+        // zone_* outputs return 1/0 per pixel; mean = fraction of valid pixels in that zone
+        $zoneCritical  = $this->stat($outputs, 'zone_critical', 'mean');
+        $zoneLow       = $this->stat($outputs, 'zone_low', 'mean');
+        $zoneModerate  = $this->stat($outputs, 'zone_moderate', 'mean');
+        $zoneGood      = $this->stat($outputs, 'zone_good', 'mean');
+        $zoneExcellent = $this->stat($outputs, 'zone_excellent', 'mean');
+
+        $ndviStdevFloat = is_numeric($ndviStdev) ? (float) $ndviStdev : 0.0;
+        $cv = $ndviStdevFloat / max(0.001, abs($ndviFloat)); // coefficient of variation
 
         return [
             'ndvi_mean'      => round($ndviFloat, 3),
@@ -371,6 +454,27 @@ function evaluatePixel(sample) {
             'data_source'    => 'copernicus',
             'health_status'  => $this->healthStatus($ndviFloat),
             'trend'          => $this->trend($plot, $ndviFloat, $imageDate, $plotSigpacId),
+            // Improvement #4: raw band reflectances
+            'red_band'       => is_numeric($r = $this->stat($outputs, 'red', 'mean')) ? round((float) $r, 4) : null,
+            'nir_band'       => is_numeric($n = $this->stat($outputs, 'nir', 'mean')) ? round((float) $n, 4) : null,
+            'green_band'     => is_numeric($g = $this->stat($outputs, 'green', 'mean')) ? round((float) $g, 4) : null,
+            // Improvement #3: metadata with coverage quality info
+            'metadata' => [
+                'valid_pixel_count'  => $validCount,
+                'total_pixel_count'  => $sampleCount,
+                'valid_pixel_ratio'  => $validPixelRatio,
+                'interval_from'      => $interval['interval']['from'],
+                'interval_to'        => $interval['interval']['to'],
+            ],
+            // Improvement #5: vigor zone distribution
+            'area_statistics' => [
+                'zone_critical_pct'  => is_numeric($zoneCritical)  ? round((float) $zoneCritical * 100, 1)  : null,
+                'zone_low_pct'       => is_numeric($zoneLow)       ? round((float) $zoneLow * 100, 1)       : null,
+                'zone_moderate_pct'  => is_numeric($zoneModerate)  ? round((float) $zoneModerate * 100, 1)  : null,
+                'zone_good_pct'      => is_numeric($zoneGood)      ? round((float) $zoneGood * 100, 1)      : null,
+                'zone_excellent_pct' => is_numeric($zoneExcellent) ? round((float) $zoneExcellent * 100, 1) : null,
+                'cv'                 => round($cv, 4),
+            ],
         ];
     }
 

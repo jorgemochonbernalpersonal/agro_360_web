@@ -58,6 +58,34 @@
         </x-slot:actions>
     </x-agro.page-header>
 
+    {{-- Data source health badges (improvement #6) --}}
+    @if(!empty($dataSourceStatus))
+        <div class="mb-4 flex flex-wrap items-center gap-2 text-xs">
+            @foreach($dataSourceStatus as $key => $source)
+                @php
+                    $limitWarning = $source['limit_warning'] ?? false;
+                    $limitOk      = $source['limit_ok'] ?? true;
+                    $isMock       = $source['mock'] ?? false;
+                    $isOk         = !$isMock && $limitOk;
+                    $badge        = $isOk
+                        ? ($limitWarning ? ['icon' => '⚠️', 'cls' => 'bg-yellow-50 border-yellow-300 text-yellow-800']
+                                         : ['icon' => '✅', 'cls' => 'bg-green-50 border-green-300 text-green-800'])
+                        : ['icon' => '🔴', 'cls' => 'bg-red-50 border-red-300 text-red-800'];
+                @endphp
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full border {{ $badge['cls'] }} font-medium">
+                    {{ $badge['icon'] }} {{ $source['label'] }}
+                    @if($isMock) (demo) @endif
+                    @if(isset($source['monthly_usage']) && $source['monthly_limit'])
+                        · {{ number_format($source['monthly_usage']) }}/{{ number_format($source['monthly_limit']) }} UPs
+                    @endif
+                    @if(isset($source['last_fetch']) && $source['last_fetch'])
+                        · {{ \Carbon\Carbon::parse($source['last_fetch'])->diffForHumans() }}
+                    @endif
+                </span>
+            @endforeach
+        </div>
+    @endif
+
     {{-- Stats Overview --}}
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         <div class="bg-white rounded-xl border border-zinc-200 p-3 text-center">

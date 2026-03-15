@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        {{-- Vigor Zones --}}
+        {{-- Vigor Zones — improvement #5: show real pixel percentages from Sentinel-2 --}}
         @if($vigorZones)
             <div>
                 <h4 class="text-lg font-semibold text-zinc-800 mb-3">Zonas de Vigor</h4>
@@ -125,16 +125,27 @@
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center flex-1">
                                     <span class="text-2xl mr-3">{{ $zone['icon'] }}</span>
-                                    <div>
+                                    <div class="flex-1">
                                         <div class="text-sm font-semibold text-{{ $zone['color'] }}-900">{{ $zone['label'] }}</div>
                                         <div class="text-xs text-{{ $zone['color'] }}-700">{{ $zone['description'] }}</div>
+                                        @if(isset($zone['pct']) && $zone['pct'] !== null)
+                                            <div class="mt-1.5 h-1.5 bg-{{ $zone['color'] }}-100 rounded-full overflow-hidden">
+                                                <div class="h-full bg-{{ $zone['color'] }}-400 rounded-full"
+                                                     style="width: {{ min(100, $zone['pct']) }}%"></div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <div class="text-xs text-{{ $zone['color'] }}-600">Rango NDVI</div>
-                                    <div class="text-sm font-mono text-{{ $zone['color'] }}-900">
-                                        {{ number_format($zone['range']['min'], 2) }} - {{ number_format($zone['range']['max'], 2) }}
-                                    </div>
+                                <div class="text-right ml-3">
+                                    @if(isset($zone['pct']) && $zone['pct'] !== null)
+                                        <div class="text-xl font-bold text-{{ $zone['color'] }}-900">{{ number_format($zone['pct'], 1) }}%</div>
+                                        <div class="text-xs text-{{ $zone['color'] }}-600">del recinto</div>
+                                    @else
+                                        <div class="text-xs text-{{ $zone['color'] }}-600">Rango NDVI</div>
+                                        <div class="text-sm font-mono text-{{ $zone['color'] }}-900">
+                                            {{ number_format($zone['range']['min'], 2) }} – {{ number_format($zone['range']['max'], 2) }}
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

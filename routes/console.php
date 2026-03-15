@@ -31,7 +31,9 @@ Schedule::command('remote-sensing:update-all', [
     '--delay' => 2,
 ])
     ->dailyAt('02:00')
-    ->withoutOverlapping();
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->emailOutputOnFailure(config('mail.from.address'));
 
 // 🌌 Actualizar datos enriquecidos (GNDVI, LAI, SMAP, ET) a las 2:30 AM
 // Se ejecuta 30 min después del update-all para que el NDVI básico ya esté guardado
