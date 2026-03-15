@@ -6,7 +6,7 @@ use App\Models\Plot;
 use App\Services\RemoteSensing\NasaSMAPService;
 use Livewire\Component;
 
-class SMAPSoilCard extends Component
+class SmapSoilCard extends Component
 {
     public Plot $plot;
     public ?array $smapData = null;
