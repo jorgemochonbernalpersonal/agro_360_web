@@ -187,7 +187,9 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
                 'body'    => substr($response->body(), 0, 200),
             ]);
 
-            return $this->generateMockData($plot);
+            $fallback = $this->generateMockData($plot);
+            Cache::put($cacheKey, $fallback, now()->addHour());
+            return $fallback;
 
         } catch (\Exception $e) {
             Log::warning('NASA Earthdata API error — using estimated data', [
