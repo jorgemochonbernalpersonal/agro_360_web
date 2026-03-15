@@ -19,22 +19,20 @@ use Illuminate\Support\Facades\Cache;
 #[Layout('components.app-layout')]
 class Dashboard extends Component
 {
-    #[Url]
-    public ?int $selectedPlotId = null;
-    
     #[Url(as: 'tab')]
     public string $activeTab = 'satellite';
-    
+
     #[Url(as: 'sigpac')]
     public ?int $selectedSigpacId = null;
-    
-    // All plots for selector
+
+    // All sigpac recintos (all plots) for selector
+    public array $allSigpacs = [];
+    // Plots kept for stats and compare tab
     public $plots = [];
     public array $stats = [];
-    
+
     // Selected plot data
     public ?Plot $selectedPlot = null;
-    public array $availableSigpacs = [];
     public ?PlotRemoteSensing $ndviData = null;
     public array $historicalData = [];
     public ?float $lastYearNdvi = null;
@@ -88,49 +86,40 @@ class Dashboard extends Component
             return;
         }
         
-        // Solo parcelas con geometrías configuradas
+        // Load plots (for stats and compare tab)
         $this->plots = Plot::forUser($user)
             ->whereHas('plotGeometries')
             ->select(['id', 'name', 'area'])
             ->orderBy('name')
             ->get();
-        
+
         $this->loadStats();
+        $this->loadAllSigpacs();
 
-        $plots = collect($this->plots);
-
-        // Validate URL-injected selectedPlotId belongs to user's authorized plots
-        if ($this->selectedPlotId && !$plots->contains('id', $this->selectedPlotId)) {
-            $this->selectedPlotId = null;
+        // Validate URL-injected selectedSigpacId belongs to user's authorized sigpacs
+        if ($this->selectedSigpacId && !collect($this->allSigpacs)->contains('id', $this->selectedSigpacId)) {
+            $this->selectedSigpacId = null;
         }
 
-        // Auto-select first plot if none set
-        if (!$this->selectedPlotId && $plots->isNotEmpty()) {
-            $this->selectedPlotId = $plots->first()->id;
+        // Auto-select first sigpac if none set
+        if (!$this->selectedSigpacId && !empty($this->allSigpacs)) {
+            $this->selectedSigpacId = $this->allSigpacs[0]['id'];
         }
-        
-        if ($this->selectedPlotId) {
-            $this->loadAvailableSigpacs();
-            $this->autoSelectSigpac();
+
+        if ($this->selectedSigpacId) {
+            $this->deriveSelectedPlot();
             $this->loadPlotData();
         }
     }
 
-    public function updatedSelectedPlotId(): void
+    public function updatedSelectedSigpacId(): void
     {
-        // Prevent IDOR: verify the new plot is within the user's authorized scope
-        if (!collect($this->plots)->contains('id', $this->selectedPlotId)) {
+        // Prevent IDOR
+        if (!collect($this->allSigpacs)->contains('id', $this->selectedSigpacId)) {
             abort(403);
         }
 
-        $this->selectedPlot = Plot::find($this->selectedPlotId);
-        $this->loadAvailableSigpacs();
-        $this->autoSelectSigpac();
-        $this->loadPlotData();
-    }
-    
-    public function updatedSelectedSigpacId()
-    {
+        $this->deriveSelectedPlot();
         $this->loadPlotData(forceRefresh: true);
     }
 
@@ -431,22 +420,26 @@ class Dashboard extends Component
     /**
      * Load available sigpac parcels for selected plot
      */
-    private function loadAvailableSigpacs()
+    /**
+     * Load all sigpac recintos across all user plots (for the main selector)
+     */
+    private function loadAllSigpacs(): void
     {
-        if (!$this->selectedPlot) {
-            $this->availableSigpacs = [];
+        $plotIds = collect($this->plots)->pluck('id');
+
+        if ($plotIds->isEmpty()) {
+            $this->allSigpacs = [];
             return;
         }
 
-        $this->availableSigpacs = $this->selectedPlot->multiplePlotSigpacs()
+        $this->allSigpacs = \App\Models\MultipartPlotSigpac::whereIn('plot_id', $plotIds)
             ->whereNotNull('plot_geometry_id')
-            ->with(['sigpacCode', 'plotGeometry'])
+            ->with(['sigpacCode', 'plotGeometry', 'plot'])
             ->get()
-            ->map(function($mps) {
+            ->map(function ($mps) {
                 $geometry = $mps->plotGeometry;
                 $centroid = $geometry?->getCentroidAsArray();
-                
-                // Calculate area from geometry
+
                 $area = null;
                 if ($geometry) {
                     $result = \DB::selectOne(
@@ -455,32 +448,32 @@ class Dashboard extends Component
                     );
                     $area = $result?->area_ha;
                 }
-                
+
                 return [
-                    'id' => $mps->id,
-                    'sigpac_code' => $mps->sigpacCode->code ?? 'Sin código',
-                    'display_name' => $this->selectedPlot->name . ' - ' . ($mps->sigpacCode->code ?? 'Recinto ' . $mps->id),
-                    'area_ha' => $area ? round($area, 2) : 0,
-                    'centroid' => $centroid,
+                    'id'           => $mps->id,
+                    'plot_id'      => $mps->plot_id,
+                    'plot_name'    => $mps->plot->name ?? 'Sin parcela',
+                    'sigpac_code'  => $mps->sigpacCode?->code ?? 'Sin código',
+                    'display_name' => ($mps->plot->name ?? 'Parcela') . ' · ' . ($mps->sigpacCode?->code ?? 'Recinto ' . $mps->id),
+                    'area_ha'      => $area ? round($area, 2) : 0,
+                    'centroid'     => $centroid,
                 ];
             })
             ->toArray();
     }
-    
+
     /**
-     * Auto-select first sigpac parcel
+     * Set selectedPlot from the currently selected sigpac
      */
-    private function autoSelectSigpac()
+    private function deriveSelectedPlot(): void
     {
-        if (empty($this->availableSigpacs)) {
-            $this->selectedSigpacId = null;
+        if (!$this->selectedSigpacId) {
+            $this->selectedPlot = null;
             return;
         }
 
-        // Auto-select first if none selected
-        if (!$this->selectedSigpacId || !collect($this->availableSigpacs)->contains('id', $this->selectedSigpacId)) {
-            $this->selectedSigpacId = $this->availableSigpacs[0]['id'];
-        }
+        $sigpac = collect($this->allSigpacs)->firstWhere('id', $this->selectedSigpacId);
+        $this->selectedPlot = $sigpac ? Plot::find($sigpac['plot_id']) : null;
     }
     
     /**

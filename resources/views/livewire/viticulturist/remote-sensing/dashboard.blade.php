@@ -20,13 +20,15 @@
                 Resumen
             </a>
 
-            <flux:select wire:model.live="selectedPlotId">
-                @if(count($plots) > 0)
-                    @foreach($plots as $plot)
-                        <option value="{{ $plot->id }}" wire:key="plot-{{ $plot->id }}">{{ $plot->name }}</option>
+            <flux:select wire:model.live="selectedSigpacId">
+                @if(count($allSigpacs) > 0)
+                    @foreach($allSigpacs as $sigpac)
+                        <option value="{{ $sigpac['id'] }}" wire:key="sigpac-{{ $sigpac['id'] }}">
+                            {{ $sigpac['display_name'] }} ({{ $sigpac['area_ha'] }} ha)
+                        </option>
                     @endforeach
                 @else
-                    <option value="">Sin parcelas con geometrías</option>
+                    <option value="">Sin recintos con geometrías</option>
                 @endif
             </flux:select>
 
@@ -142,89 +144,19 @@
                 </div>
             </div>
 
-            {{-- Selector de recinto (compartido en todos los tabs) --}}
-            @if(!empty($availableSigpacs))
-                @if(count($availableSigpacs) === 1)
-                    <div class="mb-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-3">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"/>
-                            </svg>
-                            <div class="flex-1">
-                                <div class="text-sm font-semibold text-blue-900">
-                                    📍 {{ $availableSigpacs[0]['display_name'] }}
-                                </div>
-                                <div class="text-xs text-blue-700 mt-1">
-                                    ✓ Analizando {{ number_format($availableSigpacs[0]['area_ha'], 2) }} hectáreas
-                                    @if($availableSigpacs[0]['centroid'])
-                                        • Lat: {{ number_format($availableSigpacs[0]['centroid']['lat'], 4) }}°,
-                                        Lon: {{ number_format($availableSigpacs[0]['centroid']['lng'], 4) }}°
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                @elseif(count($availableSigpacs) <= 4)
-                    <div class="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-                        <label class="block text-sm font-semibold text-zinc-800 mb-3">📍 Selecciona recinto a analizar:</label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            @foreach($availableSigpacs as $sigpac)
-                                @php $isSelected = $selectedSigpacId == $sigpac['id']; @endphp
-                                <button wire:click="$set('selectedSigpacId', {{ $sigpac['id'] }})"
-                                        wire:key="sigpac-btn-{{ $sigpac['id'] }}"
-                                        class="text-left p-3 rounded-lg border-2 transition-all {{ $isSelected ? 'border-green-500 bg-green-50 shadow-md' : 'border-zinc-300 bg-white hover:border-blue-400' }}">
-                                    <div class="flex items-start gap-2">
-                                        <flux:icon wire:ignore
-                                            icon="{{ $isSelected ? 'check-circle' : 'circle' }}"
-                                            class="w-5 h-5 mt-0.5 shrink-0 {{ $isSelected ? 'text-green-600' : 'text-zinc-400' }}" />
-                                        <div class="flex-1">
-                                            <div class="text-sm font-semibold {{ $isSelected ? 'text-green-900' : 'text-zinc-900' }}">
-                                                {{ $sigpac['display_name'] }}
-                                            </div>
-                                            <div class="text-xs {{ $isSelected ? 'text-green-700' : 'text-zinc-600' }} mt-1">
-                                                📏 {{ number_format($sigpac['area_ha'], 2) }} ha
-                                                @if($sigpac['centroid'])
-                                                    · {{ number_format($sigpac['centroid']['lat'], 4) }}°, {{ number_format($sigpac['centroid']['lng'], 4) }}°
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-
-                @else
-                    <div class="mb-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
-                        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-                            <div class="flex-1">
-                                <label class="block text-sm font-semibold text-zinc-800 mb-2">
-                                    📍 Recinto a analizar
-                                    <span class="text-xs font-normal text-zinc-600">(parcela con {{ count($availableSigpacs) }} recintos)</span>
-                                </label>
-                                <flux:select wire:model.live="selectedSigpacId">
-                                    @foreach($availableSigpacs as $sigpac)
-                                        <option value="{{ $sigpac['id'] }}">
-                                            {{ $sigpac['display_name'] }} ({{ number_format($sigpac['area_ha'], 2) }} ha)
-                                        </option>
-                                    @endforeach
-                                </flux:select>
-                            </div>
-
-                            @php $selectedSigpac = collect($availableSigpacs)->firstWhere('id', $selectedSigpacId); @endphp
-                            @if($selectedSigpac && $selectedSigpac['centroid'])
-                                <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 text-xs">
-                                    <div class="font-semibold text-zinc-700 mb-1">Coordenadas:</div>
-                                    <div class="text-zinc-600">
-                                        📍 Lat: {{ number_format($selectedSigpac['centroid']['lat'], 6) }}°<br>
-                                        📍 Lon: {{ number_format($selectedSigpac['centroid']['lng'], 6) }}°
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endif
+            {{-- Info del recinto seleccionado --}}
+            @php $currentSigpac = collect($allSigpacs)->firstWhere('id', $selectedSigpacId); @endphp
+            @if($currentSigpac)
+                <div class="mb-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-3 text-sm text-blue-800 flex items-center gap-3">
+                    <flux:icon icon="map-pin" class="size-4 shrink-0 text-blue-600" />
+                    <span>
+                        Analizando <strong>{{ $currentSigpac['area_ha'] }} ha</strong>
+                        @if($currentSigpac['centroid'])
+                            · Lat: {{ number_format($currentSigpac['centroid']['lat'], 4) }}°,
+                            Lon: {{ number_format($currentSigpac['centroid']['lng'], 4) }}°
+                        @endif
+                    </span>
+                </div>
             @endif
 
             {{-- Contenido del tab activo --}}
@@ -249,8 +181,8 @@
         <x-agro.card>
             <x-agro.empty-state
                 icon="signal"
-                title="Selecciona una parcela"
-                description="Elige una parcela para ver sus datos de análisis avanzado" />
+                title="Selecciona un recinto"
+                description="Elige un recinto SIGPAC para ver sus datos de análisis avanzado" />
         </x-agro.card>
     @endif
     </div>{{-- cierre wire:key dashboard-body --}}
