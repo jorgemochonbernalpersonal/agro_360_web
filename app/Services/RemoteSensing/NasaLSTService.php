@@ -371,9 +371,13 @@ class NasaLSTService
         $criticalTemp = 0;
         $warningTemp = 3;
 
-        if ($lstNight <= $warningTemp && $month >= 3 && $month <= 5) {
+        // Spring (Mar-May): alert even at mild temps (budbreak/flowering vulnerable)
+        // Rest of year: only alert on confirmed or near-confirmed frost (≤1°C)
+        $activeThreshold = ($month >= 3 && $month <= 5) ? $warningTemp : 1;
+
+        if ($lstNight <= $activeThreshold) {
             $severity = $lstNight <= $criticalTemp ? 'critical' : 'high';
-            
+
             if ($lstNight <= $criticalTemp) {
                 $riskLevel = 'Helada confirmada';
             } elseif ($lstNight <= 2) {
@@ -381,22 +385,22 @@ class NasaLSTService
             } else {
                 $riskLevel = 'Riesgo moderado';
             }
-            
-            if ($month === 3 || $month === 4) {
-                $phenologicalRisk = 'Riesgo en brotación (daño crítico)';
-            } elseif ($month === 5) {
-                $phenologicalRisk = 'Riesgo en floración (pérdida cosecha)';
-            } else {
-                $phenologicalRisk = 'Riesgo general';
-            }
-            
+
+            $phenologicalRisk = match (true) {
+                $month === 3 || $month === 4 => 'Riesgo en brotación (daño crítico)',
+                $month === 5                 => 'Riesgo en floración (pérdida cosecha)',
+                $month >= 10                 => 'Posible daño en maduración tardía',
+                $month <= 2                  => 'Viña en reposo — daño en yemas si < -15°C',
+                default                      => 'Riesgo general',
+            };
+
             return [
-                'detected' => true,
-                'severity' => $severity,
-                'lst_night' => $lstNight,
-                'risk_level' => $riskLevel,
+                'detected'          => true,
+                'severity'          => $severity,
+                'lst_night'         => $lstNight,
+                'risk_level'        => $riskLevel,
                 'phenological_risk' => $phenologicalRisk,
-                'recommendation' => 'Activar métodos anti-helada (aspersión, calefactores)',
+                'recommendation'    => 'Activar métodos anti-helada (aspersión, calefactores)',
             ];
         }
 

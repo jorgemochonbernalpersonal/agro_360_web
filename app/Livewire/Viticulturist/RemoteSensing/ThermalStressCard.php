@@ -83,21 +83,22 @@ class ThermalStressCard extends Component
                 $this->cwsiData['value'] = $remoteSensing->cwsi;
             }
 
-            // Check heat stress
+            $recordMonth = $remoteSensing->image_date->month;
+            $lstService  = app(\App\Services\RemoteSensing\NasaLSTService::class);
+
+            // Check heat stress using the record's own month, not today's
             if ($remoteSensing->lst_day) {
-                $lstService = app(\App\Services\RemoteSensing\NasaLSTService::class);
                 $this->heatStress = $lstService->detectHeatStress(
                     $remoteSensing->lst_day,
-                    now()->month
+                    $recordMonth
                 );
             }
 
-            // Check frost risk
+            // Check frost risk using the record's own month, not today's
             if ($remoteSensing->lst_night) {
-                $lstService = app(\App\Services\RemoteSensing\NasaLSTService::class);
                 $this->frostRisk = $lstService->detectFrostRisk(
                     $remoteSensing->lst_night,
-                    now()->month
+                    $recordMonth
                 );
             }
 
