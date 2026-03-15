@@ -53,68 +53,49 @@ class SpectralBandsCard extends Component
             $this->error = null;
 
             $query = $this->plot->remoteSensingData()
-                ->whereNotNull('red_band');
-            
+                ->whereNotNull('ndvi_mean');
+
             if ($this->selectedDate) {
                 $query->whereDate('image_date', $this->selectedDate);
             }
-            
+
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos de bandas espectrales disponibles para esta fecha';
+                $this->error = 'No hay datos espectrales disponibles para esta fecha';
                 return;
             }
 
-            // Bandas espectrales
             $this->spectralData = [
-                'red' => $remoteSensing->red_band,
-                'nir' => $remoteSensing->nir_band,
-                'green' => $remoteSensing->green_band,
-                'blue' => $remoteSensing->blue_band,
-                'date' => $remoteSensing->image_date->format('d/m/Y'),
-                'satellite' => $remoteSensing->satellite ?? 'VIIRS',
+                'date'      => $remoteSensing->image_date->format('d/m/Y'),
+                'satellite' => $remoteSensing->satellite ?? 'Sentinel-2',
             ];
 
-            // Índices vegetación (REALES, no mocks)
+            // Índices derivados de bandas espectrales Sentinel-2
             $this->indices = [
                 'ndvi' => [
-                    'value' => $remoteSensing->ndvi_mean,
-                    'label' => 'NDVI',
+                    'value'       => $remoteSensing->ndvi_mean,
+                    'label'       => 'NDVI',
                     'description' => 'Vigor vegetativo general',
-                    'color' => 'green',
+                    'color'       => 'green',
                 ],
                 'gndvi' => [
-                    'value' => $remoteSensing->gndvi,
-                    'label' => 'GNDVI',
+                    'value'       => $remoteSensing->gndvi,
+                    'label'       => 'GNDVI',
                     'description' => 'Contenido de nitrógeno/clorofila',
-                    'color' => 'emerald',
-                    'is_real' => true,
+                    'color'       => 'emerald',
+                ],
+                'ndwi' => [
+                    'value'       => $remoteSensing->ndwi_mean,
+                    'label'       => 'NDWI',
+                    'description' => 'Contenido de agua en vegetación',
+                    'color'       => 'blue',
                 ],
                 'ndre' => [
-                    'value' => $remoteSensing->ndre,
-                    'label' => 'NDRE',
-                    'description' => 'Clorofila (sin saturación)',
-                    'color' => 'lime',
-                    'is_real' => true,
-                ],
-                'msr' => [
-                    'value' => $remoteSensing->msr,
-                    'label' => 'MSR',
-                    'description' => 'Biomasa',
-                    'color' => 'teal',
-                ],
-                'ci_green' => [
-                    'value' => $remoteSensing->ci_green,
-                    'label' => 'CI-green',
-                    'description' => 'Índice de clorofila',
-                    'color' => 'cyan',
-                ],
-                'arvi' => [
-                    'value' => $remoteSensing->arvi,
-                    'label' => 'ARVI',
-                    'description' => 'Resistente a atmósfera',
-                    'color' => 'indigo',
+                    'value'       => $remoteSensing->ndre,
+                    'label'       => 'NDRE',
+                    'description' => 'Clorofila sin saturación (Red-Edge)',
+                    'color'       => 'lime',
                 ],
             ];
 

@@ -29,17 +29,17 @@ class OfficialLaiCard extends Component
     public function loadAvailableDates()
     {
         $dates = $this->plot->remoteSensingData()
-            ->whereNotNull('lai')
+            ->whereNotNull('ndvi_mean')
             ->orderBy('image_date', 'desc')
             ->limit(30)
             ->pluck('image_date')
             ->map(fn($date) => $date->format('Y-m-d'))
             ->toArray();
-        
+
         $this->availableDates = $dates;
-        
+
         if (empty($this->selectedDate) && !empty($dates)) {
-            $this->selectedDate = $dates[0]; // Most recent
+            $this->selectedDate = $dates[0];
         }
     }
 
@@ -55,42 +55,39 @@ class OfficialLaiCard extends Component
             $this->error = null;
 
             $query = $this->plot->remoteSensingData()
-                ->whereNotNull('lai');
-            
-            // Filter by selected date or get latest
+                ->whereNotNull('ndvi_mean');
+
             if ($this->selectedDate) {
                 $query->whereDate('image_date', $this->selectedDate);
             }
-            
+
             $remoteSensing = $query->orderBy('image_date', 'desc')->first();
 
             if (!$remoteSensing) {
-                $this->error = 'No hay datos de LAI disponibles para esta fecha';
+                $this->error = 'No hay datos disponibles para esta fecha';
                 return;
             }
 
             $laiService = app(NasaLAIService::class);
 
-            // LAI data
-            if ($remoteSensing->lai) {
-                $classification = $laiService->classifyLAI($remoteSensing->lai);
-                
-                $this->laiData = array_merge([
-                    'value' => $remoteSensing->lai,
-                    'date' => $remoteSensing->image_date->format('d/m/Y'),
-                    'source' => 'NASA MODIS (Oficial)',
-                ], $classification);
+            // Estimar LAI desde NDVI (fórmula empírica para viñedo: LAI = -ln(1 - NDVI) * 0.9)
+            $ndvi = (float) ($remoteSensing->ndvi_mean ?? 0);
+            $estimatedLai = $ndvi > 0 ? round(-log(max(0.01, 1 - min(0.99, $ndvi))) * 0.9, 2) : 0;
 
-                // Yield estimate
-                $areaHa = $this->plot->area ?? 1;
-                $varietyType = 'red'; // TODO: Get from plot data
-                $this->yieldEstimate = $laiService->estimateYield($remoteSensing->lai, $areaHa, $varietyType);
-            }
+            $lai = $remoteSensing->lai ?? $estimatedLai;
+            $classification = $laiService->classifyLAI($lai);
 
-            // FPAR data
-            if ($remoteSensing->fpar) {
-                $this->fparData = $laiService->analyzeFPAR($remoteSensing->fpar);
-            }
+            $this->laiData = array_merge([
+                'value'  => $lai,
+                'date'   => $remoteSensing->image_date->format('d/m/Y'),
+                'source' => $remoteSensing->lai ? 'NASA MODIS (Oficial)' : 'Estimado desde Sentinel-2 NDVI',
+            ], $classification);
+
+            $areaHa = $this->plot->area ?? 1;
+            $this->yieldEstimate = $laiService->estimateYield($lai, $areaHa, 'red');
+
+            $fpar = $remoteSensing->fpar ?? round($ndvi * 0.95, 3);
+            $this->fparData = $laiService->analyzeFPAR($fpar);
 
         } catch (\Exception $e) {
             $this->error = 'Error al cargar datos de LAI';
