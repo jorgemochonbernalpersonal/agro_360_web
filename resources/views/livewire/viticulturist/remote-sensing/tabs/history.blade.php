@@ -1,5 +1,5 @@
 {{-- Tab Historial: selector de período, gráfico NDVI, estadísticas, comparación y predicción --}}
-<div wire:key="history-tab-content-{{ $selectedPlotId ?? 'none' }}-{{ $historyPeriod }}">
+<div wire:key="history-tab-content-{{ $selectedSigpacId ?? 'none' }}-{{ $historyPeriod }}">
 
     {{-- Selector de período --}}
     <div class="mb-6 bg-white rounded-lg border border-zinc-200 p-4">

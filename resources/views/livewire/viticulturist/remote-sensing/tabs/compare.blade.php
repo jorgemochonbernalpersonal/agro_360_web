@@ -5,7 +5,7 @@
     <flux:select wire:model.live="comparePlotId">
         <option value="">-- Seleccionar --</option>
         @foreach($plots as $plot)
-            @if($plot->id !== $selectedPlotId)
+            @if($plot->id !== ($selectedPlot?->id))
                 <option value="{{ $plot->id }}">{{ $plot->name }}</option>
             @endif
         @endforeach

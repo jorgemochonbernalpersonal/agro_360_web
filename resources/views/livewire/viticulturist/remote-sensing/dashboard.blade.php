@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    <div wire:key="dashboard-body-{{ $isLoading ? 'loading' : ($selectedPlotId ?? 'none') }}">
+    <div wire:key="dashboard-body-{{ $isLoading ? 'loading' : ($selectedSigpacId ?? 'none') }}">
     @if($isLoading)
         <div class="flex items-center justify-center py-16">
             <svg class="w-12 h-12 animate-spin text-green-600" fill="none" viewBox="0 0 24 24">
@@ -95,9 +95,9 @@
     @elseif($selectedPlot)
         {{-- Recomendaciones --}}
         @if(count($recommendations) > 0)
-            <div class="mb-6 flex flex-wrap gap-3" wire:key="recommendations-{{ $selectedPlotId ?? 'none' }}">
+            <div class="mb-6 flex flex-wrap gap-3" wire:key="recommendations-{{ $selectedSigpacId ?? 'none' }}">
                 @foreach($recommendations as $index => $rec)
-                    <div wire:key="rec-{{ $selectedPlotId ?? 'none' }}-{{ $index }}"
+                    <div wire:key="rec-{{ $selectedSigpacId ?? 'none' }}-{{ $index }}"
                          class="flex-1 min-w-[200px] p-3 rounded-lg border-l-4
                             @if($rec['type'] === 'danger')  bg-red-50 border-red-500
                             @elseif($rec['type'] === 'warning') bg-amber-50 border-amber-500
@@ -131,7 +131,7 @@
         />
 
         {{-- Tab Content --}}
-        <x-agro.card wire:key="tab-content-{{ $selectedPlotId ?? 'none' }}-{{ $activeTab }}">
+        <x-agro.card wire:key="tab-content-{{ $selectedSigpacId ?? 'none' }}-{{ $activeTab }}">
 
             {{-- Cabecera de parcela (compartida en todos los tabs) --}}
             <div class="flex items-center gap-3 mb-5 pb-4 border-b border-zinc-100">
