@@ -82,7 +82,20 @@ class NasaAreaRequestService
                             'format'     => ['type' => 'geotiff'],
                             'projection' => 'native',
                         ],
-                        'coordinates' => $polygon,
+                        'geo' => [
+                            'type'     => 'FeatureCollection',
+                            'features' => [[
+                                'type'       => 'Feature',
+                                'geometry'   => [
+                                    'type'        => 'Polygon',
+                                    'coordinates' => [array_map(
+                                        fn($p) => [$p['longitude'], $p['latitude']],
+                                        $polygon
+                                    )],
+                                ],
+                                'properties' => new \stdClass(),
+                            ]],
+                        ],
                     ]
                 ]);
 
