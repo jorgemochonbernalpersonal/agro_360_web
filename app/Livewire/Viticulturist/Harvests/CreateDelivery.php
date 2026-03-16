@@ -164,7 +164,7 @@ class CreateDelivery extends Component
             $this->toastSuccess('Entrega registrada correctamente.');
         }
 
-        return redirect()->route('viticulturist.harvests.index');
+        return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
     }
 
     /**

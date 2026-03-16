@@ -4,7 +4,7 @@
         description="Modifica los datos del contenedor"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.containers.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('containers.index') }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -82,7 +82,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('winery.containers.index')"
+            :cancel-url="roleRoute('containers.index')"
             submit-label="Guardar Cambios"
         />
     </form>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Billing\ProductSale;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
 use App\Models\Invoice;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $client_id          = '';
     public string $client_address_id  = '';
@@ -353,7 +354,7 @@ class Create extends Component
             DB::commit();
 
             $this->toastSuccess("Albarán {$noteCode} creado. Emítelo para generar el número de factura.");
-            return $this->redirect(route('winery.invoices.products.index'), navigate: true);
+            return $this->roleRedirect('invoices.products.index');
 
         } catch (\Exception $e) {
             DB::rollBack();

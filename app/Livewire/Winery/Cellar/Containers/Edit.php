@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\Containers;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerType;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Container $container;
 
@@ -60,7 +61,7 @@ class Edit extends Component
         ];
     }
 
-    public function save(): void
+    public function save(): mixed
     {
         $this->validate();
 
@@ -87,11 +88,11 @@ class Edit extends Component
 
         if ($error) {
             $this->addError('capacity', $error);
-            return;
+            return null;
         }
 
         $this->toastSuccess('Contenedor actualizado correctamente.');
-        redirect()->route('winery.containers.index');
+        return $this->roleRedirect('containers.index');
     }
 
     public function render()

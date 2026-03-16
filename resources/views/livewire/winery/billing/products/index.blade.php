@@ -45,7 +45,7 @@
                 Rápida
             </flux:button>
 
-            <flux:button href="{{ route('winery.invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Factura
             </flux:button>
 
@@ -202,7 +202,7 @@
                             <div class="flex items-center gap-0.5 flex-wrap justify-end">
 
                                 @if(!$isLocked)
-                                    <a href="{{ route('winery.invoices.products.edit', $invoice->id) }}" wire:navigate
+                                    <a href="{{ roleRoute('invoices.products.edit', $invoice->id) }}" wire:navigate
                                        class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
@@ -217,17 +217,17 @@
                                     </button>
                                 @endif
 
-                                <a href="{{ route('winery.invoices.products.pdf', $invoice->id) }}"
+                                <a href="{{ roleRoute('invoices.products.pdf', $invoice->id) }}"
                                    target="_blank" class="{{ $btnBase }}" title="Descargar Factura">
                                     <flux:icon icon="document-text" class="size-4" />
                                 </a>
 
-                                <a href="{{ route('winery.invoices.products.delivery-note-pdf', $invoice->id) }}"
+                                <a href="{{ roleRoute('invoices.products.delivery-note-pdf', $invoice->id) }}"
                                    target="_blank" class="{{ $btnBase }}" title="Descargar Albarán">
                                     <flux:icon icon="document-arrow-down" class="size-4" />
                                 </a>
 
-                                <a href="{{ route('winery.invoices.products.valorado-pdf', $invoice->id) }}"
+                                <a href="{{ roleRoute('invoices.products.valorado-pdf', $invoice->id) }}"
                                    target="_blank" class="{{ $btnBase }}" title="Descargar Albarán Valorado">
                                     <flux:icon icon="currency-euro" class="size-4" />
                                 </a>
@@ -287,7 +287,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('invoices.products.create') }}" wire:navigate variant="primary" icon="plus">
                         Nueva Factura
                     </flux:button>
                 </x-slot:action>

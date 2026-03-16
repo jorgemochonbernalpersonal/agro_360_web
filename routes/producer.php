@@ -4,6 +4,7 @@ use App\Livewire\Viticulturist\Campaign\Create as CampaignCreate;
 use App\Livewire\Viticulturist\Campaign\Edit as CampaignEdit;
 use App\Livewire\Viticulturist\Campaign\Index as CampaignIndex;
 use App\Livewire\Viticulturist\Campaign\Show as CampaignShow;
+use App\Livewire\Viticulturist\DigitalNotebook;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateCulturalWork;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateFertilization;
 use App\Livewire\Viticulturist\DigitalNotebook\CreateHarvest;
@@ -320,6 +321,7 @@ Route::middleware(['role:producer', 'check.beta'])
         });
 
         // ── Cuaderno de Campo ─────────────────────────────────────────────
+        Route::get('/digital-notebook', DigitalNotebook::class)->name('digital-notebook');
         Route::prefix('digital-notebook')->name('digital-notebook.')->group(function () {
             Route::get('/treatment', TreatmentIndex::class)->name('treatment.index');
             Route::get('/treatment/create', CreatePhytosanitaryTreatment::class)->name('treatment.create');

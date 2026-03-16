@@ -14,7 +14,7 @@
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
         </div>
 
-        <flux:button href="{{ route('winery.container-rooms.create') }}" wire:navigate variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('container-rooms.create') }}" wire:navigate variant="primary" icon="plus">
             Nueva sala
         </flux:button>
     </div>
@@ -26,7 +26,7 @@
             description="Crea las zonas de tu bodega para organizar los depósitos."
         >
             <x-slot:action>
-                <flux:button href="{{ route('winery.container-rooms.create') }}" wire:navigate variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('container-rooms.create') }}" wire:navigate variant="primary" icon="plus">
                     Nueva sala
                 </flux:button>
             </x-slot:action>
@@ -76,7 +76,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center gap-1">
-                            <a href="{{ route('winery.container-rooms.edit', $room) }}" wire:navigate
+                            <a href="{{ roleRoute('container-rooms.edit', $room) }}" wire:navigate
                                 class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Editar">
                                 <flux:icon icon="pencil-square" class="size-4" />
                             </a>

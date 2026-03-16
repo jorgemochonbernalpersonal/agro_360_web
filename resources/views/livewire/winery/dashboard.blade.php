@@ -13,7 +13,7 @@
                 @endif
             </p>
         </div>
-        <flux:button variant="primary" icon="plus" href="{{ route('winery.grape-reception.create') }}" wire:navigate>
+        <flux:button variant="primary" icon="plus" href="{{ roleRoute('grape-reception.create') }}" wire:navigate>
             Nueva recepción
         </flux:button>
     </div>
@@ -51,7 +51,12 @@
             <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Recepciones</p>
                 <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $totalReceptions }}</p>
-                <p class="text-xs text-zinc-400 mt-0.5">{{ $openBatchCount }} lotes abiertos</p>
+                <p class="text-xs text-zinc-400 mt-0.5">
+                    {{ $openBatchCount }} abiertos
+                    @if($closedBatchCount > 0)
+                        · <span class="text-green-600">{{ $closedBatchCount }} cerrados</span>
+                    @endif
+                </p>
             </div>
             <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Viticultores</p>
@@ -68,7 +73,7 @@
     @if($alertsExceeded > 0 || $alertsAtRisk > 0)
         <div class="flex flex-wrap gap-3">
             @if($alertsExceeded > 0)
-                <a href="{{ route('winery.harvest-summary.index', ['alertFilter' => 'exceeded']) }}" wire:navigate
+                <a href="{{ roleRoute('harvest-summary.index', ['alertFilter' => 'exceeded']) }}" wire:navigate
                     class="flex items-center gap-2 px-4 py-2.5 bg-red-50 border border-red-200 rounded-xl text-sm font-medium text-red-700 hover:bg-red-100 transition-colors">
                     <flux:icon icon="exclamation-triangle" class="size-4" />
                     {{ $alertsExceeded }} lote{{ $alertsExceeded > 1 ? 's' : '' }} superado{{ $alertsExceeded > 1 ? 's' : '' }}
@@ -76,7 +81,7 @@
                 </a>
             @endif
             @if($alertsAtRisk > 0)
-                <a href="{{ route('winery.harvest-summary.index', ['alertFilter' => 'at_risk']) }}" wire:navigate
+                <a href="{{ roleRoute('harvest-summary.index', ['alertFilter' => 'at_risk']) }}" wire:navigate
                     class="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors">
                     <flux:icon icon="bell-alert" class="size-4" />
                     {{ $alertsAtRisk }} en riesgo (≥80%)
@@ -99,7 +104,7 @@
                         </div>
                         <span class="font-semibold text-zinc-900">Últimas recepciones</span>
                     </div>
-                    <a href="{{ route('winery.grape-reception.index') }}" wire:navigate
+                    <a href="{{ roleRoute('grape-reception.index') }}" wire:navigate
                         class="text-xs text-agro-600 hover:underline font-medium">Ver todas →</a>
                 </div>
             </x-slot:header>
@@ -108,14 +113,14 @@
                 <div class="py-8 text-center">
                     <flux:icon icon="archive-box-arrow-down" class="size-10 text-zinc-200 mx-auto mb-2" />
                     <p class="text-sm text-zinc-400">No hay recepciones en la campaña activa</p>
-                    <a href="{{ route('winery.grape-reception.create') }}" wire:navigate class="text-xs text-agro-600 hover:underline mt-1 inline-block">
+                    <a href="{{ roleRoute('grape-reception.create') }}" wire:navigate class="text-xs text-agro-600 hover:underline mt-1 inline-block">
                         Registrar primera recepción →
                     </a>
                 </div>
             @else
                 <div class="space-y-2">
                     @foreach($recentReceptions as $r)
-                        <a href="{{ route('winery.grape-reception.show', $r) }}" wire:navigate
+                        <a href="{{ roleRoute('grape-reception.show', $r) }}" wire:navigate
                             class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-50 transition-colors group">
                             <div class="w-9 h-9 rounded-lg bg-agro-50 flex items-center justify-center shrink-0">
                                 <flux:icon icon="scale" class="size-4 text-agro-600" />
@@ -149,7 +154,7 @@
                         </div>
                         <span class="font-semibold text-zinc-900">Viticultores vinculados</span>
                     </div>
-                    <a href="{{ route('winery.viticulturists.index') }}" wire:navigate
+                    <a href="{{ roleRoute('viticulturists.index') }}" wire:navigate
                         class="text-xs text-agro-600 hover:underline font-medium">Ver todos →</a>
                 </div>
             </x-slot:header>
@@ -158,14 +163,14 @@
                 <div class="py-8 text-center">
                     <flux:icon icon="users" class="size-10 text-zinc-200 mx-auto mb-2" />
                     <p class="text-sm text-zinc-400">No hay viticultores vinculados</p>
-                    <a href="{{ route('winery.viticulturists.invite') }}" wire:navigate class="text-xs text-agro-600 hover:underline mt-1 inline-block">
+                    <a href="{{ roleRoute('viticulturists.invite') }}" wire:navigate class="text-xs text-agro-600 hover:underline mt-1 inline-block">
                         Invitar viticultor →
                     </a>
                 </div>
             @else
                 <div class="space-y-2">
                     @foreach($recentViticulturists as $wv)
-                        <a href="{{ route('winery.viticulturists.show', $wv->viticulturist) }}" wire:navigate
+                        <a href="{{ roleRoute('viticulturists.show', $wv->viticulturist) }}" wire:navigate
                             class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-50 transition-colors">
                             <div class="w-9 h-9 rounded-full bg-agro-100 flex items-center justify-center shrink-0">
                                 <span class="text-sm font-bold text-agro-700">
@@ -189,7 +194,7 @@
     <div>
         <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Accesos rápidos</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <a href="{{ route('winery.harvest-summary.index') }}" wire:navigate
+            <a href="{{ roleRoute('harvest-summary.index') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
                     <flux:icon icon="chart-bar" class="size-5 text-agro-600" />
@@ -199,7 +204,7 @@
                     <p class="text-xs text-zinc-400">Vendimia en tiempo real</p>
                 </div>
             </a>
-            <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+            <a href="{{ roleRoute('grape-reception.create') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
                     <flux:icon icon="plus-circle" class="size-5 text-agro-600" />
@@ -209,7 +214,7 @@
                     <p class="text-xs text-zinc-400">Registrar entrada de uva</p>
                 </div>
             </a>
-            <a href="{{ route('winery.product-lots.index') }}" wire:navigate
+            <a href="{{ roleRoute('product-lots.index') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
                     <flux:icon icon="beaker" class="size-5 text-agro-600" />
@@ -219,7 +224,7 @@
                     <p class="text-xs text-zinc-400">Control de bodega</p>
                 </div>
             </a>
-            <a href="{{ route('winery.invoices.grape-purchase.index') }}" wire:navigate
+            <a href="{{ roleRoute('invoices.grape-purchase.index') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
                     <flux:icon icon="document-text" class="size-5 text-agro-600" />

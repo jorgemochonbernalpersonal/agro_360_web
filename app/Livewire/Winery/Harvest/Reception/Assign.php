@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Reception;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerType;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Assign extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Harvest $harvest;
     public string  $container_id = '';
@@ -34,7 +35,7 @@ class Assign extends Component
         }
     }
 
-    public function save(): void
+    public function save(): mixed
     {
         $this->validate([
             'container_id' => ['required', 'exists:containers,id'],
@@ -47,7 +48,7 @@ class Assign extends Component
 
         if ($this->harvest->container_id === $container->id) {
             $this->toastError('Este contenedor ya está asignado a esta recepción.');
-            return;
+            return null;
         }
 
         // Validate available capacity on the target container (always, whether assigning or reassigning)
@@ -56,14 +57,14 @@ class Assign extends Component
             $available = number_format($container->getAvailableCapacity(), 0);
             $required  = number_format($weight, 0);
             $this->addError('container_id', "Capacidad insuficiente. Disponible: {$available} kg, Necesario: {$required} kg.");
-            return;
+            return null;
         }
 
         // HarvestObserver::updating() handles ContainerStockService::transferContainer()
         $this->harvest->update(['container_id' => $container->id]);
 
         $this->toastSuccess("Recepción asignada al contenedor «{$container->name}».");
-        redirect()->route('winery.grape-reception.index');
+        return $this->roleRedirect('grape-reception.index');
     }
 
     public function render()

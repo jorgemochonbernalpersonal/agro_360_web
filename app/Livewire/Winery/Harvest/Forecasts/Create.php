@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Forecasts;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $viticulturist_id  = '';
     public string $plot_id           = '';
@@ -199,7 +200,7 @@ class Create extends Component
         ];
     }
 
-    public function save(): void
+    public function save(): mixed
     {
         $this->validate();
 
@@ -227,7 +228,7 @@ class Create extends Component
 
         if ($exists) {
             $this->addError('plot_planting_id', 'Ya existe una previsión para esta plantación y campaña. Edita la existente.');
-            return;
+            return null;
         }
 
         WineryYieldForecast::create([
@@ -243,7 +244,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Previsión de vendimia creada correctamente.');
-        redirect()->route('winery.harvest-forecasts.index');
+        return $this->roleRedirect('harvest-forecasts.index');
     }
 
     public function render()

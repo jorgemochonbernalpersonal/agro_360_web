@@ -51,14 +51,14 @@ class Index extends Component
     public function closeBatch(int $batchId): void
     {
         $batch = GrapeReceptionBatch::where('winery_id', Auth::id())->findOrFail($batchId);
-        $batch->update(['status' => 'closed']);
+        $batch->close();
         $this->toastSuccess('Lote cerrado. No se podrán añadir más recepciones.');
     }
 
     public function reopenBatch(int $batchId): void
     {
         $batch = GrapeReceptionBatch::where('winery_id', Auth::id())->findOrFail($batchId);
-        $batch->update(['status' => 'open']);
+        $batch->reopen();
         $this->toastSuccess('Lote reabierto.');
     }
 

@@ -85,7 +85,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Campaña actualizada correctamente.');
-            return redirect()->route('viticulturist.campaign.index');
+            return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar campaña', [
                 'error' => $e->getMessage(),

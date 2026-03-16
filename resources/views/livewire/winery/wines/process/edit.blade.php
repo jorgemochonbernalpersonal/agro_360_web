@@ -3,7 +3,7 @@
     description="Modifica la etapa del proceso de vinificación."
     icon="arrow-path"
     icon-color="from-indigo-500 to-indigo-700"
-    :back-url="route('winery.wines.edit', $wine)"
+    :back-url="roleRoute('wines.edit', $wine)"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Tipo de operación" color="indigo">
@@ -103,6 +103,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.wines.edit', $wine)" submit-label="Guardar cambios" />
+        <x-agro.form-actions :back-url="roleRoute('wines.edit', $wine)" submit-label="Guardar cambios" />
     </form>
 </x-agro.form-card>

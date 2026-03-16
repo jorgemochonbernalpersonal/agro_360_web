@@ -3,14 +3,14 @@
         <x-slot:actions>
             @can('update', $plot)
                 <flux:button
-                    href="{{ auth()->user()->isWinery() ? route('winery.plots.edit', $plot) : route('plots.edit', $plot) }}"
+                    href="{{ roleRoute('plots.edit', $plot) }}"
                     variant="primary"
                     icon="pencil-square"
                 >
                     Editar
                 </flux:button>
             @endcan
-            <flux:button href="{{ auth()->user()->isWinery() ? route('winery.plots.index') : route('plots.index') }}" variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('plots.index') }}" variant="outline" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>

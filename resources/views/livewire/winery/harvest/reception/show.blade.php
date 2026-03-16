@@ -9,11 +9,11 @@
         :description="$harvest->harvest_start_date?->format('d/m/Y') . ($harvest->harvest_time ? ' · ' . $harvest->harvest_time : '')"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.grape-reception.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('grape-reception.index') }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
             @if(!$isCancelled)
-                <flux:button href="{{ route('winery.grape-reception.edit', $harvest) }}" variant="primary" icon="pencil-square">
+                <flux:button href="{{ roleRoute('grape-reception.edit', $harvest) }}" variant="primary" icon="pencil-square">
                     Editar
                 </flux:button>
             @endif
@@ -424,11 +424,11 @@
                         <span class="font-semibold text-zinc-900">Acciones</span>
                     </x-slot:header>
                     <div class="space-y-2">
-                        <flux:button href="{{ route('winery.grape-reception.edit', $harvest) }}" variant="primary" class="w-full" icon="pencil-square">
+                        <flux:button href="{{ roleRoute('grape-reception.edit', $harvest) }}" variant="primary" class="w-full" icon="pencil-square">
                             Editar recepción
                         </flux:button>
                         <flux:button
-                            href="{{ route('winery.grape-reception.assign', $harvest) }}"
+                            href="{{ roleRoute('grape-reception.assign', $harvest) }}"
                             variant="outline"
                             class="w-full"
                             icon="archive-box-arrow-down"
@@ -436,7 +436,7 @@
                             {{ $harvest->container ? 'Cambiar depósito' : 'Asignar depósito' }}
                         </flux:button>
                         <flux:button
-                            href="{{ route('winery.grape-reception.export-pdf-single', $harvest) }}"
+                            href="{{ roleRoute('grape-reception.export-pdf-single', $harvest) }}"
                             target="_blank"
                             variant="ghost"
                             class="w-full"

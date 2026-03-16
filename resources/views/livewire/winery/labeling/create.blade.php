@@ -3,7 +3,7 @@
     description="Registra una operación de etiquetado y el consumo de etiquetas del lote."
     icon="tag"
     icon-color="from-violet-500 to-violet-700"
-    :back-url="route('winery.labeling.index')"
+    :back-url="roleRoute('labeling.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -110,6 +110,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.labeling.index')" submit-label="Guardar sesión" />
+        <x-agro.form-actions :back-url="roleRoute('labeling.index')" submit-label="Guardar sesión" />
     </form>
 </x-agro.form-card>

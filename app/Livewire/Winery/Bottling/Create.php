@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Bottling;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerHistory;
@@ -18,7 +19,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     // ── Datos principales ─────────────────────────────────────────────────────
     public string $wine_id                   = '';
@@ -253,7 +254,7 @@ class Create extends Component
         });
 
         $this->toastSuccess('Embotellado registrado correctamente.');
-        $this->redirect(route('winery.bottling.index'), navigate: true);
+        $this->roleRedirect('bottling.index');
     }
 
     public function render()

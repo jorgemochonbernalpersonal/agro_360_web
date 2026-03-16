@@ -79,7 +79,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Campaña creada correctamente.');
-            return redirect()->route('viticulturist.campaign.index');
+            return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al crear campaña', [
                 'error' => $e->getMessage(),

@@ -3,7 +3,7 @@
     description="Define una serie numerada de contraetiquetas o etiquetas de bodega."
     icon="tag"
     icon-color="from-violet-500 to-violet-700"
-    :back-url="route('winery.label-batches.index')"
+    :back-url="roleRoute('label-batches.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -85,6 +85,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.label-batches.index')" submit-label="Crear lote" />
+        <x-agro.form-actions :back-url="roleRoute('label-batches.index')" submit-label="Crear lote" />
     </form>
 </x-agro.form-card>

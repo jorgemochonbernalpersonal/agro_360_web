@@ -8,7 +8,7 @@
                     Exportar Excel
                 </flux:button>
             @endif
-            <flux:button :href="route('winery.clients.index')" icon="arrow-left" variant="ghost">
+            <flux:button :href="roleRoute('clients.index')" icon="arrow-left" variant="ghost">
                 Volver
             </flux:button>
         </x-slot:actions>

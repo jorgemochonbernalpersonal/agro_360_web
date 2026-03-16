@@ -77,7 +77,7 @@ class Edit extends Component
 
         $this->toastSuccess('Insumo actualizado correctamente.');
 
-        return redirect()->route('viticulturist.almacen.index', ['tab' => 'insumos']);
+        return $this->redirect(route('viticulturist.almacen.index', ['tab' => 'insumos']), navigate: true);
     }
 
     public function render()

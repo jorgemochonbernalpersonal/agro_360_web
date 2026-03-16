@@ -52,7 +52,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('winery.external-grape.create') }}" wire:navigate variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('external-grape.create') }}" wire:navigate variant="primary" icon="plus">
             Nueva
         </flux:button>
     </div>
@@ -201,7 +201,7 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('winery.external-grape.edit', $grape) }}" wire:navigate
+                                    <a href="{{ roleRoute('external-grape.edit', $grape) }}" wire:navigate
                                         class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
@@ -237,7 +237,7 @@
             >
                 @if(!$search && !$typeFilter && !$statusFilter && !$vintageFilter && !$colorFilter)
                     <x-slot:action>
-                        <flux:button href="{{ route('winery.external-grape.create') }}" wire:navigate variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('external-grape.create') }}" wire:navigate variant="primary" icon="plus">
                             Nueva partida
                         </flux:button>
                     </x-slot:action>

@@ -35,16 +35,16 @@
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('winery.product-lots.insights') }}" wire:navigate variant="ghost" icon="chart-bar">
+        <flux:button href="{{ roleRoute('product-lots.insights') }}" wire:navigate variant="ghost" icon="chart-bar">
             Insights
         </flux:button>
 
-        <flux:button href="{{ route('winery.product-lots.audit') }}" wire:navigate variant="ghost" icon="shield-check">
+        <flux:button href="{{ roleRoute('product-lots.audit') }}" wire:navigate variant="ghost" icon="shield-check">
             Auditoría
         </flux:button>
 
         {{-- Nuevo Producto --}}
-        <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('product-lots.create') }}" wire:navigate variant="primary" icon="plus">
             Nuevo
         </flux:button>
     </div>
@@ -211,11 +211,11 @@
                             <div class="flex items-center justify-between">
                                 {{-- Grupo izquierdo: editar + duplicar + ventas --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('winery.product-lots.edit', $lot) }}" wire:navigate
+                                    <a href="{{ roleRoute('product-lots.edit', $lot) }}" wire:navigate
                                         class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
-                                    <a href="{{ route('winery.product-lots.sales', $lot) }}" wire:navigate
+                                    <a href="{{ roleRoute('product-lots.sales', $lot) }}" wire:navigate
                                         class="{{ $btnBase }}" title="Ver ventas">
                                         <flux:icon icon="shopping-cart" class="size-4" />
                                     </a>
@@ -261,7 +261,7 @@
                 description="Crea el primer producto para gestionar tu stock"
             >
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.product-lots.create') }}" wire:navigate variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('product-lots.create') }}" wire:navigate variant="primary" icon="plus">
                         Nuevo Producto
                     </flux:button>
                 </x-slot:action>

@@ -108,7 +108,7 @@
                         <div class="shrink-0">
                             @if($delivery->harvest_id)
                                 <flux:button
-                                    href="{{ route('winery.grape-reception.show', $delivery->harvest_id) }}"
+                                    href="{{ roleRoute('grape-reception.show', $delivery->harvest_id) }}"
                                     variant="{{ $hasNote ? 'primary' : 'outline' }}"
                                     size="sm"
                                     icon="arrow-top-right-on-square"

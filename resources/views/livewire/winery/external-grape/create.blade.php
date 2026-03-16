@@ -3,7 +3,7 @@
     description="Registra uva, mosto o vino a granel de un proveedor externo."
     icon="archive-box"
     icon-color="from-agro-500 to-agro-700"
-    :back-url="route('winery.external-grape.index')"
+    :back-url="roleRoute('external-grape.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -131,6 +131,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.external-grape.index')" submit-label="Guardar partida" />
+        <x-agro.form-actions :back-url="roleRoute('external-grape.index')" submit-label="Guardar partida" />
     </form>
 </x-agro.form-card>

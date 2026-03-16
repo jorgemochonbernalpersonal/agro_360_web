@@ -5,13 +5,14 @@ namespace App\Livewire\Winery\ExternalGrape;
 use App\Models\Container;
 use App\Models\ExternalGrape;
 use App\Models\GrapeVariety;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $supplier_name     = '';
     public string $grape_type        = 'grapes';
@@ -80,7 +81,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Partida registrada correctamente.');
-        $this->redirect(route('winery.external-grape.index'), navigate: true);
+        $this->roleRedirect('external-grape.index');
     }
 
     public function render()

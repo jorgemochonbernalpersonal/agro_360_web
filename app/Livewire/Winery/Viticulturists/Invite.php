@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Viticulturists;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Invite extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $search = '';
 
@@ -53,7 +54,7 @@ class Invite extends Component
             ->toArray();
     }
 
-    public function confirm(int $userId): void
+    public function confirm(int $userId): mixed
     {
         $this->confirmingId = $userId;
     }
@@ -109,7 +110,7 @@ class Invite extends Component
 
         $this->toastSuccess("{$user->name} ha sido vinculado a tu bodega.");
 
-        return redirect()->route('winery.viticulturists.index');
+        return $this->roleRedirect('viticulturists.index');
     }
 
     public function render()

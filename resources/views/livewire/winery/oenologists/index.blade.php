@@ -31,7 +31,7 @@
                 />
             </div>
 
-            <flux:button href="{{ route('winery.oenologists.create') }}" wire:navigate variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('oenologists.create') }}" wire:navigate variant="primary" icon="plus">
                 Nuevo Enólogo
             </flux:button>
 
@@ -117,7 +117,7 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ route('winery.oenologists.edit', $oenologist->id) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
+                                <a href="{{ roleRoute('oenologists.edit', $oenologist->id) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
                                     <flux:icon icon="pencil-square" class="size-4" />
                                 </a>
                             </div>
@@ -162,7 +162,7 @@
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.oenologists.create') }}" wire:navigate variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('oenologists.create') }}" wire:navigate variant="primary" icon="plus">
                         Nuevo Enólogo
                     </flux:button>
                 </x-slot:action>

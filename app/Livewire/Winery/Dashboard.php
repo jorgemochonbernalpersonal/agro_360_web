@@ -17,7 +17,7 @@ class Dashboard extends Component
     {
         $wineryId = Auth::id();
 
-        // Campaña activa
+        // Campaña activa de la bodega (viticulturist_id almacena el ID del propietario, sea viticultor o bodega)
         $activeCampaign = Campaign::forViticulturist($wineryId)->where('active', true)->first();
         $vintageYear    = $activeCampaign?->year ?? now()->year;
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Bottling;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\Oenologist;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public WineBottling $bottling;
 
@@ -217,7 +218,7 @@ class Edit extends Component
         });
 
         $this->toastSuccess('Embotellado actualizado correctamente.');
-        $this->redirect(route('winery.bottling.index'), navigate: true);
+        $this->roleRedirect('bottling.index');
     }
 
     public function render()

@@ -74,7 +74,7 @@ class Index extends Component
 
     public function delete($campaignId): void
     {
-        $campaign = Campaign::withCount('activities')->findOrFail($campaignId);
+        $campaign = Campaign::forViticulturist(Auth::id())->withCount('activities')->findOrFail($campaignId);
 
         if (!Auth::user()->can('delete', $campaign)) {
             $this->toastError('No tienes permiso para eliminar esta campaña.');
@@ -131,13 +131,14 @@ class Index extends Component
 
         $campaigns = $query->paginate(12);
 
-        // Una sola query para stats y años (evita 3 COUNT extra por render)
-        $allCampaigns = Campaign::forViticulturist($user->id)->select('active', 'year')->get();
         $stats = [
-            'active'   => $allCampaigns->where('active', true)->count(),
-            'inactive' => $allCampaigns->where('active', false)->count(),
+            'active'   => Campaign::forViticulturist($user->id)->where('active', true)->count(),
+            'inactive' => Campaign::forViticulturist($user->id)->where('active', false)->count(),
         ];
-        $years = $allCampaigns->pluck('year')->unique()->sortDesc()->values();
+        $years = Campaign::forViticulturist($user->id)
+            ->orderByDesc('year')
+            ->distinct()
+            ->pluck('year');
 
         return view('livewire.viticulturist.campaign.index', [
             'campaigns' => $campaigns,

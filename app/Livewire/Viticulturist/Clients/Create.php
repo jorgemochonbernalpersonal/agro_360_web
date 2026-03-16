@@ -228,7 +228,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Cliente creado exitosamente.');
-            return redirect()->route('viticulturist.clients.index');
+            return $this->redirect(route('viticulturist.clients.index'), navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear el cliente. Inténtalo de nuevo.');
         }

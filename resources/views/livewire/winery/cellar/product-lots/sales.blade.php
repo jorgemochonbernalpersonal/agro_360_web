@@ -5,7 +5,7 @@
         description="Historial de albaranes y facturas de este lote"
     >
         <x-slot:actions>
-            <flux:button :href="route('winery.product-lots.index')" icon="arrow-left" variant="ghost">
+            <flux:button :href="roleRoute('product-lots.index')" icon="arrow-left" variant="ghost">
                 Volver a lotes
             </flux:button>
         </x-slot:actions>

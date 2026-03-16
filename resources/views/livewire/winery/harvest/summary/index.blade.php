@@ -150,7 +150,7 @@
             >
                 <x-slot:action>
                     <div class="mt-4 flex flex-col gap-2 text-left max-w-xs mx-auto">
-                        <a href="{{ route('winery.harvest-forecasts.create') }}" wire:navigate
+                        <a href="{{ roleRoute('harvest-forecasts.create') }}" wire:navigate
                             class="flex items-center gap-3 p-3 bg-agro-50 border border-agro-200 rounded-xl hover:bg-agro-100 transition-colors">
                             <div class="w-7 h-7 rounded-lg bg-agro-600 text-white font-bold text-xs flex items-center justify-center shrink-0">1</div>
                             <div>
@@ -158,7 +158,7 @@
                                 <p class="text-xs text-zinc-500">Define el aforo esperado por plantación</p>
                             </div>
                         </a>
-                        <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+                        <a href="{{ roleRoute('grape-reception.create') }}" wire:navigate
                             class="flex items-center gap-3 p-3 bg-white border border-zinc-200 rounded-xl hover:bg-zinc-50 transition-colors">
                             <div class="w-7 h-7 rounded-lg bg-zinc-200 text-zinc-500 font-bold text-xs flex items-center justify-center shrink-0">2</div>
                             <div>

@@ -4,10 +4,10 @@
         description="Resumen de calidad analítica y sensorial de cada vino"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.tasting-notes.create') }}" variant="ghost" icon="plus" size="sm">
+            <flux:button href="{{ roleRoute('tasting-notes.create') }}" variant="ghost" icon="plus" size="sm">
                 Nueva cata
             </flux:button>
-            <flux:button href="{{ route('winery.wines.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('wines.create') }}" variant="primary" icon="plus">
                 Nuevo vino
             </flux:button>
         </x-slot:actions>
@@ -147,10 +147,10 @@
 
                         {{-- ── Acciones ─────────────────────────────────── --}}
                         <div class="flex md:flex-col gap-2 md:items-end shrink-0">
-                            <a href="{{ route('winery.wines.edit', $wine) }}">
+                            <a href="{{ roleRoute('wines.edit', $wine) }}">
                                 <flux:button variant="ghost" size="sm" icon="pencil">Editar</flux:button>
                             </a>
-                            <a href="{{ route('winery.tasting-notes.create') }}?wine_id={{ $wine->id }}">
+                            <a href="{{ roleRoute('tasting-notes.create') }}?wine_id={{ $wine->id }}">
                                 <flux:button variant="ghost" size="sm" icon="plus">Añadir cata</flux:button>
                             </a>
                         </div>
@@ -173,7 +173,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.wines.create') }}" variant="primary" icon="plus">Nuevo vino</flux:button>
+                    <flux:button href="{{ roleRoute('wines.create') }}" variant="primary" icon="plus">Nuevo vino</flux:button>
                 </x-slot:action>
             @endif
         </x-agro.empty-state>

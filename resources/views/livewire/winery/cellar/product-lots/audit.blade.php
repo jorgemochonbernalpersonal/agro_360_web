@@ -5,7 +5,7 @@
         description="Verificación y reconstrucción de stock por movimientos registrados"
     >
         <x-slot:actions>
-            <flux:button :href="route('winery.product-lots.index')" icon="arrow-left" variant="ghost" wire:navigate>
+            <flux:button :href="roleRoute('product-lots.index')" icon="arrow-left" variant="ghost" wire:navigate>
                 Volver a productos
             </flux:button>
         </x-slot:actions>

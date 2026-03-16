@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Billing\GrapePurchase;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\Invoice;
@@ -14,7 +15,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Invoice $invoice;
 
@@ -231,7 +232,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Liquidación actualizada correctamente.');
-            return $this->redirect(route('winery.invoices.grape-purchase.index'), navigate: true);
+            return $this->roleRedirect('invoices.grape-purchase.index');
 
         } catch (\Exception $e) {
             Log::error('Error al editar liquidación de vendimia: ' . $e->getMessage(), [

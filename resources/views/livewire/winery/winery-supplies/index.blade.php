@@ -5,7 +5,7 @@
     icon="beaker"
 >
     <x-slot:actions>
-        <flux:button variant="primary" icon="plus" href="{{ route('winery.winery-supplies.create') }}" wire:navigate>
+        <flux:button variant="primary" icon="plus" href="{{ roleRoute('winery-supplies.create') }}" wire:navigate>
             Nuevo insumo
         </flux:button>
     </x-slot:actions>
@@ -52,7 +52,7 @@
                 <x-agro.table-cell align="right">
                     <div class="flex justify-end gap-2">
                         <flux:button size="sm" variant="ghost" icon="pencil"
-                            href="{{ route('winery.winery-supplies.edit', $supply) }}" wire:navigate />
+                            href="{{ roleRoute('winery-supplies.edit', $supply) }}" wire:navigate />
                         <flux:button size="sm" variant="ghost" icon="trash"
                             wire:click="delete({{ $supply->id }})"
                             wire:loading.attr="disabled"

@@ -67,7 +67,7 @@ class CreateObservation extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return redirect()->route('viticulturist.campaign.create');
+            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -203,7 +203,7 @@ class CreateObservation extends Component
             });
 
             $this->toastSuccess('Observación registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.observation.index');
+            return $this->redirect(route('viticulturist.digital-notebook.observation.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar observación', [
                 'error' => $e->getMessage(),

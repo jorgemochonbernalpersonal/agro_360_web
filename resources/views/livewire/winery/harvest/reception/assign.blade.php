@@ -4,7 +4,7 @@
         description="Asigna esta recepción de uva a un depósito o barrica"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.grape-reception.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('grape-reception.index') }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -69,7 +69,7 @@
                     description="Crea un contenedor antes de asignar recepciones."
                 >
                     <x-slot:action>
-                        <flux:button href="{{ route('winery.containers.create') }}" variant="ghost" size="sm" icon="plus">
+                        <flux:button href="{{ roleRoute('containers.create') }}" variant="ghost" size="sm" icon="plus">
                             Crear contenedor
                         </flux:button>
                     </x-slot:action>
@@ -136,7 +136,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('winery.grape-reception.index')"
+            :cancel-url="roleRoute('grape-reception.index')"
             submit-label="Asignar Contenedor"
         />
     </form>

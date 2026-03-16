@@ -57,6 +57,8 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             return redirect()->route('viticulturist.settings', ['tab' => 'invoicing']);
         });
 
+        Route::get('/winery-access', \App\Livewire\Viticulturist\WineryAccess\Index::class)->name('winery-access.index');
+
         Route::prefix('support')->name('support.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Support\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Viticulturist\Support\CreateTicket::class)->name('create');

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\ProductLots;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\ProductLot;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     // ── Básico ──────────────────────────────────────────────────────
     public string $wine_id    = '';
@@ -251,7 +252,7 @@ class Create extends Component
         });
 
         $this->toastSuccess('Producto creado correctamente.');
-        $this->redirect(route('winery.product-lots.index'), navigate: true);
+        $this->roleRedirect('product-lots.index');
     }
 
     public function render()

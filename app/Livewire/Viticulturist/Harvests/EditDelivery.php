@@ -174,7 +174,7 @@ class EditDelivery extends Component
 
         $this->toastSuccess($message);
 
-        return redirect()->route('viticulturist.harvests.index');
+        return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
     }
 
     public function delete(): mixed
@@ -223,7 +223,7 @@ class EditDelivery extends Component
 
         $this->toastSuccess('Entrega eliminada.');
 
-        return redirect()->route('viticulturist.harvests.index');
+        return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
     }
 
     public function render()

@@ -164,15 +164,18 @@ class Create extends Component
 
         // Cargar parcelas si hay campaña seleccionada
         if ($this->campaign_id) {
-            $this->availablePlots = Plot::whereHas('activities', function($q) {
-                $q->where('campaign_id', $this->campaign_id)
-                  ->where('viticulturist_id', Auth::id());
-            })
-            ->orWhere('viticulturist_id', $user->id)
-            ->where('active', true)
-            ->distinct()
-            ->orderBy('name')
-            ->get();
+            $campaignId = $this->campaign_id;
+            $this->availablePlots = Plot::where('active', true)
+                ->where(function ($q) use ($user, $campaignId) {
+                    $q->whereHas('activities', function ($aq) use ($user, $campaignId) {
+                        $aq->where('campaign_id', $campaignId)
+                           ->where('viticulturist_id', $user->id);
+                    })
+                    ->orWhere('viticulturist_id', $user->id);
+                })
+                ->distinct()
+                ->orderBy('name')
+                ->get();
         } else {
             $this->availablePlots = Plot::where('viticulturist_id', $user->id)
                 ->where('active', true)
@@ -263,7 +266,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Rendimiento estimado creado exitosamente.');
-            return redirect()->route('viticulturist.digital-notebook.estimated-yields.index');
+            return $this->redirect(route('viticulturist.digital-notebook.estimated-yields.index'), navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear el rendimiento estimado. Inténtalo de nuevo.');
         }

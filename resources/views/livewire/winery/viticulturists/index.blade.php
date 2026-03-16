@@ -14,6 +14,16 @@
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
         </div>
 
+        {{-- Filtro origen --}}
+        <select wire:model.live="sourceFilter"
+            class="text-sm border border-zinc-200 rounded-xl px-3 py-2.5 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition">
+            <option value="">Todos los orígenes</option>
+            <option value="own">Propios</option>
+            <option value="supervisor">Asignados por D.O.</option>
+            <option value="viticulturist">Viticultor</option>
+            <option value="self">Autoregistro</option>
+        </select>
+
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -23,12 +33,12 @@
         </flux:button>
 
         {{-- Invitar existente --}}
-        <flux:button href="{{ route('winery.viticulturists.invite') }}" variant="ghost" icon="link">
+        <flux:button href="{{ roleRoute('viticulturists.invite') }}" variant="ghost" icon="link">
             Invitar existente
         </flux:button>
 
         {{-- Añadir Viticultor --}}
-        <flux:button href="{{ route('winery.viticulturists.create') }}" variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('viticulturists.create') }}" variant="primary" icon="plus">
             Añadir Viticultor
         </flux:button>
 
@@ -105,7 +115,7 @@
                         <div class="flex-1 space-y-3 text-sm">
                             <div class="flex items-center justify-between">
                                 <span class="text-zinc-500">Parcelas</span>
-                                <a href="{{ route('winery.plots.index') }}"
+                                <a href="{{ roleRoute('plots.index') }}"
                                     class="flex items-center gap-1 font-semibold text-agro-700 hover:underline">
                                     <flux:icon icon="map" class="size-4" />
                                     {{ $v->plots_count }} {{ Str::plural('parcela', $v->plots_count) }}
@@ -115,6 +125,16 @@
                                 <span class="text-zinc-500">Origen</span>
                                 <flux:badge :color="$src['color']" size="sm">{{ $src['label'] }}</flux:badge>
                             </div>
+                            @if ($v->can_login)
+                                <div class="flex items-center justify-between">
+                                    <span class="text-zinc-500">Cuaderno</span>
+                                    @if($relation->cuaderno_access)
+                                        <flux:badge color="green" icon="book-open" size="sm">Acceso</flux:badge>
+                                    @else
+                                        <flux:badge icon="lock-closed" size="sm">Sin acceso</flux:badge>
+                                    @endif
+                                </div>
+                            @endif
                             @if ($inviteStatus)
                                 <div class="flex items-center justify-between">
                                     <span class="text-zinc-500">Invitación</span>
@@ -134,7 +154,7 @@
 
                                 {{-- Grupo izquierdo: navegar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('winery.viticulturists.show', $v->id) }}"
+                                    <a href="{{ roleRoute('viticulturists.show', $v->id) }}"
                                         class="{{ $btnBase }}" title="Ver viticultor">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
@@ -146,12 +166,12 @@
                                 {{-- Grupo derecho: gestionar --}}
                                 <div class="flex items-center gap-0.5">
                                     @if ($relation->source === 'own')
-                                        <a href="{{ route('winery.viticulturists.edit', $v->id) }}"
+                                        <a href="{{ roleRoute('viticulturists.edit', $v->id) }}"
                                             class="{{ $btnBase }}" title="Editar">
                                             <flux:icon icon="pencil-square" class="size-4" />
                                         </a>
                                         @if (!$v->can_login)
-                                            <a href="{{ route('winery.viticulturists.show', $v->id) }}"
+                                            <a href="{{ roleRoute('viticulturists.show', $v->id) }}"
                                                 class="{{ $btnPrimary }}"
                                                 title="{{ $v->invitation_token ? 'Ver invitación' : 'Invitar al portal' }}">
                                                 <flux:icon icon="paper-airplane" class="size-4" />
@@ -176,7 +196,7 @@
                 description="Añade viticultores para gestionar sus parcelas y vendimias"
             >
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.viticulturists.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturists.create') }}" variant="primary" icon="plus">
                         Añadir Viticultor
                     </flux:button>
                 </x-slot:action>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\LabelBatches;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\LabelBatch;
 use App\Models\LabelWaste;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public LabelBatch $batch;
 
@@ -81,7 +82,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Lote actualizado correctamente.');
-        $this->redirect(route('winery.label-batches.index'), navigate: true);
+        $this->roleRedirect('label-batches.index');
     }
 
     public function toggleWasteForm(): void

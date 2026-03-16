@@ -322,7 +322,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Cliente actualizado exitosamente.');
-            return redirect()->route('viticulturist.clients.index');
+            return $this->redirect(route('viticulturist.clients.index'), navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar el cliente. Inténtalo de nuevo.');
         }

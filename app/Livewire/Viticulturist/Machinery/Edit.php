@@ -129,7 +129,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Maquinaria actualizada correctamente.');
-            return redirect()->route('viticulturist.machinery.index');
+            return $this->redirect(route('viticulturist.machinery.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar maquinaria', [
                 'error' => $e->getMessage(),

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\TastingNotes;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
 use App\Models\Wine;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public WineTastingNote $tastingNote;
 
@@ -123,7 +124,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Nota de cata actualizada correctamente.');
-        $this->redirect(route('winery.tasting-notes.index'), navigate: true);
+        $this->roleRedirect('tasting-notes.index');
     }
 
     public function render()

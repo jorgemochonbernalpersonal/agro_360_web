@@ -4,7 +4,7 @@
         description="Crea una nueva factura de venta de productos a un cliente"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.invoices.products.index') }}" variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('invoices.products.index') }}" variant="outline" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -27,7 +27,7 @@
                         <flux:error name="client_id" />
                         @if ($clients->isEmpty())
                             <p class="mt-1 text-xs text-zinc-400">
-                                <a href="{{ route('winery.clients.create') }}" class="text-blue-600 underline">Crea tu primer cliente</a>
+                                <a href="{{ roleRoute('clients.create') }}" class="text-blue-600 underline">Crea tu primer cliente</a>
                             </p>
                         @endif
                     </flux:field>
@@ -386,7 +386,7 @@
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.invoices.products.index')" submit-label="Crear Factura" />
+            <x-agro.form-actions :cancel-url="roleRoute('invoices.products.index')" submit-label="Crear Factura" />
         </form>
     </x-agro.card>
 </div>

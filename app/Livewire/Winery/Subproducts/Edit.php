@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Subproducts;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public WineSubproduct $subproduct;
 
@@ -104,7 +105,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Subproducto actualizado correctamente.');
-        $this->redirect(route('winery.subproducts.index'), navigate: true);
+        $this->roleRedirect('subproducts.index');
     }
 
     public function render()

@@ -266,3 +266,29 @@ if (!function_exists('active_route')) {
         return request()->routeIs($routeName) ? $activeClass : '';
     }
 }
+
+if (!function_exists('roleRoute')) {
+    /**
+     * Generate a role-aware URL for shared Blade views.
+     *
+     * - Producer  → producer.{suffix}
+     * - Winery    → winery.{suffix}
+     * - Others (viticulturist, etc.) → {suffix}  (no prefix)
+     *
+     * Use instead of route('winery.X') in views shared across roles.
+     */
+    function roleRoute(string $suffix, mixed $parameters = []): string
+    {
+        $user = auth()->user();
+
+        if ($user?->isProducer()) {
+            return route("producer.{$suffix}", $parameters);
+        }
+
+        if ($user?->hasWineryAccess()) {
+            return route("winery.{$suffix}", $parameters);
+        }
+
+        return route($suffix, $parameters);
+    }
+}

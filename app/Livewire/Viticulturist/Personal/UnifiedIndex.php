@@ -267,7 +267,14 @@ class UnifiedIndex extends Component
         $hasCrews = Crew::where('viticulturist_id', $viticulturistId)->exists();
         $hasSubs = \App\Models\Subscription::where('user_id', $viticulturistId)->exists();
         $hasPayments = \App\Models\Payment::where('user_id', $viticulturistId)->exists();
-        $hasWineryRelations = WineryViticulturist::where('viticulturist_id', $viticulturistId)->exists();
+        // Exclude the creator's own link record (source=viticulturist, parent=current user)
+        // to avoid permanently blocking deletion of sub-viticulturists.
+        $hasWineryRelations = WineryViticulturist::where('viticulturist_id', $viticulturistId)
+            ->where(function ($q) use ($user) {
+                $q->where('source', '!=', WineryViticulturist::SOURCE_VITICULTURIST)
+                  ->orWhere('parent_viticulturist_id', '!=', $user->id);
+            })
+            ->exists();
 
         if ($hasPlots || $hasCampaigns || $hasCrews || $hasSubs || $hasPayments || $hasWineryRelations) {
             $this->toastError('No se puede eliminar el viticultor porque tiene datos relacionados.');

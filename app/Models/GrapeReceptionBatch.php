@@ -64,6 +64,22 @@ class GrapeReceptionBatch extends Model
     // ─── Helpers ────────────────────────────────────────────────────────────
 
     /**
+     * Cierra el lote — no se pueden añadir más recepciones.
+     */
+    public function close(): void
+    {
+        $this->update(['status' => 'closed']);
+    }
+
+    /**
+     * Reabre el lote para permitir nuevas recepciones.
+     */
+    public function reopen(): void
+    {
+        $this->update(['status' => 'open']);
+    }
+
+    /**
      * Recalcula y persiste el total a partir de las recepciones activas.
      * Úsalo tras cancelar una recepción para mantener la coherencia.
      */

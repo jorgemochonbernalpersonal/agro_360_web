@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\Containers;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerType;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $name          = '';
     public string $type_id       = '';
@@ -43,7 +44,7 @@ class Create extends Component
         ];
     }
 
-    public function save(): void
+    public function save(): mixed
     {
         $this->validate();
 
@@ -61,7 +62,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess("Contenedor «{$this->name}» creado correctamente.");
-        redirect()->route('winery.containers.index');
+        return $this->roleRedirect('containers.index');
     }
 
     public function render()

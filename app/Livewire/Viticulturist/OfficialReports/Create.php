@@ -411,7 +411,7 @@ class Create extends Component
             $this->toastSuccess('✅ Informe en proceso. Te avisaremos por email cuando esté listo (1-5 min).');
 
             // Redirigir
-            return redirect()->route('viticulturist.official-reports.index');
+            return $this->redirect(route('viticulturist.official-reports.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al crear informe para cola', [
                 'user_id' => auth()->id(),
@@ -626,7 +626,7 @@ class Create extends Component
         if ($generatedCount > 0) {
             $this->password = '';
             $this->toastSuccess("✅ Se generarán {$generatedCount} informes en lotes. Te avisaremos por email cuando estén listos (5-10 min por lote).");
-            return redirect()->route('viticulturist.official-reports.index');
+            return $this->redirect(route('viticulturist.official-reports.index'), navigate: true);
         } else {
             $this->addError('generation', 'Error al generar informes: ' . implode(', ', $errors));
             $this->toastError('Error al generar informes por lotes.');
@@ -732,7 +732,7 @@ class Create extends Component
         $this->showSuccessModal = false;
 
         // Redirigir a la lista de informes
-        return redirect()->route('viticulturist.official-reports.index');
+        return $this->redirect(route('viticulturist.official-reports.index'), navigate: true);
     }
 
     public function render()

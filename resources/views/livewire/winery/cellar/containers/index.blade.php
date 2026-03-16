@@ -4,7 +4,7 @@
         description="Gestiona tus depósitos, barricas y otros contenedores"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.containers.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('containers.create') }}" variant="primary" icon="plus">
                 Nuevo Contenedor
             </flux:button>
         </x-slot:actions>
@@ -126,7 +126,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ route('winery.containers.edit', $container) }}" title="Editar">
+                            <a href="{{ roleRoute('containers.edit', $container) }}" title="Editar">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="pencil" class="size-4" />
                                 </button>
@@ -176,7 +176,7 @@
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.containers.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('containers.create') }}" variant="primary" icon="plus">
                         Nuevo Contenedor
                     </flux:button>
                 </x-slot:action>

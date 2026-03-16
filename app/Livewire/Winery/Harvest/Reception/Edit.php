@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Reception;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\Harvest;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Harvest $harvest;
 
@@ -212,7 +213,7 @@ class Edit extends Component
         ];
     }
 
-    public function save(): void
+    public function save(): mixed
     {
         $this->validate();
 
@@ -239,7 +240,7 @@ class Edit extends Component
                 "El contenedor «{$container->name}» no tiene capacidad suficiente. " .
                 "Disponible: " . number_format($effectiveAvailable, 0) . " kg."
             );
-            return;
+            return null;
         }
 
         try {
@@ -280,7 +281,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Recepción actualizada correctamente.');
-            $this->redirect(route('winery.grape-reception.index'), navigate: true);
+            return $this->roleRedirect('grape-reception.index');
 
         } catch (\Exception $e) {
             \Log::error('Error al actualizar recepción de uva', [

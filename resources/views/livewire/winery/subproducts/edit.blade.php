@@ -3,7 +3,7 @@
     description="Modifica el registro de subproducto de elaboración."
     icon="archive-box"
     icon-color="from-amber-600 to-orange-700"
-    :back-url="route('winery.subproducts.index')"
+    :back-url="roleRoute('subproducts.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -109,6 +109,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.subproducts.index')" submit-label="Guardar cambios" />
+        <x-agro.form-actions :back-url="roleRoute('subproducts.index')" submit-label="Guardar cambios" />
     </form>
 </x-agro.form-card>

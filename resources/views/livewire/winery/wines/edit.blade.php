@@ -3,7 +3,7 @@
     description="Modifica los datos del vino y consulta su historial de operaciones."
     icon="beaker"
     icon-color="from-purple-500 to-purple-700"
-    :back-url="route('winery.wines.index')"
+    :back-url="roleRoute('wines.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Identificación" color="purple">
@@ -106,10 +106,10 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.wines.index')" submit-label="Actualizar vino">
+        <x-agro.form-actions :back-url="roleRoute('wines.index')" submit-label="Actualizar vino">
             <x-slot:extra>
                 <flux:button variant="ghost" icon="plus"
-                    href="{{ route('winery.wines.process.create', $wine) }}" wire:navigate>
+                    href="{{ roleRoute('wines.process.create', $wine) }}" wire:navigate>
                     Añadir operación
                 </flux:button>
             </x-slot:extra>

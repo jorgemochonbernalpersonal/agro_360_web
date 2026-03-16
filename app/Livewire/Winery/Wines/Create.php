@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Wines;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
 use App\Models\Wine;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $name          = '';
     public string $vintage       = '';
@@ -67,7 +68,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess("Vino «{$wine->name}» creado correctamente.");
-        $this->redirect(route('winery.wines.index'), navigate: true);
+        $this->roleRedirect('wines.index');
     }
 
     public function render()

@@ -3,7 +3,7 @@
     description="Modifica los datos de la partida de uva, mosto o vino a granel."
     icon="archive-box"
     icon-color="from-agro-500 to-agro-700"
-    :back-url="route('winery.external-grape.index')"
+    :back-url="roleRoute('external-grape.index')"
 >
     <form wire:submit="update" class="space-y-8">
 
@@ -130,6 +130,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.external-grape.index')" submit-label="Actualizar partida" />
+        <x-agro.form-actions :back-url="roleRoute('external-grape.index')" submit-label="Actualizar partida" />
     </form>
 </x-agro.form-card>

@@ -3,10 +3,13 @@
 namespace App\Livewire\Winery\Viticulturists;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\NotebookAccessRequest;
 use App\Models\User;
 use App\Models\WineryViticulturist;
+use App\Notifications\NotebookAccessRequestedNotification;
 use App\Notifications\ViticulturistInvitationNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -17,7 +20,7 @@ class Show extends Component
     public User $viticulturist;
     public WineryViticulturist $relation;
 
-    // Invitación
+    // Invitation
     public string $inviteEmail    = '';
     public bool   $showEmailField = false;
 
@@ -29,19 +32,14 @@ class Show extends Component
             ->where('viticulturist_id', $viticulturist->id)
             ->firstOrFail();
 
-        $this->viticulturist = $viticulturist->load([
-            'plots.municipality',
-            'plots.plantings.grapeVariety',
-            'profile',
-        ]);
+        $this->viticulturist = $viticulturist->load(['profile']);
 
-        // Pre-rellenar email si ya tiene uno real
         if ($this->hasRealEmail()) {
             $this->inviteEmail = $this->viticulturist->email;
         }
     }
 
-    // ── Invitación ───────────────────────────────────────────────────────────
+    // ── Invitation ───────────────────────────────────────────────────────────
 
     protected function hasRealEmail(): bool
     {
@@ -58,7 +56,6 @@ class Show extends Component
             'inviteEmail.email'    => 'El email no es válido.',
         ]);
 
-        // Verificar que el email no está ya en uso por otro usuario
         $emailTaken = User::where('email', $this->inviteEmail)
             ->where('id', '!=', $this->viticulturist->id)
             ->exists();
@@ -68,10 +65,8 @@ class Show extends Component
             return;
         }
 
-        // Generar token único
         $token = Str::random(64);
 
-        // Actualizar usuario: email real si era fake, token, sent_at, expires_at (7 días)
         $updates = [
             'invitation_token'      => $token,
             'invitation_sent_at'    => now(),
@@ -85,7 +80,6 @@ class Show extends Component
         $this->viticulturist->update($updates);
         $this->viticulturist->refresh();
 
-        // Enviar notificación
         $this->viticulturist->notify(new ViticulturistInvitationNotification(Auth::user(), $token));
 
         $this->showEmailField = false;
@@ -102,10 +96,62 @@ class Show extends Component
         $this->toastSuccess('Invitación revocada.');
     }
 
+    // ── Field notebook access ─────────────────────────────────────────────────
+
+    public function requestNotebookAccess(): void
+    {
+        $existing = NotebookAccessRequest::where('winery_id', Auth::id())
+            ->where('viticulturist_id', $this->viticulturist->id)
+            ->first();
+
+        if ($existing && $existing->isPending()) {
+            $this->toastInfo('Ya tienes una solicitud pendiente de respuesta.');
+            return;
+        }
+
+        if ($this->relation->cuaderno_access) {
+            $this->toastInfo('Esta bodega ya tiene acceso al cuaderno.');
+            return;
+        }
+
+        NotebookAccessRequest::updateOrCreate(
+            [
+                'winery_id'        => Auth::id(),
+                'viticulturist_id' => $this->viticulturist->id,
+            ],
+            [
+                'status'       => NotebookAccessRequest::STATUS_PENDING,
+                'requested_at' => now(),
+                'responded_at' => null,
+            ]
+        );
+
+        $this->viticulturist->notify(new NotebookAccessRequestedNotification(Auth::user()));
+
+        Cache::forget("nav_badge_notebook_access_{$this->viticulturist->id}");
+
+        $this->toastSuccess('Solicitud enviada. El viticultor recibirá una notificación para aprobarla.');
+    }
+
+    public function cancelAccessRequest(): void
+    {
+        NotebookAccessRequest::where('winery_id', Auth::id())
+            ->where('viticulturist_id', $this->viticulturist->id)
+            ->where('status', NotebookAccessRequest::STATUS_PENDING)
+            ->delete();
+
+        $this->toastSuccess('Solicitud cancelada.');
+    }
+
     // ── Render ───────────────────────────────────────────────────────────────
 
     public function render()
     {
+        $this->viticulturist->load([
+            'plots.municipality',
+            'plots.plantings.grapeVariety',
+        ]);
+
         $plots = $this->viticulturist->plots;
 
         $totalHa        = $plots->sum('area');
@@ -113,6 +159,12 @@ class Show extends Component
         $totalKgLimit   = $plots->sum(fn($p) => $p->plantings->sum('harvest_limit_kg'));
 
         $isOwn = $this->relation->source === WineryViticulturist::SOURCE_OWN;
+
+        $accessRequest = $this->viticulturist->can_login
+            ? NotebookAccessRequest::where('winery_id', Auth::id())
+                ->where('viticulturist_id', $this->viticulturist->id)
+                ->first()
+            : null;
 
         return view('livewire.winery.viticulturists.show', [
             'plots'          => $plots,
@@ -122,6 +174,7 @@ class Show extends Component
             'relation'       => $this->relation,
             'isOwn'          => $isOwn,
             'hasRealEmail'   => $this->hasRealEmail(),
+            'accessRequest'  => $accessRequest,
         ])->layout('layouts.app');
     }
 }

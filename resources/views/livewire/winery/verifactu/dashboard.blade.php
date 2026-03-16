@@ -355,7 +355,7 @@
                     @else
                         <div class="flex items-center gap-2">
                             <flux:badge color="red">No configurado</flux:badge>
-                            <flux:button href="{{ route('winery.settings') }}" wire:navigate size="sm" variant="ghost" icon="arrow-top-right-on-square">
+                            <flux:button href="{{ roleRoute('settings') }}" wire:navigate size="sm" variant="ghost" icon="arrow-top-right-on-square">
                                 Configurar
                             </flux:button>
                         </div>

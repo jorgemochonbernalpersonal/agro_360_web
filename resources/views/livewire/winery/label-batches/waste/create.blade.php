@@ -3,7 +3,7 @@
     description="Registra etiquetas inutilizadas, dañadas o destruidas."
     icon="exclamation-triangle"
     icon-color="from-red-500 to-red-700"
-    :back-url="route('winery.label-batches.waste.index', $labelBatch)"
+    :back-url="roleRoute('label-batches.waste.index', $labelBatch)"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos de la merma" color="red">
@@ -48,6 +48,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.label-batches.waste.index', $labelBatch)" submit-label="Registrar merma" />
+        <x-agro.form-actions :back-url="roleRoute('label-batches.waste.index', $labelBatch)" submit-label="Registrar merma" />
     </form>
 </x-agro.form-card>

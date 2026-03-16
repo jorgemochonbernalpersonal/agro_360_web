@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\TastingNotes;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
 use App\Models\Wine;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $wine_id             = '';
     public string $evaluation_date     = '';
@@ -117,7 +118,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Nota de cata registrada correctamente.');
-        $this->redirect(route('winery.tasting-notes.index'), navigate: true);
+        $this->roleRedirect('tasting-notes.index');
     }
 
     public function render()

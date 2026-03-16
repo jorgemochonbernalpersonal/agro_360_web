@@ -4,18 +4,18 @@
         description="Perfil del viticultor vinculado a tu bodega"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.viticulturists.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturists.index') }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
             @if($isOwn)
                 <flux:button
-                    href="{{ route('winery.plots.create', ['viticulturist_id' => $viticulturist->id]) }}"
+                    href="{{ roleRoute('plots.create', ['viticulturist_id' => $viticulturist->id]) }}"
                     variant="ghost"
                     icon="map"
                 >
                     Añadir parcela
                 </flux:button>
-                <flux:button href="{{ route('winery.viticulturists.edit', $viticulturist->id) }}" variant="primary" icon="pencil-square">
+                <flux:button href="{{ roleRoute('viticulturists.edit', $viticulturist->id) }}" variant="primary" icon="pencil-square">
                     Editar
                 </flux:button>
             @endif
@@ -217,6 +217,117 @@
         @endif
     </x-agro.card>
 
+    {{-- Cuaderno de campo --}}
+    @if($viticulturist->can_login)
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <div class="p-1.5 rounded-lg bg-purple-50">
+                    <flux:icon icon="book-open" class="size-4 text-purple-600" />
+                </div>
+                <span class="font-semibold text-zinc-900 text-sm">Cuaderno de campo digital</span>
+            </div>
+        </x-slot:header>
+
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+                @if($relation->cuaderno_access)
+                    <div class="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                        <flux:icon icon="check-circle" class="size-5 text-green-600" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-zinc-900">Acceso concedido</p>
+                        <p class="text-xs text-zinc-400">
+                            Desde {{ $relation->cuaderno_granted_at?->format('d/m/Y') ?? '—' }}
+                            · Puedes ver las actividades del viticultor en el cuaderno de campo.
+                        </p>
+                    </div>
+                @elseif($accessRequest?->isPending())
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+                        <flux:icon icon="clock" class="size-5 text-amber-500" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-amber-800">Solicitud pendiente</p>
+                        <p class="text-xs text-zinc-400">
+                            Enviada el {{ $accessRequest->requested_at->format('d/m/Y') }}
+                            · Esperando que el viticultor apruebe el acceso.
+                        </p>
+                    </div>
+                @elseif($accessRequest?->isRejected())
+                    <div class="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+                        <flux:icon icon="x-circle" class="size-5 text-red-400" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-zinc-700">Solicitud rechazada</p>
+                        <p class="text-xs text-zinc-400">
+                            El viticultor no concedió el acceso.
+                            @if($accessRequest->responded_at)
+                                Respondida el {{ $accessRequest->responded_at->format('d/m/Y') }}.
+                            @endif
+                        </p>
+                    </div>
+                @else
+                    <div class="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0">
+                        <flux:icon icon="lock-closed" class="size-5 text-zinc-400" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-zinc-700">Sin acceso al cuaderno</p>
+                        <p class="text-xs text-zinc-400">
+                            El viticultor no ha concedido acceso a sus actividades de campo.
+                            @if($relation->cuaderno_revoked_at)
+                                Revocado el {{ $relation->cuaderno_revoked_at->format('d/m/Y') }}.
+                            @endif
+                        </p>
+                    </div>
+                @endif
+            </div>
+
+            @if($isOwn)
+            <div class="shrink-0">
+                @if($relation->cuaderno_access)
+                    {{-- Access granted: viticulturist controls revocation --}}
+                @elseif($accessRequest?->isPending())
+                    <flux:button
+                        size="sm"
+                        variant="ghost"
+                        icon="x-mark"
+                        wire:click="cancelAccessRequest"
+                        wire:confirm="¿Cancelar la solicitud de acceso al cuaderno?"
+                    >
+                        Cancelar solicitud
+                    </flux:button>
+                @else
+                    <flux:button
+                        size="sm"
+                        variant="primary"
+                        icon="book-open"
+                        wire:click="requestNotebookAccess"
+                    >
+                        {{ $accessRequest?->isRejected() ? 'Solicitar de nuevo' : 'Solicitar acceso' }}
+                    </flux:button>
+                @endif
+            </div>
+            @endif
+        </div>
+
+        @if($relation->cuaderno_access)
+            <div class="mt-3 pt-3 border-t border-zinc-100">
+                <p class="text-xs text-zinc-400">
+                    <flux:icon icon="information-circle" class="size-3.5 inline-block mr-1" />
+                    El viticultor puede revocar este acceso en cualquier momento desde su panel.
+                </p>
+            </div>
+        @elseif(!$isOwn)
+            <div class="mt-3 pt-3 border-t border-zinc-100">
+                <p class="text-xs text-zinc-400">
+                    <flux:icon icon="information-circle" class="size-3.5 inline-block mr-1" />
+                    El acceso al cuaderno lo gestiona el propio viticultor desde su perfil.
+                </p>
+            </div>
+        @endif
+    </x-agro.card>
+    @endif
+
     {{-- Parcelas y plantaciones --}}
     <x-agro.card>
         <x-slot:header>
@@ -248,7 +359,7 @@
                             <div class="flex items-center gap-4 text-sm text-zinc-600">
                                 <span>{{ number_format($plot->area, 2) }} ha</span>
                                 <span>{{ $plot->plantings->count() }} {{ Str::plural('plantación', $plot->plantings->count()) }}</span>
-                                <a href="{{ route('winery.plots.show', $plot->id) }}"
+                                <a href="{{ roleRoute('plots.show', $plot->id) }}"
                                    class="text-agro-700 hover:underline text-xs font-medium">
                                     Ver parcela →
                                 </a>

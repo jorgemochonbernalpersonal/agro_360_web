@@ -56,7 +56,7 @@ class CreateCulturalWork extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return redirect()->route('viticulturist.campaign.create');
+            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -194,7 +194,7 @@ class CreateCulturalWork extends Component
             });
 
             $this->toastSuccess('Labor cultural registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.cultural.index');
+            return $this->redirect(route('viticulturist.digital-notebook.cultural.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar labor cultural', [
                 'error' => $e->getMessage(),

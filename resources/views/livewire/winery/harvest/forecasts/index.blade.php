@@ -44,7 +44,7 @@
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
             {{-- Nueva --}}
-            <flux:button variant="primary" icon="plus" href="{{ route('winery.harvest-forecasts.create') }}" wire:navigate>
+            <flux:button variant="primary" icon="plus" href="{{ roleRoute('harvest-forecasts.create') }}" wire:navigate>
                 Nueva previsión
             </flux:button>
         </div>
@@ -165,7 +165,7 @@
                 description="Crea el aforo previo a la vendimia para planificar las recepciones."
             >
                 <x-slot:action>
-                    <flux:button variant="primary" icon="plus" href="{{ route('winery.harvest-forecasts.create') }}" wire:navigate>
+                    <flux:button variant="primary" icon="plus" href="{{ roleRoute('harvest-forecasts.create') }}" wire:navigate>
                         Nueva previsión
                     </flux:button>
                 </x-slot:action>
@@ -277,7 +277,7 @@
                                 </div>
                                 <div class="flex items-center gap-1">
                                     <flux:button size="sm" variant="ghost" icon="pencil"
-                                        href="{{ route('winery.harvest-forecasts.edit', $forecast) }}" wire:navigate />
+                                        href="{{ roleRoute('harvest-forecasts.edit', $forecast) }}" wire:navigate />
                                     <flux:button size="sm" variant="ghost" icon="trash" class="text-red-500"
                                         wire:click="delete({{ $forecast->id }})"
                                         wire:loading.attr="disabled"

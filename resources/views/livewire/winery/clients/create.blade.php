@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Nuevo Cliente"
         description="Crea un nuevo cliente"
-        :back-url="route('winery.clients.index')"
+        :back-url="roleRoute('clients.index')"
     >
         <form wire:submit="save" class="space-y-8">
             <x-agro.form-section title="Tipo de Cliente">
@@ -224,7 +224,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.clients.index')" submit-label="Crear Cliente" />
+            <x-agro.form-actions :cancel-url="roleRoute('clients.index')" submit-label="Crear Cliente" />
         </form>
     </x-agro.form-card>
 </div>

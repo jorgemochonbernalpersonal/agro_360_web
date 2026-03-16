@@ -64,7 +64,7 @@ class DigitalNotebook extends Component
 
             if (!$campaign) {
                 $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-                return redirect()->route('viticulturist.campaign.index');
+                return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
             }
 
             $this->selectedCampaign = $campaign->id;

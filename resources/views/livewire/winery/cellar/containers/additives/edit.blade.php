@@ -3,7 +3,7 @@
     description="Modifica el aditivo enológico registrado."
     icon="beaker"
     icon-color="from-purple-500 to-purple-700"
-    :back-url="route('winery.containers.additives.index', $container)"
+    :back-url="roleRoute('containers.additives.index', $container)"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Aditivo" color="purple">
@@ -59,6 +59,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.containers.additives.index', $container)" submit-label="Guardar cambios" />
+        <x-agro.form-actions :back-url="roleRoute('containers.additives.index', $container)" submit-label="Guardar cambios" />
     </form>
 </x-agro.form-card>
