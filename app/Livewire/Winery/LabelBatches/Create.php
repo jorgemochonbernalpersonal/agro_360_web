@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\LabelBatches;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\LabelBatch;
 use App\Models\Wine;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $name         = '';
     public string $wine_id      = '';
@@ -79,7 +80,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Lote de etiquetas creado correctamente.');
-        $this->redirect(route('winery.label-batches.index'), navigate: true);
+        $this->roleRedirect('label-batches.index');
     }
 
     public function render()

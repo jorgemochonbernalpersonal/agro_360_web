@@ -3,7 +3,7 @@
     description="Modifica los datos y registra mermas del lote."
     icon="tag"
     icon-color="from-violet-500 to-violet-700"
-    :back-url="route('winery.label-batches.index')"
+    :back-url="roleRoute('label-batches.index')"
 >
     {{-- ── Disponibilidad ──────────────────────────────────────────────────── --}}
     <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -74,7 +74,7 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.label-batches.index')" submit-label="Guardar cambios" />
+        <x-agro.form-actions :back-url="roleRoute('label-batches.index')" submit-label="Guardar cambios" />
     </form>
 
     {{-- ── Mermas ──────────────────────────────────────────────────────────── --}}

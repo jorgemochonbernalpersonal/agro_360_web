@@ -12,10 +12,10 @@
             </p>
         </div>
         <div class="flex items-center gap-2">
-            <flux:button variant="outline" icon="map" href="{{ route('plots.index') }}" wire:navigate size="sm">
+            <flux:button variant="outline" icon="map" href="{{ route('producer.plots.index') }}" wire:navigate size="sm">
                 Mis parcelas
             </flux:button>
-            <flux:button variant="primary" icon="plus" href="{{ route('winery.grape-reception.create') }}" wire:navigate size="sm">
+            <flux:button variant="primary" icon="plus" href="{{ route('producer.grape-reception.create') }}" wire:navigate size="sm">
                 Nueva recepción
             </flux:button>
         </div>
@@ -113,7 +113,7 @@
                         <span class="font-semibold text-zinc-900">Actividades recientes</span>
                         <flux:badge color="purple" size="sm">Campo</flux:badge>
                     </div>
-                    <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate
+                    <a href="{{ route('producer.digital-notebook') }}" wire:navigate
                         class="text-xs text-agro-600 hover:underline font-medium">Ver todas →</a>
                 </div>
             </x-slot:header>
@@ -122,7 +122,7 @@
                 <div class="py-8 text-center">
                     <flux:icon icon="clipboard-document-list" class="size-10 text-zinc-200 mx-auto mb-2" />
                     <p class="text-sm text-zinc-400">No hay actividades registradas</p>
-                    <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate
+                    <a href="{{ route('producer.digital-notebook') }}" wire:navigate
                         class="text-xs text-agro-600 hover:underline mt-1 inline-block">
                         Ir al cuaderno de campo →
                     </a>
@@ -163,7 +163,7 @@
                         <span class="font-semibold text-zinc-900">Últimas recepciones</span>
                         <flux:badge color="green" size="sm">Bodega</flux:badge>
                     </div>
-                    <a href="{{ route('winery.grape-reception.index') }}" wire:navigate
+                    <a href="{{ route('producer.grape-reception.index') }}" wire:navigate
                         class="text-xs text-agro-600 hover:underline font-medium">Ver todas →</a>
                 </div>
             </x-slot:header>
@@ -172,7 +172,7 @@
                 <div class="py-8 text-center">
                     <flux:icon icon="archive-box-arrow-down" class="size-10 text-zinc-200 mx-auto mb-2" />
                     <p class="text-sm text-zinc-400">No hay recepciones en la campaña activa</p>
-                    <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+                    <a href="{{ route('producer.grape-reception.create') }}" wire:navigate
                         class="text-xs text-agro-600 hover:underline mt-1 inline-block">
                         Registrar primera recepción →
                     </a>
@@ -180,7 +180,7 @@
             @else
                 <div class="space-y-1">
                     @foreach($recentReceptions as $r)
-                        <a href="{{ route('winery.grape-reception.show', $r) }}" wire:navigate
+                        <a href="{{ route('producer.grape-reception.show', $r) }}" wire:navigate
                             class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-50 transition-colors group">
                             <div class="w-9 h-9 rounded-lg bg-agro-50 flex items-center justify-center shrink-0">
                                 <flux:icon icon="scale" class="size-4 text-agro-600" />
@@ -211,7 +211,7 @@
         <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Accesos rápidos</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
 
-            <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate
+            <a href="{{ route('producer.digital-notebook') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-purple-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors">
                     <flux:icon icon="book-open" class="size-5 text-purple-600" />
@@ -222,7 +222,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('viticulturist.harvests.index') }}" wire:navigate
+            <a href="{{ route('producer.harvests.index') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
                     <flux:icon icon="truck" class="size-5 text-agro-600" />
@@ -233,7 +233,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+            <a href="{{ route('producer.grape-reception.create') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-agro-50 flex items-center justify-center group-hover:bg-agro-100 transition-colors">
                     <flux:icon icon="plus-circle" class="size-5 text-agro-600" />
@@ -244,7 +244,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('winery.harvest-summary.index') }}" wire:navigate
+            <a href="{{ route('producer.harvest-summary.index') }}" wire:navigate
                 class="flex items-center gap-3 p-4 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-agro-300 transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
                     <flux:icon icon="chart-bar" class="size-5 text-amber-600" />

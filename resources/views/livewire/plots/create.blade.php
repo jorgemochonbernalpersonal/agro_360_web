@@ -1,5 +1,5 @@
 ﻿<div>
-    <x-agro.form-card title="Nueva Parcela" description="Crea una nueva parcela agricola" :back-url="auth()->user()->isWinery() ? route('winery.plots.index') : route('plots.index')">
+    <x-agro.form-card title="Nueva Parcela" description="Crea una nueva parcela agricola" :back-url="roleRoute('plots.index')">
         <form wire:submit.prevent="save" class="space-y-8" data-cy="plot-create-form">
             @error('general')
                 <flux:callout variant="danger" icon="x-circle">
@@ -276,7 +276,7 @@
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="auth()->user()->isWinery() ? route('winery.plots.index') : route('plots.index')" submit-label="Crear Parcela" />
+            <x-agro.form-actions :cancel-url="roleRoute('plots.index')" submit-label="Crear Parcela" />
         </form>
     </x-agro.form-card>
 </div>

@@ -64,7 +64,7 @@ class CreateFertilization extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return redirect()->route('viticulturist.campaign.create');
+            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -233,7 +233,7 @@ class CreateFertilization extends Component
             });
 
             $this->toastSuccess('Fertilización registrada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.fertilization.index');
+            return $this->redirect(route('viticulturist.digital-notebook.fertilization.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar fertilización', [
                 'error' => $e->getMessage(),

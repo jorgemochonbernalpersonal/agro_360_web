@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Labeling;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\LabelBatch;
 use App\Models\Wine;
@@ -14,7 +15,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $wine_id           = '';
     public string $wine_bottling_id  = '';
@@ -152,7 +153,7 @@ class Create extends Component
         }
 
         $this->toastSuccess('Sesión de etiquetado registrada.');
-        $this->redirect(route('winery.labeling.index'), navigate: true);
+        $this->roleRedirect('labeling.index');
     }
 
     public function render()

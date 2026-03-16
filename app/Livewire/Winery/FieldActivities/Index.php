@@ -35,12 +35,26 @@ class Index extends Component
     {
         $wineryId = Auth::id();
 
+        // Only show activities from viticulturists who have granted cuaderno access.
+        // Ghost viticulturists (can_login=false) cannot fill their own notebook,
+        // so they are excluded from this view regardless.
         $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
+            ->where('cuaderno_access', true)
             ->pluck('viticulturist_id');
 
         if (Auth::user()->isProducer()) {
             $viticulturistIds = $viticulturistIds->push($wineryId)->unique();
         }
+
+        // Viticulturists linked but without cuaderno consent, for the warning banner
+        $withoutCuadernoAccess = WineryViticulturist::where('winery_id', $wineryId)
+            ->where('cuaderno_access', false)
+            ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
+            ->with('viticulturist:id,name')
+            ->get()
+            ->pluck('viticulturist')
+            ->filter()
+            ->values();
 
         $query = AgriculturalActivity::with([
                 'viticulturist:id,name',
@@ -87,12 +101,13 @@ class Index extends Component
         ];
 
         return view('livewire.winery.field-activities.index', [
-            'activities'          => $activities,
-            'linkedViticulturists'=> $linkedViticulturists,
-            'campaigns'           => $campaigns,
-            'plots'               => $plots,
-            'stats'               => $stats,
-            'activityTypes'       => AgriculturalActivity::ACTIVITY_TYPES,
+            'activities'            => $activities,
+            'linkedViticulturists'  => $linkedViticulturists,
+            'campaigns'             => $campaigns,
+            'plots'                 => $plots,
+            'stats'                 => $stats,
+            'activityTypes'         => AgriculturalActivity::ACTIVITY_TYPES,
+            'withoutCuadernoAccess' => $withoutCuadernoAccess,
         ])->layout('layouts.app');
     }
 }

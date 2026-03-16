@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Wines;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
 use App\Models\Wine;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Wine $wine;
 
@@ -87,7 +88,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Vino actualizado correctamente.');
-        $this->redirect(route('winery.wines.index'), navigate: true);
+        $this->roleRedirect('wines.index');
     }
 
     public function render()

@@ -30,7 +30,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('winery.wines.create') }}" wire:navigate variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('wines.create') }}" wire:navigate variant="primary" icon="plus">
             Nuevo
         </flux:button>
     </div>
@@ -169,11 +169,11 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('winery.wines.show', $wine) }}" wire:navigate
+                                    <a href="{{ roleRoute('wines.show', $wine) }}" wire:navigate
                                         class="{{ $btnBase }}" title="Ver detalle">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
-                                    <a href="{{ route('winery.wines.edit', $wine) }}" wire:navigate
+                                    <a href="{{ roleRoute('wines.edit', $wine) }}" wire:navigate
                                         class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
@@ -208,7 +208,7 @@
             >
                 @if(!$search && !$typeFilter && !$statusFilter && !$vintageFilter)
                     <x-slot:action>
-                        <flux:button href="{{ route('winery.wines.create') }}" wire:navigate variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('wines.create') }}" wire:navigate variant="primary" icon="plus">
                             Nuevo vino
                         </flux:button>
                     </x-slot:action>

@@ -5,10 +5,10 @@
         description="Historial y programación de mantenimientos del contenedor."
     >
         <x-slot:actions>
-            <flux:button variant="ghost" icon="arrow-left" href="{{ route('winery.containers.index') }}" wire:navigate>
+            <flux:button variant="ghost" icon="arrow-left" href="{{ roleRoute('containers.index') }}" wire:navigate>
                 Volver a contenedores
             </flux:button>
-            <flux:button variant="primary" icon="plus" href="{{ route('winery.containers.maintenance.create', $container) }}" wire:navigate>
+            <flux:button variant="primary" icon="plus" href="{{ roleRoute('containers.maintenance.create', $container) }}" wire:navigate>
                 Nuevo mantenimiento
             </flux:button>
         </x-slot:actions>
@@ -64,7 +64,7 @@
             title="Sin mantenimientos registrados"
             description="Programa el primer mantenimiento para este contenedor."
         >
-            <flux:button variant="primary" icon="plus" href="{{ route('winery.containers.maintenance.create', $container) }}" wire:navigate>
+            <flux:button variant="primary" icon="plus" href="{{ roleRoute('containers.maintenance.create', $container) }}" wire:navigate>
                 Nuevo mantenimiento
             </flux:button>
         </x-agro.empty-state>

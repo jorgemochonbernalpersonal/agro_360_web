@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\Containers\Additives;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerAdditiveSupply;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Container $container;
 
@@ -65,7 +66,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Aditivo registrado correctamente.');
-        $this->redirect(route('winery.containers.additives.index', $this->container), navigate: true);
+        $this->roleRedirect('containers.additives.index', $this->container);
     }
 
     public function render()

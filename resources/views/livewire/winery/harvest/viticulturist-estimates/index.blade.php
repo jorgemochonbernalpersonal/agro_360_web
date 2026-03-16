@@ -38,7 +38,7 @@
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         {{-- Navegación --}}
-        <flux:button variant="ghost" icon="chart-bar" href="{{ route('winery.harvest-summary.index') }}" wire:navigate size="sm">
+        <flux:button variant="ghost" icon="chart-bar" href="{{ roleRoute('harvest-summary.index') }}" wire:navigate size="sm">
             Cuadro de mando
         </flux:button>
     </div>

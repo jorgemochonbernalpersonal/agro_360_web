@@ -1,6 +1,6 @@
 <div>
     <x-agro.form-card title="Editar Cliente" description="Modifica los datos del cliente"
-        :back-url="route('winery.clients.index')">
+        :back-url="roleRoute('clients.index')">
 
         <form wire:submit.prevent="update" class="space-y-8">
 
@@ -221,7 +221,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.clients.index')" submit-label="Guardar Cambios" />
+            <x-agro.form-actions :cancel-url="roleRoute('clients.index')" submit-label="Guardar Cambios" />
         </form>
     </x-agro.form-card>
 </div>

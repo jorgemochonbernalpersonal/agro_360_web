@@ -68,7 +68,7 @@ class Create extends Component
 
             $this->toastSuccess('Producto fitosanitario creado correctamente.');
 
-            return redirect()->route('viticulturist.phytosanitary-products.index');
+            return $this->redirect(route('viticulturist.phytosanitary-products.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al crear producto fitosanitario', [
                 'error' => $e->getMessage(),

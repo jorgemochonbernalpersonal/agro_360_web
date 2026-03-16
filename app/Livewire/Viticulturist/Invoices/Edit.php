@@ -326,7 +326,7 @@ class Edit extends Component
 
             $this->toastSuccess('Factura emitida correctamente.');
             $this->closeInvoiceModal();
-            return redirect()->route('viticulturist.invoices.index');
+            return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al facturar. Inténtalo de nuevo.');
         }
@@ -484,7 +484,7 @@ class Edit extends Component
                     }
 
                     $this->toastSuccess('Estado de pago actualizado exitosamente.');
-                    return redirect()->route('viticulturist.invoices.index');
+                    return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
                 }
 
                 // Si no está bloqueada, actualizar normalmente
@@ -580,7 +580,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Factura actualizada exitosamente.');
-            return redirect()->route('viticulturist.invoices.index');
+            return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar la factura. Inténtalo de nuevo.');
         }

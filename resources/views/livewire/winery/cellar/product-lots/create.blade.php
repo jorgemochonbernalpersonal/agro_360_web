@@ -1,6 +1,6 @@
 <div>
     <x-agro.form-card title="Nuevo Producto" description="Registra un producto para su venta y facturación"
-        :back-url="route('winery.product-lots.index')">
+        :back-url="roleRoute('product-lots.index')">
 
         <div x-data="{ tab: 'general' }">
             <form wire:submit.prevent="save" class="space-y-0">
@@ -439,7 +439,7 @@
                     </x-agro.form-section>
                 </div>
 
-                <x-agro.form-actions :cancel-url="route('winery.product-lots.index')" submit-label="Crear Producto" />
+                <x-agro.form-actions :cancel-url="roleRoute('product-lots.index')" submit-label="Crear Producto" />
 
             </form>
         </div>

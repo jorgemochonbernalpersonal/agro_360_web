@@ -3,7 +3,7 @@
     description="Registra una operación de embotellado con los materiales utilizados."
     icon="archive-box-arrow-down"
     icon-color="from-emerald-500 to-emerald-700"
-    :back-url="route('winery.bottling.index')"
+    :back-url="roleRoute('bottling.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -196,6 +196,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.bottling.index')" submit-label="Guardar embotellado" />
+        <x-agro.form-actions :back-url="roleRoute('bottling.index')" submit-label="Guardar embotellado" />
     </form>
 </x-agro.form-card>

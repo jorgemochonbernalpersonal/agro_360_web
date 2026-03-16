@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Harvest\Forecasts;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\EstimatedYield;
 use App\Models\PlotPlanting;
@@ -11,7 +12,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public WineryYieldForecast $forecast;
 
@@ -100,7 +101,7 @@ class Edit extends Component
         ];
     }
 
-    public function save(): void
+    public function save(): mixed
     {
         $this->validate();
 
@@ -112,7 +113,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Previsión actualizada correctamente.');
-        redirect()->route('winery.harvest-forecasts.index');
+        return $this->roleRedirect('harvest-forecasts.index');
     }
 
     public function render()

@@ -4,7 +4,7 @@
         description="Series numeradas de contraetiquetas y etiquetas de bodega"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.label-batches.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('label-batches.create') }}" variant="primary" icon="plus">
                 Nuevo Lote
             </flux:button>
         </x-slot:actions>
@@ -113,12 +113,12 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ route('winery.label-batches.edit', $batch) }}" wire:navigate title="Editar">
+                            <a href="{{ roleRoute('label-batches.edit', $batch) }}" wire:navigate title="Editar">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="pencil-square" class="size-4" />
                                 </button>
                             </a>
-                            <a href="{{ route('winery.label-batches.waste.index', $batch) }}" wire:navigate title="Mermas">
+                            <a href="{{ roleRoute('label-batches.waste.index', $batch) }}" wire:navigate title="Mermas">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                                     <flux:icon icon="exclamation-triangle" class="size-4" />
                                 </button>
@@ -152,7 +152,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.label-batches.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('label-batches.create') }}" variant="primary" icon="plus">
                         Nuevo Lote
                     </flux:button>
                 </x-slot:action>

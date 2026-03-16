@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Nuevo Enólogo"
         description="Registra un técnico enológico en tu bodega"
-        :back-url="route('winery.oenologists.index')"
+        :back-url="roleRoute('oenologists.index')"
     >
         <form wire:submit="save" class="space-y-8">
 
@@ -49,7 +49,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.oenologists.index')" submit-label="Crear Enólogo" />
+            <x-agro.form-actions :cancel-url="roleRoute('oenologists.index')" submit-label="Crear Enólogo" />
 
         </form>
     </x-agro.form-card>

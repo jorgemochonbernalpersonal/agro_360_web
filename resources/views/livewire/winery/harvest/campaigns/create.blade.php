@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nueva Campaña de Vendimia"
     description="Define el periodo y nombre de la campaña para agrupar tus recepciones de uva"
-    :back-url="route('winery.campaigns.index')"
+    :back-url="roleRoute('campaigns.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos de la Campaña">
@@ -39,7 +39,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('winery.campaigns.index')"
+            :cancel-url="roleRoute('campaigns.index')"
             submit-label="Crear Campaña"
         />
     </form>

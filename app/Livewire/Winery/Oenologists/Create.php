@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Oenologists;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +10,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $name           = '';
     public string $surname        = '';
@@ -46,7 +47,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Enólogo creado correctamente.');
-        return $this->redirect(route('winery.oenologists.index'), navigate: true);
+        return $this->roleRedirect('oenologists.index');
     }
 
     public function render()

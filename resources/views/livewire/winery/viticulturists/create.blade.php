@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Añadir Viticultor"
         description="Crea un viticultor ghost (sin acceso al sistema). Cuando el viticultor se registre con el mismo DNI, las cuentas se fusionarán automáticamente."
-        :back-url="route('winery.viticulturists.index')"
+        :back-url="roleRoute('viticulturists.index')"
     >
         <form wire:submit="save" class="space-y-8">
             <x-agro.form-section title="Datos del Viticultor">
@@ -69,7 +69,7 @@
                 </p>
             </div>
 
-            <x-agro.form-actions :cancel-url="route('winery.viticulturists.index')" submit-label="Crear Viticultor" />
+            <x-agro.form-actions :cancel-url="roleRoute('viticulturists.index')" submit-label="Crear Viticultor" />
         </form>
     </x-agro.form-card>
 </div>

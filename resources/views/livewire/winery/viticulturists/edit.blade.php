@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Editar Viticultor"
         description="Datos del viticultor ghost gestionado por tu bodega"
-        :back-url="route('winery.viticulturists.show', $viticulturistId)"
+        :back-url="roleRoute('viticulturists.show', $viticulturistId)"
     >
         <form wire:submit="save" class="space-y-8">
             <x-agro.form-section title="Datos del Viticultor">
@@ -35,7 +35,7 @@
             </x-agro.form-section>
 
             <x-agro.form-actions
-                :cancel-url="route('winery.viticulturists.show', $viticulturistId)"
+                :cancel-url="roleRoute('viticulturists.show', $viticulturistId)"
                 submit-label="Guardar cambios"
             />
         </form>

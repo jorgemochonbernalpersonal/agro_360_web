@@ -5,11 +5,11 @@
 >
     <x-slot:actions>
         <flux:button variant="ghost" icon="arrow-left"
-            href="{{ route('winery.containers.index') }}" wire:navigate>
+            href="{{ roleRoute('containers.index') }}" wire:navigate>
             Volver
         </flux:button>
         <flux:button variant="primary" icon="plus"
-            href="{{ route('winery.containers.additives.create', $container) }}" wire:navigate>
+            href="{{ roleRoute('containers.additives.create', $container) }}" wire:navigate>
             Añadir aditivo
         </flux:button>
     </x-slot:actions>
@@ -33,7 +33,7 @@
                 <x-agro.table-cell>{{ $additive->creator?->name ?? '—' }}</x-agro.table-cell>
                 <x-agro.table-cell align="right">
                     <div class="flex items-center justify-end gap-1">
-                        <a href="{{ route('winery.containers.additives.edit', [$container, $additive]) }}" wire:navigate
+                        <a href="{{ roleRoute('containers.additives.edit', [$container, $additive]) }}" wire:navigate
                             class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors" title="Editar">
                             <flux:icon icon="pencil-square" class="size-4" />
                         </a>

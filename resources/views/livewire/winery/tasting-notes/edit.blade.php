@@ -3,7 +3,7 @@
     description="Modifica la evaluación sensorial registrada."
     icon="beaker"
     icon-color="from-amber-500 to-amber-700"
-    :back-url="route('winery.tasting-notes.index')"
+    :back-url="roleRoute('tasting-notes.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -185,6 +185,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.tasting-notes.index')" submit-label="Guardar cambios" />
+        <x-agro.form-actions :back-url="roleRoute('tasting-notes.index')" submit-label="Guardar cambios" />
     </form>
 </x-agro.form-card>

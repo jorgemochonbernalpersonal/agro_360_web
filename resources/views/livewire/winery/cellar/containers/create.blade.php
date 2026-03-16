@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nuevo Contenedor"
     description="Registra un depósito, barrica u otro contenedor de tu bodega"
-    :back-url="route('winery.containers.index')"
+    :back-url="roleRoute('containers.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Contenedor">
@@ -57,7 +57,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('winery.containers.index')"
+            :cancel-url="roleRoute('containers.index')"
             submit-label="Crear Contenedor"
         />
     </form>

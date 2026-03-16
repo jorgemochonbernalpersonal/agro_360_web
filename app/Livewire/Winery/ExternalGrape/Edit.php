@@ -5,13 +5,14 @@ namespace App\Livewire\Winery\ExternalGrape;
 use App\Models\Container;
 use App\Models\ExternalGrape;
 use App\Models\GrapeVariety;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public ExternalGrape $grape;
 
@@ -97,7 +98,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Partida actualizada correctamente.');
-        $this->redirect(route('winery.external-grape.index'), navigate: true);
+        $this->roleRedirect('external-grape.index');
     }
 
     public function render()

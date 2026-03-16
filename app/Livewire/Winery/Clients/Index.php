@@ -71,15 +71,15 @@ class Index extends Component
         }
 
         if ($this->search) {
-            $term = '%' . $this->search . '%';
+            $term = '%' . mb_strtolower($this->search) . '%';
             $query->where(function ($q) use ($term) {
-                $q->where('first_name', 'like', $term)
-                  ->orWhere('last_name', 'like', $term)
-                  ->orWhere('company_name', 'like', $term)
-                  ->orWhere('email', 'like', $term)
-                  ->orWhere('phone', 'like', $term)
-                  ->orWhere('company_document', 'like', $term)
-                  ->orWhere('particular_document', 'like', $term);
+                $q->whereRaw('LOWER(first_name) LIKE ?', [$term])
+                  ->orWhereRaw('LOWER(last_name) LIKE ?', [$term])
+                  ->orWhereRaw('LOWER(company_name) LIKE ?', [$term])
+                  ->orWhereRaw('LOWER(email) LIKE ?', [$term])
+                  ->orWhereRaw('LOWER(phone) LIKE ?', [$term])
+                  ->orWhereRaw('LOWER(company_document) LIKE ?', [$term])
+                  ->orWhereRaw('LOWER(particular_document) LIKE ?', [$term]);
             });
         }
 

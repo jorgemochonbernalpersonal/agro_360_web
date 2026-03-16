@@ -78,7 +78,7 @@ class CreateStock extends Component
         ]);
 
         $this->toastSuccess('Stock registrado correctamente');
-        return redirect()->route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']);
+        return $this->redirect(route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']), navigate: true);
     }
 
     public function render()

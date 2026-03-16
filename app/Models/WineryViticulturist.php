@@ -16,6 +16,16 @@ class WineryViticulturist extends Model
         'source',
         'supervisor_id',
         'parent_viticulturist_id',
+        'notes',
+        'cuaderno_access',
+        'cuaderno_granted_at',
+        'cuaderno_revoked_at',
+    ];
+
+    protected $casts = [
+        'cuaderno_access'    => 'boolean',
+        'cuaderno_granted_at' => 'datetime',
+        'cuaderno_revoked_at' => 'datetime',
     ];
 
     /**
@@ -64,6 +74,29 @@ class WineryViticulturist extends Model
     public function parentViticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'parent_viticulturist_id');
+    }
+
+    /**
+     * Grant field notebook access for this winery.
+     */
+    public function grantNotebookAccess(): void
+    {
+        $this->update([
+            'cuaderno_access'     => true,
+            'cuaderno_granted_at' => now(),
+            'cuaderno_revoked_at' => null,
+        ]);
+    }
+
+    /**
+     * Revoke field notebook access for this winery.
+     */
+    public function revokeNotebookAccess(): void
+    {
+        $this->update([
+            'cuaderno_access'     => false,
+            'cuaderno_revoked_at' => now(),
+        ]);
     }
 
     /**

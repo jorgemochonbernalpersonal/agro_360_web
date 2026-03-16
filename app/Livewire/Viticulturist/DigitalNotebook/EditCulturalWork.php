@@ -50,7 +50,7 @@ class EditCulturalWork extends Component
         
         if ($this->activity->activity_type !== 'cultural') {
             $this->toastError('Esta actividad no es una labor cultural.');
-            return redirect()->route('viticulturist.digital-notebook.cultural.index');
+            return $this->redirect(route('viticulturist.digital-notebook.cultural.index'), navigate: true);
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -59,7 +59,7 @@ class EditCulturalWork extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError(' No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return redirect()->route('viticulturist.digital-notebook.cultural.index');
+            return $this->redirect(route('viticulturist.digital-notebook.cultural.index'), navigate: true);
         }
         
         $this->culturalWork = $this->activity->culturalWork;
@@ -222,7 +222,7 @@ class EditCulturalWork extends Component
             });
 
             $this->toastSuccess('Labor cultural actualizada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.cultural.index');
+            return $this->redirect(route('viticulturist.digital-notebook.cultural.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar labor cultural', [
                 'error' => $e->getMessage(),

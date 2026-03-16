@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Editar Recepción de Uva"
         description="Modifica los datos de la recepción registrada"
-        :back-url="route('winery.grape-reception.index')"
+        :back-url="roleRoute('grape-reception.index')"
     >
         <form wire:submit.prevent="save" class="space-y-8">
 
@@ -273,7 +273,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('winery.grape-reception.index')"
+            :cancel-url="roleRoute('grape-reception.index')"
             submit-label="Guardar Cambios"
         />
 

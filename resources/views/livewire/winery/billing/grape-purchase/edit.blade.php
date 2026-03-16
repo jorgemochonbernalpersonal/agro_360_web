@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Editar Liquidación de Vendimia"
         description="{{ $invoice->invoice_number }} — {{ $invoice->viticulturist?->name }}"
-        :back-url="route('winery.invoices.grape-purchase.index')">
+        :back-url="roleRoute('invoices.grape-purchase.index')">
 
         @if ($isLocked)
             <flux:callout variant="warning" icon="exclamation-triangle">
@@ -176,7 +176,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.invoices.grape-purchase.index')" submit-label="Guardar Cambios" />
+            <x-agro.form-actions :cancel-url="roleRoute('invoices.grape-purchase.index')" submit-label="Guardar Cambios" />
         </form>
 
         @endif

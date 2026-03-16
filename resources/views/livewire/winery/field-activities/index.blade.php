@@ -5,6 +5,24 @@
         description="Registro de actividades agrícolas de tus viticultores vinculados (solo lectura)."
     />
 
+    {{-- Cuaderno access warning --}}
+    @if($withoutCuadernoAccess->isNotEmpty())
+        <div class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <flux:icon icon="lock-closed" class="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-amber-800">
+                    {{ $withoutCuadernoAccess->count() === 1 ? '1 viticultor' : $withoutCuadernoAccess->count() . ' viticultores' }}
+                    sin acceso al cuaderno de campo
+                </p>
+                <p class="text-xs text-amber-700 mt-0.5">
+                    {{ $withoutCuadernoAccess->pluck('name')->join(', ') }}
+                    — Sus actividades no se muestran hasta que concedas acceso desde
+                    <a href="{{ roleRoute('viticulturists.index') }}" wire:navigate class="font-medium underline">Mis Viticultores</a>.
+                </p>
+            </div>
+        </div>
+    @endif
+
     @php
         $filterCount = (int) !empty($viticulturistFilter) + (int) !empty($activityTypeFilter) + (int) !empty($campaignFilter) + (int) !empty($plotFilter);
     @endphp
@@ -28,7 +46,7 @@
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         {{-- Navegación --}}
-        <flux:button variant="ghost" icon="chart-bar" href="{{ route('winery.harvest-summary.index') }}" wire:navigate size="sm">
+        <flux:button variant="ghost" icon="chart-bar" href="{{ roleRoute('harvest-summary.index') }}" wire:navigate size="sm">
             Cuadro de mando
         </flux:button>
     </div>

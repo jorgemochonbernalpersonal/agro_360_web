@@ -71,7 +71,7 @@
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         {{-- Exportar PDF --}}
-        <a href="{{ route('winery.grape-reception.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
+        <a href="{{ roleRoute('grape-reception.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
            target="_blank"
            class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
            title="Exportar PDF">
@@ -80,7 +80,7 @@
         </a>
 
         {{-- Exportar Excel --}}
-        <a href="{{ route('winery.grape-reception.export-excel', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
+        <a href="{{ roleRoute('grape-reception.export-excel', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter, 'disqualified' => $disqualifiedFilter])) }}"
            class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
            title="Exportar Excel">
             <flux:icon icon="table-cells" class="size-4 text-zinc-500" />
@@ -91,7 +91,7 @@
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         {{-- Nueva Recepción --}}
-        <flux:button href="{{ route('winery.grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
             Nueva
         </flux:button>
     </div>
@@ -293,11 +293,11 @@
 
                                 {{-- Grupo derecho: ver + editar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('winery.grape-reception.show', $reception) }}" wire:navigate class="{{ $btnBase }}" title="Ver detalle">
+                                    <a href="{{ roleRoute('grape-reception.show', $reception) }}" wire:navigate class="{{ $btnBase }}" title="Ver detalle">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
                                     @if(!$isCancelled)
-                                        <a href="{{ route('winery.grape-reception.edit', $reception) }}" wire:navigate class="{{ $btnBase }}" title="Editar recepción">
+                                        <a href="{{ roleRoute('grape-reception.edit', $reception) }}" wire:navigate class="{{ $btnBase }}" title="Editar recepción">
                                             <flux:icon icon="pencil-square" class="size-4" />
                                         </a>
                                     @endif
@@ -318,7 +318,7 @@
                 description="Registra la primera entrada de uva para esta campaña"
             >
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
                         Nueva Recepción
                     </flux:button>
                 </x-slot:action>

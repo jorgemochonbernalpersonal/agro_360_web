@@ -4,7 +4,7 @@
         description="Busca un viticultor registrado en el sistema y vincúlalo a tu bodega"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.viticulturists.index') }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturists.index') }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -46,7 +46,7 @@
                     <p class="text-sm font-medium">No se encontraron viticultores</p>
                     <p class="text-xs text-center max-w-xs">
                         Si el viticultor aún no tiene cuenta, puedes
-                        <a href="{{ route('winery.viticulturists.create') }}" class="text-agro-600 hover:underline font-medium">crearlo como ghost</a>.
+                        <a href="{{ roleRoute('viticulturists.create') }}" class="text-agro-600 hover:underline font-medium">crearlo como ghost</a>.
                     </p>
                 </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Billing\ProductSale;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Client;
 use App\Models\Invoice;
@@ -17,7 +18,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Invoice $invoice;
 
@@ -475,7 +476,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Factura actualizada correctamente.');
-            return $this->redirect(route('winery.invoices.products.index'), navigate: true);
+            return $this->roleRedirect('invoices.products.index');
 
         } catch (\Exception $e) {
             Log::error('Error al editar factura de productos: ' . $e->getMessage(), [

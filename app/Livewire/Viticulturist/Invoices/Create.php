@@ -463,7 +463,7 @@ class Create extends Component
             });
 
             $this->toastSuccess("Albarán {$deliveryNoteCode} creado. Emítelo para generar el número de factura.");
-            return redirect()->route('viticulturist.invoices.index');
+            return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al crear la factura. Inténtalo de nuevo.');
         }

@@ -1,0 +1,170 @@
+<?php
+
+namespace App\Livewire\Supervisor\Labels;
+
+use App\Models\DoLabel;
+use App\Models\SupervisorWinery;
+use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
+
+class Index extends Component
+{
+    use WithPagination, WithToastNotifications;
+
+    public string $currentTab    = 'all';
+    public string $vintageFilter = '';
+    public bool   $showCreate    = false;
+
+    // Create form
+    public string $winery_id          = '';
+    public string $vintage            = '';
+    public string $batch_number       = '';
+    public int    $quantity_requested = 0;
+    public string $notes              = '';
+
+    protected $queryString = [
+        'currentTab'    => ['except' => 'all', 'as' => 'tab'],
+        'vintageFilter' => ['except' => ''],
+    ];
+
+    public function mount(): void
+    {
+        $this->vintage = (string) now()->year;
+    }
+
+    public function switchTab(string $tab): void
+    {
+        $this->currentTab = $tab;
+        $this->resetPage();
+    }
+
+    public function toggleCreate(): void
+    {
+        $this->showCreate = !$this->showCreate;
+    }
+
+    public function saveLabel(): void
+    {
+        $this->validate([
+            'winery_id'          => 'required|integer|exists:users,id',
+            'vintage'            => 'required|integer|min:1990|max:2100',
+            'batch_number'       => 'nullable|string|max:100',
+            'quantity_requested' => 'required|integer|min:1',
+            'notes'              => 'nullable|string',
+        ]);
+
+        $doId = Auth::id();
+
+        $isLinked = SupervisorWinery::where('supervisor_id', $doId)
+            ->where('winery_id', $this->winery_id)
+            ->exists();
+
+        if (!$isLinked) {
+            $this->toastError('La bodega seleccionada no pertenece a esta denominación.');
+            return;
+        }
+
+        DoLabel::create([
+            'supervisor_id'      => $doId,
+            'winery_id'          => $this->winery_id,
+            'vintage'            => $this->vintage,
+            'batch_number'       => $this->batch_number ?: null,
+            'quantity_requested' => $this->quantity_requested,
+            'notes'              => $this->notes ?: null,
+            'requested_at'       => now(),
+        ]);
+
+        $this->reset(['batch_number', 'quantity_requested', 'notes']);
+        $this->showCreate = false;
+        $this->toastSuccess('Solicitud de contraetiquetas registrada.');
+    }
+
+    public function issue(int $labelId): void
+    {
+        $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
+
+        if (!in_array($label->status, [DoLabel::STATUS_PENDING, DoLabel::STATUS_APPROVED])) {
+            $this->toastError('Solo se pueden emitir solicitudes pendientes o aprobadas.');
+            return;
+        }
+
+        $label->update([
+            'status'            => DoLabel::STATUS_ISSUED,
+            'quantity_issued'   => $label->quantity_requested,
+            'quantity_stock'    => $label->quantity_requested,
+            'issued_at'         => now(),
+            'issued_by'         => Auth::id(),
+        ]);
+
+        $this->toastSuccess('Contraetiquetas emitidas correctamente.');
+    }
+
+    public function approve(int $labelId): void
+    {
+        $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
+        $label->update(['status' => DoLabel::STATUS_APPROVED]);
+        $this->toastSuccess('Solicitud aprobada.');
+    }
+
+    public function cancel(int $labelId): void
+    {
+        $label = DoLabel::forSupervisor(Auth::id())->findOrFail($labelId);
+        $label->update(['status' => DoLabel::STATUS_CANCELLED]);
+        $this->toastSuccess('Solicitud cancelada.');
+    }
+
+    #[Layout('layouts.app')]
+    public function render()
+    {
+        $doId = Auth::id();
+
+        $query = DoLabel::forSupervisor($doId)->with(['winery:id,name']);
+
+        if ($this->currentTab !== 'all') {
+            $query->where('status', $this->currentTab);
+        }
+
+        if ($this->vintageFilter) {
+            $query->where('vintage', $this->vintageFilter);
+        }
+
+        $labels = $query->orderByDesc('created_at')->paginate(15);
+
+        $counts = [
+            'all'       => DoLabel::forSupervisor($doId)->count(),
+            'pending'   => DoLabel::forSupervisor($doId)->where('status', 'pending')->count(),
+            'approved'  => DoLabel::forSupervisor($doId)->where('status', 'approved')->count(),
+            'issued'    => DoLabel::forSupervisor($doId)->where('status', 'issued')->count(),
+        ];
+
+        $availableVintages = DoLabel::forSupervisor($doId)
+            ->select('vintage')->distinct()->orderByDesc('vintage')->pluck('vintage');
+
+        $wineries = \App\Models\User::whereIn('id',
+            SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id')
+        )->orderBy('name')->get(['id', 'name']);
+
+        $totalIssued = DoLabel::forSupervisor($doId)
+            ->where('status', DoLabel::STATUS_ISSUED)
+            ->when($this->vintageFilter, fn($q) => $q->where('vintage', $this->vintageFilter))
+            ->sum('quantity_issued');
+
+        $tabs = [
+            'all'      => ['label' => 'Todas',      'count' => $counts['all']],
+            'pending'  => ['label' => 'Pendientes', 'count' => $counts['pending']],
+            'approved' => ['label' => 'Aprobadas',  'count' => $counts['approved']],
+            'issued'   => ['label' => 'Emitidas',   'count' => $counts['issued']],
+        ];
+
+        return view('livewire.supervisor.labels.index', [
+            'labels'            => $labels,
+            'tabs'              => $tabs,
+            'wineries'          => $wineries,
+            'availableVintages' => $availableVintages,
+            'totalIssued'       => $totalIssued,
+        ]);
+    }
+}

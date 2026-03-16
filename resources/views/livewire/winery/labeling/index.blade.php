@@ -4,10 +4,10 @@
         description="Registro de sesiones de etiquetado y consumo de etiquetas"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.label-batches.index') }}" variant="ghost" icon="tag" size="sm">
+            <flux:button href="{{ roleRoute('label-batches.index') }}" variant="ghost" icon="tag" size="sm">
                 Gestionar lotes
             </flux:button>
-            <flux:button href="{{ route('winery.labeling.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('labeling.create') }}" variant="primary" icon="plus">
                 Nueva Sesión
             </flux:button>
         </x-slot:actions>
@@ -63,7 +63,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 @if($labeling->labelBatch)
-                                    <a href="{{ route('winery.label-batches.edit', $labeling->label_batch_id) }}"
+                                    <a href="{{ roleRoute('label-batches.edit', $labeling->label_batch_id) }}"
                                         class="text-xs text-violet-600 hover:text-violet-800 underline underline-offset-2">
                                         {{ $labeling->labelBatch->name }}
                                     </a>
@@ -76,7 +76,7 @@
                             </td>
                             <td class="px-4 py-3 text-zinc-500">
                                 @if($labeling->bottling)
-                                    <a href="{{ route('winery.bottling.edit', $labeling->wine_bottling_id) }}"
+                                    <a href="{{ roleRoute('bottling.edit', $labeling->wine_bottling_id) }}"
                                         class="text-xs text-emerald-600 hover:text-emerald-800 underline underline-offset-2">
                                         {{ $labeling->bottling->bottling_date->format('d/m/Y') }}
                                     </a>
@@ -86,7 +86,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-1">
-                                    <a href="{{ route('winery.labeling.edit', $labeling) }}" title="Editar">
+                                    <a href="{{ roleRoute('labeling.edit', $labeling) }}" title="Editar">
                                         <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                             <flux:icon icon="pencil" class="size-4" />
                                         </button>
@@ -120,7 +120,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.labeling.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('labeling.create') }}" variant="primary" icon="plus">
                         Nueva Sesión
                     </flux:button>
                 </x-slot:action>

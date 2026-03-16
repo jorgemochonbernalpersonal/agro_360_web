@@ -4,7 +4,7 @@
         description="Registro de operaciones de embotellado y materiales utilizados"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.bottling.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('bottling.create') }}" variant="primary" icon="plus">
                 Nuevo Embotellado
             </flux:button>
         </x-slot:actions>
@@ -80,7 +80,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 @if($bottling->productLot)
-                                    <a href="{{ route('winery.product-lots.edit', $bottling->product_lot_id) }}"
+                                    <a href="{{ roleRoute('product-lots.edit', $bottling->product_lot_id) }}"
                                         class="text-xs text-agro-600 hover:text-agro-800 underline underline-offset-2">
                                         {{ $bottling->productLot->name }}
                                     </a>
@@ -90,7 +90,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-1">
-                                    <a href="{{ route('winery.bottling.edit', $bottling) }}" title="Editar">
+                                    <a href="{{ roleRoute('bottling.edit', $bottling) }}" title="Editar">
                                         <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                             <flux:icon icon="pencil" class="size-4" />
                                         </button>
@@ -128,7 +128,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.bottling.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('bottling.create') }}" variant="primary" icon="plus">
                         Nuevo Embotellado
                     </flux:button>
                 </x-slot:action>

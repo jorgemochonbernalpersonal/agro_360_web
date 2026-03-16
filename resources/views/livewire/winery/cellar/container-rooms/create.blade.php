@@ -3,7 +3,7 @@
     description="Define una zona o sala para organizar tus depósitos."
     icon="building-office"
     icon-color="from-teal-500 to-teal-700"
-    :back-url="route('winery.container-rooms.index')"
+    :back-url="roleRoute('container-rooms.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos de la sala" color="teal">
@@ -44,6 +44,6 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.container-rooms.index')" submit-label="Crear sala" />
+        <x-agro.form-actions :back-url="roleRoute('container-rooms.index')" submit-label="Crear sala" />
     </form>
 </x-agro.form-card>

@@ -9,11 +9,11 @@
     >
         <x-slot:actions>
             <flux:button variant="ghost" icon="pencil"
-                href="{{ route('winery.wines.edit', $wine) }}" wire:navigate>
+                href="{{ roleRoute('wines.edit', $wine) }}" wire:navigate>
                 Editar
             </flux:button>
             <flux:button variant="ghost" icon="arrow-left"
-                href="{{ route('winery.wines.index') }}" wire:navigate>
+                href="{{ roleRoute('wines.index') }}" wire:navigate>
                 Volver
             </flux:button>
         </x-slot:actions>

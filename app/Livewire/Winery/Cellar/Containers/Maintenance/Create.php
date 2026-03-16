@@ -7,13 +7,14 @@ use App\Models\ContainerMaintenance;
 use App\Models\ContainerWasteType;
 use App\Models\UnitOfMeasurement;
 use App\Models\WinerySupply;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Container $container;
 
@@ -141,7 +142,7 @@ class Create extends Component
         }
 
         $this->toastSuccess('Mantenimiento registrado correctamente.');
-        $this->redirect(route('winery.containers.maintenance.index', $this->container), navigate: true);
+        $this->roleRedirect('containers.maintenance.index', $this->container);
     }
 
     public function render()

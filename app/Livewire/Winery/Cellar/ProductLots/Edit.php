@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Cellar\ProductLots;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\GrapeVariety;
 use App\Models\ProductLot;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class Edit extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public ProductLot $lot;
 
@@ -334,7 +335,7 @@ class Edit extends Component
         });
 
         $this->toastSuccess('Producto actualizado correctamente.');
-        $this->redirect(route('winery.product-lots.index'), navigate: true);
+        $this->roleRedirect('product-lots.index');
     }
 
     public function render()

@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header title="Liquidaciones de Vendimia" description="Pagos a viticultores por la uva recibida">
         <x-slot:actions>
-            <flux:button href="{{ route('winery.invoices.grape-purchase.create') }}" wire:navigate variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('invoices.grape-purchase.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Liquidación
             </flux:button>
         </x-slot:actions>
@@ -90,20 +90,20 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1 flex-wrap">
                             @if ($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
-                                <a href="{{ route('winery.invoices.grape-purchase.edit', $invoice->id) }}" wire:navigate title="Editar">
+                                <a href="{{ roleRoute('invoices.grape-purchase.edit', $invoice->id) }}" wire:navigate title="Editar">
                                     <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                         <flux:icon icon="pencil" class="size-4" />
                                     </button>
                                 </a>
                             @endif
 
-                            <a href="{{ route('winery.invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank" title="Descargar Liquidación">
+                            <a href="{{ roleRoute('invoices.grape-purchase.pdf', $invoice->id) }}" target="_blank" title="Descargar Liquidación">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="document-text" class="size-4" />
                                 </button>
                             </a>
 
-                            <a href="{{ route('winery.invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán">
+                            <a href="{{ roleRoute('invoices.grape-purchase.delivery-note-pdf', $invoice->id) }}" target="_blank" title="Descargar Albarán">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="document-arrow-down" class="size-4" />
                                 </button>
@@ -155,7 +155,7 @@
             description="Crea la primera liquidación para pagar a los viticultores"
         >
             <x-slot:action>
-                <flux:button href="{{ route('winery.invoices.grape-purchase.create') }}" wire:navigate variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('invoices.grape-purchase.create') }}" wire:navigate variant="primary" icon="plus">
                     Nueva Liquidación
                 </flux:button>
             </x-slot:action>

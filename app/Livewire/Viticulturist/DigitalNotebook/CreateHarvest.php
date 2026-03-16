@@ -112,7 +112,7 @@ class CreateHarvest extends Component
         
         if (!$campaign) {
             $this->toastError('No se pudo obtener la campaña activa.');
-            return redirect()->route('viticulturist.campaign.create');
+            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -568,7 +568,7 @@ class CreateHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha registrada correctamente.');
-            return redirect()->route('viticulturist.harvests.index');
+            return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar cosecha', [
                 'error' => $e->getMessage(),

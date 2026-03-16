@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\NotebookAccessRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -108,6 +109,17 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.bodega-messages*'),
                     'wip'    => true,
                     'new'    => true,
+                ],
+                [
+                    'icon'   => 'lock-closed',
+                    'label'  => 'Acceso Bodegas al Cuaderno',
+                    'route'  => 'viticulturist.winery-access.index',
+                    'active' => request()->routeIs('viticulturist.winery-access*'),
+                    'badge'  => Cache::remember("nav_badge_notebook_access_{$user->id}", 120, fn() =>
+                        NotebookAccessRequest::where('viticulturist_id', $user->id)
+                            ->where('status', NotebookAccessRequest::STATUS_PENDING)
+                            ->count()
+                    ),
                 ],
             ];
 

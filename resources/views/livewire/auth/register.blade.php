@@ -132,6 +132,20 @@
                 </div>
             @endif
 
+            @guest
+            <div x-show="$wire.role === 'viticulturist'" x-cloak>
+                <flux:field>
+                    <flux:label>DNI / NIF <span class="text-zinc-400 font-normal text-xs">(opcional)</span></flux:label>
+                    <flux:input wire:model="dni"
+                                placeholder="12345678A"
+                                maxlength="20"
+                                autocomplete="off" />
+                    <flux:description class="text-xs text-zinc-400">Si tu bodega ya te tiene registrado, lo usaremos para vincular tu cuenta automáticamente.</flux:description>
+                    <flux:error name="dni" />
+                </flux:field>
+            </div>
+            @endguest
+
             <flux:field>
                 <flux:label>Contraseña</flux:label>
                 <div class="relative">

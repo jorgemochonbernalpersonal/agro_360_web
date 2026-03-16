@@ -18,6 +18,7 @@ class Register extends Component
     public $email = '';
     public $password = '';
     public $password_confirmation = '';
+    public $dni  = '';
     public $role = 'viticulturist'; // Por defecto
     public $winery_id = ''; // Si lo crea un winery
     public $supervisor_id = ''; // Si lo crea un supervisor
@@ -44,10 +45,11 @@ class Register extends Component
     protected function rules(): array
     {
         $rules = [
-            'name' => 'required|string|max:255',
+            'name'     => 'required|string|max:255',
             // La unicidad se gestionará manualmente en register() para permitir activar viticultores pre-creados
-            'email' => 'required|string|email|max:255',
+            'email'    => 'required|string|email|max:255',
             'password' => ['required', 'confirmed', Password::defaults()],
+            'dni'      => ['nullable', 'string', 'max:20', 'regex:/^[A-Za-z0-9\-]+$/'],
         ];
 
         // Si está autenticado, puede seleccionar rol
@@ -75,7 +77,9 @@ class Register extends Component
             'password.confirmed' => 'Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'role.required' => 'Debes seleccionar un rol.',
-            'role.in' => 'El rol seleccionado no es válido.',
+            'role.in'       => 'El rol seleccionado no es válido.',
+            'dni.max'       => 'El DNI no puede tener más de 20 caracteres.',
+            'dni.regex'     => 'El DNI solo puede contener letras, números y guiones.',
         ];
     }
 
@@ -113,6 +117,7 @@ class Register extends Component
         $this->validate();
 
         $this->email = strtolower(trim($this->email));
+        $normalizedDni = $this->dni ? strtoupper(preg_replace('/\s+/', '', $this->dni)) : null;
 
         $existing = User::where('email', $this->email)->first();
 
@@ -125,14 +130,15 @@ class Register extends Component
                     // a este correo y el viticultor lo recibió (de lo contrario no sabría que
                     // tiene una cuenta pre-creada). Marcamos email_verified_at automáticamente.
                     $existing->update([
-                        'name'              => $this->name,
-                        'password'          => Hash::make($this->password),
-                        'can_login'         => true,
-                        'password_must_reset' => false,
-                        'email_verified_at' => $existing->email_verified_at ?? now(),
-                        'invitation_token'  => null,
+                        'name'                  => $this->name,
+                        'password'              => Hash::make($this->password),
+                        'can_login'             => true,
+                        'password_must_reset'   => false,
+                        'email_verified_at'     => $existing->email_verified_at ?? now(),
+                        'dni'                   => $normalizedDni ?? $existing->dni,
+                        'invitation_token'      => null,
                         'invitation_expires_at' => null,
-                        'invitation_sent_at' => null,
+                        'invitation_sent_at'    => null,
                     ]);
 
                     Auth::login($existing->fresh());
@@ -146,6 +152,28 @@ class Register extends Component
                 // Cualquier otro caso: email ya usado por una cuenta activa
                 $this->addError('email', 'Este email ya está registrado.');
                 return;
+            }
+
+            // DNI merge: ghost sin email coincidente pero con DNI registrado por la bodega
+            if ($normalizedDni && $this->role === 'viticulturist') {
+                $merged = $this->mergeGhostByDni($normalizedDni, $this->email);
+                if ($merged === true) {
+                    return $this->redirect(route('viticulturist.dashboard'), navigate: true);
+                }
+                if ($merged === 'email_taken') {
+                    $this->addError('email', 'Este email ya está registrado.');
+                    return;
+                }
+                // null → no ghost found, continue with normal registration
+            }
+
+            // DNI activo duplicado: evitar conflicto de unique constraint
+            if ($normalizedDni) {
+                $dniTaken = User::where('dni', $normalizedDni)->where('can_login', true)->exists();
+                if ($dniTaken) {
+                    $this->addError('dni', 'Este DNI ya está registrado en el sistema.');
+                    return;
+                }
             }
         } else {
             // Creación interna (admin/supervisor/winery/viticultor): no permitir reutilizar emails
@@ -170,12 +198,13 @@ class Register extends Component
         }
 
         $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => $password,
-            'role' => $this->role,
+            'name'                => $this->name,
+            'email'               => $this->email,
+            'password'            => $password,
+            'role'                => $this->role,
+            'dni'                 => $normalizedDni ?? null,
             'password_must_reset' => $isViticulturistCreatingViticulturist,
-            'can_login' => true,
+            'can_login'           => true,
         ]);
 
         // Crear relaciones automáticas si está autenticado
@@ -321,6 +350,53 @@ class Register extends Component
             'producer'      => 'producer.dashboard',
             default         => 'home',
         };
+    }
+
+    /**
+     * Attempt to activate a ghost viticulturist matched by DNI.
+     *
+     * Returns true on success, 'email_taken' if the supplied email belongs to
+     * another active account, or null when no ghost is found.
+     */
+    private function mergeGhostByDni(string $normalizedDni, string $email): true|string|null
+    {
+        $ghost = User::where('dni', $normalizedDni)
+            ->where('role', User::ROLE_VITICULTURIST)
+            ->where('can_login', false)
+            ->first();
+
+        if (!$ghost) {
+            return null;
+        }
+
+        // The email the registrant chose must not already belong to a different active account.
+        $emailTaken = User::where('email', $email)
+            ->where('id', '!=', $ghost->id)
+            ->where('can_login', true)
+            ->exists();
+
+        if ($emailTaken) {
+            return 'email_taken';
+        }
+
+        $ghost->update([
+            'name'                  => $this->name,
+            'email'                 => $email,
+            'password'              => Hash::make($this->password),
+            'can_login'             => true,
+            'password_must_reset'   => false,
+            'email_verified_at'     => now(),
+            'invitation_token'      => null,
+            'invitation_expires_at' => null,
+            'invitation_sent_at'    => null,
+        ]);
+
+        Auth::login($ghost->fresh());
+        session()->regenerate();
+
+        $this->toastSuccess('¡Cuenta vinculada! Tu bodega ya tenía tus datos registrados. Bienvenido a Agro365.');
+
+        return true;
     }
 
     public function render()

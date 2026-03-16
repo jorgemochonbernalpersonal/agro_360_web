@@ -10,11 +10,20 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends AbstractIndex
 {
-    public string $search = '';
+    public string $search       = '';
+    public string $sourceFilter = '';
+
+    protected $queryString = [
+        'search'       => ['except' => ''],
+        'sourceFilter' => ['except' => ''],
+    ];
+
+    public function updatingSearch(): void       { $this->resetPage(); }
+    public function updatingSourceFilter(): void { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
-        return ['search' => ''];
+        return ['search' => '', 'sourceFilter' => ''];
     }
 
     protected function baseQuery(): Builder
@@ -34,6 +43,10 @@ class Index extends AbstractIndex
                 $q->whereRaw('LOWER(name) LIKE ?', [$search])
                   ->orWhereRaw('LOWER(email) LIKE ?', [$search])
             );
+        }
+
+        if ($this->sourceFilter) {
+            $query->where('source', $this->sourceFilter);
         }
     }
 

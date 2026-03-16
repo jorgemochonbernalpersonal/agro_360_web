@@ -1,6 +1,6 @@
 <div>
     <x-agro.form-card title="Nueva Liquidación de Vendimia" description="Registra el pago a un viticultor por la uva recibida"
-        :back-url="route('winery.invoices.grape-purchase.index')">
+        :back-url="roleRoute('invoices.grape-purchase.index')">
 
         <form wire:submit.prevent="save" class="space-y-8">
 
@@ -164,7 +164,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('winery.invoices.grape-purchase.index')" submit-label="Crear Liquidación" />
+            <x-agro.form-actions :cancel-url="roleRoute('invoices.grape-purchase.index')" submit-label="Crear Liquidación" />
         </form>
     </x-agro.form-card>
 </div>

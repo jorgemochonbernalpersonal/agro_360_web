@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\LabelBatches\Waste;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\LabelBatch;
 use App\Models\LabelWaste;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public LabelBatch $labelBatch;
 
@@ -65,7 +66,7 @@ class Create extends Component
         $this->labelBatch->increment('wasted_quantity', (int) $this->quantity);
 
         $this->toastSuccess('Merma de etiquetas registrada correctamente.');
-        $this->redirect(route('winery.label-batches.waste.index', $this->labelBatch), navigate: true);
+        $this->roleRedirect('label-batches.waste.index', $this->labelBatch);
     }
 
     public function render()

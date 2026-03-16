@@ -32,7 +32,7 @@
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-            <a href="{{ route('winery.harvest-quality.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter])) }}"
+            <a href="{{ roleRoute('harvest-quality.export-pdf', array_filter(['campaign' => $campaignFilter, 'viticulturist' => $viticulturistFilter])) }}"
                target="_blank"
                class="inline-flex items-center gap-2 px-3 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
                title="Exportar PDF de calidad">
@@ -121,7 +121,7 @@
                 description="Registra recepciones con parámetros de calidad (Baumé, Brix, alcohol…) para ver el análisis."
             >
                 <x-slot:action>
-                    <flux:button variant="primary" icon="plus" href="{{ route('winery.grape-reception.create') }}" wire:navigate>
+                    <flux:button variant="primary" icon="plus" href="{{ roleRoute('grape-reception.create') }}" wire:navigate>
                         Nueva recepción
                     </flux:button>
                 </x-slot:action>

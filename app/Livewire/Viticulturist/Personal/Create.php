@@ -78,7 +78,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Cuadrilla creada correctamente.');
-            return redirect()->route('viticulturist.personal.index');
+            return $this->redirect(route('viticulturist.personal.index'), navigate: true);
         } catch (\Exception $e) {
             Log::error('Error al crear cuadrilla', [
                 'error' => $e->getMessage(),

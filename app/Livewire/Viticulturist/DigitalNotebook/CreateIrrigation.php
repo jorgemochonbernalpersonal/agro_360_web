@@ -60,7 +60,7 @@ class CreateIrrigation extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return redirect()->route('viticulturist.campaign.create');
+            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -205,7 +205,7 @@ class CreateIrrigation extends Component
             });
 
             $this->toastSuccess('Riego registrado correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.irrigation.index');
+            return $this->redirect(route('viticulturist.digital-notebook.irrigation.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar riego', [
                 'error' => $e->getMessage(),

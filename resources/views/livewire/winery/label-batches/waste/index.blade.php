@@ -5,10 +5,10 @@
         description="Etiquetas inutilizadas, dañadas o destruidas de este lote"
     >
         <x-slot:actions>
-            <flux:button :href="route('winery.label-batches.waste.create', $labelBatch)" wire:navigate variant="primary" icon="plus">
+            <flux:button :href="roleRoute('label-batches.waste.create', $labelBatch)" wire:navigate variant="primary" icon="plus">
                 Registrar merma
             </flux:button>
-            <flux:button :href="route('winery.label-batches.index')" wire:navigate variant="ghost" icon="arrow-left">
+            <flux:button :href="roleRoute('label-batches.index')" wire:navigate variant="ghost" icon="arrow-left">
                 Volver a lotes
             </flux:button>
         </x-slot:actions>
@@ -49,7 +49,7 @@
             description="Registra las etiquetas inutilizadas o destruidas de este lote."
         >
             <x-slot:action>
-                <flux:button :href="route('winery.label-batches.waste.create', $labelBatch)" wire:navigate variant="primary" icon="plus">
+                <flux:button :href="roleRoute('label-batches.waste.create', $labelBatch)" wire:navigate variant="primary" icon="plus">
                     Registrar merma
                 </flux:button>
             </x-slot:action>

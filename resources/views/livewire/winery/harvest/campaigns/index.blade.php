@@ -5,7 +5,7 @@
         description="Las campañas se crean automáticamente al registrar una recepción de uva"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('grape-reception.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Recepción
             </flux:button>
         </x-slot:actions>
@@ -32,7 +32,7 @@
                 description="Crea una campaña para empezar a registrar recepciones de uva."
             >
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.campaigns.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('campaigns.create') }}" variant="primary" icon="plus">
                         Nueva Campaña
                     </flux:button>
                 </x-slot:action>
@@ -61,7 +61,7 @@
                         </x-agro.table-cell>
 
                         <x-agro.table-cell>
-                            <a href="{{ route('winery.grape-reception.index', ['campaignFilter' => $campaign->id]) }}"
+                            <a href="{{ roleRoute('grape-reception.index', ['campaignFilter' => $campaign->id]) }}"
                                wire:navigate
                                class="text-sm text-agro-700 hover:underline">
                                 {{ $campaign->activities_count }}
@@ -79,7 +79,7 @@
                             <div class="flex items-center justify-end gap-1">
                                 @if(!$campaign->locked_at)
                                     <flux:button size="sm" variant="ghost" icon="pencil-square"
-                                        href="{{ route('winery.campaigns.edit', $campaign) }}"
+                                        href="{{ roleRoute('campaigns.edit', $campaign) }}"
                                         wire:navigate
                                         title="Editar campaña"
                                     />

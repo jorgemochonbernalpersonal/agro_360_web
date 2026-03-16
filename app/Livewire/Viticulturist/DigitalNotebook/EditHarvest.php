@@ -127,7 +127,7 @@ class EditHarvest extends Component
 
         if ($activity->isLocked()) {
             $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            redirect()->route('viticulturist.harvests.index');
+            $this->redirect(route('viticulturist.harvests.index'), navigate: true);
             return;
         }
 
@@ -619,7 +619,7 @@ class EditHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha actualizada correctamente.');
-            return redirect()->route('viticulturist.digital-notebook.harvest.show', $this->harvest->id);
+            return $this->redirect(route('viticulturist.digital-notebook.harvest.show', $this->harvest->id), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar cosecha', [
                 'error' => $e->getMessage(),

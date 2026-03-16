@@ -3,7 +3,7 @@
     description="{{ $container->name }} — modifica los datos del mantenimiento."
     icon="wrench-screwdriver"
     icon-color="from-zinc-500 to-zinc-700"
-    :back-url="route('winery.containers.maintenance.index', $container)"
+    :back-url="roleRoute('containers.maintenance.index', $container)"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -158,6 +158,6 @@
             </flux:button>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.containers.maintenance.index', $container)" submit-label="Actualizar mantenimiento" />
+        <x-agro.form-actions :back-url="roleRoute('containers.maintenance.index', $container)" submit-label="Actualizar mantenimiento" />
     </form>
 </x-agro.form-card>

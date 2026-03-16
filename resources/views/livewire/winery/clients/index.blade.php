@@ -47,11 +47,11 @@
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-            <flux:button href="{{ route('winery.clients.insights') }}" wire:navigate variant="ghost" icon="chart-bar">
+            <flux:button href="{{ roleRoute('clients.insights') }}" wire:navigate variant="ghost" icon="chart-bar">
                 Insights
             </flux:button>
 
-            <flux:button href="{{ route('winery.clients.create') }}" wire:navigate variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('clients.create') }}" wire:navigate variant="primary" icon="plus">
                 Nuevo Cliente
             </flux:button>
 
@@ -170,7 +170,7 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ route('winery.clients.edit', $client->id) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
+                                <a href="{{ roleRoute('clients.edit', $client->id) }}" wire:navigate class="{{ $btnBase }}" title="Editar">
                                     <flux:icon icon="pencil-square" class="size-4" />
                                 </a>
                             </div>
@@ -206,7 +206,7 @@
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
-                    <flux:button href="{{ route('winery.clients.create') }}" wire:navigate variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('clients.create') }}" wire:navigate variant="primary" icon="plus">
                         Nuevo Cliente
                     </flux:button>
                 </x-slot:action>

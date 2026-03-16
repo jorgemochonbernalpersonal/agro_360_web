@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Editar Previsión de Vendimia"
         description="Modifica el aforo estimado de uva."
-        :back-url="route('winery.harvest-forecasts.index')"
+        :back-url="roleRoute('harvest-forecasts.index')"
     >
         <form wire:submit.prevent="save" class="space-y-8">
 
@@ -110,7 +110,7 @@
             </x-agro.form-section>
 
             <x-agro.form-actions
-                :cancel-url="route('winery.harvest-forecasts.index')"
+                :cancel-url="roleRoute('harvest-forecasts.index')"
                 submit-label="Guardar cambios"
             />
 

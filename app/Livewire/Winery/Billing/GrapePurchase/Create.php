@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Billing\GrapePurchase;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Harvest;
 use App\Models\Invoice;
@@ -16,7 +17,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public string $viticulturist_id = '';
     public string $invoice_date     = '';
@@ -46,7 +47,7 @@ class Create extends Component
             return;
         }
 
-        $harvest = Harvest::find($harvestId);
+        $harvest = Harvest::where('winery_id', Auth::id())->find($harvestId);
         if (!$harvest) return;
 
         $this->lines[] = [
@@ -219,7 +220,7 @@ class Create extends Component
             $viticulturist->notify(new GrapePurchaseInvoiceIssuedNotification($invoice));
 
             $this->toastSuccess("Liquidación {$number} creada — Ref.: {$noteCode}");
-            return $this->redirect(route('winery.invoices.grape-purchase.index'), navigate: true);
+            return $this->roleRedirect('invoices.grape-purchase.index');
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Winery\Wines\Process;
 
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\UnitOfMeasurement;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public Wine $wine;
 
@@ -85,7 +86,7 @@ class Create extends Component
         }
 
         $this->toastSuccess('Operación de vinificación registrada correctamente.');
-        $this->redirect(route('winery.wines.edit', $this->wine), navigate: true);
+        $this->roleRedirect('wines.edit', $this->wine);
     }
 
     public function render()

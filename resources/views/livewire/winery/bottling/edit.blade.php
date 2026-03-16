@@ -3,7 +3,7 @@
     description="Modifica los datos de esta operación de embotellado."
     icon="archive-box-arrow-down"
     icon-color="from-emerald-500 to-emerald-700"
-    :back-url="route('winery.bottling.index')"
+    :back-url="roleRoute('bottling.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -186,6 +186,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.bottling.index')" submit-label="Guardar cambios" />
+        <x-agro.form-actions :back-url="roleRoute('bottling.index')" submit-label="Guardar cambios" />
     </form>
 </x-agro.form-card>

@@ -6,7 +6,7 @@
         :description="'Alb: ' . ($invoice->delivery_note_code ?? '—') . ' · ' . ($invoice->client?->full_name ?? '')"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.invoices.products.index') }}" variant="outline" icon="arrow-left" wire:navigate>
+            <flux:button href="{{ roleRoute('invoices.products.index') }}" variant="outline" icon="arrow-left" wire:navigate>
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -370,7 +370,7 @@
             @if (!$isLocked)
                 <div class="flex justify-end gap-3 pt-2">
                     <flux:button type="button" variant="outline"
-                        href="{{ route('winery.invoices.products.index') }}" wire:navigate>
+                        href="{{ roleRoute('invoices.products.index') }}" wire:navigate>
                         Cancelar
                     </flux:button>
                     <flux:button type="submit" variant="primary">
@@ -380,7 +380,7 @@
             @else
                 <div class="flex justify-end pt-2">
                     <flux:button type="button" variant="outline"
-                        href="{{ route('winery.invoices.products.index') }}" wire:navigate icon="arrow-left">
+                        href="{{ roleRoute('invoices.products.index') }}" wire:navigate icon="arrow-left">
                         Volver al listado
                     </flux:button>
                 </div>

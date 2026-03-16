@@ -3,7 +3,7 @@
     description="Modifica los datos del insumo de bodega."
     icon="beaker"
     icon-color="from-blue-500 to-blue-700"
-    :back-url="route('winery.winery-supplies.index')"
+    :back-url="roleRoute('winery-supplies.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Identificación" color="blue">
@@ -71,6 +71,6 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('winery.winery-supplies.index')" submit-label="Actualizar insumo" />
+        <x-agro.form-actions :back-url="roleRoute('winery-supplies.index')" submit-label="Actualizar insumo" />
     </form>
 </x-agro.form-card>

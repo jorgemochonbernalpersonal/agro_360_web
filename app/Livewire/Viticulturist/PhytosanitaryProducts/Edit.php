@@ -86,7 +86,7 @@ class Edit extends Component
 
             $this->toastSuccess('Producto fitosanitario actualizado correctamente.');
 
-            return redirect()->route('viticulturist.phytosanitary-products.index');
+            return $this->redirect(route('viticulturist.phytosanitary-products.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar producto fitosanitario', [
                 'error' => $e->getMessage(),

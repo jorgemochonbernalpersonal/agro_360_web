@@ -11,13 +11,14 @@ use App\Models\WineryYieldForecast;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\WineryViticulturist;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     // ── Context ─────────────────────────────────────────────────────────────
     public string $viticulturist_id = '';
@@ -105,6 +106,17 @@ class Create extends Component
         $this->resetPlantingState();
 
         if (!$this->viticulturist_id) {
+            return;
+        }
+
+        $wineryId      = Auth::id();
+        $isSelf        = Auth::user()->isProducer() && (int) $this->viticulturist_id === $wineryId;
+        $isLinked      = $isSelf || WineryViticulturist::where('winery_id', $wineryId)
+            ->where('viticulturist_id', $this->viticulturist_id)
+            ->exists();
+
+        if (!$isLinked) {
+            $this->viticulturist_id = '';
             return;
         }
 
@@ -306,7 +318,7 @@ class Create extends Component
 
     // ── Save ─────────────────────────────────────────────────────────────────
 
-    public function save(): void
+    public function save(): mixed
     {
         $this->validate();
 
@@ -343,7 +355,7 @@ class Create extends Component
                 "El contenedor «{$container->name}» no tiene capacidad suficiente. " .
                 "Disponible: " . number_format($container->getAvailableCapacity(), 0) . " kg."
             );
-            return;
+            return null;
         }
 
         // Auto-get/create campaign for vintage year
@@ -357,7 +369,7 @@ class Create extends Component
             ->first();
         if ($existingBatch && $existingBatch->status === 'closed') {
             $this->toastError('El lote de esta plantación está cerrado. Réabrelo desde el Cuadro de Mando antes de añadir más recepciones.');
-            return;
+            return null;
         }
 
         $pricePerKg = $this->price_per_kg ? (float) $this->price_per_kg : null;
@@ -424,7 +436,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Recepción registrada. Puedes continuar con el mismo viticultor.');
-            redirect()->route('winery.grape-reception.create', array_filter([
+            return $this->roleRedirect('grape-reception.create', array_filter([
                 'viticulturist_id' => $this->viticulturist_id,
                 'plot_id'          => $this->plot_id,
             ]));
@@ -446,7 +458,6 @@ class Create extends Component
         $wineryId = Auth::id();
 
         $linkedViticulturists = WineryViticulturist::where('winery_id', $wineryId)
-            ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
             ->with('viticulturist:id,name')
             ->get()
             ->pluck('viticulturist')

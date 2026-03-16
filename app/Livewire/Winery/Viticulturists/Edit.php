@@ -34,6 +34,7 @@ class Edit extends AbstractEdit
         $rawEmail              = $user->email ?? '';
         $this->email           = str_starts_with($rawEmail, 'viticultores.') ? '' : $rawEmail;
         $this->phone           = $user->profile?->phone ?? '';
+        $this->notes           = $relation->notes ?? '';
     }
 
     protected function rules(): array
@@ -57,7 +58,8 @@ class Edit extends AbstractEdit
 
     protected function performUpdate(): void
     {
-        $user = User::findOrFail($this->viticulturistId);
+        $wineryId = Auth::id();
+        $user     = User::findOrFail($this->viticulturistId);
 
         $emailValue = $this->email ?: null;
 
@@ -82,6 +84,10 @@ class Edit extends AbstractEdit
         } elseif ($user->profile) {
             $user->profile()->update(['phone' => null]);
         }
+
+        WineryViticulturist::where('winery_id', $wineryId)
+            ->where('viticulturist_id', $user->id)
+            ->update(['notes' => $this->notes ?: null]);
     }
 
     protected function successMessage(): string

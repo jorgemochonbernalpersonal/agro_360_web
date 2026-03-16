@@ -100,7 +100,7 @@ class CreateTicket extends Component
 
         $this->toastSuccess('Ticket creado exitosamente. Te contactaremos pronto.');
 
-        return redirect()->route('viticulturist.support.index');
+        return $this->redirect(route('viticulturist.support.index'), navigate: true);
     }
 
     public function render()

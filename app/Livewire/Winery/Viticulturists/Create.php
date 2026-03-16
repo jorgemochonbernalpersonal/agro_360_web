@@ -56,6 +56,7 @@ class Create extends AbstractCreate
             'viticulturist_id' => $user->id,
             'source'           => WineryViticulturist::SOURCE_OWN,
             'assigned_by'      => $this->wineryId(),
+            'notes'            => $this->notes ?: null,
         ]);
 
         // Inherit beta from winery if active
