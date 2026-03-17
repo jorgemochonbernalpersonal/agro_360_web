@@ -2,8 +2,13 @@
 
 namespace App\Livewire\Viticulturist;
 
+use App\Models\AgriculturalActivity;
+use App\Models\Campaign;
 use App\Models\OnboardingProgress;
+use App\Models\PhytosanitaryProduct;
+use App\Models\Plot;
 use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class OnboardingChecklist extends Component
@@ -21,10 +26,13 @@ class OnboardingChecklist extends Component
     public function loadProgress(): void
     {
         $userId = auth()->id();
-        
+
+        // Auto-marcar pasos que ya tienen datos reales (retrocompatibilidad)
+        $this->autoCompleteExistingData($userId);
+
         // Verificar si debe mostrarse
         $this->show = !OnboardingProgress::isOnboardingComplete($userId);
-        
+
         if (!$this->show) {
             return;
         }
@@ -118,6 +126,30 @@ class OnboardingChecklist extends Component
             OnboardingProgress::STEP_REGISTER_ACTIVITY => route('viticulturist.digital-notebook'),
             default => route('viticulturist.dashboard'),
         };
+    }
+
+    private function autoCompleteExistingData(int $userId): void
+    {
+        $checks = [
+            OnboardingProgress::STEP_REVIEW_CAMPAIGN => fn () =>
+                Campaign::forViticulturist($userId)->where('active', true)->exists(),
+
+            OnboardingProgress::STEP_CREATE_PLOT => fn () =>
+                Plot::forUser(Auth::user())->exists(),
+
+            OnboardingProgress::STEP_ADD_PRODUCTS => fn () =>
+                PhytosanitaryProduct::forUser($userId)->exists(),
+
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => fn () =>
+                AgriculturalActivity::forViticulturist($userId)->exists(),
+        ];
+
+        foreach ($checks as $step => $hasData) {
+            $progress = OnboardingProgress::getOrCreate($userId, $step);
+            if (!$progress->isCompleted() && $hasData()) {
+                $progress->markAsCompleted();
+            }
+        }
     }
 
     public function render()

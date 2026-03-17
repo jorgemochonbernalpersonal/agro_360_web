@@ -12,20 +12,92 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Aviso estado bloqueado --}}
-    @if($this->isLocked)
-        <flux:callout variant="warning">
-            <strong>Albarán bloqueado:</strong>
-            {{ $invoice->delivery_status === 'delivered' ? 'Ya entregado.' : 'Cancelado.' }}
-            Solo puedes modificar el estado de pago.
-        </flux:callout>
-    @endif
+    {{-- ── Card de estados ──────────────────────────────────────────────────── --}}
+    <x-agro.card>
+        <div class="flex flex-wrap items-end gap-4">
 
-    {{-- Aviso factura enviada --}}
-    @if($invoice->status === 'sent' && !$this->isLocked)
+            {{-- Entrega --}}
+            <div class="flex-1 min-w-[160px]">
+                <flux:field>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Entrega</flux:label>
+                    <flux:select wire:model="delivery_status" :disabled="$this->isLocked">
+                        <option value="pending">Pendiente</option>
+                        <option value="in_transit">En tránsito</option>
+                        <option value="delivered">Entregada</option>
+                        <option value="cancelled">Cancelada</option>
+                    </flux:select>
+                </flux:field>
+            </div>
+
+            {{-- Cobro --}}
+            <div class="flex-1 min-w-[160px]">
+                <flux:field>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Estado de cobro</flux:label>
+                    <flux:select wire:model="payment_status" :disabled="$invoice->status === 'cancelled'">
+                        <option value="unpaid">Pendiente de cobro</option>
+                        <option value="paid">Cobrada</option>
+                        <option value="overdue">Vencida</option>
+                        <option value="refunded">Reembolsada</option>
+                    </flux:select>
+                </flux:field>
+            </div>
+
+            {{-- Forma de pago --}}
+            <div class="flex-1 min-w-[160px]">
+                <flux:field>
+                    <flux:label class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Forma de pago</flux:label>
+                    <flux:select wire:model="payment_type" :disabled="$invoice->status === 'cancelled'">
+                        <option value="">Sin especificar</option>
+                        <option value="cash">Efectivo</option>
+                        <option value="transfer">Transferencia</option>
+                        <option value="check">Cheque</option>
+                        <option value="other">Otro</option>
+                    </flux:select>
+                </flux:field>
+            </div>
+
+            {{-- Info factura --}}
+            <div class="flex-1 min-w-[140px] space-y-1">
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Factura</p>
+                @if($invoice->invoice_number)
+                    <p class="font-mono font-bold text-zinc-900 text-sm">{{ $invoice->invoice_number }}</p>
+                    @if($invoice->invoice_date)
+                        <p class="text-xs text-zinc-400">{{ $invoice->invoice_date->format('d/m/Y') }}</p>
+                    @endif
+                    <flux:badge color="blue" size="sm">Emitida</flux:badge>
+                @elseif($invoice->status === 'cancelled')
+                    <flux:badge color="red" size="sm">Cancelada</flux:badge>
+                @else
+                    <flux:badge color="zinc" size="sm">Borrador</flux:badge>
+                    <p class="text-xs text-zinc-400">Emite desde el listado</p>
+                @endif
+            </div>
+
+            {{-- Botón guardar estados --}}
+            @if($invoice->status !== 'cancelled')
+                <div class="flex-shrink-0">
+                    <flux:button type="button" variant="primary" size="sm"
+                        wire:click="saveStatuses"
+                        wire:loading.attr="disabled"
+                        wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">
+                        <span wire:loading.remove wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">Guardar estados</span>
+                        <span wire:loading wire:target="saveStatuses,confirmPaymentDate,confirmDeliveryStatus">Guardando...</span>
+                    </flux:button>
+                </div>
+            @endif
+        </div>
+    </x-agro.card>
+
+    {{-- Aviso si bloqueada --}}
+    @if($this->isLocked)
+        <flux:callout variant="{{ $invoice->status === 'cancelled' ? 'danger' : 'warning' }}" icon="lock-closed">
+            <strong>Factura {{ $invoice->status === 'cancelled' ? 'cancelada' : ($invoice->delivery_status === 'delivered' ? 'entregada' : 'cerrada') }}.</strong>
+            El contenido no puede modificarse. Puedes actualizar el estado de cobro desde la tarjeta de arriba.
+        </flux:callout>
+    @elseif($invoice->status === 'sent')
         <flux:callout variant="info">
             <strong>Factura emitida.</strong>
-            El número de factura y el código de albarán están bloqueados. Para anular necesitas una factura rectificativa.
+            Las líneas están bloqueadas. Para corregir errores usa una factura rectificativa.
         </flux:callout>
     @endif
 
@@ -124,43 +196,6 @@
                             <flux:error name="client_address_id" />
                         </flux:field>
                     @endif
-                </div>
-            </x-agro.form-section>
-
-            {{-- Estados --}}
-            <x-agro.form-section title="Estados">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <flux:field>
-                        <flux:label required>Estado de entrega</flux:label>
-                        <flux:select
-                            wire:model="delivery_status"
-                            required
-                            :disabled="$this->isLocked"
-                        >
-                            <option value="pending">Pendiente</option>
-                            <option value="in_transit">En tránsito</option>
-                            <option value="delivered">Entregado</option>
-                            <option value="cancelled">Cancelado</option>
-                        </flux:select>
-                        <flux:error name="delivery_status" />
-                        <p class="mt-1 text-xs text-zinc-400">
-                            Solo informativo — no afecta al stock ni al número de factura.
-                        </p>
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label required>Estado de pago</flux:label>
-                        <flux:select wire:model="payment_status" required>
-                            <option value="unpaid">No pagado</option>
-                            <option value="paid">Pagado</option>
-                            <option value="overdue">Vencido</option>
-                            <option value="refunded">Reembolsado</option>
-                        </flux:select>
-                        <flux:error name="payment_status" />
-                        <p class="mt-1 text-xs text-zinc-400">
-                            El estado de pago no afecta al stock.
-                        </p>
-                    </flux:field>
                 </div>
             </x-agro.form-section>
 
@@ -463,39 +498,132 @@
             </x-agro.form-section>
 
             {{-- Acciones --}}
-            <div class="flex justify-between items-center gap-4 pt-2">
-                {{-- Botón facturar (solo en draft) --}}
-                <div>
-                    @if($invoice->status === 'draft' && !$this->isLocked)
+            @if(!$this->isLocked)
+                <div class="flex justify-between items-center gap-4 pt-2">
+                    <div>
+                        @if($invoice->status === 'draft')
+                            <flux:button
+                                type="button"
+                                wire:click="openInvoiceModal"
+                                variant="primary"
+                                icon="paper-airplane"
+                            >
+                                Emitir factura
+                            </flux:button>
+                        @endif
+                    </div>
+                    <div class="flex gap-3">
                         <flux:button
                             type="button"
-                            wire:click="openInvoiceModal"
-                            variant="primary"
-                            icon="paper-airplane"
+                            variant="outline"
+                            wire:click="cancel"
+                            wire:confirm="¿Descartar los cambios no guardados?"
                         >
-                            Emitir factura
+                            Descartar cambios
                         </flux:button>
-                    @elseif($invoice->status === 'sent')
-                        <flux:badge color="green" size="lg">Factura emitida</flux:badge>
-                    @endif
+                        <flux:button type="submit" variant="primary">
+                            Guardar cambios
+                        </flux:button>
+                    </div>
                 </div>
-
-                <div class="flex gap-3">
+            @else
+                <div class="flex justify-end pt-2">
                     <flux:button
                         type="button"
                         variant="outline"
-                        wire:click="cancel"
-                        wire:confirm="¿Descartar los cambios no guardados?"
+                        href="{{ route('viticulturist.invoices.index') }}"
+                        wire:navigate
+                        icon="arrow-left"
                     >
-                        Descartar cambios
+                        Volver al listado
                     </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        Guardar cambios
+                </div>
+            @endif
+        </form>
+    </x-agro.card>
+
+    {{-- Modal: Cambio de estado de entrega (mueve stock) --}}
+    @if($showDeliveryModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+             x-data x-on:keydown.escape.window="$wire.closeDeliveryModal()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md" @click.stop>
+                <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-zinc-900">
+                        {{ $pendingDeliveryStatus === 'delivered' ? 'Confirmar entrega' : 'Cancelar entrega' }}
+                    </h3>
+                    <flux:button wire:click="closeDeliveryModal" variant="ghost" size="sm" icon="x-mark" />
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="bg-zinc-50 rounded-lg p-4 grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <p class="text-zinc-500">Albarán</p>
+                            <p class="font-mono font-semibold text-zinc-900">{{ $invoice->delivery_note_code }}</p>
+                        </div>
+                        <div>
+                            <p class="text-zinc-500">Cliente</p>
+                            <p class="font-semibold text-zinc-900">{{ $invoice->client?->full_name ?? '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-zinc-500">Total</p>
+                            <p class="font-bold text-green-600 text-base">{{ number_format($this->totalAmount, 2) }} €</p>
+                        </div>
+                    </div>
+                    @if($pendingDeliveryStatus === 'delivered')
+                        <flux:callout variant="warning">
+                            El stock pasará de <strong>reservado → vendido</strong>. Esta acción bloquea la edición del contenido.
+                        </flux:callout>
+                    @else
+                        <flux:callout variant="danger">
+                            El stock se restaurará a <strong>disponible</strong>. El albarán quedará cancelado.
+                        </flux:callout>
+                    @endif
+                </div>
+                <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl">
+                    <flux:button wire:click="closeDeliveryModal" variant="outline"
+                        wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">Cancelar</flux:button>
+                    <flux:button wire:click="confirmDeliveryStatus"
+                        variant="{{ $pendingDeliveryStatus === 'delivered' ? 'primary' : 'danger' }}"
+                        icon="{{ $pendingDeliveryStatus === 'delivered' ? 'check-circle' : 'x-circle' }}"
+                        wire:loading.attr="disabled" wire:target="confirmDeliveryStatus">
+                        <span wire:loading.remove wire:target="confirmDeliveryStatus">
+                            {{ $pendingDeliveryStatus === 'delivered' ? 'Confirmar entrega' : 'Confirmar cancelación' }}
+                        </span>
+                        <span wire:loading wire:target="confirmDeliveryStatus">Guardando...</span>
                     </flux:button>
                 </div>
             </div>
-        </form>
-    </x-agro.card>
+        </div>
+    @endif
+
+    {{-- Modal: Fecha de cobro --}}
+    @if($showPaymentDateModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+             x-data x-on:keydown.escape.window="$wire.closePaymentDateModal()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm" @click.stop>
+                <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-zinc-900">Fecha de cobro</h3>
+                    <flux:button wire:click="closePaymentDateModal" variant="ghost" size="sm" icon="x-mark" />
+                </div>
+                <div class="p-6 space-y-4">
+                    <p class="text-sm text-zinc-600">Indica la fecha en que se realizó el cobro.</p>
+                    <flux:field>
+                        <flux:label required>Fecha de cobro</flux:label>
+                        <flux:input wire:model="payment_date" type="date" required />
+                        <flux:error name="payment_date" />
+                    </flux:field>
+                </div>
+                <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50 border-t border-zinc-200 rounded-b-2xl">
+                    <flux:button wire:click="closePaymentDateModal" variant="outline"
+                        wire:loading.attr="disabled" wire:target="confirmPaymentDate">Cancelar</flux:button>
+                    <flux:button wire:click="confirmPaymentDate" variant="primary" icon="check"
+                        wire:loading.attr="disabled" wire:target="confirmPaymentDate">
+                        <span wire:loading.remove wire:target="confirmPaymentDate">Confirmar</span>
+                        <span wire:loading wire:target="confirmPaymentDate">Guardando...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    @endif
 
     {{-- Modal: Confirmar emisión de factura --}}
     @if($showInvoiceModal)

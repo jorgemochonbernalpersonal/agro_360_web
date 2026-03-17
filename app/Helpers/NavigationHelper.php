@@ -81,7 +81,7 @@ class NavigationHelper
                     'icon'   => 'clipboard-document-list',
                     'label'  => 'Campañas',
                     'route'  => 'viticulturist.campaign.index',
-                    'active' => request()->routeIs('viticulturist.campaign*') && !request()->routeIs('viticulturist.campaign-documents.*') && !request()->routeIs('viticulturist.campaign-sign.*'),
+                    'active' => request()->routeIs('viticulturist.campaign.*'),
                 ],
                 [
                     'icon'   => 'folder-open',
@@ -125,6 +125,13 @@ class NavigationHelper
 
             // GRUPO: CUADERNO DE CAMPO — entradas diarias
             $menu['cuaderno_inputs'] = [
+                [
+                    'icon'   => 'book-open',
+                    'label'  => 'Cuaderno Digital',
+                    'route'  => 'viticulturist.digital-notebook',
+                    'active' => request()->routeIs('viticulturist.digital-notebook') && !request()->routeIs('viticulturist.digital-notebook.*'),
+                ],
+                ['divider' => true],
                 [
                     'icon'   => 'shield-exclamation',
                     'label'  => 'Tratamientos',
@@ -191,12 +198,6 @@ class NavigationHelper
             // GRUPO: REGISTROS OFICIALES — outputs y compliance del cuaderno
             $menu['registros_oficiales'] = [
                 [
-                    'icon'   => 'chart-bar',
-                    'label'  => 'Cumplimiento Cuaderno',
-                    'route'  => 'viticulturist.pac-compliance',
-                    'active' => request()->routeIs('viticulturist.pac-compliance'),
-                ],
-                [
                     'icon'   => 'clipboard-document-check',
                     'label'  => 'Análisis de Residuos',
                     'route'  => 'viticulturist.residue-analyses.index',
@@ -261,7 +262,7 @@ class NavigationHelper
                     'active' => request()->routeIs('plots.territory'),
                 ],
                 [
-                    'icon' => 'beaker',
+                    'icon' => 'viewfinder-circle',
                     'label' => 'Entorno de Parcelas',
                     'route' => 'viticulturist.plot-environments.index',
                     'active' => request()->routeIs('viticulturist.plot-environments.*'),
@@ -295,13 +296,13 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.field-applicators.*'),
                 ],
                 [
-                    'icon' => 'cog-6-tooth',
+                    'icon' => 'cog-8-tooth',
                     'label' => 'Equipos ITB/ITEA',
                     'route' => 'viticulturist.field-equipment.index',
                     'active' => request()->routeIs('viticulturist.field-equipment.*'),
                 ],
                 [
-                    'icon'   => 'shield-exclamation',
+                    'icon'   => 'lifebuoy',
                     'label'  => 'Seguros Agrarios',
                     'route'  => 'viticulturist.agri-insurance.index',
                     'active' => request()->routeIs('viticulturist.agri-insurance*'),
@@ -341,6 +342,13 @@ class NavigationHelper
                     'label'  => 'Historial de Ayudas',
                     'route'  => 'viticulturist.pac.payments.index',
                     'active' => request()->routeIs('viticulturist.pac.payments.*'),
+                ],
+                ['divider' => true],
+                [
+                    'icon'   => 'chart-bar',
+                    'label'  => 'Cumplimiento Cuaderno',
+                    'route'  => 'viticulturist.pac-compliance',
+                    'active' => request()->routeIs('viticulturist.pac-compliance'),
                 ],
             ];
 
@@ -401,6 +409,12 @@ class NavigationHelper
                     'active' => request()->routeIs('viticulturist.verifactu*'),
                     'wip'    => true,
                     'new'    => true,
+                ],
+                [
+                    'icon'   => 'document-arrow-up',
+                    'label'  => 'Facturas Venta Cosecha',
+                    'route'  => 'viticulturist.invoices.harvest-sale.index',
+                    'active' => request()->routeIs('viticulturist.invoices.harvest-sale*'),
                 ],
                 [
                     'icon'   => 'document-arrow-down',

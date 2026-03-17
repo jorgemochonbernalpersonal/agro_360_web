@@ -20,31 +20,6 @@ class Index extends Component
 
     protected $queryString = ['search', 'wineryFilter'];
 
-    public function mount()
-    {
-        $user = Auth::user();
-        
-        // Auto-registrar viticultor si no tiene registro en WineryViticulturist
-        if ($user && $user->hasViticulturistAccess()) {
-            $hasRecord = \App\Models\WineryViticulturist::where('viticulturist_id', $user->id)->exists();
-            
-            if (!$hasRecord) {
-                \App\Models\WineryViticulturist::create([
-                    'winery_id' => null,
-                    'viticulturist_id' => $user->id,
-                    'source' => \App\Models\WineryViticulturist::SOURCE_SELF,
-                    'parent_viticulturist_id' => null,
-                    'assigned_by' => $user->id,
-                ]);
-                
-                \Illuminate\Support\Facades\Log::info('Auto-registered viticulturist in WineryViticulturist', [
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                ]);
-            }
-        }
-    }
-
     public function render()
     {
         $user = Auth::user();

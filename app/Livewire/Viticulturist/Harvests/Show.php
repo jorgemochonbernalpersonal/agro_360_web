@@ -65,17 +65,22 @@ class Show extends Component
         ]);
 
         // Notificar a la bodega si la recepción está enlazada
+        $notified = false;
         if ($delivery->harvest_id) {
             $winery = $delivery->harvest?->winery;
             if ($winery?->email) {
                 $winery->notify(new HarvestDeliveryDisputedNotification($delivery));
+                $notified = true;
             }
         }
 
         $this->disputingId = null;
         $this->disputeNote = '';
 
-        $this->toastSuccess('Reclamación enviada. La bodega recibirá una notificación.');
+        $this->toastSuccess($notified
+            ? 'Reclamación enviada. La bodega recibirá una notificación.'
+            : 'Reclamación registrada. No se pudo notificar a la bodega porque la entrega no está vinculada a una recepción.'
+        );
     }
 
     public function render()

@@ -131,5 +131,49 @@ trait WithViticulturistValidation
             },
         ];
     }
+
+    /**
+     * Validates that declared PAC areas don't exceed the real plot areas.
+     * Re-queries DB to prevent tampering with Livewire state.
+     * Returns true if all areas are valid, false if errors were added.
+     */
+    protected function validatePacDeclaredAreas(array $selectedIds, array $items): bool
+    {
+        $plots = Plot::where('viticulturist_id', Auth::id())
+            ->whereIn('id', $selectedIds)
+            ->get()
+            ->keyBy('id');
+
+        $hasErrors = false;
+
+        foreach ($selectedIds as $plotId) {
+            $plot = $plots->get($plotId);
+            if (!$plot) {
+                continue;
+            }
+
+            $plotArea     = (float) ($plot->area ?? 0);
+            $declaredArea = (float) ($items[$plotId]['declared_area'] ?? 0);
+            $eligibleArea = (float) ($items[$plotId]['eligible_area'] ?? 0);
+
+            if ($plotArea > 0 && $declaredArea > $plotArea) {
+                $this->addError(
+                    "items.{$plotId}.declared_area",
+                    "La superficie declarada ({$declaredArea} ha) supera la superficie total de la parcela \"{$plot->name}\" ({$plotArea} ha)."
+                );
+                $hasErrors = true;
+            }
+
+            if ($eligibleArea > $declaredArea) {
+                $this->addError(
+                    "items.{$plotId}.eligible_area",
+                    "La superficie admisible ({$eligibleArea} ha) no puede superar la superficie declarada ({$declaredArea} ha) en la parcela \"{$plot->name}\"."
+                );
+                $hasErrors = true;
+            }
+        }
+
+        return !$hasErrors;
+    }
 }
 

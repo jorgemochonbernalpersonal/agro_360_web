@@ -123,7 +123,7 @@ class CreateDelivery extends Component
             'price_per_kg'     => $this->price_per_kg ?: null,
             'total_price'      => $totalPrice,
             'delivery_date'    => $this->delivery_date,
-            'ticket_number'         => $this->ticket_number ?: null,
+            'ticket_number'         => ($t = trim($this->ticket_number)) !== '' ? $t : null,
             'destination_rega_code' => $this->destination_rega_code ?: null,
             'vehicle_plate'         => $this->vehicle_plate ?: null,
             'notes'                 => $this->notes ?: null,
@@ -138,13 +138,17 @@ class CreateDelivery extends Component
         ]);
 
         // Notify all linked wineries that a new delivery has been declared
+        // Disqualified deliveries are not notified — the winery should only be informed
+        // of valid commercial deliveries.
         $delivery->load(['plotPlanting.grapeVariety', 'plotPlanting.plot', 'viticulturist']);
-        WineryViticulturist::where('viticulturist_id', Auth::id())
-            ->with('winery')
-            ->get()
-            ->pluck('winery')
-            ->filter(fn ($w) => $w?->email)
-            ->each(fn ($winery) => $winery->notify(new HarvestDeliveryCreatedNotification($delivery)));
+        if (!$delivery->disqualified) {
+            WineryViticulturist::where('viticulturist_id', Auth::id())
+                ->with('winery')
+                ->get()
+                ->pluck('winery')
+                ->filter(fn ($w) => $w?->email)
+                ->each(fn ($winery) => $winery->notify(new HarvestDeliveryCreatedNotification($delivery)));
+        }
 
         // Try to link with an existing unlinked winery reception (reverse auto-link)
         // This handles the case where the winery recorded the harvest before the
@@ -186,10 +190,13 @@ class CreateDelivery extends Component
             ->whereDoesntHave('delivery')
             ->get();
 
-        // 1. Match by ticket number
+        // 1. Match by ticket number (case- and whitespace-insensitive)
         $harvest = null;
         if ($delivery->ticket_number) {
-            $harvest = $unlinked->firstWhere('harvest_ticket_number', $delivery->ticket_number);
+            $normalizedTicket = strtolower(trim($delivery->ticket_number));
+            $harvest = $unlinked->first(
+                fn ($h) => strtolower(trim($h->harvest_ticket_number ?? '')) === $normalizedTicket
+            );
         }
 
         // 2. Fallback: only one unlinked reception

@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist\Pac\Declarations;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Models\PacDeclaration;
 use App\Models\PacDeclarationItem;
 use App\Models\Plot;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class Create extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithViticulturistValidation;
 
     public int    $year;
     public string $reference_number = '';
@@ -108,6 +109,11 @@ class Create extends Component
         }
 
         $this->validate();
+
+        if (!$this->validatePacDeclaredAreas($selectedIds, $this->items)) {
+            $this->toastError('Revisa las superficies declaradas antes de continuar.');
+            return;
+        }
 
         DB::transaction(function () use ($selectedIds, $status) {
             $declaration = PacDeclaration::create([

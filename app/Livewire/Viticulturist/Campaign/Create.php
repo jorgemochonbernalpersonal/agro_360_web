@@ -78,7 +78,12 @@ class Create extends Component
                 }
             });
 
-            $this->toastSuccess('Campaña creada correctamente.');
+            if ($this->active) {
+                session()->flash('campaign_activated', "Campaña {$this->year} activada. Ya puedes registrar actividades.");
+                return $this->redirect(route('viticulturist.digital-notebook'), navigate: true);
+            }
+
+            $this->toastSuccess('Campaña creada correctamente. Actívala cuando quieras empezar a registrar actividades.');
             return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al crear campaña', [

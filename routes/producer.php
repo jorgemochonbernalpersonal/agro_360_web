@@ -94,6 +94,14 @@ Route::middleware(['role:producer', 'check.beta'])
         });
 
         // ── Facturas — sub-rutas específicas ANTES del wildcard {invoice} ─
+
+        // Facturas mixtas (cosechas + vinos en el mismo albarán)
+        Route::prefix('invoices/mixed')->name('invoices.mixed.')->group(function () {
+            Route::get('/', \App\Livewire\Producer\Invoices\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Producer\Invoices\Create::class)->name('create');
+            Route::get('/{invoice}/edit', \App\Livewire\Producer\Invoices\Edit::class)->name('edit');
+        });
+
         Route::prefix('invoices/products')->name('invoices.products.')->group(function () {
             Route::get('/', \App\Livewire\Winery\Billing\ProductSale\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Winery\Billing\ProductSale\Create::class)->name('create');
@@ -128,7 +136,7 @@ Route::middleware(['role:producer', 'check.beta'])
         Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
 
         // ── Configuración ─────────────────────────────────────────────────
-        Route::get('/settings', \App\Livewire\Winery\Settings::class)->name('settings');
+        Route::get('/settings', \App\Livewire\Producer\Settings::class)->name('settings');
 
 
         // ══════════════════════════════════════════════════════════════════

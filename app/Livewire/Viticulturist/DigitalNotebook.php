@@ -69,6 +69,10 @@ class DigitalNotebook extends Component
 
             $this->selectedCampaign = $campaign->id;
         }
+
+        if (session()->has('campaign_activated')) {
+            $this->toastSuccess(session()->pull('campaign_activated'));
+        }
     }
 
     public function updatedSelectedCampaign(): void

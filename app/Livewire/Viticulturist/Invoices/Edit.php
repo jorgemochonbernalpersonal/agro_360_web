@@ -8,7 +8,6 @@ use App\Models\Tax;
 use App\Models\Harvest;
 use App\Models\Campaign;
 use App\Livewire\Concerns\WithToastNotifications;
-use App\Services\HarvestStockService;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +24,8 @@ class Edit extends Component
     public $delivery_note_date = '';
     public $delivery_status = '';
     public $payment_status = '';
+    public $payment_type   = '';
+    public $payment_date   = '';
     public $items = [];
     public $observations = '';
     public $observations_invoice = '';
@@ -34,6 +35,11 @@ class Edit extends Component
     // Modal de confirmación de facturación
     public $showInvoiceModal = false;
     public $invoice_date_modal = '';
+
+    // Modales de estados (entrega + cobro)
+    public bool   $showDeliveryModal     = false;
+    public string $pendingDeliveryStatus = '';
+    public bool   $showPaymentDateModal  = false;
 
     /**
      * Determina si la factura ya está facturada (no se puede modificar el código)
@@ -49,7 +55,9 @@ class Edit extends Component
      */
     public function getIsLockedProperty(): bool
     {
-        return $this->invoice->delivery_status === 'delivered' || $this->invoice->delivery_status === 'cancelled';
+        return $this->invoice->delivery_status === 'delivered'
+            || $this->invoice->delivery_status === 'cancelled'
+            || $this->invoice->status === 'cancelled';
     }
 
     public $availableClients = [];
@@ -89,6 +97,9 @@ class Edit extends Component
             ? $this->invoice->delivery_note_date->format('Y-m-d') : '';
         $this->delivery_status     = $this->invoice->delivery_status;
         $this->payment_status      = $this->invoice->payment_status;
+        $this->payment_type        = $this->invoice->payment_type ?? '';
+        $this->payment_date        = $this->invoice->payment_date
+            ? $this->invoice->payment_date->format('Y-m-d') : '';
         $this->observations        = $this->invoice->observations ?? '';
         $this->observations_invoice = $this->invoice->observations_invoice ?? '';
         $this->delivery_note_code  = $this->invoice->delivery_note_code ?? '';
@@ -306,6 +317,128 @@ class Edit extends Component
         $this->invoice_date_modal = '';
     }
 
+    // ── Guardar estados (entrega + cobro) ─────────────────────────────────────
+
+    public function saveStatuses(): void
+    {
+        if ($this->invoice->status === 'cancelled') {
+            $this->toastError('No se puede modificar una factura cancelada.');
+            return;
+        }
+
+        // Si cobro = pagado y no hay fecha → pedir fecha de pago
+        if ($this->payment_status === 'paid' && !$this->payment_date) {
+            $this->showPaymentDateModal = true;
+            return;
+        }
+
+        // Si la entrega cambia a un estado que mueve stock → confirmar
+        $originalDelivery = $this->invoice->delivery_status;
+        if ($this->delivery_status !== $originalDelivery
+            && in_array($this->delivery_status, ['delivered', 'cancelled'])) {
+            $this->pendingDeliveryStatus = $this->delivery_status;
+            $this->showDeliveryModal     = true;
+            return;
+        }
+
+        $this->persistStatuses();
+    }
+
+    // ── Modal: fecha de cobro ─────────────────────────────────────────────────
+
+    public function confirmPaymentDate(): void
+    {
+        $this->validate(
+            ['payment_date' => 'required|date'],
+            ['payment_date.required' => 'La fecha de cobro es obligatoria.']
+        );
+
+        $this->showPaymentDateModal = false;
+
+        // Si además hay que confirmar entrega, encadenar ese modal
+        $originalDelivery = $this->invoice->delivery_status;
+        if ($this->delivery_status !== $originalDelivery
+            && in_array($this->delivery_status, ['delivered', 'cancelled'])) {
+            $this->pendingDeliveryStatus = $this->delivery_status;
+            $this->showDeliveryModal     = true;
+            return;
+        }
+
+        $this->persistStatuses();
+    }
+
+    public function closePaymentDateModal(): void
+    {
+        $this->showPaymentDateModal = false;
+        $this->resetValidation('payment_date');
+    }
+
+    // ── Modal: confirmación entrega (mueve stock) ─────────────────────────────
+
+    public function closeDeliveryModal(): void
+    {
+        // Revertir el select al valor actual de la BD
+        $this->delivery_status       = $this->invoice->delivery_status;
+        $this->showDeliveryModal     = false;
+        $this->pendingDeliveryStatus = '';
+    }
+
+    public function confirmDeliveryStatus(): void
+    {
+        $newStatus = $this->pendingDeliveryStatus;
+
+        if (!in_array($newStatus, ['delivered', 'cancelled'])) {
+            $this->closeDeliveryModal();
+            return;
+        }
+
+        try {
+            // delivery_status is purely informational — stock is managed by invoice.status via
+            // InvoiceObserver (draft→sent moves reserved→sold, cancelled releases all stock).
+            // InvoiceObserver::handleDeliveryStatusChange() deliberately does NOT move stock.
+            $this->invoice->update(['delivery_status' => $newStatus]);
+
+            $this->delivery_status       = $newStatus;
+            $this->showDeliveryModal     = false;
+            $this->pendingDeliveryStatus = '';
+
+            $this->persistPaymentStatus();
+
+            $label = $newStatus === 'delivered' ? 'entregada' : 'cancelada';
+            $this->toastSuccess("Estados guardados. Entrega: {$label}.");
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error al actualizar estado de entrega: ' . $e->getMessage(), [
+                'invoice_id' => $this->invoice->id,
+                'user_id'    => Auth::id(),
+            ]);
+            $this->toastError('Error al actualizar el estado de entrega.');
+            $this->closeDeliveryModal();
+        }
+    }
+
+    private function persistStatuses(): void
+    {
+        $this->invoice->update([
+            'delivery_status' => $this->delivery_status,
+            'payment_status'  => $this->payment_status,
+            'payment_type'    => $this->payment_type ?: null,
+            'payment_date'    => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
+        ]);
+        $this->invoice->refresh();
+        $this->toastSuccess('Estados actualizados correctamente.');
+    }
+
+    private function persistPaymentStatus(): void
+    {
+        $this->invoice->update([
+            'payment_status' => $this->payment_status,
+            'payment_type'   => $this->payment_type ?: null,
+            'payment_date'   => $this->payment_status === 'paid' ? ($this->payment_date ?: null) : null,
+        ]);
+        $this->invoice->refresh();
+    }
+
     public function markAsSent()
     {
         $this->validate(
@@ -466,120 +599,89 @@ class Edit extends Component
 
     public function update()
     {
+        if ($this->isLocked) {
+            $this->toastError('Esta factura no se puede modificar. Usa "Guardar estados" para cambiar el estado de pago.');
+            return;
+        }
+
         $this->validate();
 
         try {
             DB::transaction(function () {
-                // Si está bloqueada (entregada o cancelada), solo actualizar payment_status
-                if ($this->isLocked) {
-                    $this->invoice->update([
-                        'payment_status' => $this->payment_status,
-                    ]);
-
-                    // Actualizar fecha de pago si cambia el estado
-                    if ($this->payment_status === 'paid' && !$this->invoice->payment_date) {
-                        $this->invoice->update(['payment_date' => now()]);
-                    } elseif ($this->payment_status !== 'paid' && $this->invoice->payment_date) {
-                        $this->invoice->update(['payment_date' => null]);
-                    }
-
-                    $this->toastSuccess('Estado de pago actualizado exitosamente.');
-                    return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
-                }
-
-                // Si no está bloqueada, actualizar normalmente
-                
                 $subtotal       = $this->subtotal;
                 $discountAmount = $this->discountAmount;
                 $taxAmount      = $this->taxAmount;
                 $totalAmount    = $this->totalAmount;
 
                 $this->invoice->update([
-                    'client_id'          => $this->client_id,
-                    'client_address_id'  => $this->client_address_id ?: null,
-                    'invoice_date'       => $this->invoice_date ?: null,
-                    'delivery_note_date' => $this->delivery_note_date ?: null,
-                    'delivery_status'    => $this->delivery_status,
-                    'payment_status'     => $this->payment_status,
-                    'subtotal'           => $subtotal,
-                    'discount_amount'    => $discountAmount,
-                    'tax_base'           => $subtotal,
-                    'tax_rate'           => $taxAmount > 0 && $subtotal > 0 ? ($taxAmount / $subtotal) * 100 : 0,
-                    'tax_amount'         => $taxAmount,
-                    'total_amount'       => $totalAmount,
-                    'observations'       => $this->observations ?: null,
+                    'client_id'            => $this->client_id,
+                    'client_address_id'    => $this->client_address_id ?: null,
+                    'invoice_date'         => $this->invoice_date ?: null,
+                    'delivery_note_date'   => $this->delivery_note_date ?: null,
+                    // delivery_status y payment_status se gestionan vía saveStatuses()
+                    'subtotal'             => $subtotal,
+                    'discount_amount'      => $discountAmount,
+                    'tax_base'             => $subtotal,
+                    'tax_rate'             => $taxAmount > 0 && $subtotal > 0 ? ($taxAmount / $subtotal) * 100 : 0,
+                    'tax_amount'           => $taxAmount,
+                    'total_amount'         => $totalAmount,
+                    'observations'         => $this->observations ?: null,
                     'observations_invoice' => $this->observations_invoice ?: null,
                 ]);
 
-                // Unreserve all existing harvest items before deletion
-                // (reads from DB while items still exist; delivery_status not yet changed)
-                $existingHarvestItems = $this->invoice->items()
-                    ->where('concept_type', 'harvest')
-                    ->whereNotNull('harvest_id')
-                    ->get();
-                HarvestStockService::unreserveItems($existingHarvestItems, $this->invoice);
+                // Delete old items individually so InvoiceItemObserver::deleting() fires per item.
+                // Bulk delete ($query->delete()) does NOT trigger model events.
+                // Observer routes: draft → ContainerStockService::unreserveStock()
+                //                  sent  → ContainerStockService::releaseFromInvoice()
+                $this->invoice->load('items.harvest');
+                $this->invoice->items->each(fn ($item) => $item->delete());
 
-                // Eliminar items existentes
-                $this->invoice->items()->delete();
+                // Recreate items — InvoiceItemObserver::created() fires per item and routes:
+                //   draft → ContainerStockService::reserveStock()
+                //   sent  → ContainerStockService::directSale()
+                // No manual stock call needed — observer is the single source of truth.
+                foreach ($this->items as $itemData) {
+                    $itemSubtotal              = $itemData['quantity'] * $itemData['unit_price'];
+                    $itemDiscount              = $itemSubtotal * ($itemData['discount_percentage'] / 100);
+                    $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
 
-                // Crear nuevos items y mover stock según el nuevo delivery_status.
-                // InvoiceItemObserver se deshabilita para evitar doble movimiento:
-                // el bulk-delete anterior no disparó Observer.deleting (masa), pero
-                // items()->create() sí dispararía Observer.created (ContainerStockService).
-                // HarvestStockService::moveOnItemSave es la fuente de verdad aquí.
-                $newDeliveryStatus = $this->delivery_status;
+                    $tax     = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
+                    $taxRate = $tax ? $tax->rate : 0;
+                    $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
 
-                \App\Models\InvoiceItem::withoutEvents(function () use ($newDeliveryStatus) {
-                    foreach ($this->items as $itemData) {
-                        $itemSubtotal = $itemData['quantity'] * $itemData['unit_price'];
-                        $itemDiscount = $itemSubtotal * ($itemData['discount_percentage'] / 100);
-                        $itemSubtotalAfterDiscount = $itemSubtotal - $itemDiscount;
+                    $this->invoice->items()->create([
+                        'harvest_id'          => $itemData['harvest_id'] ?? null,
+                        'name'                => $itemData['name'],
+                        'description'         => $itemData['description'] ?? null,
+                        'sku'                 => $itemData['sku'] ?? null,
+                        'quantity'            => $itemData['quantity'],
+                        'unit'                => $itemData['unit'] ?? 'unidades',
+                        'unit_price'          => $itemData['unit_price'],
+                        'discount_percentage' => $itemData['discount_percentage'],
+                        'discount_amount'     => $itemDiscount,
+                        'tax_id'              => $itemData['tax_id'] ?: null,
+                        'tax_name'            => $tax ? $tax->name : null,
+                        'tax_rate'            => $taxRate,
+                        'tax_base'            => $itemSubtotalAfterDiscount,
+                        'tax_amount'          => $itemTax,
+                        'subtotal'            => $itemSubtotalAfterDiscount,
+                        'total'               => $itemSubtotalAfterDiscount + $itemTax,
+                        'concept_type'        => $itemData['concept_type'] ?? 'other',
+                    ]);
+                }
 
-                        $tax = $itemData['tax_id'] ? Tax::find($itemData['tax_id']) : null;
-                        $taxRate = $tax ? $tax->rate : 0;
-                        $itemTax = $itemSubtotalAfterDiscount * ($taxRate / 100);
-                        $itemTotal = $itemSubtotalAfterDiscount + $itemTax;
-
-                        $newItem = $this->invoice->items()->create([
-                            'harvest_id' => $itemData['harvest_id'] ?? null,
-                            'name' => $itemData['name'],
-                            'description' => $itemData['description'] ?? null,
-                            'sku' => $itemData['sku'] ?? null,
-                            'quantity' => $itemData['quantity'],
-                            'unit' => $itemData['unit'] ?? 'unidades',
-                            'unit_price' => $itemData['unit_price'],
-                            'discount_percentage' => $itemData['discount_percentage'],
-                            'discount_amount' => $itemDiscount,
-                            'tax_id' => $itemData['tax_id'] ?: null,
-                            'tax_name' => $tax ? $tax->name : null,
-                            'tax_rate' => $taxRate,
-                            'tax_base' => $itemSubtotalAfterDiscount,
-                            'tax_amount' => $itemTax,
-                            'subtotal' => $itemSubtotalAfterDiscount,
-                            'total' => $itemTotal,
-                            'concept_type' => $itemData['concept_type'] ?? 'other',
-                        ]);
-
-                        // HarvestStockService es la única fuente de stock en Edit
-                        HarvestStockService::moveOnItemSave($this->invoice, $newItem, $newDeliveryStatus);
-                    }
-                });
-                
-                // Registrar en audit log
                 $this->invoice->logAction(
                     'updated',
                     'Factura actualizada',
                     [
-                        'client_id' => ['old' => $this->invoice->getOriginal('client_id'), 'new' => $this->client_id],
+                        'client_id'    => ['old' => $this->invoice->getOriginal('client_id'), 'new' => $this->client_id],
                         'total_amount' => ['old' => $this->invoice->getOriginal('total_amount'), 'new' => $totalAmount],
-                        'delivery_status' => ['old' => $this->invoice->getOriginal('delivery_status'), 'new' => $this->delivery_status],
-                        'payment_status' => ['old' => $this->invoice->getOriginal('payment_status'), 'new' => $this->payment_status],
-                        'items_count' => count($this->items),
+                        'items_count'  => count($this->items),
                     ]
                 );
             });
 
-            $this->toastSuccess('Factura actualizada exitosamente.');
+            $this->toastSuccess('Factura actualizada correctamente.');
             return $this->redirect(route('viticulturist.invoices.index'), navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar la factura. Inténtalo de nuevo.');

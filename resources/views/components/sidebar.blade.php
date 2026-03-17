@@ -42,7 +42,7 @@
         ['key' => 'parcelas',  'icon' => 'map',                      'label' => 'Parcelas',             'sections' => ['plots_analysis']],
         ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
         ['key' => 'normativa', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
-        ['key' => 'pac',       'icon' => 'banknotes',                'label' => 'PAC',                  'sections' => ['pac']],
+        ['key' => 'pac',       'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
         ['key' => 'negocio',   'icon' => 'calculator',               'label' => 'Negocio',              'sections' => ['billing']],
     ];
 

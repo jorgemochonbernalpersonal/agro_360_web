@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
+use App\Models\EstimatedYield;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -53,7 +54,7 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function toggleActive($campaignId): void
+    public function toggleActive($campaignId)
     {
         $campaign = Campaign::forViticulturist(Auth::id())->findOrFail($campaignId);
 
@@ -67,8 +68,8 @@ class Index extends Component
             $this->toastSuccess("Campaña {$campaign->year} desactivada.");
         } else {
             $campaign->activate();
-            $this->toastSuccess("Campaña {$campaign->year} activada como campaña actual.");
-            $this->currentTab = 'active';
+            session()->flash('campaign_activated', "Campaña {$campaign->year} activada. Ya puedes registrar actividades.");
+            return $this->redirect(route('viticulturist.digital-notebook'), navigate: true);
         }
     }
 
@@ -83,6 +84,12 @@ class Index extends Component
 
         if ($campaign->activities_count > 0) {
             $this->toastError('No se puede eliminar una campaña que tiene actividades registradas.');
+            return;
+        }
+
+        $hasEstimatedYields = EstimatedYield::where('campaign_id', $campaign->id)->exists();
+        if ($hasEstimatedYields) {
+            $this->toastError('No se puede eliminar una campaña que tiene rendimientos estimados registrados.');
             return;
         }
 

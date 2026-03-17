@@ -155,6 +155,13 @@ class HarvestStockService
     {
         $state = self::currentState($harvestId);
 
+        // Guard: if reserved_qty < qty the stock was already moved to sold by the observer
+        // (e.g. InvoiceObserver::convertReservationsToSales on draft→sent). Skip to prevent
+        // double-counting sold_qty.
+        if ($state['reserved_qty'] < $qty) {
+            return;
+        }
+
         self::appendLedger($harvestId, $item, $invoice, 'sale', -$qty, [
             'available_qty' => $state['available_qty'],
             'reserved_qty'  => max(0, $state['reserved_qty'] - $qty),

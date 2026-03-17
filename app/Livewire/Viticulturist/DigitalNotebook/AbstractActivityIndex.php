@@ -69,8 +69,9 @@ abstract class AbstractActivityIndex extends Component
 
     public function clearFilters(): void
     {
-        $this->search     = '';
-        $this->plotFilter = '';
+        $this->search         = '';
+        $this->plotFilter     = '';
+        $this->campaignFilter = '';
         $this->resetPage();
     }
 

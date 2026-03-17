@@ -66,6 +66,8 @@ class Edit extends Component
         }
 
         try {
+            $wasActive = (bool) $this->campaign->active;
+
             DB::transaction(function () use ($user) {
                 $this->campaign->update([
                     'name' => $this->name,
@@ -83,6 +85,12 @@ class Edit extends Component
                     $this->campaign->update(['active' => false]);
                 }
             });
+
+            $justActivated = $this->active && !$wasActive;
+            if ($justActivated) {
+                session()->flash('campaign_activated', "Campaña {$this->campaign->year} activada. Ya puedes registrar actividades.");
+                return $this->redirect(route('viticulturist.digital-notebook'), navigate: true);
+            }
 
             $this->toastSuccess('Campaña actualizada correctamente.');
             return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
