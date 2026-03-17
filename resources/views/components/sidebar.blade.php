@@ -70,7 +70,7 @@
 
     $doChapters = [
         ['key' => 'do_censo',        'icon' => 'users',              'label' => 'Censo',              'sections' => ['do_census']],
-        ['key' => 'do_viticultores', 'icon' => 'leaf',               'label' => 'Viticultores DO',    'sections' => ['do_growers']],
+        ['key' => 'do_viticultores', 'icon' => 'user-group',         'label' => 'Viticultores DO',    'sections' => ['do_growers']],
         ['key' => 'do_campanas',     'icon' => 'flag',               'label' => 'Campañas',           'sections' => ['do_campaigns']],
         ['key' => 'do_sup_bodegas',  'icon' => 'building-office-2',  'label' => 'Bodegas',            'sections' => ['do_oversight_wineries']],
         ['key' => 'do_sup_vitic',    'icon' => 'eye',                'label' => 'Viticultores',       'sections' => ['do_oversight_growers']],

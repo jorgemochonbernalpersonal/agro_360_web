@@ -55,7 +55,7 @@
                 </a>
                 <a href="{{ route('supervisor.growers.index') }}" wire:navigate
                    class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition group">
-                    <flux:icon icon="leaf" class="w-4 h-4 text-zinc-400 group-hover:text-emerald-500 flex-shrink-0" />
+                    <flux:icon icon="user-group" class="w-4 h-4 text-zinc-400 group-hover:text-emerald-500 flex-shrink-0" />
                     Viticultores DO
                 </a>
                 <a href="{{ route('supervisor.campaigns.index') }}" wire:navigate

@@ -9,7 +9,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <x-agro.stat-card label="Parcelas activas" :value="$totalPlots" icon="map" color="blue" />
         <x-agro.stat-card label="Superficie total (ha)" :value="number_format($totalArea, 2)" icon="square-3-stack-3d" color="agro" />
-        <x-agro.stat-card label="Parcelas ecológicas" :value="$organicPlots" icon="leaf" color="agro" description="Certificadas ecológico" />
+        <x-agro.stat-card label="Parcelas ecológicas" :value="$organicPlots" icon="sparkles" color="agro" description="Certificadas ecológico" />
     </div>
 
     {{-- Tabs --}}

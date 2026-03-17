@@ -42,7 +42,7 @@
             {{-- Sin resultados --}}
             @elseif(empty($results))
                 <div class="flex flex-col items-center justify-center py-10 text-zinc-400 gap-2">
-                    <flux:icon icon="user-x-mark" class="size-10" />
+                    <flux:icon icon="user-minus" class="size-10" />
                     <p class="text-sm font-medium">No se encontraron viticultores</p>
                     <p class="text-xs text-center max-w-xs">
                         Si el viticultor aún no tiene cuenta, puedes

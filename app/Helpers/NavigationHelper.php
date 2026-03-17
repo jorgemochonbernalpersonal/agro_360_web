@@ -1070,7 +1070,7 @@ class NavigationHelper
 
         // ── VITICULTORES DO ───────────────────────────────────────────
         $menu['do_growers'] = [
-            ['icon' => 'leaf',               'label' => 'Mis viticultores DO',         'route' => 'supervisor.growers.index', 'active' => request()->routeIs('supervisor.growers.*')],
+            ['icon' => 'user-group',         'label' => 'Mis viticultores DO',         'route' => 'supervisor.growers.index', 'active' => request()->routeIs('supervisor.growers.*')],
             ['icon' => 'map',                'label' => 'Parcelas',                    'route' => 'supervisor.growers.index', 'active' => false],
             ['icon' => 'book-open',          'label' => 'Plantaciones',               'route' => 'supervisor.growers.index', 'active' => false],
             ['icon' => 'globe-europe-africa','label' => 'SIGPAC',                     'route' => 'supervisor.growers.index', 'active' => false],

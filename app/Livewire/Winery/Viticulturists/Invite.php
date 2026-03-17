@@ -54,7 +54,7 @@ class Invite extends Component
             ->toArray();
     }
 
-    public function confirm(int $userId): mixed
+    public function confirm(int $userId): void
     {
         $this->confirmingId = $userId;
     }

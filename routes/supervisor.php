@@ -20,6 +20,7 @@ Route::middleware(['role:supervisor'])
 
         // ── Oversight ─────────────────────────────────────────────────
         Route::get('/oversight/wineries', \App\Livewire\Supervisor\Oversight\Wineries\Index::class)->name('oversight.wineries.index');
+        Route::get('/oversight/wineries/{winery}', \App\Livewire\Supervisor\Oversight\Wineries\Show::class)->name('oversight.wineries.show');
         Route::get('/oversight/growers', \App\Livewire\Supervisor\Oversight\Growers\Index::class)->name('oversight.growers.index');
 
         // ── Qualification ─────────────────────────────────────────────

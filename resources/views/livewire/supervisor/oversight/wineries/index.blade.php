@@ -70,7 +70,11 @@
             @endphp
             <tr class="hover:bg-zinc-50 transition">
                 <td class="px-6 py-3 text-sm font-medium text-zinc-800">
-                    {{ $winery->name }}
+                    <a href="{{ route('supervisor.oversight.wineries.show', $winery) }}"
+                       wire:navigate
+                       class="hover:text-blue-600 transition">
+                        {{ $winery->name }}
+                    </a>
                 </td>
                 <td class="px-6 py-3 text-sm text-zinc-500">
                     {{ $vitCountByWinery[$winery->id] ?? 0 }}
