@@ -270,6 +270,7 @@ class Create extends Component
 
     public function updatedAutonomousCommunityId($value): void
     {
+        $this->autonomous_community_id = $value;
         $this->province_id     = '';
         $this->municipality_id = '';
         $this->municipalities  = [];
@@ -280,6 +281,7 @@ class Create extends Component
 
     public function updatedProvinceId($value): void
     {
+        $this->province_id = $value;
         $this->municipality_id = '';
         $this->municipalities = $value
             ? Municipality::where('province_id', $value)->orderBy('name')->get(['id', 'name'])->toArray()

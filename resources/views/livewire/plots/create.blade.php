@@ -67,11 +67,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <flux:field>
                         <flux:label for="autonomous_community_id">Comunidad Autónoma *</flux:label>
-                        <flux:select wire:model.live="autonomous_community_id" id="autonomous_community_id"
+                        <flux:select wire:change="updatedAutonomousCommunityId($event.target.value)" id="autonomous_community_id"
                             data-cy="plot-autonomous-community-id" required>
                             <option value="">Seleccionar...</option>
                             @foreach ($autonomousCommunities as $community)
-                                <option value="{{ $community->id }}">
+                                <option value="{{ $community->id }}" @selected($autonomous_community_id == $community->id)>
                                     {{ $community->code === '15' ? 'Comunidad Foral de Navarra' : $community->name }}
                                 </option>
                             @endforeach
@@ -81,11 +81,11 @@
 
                     <flux:field>
                         <flux:label for="province_id">Provincia *</flux:label>
-                        <flux:select wire:model.live="province_id" id="province_id" data-cy="plot-province-id" required
+                        <flux:select wire:change="updatedProvinceId($event.target.value)" id="province_id" data-cy="plot-province-id" required
                             :disabled="empty($provinces)">
                             <option value="">Seleccionar...</option>
                             @foreach ($provinces as $province)
-                                <option value="{{ $province['id'] }}">{{ $province['name'] }}</option>
+                                <option value="{{ $province['id'] }}" @selected($province_id == $province['id'])>{{ $province['name'] }}</option>
                             @endforeach
                         </flux:select>
                         <flux:error name="province_id" />
@@ -93,7 +93,7 @@
 
                     <flux:field>
                         <flux:label for="municipality_id">Municipio *</flux:label>
-                        <flux:select wire:model.live="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
+                        <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
                             :disabled="empty($municipalities)">
                             <option value="">Seleccionar...</option>
                             @foreach ($municipalities as $municipality)
