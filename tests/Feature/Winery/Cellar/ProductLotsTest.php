@@ -100,4 +100,33 @@ class ProductLotsTest extends WineryTestCase
             ->get(route('winery.product-lots.edit', $lot))
             ->assertForbidden();
     }
+
+    public function test_insights_renders(): void
+    {
+        $this->get(route('winery.product-lots.insights'))->assertOk();
+    }
+
+    public function test_audit_renders(): void
+    {
+        $this->get(route('winery.product-lots.audit'))->assertOk();
+    }
+
+    public function test_sales_renders(): void
+    {
+        $lot = ProductLot::create([
+            'user_id'            => $this->winery->id,
+            'name'               => 'Sales Lot',
+            'wine_type'          => 'tinto',
+            'quantity'           => 500,
+            'initial_quantity'   => 500,
+            'unit'               => 'botellas',
+            'available_quantity' => 500,
+            'reserved_quantity'  => 0,
+            'sold_quantity'      => 0,
+            'price_per_unit'     => 0,
+            'archived'           => false,
+        ]);
+
+        $this->get(route('winery.product-lots.sales', $lot))->assertOk();
+    }
 }

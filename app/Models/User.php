@@ -109,7 +109,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public const ROLE_WINERY             = 'winery';
     public const ROLE_VITICULTURIST      = 'viticulturist';
     public const ROLE_PRODUCER           = 'producer';
-    public const ROLE_DO                 = 'do';
+    // ROLE_DO is an alias for ROLE_SUPERVISOR — denomination_of_origin uses 'supervisor' in DB
+    public const ROLE_DO                 = 'supervisor';
 
     /**
      * Verificar si el usuario es admin
@@ -120,7 +121,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Verificar si el usuario es supervisor
+     * Verificar si el usuario es supervisor / denomination of origin
      */
     public function isSupervisor(): bool
     {

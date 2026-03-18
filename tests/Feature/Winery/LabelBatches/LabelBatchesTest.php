@@ -4,7 +4,9 @@ namespace Tests\Feature\Winery\LabelBatches;
 
 use App\Livewire\Winery\LabelBatches\Create;
 use App\Livewire\Winery\LabelBatches\Edit;
+use App\Livewire\Winery\LabelBatches\Waste\Create as WasteCreate;
 use App\Models\LabelBatch;
+use App\Models\LabelWaste;
 use App\Models\User;
 use App\Models\Wine;
 use Livewire\Livewire;
@@ -113,5 +115,66 @@ class LabelBatchesTest extends WineryTestCase
         $this->actingAs($otherWinery)
             ->get(route('winery.label-batches.edit', $batch))
             ->assertForbidden();
+    }
+
+    public function test_waste_index_renders(): void
+    {
+        $batch = LabelBatch::create([
+            'user_id'         => $this->winery->id,
+            'name'            => 'Waste Batch',
+            'source'          => 'own',
+            'start_number'    => 1,
+            'end_number'      => 500,
+            'total_quantity'  => 500,
+            'used_quantity'   => 0,
+            'wasted_quantity' => 0,
+        ]);
+
+        $this->get(route('winery.label-batches.waste.index', $batch))->assertOk();
+    }
+
+    public function test_waste_create_validates_required_fields(): void
+    {
+        $batch = LabelBatch::create([
+            'user_id'         => $this->winery->id,
+            'name'            => 'Waste Batch',
+            'source'          => 'own',
+            'start_number'    => 1,
+            'end_number'      => 500,
+            'total_quantity'  => 500,
+            'used_quantity'   => 0,
+            'wasted_quantity' => 0,
+        ]);
+
+        Livewire::test(WasteCreate::class, ['labelBatch' => $batch])
+            ->set('quantity', '')
+            ->set('waste_date', '')
+            ->call('save')
+            ->assertHasErrors(['quantity', 'waste_date']);
+    }
+
+    public function test_waste_create_saves(): void
+    {
+        $batch = LabelBatch::create([
+            'user_id'         => $this->winery->id,
+            'name'            => 'Waste Batch',
+            'source'          => 'own',
+            'start_number'    => 1,
+            'end_number'      => 500,
+            'total_quantity'  => 500,
+            'used_quantity'   => 0,
+            'wasted_quantity' => 0,
+        ]);
+
+        Livewire::test(WasteCreate::class, ['labelBatch' => $batch])
+            ->set('quantity', 10)
+            ->set('waste_date', now()->toDateString())
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('label_wastes', [
+            'label_batch_id' => $batch->id,
+            'quantity'       => 10,
+        ]);
     }
 }

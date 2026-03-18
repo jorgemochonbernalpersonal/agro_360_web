@@ -955,7 +955,7 @@ class NavigationHelper
             ['icon' => 'shopping-cart',          'label' => 'Cosecha Comercializada', 'route' => 'producer.marketed-harvests.index', 'active' => request()->routeIs('producer.marketed-harvests.*')],
             ['icon' => 'table-cells',            'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',        'active' => request()->routeIs('producer.plot-costs*'), 'new' => true],
             ['icon' => 'users',                  'label' => 'Clientes',               'route' => 'producer.clients.index',           'active' => request()->routeIs('producer.clients.*')],
-            ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Financieras','route' => 'producer.financial-stats',        'active' => request()->routeIs('producer.financial-stats')],
+            ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Viñedo',     'route' => 'producer.financial-stats',        'active' => request()->routeIs('producer.financial-stats')],
         ];
 
         // ── VENDIMIA (BODEGA) ─────────────────────────────────────────────
@@ -972,20 +972,24 @@ class NavigationHelper
 
         // ── BODEGA (CELLAR) ───────────────────────────────────────────────
         $menu['cellar'] = [
-            ['icon' => 'beaker',                  'label' => 'Contenedores',              'route' => 'producer.containers.index',    'active' => request()->routeIs('producer.containers*')],
-            ['icon' => 'archive-box',             'label' => 'Uva / Mosto externo',       'route' => 'producer.external-grape.index','active' => request()->routeIs('producer.external-grape*')],
-            ['icon' => 'arrows-right-left',       'label' => 'Vinos',                     'route' => 'producer.wines.index',         'active' => request()->routeIs('producer.wines*')],
-            ['icon' => 'user-circle',             'label' => 'Enólogos',                  'route' => 'producer.oenologists.index',   'active' => request()->routeIs('producer.oenologists*')],
-            ['icon' => 'magnifying-glass',        'label' => 'Análisis de Lab.',           'route' => 'producer.wine-analysis.index', 'active' => request()->routeIs('producer.wine-analysis*')],
-            ['icon' => 'archive-box',             'label' => 'Productos',                  'route' => 'producer.product-lots.index',  'active' => request()->routeIs('producer.product-lots*')],
-            ['icon' => 'magnifying-glass-circle', 'label' => 'Trazabilidad',               'route' => 'producer.traceability.index',  'active' => request()->routeIs('producer.traceability*'), 'wip' => true, 'new' => true],
-            ['icon' => 'archive-box-arrow-down',  'label' => 'Embotellado y Expediciones','route' => 'producer.bottling.index',        'active' => request()->routeIs('producer.bottling*'), 'new' => true],
-            ['icon' => 'tag',                     'label' => 'Etiquetado',                'route' => 'producer.label-batches.index',   'active' => request()->routeIs('producer.label-batches*') || request()->routeIs('producer.labeling*'), 'new' => true],
-            ['icon' => 'document-text',           'label' => 'Fichas Técnicas y Catas',   'route' => 'producer.product-sheets.index',  'active' => request()->routeIs('producer.product-sheets*') || request()->routeIs('producer.tasting-notes*'), 'new' => true],
-            ['icon' => 'archive-box-x-mark',      'label' => 'Subproductos',              'route' => 'producer.subproducts.index',     'active' => request()->routeIs('producer.subproducts*'), 'new' => true],
+            ['icon' => 'beaker',                  'label' => 'Contenedores',               'route' => 'producer.containers.index',       'active' => request()->routeIs('producer.containers*')],
+            ['icon' => 'home-modern',             'label' => 'Salas de Bodega',            'route' => 'producer.container-rooms.index',  'active' => request()->routeIs('producer.container-rooms*'), 'new' => true],
+            ['icon' => 'cog-6-tooth',             'label' => 'Operaciones de Bodega',      'route' => 'producer.cellar-operations.index','active' => request()->routeIs('producer.cellar-operations*'), 'new' => true],
+            ['icon' => 'archive-box',             'label' => 'Uva / Mosto externo',        'route' => 'producer.external-grape.index',   'active' => request()->routeIs('producer.external-grape*')],
+            ['icon' => 'arrows-right-left',       'label' => 'Vinos',                      'route' => 'producer.wines.index',            'active' => request()->routeIs('producer.wines*')],
+            ['icon' => 'user-circle',             'label' => 'Enólogos',                   'route' => 'producer.oenologists.index',      'active' => request()->routeIs('producer.oenologists*')],
+            ['icon' => 'magnifying-glass',        'label' => 'Análisis de Lab.',            'route' => 'producer.wine-analysis.index',   'active' => request()->routeIs('producer.wine-analysis*')],
+            ['icon' => 'archive-box',             'label' => 'Productos',                   'route' => 'producer.product-lots.index',    'active' => request()->routeIs('producer.product-lots*') && !request()->routeIs('producer.product-lots.audit')],
+            ['icon' => 'magnifying-glass-circle', 'label' => 'Trazabilidad',                'route' => 'producer.traceability.index',    'active' => request()->routeIs('producer.traceability*'), 'wip' => true, 'new' => true],
+            ['icon' => 'archive-box-arrow-down',  'label' => 'Embotellado y Expediciones', 'route' => 'producer.bottling.index',         'active' => request()->routeIs('producer.bottling*'), 'new' => true],
+            ['icon' => 'tag',                     'label' => 'Etiquetado',                 'route' => 'producer.label-batches.index',    'active' => request()->routeIs('producer.label-batches*') || request()->routeIs('producer.labeling*'), 'new' => true],
+            ['icon' => 'document-text',           'label' => 'Fichas Técnicas y Catas',    'route' => 'producer.product-sheets.index',  'active' => request()->routeIs('producer.product-sheets*') || request()->routeIs('producer.tasting-notes*'), 'new' => true],
+            ['icon' => 'archive-box-x-mark',      'label' => 'Subproductos',               'route' => 'producer.subproducts.index',     'active' => request()->routeIs('producer.subproducts*'), 'new' => true],
             ['divider' => true],
-            ['icon' => 'building-storefront',     'label' => 'Insumos de Bodega',          'route' => 'producer.winery-supplies.index','active' => request()->routeIs('producer.winery-supplies*')],
-            ['icon' => 'truck',                   'label' => 'Proveedores',                'route' => 'producer.suppliers.index',     'active' => request()->routeIs('producer.suppliers*')],
+            ['icon' => 'building-storefront',     'label' => 'Insumos de Bodega',           'route' => 'producer.winery-supplies.index', 'active' => request()->routeIs('producer.winery-supplies*')],
+            ['icon' => 'truck',                   'label' => 'Proveedores',                 'route' => 'producer.suppliers.index',       'active' => request()->routeIs('producer.suppliers*')],
+            ['divider' => true],
+            ['icon' => 'bell-alert',              'label' => 'Centro de Alertas',           'route' => 'producer.alerts.index',          'active' => request()->routeIs('producer.alerts*'), 'new' => true],
         ];
 
         // ── NORMATIVA BODEGA ──────────────────────────────────────────────
@@ -996,15 +1000,20 @@ class NavigationHelper
             ['icon' => 'shield-check',     'label' => 'Registros Sanitarios',          'route' => 'producer.sanitary-registrations.index',  'active' => request()->routeIs('producer.sanitary-registrations*'), 'new' => true],
             ['icon' => 'identification',   'label' => 'Autorizaciones de Embotellado', 'route' => 'producer.bottling-authorizations.index', 'active' => request()->routeIs('producer.bottling-authorizations*'), 'new' => true],
             ['icon' => 'sparkles',         'label' => 'Certificaciones Ecológicas',    'route' => 'producer.eco-certifications.index',      'active' => request()->routeIs('producer.eco-certifications*'), 'new' => true],
+            ['divider' => true],
+            ['icon' => 'folder-open',      'label' => 'Documentos Bodega',             'route' => 'producer.documents.index',               'active' => request()->routeIs('producer.documents*'), 'new' => true],
         ];
 
         // ── NEGOCIO BODEGA ────────────────────────────────────────────────
         $menu['winery_billing'] = [
-            ['icon' => 'arrow-up-tray',  'label' => 'Venta de Productos', 'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
-            ['icon' => 'arrow-down-tray','label' => 'Compra de Uva',      'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
+            ['icon' => 'arrow-up-tray',           'label' => 'Venta de Productos',    'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
+            ['icon' => 'arrow-down-tray',         'label' => 'Compra de Uva',         'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
+            ['icon' => 'users',                   'label' => 'Clientes Bodega',        'route' => 'producer.winery-clients.index',          'active' => request()->routeIs('producer.winery-clients*'), 'new' => true],
+            ['icon' => 'chart-bar',               'label' => 'Resumen Económico',      'route' => 'producer.financial-summary.index',       'active' => request()->routeIs('producer.financial-summary*'), 'new' => true],
+            ['icon' => 'presentation-chart-line', 'label' => 'Estadísticas Bodega',   'route' => 'producer.financial-stats-winery',        'active' => request()->routeIs('producer.financial-stats-winery'), 'new' => true],
             ['divider' => true],
-            ['icon' => 'globe-alt',      'label' => 'Exportación',        'route' => 'producer.exports.index',                 'active' => request()->routeIs('producer.exports*'), 'wip' => true, 'new' => true],
-            ['icon' => 'sparkles',       'label' => 'Enoturismo',         'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true, 'new' => true],
+            ['icon' => 'globe-alt',               'label' => 'Exportación',            'route' => 'producer.exports.index',                 'active' => request()->routeIs('producer.exports*'), 'wip' => true, 'new' => true],
+            ['icon' => 'sparkles',                'label' => 'Enoturismo',             'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true, 'new' => true],
         ];
 
         // ── RAIL BOTTOM ───────────────────────────────────────────────────

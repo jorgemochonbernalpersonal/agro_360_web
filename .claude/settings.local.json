@@ -152,7 +152,10 @@
       "Bash(mkdir -p /c/Users/dispo/Desktop/personal/agro_360_web/resources/views/livewire/viticulturist/plot-costs)",
       "Bash(do)",
       "Bash(echo \"=== $f ===\")",
-      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Supervisor/**)"
+      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Supervisor/**)",
+      "Bash(xargs -I{} basename {})",
+      "Bash(1 mysql:*)",
+      "Bash(kill 1101)"
     ]
   }
 }
