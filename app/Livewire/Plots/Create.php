@@ -268,7 +268,7 @@ class Create extends Component
         return $query->where(fn($q) => $q->whereNull('user_id')->whereNotIn('id', $hidden)->orWhere('user_id', Auth::id()));
     }
 
-    public function updatedAutonomousCommunityId($value): void
+    public function selectCommunity(string $value): void
     {
         $this->autonomous_community_id = $value;
         $this->province_id     = '';
@@ -279,7 +279,7 @@ class Create extends Component
             : [];
     }
 
-    public function updatedProvinceId($value): void
+    public function selectProvince(string $value): void
     {
         $this->province_id = $value;
         $this->municipality_id = '';

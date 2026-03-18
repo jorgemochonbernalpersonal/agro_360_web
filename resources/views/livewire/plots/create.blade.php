@@ -67,7 +67,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <flux:field>
                         <flux:label for="autonomous_community_id">Comunidad Autónoma *</flux:label>
-                        <flux:select wire:change="updatedAutonomousCommunityId($event.target.value)" id="autonomous_community_id"
+                        <flux:select wire:change="selectCommunity($event.target.value)" id="autonomous_community_id"
                             data-cy="plot-autonomous-community-id" required>
                             <option value="">Seleccionar...</option>
                             @foreach ($autonomousCommunities as $community)
@@ -81,7 +81,7 @@
 
                     <flux:field>
                         <flux:label for="province_id">Provincia *</flux:label>
-                        <flux:select wire:change="updatedProvinceId($event.target.value)" id="province_id" data-cy="plot-province-id" required
+                        <flux:select wire:change="selectProvince($event.target.value)" id="province_id" data-cy="plot-province-id" required
                             :disabled="empty($provinces)">
                             <option value="">Seleccionar...</option>
                             @foreach ($provinces as $province)
