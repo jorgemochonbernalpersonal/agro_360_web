@@ -177,7 +177,12 @@
       "Bash(__NEW_LINE_4ed061daf4a343f9__ echo:*)",
       "Bash(__NEW_LINE_482edc4ebf816cbb__ echo:*)",
       "Bash(grep -o '\\\\\\\\App\\\\\\\\Livewire[^\\)]*')",
-      "Bash(__NEW_LINE_811ecc2a11f6541a__ echo:*)"
+      "Bash(__NEW_LINE_811ecc2a11f6541a__ echo:*)",
+      "Bash(reg query:*)",
+      "Bash(where mysql:*)",
+      "Read(//c/Program Files/**)",
+      "Bash(php artisan tinker --execute=\":*)",
+      "Bash(powershell -Command \"Get-Process -Id \\(netstat -ano | Select-String '''':8000.*LISTENING'''' | ForEach-Object {\\($_-split ''''\\\\s+''''\\)[-1]} | Select-Object -First 1\\)\")"
     ]
   }
 }

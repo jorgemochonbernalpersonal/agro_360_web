@@ -28,6 +28,15 @@ Route::get('/blog/{slug}', [App\Http\Controllers\BlogController::class, 'show'])
     ->where('slug', implode('|', App\Http\Controllers\BlogController::getAllSlugs()))
     ->name('blog.show');
 
+// Dusk debug (solo testing)
+Route::get('/dusk-env', function () {
+    return response()->json([
+        'env'     => app()->environment(),
+        'db'      => DB::connection()->getDatabaseName(),
+        'session' => config('session.driver'),
+    ]);
+})->middleware('throttle:60,1');
+
 // Health Check Endpoint para UptimeRobot y monitoreo
 Route::get('/health', function () {
     try {

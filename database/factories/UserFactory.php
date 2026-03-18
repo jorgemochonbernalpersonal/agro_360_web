@@ -64,6 +64,16 @@ class UserFactory extends Factory
     }
 
     /**
+     * Indicate that the user is a producer.
+     */
+    public function producer(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'producer',
+        ]);
+    }
+
+    /**
      * Indicate that the user is an admin.
      */
     public function admin(): static
