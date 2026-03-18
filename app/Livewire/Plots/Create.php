@@ -143,6 +143,10 @@ class Create extends Component
 
     public function save()
     {
+        // validate() debe estar FUERA del try-catch para que Livewire
+        // pueda interceptar ValidationException y emitir el snapshot correcto.
+        // Si se atrapa aquí, el pipeline interno de Livewire queda interrumpido
+        // y el JS lanza "Snapshot missing on Livewire component".
         $this->validate();
 
         try {
@@ -179,7 +183,8 @@ class Create extends Component
                 $user = Auth::user();
                 $canAssign = false;
 
-                if ($user->hasWineryAccess()) {
+                if (!$user->isProducer() && $user->hasWineryAccess()) {
+                    // Bodega pura: solo viticultores que ella misma creó
                     $canAssign = \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
                         ->where('winery_id', $user->id)
                         ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)

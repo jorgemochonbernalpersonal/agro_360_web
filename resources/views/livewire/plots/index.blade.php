@@ -47,7 +47,7 @@
 
         {{-- Nueva Parcela --}}
         @can('create', \App\Models\Plot::class)
-            <flux:button href="{{ route('plots.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('plots.create') }}" variant="primary" icon="plus">
                 Nueva
             </flux:button>
         @endcan
@@ -342,7 +342,7 @@
                 description="Comienza agregando tu primera parcela al sistema" icon="inbox">
                 @can('create', \App\Models\Plot::class)
                     <x-slot name="action">
-                        <flux:button href="{{ route('plots.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('plots.create') }}" variant="primary" icon="plus">
                             Crear mi primera parcela
                         </flux:button>
                     </x-slot>
