@@ -22,8 +22,10 @@ use App\Models\TrainingSystem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('layouts.app')]
 class Create extends Component
 {
     use WithRoleBasedFields, WithUserFilters, WithToastNotifications;
@@ -302,6 +304,6 @@ class Create extends Component
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name', 'code'])
                 ->orderBy('name')
                 ->get(),
-        ])->layout('layouts.app');
+        ]);
     }
 }

@@ -18,11 +18,13 @@ use App\Models\Municipality;
 use App\Livewire\Concerns\WithRoleBasedFields;
 use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
+#[Layout('layouts.app')]
 class Edit extends Component
 {
     use WithRoleBasedFields, WithUserFilters, WithToastNotifications;
@@ -319,6 +321,6 @@ class Edit extends Component
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
                 ->orderBy('name')
                 ->get(),
-        ])->layout('layouts.app');
+        ]);
     }
 }
