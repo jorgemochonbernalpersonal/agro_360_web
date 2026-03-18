@@ -67,11 +67,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <flux:field>
                         <flux:label for="autonomous_community_id">Comunidad Autónoma *</flux:label>
-                        <flux:select wire:change="selectCommunity($event.target.value)" id="autonomous_community_id"
+                        <flux:select wire:model.live="autonomous_community_id" id="autonomous_community_id"
                             data-cy="plot-autonomous-community-id" required>
                             <option value="">Seleccionar...</option>
                             @foreach ($autonomousCommunities as $community)
-                                <option value="{{ $community->id }}" @selected($autonomous_community_id == $community->id)>
+                                <option value="{{ $community->id }}">
                                     {{ $community->code === '15' ? 'Comunidad Foral de Navarra' : $community->name }}
                                 </option>
                             @endforeach
@@ -81,27 +81,29 @@
 
                     <flux:field>
                         <flux:label for="province_id">Provincia *</flux:label>
-                        <flux:select wire:change="selectProvince($event.target.value)" id="province_id" data-cy="plot-province-id" required
-                            :disabled="empty($provinces)">
+                        <flux:select wire:model.live="province_id" id="province_id" data-cy="plot-province-id" required
+                            :disabled="!$autonomous_community_id">
                             <option value="">Seleccionar...</option>
                             @foreach ($provinces as $province)
-                                <option value="{{ $province['id'] }}" @selected($province_id == $province['id'])>{{ $province['name'] }}</option>
+                                <option value="{{ $province->id }}">{{ $province->name }}</option>
                             @endforeach
                         </flux:select>
                         <flux:error name="province_id" />
                     </flux:field>
 
-                    <flux:field>
-                        <flux:label for="municipality_id">Municipio *</flux:label>
-                        <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
-                            :disabled="empty($municipalities)">
-                            <option value="">Seleccionar...</option>
-                            @foreach ($municipalities as $municipality)
-                                <option value="{{ $municipality['id'] }}">{{ $municipality['name'] }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="municipality_id" />
-                    </flux:field>
+                    <div wire:key="mun-wrapper-{{ $province_id }}">
+                        <flux:field>
+                            <flux:label for="municipality_id">Municipio *</flux:label>
+                            <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
+                                :disabled="!$province_id">
+                                <option value="">Seleccionar...</option>
+                                @foreach ($municipalities as $municipality)
+                                    <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
+                                @endforeach
+                            </flux:select>
+                            <flux:error name="municipality_id" />
+                        </flux:field>
+                    </div>
 
                     <flux:field>
                         <flux:label for="site_id">Paraje</flux:label>

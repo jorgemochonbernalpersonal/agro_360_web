@@ -62,9 +62,8 @@ class Edit extends Component
     public $pac_eligible_area = '';
     public $non_eligible_area = '';
 
-    // Cascading location data (managed server-side to avoid Alpine/Livewire morph conflict)
-    public array $provinces     = [];
-    public array $municipalities = [];
+    // Note: provinces/municipalities are NOT stored as public properties.
+    // They are computed fresh in render() to avoid snapshot/morphdom conflicts.
 
     public function mount(Plot $plot)
     {
@@ -107,15 +106,7 @@ class Edit extends Component
         $this->pac_eligible_area = $plot->pac_eligible_area ?? '';
         $this->non_eligible_area = $plot->non_eligible_area ?? '';
 
-        // Pre-populate cascading selects
-        if ($this->autonomous_community_id) {
-            $this->provinces = Province::where('autonomous_community_id', $this->autonomous_community_id)
-                ->orderBy('name')->get(['id', 'name'])->toArray();
-        }
-        if ($this->province_id) {
-            $this->municipalities = Municipality::where('province_id', $this->province_id)
-                ->orderBy('name')->get(['id', 'name'])->toArray();
-        }
+        // provinces/municipalities are computed in render() — no need to pre-populate here.
     }
 
     protected function rules(): array
@@ -169,24 +160,15 @@ class Edit extends Component
         ];
     }
 
-    public function selectCommunity(string $value): void
+    public function updatedAutonomousCommunityId(): void
     {
-        $this->autonomous_community_id = $value;
         $this->province_id     = '';
         $this->municipality_id = '';
-        $this->municipalities  = [];
-        $this->provinces = $value
-            ? Province::where('autonomous_community_id', $value)->orderBy('name')->get(['id', 'name'])->toArray()
-            : [];
     }
 
-    public function selectProvince(string $value): void
+    public function updatedProvinceId(): void
     {
-        $this->province_id = $value;
         $this->municipality_id = '';
-        $this->municipalities = $value
-            ? Municipality::where('province_id', $value)->orderBy('name')->get(['id', 'name'])->toArray()
-            : [];
     }
 
     public function update()
@@ -318,9 +300,13 @@ class Edit extends Component
             'valleys'        => $this->catalogScope(Valley::where('active', true), 'valleys')->orderBy('name')->get(),
             'sites'          => $this->catalogScope(Site::where('is_archived', false), 'sites')->orderBy('name')->get(),
             'trainingSystems'=> $this->catalogScope(TrainingSystem::where('active', true), 'training_systems')->orderBy('name')->get(),
-            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
-                ->orderBy('name')
-                ->get(),
+            'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])->orderBy('name')->get(),
+            'provinces'      => $this->autonomous_community_id
+                ? Province::where('autonomous_community_id', $this->autonomous_community_id)->orderBy('name')->get(['id', 'name'])
+                : collect(),
+            'municipalities' => $this->province_id
+                ? Municipality::where('province_id', $this->province_id)->orderBy('name')->get(['id', 'name'])
+                : collect(),
         ]);
     }
 }
