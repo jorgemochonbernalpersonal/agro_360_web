@@ -76,6 +76,7 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── Contenedores (unificado bodega + campo) ───────────────────────
         Route::prefix('containers')->name('containers.')->group(function () {
             Route::get('/', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('index');
+            Route::get('/map', \App\Livewire\Winery\Cellar\Containers\Map::class)->name('map');
             Route::get('/create', \App\Livewire\Winery\Cellar\Containers\Create::class)->name('create');
             Route::get('/{container}/edit', \App\Livewire\Winery\Cellar\Containers\Edit::class)->name('edit');
             Route::get('/{container}/maintenance', \App\Livewire\Winery\Cellar\Containers\Maintenance\Index::class)->name('maintenance.index');
@@ -188,11 +189,13 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── Vinos ─────────────────────────────────────────────────────────
         Route::prefix('wines')->name('wines.')->group(function () {
             Route::get('/', \App\Livewire\Winery\Wines\Index::class)->name('index');
+            Route::get('/timeline', \App\Livewire\Winery\Wines\Timeline::class)->name('timeline');
             Route::get('/create', \App\Livewire\Winery\Wines\Create::class)->name('create');
             Route::get('/{wine}', \App\Livewire\Winery\Wines\Show::class)->name('show');
             Route::get('/{wine}/edit', \App\Livewire\Winery\Wines\Edit::class)->name('edit');
             Route::get('/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('process.create');
             Route::get('/{wine}/process/{process}/edit', \App\Livewire\Winery\Wines\Process\Edit::class)->name('process.edit');
+            Route::get('/{wine}/traceability-pdf', [\App\Http\Controllers\Winery\WineTraceabilityController::class, 'exportPdf'])->name('traceability-pdf');
         });
 
         // ── Enólogos ──────────────────────────────────────────────────────
@@ -220,10 +223,8 @@ Route::middleware(['role:producer', 'check.beta'])
         });
 
         // ── Trazabilidad ──────────────────────────────────────────────────
-        Route::get('/traceability', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('traceability.index')
-            ->defaults('module', 'Trazabilidad')
-            ->defaults('icon', 'magnifying-glass-circle');
+        Route::get('/traceability', \App\Livewire\Winery\Traceability\Index::class)
+            ->name('traceability.index');
 
         // ── Embotellado ───────────────────────────────────────────────────
         Route::get('/bottling', \App\Livewire\Winery\Bottling\Index::class)->name('bottling.index');

@@ -70,6 +70,7 @@ Route::middleware(['role:winery,producer'])
 
         // ── Contenedores de bodega ────────────────────────────────────
         Route::get('/containers', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('containers.index');
+        Route::get('/containers/map', \App\Livewire\Winery\Cellar\Containers\Map::class)->name('containers.map');
         Route::get('/containers/create', \App\Livewire\Winery\Cellar\Containers\Create::class)->name('containers.create');
         Route::get('/containers/{container}/edit', \App\Livewire\Winery\Cellar\Containers\Edit::class)->name('containers.edit');
         Route::get('/containers/{container}/maintenance', \App\Livewire\Winery\Cellar\Containers\Maintenance\Index::class)->name('containers.maintenance.index');
@@ -91,11 +92,13 @@ Route::middleware(['role:winery,producer'])
 
         // ── Vinos ─────────────────────────────────────────────────────────────
         Route::get('/wines', \App\Livewire\Winery\Wines\Index::class)->name('wines.index');
+        Route::get('/wines/timeline', \App\Livewire\Winery\Wines\Timeline::class)->name('wines.timeline');
         Route::get('/wines/create', \App\Livewire\Winery\Wines\Create::class)->name('wines.create');
         Route::get('/wines/{wine}', \App\Livewire\Winery\Wines\Show::class)->name('wines.show');
         Route::get('/wines/{wine}/edit', \App\Livewire\Winery\Wines\Edit::class)->name('wines.edit');
         Route::get('/wines/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('wines.process.create');
         Route::get('/wines/{wine}/process/{process}/edit', \App\Livewire\Winery\Wines\Process\Edit::class)->name('wines.process.edit');
+        Route::get('/wines/{wine}/traceability-pdf', [\App\Http\Controllers\Winery\WineTraceabilityController::class, 'exportPdf'])->name('wines.traceability-pdf');
 
         // ── Uva / mosto / vino externo (en construcción) ─────────────
         Route::get('/external-grape', \App\Livewire\Winery\ExternalGrape\Index::class)->name('external-grape.index');
@@ -216,11 +219,9 @@ Route::middleware(['role:winery,producer'])
             ->defaults('module', 'Enoturismo')
             ->defaults('icon', 'sparkles');
 
-        // ── Trazabilidad (en construcción) ───────────────────────────
-        Route::get('/traceability', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('traceability.index')
-            ->defaults('module', 'Trazabilidad')
-            ->defaults('icon', 'magnifying-glass-circle');
+        // ── Trazabilidad ──────────────────────────────────────────────
+        Route::get('/traceability', \App\Livewire\Winery\Traceability\Index::class)
+            ->name('traceability.index');
 
         // ── Operaciones de Bodega ─────────────────────────────────────
         Route::prefix('cellar-operations')->name('cellar-operations.')->group(function () {

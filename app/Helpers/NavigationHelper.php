@@ -530,7 +530,14 @@ class NavigationHelper
                     'icon'   => 'beaker',
                     'label'  => 'Contenedores',
                     'route'  => 'winery.containers.index',
-                    'active' => request()->routeIs('winery.containers*'),
+                    'active' => request()->routeIs('winery.containers.index') || request()->routeIs('winery.containers.create') || request()->routeIs('winery.containers.edit') || request()->routeIs('winery.containers.show'),
+                ],
+                [
+                    'icon'   => 'map',
+                    'label'  => 'Mapa de Bodega',
+                    'route'  => 'winery.containers.map',
+                    'active' => request()->routeIs('winery.containers.map'),
+                    'new'    => true,
                 ],
                 [
                     'icon'   => 'building-office',
@@ -549,7 +556,14 @@ class NavigationHelper
                     'icon'   => 'arrows-right-left',
                     'label'  => 'Vinos',
                     'route'  => 'winery.wines.index',
-                    'active' => request()->routeIs('winery.wines*'),
+                    'active' => request()->routeIs('winery.wines.index') || request()->routeIs('winery.wines.create') || request()->routeIs('winery.wines.edit') || request()->routeIs('winery.wines.show'),
+                ],
+                [
+                    'icon'   => 'queue-list',
+                    'label'  => 'Timeline de Vinos',
+                    'route'  => 'winery.wines.timeline',
+                    'active' => request()->routeIs('winery.wines.timeline'),
+                    'new'    => true,
                 ],
                 [
                     'icon'   => 'user-circle',
@@ -591,7 +605,7 @@ class NavigationHelper
                     'label'  => 'Trazabilidad',
                     'route'  => 'winery.traceability.index',
                     'active' => request()->routeIs('winery.traceability*'),
-                    'wip'    => true,
+                    'new'    => true,
                 ],
                 ['divider' => true],
                 [
@@ -977,15 +991,17 @@ class NavigationHelper
 
         // ── BODEGA (CELLAR) ───────────────────────────────────────────────
         $menu['cellar'] = [
-            ['icon' => 'beaker',                  'label' => 'Contenedores',               'route' => 'producer.containers.index',       'active' => request()->routeIs('producer.containers*')],
+            ['icon' => 'beaker',                  'label' => 'Contenedores',               'route' => 'producer.containers.index',       'active' => request()->routeIs('producer.containers.index') || request()->routeIs('producer.containers.create') || request()->routeIs('producer.containers.edit') || request()->routeIs('producer.containers.show')],
+            ['icon' => 'map',                     'label' => 'Mapa de Bodega',             'route' => 'producer.containers.map',         'active' => request()->routeIs('producer.containers.map'), 'new' => true],
             ['icon' => 'home-modern',             'label' => 'Salas de Bodega',            'route' => 'producer.container-rooms.index',  'active' => request()->routeIs('producer.container-rooms*'), 'new' => true],
             ['icon' => 'cog-6-tooth',             'label' => 'Operaciones de Bodega',      'route' => 'producer.cellar-operations.index','active' => request()->routeIs('producer.cellar-operations*'), 'new' => true],
             ['icon' => 'archive-box',             'label' => 'Uva / Mosto externo',        'route' => 'producer.external-grape.index',   'active' => request()->routeIs('producer.external-grape*')],
-            ['icon' => 'arrows-right-left',       'label' => 'Vinos',                      'route' => 'producer.wines.index',            'active' => request()->routeIs('producer.wines*')],
+            ['icon' => 'arrows-right-left',       'label' => 'Vinos',                      'route' => 'producer.wines.index',            'active' => request()->routeIs('producer.wines.index') || request()->routeIs('producer.wines.create') || request()->routeIs('producer.wines.edit') || request()->routeIs('producer.wines.show')],
+            ['icon' => 'queue-list',              'label' => 'Timeline de Vinos',          'route' => 'producer.wines.timeline',         'active' => request()->routeIs('producer.wines.timeline'), 'new' => true],
             ['icon' => 'user-circle',             'label' => 'Enólogos',                   'route' => 'producer.oenologists.index',      'active' => request()->routeIs('producer.oenologists*')],
             ['icon' => 'magnifying-glass',        'label' => 'Análisis de Lab.',            'route' => 'producer.wine-analysis.index',   'active' => request()->routeIs('producer.wine-analysis*')],
             ['icon' => 'archive-box',             'label' => 'Productos',                   'route' => 'producer.product-lots.index',    'active' => request()->routeIs('producer.product-lots*') && !request()->routeIs('producer.product-lots.audit')],
-            ['icon' => 'magnifying-glass-circle', 'label' => 'Trazabilidad',                'route' => 'producer.traceability.index',    'active' => request()->routeIs('producer.traceability*'), 'wip' => true, 'new' => true],
+            ['icon' => 'magnifying-glass-circle', 'label' => 'Trazabilidad',                'route' => 'producer.traceability.index',    'active' => request()->routeIs('producer.traceability*'), 'new' => true],
             ['icon' => 'archive-box-arrow-down',  'label' => 'Embotellado y Expediciones', 'route' => 'producer.bottling.index',         'active' => request()->routeIs('producer.bottling*'), 'new' => true],
             ['icon' => 'tag',                     'label' => 'Etiquetado',                 'route' => 'producer.label-batches.index',    'active' => request()->routeIs('producer.label-batches*') || request()->routeIs('producer.labeling*'), 'new' => true],
             ['icon' => 'document-text',           'label' => 'Fichas Técnicas y Catas',    'route' => 'producer.product-sheets.index',  'active' => request()->routeIs('producer.product-sheets*') || request()->routeIs('producer.tasting-notes*'), 'new' => true],

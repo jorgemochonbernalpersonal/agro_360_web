@@ -16,9 +16,61 @@ class Audit extends Component
 
     public bool $onlyDrifted = false;
 
+    // ─── Ajuste manual ────────────────────────────────────────────────────────
+    public ?int   $adjustingLotId     = null;
+    public string $adjustingLotName   = '';
+    public float  $manualAvailable    = 0;
+    public float  $manualReserved     = 0;
+    public float  $manualSold         = 0;
+    public string $adjustmentNote     = '';
+
     public function updatingOnlyDrifted(): void
     {
         $this->resetPage();
+    }
+
+    public function openAdjustModal(int $lotId): void
+    {
+        $lot = ProductLot::where('user_id', Auth::id())->findOrFail($lotId);
+
+        $this->adjustingLotId   = $lotId;
+        $this->adjustingLotName = $lot->name;
+        $this->manualAvailable  = (float) $lot->available_quantity;
+        $this->manualReserved   = (float) $lot->reserved_quantity;
+        $this->manualSold       = (float) $lot->sold_quantity;
+        $this->adjustmentNote   = '';
+
+        $this->dispatch('open-modal', name: 'manual-adjustment');
+    }
+
+    public function saveManualAdjustment(): void
+    {
+        $this->validate([
+            'manualAvailable' => 'required|numeric|min:0',
+            'manualReserved'  => 'required|numeric|min:0',
+            'manualSold'      => 'required|numeric|min:0',
+            'adjustmentNote'  => 'required|string|min:5|max:500',
+        ], [
+            'adjustmentNote.required' => 'La justificación es obligatoria.',
+            'adjustmentNote.min'      => 'La justificación debe tener al menos 5 caracteres.',
+        ]);
+
+        $lot = ProductLot::where('user_id', Auth::id())->findOrFail($this->adjustingLotId);
+
+        $prevNote = $lot->notes ? $lot->notes . "\n\n" : '';
+        $newNote  = $prevNote . '[' . now()->format('d/m/Y H:i') . '] Ajuste manual: ' . $this->adjustmentNote;
+
+        $lot->update([
+            'available_quantity' => $this->manualAvailable,
+            'reserved_quantity'  => $this->manualReserved,
+            'sold_quantity'      => $this->manualSold,
+            'quantity'           => $this->manualAvailable + $this->manualReserved + $this->manualSold,
+            'notes'              => $newNote,
+        ]);
+
+        $this->dispatch('close-modal', name: 'manual-adjustment');
+        $this->reset(['adjustingLotId', 'adjustingLotName', 'manualAvailable', 'manualReserved', 'manualSold', 'adjustmentNote']);
+        $this->toastSuccess("Stock de «{$lot->name}» ajustado manualmente.");
     }
 
     // ─── Reconstrucción de un lote ────────────────────────────────────────────

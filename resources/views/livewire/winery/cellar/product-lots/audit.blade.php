@@ -157,20 +157,27 @@
 
                         {{-- Acción --}}
                         <x-agro.table-cell align="center">
-                            @if($hasDrift)
+                            <div class="flex items-center justify-center gap-1">
+                                @if($hasDrift)
+                                    <flux:button
+                                        wire:click="recalculate({{ $lot->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:confirm="¿Recalcular stock de «{{ $lot->name }}»? Se sobreescribirán las cantidades actuales con los valores reconstruidos desde los movimientos."
+                                        variant="ghost"
+                                        icon="arrow-path"
+                                        size="xs"
+                                    >
+                                        Recalcular
+                                    </flux:button>
+                                @endif
                                 <flux:button
-                                    wire:click="recalculate({{ $lot->id }})"
-                                    wire:loading.attr="disabled"
-                                    wire:confirm="¿Recalcular stock de «{{ $lot->name }}»? Se sobreescribirán las cantidades actuales con los valores reconstruidos desde los movimientos."
+                                    wire:click="openAdjustModal({{ $lot->id }})"
                                     variant="ghost"
-                                    icon="arrow-path"
+                                    icon="pencil-square"
                                     size="xs"
-                                >
-                                    Recalcular
-                                </flux:button>
-                            @else
-                                <span class="text-zinc-300 text-xs">—</span>
-                            @endif
+                                    title="Ajuste manual"
+                                />
+                            </div>
                         </x-agro.table-cell>
 
                     </x-agro.table-row>
@@ -184,8 +191,60 @@
         <p class="text-sm">
             La columna <strong>Esperado</strong> replica todos los movimientos registrados desde el stock inicial del lote.
             Si hay discrepancia, significa que alguna cantidad fue modificada manualmente o que ocurrió un error en una transacción.
-            <strong>Recalcular</strong> sobreescribe los valores actuales con los reconstruidos desde movimientos.
+            <strong>Recalcular</strong> sobreescribe los valores con los reconstruidos desde movimientos.
+            <strong>Ajuste manual</strong> permite corregir directamente con justificación auditada.
         </p>
     </flux:callout>
+
+    {{-- Modal ajuste manual --}}
+    <x-agro.modal name="manual-adjustment" max-width="lg">
+        <div class="p-6 space-y-5">
+            <div>
+                <flux:heading size="lg">Ajuste manual de stock</flux:heading>
+                <flux:subheading>{{ $adjustingLotName }}</flux:subheading>
+            </div>
+
+            <flux:callout variant="warning" icon="exclamation-triangle">
+                <flux:callout.text>
+                    Este ajuste sobreescribe los valores directamente. Queda registrado en las notas del lote.
+                    Úsalo solo si el recálculo automático no refleja la realidad.
+                </flux:callout.text>
+            </flux:callout>
+
+            <div class="grid grid-cols-3 gap-4">
+                <flux:field>
+                    <flux:label>Disponible</flux:label>
+                    <flux:input wire:model="manualAvailable" type="number" step="0.001" min="0" />
+                    <flux:error name="manualAvailable" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Reservado</flux:label>
+                    <flux:input wire:model="manualReserved" type="number" step="0.001" min="0" />
+                    <flux:error name="manualReserved" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Vendido</flux:label>
+                    <flux:input wire:model="manualSold" type="number" step="0.001" min="0" />
+                    <flux:error name="manualSold" />
+                </flux:field>
+            </div>
+
+            <flux:field>
+                <flux:label>Justificación <span class="text-red-500">*</span></flux:label>
+                <flux:textarea wire:model="adjustmentNote" rows="3"
+                    placeholder="Explica el motivo del ajuste (error en transacción, corrección de inventario físico...)" />
+                <flux:error name="adjustmentNote" />
+            </flux:field>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <flux:button x-on:click="$dispatch('close-modal', { name: 'manual-adjustment' })" variant="ghost">
+                    Cancelar
+                </flux:button>
+                <flux:button wire:click="saveManualAdjustment" wire:loading.attr="disabled" variant="primary" icon="check">
+                    Guardar ajuste
+                </flux:button>
+            </div>
+        </div>
+    </x-agro.modal>
 
 </div>

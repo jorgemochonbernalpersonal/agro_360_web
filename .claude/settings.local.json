@@ -169,7 +169,15 @@
       "WebFetch(domain:noticias.juridicas.com)",
       "WebFetch(domain:puentesilicie.com)",
       "Bash(where gh:*)",
-      "Bash(winget list:*)"
+      "Bash(winget list:*)",
+      "Bash(/tmp/verify_routes.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(__NEW_LINE_f54ea0790bc80eca__ echo:*)",
+      "Bash(head -10 echo \"\" echo \"Routes use for /winery-clients:\" grep -A 5 \"prefix\\(''''winery-clients''''\\)\" routes/producer.php)",
+      "Bash(__NEW_LINE_4ed061daf4a343f9__ echo:*)",
+      "Bash(__NEW_LINE_482edc4ebf816cbb__ echo:*)",
+      "Bash(grep -o '\\\\\\\\App\\\\\\\\Livewire[^\\)]*')",
+      "Bash(__NEW_LINE_811ecc2a11f6541a__ echo:*)"
     ]
   }
 }
