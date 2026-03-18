@@ -989,28 +989,35 @@ class NavigationHelper
             ['icon' => 'exclamation-triangle',    'label' => 'Disputas',           'route' => 'producer.grape-reception.disputes', 'active' => request()->routeIs('producer.grape-reception.disputes')],
         ];
 
-        // ── BODEGA (CELLAR) ───────────────────────────────────────────────
-        $menu['cellar'] = [
-            ['icon' => 'beaker',                  'label' => 'Contenedores',               'route' => 'producer.containers.index',       'active' => request()->routeIs('producer.containers.index') || request()->routeIs('producer.containers.create') || request()->routeIs('producer.containers.edit') || request()->routeIs('producer.containers.show')],
-            ['icon' => 'map',                     'label' => 'Mapa de Bodega',             'route' => 'producer.containers.map',         'active' => request()->routeIs('producer.containers.map'), 'new' => true],
-            ['icon' => 'home-modern',             'label' => 'Salas de Bodega',            'route' => 'producer.container-rooms.index',  'active' => request()->routeIs('producer.container-rooms*'), 'new' => true],
-            ['icon' => 'cog-6-tooth',             'label' => 'Operaciones de Bodega',      'route' => 'producer.cellar-operations.index','active' => request()->routeIs('producer.cellar-operations*'), 'new' => true],
-            ['icon' => 'archive-box',             'label' => 'Uva / Mosto externo',        'route' => 'producer.external-grape.index',   'active' => request()->routeIs('producer.external-grape*')],
-            ['icon' => 'arrows-right-left',       'label' => 'Vinos',                      'route' => 'producer.wines.index',            'active' => request()->routeIs('producer.wines.index') || request()->routeIs('producer.wines.create') || request()->routeIs('producer.wines.edit') || request()->routeIs('producer.wines.show')],
-            ['icon' => 'queue-list',              'label' => 'Timeline de Vinos',          'route' => 'producer.wines.timeline',         'active' => request()->routeIs('producer.wines.timeline'), 'new' => true],
-            ['icon' => 'user-circle',             'label' => 'Enólogos',                   'route' => 'producer.oenologists.index',      'active' => request()->routeIs('producer.oenologists*')],
-            ['icon' => 'magnifying-glass',        'label' => 'Análisis de Lab.',            'route' => 'producer.wine-analysis.index',   'active' => request()->routeIs('producer.wine-analysis*')],
-            ['icon' => 'archive-box',             'label' => 'Productos',                   'route' => 'producer.product-lots.index',    'active' => request()->routeIs('producer.product-lots*') && !request()->routeIs('producer.product-lots.audit')],
-            ['icon' => 'magnifying-glass-circle', 'label' => 'Trazabilidad',                'route' => 'producer.traceability.index',    'active' => request()->routeIs('producer.traceability*'), 'new' => true],
+        // ── BODEGA — ELABORACIÓN ─────────────────────────────────────────
+        $menu['cellar_elab'] = [
+            ['icon' => 'beaker',            'label' => 'Contenedores',          'route' => 'producer.containers.index',        'active' => request()->routeIs('producer.containers.index') || request()->routeIs('producer.containers.create') || request()->routeIs('producer.containers.edit') || request()->routeIs('producer.containers.show')],
+            ['icon' => 'map',               'label' => 'Mapa de Bodega',        'route' => 'producer.containers.map',          'active' => request()->routeIs('producer.containers.map'), 'new' => true],
+            ['icon' => 'home-modern',       'label' => 'Salas de Bodega',       'route' => 'producer.container-rooms.index',   'active' => request()->routeIs('producer.container-rooms*'), 'new' => true],
+            ['icon' => 'calendar-days',     'label' => 'Operaciones de Bodega', 'route' => 'producer.cellar-operations.index', 'active' => request()->routeIs('producer.cellar-operations*'), 'new' => true],
+            ['icon' => 'archive-box',       'label' => 'Uva / Mosto externo',   'route' => 'producer.external-grape.index',    'active' => request()->routeIs('producer.external-grape*')],
+            ['divider' => true],
+            ['icon' => 'arrows-right-left', 'label' => 'Vinos',                 'route' => 'producer.wines.index',             'active' => request()->routeIs('producer.wines.index') || request()->routeIs('producer.wines.create') || request()->routeIs('producer.wines.edit') || request()->routeIs('producer.wines.show')],
+            ['icon' => 'queue-list',        'label' => 'Timeline de Vinos',     'route' => 'producer.wines.timeline',          'active' => request()->routeIs('producer.wines.timeline'), 'new' => true],
+            ['icon' => 'user-circle',       'label' => 'Enólogos',              'route' => 'producer.oenologists.index',       'active' => request()->routeIs('producer.oenologists*')],
+            ['icon' => 'magnifying-glass',  'label' => 'Análisis de Lab.',      'route' => 'producer.wine-analysis.index',     'active' => request()->routeIs('producer.wine-analysis*')],
+        ];
+
+        // ── BODEGA — SALIDA ───────────────────────────────────────────────
+        $menu['cellar_salida'] = [
+            ['icon' => 'archive-box',             'label' => 'Productos',                  'route' => 'producer.product-lots.index',     'active' => request()->routeIs('producer.product-lots*') && !request()->routeIs('producer.product-lots.audit')],
+            ['icon' => 'shield-check',            'label' => 'Auditoría de Stock',         'route' => 'producer.product-lots.audit',     'active' => request()->routeIs('producer.product-lots.audit'), 'new' => true],
+            ['icon' => 'magnifying-glass-circle', 'label' => 'Trazabilidad',               'route' => 'producer.traceability.index',     'active' => request()->routeIs('producer.traceability*'), 'new' => true],
+            ['divider' => true],
             ['icon' => 'archive-box-arrow-down',  'label' => 'Embotellado y Expediciones', 'route' => 'producer.bottling.index',         'active' => request()->routeIs('producer.bottling*'), 'new' => true],
             ['icon' => 'tag',                     'label' => 'Etiquetado',                 'route' => 'producer.label-batches.index',    'active' => request()->routeIs('producer.label-batches*') || request()->routeIs('producer.labeling*'), 'new' => true],
             ['icon' => 'document-text',           'label' => 'Fichas Técnicas y Catas',    'route' => 'producer.product-sheets.index',  'active' => request()->routeIs('producer.product-sheets*') || request()->routeIs('producer.tasting-notes*'), 'new' => true],
             ['icon' => 'archive-box-x-mark',      'label' => 'Subproductos',               'route' => 'producer.subproducts.index',     'active' => request()->routeIs('producer.subproducts*'), 'new' => true],
             ['divider' => true],
-            ['icon' => 'building-storefront',     'label' => 'Insumos de Bodega',           'route' => 'producer.winery-supplies.index', 'active' => request()->routeIs('producer.winery-supplies*')],
-            ['icon' => 'truck',                   'label' => 'Proveedores',                 'route' => 'producer.suppliers.index',       'active' => request()->routeIs('producer.suppliers*')],
+            ['icon' => 'building-storefront',     'label' => 'Insumos de Bodega',          'route' => 'producer.winery-supplies.index', 'active' => request()->routeIs('producer.winery-supplies*')],
+            ['icon' => 'truck',                   'label' => 'Proveedores',                'route' => 'producer.suppliers.index',       'active' => request()->routeIs('producer.suppliers*')],
             ['divider' => true],
-            ['icon' => 'bell-alert',              'label' => 'Centro de Alertas',           'route' => 'producer.alerts.index',          'active' => request()->routeIs('producer.alerts*'), 'new' => true],
+            ['icon' => 'bell-alert',              'label' => 'Centro de Alertas',          'route' => 'producer.alerts.index',          'active' => request()->routeIs('producer.alerts*'), 'new' => true],
         ];
 
         // ── NORMATIVA BODEGA ──────────────────────────────────────────────
