@@ -183,7 +183,16 @@ class Create extends Component
                 $user = Auth::user();
                 $canAssign = false;
 
-                if (!$user->isProducer() && $user->hasWineryAccess()) {
+                if ($user->isProducer()) {
+                    // Producer: puede asignarse a sí mismo, o viticultores creados como bodega o como viticultor
+                    $canAssign = (int) $this->viticulturist_id === $user->id
+                        || \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
+                            ->where('winery_id', $user->id)
+                            ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)
+                            ->where('assigned_by', $user->id)
+                            ->exists()
+                        || $user->canEditViticulturist($this->viticulturist_id);
+                } elseif ($user->hasWineryAccess()) {
                     // Bodega pura: solo viticultores que ella misma creó
                     $canAssign = \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
                         ->where('winery_id', $user->id)
