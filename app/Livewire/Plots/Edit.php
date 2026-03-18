@@ -189,6 +189,43 @@ class Edit extends Component
     {
         $this->validate();
 
+        // El check de permisos debe estar FUERA del try-catch (igual que validate())
+        // para que Livewire intercepte la ValidationException correctamente.
+        $user = Auth::user();
+        $viticulturistForPlot = null;
+
+        if ($this->canSelectViticulturist() && $this->viticulturist_id) {
+            $canAssign = false;
+
+            if ($user->isProducer()) {
+                $canAssign = (int) $this->viticulturist_id === $user->id
+                    || \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
+                        ->where('winery_id', $user->id)
+                        ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)
+                        ->where('assigned_by', $user->id)
+                        ->exists()
+                    || $user->canEditViticulturist($this->viticulturist_id);
+            } elseif ($user->hasWineryAccess()) {
+                $canAssign = \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
+                    ->where('winery_id', $user->id)
+                    ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)
+                    ->where('assigned_by', $user->id)
+                    ->exists();
+            } elseif ($user->hasViticulturistAccess()) {
+                $canAssign = $user->canEditViticulturist($this->viticulturist_id);
+            } else {
+                $canAssign = true; // Admin y supervisor
+            }
+
+            if (!$canAssign) {
+                throw ValidationException::withMessages([
+                    'viticulturist_id' => 'Solo puedes asignar parcelas a viticultores que has creado.',
+                ]);
+            }
+
+            $viticulturistForPlot = $this->viticulturist_id;
+        }
+
         try {
             DB::beginTransaction();
 
@@ -219,39 +256,8 @@ class Edit extends Component
                 'non_eligible_area' => $this->non_eligible_area ?: null,
             ];
 
-            if ($this->canSelectViticulturist() && $this->viticulturist_id) {
-                // Validar que el viticultor fue creado por el usuario
-                $user = Auth::user();
-                $canAssign = false;
-                
-                if ($user->isProducer()) {
-                    // Producer: puede asignarse a sí mismo, o viticultores creados como bodega o como viticultor
-                    $canAssign = (int) $this->viticulturist_id === $user->id
-                        || \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
-                            ->where('winery_id', $user->id)
-                            ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)
-                            ->where('assigned_by', $user->id)
-                            ->exists()
-                        || $user->canEditViticulturist($this->viticulturist_id);
-                } elseif ($user->hasWineryAccess()) {
-                    $canAssign = \App\Models\WineryViticulturist::where('viticulturist_id', $this->viticulturist_id)
-                        ->where('winery_id', $user->id)
-                        ->where('source', \App\Models\WineryViticulturist::SOURCE_OWN)
-                        ->where('assigned_by', $user->id)
-                        ->exists();
-                } elseif ($user->hasViticulturistAccess()) {
-                    $canAssign = $user->canEditViticulturist($this->viticulturist_id);
-                } else {
-                    $canAssign = true; // Admin y supervisor
-                }
-                
-                if (!$canAssign) {
-                    throw ValidationException::withMessages([
-                        'viticulturist_id' => 'Solo puedes asignar parcelas a viticultores que has creado.',
-                    ]);
-                }
-                
-                $data['viticulturist_id'] = $this->viticulturist_id;
+            if ($viticulturistForPlot) {
+                $data['viticulturist_id'] = $viticulturistForPlot;
             }
 
             if ($this->canSelectLocation()) {
@@ -265,7 +271,7 @@ class Edit extends Component
             DB::commit();
 
             $this->toastSuccess('Parcela actualizada correctamente.');
-            $indexRoute = Auth::user()->isProducer() ? 'producer.plots.index' : 'plots.index';
+            $indexRoute = $user->isProducer() ? 'producer.plots.index' : 'plots.index';
             return $this->redirect(route($indexRoute), navigate: true);
         } catch (\Exception $e) {
             DB::rollBack();
