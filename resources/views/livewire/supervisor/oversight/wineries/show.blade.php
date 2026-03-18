@@ -21,11 +21,29 @@
                     <span class="size-1.5 rounded-full bg-green-500"></span>
                     Activa
                 </span>
+                <flux:button
+                    wire:click="toggleAccess"
+                    wire:confirm="¿Desactivar el acceso a esta bodega? No podrá iniciar sesión hasta que lo reactives."
+                    variant="danger"
+                    size="sm"
+                    icon="lock-closed"
+                >
+                    Desactivar acceso
+                </flux:button>
             @else
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-100 text-zinc-500 border border-zinc-200">
                     <span class="size-1.5 rounded-full bg-zinc-400"></span>
                     Sin acceso
                 </span>
+                <flux:button
+                    wire:click="toggleAccess"
+                    wire:confirm="¿Restaurar el acceso a esta bodega?"
+                    variant="primary"
+                    size="sm"
+                    icon="lock-open"
+                >
+                    Activar acceso
+                </flux:button>
             @endif
         </div>
     </div>
@@ -61,9 +79,14 @@
     {{-- Viticultores asignados por la DO --}}
     <x-agro.card>
         <x-slot:header>
-            <div class="flex items-center gap-2">
-                <flux:icon icon="users" class="size-4 text-blue-500" />
-                <span>Viticultores asignados por esta DO</span>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="users" class="size-4 text-blue-500" />
+                    <span>Viticultores asignados por esta DO</span>
+                </div>
+                <flux:button wire:click="openAssignModal" variant="ghost" size="sm" icon="user-plus">
+                    Asignar viticultor
+                </flux:button>
             </div>
         </x-slot:header>
 
@@ -75,7 +98,7 @@
             />
         @else
             <x-agro.data-table
-                :headers="['Viticultor', 'Parcelas activas', 'Superficie (ha)', 'Última actividad']"
+                :headers="['Viticultor', 'Parcelas activas', 'Superficie (ha)', 'Última actividad', '']"
             >
                 @foreach($viticulturistRelations as $rel)
                     @php
@@ -116,11 +139,70 @@
                                 <span class="text-zinc-300">Sin actividad</span>
                             @endif
                         </x-agro.table-cell>
+                        <x-agro.table-cell align="right">
+                            <flux:button
+                                wire:click="unassignViticulturist({{ $vit->id }})"
+                                wire:confirm="¿Retirar a {{ $vit->name }} de esta bodega?"
+                                variant="ghost"
+                                size="sm"
+                                icon="user-minus"
+                            >
+                                Retirar
+                            </flux:button>
+                        </x-agro.table-cell>
                     </x-agro.table-row>
                 @endforeach
             </x-agro.data-table>
         @endif
     </x-agro.card>
+
+    {{-- Modal asignar viticultor --}}
+    <flux:modal wire:model="showAssignModal" name="assign-viticulturist" class="w-full max-w-lg">
+        <div class="p-6 space-y-4">
+            <div>
+                <h3 class="text-base font-semibold text-zinc-900">Asignar viticultor</h3>
+                <p class="text-sm text-zinc-500 mt-0.5">Viticultores de tu pool disponibles para asignar a esta bodega.</p>
+            </div>
+
+            <flux:input wire:model.live="poolSearch" placeholder="Buscar por nombre o email…" icon="magnifying-glass" />
+
+            @if($poolViticulturists->isEmpty())
+                <p class="text-sm text-zinc-400 text-center py-6">
+                    {{ $poolSearch ? 'Sin resultados para esta búsqueda.' : 'Todos los viticultores del pool ya están asignados a esta bodega.' }}
+                </p>
+            @else
+                <div class="divide-y divide-zinc-100 max-h-72 overflow-y-auto -mx-6 px-6">
+                    @foreach($poolViticulturists as $vit)
+                        <div class="flex items-center justify-between py-3">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="size-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                                    <flux:icon icon="user" class="size-3.5 text-blue-500" />
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-zinc-800 truncate">{{ $vit->name }}</p>
+                                    @if($vit->email && !str_starts_with($vit->email, 'viticultores.'))
+                                        <p class="text-xs text-zinc-400 truncate">{{ $vit->email }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <flux:button
+                                wire:click="assignViticulturist({{ $vit->id }})"
+                                variant="primary"
+                                size="sm"
+                                class="shrink-0 ml-3"
+                            >
+                                Asignar
+                            </flux:button>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            <div class="flex justify-end pt-2">
+                <flux:button wire:click="closeAssignModal" variant="ghost">Cerrar</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 
     {{-- Recepciones de vendimia --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -220,5 +302,73 @@
         </div>
 
     </div>
+
+    {{-- Módulos activos (Abilities) ─────────────────────────────────────────── --}}
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="puzzle-piece" class="size-4 text-violet-500" />
+                    <span>Módulos activos</span>
+                </div>
+                @if($grantedAbilityIds->isEmpty())
+                    <span class="text-xs text-zinc-400 italic">Sin restricciones — acceso total</span>
+                @else
+                    <span class="text-xs text-zinc-500">{{ $grantedAbilityIds->count() }} de {{ $allAbilities->count() }} módulos habilitados</span>
+                @endif
+            </div>
+        </x-slot:header>
+
+        @if($allAbilities->isEmpty())
+            <x-agro.empty-state
+                icon="puzzle-piece"
+                title="Sin módulos configurados"
+                description="Ejecuta el AbilitySeeder para cargar los módulos disponibles."
+            />
+        @else
+            @php $byModule = $allAbilities->groupBy('module'); @endphp
+            <div class="divide-y divide-zinc-100">
+                @foreach($byModule as $module => $abilities)
+                    <div class="px-4 py-3">
+                        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-2">{{ $module }}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            @foreach($abilities as $ability)
+                                @php $granted = $grantedAbilityIds->contains($ability->id); @endphp
+                                <div class="flex items-center justify-between gap-3 py-1.5 px-3 rounded-lg
+                                    {{ $granted ? 'bg-violet-50' : 'bg-zinc-50' }}">
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium text-zinc-800 truncate">{{ $ability->name }}</p>
+                                        @if($ability->description)
+                                            <p class="text-xs text-zinc-400 truncate">{{ $ability->description }}</p>
+                                        @endif
+                                    </div>
+                                    <button
+                                        wire:click="toggleAbility({{ $ability->id }})"
+                                        class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent
+                                            transition-colors duration-200 focus:outline-none
+                                            {{ $granted ? 'bg-violet-500' : 'bg-zinc-300' }}"
+                                        role="switch"
+                                        aria-checked="{{ $granted ? 'true' : 'false' }}"
+                                    >
+                                        <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow
+                                            transition duration-200 {{ $granted ? 'translate-x-4' : 'translate-x-0' }}">
+                                        </span>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if(! $grantedAbilityIds->isEmpty())
+                <div class="px-4 pb-3 pt-1">
+                    <flux:callout variant="info" icon="information-circle" class="text-xs">
+                        Solo los módulos activados estarán disponibles para esta bodega. Si no hay ninguno marcado, la bodega tiene acceso completo.
+                    </flux:callout>
+                </div>
+            @endif
+        @endif
+    </x-agro.card>
 
 </div>

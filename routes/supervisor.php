@@ -32,6 +32,9 @@ Route::middleware(['role:supervisor'])
         // ── Inspection ────────────────────────────────────────────────
         Route::get('/inspection', \App\Livewire\Supervisor\Inspection\Index::class)->name('inspection.index');
 
+        // ── Solicitudes (bidireccional con bodegas) ───────────────────
+        Route::get('/requests', \App\Livewire\Supervisor\Requests\Index::class)->name('requests.index');
+
         // ── Regulation ────────────────────────────────────────────────
         Route::get('/regulation', \App\Livewire\Supervisor\Regulation\Index::class)->name('regulation.index');
 

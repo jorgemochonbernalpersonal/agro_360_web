@@ -23,6 +23,11 @@ class WineProcessDetail extends Model
         'filtration'          => 'Filtrado',
         'cold_stabilization'  => 'Estabilización tartárica',
         'bottling'            => 'Embotellado',
+        'enrichment'          => 'Enriquecimiento (chaptalización)',
+        'concentration'       => 'Concentración de mosto',
+        'acidification'       => 'Acidificación',
+        'desacidification'    => 'Desacidificación',
+        'sulfitation'         => 'Sulfitado',
         'other'               => 'Otro',
     ];
 

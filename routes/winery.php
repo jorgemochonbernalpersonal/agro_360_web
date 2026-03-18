@@ -12,6 +12,10 @@ Route::middleware(['role:winery,producer'])
 
         Route::get('/dashboard', \App\Livewire\Winery\Dashboard::class)->name('dashboard');
 
+        // ── Denominación de Origen ───────────────────────────────────
+        Route::get('/denomination', \App\Livewire\Winery\Denomination\Index::class)->name('denomination.index');
+        Route::get('/denomination/requests', \App\Livewire\Winery\Denomination\Requests\Index::class)->name('denomination.requests.index');
+
         // ── Viticultores ─────────────────────────────────────────────
         Route::get('/viticulturists', \App\Livewire\Winery\Viticulturists\Index::class)->name('viticulturists.index');
         Route::get('/viticulturists/create', \App\Livewire\Winery\Viticulturists\Create::class)->name('viticulturists.create');
@@ -154,12 +158,12 @@ Route::middleware(['role:winery,producer'])
         Route::get('/suppliers/create', \App\Livewire\Winery\Suppliers\Create::class)->name('suppliers.create');
         Route::get('/suppliers/{supplier}/edit', \App\Livewire\Winery\Suppliers\Edit::class)->name('suppliers.edit');
 
-        // ── SILICIE (en construcción) ─────────────────────────────────
-        Route::get('/silicie', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('silicie.dashboard')
-            ->defaults('module', 'SILICIE')
-            ->defaults('icon', 'document-chart-bar');
+        // ── SILICIE ───────────────────────────────────────────────────
+        Route::get('/silicie', \App\Livewire\Winery\Silicie\Dashboard::class)
+            ->name('silicie.dashboard');
         Route::get('/silicie/movements', fn() => redirect()->route('winery.silicie.dashboard'))->name('silicie.movements.index');
+        Route::get('/silicie/infovi', \App\Livewire\Winery\Silicie\Infovi::class)
+            ->name('silicie.infovi');
 
         // ── Documentos Bodega ─────────────────────────────────────────
         Route::get('/documents', \App\Livewire\Winery\Documents\Index::class)->name('documents.index');

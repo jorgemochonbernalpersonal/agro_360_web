@@ -742,8 +742,13 @@ class NavigationHelper
                     'icon'   => 'document-chart-bar',
                     'label'  => 'SILICIE',
                     'route'  => 'winery.silicie.dashboard',
-                    'active' => request()->routeIs('winery.silicie*'),
-                    'wip'    => true,
+                    'active' => request()->routeIs('winery.silicie.dashboard') || request()->routeIs('winery.silicie.movements*'),
+                ],
+                [
+                    'icon'   => 'chart-bar',
+                    'label'  => 'INFOVI (AICA)',
+                    'route'  => 'winery.silicie.infovi',
+                    'active' => request()->routeIs('winery.silicie.infovi'),
                 ],
                 ['divider' => true],
                 [

@@ -2,8 +2,11 @@
 
 namespace App\Livewire\Supervisor\Oversight\Wineries;
 
+use App\Models\Ability;
+use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
 use App\Models\User;
+use App\Models\UserAbility;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +17,87 @@ class Show extends Component
 {
     public User $winery;
 
+    public bool   $showAssignModal = false;
+    public string $poolSearch      = '';
+
+    public function updatingPoolSearch(): void
+    {
+        // reset handled in render — no pagination needed
+    }
+
+    public function openAssignModal(): void
+    {
+        $this->poolSearch      = '';
+        $this->showAssignModal = true;
+    }
+
+    public function closeAssignModal(): void
+    {
+        $this->showAssignModal = false;
+        $this->poolSearch      = '';
+    }
+
+    public function assignViticulturist(int $viticulturistId): void
+    {
+        // Guard: viticultor debe estar en el pool del supervisor
+        SupervisorViticulturist::where('supervisor_id', Auth::id())
+            ->where('viticulturist_id', $viticulturistId)
+            ->firstOrFail();
+
+        WineryViticulturist::firstOrCreate(
+            [
+                'winery_id'        => $this->winery->id,
+                'viticulturist_id' => $viticulturistId,
+            ],
+            [
+                'source'        => WineryViticulturist::SOURCE_SUPERVISOR,
+                'supervisor_id' => Auth::id(),
+                'assigned_by'   => Auth::id(),
+            ]
+        );
+
+        $this->dispatch('toast', message: 'Viticultor asignado a la bodega.', type: 'success');
+    }
+
+    public function unassignViticulturist(int $viticulturistId): void
+    {
+        WineryViticulturist::where('supervisor_id', Auth::id())
+            ->where('winery_id', $this->winery->id)
+            ->where('viticulturist_id', $viticulturistId)
+            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+            ->firstOrFail()
+            ->delete();
+
+        $this->dispatch('toast', message: 'Viticultor retirado de la bodega.', type: 'warning');
+    }
+
+    public function toggleAbility(int $abilityId): void
+    {
+        // Guard: la bodega debe pertenecer a este supervisor
+        SupervisorWinery::where('supervisor_id', Auth::id())
+            ->where('winery_id', $this->winery->id)
+            ->firstOrFail();
+
+        $ability = Ability::findOrFail($abilityId);
+
+        $existing = UserAbility::where('user_id', $this->winery->id)
+            ->where('ability_id', $abilityId)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $this->dispatch('toast', message: "Módulo «{$ability->name}» desactivado.", type: 'warning');
+        } else {
+            UserAbility::create([
+                'user_id'    => $this->winery->id,
+                'ability_id' => $abilityId,
+                'granted_by' => Auth::id(),
+                'granted_at' => now(),
+            ]);
+            $this->dispatch('toast', message: "Módulo «{$ability->name}» activado.", type: 'success');
+        }
+    }
+
     public function mount(User $winery): void
     {
         SupervisorWinery::where('supervisor_id', Auth::id())
@@ -21,6 +105,23 @@ class Show extends Component
             ->firstOrFail();
 
         $this->winery = $winery;
+    }
+
+    public function toggleAccess(): void
+    {
+        // Guard: verificar que esta bodega pertenece al supervisor
+        SupervisorWinery::where('supervisor_id', Auth::id())
+            ->where('winery_id', $this->winery->id)
+            ->firstOrFail();
+
+        $this->winery->update(['can_login' => ! $this->winery->can_login]);
+        $this->winery->refresh();
+
+        $msg = $this->winery->can_login
+            ? 'Acceso restaurado. La bodega puede iniciar sesión.'
+            : 'Bodega desactivada. No podrá iniciar sesión.';
+
+        $this->dispatch('toast', message: $msg, type: $this->winery->can_login ? 'success' : 'warning');
     }
 
     #[Layout('layouts.app')]
@@ -105,6 +206,27 @@ class Show extends Component
             ->limit(8)
             ->get();
 
+        // ── Pool de viticultores del supervisor no asignados aún a esta bodega ──
+        $assignedViticulturistIds = WineryViticulturist::where('supervisor_id', $supervisorId)
+            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+            ->where('winery_id', $wineryId)
+            ->pluck('viticulturist_id');
+
+        $poolQuery = User::whereIn(
+            'id',
+            SupervisorViticulturist::where('supervisor_id', $supervisorId)->pluck('viticulturist_id')
+        )->whereNotIn('id', $assignedViticulturistIds);
+
+        if ($this->poolSearch) {
+            $s = '%' . strtolower($this->poolSearch) . '%';
+            $poolQuery->where(function ($q) use ($s) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$s])
+                  ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
+            });
+        }
+
+        $poolViticulturists = $poolQuery->orderBy('name')->get(['id', 'name', 'email']);
+
         // ── Contenedores de la bodega ─────────────────────────────────────────
         $containerCount = DB::table('containers')
             ->where('user_id', $wineryId)
@@ -114,6 +236,10 @@ class Show extends Component
         $wineCount = DB::table('wines')
             ->where('user_id', $wineryId)
             ->count();
+
+        // ── Abilities ─────────────────────────────────────────────────────────
+        $allAbilities      = Ability::orderBy('module')->orderBy('name')->get();
+        $grantedAbilityIds = UserAbility::where('user_id', $wineryId)->pluck('ability_id');
 
         return view('livewire.supervisor.oversight.wineries.show', [
             'viticulturistRelations' => $viticulturistRelations,
@@ -125,6 +251,9 @@ class Show extends Component
             'currentVintage'         => $currentVintage,
             'containerCount'         => $containerCount,
             'wineCount'              => $wineCount,
+            'poolViticulturists'     => $poolViticulturists,
+            'allAbilities'           => $allAbilities,
+            'grantedAbilityIds'      => $grantedAbilityIds,
         ]);
     }
 }

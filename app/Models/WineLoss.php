@@ -15,10 +15,19 @@ class WineLoss extends Model
         'other'       => 'Otro',
     ];
 
+    const LOSS_AUTHORIZATIONS = [
+        'authorized'    => 'Pérdida autorizada',
+        'processing'    => 'Pérdida por proceso',
+        'extraordinary' => 'Pérdida extraordinaria',
+        'quality'       => 'Rechazo por calidad',
+    ];
+
     protected $fillable = [
         'wine_id',
         'container_id',
         'loss_type',
+        'loss_authorization',
+        'regulatory_reference',
         'quantity',
         'unit_of_measurement_id',
         'loss_date',

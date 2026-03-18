@@ -18,6 +18,9 @@ class Index extends Component
     public string $currentTab = 'wineries'; // 'wineries' | 'viticulturists'
     public string $search = '';
 
+    public bool   $showAssignModal = false;
+    public string $assignSearch    = '';
+
     protected $queryString = [
         'currentTab' => ['as' => 'tab', 'except' => 'wineries'],
         'search'     => ['except' => ''],
@@ -41,6 +44,45 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function openAssignModal(): void
+    {
+        $this->assignSearch    = '';
+        $this->showAssignModal = true;
+    }
+
+    public function closeAssignModal(): void
+    {
+        $this->showAssignModal = false;
+        $this->assignSearch    = '';
+    }
+
+    public function assignWinery(int $wineryId): void
+    {
+        $winery = User::where('id', $wineryId)
+            ->whereIn('role', ['winery', 'producer'])
+            ->firstOrFail();
+
+        SupervisorWinery::firstOrCreate(
+            [
+                'supervisor_id' => Auth::id(),
+                'winery_id'     => $winery->id,
+            ],
+            ['assigned_by' => Auth::id()]
+        );
+
+        $this->dispatch('toast', message: "{$winery->name} adscrita a la denominación.", type: 'success');
+    }
+
+    public function unassignWinery(int $wineryId): void
+    {
+        SupervisorWinery::where('supervisor_id', Auth::id())
+            ->where('winery_id', $wineryId)
+            ->firstOrFail()
+            ->delete();
+
+        $this->dispatch('toast', message: 'Bodega desadscrita de la denominación.', type: 'warning');
+    }
+
     #[Layout('layouts.app')]
     public function render()
     {
@@ -54,10 +96,8 @@ class Index extends Component
             ->count('viticulturist_id');
 
         if ($this->currentTab === 'wineries') {
-            // Get winery IDs supervised by this DO
             $wineryIds = SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id');
 
-            // Count viticulturists per winery assigned via this DO
             $vitCountByWinery = WineryViticulturist::where('supervisor_id', $doId)
                 ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
                 ->select('winery_id', DB::raw('count(distinct viticulturist_id) as vit_count'))
@@ -74,8 +114,7 @@ class Index extends Component
                 });
             }
 
-            $items           = $query->orderBy('name')->paginate(15);
-            $vitCountByWinery = $vitCountByWinery;
+            $items = $query->orderBy('name')->paginate(15);
         } else {
             $viticulturistIds = WineryViticulturist::where('supervisor_id', $doId)
                 ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
@@ -96,11 +135,28 @@ class Index extends Component
             $vitCountByWinery = collect();
         }
 
+        // Bodegas disponibles para asignar (no adscritas aún a este supervisor)
+        $assignedWineryIds = SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id');
+
+        $availableQuery = User::whereIn('role', ['winery', 'producer'])
+            ->whereNotIn('id', $assignedWineryIds);
+
+        if ($this->assignSearch) {
+            $s = '%' . strtolower($this->assignSearch) . '%';
+            $availableQuery->where(function ($q) use ($s) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$s])
+                  ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
+            });
+        }
+
+        $availableWineries = $availableQuery->orderBy('name')->limit(20)->get(['id', 'name', 'email']);
+
         return view('livewire.supervisor.census.index', [
             'items'              => $items,
             'wineryCount'        => $wineryCount,
             'viticulturistCount' => $viticulturistCount,
-            'vitCountByWinery'   => $vitCountByWinery,
+            'vitCountByWinery'   => $vitCountByWinery ?? collect(),
+            'availableWineries'  => $availableWineries,
         ]);
     }
 }

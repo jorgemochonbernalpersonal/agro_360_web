@@ -173,6 +173,36 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Comprueba si la bodega tiene una ability concreta habilitada.
+     *
+     * Retrocompatibilidad: si la bodega no tiene NINGUNA ability configurada
+     * (supervisor no ha establecido restricciones) devuelve TRUE para todo,
+     * de modo que el acceso existente no se rompe.
+     */
+    public function hasAbility(string $code): bool
+    {
+        if (! $this->hasWineryAccess()) {
+            return false;
+        }
+
+        $granted = $this->abilities()->pluck('code');
+
+        // Sin restricciones configuradas → acceso total (retrocompatible)
+        if ($granted->isEmpty()) {
+            return true;
+        }
+
+        return $granted->contains($code);
+    }
+
+    public function abilities()
+    {
+        return $this->belongsToMany(Ability::class, 'user_abilities')
+            ->withPivot('granted_by', 'granted_at')
+            ->withTimestamps();
+    }
+
+    /**
      * Perfil del usuario
      */
     public function profile()
