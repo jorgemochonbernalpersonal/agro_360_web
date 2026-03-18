@@ -63,11 +63,45 @@
 
         <!-- 2. Ubicacion -->
         <x-agro.form-section title="Ubicación">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6"
+                x-data="{
+                    communityId: '{{ $autonomous_community_id }}',
+                    provinceId: '{{ $province_id }}',
+                    municipalityId: '{{ $municipality_id }}',
+                    municipalities: @js($initMunicipalities),
+                    allProvinces: @js($allProvinces),
+                    get filteredProvinces() {
+                        if (!this.communityId) return [];
+                        return this.allProvinces.filter(p => String(p.autonomous_community_id) === String(this.communityId));
+                    },
+                    onCommunityChange(value) {
+                        this.communityId = value;
+                        this.provinceId = '';
+                        this.municipalityId = '';
+                        this.municipalities = [];
+                        this.$nextTick(() => {
+                            const p = document.getElementById('province_id');
+                            if (p) { p.value = ''; p.dispatchEvent(new Event('change', { bubbles: true })); }
+                        });
+                    },
+                    async onProvinceChange(value) {
+                        this.provinceId = value;
+                        this.municipalityId = '';
+                        this.municipalities = [];
+                        this.$nextTick(() => {
+                            const m = document.getElementById('municipality_id');
+                            if (m) { m.value = ''; m.dispatchEvent(new Event('change', { bubbles: true })); }
+                        });
+                        if (value) {
+                            this.municipalities = await $wire.getMunicipalities(value);
+                        }
+                    }
+                }">
                 <flux:field>
                     <flux:label for="autonomous_community_id">Comunidad Autónoma *</flux:label>
-                    <flux:select wire:model.live="autonomous_community_id" id="autonomous_community_id"
-                        data-cy="plot-autonomous-community-id" required>
+                    <flux:select wire:model="autonomous_community_id" id="autonomous_community_id"
+                        data-cy="plot-autonomous-community-id" required
+                        x-on:change="onCommunityChange($event.target.value)">
                         <option value="">Seleccionar...</option>
                         @foreach ($autonomousCommunities as $community)
                             <option value="{{ $community->id }}">{{ $community->name }}</option>
@@ -78,29 +112,30 @@
 
                 <flux:field>
                     <flux:label for="province_id">Provincia *</flux:label>
-                    <flux:select wire:model.live="province_id" id="province_id" data-cy="plot-province-id" required
-                        :disabled="!$autonomous_community_id">
+                    <flux:select wire:model="province_id" id="province_id" data-cy="plot-province-id" required
+                        x-bind:disabled="!communityId"
+                        x-bind:value="provinceId"
+                        x-on:change="onProvinceChange($event.target.value)">
                         <option value="">Seleccionar...</option>
-                        @foreach ($provinces as $province)
-                            <option value="{{ $province->id }}">{{ $province->name }}</option>
-                        @endforeach
+                        <template x-for="province in filteredProvinces" :key="province.id">
+                            <option :value="province.id" x-text="province.name"></option>
+                        </template>
                     </flux:select>
                     <flux:error name="province_id" />
                 </flux:field>
 
-                <div wire:key="mun-wrapper-{{ $province_id }}">
-                    <flux:field>
-                        <flux:label for="municipality_id">Municipio *</flux:label>
-                        <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
-                            :disabled="!$province_id">
-                            <option value="">Seleccionar...</option>
-                            @foreach ($municipalities as $municipality)
-                                <option value="{{ $municipality->id }}">{{ $municipality->name }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="municipality_id" />
-                    </flux:field>
-                </div>
+                <flux:field>
+                    <flux:label for="municipality_id">Municipio *</flux:label>
+                    <flux:select wire:model="municipality_id" id="municipality_id" data-cy="plot-municipality-id" required
+                        x-bind:disabled="!provinceId"
+                        x-bind:value="municipalityId">
+                        <option value="">Seleccionar...</option>
+                        <template x-for="mun in municipalities" :key="mun.id">
+                            <option :value="mun.id" x-text="mun.name"></option>
+                        </template>
+                    </flux:select>
+                    <flux:error name="municipality_id" />
+                </flux:field>
 
                 <flux:field>
                     <flux:label for="site_id">Paraje</flux:label>

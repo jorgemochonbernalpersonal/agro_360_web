@@ -19,6 +19,7 @@ use App\Livewire\Concerns\WithRoleBasedFields;
 use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -160,15 +161,14 @@ class Edit extends Component
         ];
     }
 
-    public function updatedAutonomousCommunityId(): void
+    #[Renderless]
+    public function getMunicipalities(string $provinceId): array
     {
-        $this->province_id     = '';
-        $this->municipality_id = '';
-    }
-
-    public function updatedProvinceId(): void
-    {
-        $this->municipality_id = '';
+        if (!$provinceId) return [];
+        return Municipality::where('province_id', $provinceId)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->toArray();
     }
 
     public function update()
@@ -301,12 +301,10 @@ class Edit extends Component
             'sites'          => $this->catalogScope(Site::where('is_archived', false), 'sites')->orderBy('name')->get(),
             'trainingSystems'=> $this->catalogScope(TrainingSystem::where('active', true), 'training_systems')->orderBy('name')->get(),
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])->orderBy('name')->get(),
-            'provinces'      => $this->autonomous_community_id
-                ? Province::where('autonomous_community_id', $this->autonomous_community_id)->orderBy('name')->get(['id', 'name'])
-                : collect(),
-            'municipalities' => $this->province_id
-                ? Municipality::where('province_id', $this->province_id)->orderBy('name')->get(['id', 'name'])
-                : collect(),
+            'allProvinces'   => Province::orderBy('name')->get(['id', 'name', 'autonomous_community_id'])->toArray(),
+            'initMunicipalities' => $this->province_id
+                ? Municipality::where('province_id', $this->province_id)->orderBy('name')->get(['id', 'name'])->toArray()
+                : [],
         ]);
     }
 }
