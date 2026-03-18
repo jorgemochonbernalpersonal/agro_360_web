@@ -155,7 +155,8 @@
       "Read(//c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Supervisor/**)",
       "Bash(xargs -I{} basename {})",
       "Bash(1 mysql:*)",
-      "Bash(kill 1101)"
+      "Bash(kill 1101)",
+      "Bash(npm i:*)"
     ]
   }
 }
