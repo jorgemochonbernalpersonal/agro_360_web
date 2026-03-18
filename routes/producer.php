@@ -300,6 +300,11 @@ Route::middleware(['role:producer', 'check.beta'])
             ->defaults('module', 'SILICIE')
             ->defaults('icon', 'document-chart-bar');
 
+        Route::get('/silicie/infovi', \App\Livewire\Winery\UnderConstruction::class)
+            ->name('silicie.infovi')
+            ->defaults('module', 'INFOVI (AICA)')
+            ->defaults('icon', 'chart-bar');
+
         Route::get('/aica', \App\Livewire\Winery\UnderConstruction::class)
             ->name('aica.index')
             ->defaults('module', 'AICA')

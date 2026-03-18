@@ -1022,7 +1022,8 @@ class NavigationHelper
 
         // ── NORMATIVA BODEGA ──────────────────────────────────────────────
         $menu['winery_normativa'] = [
-            ['icon' => 'document-chart-bar','label' => 'SILICIE',                      'route' => 'producer.silicie.index',                 'active' => request()->routeIs('producer.silicie*'), 'wip' => true],
+            ['icon' => 'document-chart-bar', 'label' => 'SILICIE',       'route' => 'producer.silicie.index',  'active' => request()->routeIs('producer.silicie.index'), 'wip' => true],
+            ['icon' => 'chart-bar',          'label' => 'INFOVI (AICA)', 'route' => 'producer.silicie.infovi', 'active' => request()->routeIs('producer.silicie.infovi'), 'wip' => true],
             ['divider' => true],
             ['icon' => 'document-text',    'label' => 'AICA',                          'route' => 'producer.aica.index',                    'active' => request()->routeIs('producer.aica*'), 'wip' => true, 'new' => true],
             ['icon' => 'shield-check',     'label' => 'Registros Sanitarios',          'route' => 'producer.sanitary-registrations.index',  'active' => request()->routeIs('producer.sanitary-registrations*'), 'new' => true],
@@ -1034,11 +1035,13 @@ class NavigationHelper
 
         // ── NEGOCIO BODEGA ────────────────────────────────────────────────
         $menu['winery_billing'] = [
-            ['icon' => 'arrow-up-tray',           'label' => 'Venta de Productos',    'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
-            ['icon' => 'arrow-down-tray',         'label' => 'Compra de Uva',         'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
+            ['icon' => 'chart-bar-square',        'label' => 'Resumen Económico',      'route' => 'producer.financial-summary.index',       'active' => request()->routeIs('producer.financial-summary*'), 'new' => true],
+            ['icon' => 'presentation-chart-line', 'label' => 'Estadísticas Bodega',    'route' => 'producer.financial-stats-winery',        'active' => request()->routeIs('producer.financial-stats-winery'), 'new' => true],
+            ['divider' => true],
+            ['icon' => 'arrow-down-tray',         'label' => 'Compra de Uva',          'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
+            ['icon' => 'arrow-up-tray',           'label' => 'Venta de Productos',     'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
+            ['icon' => 'document-check',          'label' => 'VeriFactu',              'route' => 'producer.verifactu.index',               'active' => request()->routeIs('producer.verifactu*'), 'new' => true],
             ['icon' => 'users',                   'label' => 'Clientes Bodega',        'route' => 'producer.winery-clients.index',          'active' => request()->routeIs('producer.winery-clients*'), 'new' => true],
-            ['icon' => 'chart-bar',               'label' => 'Resumen Económico',      'route' => 'producer.financial-summary.index',       'active' => request()->routeIs('producer.financial-summary*'), 'new' => true],
-            ['icon' => 'presentation-chart-line', 'label' => 'Estadísticas Bodega',   'route' => 'producer.financial-stats-winery',        'active' => request()->routeIs('producer.financial-stats-winery'), 'new' => true],
             ['divider' => true],
             ['icon' => 'globe-alt',               'label' => 'Exportación',            'route' => 'producer.exports.index',                 'active' => request()->routeIs('producer.exports*'), 'wip' => true, 'new' => true],
             ['icon' => 'sparkles',                'label' => 'Enoturismo',             'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true, 'new' => true],
