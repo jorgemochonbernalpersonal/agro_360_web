@@ -38,6 +38,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'beta_ends_at',
         'beta_access_granted',
         'compra_uva_externa',
+        'organization_id',
     ];
 
     /**
@@ -160,6 +161,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasWineryAccess(): bool
     {
         return in_array($this->role, [self::ROLE_WINERY, self::ROLE_PRODUCER]);
+    }
+
+    /**
+     * Organización a la que pertenece este usuario (winery/DO).
+     */
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     /**

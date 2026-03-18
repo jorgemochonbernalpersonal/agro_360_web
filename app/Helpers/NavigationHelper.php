@@ -71,8 +71,7 @@ class NavigationHelper
                 'label'  => 'Notificaciones',
                 'route'  => 'viticulturist.notifications.index',
                 'active' => request()->routeIs('viticulturist.notifications*'),
-                'wip'    => true,
-                'new'    => true,
+                'badge'  => Cache::remember("nav_badge_notifications_{$user->id}", 60, fn() => $user->unreadNotifications()->count()),
             ];
 
             // GRUPO: CAMPAÑA — gestión de campaña
@@ -107,8 +106,6 @@ class NavigationHelper
                     'label'  => 'Comunicación con Bodega',
                     'route'  => 'viticulturist.bodega-messages.index',
                     'active' => request()->routeIs('viticulturist.bodega-messages*'),
-                    'wip'    => true,
-                    'new'    => true,
                 ],
                 [
                     'icon'   => 'lock-closed',
@@ -306,8 +303,6 @@ class NavigationHelper
                     'label'  => 'Seguros Agrarios',
                     'route'  => 'viticulturist.agri-insurance.index',
                     'active' => request()->routeIs('viticulturist.agri-insurance*'),
-                    'wip'    => true,
-                    'new'    => true,
                 ],
             ];
 
@@ -389,8 +384,6 @@ class NavigationHelper
                     'label'  => 'Subcontratación',
                     'route'  => 'viticulturist.subcontracting.index',
                     'active' => request()->routeIs('viticulturist.subcontracting*'),
-                    'wip'    => true,
-                    'new'    => true,
                 ],
             ];
 
@@ -433,8 +426,6 @@ class NavigationHelper
                     'label'  => 'Costes por Parcela',
                     'route'  => 'viticulturist.plot-costs.index',
                     'active' => request()->routeIs('viticulturist.plot-costs*'),
-                    'wip'    => true,
-                    'new'    => true,
                 ],
                 [
                     'icon' => 'users',
@@ -577,7 +568,6 @@ class NavigationHelper
                     'label'  => 'Operaciones de Bodega',
                     'route'  => 'winery.cellar-operations.index',
                     'active' => request()->routeIs('winery.cellar-operations*'),
-                    'wip'    => true,
                     'new'    => true,
                 ],
             ];
@@ -683,7 +673,6 @@ class NavigationHelper
                     'label'  => 'Proveedores',
                     'route'  => 'winery.suppliers.index',
                     'active' => request()->routeIs('winery.suppliers*'),
-                    'wip'    => true,
                 ],
             ];
 
@@ -695,7 +684,6 @@ class NavigationHelper
                     'label'  => 'Resumen Económico',
                     'route'  => 'winery.financial-summary.index',
                     'active' => request()->routeIs('winery.financial-summary*'),
-                    'wip'    => true,
                     'new'    => true,
                 ],
                 [
@@ -703,7 +691,6 @@ class NavigationHelper
                     'label'  => 'Estadísticas Financieras',
                     'route'  => 'winery.financial-stats.index',
                     'active' => request()->routeIs('winery.financial-stats*'),
-                    'wip'    => true,
                     'new'    => true,
                 ],
                 ['divider' => true],
@@ -712,7 +699,6 @@ class NavigationHelper
                     'label'  => 'Compra de Uva',
                     'route'  => 'winery.invoices.grape-purchase.index',
                     'active' => request()->routeIs('winery.invoices.grape-purchase*'),
-                    'wip'    => true,
                 ],
                 [
                     'icon'   => 'arrow-up-tray',
@@ -725,8 +711,6 @@ class NavigationHelper
                     'label'  => 'VeriFactu',
                     'route'  => 'winery.verifactu.index',
                     'active' => request()->routeIs('winery.verifactu*'),
-                    'wip'    => true,
-                    'new'    => true,
                 ],
                 [
                     'icon'   => 'users',
@@ -775,7 +759,6 @@ class NavigationHelper
                     'label'  => 'Registros Sanitarios',
                     'route'  => 'winery.sanitary-registrations.index',
                     'active' => request()->routeIs('winery.sanitary-registrations*'),
-                    'wip'    => true,
                     'new'    => true,
                 ],
                 [
@@ -783,7 +766,6 @@ class NavigationHelper
                     'label'  => 'Autorizaciones de Embotellado',
                     'route'  => 'winery.bottling-authorizations.index',
                     'active' => request()->routeIs('winery.bottling-authorizations*'),
-                    'wip'    => true,
                     'new'    => true,
                 ],
                 [
@@ -791,7 +773,6 @@ class NavigationHelper
                     'label'  => 'Certificaciones Ecológicas',
                     'route'  => 'winery.eco-certifications.index',
                     'active' => request()->routeIs('winery.eco-certifications*'),
-                    'wip'    => true,
                     'new'    => true,
                 ],
             ];
@@ -804,7 +785,6 @@ class NavigationHelper
                     'label'  => 'Documentos Bodega',
                     'route'  => 'winery.documents.index',
                     'active' => request()->routeIs('winery.documents*'),
-                    'wip'    => true,
                 ],
             ];
 
@@ -821,7 +801,6 @@ class NavigationHelper
                     'label'  => 'Centro de Alertas',
                     'route'  => 'winery.alerts.index',
                     'active' => request()->routeIs('winery.alerts*'),
-                    'wip'    => true,
                     'new'    => true,
                 ],
             ];
@@ -872,7 +851,6 @@ class NavigationHelper
                 'label'  => 'Notificaciones',
                 'route'  => 'viticulturist.notifications.index',
                 'active' => request()->routeIs('viticulturist.notifications*'),
-                'wip'    => true,
                 'new'    => true,
             ],
         ];
@@ -948,7 +926,7 @@ class NavigationHelper
             ['icon' => 'adjustments-vertical','label' => 'Maquinaria',               'route' => 'producer.machinery.index',              'active' => request()->routeIs('producer.machinery*')],
             ['icon' => 'building-storefront', 'label' => 'Almacén de Insumos',       'route' => 'producer.almacen.index',                'active' => request()->routeIs('producer.almacen.*')],
             ['icon' => 'beaker',              'label' => 'Productos Fitosanitarios', 'route' => 'producer.phytosanitary-products.index', 'active' => request()->routeIs('producer.phytosanitary-products.*')],
-            ['icon' => 'user-plus',           'label' => 'Subcontratación',          'route' => 'producer.subcontracting.index',         'active' => request()->routeIs('producer.subcontracting*'), 'wip' => true, 'new' => true],
+            ['icon' => 'user-plus',           'label' => 'Subcontratación',          'route' => 'producer.subcontracting.index',         'active' => request()->routeIs('producer.subcontracting*'), 'new' => true],
         ];
 
         // ── NORMATIVA ─────────────────────────────────────────────────────
@@ -958,7 +936,7 @@ class NavigationHelper
             ['icon' => 'user',              'label' => 'Asesorías Técnicas',         'route' => 'producer.advisory-memberships.index',      'active' => request()->routeIs('producer.advisory-memberships.*')],
             ['icon' => 'identification',    'label' => 'Aplicadores ROPO',           'route' => 'producer.field-applicators.index',         'active' => request()->routeIs('producer.field-applicators.*')],
             ['icon' => 'cog-6-tooth',       'label' => 'Equipos ITB/ITEA',           'route' => 'producer.field-equipment.index',           'active' => request()->routeIs('producer.field-equipment.*')],
-            ['icon' => 'shield-exclamation','label' => 'Seguros Agrarios',           'route' => 'producer.agri-insurance.index',            'active' => request()->routeIs('producer.agri-insurance*'), 'wip' => true, 'new' => true],
+            ['icon' => 'shield-exclamation','label' => 'Seguros Agrarios',           'route' => 'producer.agri-insurance.index',            'active' => request()->routeIs('producer.agri-insurance*'), 'new' => true],
         ];
 
         // ── PAC ───────────────────────────────────────────────────────────
@@ -973,9 +951,9 @@ class NavigationHelper
         // ── NEGOCIO VITICULTOR ────────────────────────────────────────────
         $menu['billing'] = [
             ['icon' => 'calculator',             'label' => 'Facturas',               'route' => 'producer.invoices.index',          'active' => request()->routeIs('producer.invoices.*') && !request()->routeIs('producer.invoices.products.*') && !request()->routeIs('producer.invoices.grape-purchase.*')],
-            ['icon' => 'document-check',         'label' => 'VeriFactu',              'route' => 'producer.verifactu.index',         'active' => request()->routeIs('producer.verifactu*'), 'wip' => true, 'new' => true],
+            ['icon' => 'document-check',         'label' => 'VeriFactu',              'route' => 'producer.verifactu.index',         'active' => request()->routeIs('producer.verifactu*'), 'new' => true],
             ['icon' => 'shopping-cart',          'label' => 'Cosecha Comercializada', 'route' => 'producer.marketed-harvests.index', 'active' => request()->routeIs('producer.marketed-harvests.*')],
-            ['icon' => 'table-cells',            'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',        'active' => request()->routeIs('producer.plot-costs*'), 'wip' => true, 'new' => true],
+            ['icon' => 'table-cells',            'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',        'active' => request()->routeIs('producer.plot-costs*'), 'new' => true],
             ['icon' => 'users',                  'label' => 'Clientes',               'route' => 'producer.clients.index',           'active' => request()->routeIs('producer.clients.*')],
             ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Financieras','route' => 'producer.financial-stats',        'active' => request()->routeIs('producer.financial-stats')],
         ];
@@ -998,16 +976,16 @@ class NavigationHelper
             ['icon' => 'archive-box',             'label' => 'Uva / Mosto externo',       'route' => 'producer.external-grape.index','active' => request()->routeIs('producer.external-grape*')],
             ['icon' => 'arrows-right-left',       'label' => 'Vinos',                     'route' => 'producer.wines.index',         'active' => request()->routeIs('producer.wines*')],
             ['icon' => 'user-circle',             'label' => 'Enólogos',                  'route' => 'producer.oenologists.index',   'active' => request()->routeIs('producer.oenologists*')],
-            ['icon' => 'magnifying-glass',        'label' => 'Análisis de Lab.',           'route' => 'producer.wine-analysis.index', 'active' => request()->routeIs('producer.wine-analysis*'), 'wip' => true],
+            ['icon' => 'magnifying-glass',        'label' => 'Análisis de Lab.',           'route' => 'producer.wine-analysis.index', 'active' => request()->routeIs('producer.wine-analysis*')],
             ['icon' => 'archive-box',             'label' => 'Productos',                  'route' => 'producer.product-lots.index',  'active' => request()->routeIs('producer.product-lots*')],
             ['icon' => 'magnifying-glass-circle', 'label' => 'Trazabilidad',               'route' => 'producer.traceability.index',  'active' => request()->routeIs('producer.traceability*'), 'wip' => true, 'new' => true],
-            ['icon' => 'archive-box-arrow-down',  'label' => 'Embotellado y Expediciones','route' => 'producer.bottling.index',        'active' => request()->routeIs('producer.bottling*'), 'wip' => true, 'new' => true],
+            ['icon' => 'archive-box-arrow-down',  'label' => 'Embotellado y Expediciones','route' => 'producer.bottling.index',        'active' => request()->routeIs('producer.bottling*'), 'new' => true],
             ['icon' => 'tag',                     'label' => 'Etiquetado',                'route' => 'producer.label-batches.index',   'active' => request()->routeIs('producer.label-batches*') || request()->routeIs('producer.labeling*'), 'new' => true],
             ['icon' => 'document-text',           'label' => 'Fichas Técnicas y Catas',   'route' => 'producer.product-sheets.index',  'active' => request()->routeIs('producer.product-sheets*') || request()->routeIs('producer.tasting-notes*'), 'new' => true],
             ['icon' => 'archive-box-x-mark',      'label' => 'Subproductos',              'route' => 'producer.subproducts.index',     'active' => request()->routeIs('producer.subproducts*'), 'new' => true],
             ['divider' => true],
-            ['icon' => 'building-storefront',     'label' => 'Insumos de Bodega',          'route' => 'producer.winery-supplies.index','active' => request()->routeIs('producer.winery-supplies*'), 'wip' => true],
-            ['icon' => 'truck',                   'label' => 'Proveedores',                'route' => 'producer.suppliers.index',     'active' => request()->routeIs('producer.suppliers*'), 'wip' => true],
+            ['icon' => 'building-storefront',     'label' => 'Insumos de Bodega',          'route' => 'producer.winery-supplies.index','active' => request()->routeIs('producer.winery-supplies*')],
+            ['icon' => 'truck',                   'label' => 'Proveedores',                'route' => 'producer.suppliers.index',     'active' => request()->routeIs('producer.suppliers*')],
         ];
 
         // ── NORMATIVA BODEGA ──────────────────────────────────────────────
@@ -1015,9 +993,9 @@ class NavigationHelper
             ['icon' => 'document-chart-bar','label' => 'SILICIE',                      'route' => 'producer.silicie.index',                 'active' => request()->routeIs('producer.silicie*'), 'wip' => true],
             ['divider' => true],
             ['icon' => 'document-text',    'label' => 'AICA',                          'route' => 'producer.aica.index',                    'active' => request()->routeIs('producer.aica*'), 'wip' => true, 'new' => true],
-            ['icon' => 'shield-check',     'label' => 'Registros Sanitarios',          'route' => 'producer.sanitary-registrations.index',  'active' => request()->routeIs('producer.sanitary-registrations*'), 'wip' => true, 'new' => true],
-            ['icon' => 'identification',   'label' => 'Autorizaciones de Embotellado', 'route' => 'producer.bottling-authorizations.index', 'active' => request()->routeIs('producer.bottling-authorizations*'), 'wip' => true, 'new' => true],
-            ['icon' => 'sparkles',         'label' => 'Certificaciones Ecológicas',    'route' => 'producer.eco-certifications.index',      'active' => request()->routeIs('producer.eco-certifications*'), 'wip' => true, 'new' => true],
+            ['icon' => 'shield-check',     'label' => 'Registros Sanitarios',          'route' => 'producer.sanitary-registrations.index',  'active' => request()->routeIs('producer.sanitary-registrations*'), 'new' => true],
+            ['icon' => 'identification',   'label' => 'Autorizaciones de Embotellado', 'route' => 'producer.bottling-authorizations.index', 'active' => request()->routeIs('producer.bottling-authorizations*'), 'new' => true],
+            ['icon' => 'sparkles',         'label' => 'Certificaciones Ecológicas',    'route' => 'producer.eco-certifications.index',      'active' => request()->routeIs('producer.eco-certifications*'), 'new' => true],
         ];
 
         // ── NEGOCIO BODEGA ────────────────────────────────────────────────

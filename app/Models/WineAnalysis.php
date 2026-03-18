@@ -2,53 +2,82 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WineAnalysis extends Model
 {
+    // ─── Constants ─────────────────────────────────────────────────────────────
+
     const ANALYSIS_TYPES = [
-        'own'      => 'Análisis propio',
-        'external' => 'Laboratorio externo',
+        'standard'   => 'Estándar',
+        'complete'   => 'Completo',
+        'organic'    => 'Ecológico',
+        'custom'     => 'Personalizado',
     ];
 
+    const RESULTS = [
+        'pending' => 'Pendiente',
+        'passed'  => 'Conforme',
+        'failed'  => 'No conforme',
+    ];
+
+    // ─── Fillable ──────────────────────────────────────────────────────────────
+
     protected $fillable = [
+        'user_id',
         'wine_id',
         'container_id',
-        'oenologist_id',
         'analysis_date',
         'analysis_type',
+        'laboratory',
         'laboratory_name',
-        'alcohol',
-        'residual_sugar',
+        'sample_reference',
+        'alcoholic_strength',
         'total_acidity',
         'volatile_acidity',
+        'residual_sugar',
+        'free_so2',
+        'total_so2',
         'ph',
-        'so2_free',
-        'so2_total',
         'density',
         'turbidity',
         'color_intensity',
         'malic_acid',
+        'alcohol',
+        'so2_free',
+        'so2_total',
         'document',
+        'result',
         'notes',
         'created_by',
     ];
 
     protected $casts = [
-        'analysis_date'   => 'date',
-        'alcohol'         => 'decimal:2',
-        'residual_sugar'  => 'decimal:2',
-        'total_acidity'   => 'decimal:2',
-        'volatile_acidity'=> 'decimal:2',
-        'ph'              => 'decimal:2',
-        'so2_free'        => 'decimal:2',
-        'so2_total'       => 'decimal:2',
-        'density'         => 'decimal:4',
-        'turbidity'       => 'decimal:2',
-        'color_intensity' => 'decimal:3',
-        'malic_acid'      => 'decimal:2',
+        'analysis_date'      => 'date',
+        'alcoholic_strength' => 'decimal:2',
+        'alcohol'            => 'decimal:2',
+        'residual_sugar'     => 'decimal:2',
+        'total_acidity'      => 'decimal:2',
+        'volatile_acidity'   => 'decimal:2',
+        'ph'                 => 'decimal:2',
+        'free_so2'           => 'decimal:1',
+        'total_so2'          => 'decimal:1',
+        'so2_free'           => 'decimal:2',
+        'so2_total'          => 'decimal:2',
+        'density'            => 'decimal:4',
+        'turbidity'          => 'decimal:2',
+        'color_intensity'    => 'decimal:3',
+        'malic_acid'         => 'decimal:2',
     ];
+
+    // ─── Relations ─────────────────────────────────────────────────────────────
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function wine(): BelongsTo
     {
@@ -70,16 +99,46 @@ class WineAnalysis extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function getAnalysisTypeLabelAttribute(): string
+    // ─── Accessors ─────────────────────────────────────────────────────────────
+
+    public function getTypeLabelAttribute(): string
     {
         return self::ANALYSIS_TYPES[$this->analysis_type] ?? $this->analysis_type;
     }
 
-    /**
-     * Indica si el SO₂ libre está por debajo del umbral mínimo de protección (~20 mg/L).
-     */
-    public function isSo2Freelow(): bool
+    public function getResultLabelAttribute(): string
     {
-        return $this->so2_free !== null && (float) $this->so2_free < 20;
+        return self::RESULTS[$this->result ?? 'pending'] ?? ($this->result ?? 'Pendiente');
+    }
+
+    /** @deprecated kept for backward-compat with Wine::Show */
+    public function getAnalysisTypeLabelAttribute(): string
+    {
+        return $this->getTypeLabelAttribute();
+    }
+
+    // ─── Scopes ────────────────────────────────────────────────────────────────
+
+    public function scopeForUser(Builder $query, int $userId): Builder
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    public function scopeForWine(Builder $query, int $wineId): Builder
+    {
+        return $query->where('wine_id', $wineId);
+    }
+
+    // ─── Helpers ───────────────────────────────────────────────────────────────
+
+    /**
+     * Indicates if free SO₂ is below the minimum protection threshold (~20 mg/L).
+     * Works with both old (so2_free) and new (free_so2) column names.
+     */
+    public function isSo2FreeLow(): bool
+    {
+        $value = $this->free_so2 ?? $this->so2_free;
+
+        return $value !== null && (float) $value < 20;
     }
 }

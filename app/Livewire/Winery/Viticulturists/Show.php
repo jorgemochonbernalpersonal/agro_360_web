@@ -56,6 +56,13 @@ class Show extends Component
             'inviteEmail.email'    => 'El email no es válido.',
         ]);
 
+        // Rate limit: max 1 envío por hora
+        if ($this->viticulturist->invitation_sent_at
+            && $this->viticulturist->invitation_sent_at->isAfter(now()->subHour())) {
+            $this->toastError('Invitación enviada hace menos de 1 hora. Espera antes de reenviar.');
+            return;
+        }
+
         $emailTaken = User::where('email', $this->inviteEmail)
             ->where('id', '!=', $this->viticulturist->id)
             ->exists();

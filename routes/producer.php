@@ -189,10 +189,11 @@ Route::middleware(['role:producer', 'check.beta'])
         });
 
         // ── Análisis de laboratorio ───────────────────────────────────────
-        Route::get('/wine-analysis', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('wine-analysis.index')
-            ->defaults('module', 'Análisis de Lab.')
-            ->defaults('icon', 'beaker');
+        Route::prefix('wine-analysis')->name('wine-analysis.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\WineAnalysis\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\WineAnalysis\Create::class)->name('create');
+            Route::get('/{analysis}/edit', \App\Livewire\Winery\WineAnalysis\Edit::class)->name('edit');
+        });
 
         // ── Lotes de producto ─────────────────────────────────────────────
         Route::prefix('product-lots')->name('product-lots.')->group(function () {
@@ -251,20 +252,23 @@ Route::middleware(['role:producer', 'check.beta'])
             ->defaults('module', 'AICA')
             ->defaults('icon', 'document-text');
 
-        Route::get('/sanitary-registrations', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('sanitary-registrations.index')
-            ->defaults('module', 'Registros Sanitarios')
-            ->defaults('icon', 'shield-check');
+        Route::prefix('sanitary-registrations')->name('sanitary-registrations.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\SanitaryRegistrations\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\SanitaryRegistrations\Create::class)->name('create');
+            Route::get('/{sanitaryRegistration}/edit', \App\Livewire\Winery\SanitaryRegistrations\Edit::class)->name('edit');
+        });
 
-        Route::get('/bottling-authorizations', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('bottling-authorizations.index')
-            ->defaults('module', 'Autorizaciones de Embotellado')
-            ->defaults('icon', 'identification');
+        Route::prefix('bottling-authorizations')->name('bottling-authorizations.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\BottlingAuthorizations\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\BottlingAuthorizations\Create::class)->name('create');
+            Route::get('/{bottlingAuthorization}/edit', \App\Livewire\Winery\BottlingAuthorizations\Edit::class)->name('edit');
+        });
 
-        Route::get('/eco-certifications', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('eco-certifications.index')
-            ->defaults('module', 'Certificaciones Ecológicas')
-            ->defaults('icon', 'sparkles');
+        Route::prefix('eco-certifications')->name('eco-certifications.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\EcoCertifications\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\EcoCertifications\Create::class)->name('create');
+            Route::get('/{ecoCertification}/edit', \App\Livewire\Winery\EcoCertifications\Edit::class)->name('edit');
+        });
 
         // ── Negocio bodega ────────────────────────────────────────────────
 
@@ -279,15 +283,17 @@ Route::middleware(['role:producer', 'check.beta'])
             ->defaults('icon', 'sparkles');
 
         // ── Sistema bodega ────────────────────────────────────────────────
-        Route::get('/winery-supplies', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('winery-supplies.index')
-            ->defaults('module', 'Insumos de Bodega')
-            ->defaults('icon', 'building-storefront');
+        Route::prefix('winery-supplies')->name('winery-supplies.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\WinerySupplies\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\WinerySupplies\Create::class)->name('create');
+            Route::get('/{winerySupply}/edit', \App\Livewire\Winery\WinerySupplies\Edit::class)->name('edit');
+        });
 
-        Route::get('/suppliers', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('suppliers.index')
-            ->defaults('module', 'Proveedores')
-            ->defaults('icon', 'truck');
+        Route::prefix('suppliers')->name('suppliers.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\Suppliers\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\Suppliers\Create::class)->name('create');
+            Route::get('/{supplier}/edit', \App\Livewire\Winery\Suppliers\Edit::class)->name('edit');
+        });
 
         // ── Módulos condicionales (compra_uva_externa = true) ─────────────
         Route::middleware(\App\Http\Middleware\EnsureProducerBuysExternalGrape::class)->group(function () {
@@ -482,10 +488,11 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{product}/edit', PhytosanitaryProductsEdit::class)->name('edit');
         });
 
-        Route::get('/subcontracting', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('subcontracting.index')
-            ->defaults('module', 'Subcontratación')
-            ->defaults('icon', 'user-plus');
+        Route::prefix('subcontracting')->name('subcontracting.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Subcontracting\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Subcontracting\Create::class)->name('create');
+            Route::get('/{record}/edit', \App\Livewire\Viticulturist\Subcontracting\Edit::class)->name('edit');
+        });
 
         // ── Normativa viticultor ──────────────────────────────────────────
         Route::prefix('exploitations')->name('exploitations.')->group(function () {
@@ -518,10 +525,11 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{fieldEquipment}/edit', \App\Livewire\Viticulturist\FieldEquipment\Edit::class)->name('edit');
         });
 
-        Route::get('/agri-insurance', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('agri-insurance.index')
-            ->defaults('module', 'Seguros Agrarios')
-            ->defaults('icon', 'shield-exclamation');
+        Route::prefix('agri-insurance')->name('agri-insurance.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\AgriInsurance\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\AgriInsurance\Create::class)->name('create');
+            Route::get('/{record}/edit', \App\Livewire\Viticulturist\AgriInsurance\Edit::class)->name('edit');
+        });
 
         // ── PAC ───────────────────────────────────────────────────────────
         Route::prefix('pac')->name('pac.')->group(function () {
@@ -545,9 +553,10 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{marketedHarvest}/edit', \App\Livewire\Viticulturist\MarketedHarvests\Edit::class)->name('edit');
         });
 
-        Route::get('/plot-costs', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('plot-costs.index')
-            ->defaults('module', 'Costes por Parcela')
-            ->defaults('icon', 'table-cells');
+        Route::prefix('plot-costs')->name('plot-costs.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PlotCosts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PlotCosts\Create::class)->name('create');
+            Route::get('/{record}/edit', \App\Livewire\Viticulturist\PlotCosts\Edit::class)->name('edit');
+        });
 
     });

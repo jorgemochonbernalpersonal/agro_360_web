@@ -145,7 +145,14 @@
       "Bash(git commit:*)",
       "Bash(cd \"C:\\\\Users\\\\dispo\\\\Desktop\\\\personal\\\\agro_360_web\" && php artisan view:clear && php artisan config:clear 2>&1 && php -r \"require 'vendor/autoload.php'; require 'bootstrap/app.php';\" 2>&1 | head -5)",
       "Bash(find app/Livewire/DenominacionOrigen -name \"*.php\" | sort\nfind resources/views/livewire/denominacion-origen -name \"*.blade.php\" | sort)",
-      "Bash(cd C:/Users/dispo/Desktop/personal/agro_360_web && cp app/Models/CuadernoAccessRequest.php app/Models/NotebookAccessRequest.php && rm app/Models/CuadernoAccessRequest.php)"
+      "Bash(cd C:/Users/dispo/Desktop/personal/agro_360_web && cp app/Models/CuadernoAccessRequest.php app/Models/NotebookAccessRequest.php && rm app/Models/CuadernoAccessRequest.php)",
+      "Bash(mkdir -p \"C:/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Viticulturist/Notifications\")",
+      "Bash(mkdir -p \"C:/Users/dispo/Desktop/personal/agro_360_web/resources/views/livewire/viticulturist/notifications\")",
+      "Bash(mkdir -p /c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Viticulturist/PlotCosts)",
+      "Bash(mkdir -p /c/Users/dispo/Desktop/personal/agro_360_web/resources/views/livewire/viticulturist/plot-costs)",
+      "Bash(do)",
+      "Bash(echo \"=== $f ===\")",
+      "Read(//c/Users/dispo/Desktop/personal/agro_360_web/app/Livewire/Supervisor/**)"
     ]
   }
 }

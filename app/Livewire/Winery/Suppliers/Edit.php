@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Livewire\Winery\Suppliers;
+
+use App\Livewire\Concerns\WithToastNotifications;
+use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+
+class Edit extends Component
+{
+    use WithToastNotifications;
+
+    public Supplier $supplier;
+
+    public string $name           = '';
+    public string $contact_person = '';
+    public string $email          = '';
+    public string $phone          = '';
+    public string $address        = '';
+    public string $vat_number     = '';
+    public string $category       = '';
+    public string $notes          = '';
+
+    public function mount(Supplier $supplier): void
+    {
+        abort_if($supplier->user_id !== Auth::id(), 403);
+        $this->supplier       = $supplier;
+        $this->name           = $supplier->name;
+        $this->contact_person = $supplier->contact_person ?? '';
+        $this->email          = $supplier->email ?? '';
+        $this->phone          = $supplier->phone ?? '';
+        $this->address        = $supplier->address ?? '';
+        $this->vat_number     = $supplier->vat_number ?? '';
+        $this->category       = $supplier->category;
+        $this->notes          = $supplier->notes ?? '';
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name'           => ['required', 'string', 'max:200'],
+            'contact_person' => ['nullable', 'string', 'max:150'],
+            'email'          => ['nullable', 'email', 'max:200'],
+            'phone'          => ['nullable', 'string', 'max:50'],
+            'address'        => ['nullable', 'string', 'max:255'],
+            'vat_number'     => ['nullable', 'string', 'max:50'],
+            'category'       => ['required', 'in:' . implode(',', array_keys(Supplier::CATEGORIES))],
+            'notes'          => ['nullable', 'string'],
+        ];
+    }
+
+    public function save(): void
+    {
+        $this->validate();
+
+        $this->supplier->update([
+            'name'           => $this->name,
+            'contact_person' => $this->contact_person ?: null,
+            'email'          => $this->email ?: null,
+            'phone'          => $this->phone ?: null,
+            'address'        => $this->address ?: null,
+            'vat_number'     => $this->vat_number ?: null,
+            'category'       => $this->category,
+            'notes'          => $this->notes ?: null,
+        ]);
+
+        $this->toastSuccess('Proveedor actualizado correctamente.');
+        $this->redirect(route('winery.suppliers.index'), navigate: true);
+    }
+
+    public function render()
+    {
+        return view('livewire.winery.suppliers.edit', [
+            'categories' => Supplier::CATEGORIES,
+        ])->layout('layouts.app');
+    }
+}

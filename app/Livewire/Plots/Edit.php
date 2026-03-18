@@ -18,7 +18,6 @@ use App\Models\Municipality;
 use App\Livewire\Concerns\WithRoleBasedFields;
 use App\Livewire\Concerns\WithUserFilters;
 use App\Livewire\Concerns\WithToastNotifications;
-use Livewire\Attributes\Renderless;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -61,6 +60,10 @@ class Edit extends Component
     public $pac_eligible_area = '';
     public $non_eligible_area = '';
 
+    // Cascading location data (managed server-side to avoid Alpine/Livewire morph conflict)
+    public array $provinces     = [];
+    public array $municipalities = [];
+
     public function mount(Plot $plot)
     {
         if (!Auth::user()->can('update', $plot)) {
@@ -101,6 +104,16 @@ class Edit extends Component
         $this->number_of_vines = $plot->number_of_vines ?? '';
         $this->pac_eligible_area = $plot->pac_eligible_area ?? '';
         $this->non_eligible_area = $plot->non_eligible_area ?? '';
+
+        // Pre-populate cascading selects
+        if ($this->autonomous_community_id) {
+            $this->provinces = Province::where('autonomous_community_id', $this->autonomous_community_id)
+                ->orderBy('name')->get(['id', 'name'])->toArray();
+        }
+        if ($this->province_id) {
+            $this->municipalities = Municipality::where('province_id', $this->province_id)
+                ->orderBy('name')->get(['id', 'name'])->toArray();
+        }
     }
 
     protected function rules(): array
@@ -154,32 +167,22 @@ class Edit extends Component
         ];
     }
 
-    #[Renderless]
-    public function fetchProvinces(int $communityId): array
+    public function updatedAutonomousCommunityId($value): void
     {
-        $this->province_id = '';
+        $this->province_id     = '';
         $this->municipality_id = '';
-        return Province::where('autonomous_community_id', $communityId)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->toArray();
+        $this->municipalities  = [];
+        $this->provinces = $value
+            ? Province::where('autonomous_community_id', $value)->orderBy('name')->get(['id', 'name'])->toArray()
+            : [];
     }
 
-    #[Renderless]
-    public function fetchMunicipalities(int $provinceId): array
+    public function updatedProvinceId($value): void
     {
-        $this->province_id = $provinceId;
         $this->municipality_id = '';
-        return Municipality::where('province_id', $provinceId)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->toArray();
-    }
-
-    #[Renderless]
-    public function selectMunicipality(int $municipalityId): void
-    {
-        $this->municipality_id = $municipalityId;
+        $this->municipalities = $value
+            ? Municipality::where('province_id', $value)->orderBy('name')->get(['id', 'name'])->toArray()
+            : [];
     }
 
     public function update()
@@ -299,18 +302,6 @@ class Edit extends Component
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name'])
                 ->orderBy('name')
                 ->get(),
-            'provinces' => $this->autonomous_community_id 
-                ? Province::select(['id', 'name', 'autonomous_community_id'])
-                    ->where('autonomous_community_id', $this->autonomous_community_id)
-                    ->orderBy('name')
-                    ->get()
-                : collect(),
-            'municipalities' => $this->province_id
-                ? Municipality::select(['id', 'name', 'province_id'])
-                    ->where('province_id', $this->province_id)
-                    ->orderBy('name')
-                    ->get()
-                : collect(),
         ])->layout('layouts.app');
     }
 }

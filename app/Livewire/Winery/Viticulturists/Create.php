@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class Create extends AbstractCreate
 {
@@ -20,7 +21,7 @@ class Create extends AbstractCreate
     {
         return [
             'name'  => ['required', 'string', 'max:255'],
-            'dni'   => ['nullable', 'string', 'max:20', 'unique:users,dni'],
+            'dni'   => ['nullable', 'string', 'max:20', Rule::unique('users', 'dni')->where('can_login', true)],
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:20'],
             'notes' => ['nullable', 'string', 'max:1000'],

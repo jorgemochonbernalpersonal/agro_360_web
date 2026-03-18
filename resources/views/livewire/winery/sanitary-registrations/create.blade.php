@@ -1,0 +1,77 @@
+<x-agro.form-card
+    title="Nuevo Registro Sanitario"
+    description="Registra un nuevo registro sanitario de la bodega."
+    icon="shield-check"
+    icon-color="from-teal-500 to-teal-700"
+    :back-url="roleRoute('sanitary-registrations.index')"
+>
+    <form wire:submit="save" class="space-y-8">
+        <x-agro.form-section title="Identificación" color="teal">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <flux:field>
+                    <flux:label required>N.º de registro</flux:label>
+                    <flux:input wire:model="registration_number" type="text" placeholder="Ej. ES-MA-0001234/A" required />
+                    <flux:error name="registration_number" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label required>Tipo de registro</flux:label>
+                    <flux:select wire:model="registration_type" required>
+                        @foreach($types as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="registration_type" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label required>Estado</flux:label>
+                    <flux:select wire:model="status" required>
+                        @foreach($statuses as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="status" />
+                </flux:field>
+
+                <flux:field class="md:col-span-2">
+                    <flux:label>Descripción de la actividad</flux:label>
+                    <flux:input wire:model="activity_description" type="text" placeholder="Descripción de la actividad registrada" />
+                    <flux:error name="activity_description" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Organismo emisor</flux:label>
+                    <flux:input wire:model="issuing_authority" type="text" placeholder="Ej. AESAN, CCAA..." />
+                    <flux:error name="issuing_authority" />
+                </flux:field>
+            </div>
+        </x-agro.form-section>
+
+        <x-agro.form-section title="Fechas" color="teal">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <flux:field>
+                    <flux:label>Fecha de registro</flux:label>
+                    <flux:input wire:model="registration_date" type="date" />
+                    <flux:error name="registration_date" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Fecha de renovación</flux:label>
+                    <flux:input wire:model="renewal_date" type="date" />
+                    <flux:error name="renewal_date" />
+                </flux:field>
+            </div>
+        </x-agro.form-section>
+
+        <x-agro.form-section title="Notas" color="teal">
+            <flux:field>
+                <flux:label>Observaciones</flux:label>
+                <flux:textarea wire:model="notes" rows="2" placeholder="Condiciones, observaciones..." />
+                <flux:error name="notes" />
+            </flux:field>
+        </x-agro.form-section>
+
+        <x-agro.form-actions :back-url="roleRoute('sanitary-registrations.index')" submit-label="Guardar registro" />
+    </form>
+</x-agro.form-card>

@@ -141,20 +141,18 @@ Route::middleware(['role:winery,producer'])
         // ── Elaboración de vino ───────────────────────────────────────
         Route::get('/wine-process', fn() => redirect()->route('winery.wines.index'))->name('wine-process.index');
 
-        // ── Análisis de laboratorio (en construcción) ────────────────
-        Route::get('/wine-analysis', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('wine-analysis.index')
-            ->defaults('module', 'Análisis de Lab.')
-            ->defaults('icon', 'beaker');
+        // ── Análisis de laboratorio ───────────────────────────────────
+        Route::get('/wine-analysis', \App\Livewire\Winery\WineAnalysis\Index::class)->name('wine-analysis.index');
+        Route::get('/wine-analysis/create', \App\Livewire\Winery\WineAnalysis\Create::class)->name('wine-analysis.create');
+        Route::get('/wine-analysis/{analysis}/edit', \App\Livewire\Winery\WineAnalysis\Edit::class)->name('wine-analysis.edit');
 
         // ── Inventario de insumos de bodega ───────────────────────────
         Route::get('/inventory', fn() => redirect()->route('winery.winery-supplies.index'))->name('inventory.index');
 
-        // ── Proveedores (en construcción) ─────────────────────────────
-        Route::get('/suppliers', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('suppliers.index')
-            ->defaults('module', 'Proveedores')
-            ->defaults('icon', 'truck');
+        // ── Proveedores ───────────────────────────────────────────────
+        Route::get('/suppliers', \App\Livewire\Winery\Suppliers\Index::class)->name('suppliers.index');
+        Route::get('/suppliers/create', \App\Livewire\Winery\Suppliers\Create::class)->name('suppliers.create');
+        Route::get('/suppliers/{supplier}/edit', \App\Livewire\Winery\Suppliers\Edit::class)->name('suppliers.edit');
 
         // ── SILICIE (en construcción) ─────────────────────────────────
         Route::get('/silicie', \App\Livewire\Winery\UnderConstruction::class)
@@ -163,23 +161,16 @@ Route::middleware(['role:winery,producer'])
             ->defaults('icon', 'document-chart-bar');
         Route::get('/silicie/movements', fn() => redirect()->route('winery.silicie.dashboard'))->name('silicie.movements.index');
 
-        // ── Documentos Bodega (en construcción) ───────────────────────
-        Route::get('/documents', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('documents.index')
-            ->defaults('module', 'Documentos Bodega')
-            ->defaults('icon', 'folder-open');
+        // ── Documentos Bodega ─────────────────────────────────────────
+        Route::get('/documents', \App\Livewire\Winery\Documents\Index::class)->name('documents.index');
+        Route::get('/documents/create', \App\Livewire\Winery\Documents\Create::class)->name('documents.create');
+        Route::get('/documents/{wineryDocument}/edit', \App\Livewire\Winery\Documents\Edit::class)->name('documents.edit');
 
-        // ── Resumen Económico (en construcción) ───────────────────────
-        Route::get('/financial-summary', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('financial-summary.index')
-            ->defaults('module', 'Resumen Económico')
-            ->defaults('icon', 'chart-bar-square');
+        // ── Resumen Económico ─────────────────────────────────────────
+        Route::get('/financial-summary', \App\Livewire\Winery\Financial\Summary::class)->name('financial-summary.index');
 
-        // ── Estadísticas Financieras (en construcción) ────────────────
-        Route::get('/financial-stats', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('financial-stats.index')
-            ->defaults('module', 'Estadísticas Financieras')
-            ->defaults('icon', 'presentation-chart-bar');
+        // ── Estadísticas Financieras ──────────────────────────────────
+        Route::get('/financial-stats', \App\Livewire\Winery\Financial\Stats::class)->name('financial-stats.index');
 
         // ── Embotellado ───────────────────────────────────────────────
         Route::get('/bottling', \App\Livewire\Winery\Bottling\Index::class)->name('bottling.index');
@@ -227,11 +218,12 @@ Route::middleware(['role:winery,producer'])
             ->defaults('module', 'Trazabilidad')
             ->defaults('icon', 'magnifying-glass-circle');
 
-        // ── Operaciones de Bodega (en construcción) ───────────────────
-        Route::get('/cellar-operations', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('cellar-operations.index')
-            ->defaults('module', 'Operaciones de Bodega')
-            ->defaults('icon', 'calendar-days');
+        // ── Operaciones de Bodega ─────────────────────────────────────
+        Route::prefix('cellar-operations')->name('cellar-operations.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\CellarOperations\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\CellarOperations\Create::class)->name('create');
+            Route::get('/{operation}/edit', \App\Livewire\Winery\CellarOperations\Edit::class)->name('edit');
+        });
 
         // ── Meteorología (en construcción) ────────────────────────────
         Route::get('/meteorology', \App\Livewire\Winery\UnderConstruction::class)
@@ -239,11 +231,8 @@ Route::middleware(['role:winery,producer'])
             ->defaults('module', 'Meteorología')
             ->defaults('icon', 'cloud');
 
-        // ── Centro de Alertas (en construcción) ───────────────────────
-        Route::get('/alerts', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('alerts.index')
-            ->defaults('module', 'Centro de Alertas')
-            ->defaults('icon', 'bell-alert');
+        // ── Centro de Alertas ─────────────────────────────────────────
+        Route::get('/alerts', \App\Livewire\Winery\Alerts\Dashboard::class)->name('alerts.index');
 
         // ── VeriFactu / facturación electrónica ───────────────────────
         Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
@@ -254,20 +243,20 @@ Route::middleware(['role:winery,producer'])
             ->defaults('module', 'AICA')
             ->defaults('icon', 'document-text');
 
-        Route::get('/sanitary-registrations', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('sanitary-registrations.index')
-            ->defaults('module', 'Registros Sanitarios')
-            ->defaults('icon', 'shield-check');
+        // ── Registros Sanitarios ──────────────────────────────────────
+        Route::get('/sanitary-registrations', \App\Livewire\Winery\SanitaryRegistrations\Index::class)->name('sanitary-registrations.index');
+        Route::get('/sanitary-registrations/create', \App\Livewire\Winery\SanitaryRegistrations\Create::class)->name('sanitary-registrations.create');
+        Route::get('/sanitary-registrations/{sanitaryRegistration}/edit', \App\Livewire\Winery\SanitaryRegistrations\Edit::class)->name('sanitary-registrations.edit');
 
-        Route::get('/bottling-authorizations', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('bottling-authorizations.index')
-            ->defaults('module', 'Autorizaciones de Embotellado')
-            ->defaults('icon', 'identification');
+        // ── Autorizaciones de Embotellado ─────────────────────────────
+        Route::get('/bottling-authorizations', \App\Livewire\Winery\BottlingAuthorizations\Index::class)->name('bottling-authorizations.index');
+        Route::get('/bottling-authorizations/create', \App\Livewire\Winery\BottlingAuthorizations\Create::class)->name('bottling-authorizations.create');
+        Route::get('/bottling-authorizations/{bottlingAuthorization}/edit', \App\Livewire\Winery\BottlingAuthorizations\Edit::class)->name('bottling-authorizations.edit');
 
-        Route::get('/eco-certifications', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('eco-certifications.index')
-            ->defaults('module', 'Certificaciones Ecológicas')
-            ->defaults('icon', 'sparkles');
+        // ── Certificaciones Ecológicas ────────────────────────────────
+        Route::get('/eco-certifications', \App\Livewire\Winery\EcoCertifications\Index::class)->name('eco-certifications.index');
+        Route::get('/eco-certifications/create', \App\Livewire\Winery\EcoCertifications\Create::class)->name('eco-certifications.create');
+        Route::get('/eco-certifications/{ecoCertification}/edit', \App\Livewire\Winery\EcoCertifications\Edit::class)->name('eco-certifications.edit');
 
         // ── Configuración ─────────────────────────────────────────────
         Route::get('/settings', \App\Livewire\Winery\Settings::class)->name('settings');

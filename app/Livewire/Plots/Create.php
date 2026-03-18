@@ -22,7 +22,6 @@ use App\Models\TrainingSystem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
 class Create extends Component
@@ -60,6 +59,10 @@ class Create extends Component
     // PAC
     public $pac_eligible_area = '';
     public $non_eligible_area = '';
+
+    // Cascading location data (managed server-side to avoid Alpine/Livewire morph conflict)
+    public array $provinces     = [];
+    public array $municipalities = [];
 
     public function mount()
     {
@@ -245,32 +248,22 @@ class Create extends Component
         return $query->where(fn($q) => $q->whereNull('user_id')->whereNotIn('id', $hidden)->orWhere('user_id', Auth::id()));
     }
 
-    #[Renderless]
-    public function fetchProvinces(int $communityId): array
+    public function updatedAutonomousCommunityId($value): void
     {
-        $this->province_id = '';
+        $this->province_id     = '';
         $this->municipality_id = '';
-        return Province::where('autonomous_community_id', $communityId)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->toArray();
+        $this->municipalities  = [];
+        $this->provinces = $value
+            ? Province::where('autonomous_community_id', $value)->orderBy('name')->get(['id', 'name'])->toArray()
+            : [];
     }
 
-    #[Renderless]
-    public function fetchMunicipalities(int $provinceId): array
+    public function updatedProvinceId($value): void
     {
-        $this->province_id = $provinceId;
         $this->municipality_id = '';
-        return Municipality::where('province_id', $provinceId)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->toArray();
-    }
-
-    #[Renderless]
-    public function selectMunicipality(int $municipalityId): void
-    {
-        $this->municipality_id = $municipalityId;
+        $this->municipalities = $value
+            ? Municipality::where('province_id', $value)->orderBy('name')->get(['id', 'name'])->toArray()
+            : [];
     }
 
     public function render()
@@ -287,18 +280,6 @@ class Create extends Component
             'autonomousCommunities' => AutonomousCommunity::select(['id', 'name', 'code'])
                 ->orderBy('name')
                 ->get(),
-            'provinces' => $this->autonomous_community_id
-                ? Province::select(['id', 'name', 'autonomous_community_id'])
-                    ->where('autonomous_community_id', $this->autonomous_community_id)
-                    ->orderBy('name')
-                    ->get()
-                : collect(),
-            'municipalities' => $this->province_id
-                ? Municipality::select(['id', 'name', 'province_id'])
-                    ->where('province_id', $this->province_id)
-                    ->orderBy('name')
-                    ->get()
-                : collect(),
         ])->layout('layouts.app');
     }
 }

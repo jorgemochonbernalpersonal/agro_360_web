@@ -51,3 +51,8 @@ Schedule::command('containers:check-maintenance', ['--days' => 7])
     ->dailyAt('08:00')
     ->withoutOverlapping();
 
+// 👻 Limpiar tokens de invitación caducados de viticultores ghost (cada lunes)
+Schedule::command('viticulturists:clean-stale-invitations', ['--days' => 30])
+    ->weeklyOn(1, '04:00')
+    ->withoutOverlapping();
+

@@ -460,29 +460,33 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             ]);
         })->name('official-reports.preview');
 
-        // ── Módulos nuevos (en construcción) ─────────────────────────
-        Route::get('/notifications', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('notifications.index')
-            ->defaults('module', 'Notificaciones')
-            ->defaults('icon', 'bell');
+        // ── Notificaciones ───────────────────────────────────────────
+        Route::get('/notifications', \App\Livewire\Viticulturist\Notifications\Index::class)
+            ->name('notifications.index');
 
         Route::get('/bodega-messages', \App\Livewire\Viticulturist\BodegaMessages\Index::class)
             ->name('bodega-messages.index');
 
-        Route::get('/subcontracting', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('subcontracting.index')
-            ->defaults('module', 'Subcontratación')
-            ->defaults('icon', 'user-plus');
+        // ── Subcontratación ───────────────────────────────────────────
+        Route::prefix('subcontracting')->name('subcontracting.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Subcontracting\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Subcontracting\Create::class)->name('create');
+            Route::get('/{record}/edit', \App\Livewire\Viticulturist\Subcontracting\Edit::class)->name('edit');
+        });
 
-        Route::get('/agri-insurance', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('agri-insurance.index')
-            ->defaults('module', 'Seguros Agrarios')
-            ->defaults('icon', 'shield-exclamation');
+        // ── Seguros Agrarios ──────────────────────────────────────────
+        Route::prefix('agri-insurance')->name('agri-insurance.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\AgriInsurance\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\AgriInsurance\Create::class)->name('create');
+            Route::get('/{insurance}/edit', \App\Livewire\Viticulturist\AgriInsurance\Edit::class)->name('edit');
+        });
 
-        Route::get('/plot-costs', \App\Livewire\Viticulturist\UnderConstruction::class)
-            ->name('plot-costs.index')
-            ->defaults('module', 'Costes por Parcela')
-            ->defaults('icon', 'table-cells');
+        // ── Costes por Parcela ────────────────────────────────────────
+        Route::prefix('plot-costs')->name('plot-costs.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PlotCosts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PlotCosts\Create::class)->name('create');
+            Route::get('/{cost}/edit', \App\Livewire\Viticulturist\PlotCosts\Edit::class)->name('edit');
+        });
 
         Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
 
