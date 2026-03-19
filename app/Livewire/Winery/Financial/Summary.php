@@ -45,8 +45,16 @@ class Summary extends Component
         $pendingGrapeCost = (float) (clone $grapeCostBase)->whereIn('status', ['sent', 'draft'])
             ->where('payment_status', '!=', 'paid')->sum('total_amount');
 
+        // ── Costes de mantenimiento de contenedores ──────────────────────────
+        $maintenanceCost = (float) DB::table('container_maintenances as cm')
+            ->join('containers as c', 'c.id', '=', 'cm.container_id')
+            ->where('c.user_id', $userId)
+            ->where('cm.status', 'completed')
+            ->whereYear('cm.performed_date', $this->year)
+            ->sum('cm.cost');
+
         // ── Margen bruto ─────────────────────────────────────────────────────
-        $grossMargin     = $totalRevenue - $totalGrapeCost;
+        $grossMargin     = $totalRevenue - $totalGrapeCost - $maintenanceCost;
         $grossMarginPct  = $totalRevenue > 0 ? ($grossMargin / $totalRevenue) * 100 : 0;
 
         // ── Ingresos mensuales (ventas pagadas) ──────────────────────────────
@@ -107,10 +115,13 @@ class Summary extends Component
             'sold'       => Wine::where('user_id', $userId)->where('status', 'sold')->count(),
         ];
 
+        $containerBase  = Container::where('user_id', $userId)->where('archived', false);
         $containerStats = [
-            'total'         => Container::where('user_id', $userId)->where('archived', false)->count(),
-            'total_capacity'=> (float) Container::where('user_id', $userId)->where('archived', false)->sum('capacity'),
-            'used_capacity' => (float) Container::where('user_id', $userId)->where('archived', false)->sum('used_capacity'),
+            'total'         => (clone $containerBase)->count(),
+            'total_capacity'=> (float) (clone $containerBase)->sum('capacity'),
+            'used_capacity' => (float) DB::table('containers')->where('user_id', $userId)->where('archived', false)
+                ->selectRaw('SUM(used_capacity + wine_volume_liters)')->value('SUM(used_capacity + wine_volume_liters)'),
+            'maintenance_cost' => $maintenanceCost,
         ];
         $containerStats['usage_pct'] = $containerStats['total_capacity'] > 0
             ? ($containerStats['used_capacity'] / $containerStats['total_capacity']) * 100
@@ -123,6 +134,7 @@ class Summary extends Component
             'pendingRevenue'   => $pendingRevenue,
             'totalGrapeCost'   => $totalGrapeCost,
             'pendingGrapeCost' => $pendingGrapeCost,
+            'maintenanceCost'  => $maintenanceCost,
             'grossMargin'      => $grossMargin,
             'grossMarginPct'   => $grossMarginPct,
             'invoiceCount'     => $invoiceCount,

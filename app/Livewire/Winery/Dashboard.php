@@ -85,13 +85,19 @@ class Dashboard extends Component
             ->distinct('wine_id')
             ->count('wine_id');
 
+        $containerBase  = Container::where('user_id', $wineryId)->where('archived', false);
         $containerUsage = [
-            'total'    => (float) Container::where('user_id', $wineryId)->where('archived', false)->sum('capacity'),
-            'used'     => (float) Container::where('user_id', $wineryId)->where('archived', false)->sum('used_capacity'),
+            'total' => (float) (clone $containerBase)->sum('capacity'),
+            'used'  => (float) (clone $containerBase)->selectRaw('SUM(used_capacity + wine_volume_liters)')->value('SUM(used_capacity + wine_volume_liters)'),
         ];
         $containerUsage['pct'] = $containerUsage['total'] > 0
             ? min(($containerUsage['used'] / $containerUsage['total']) * 100, 100)
             : 0;
+
+        $maintenanceOverdue = \App\Models\ContainerMaintenance::whereHas('container', fn($q) => $q->where('user_id', $wineryId))
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->whereDate('scheduled_date', '<', today())
+            ->count();
 
         // Últimos trasvases (3)
         $recentTransfers = WineTransfer::with(['wine', 'fromContainer', 'toContainer'])
@@ -139,6 +145,7 @@ class Dashboard extends Component
             'activeWines'          => $activeWines,
             'activeFermentations'  => $activeFermentations,
             'containerUsage'       => $containerUsage,
+            'maintenanceOverdue'   => $maintenanceOverdue,
             'recentTransfers'      => $recentTransfers,
             'recentFermentations'  => $recentFermentations,
             'recentReceptions'     => $recentReceptions,

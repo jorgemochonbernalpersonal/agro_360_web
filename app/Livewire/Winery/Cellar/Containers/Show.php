@@ -6,6 +6,8 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\ContainerHistory;
 use App\Models\Wine;
+use App\Models\WineAnalysis;
+use App\Models\WineFermentationControl;
 use App\Models\WineTransfer;
 use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
@@ -92,6 +94,18 @@ class Show extends Component
         $maintenanceCount = $container->maintenances()->count();
         $additiveCount    = $container->additiveSupplies()->count();
 
+        $recentAnalyses = WineAnalysis::with('wine')
+            ->where('container_id', $container->id)
+            ->orderByDesc('analysis_date')
+            ->take(5)
+            ->get();
+
+        $recentFermentations = WineFermentationControl::with('wine')
+            ->where('container_id', $container->id)
+            ->orderByDesc('control_date')
+            ->take(5)
+            ->get();
+
         // Ocupación cosecha (kg)
         $harvestPct = $container->capacity > 0
             ? min(($container->used_capacity / $container->capacity) * 100, 100)
@@ -105,14 +119,16 @@ class Show extends Component
         $wines = Wine::where('user_id', Auth::id())->orderBy('name')->get(['id', 'name']);
 
         return view('livewire.winery.cellar.containers.show', [
-            'wines'            => $wines,
-            'container'        => $container,
-            'history'          => $history,
-            'recentTransfers'  => $recentTransfers,
-            'maintenanceCount' => $maintenanceCount,
-            'additiveCount'    => $additiveCount,
-            'harvestPct'       => round($harvestPct, 1),
-            'winePct'          => round($winePct, 1),
+            'wines'               => $wines,
+            'container'           => $container,
+            'history'             => $history,
+            'recentTransfers'     => $recentTransfers,
+            'maintenanceCount'    => $maintenanceCount,
+            'additiveCount'       => $additiveCount,
+            'harvestPct'          => round($harvestPct, 1),
+            'winePct'             => round($winePct, 1),
+            'recentAnalyses'      => $recentAnalyses,
+            'recentFermentations' => $recentFermentations,
         ])->layout('layouts.app');
     }
 }

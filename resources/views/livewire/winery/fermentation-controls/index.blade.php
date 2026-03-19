@@ -23,6 +23,11 @@
             <option value="fermenting">En fermentación</option>
             <option value="done">Fermentación completada</option>
         </x-agro.filter-select>
+        <x-agro.filter-select wire:model.live="containerFilter" placeholder="Todos los depósitos">
+            @foreach($containers as $c)
+                <option value="{{ $c->id }}">{{ $c->name }}</option>
+            @endforeach
+        </x-agro.filter-select>
     </x-agro.filter-bar>
 
     <x-agro.data-table :headers="['Fecha', 'Vino', 'Depósito', 'Tª (°C)', 'Brix', 'Densidad', 'pH', 'Ac. Volátil', 'Estado', 'Acciones']">

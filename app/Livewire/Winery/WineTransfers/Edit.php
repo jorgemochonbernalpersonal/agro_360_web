@@ -74,6 +74,19 @@ class Edit extends Component
     {
         $this->validate();
 
+        // Validate destination container capacity (add back what the old transfer was using)
+        if ($this->to_container_id) {
+            $dest = Container::where('user_id', Auth::id())->find($this->to_container_id);
+            if ($dest) {
+                $oldQty = (float) ($this->oldData['to_container_id'] == $this->to_container_id ? $this->oldData['quantity'] : 0);
+                $available = $dest->getAvailableCapacity() + $oldQty;
+                if ($available < (float) $this->quantity) {
+                    $this->addError('quantity', 'El contenedor destino no tiene capacidad suficiente (' . number_format($available, 1) . ' L disponibles).');
+                    return;
+                }
+            }
+        }
+
         $this->transfer->update([
             'wine_id'                => $this->wine_id,
             'from_container_id'      => $this->from_container_id ?: null,

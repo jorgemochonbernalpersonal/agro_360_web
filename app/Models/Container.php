@@ -158,11 +158,19 @@ class Container extends Model
     }
 
     /**
+     * Total ocupado (uva kg + vino litros, misma unidad de referencia = capacidad)
+     */
+    public function getTotalUsed(): float
+    {
+        return (float) $this->used_capacity + (float) $this->wine_volume_liters;
+    }
+
+    /**
      * Obtener capacidad disponible
      */
     public function getAvailableCapacity(): float
     {
-        return max(0, $this->capacity - $this->used_capacity);
+        return max(0, (float) $this->capacity - $this->getTotalUsed());
     }
 
     /**
@@ -181,7 +189,7 @@ class Container extends Model
         if ($this->capacity <= 0) {
             return 0;
         }
-        return round(($this->used_capacity / $this->capacity) * 100, 2);
+        return round(($this->getTotalUsed() / (float) $this->capacity) * 100, 2);
     }
 
     /**
@@ -207,11 +215,11 @@ class Container extends Model
     }
 
     /**
-     * Verificar si está vacío
+     * Verificar si está vacío (sin uva ni vino)
      */
     public function isEmpty(): bool
     {
-        return $this->used_capacity <= 0;
+        return $this->getTotalUsed() <= 0;
     }
 
     /**
@@ -219,24 +227,24 @@ class Container extends Model
      */
     public function isFull(): bool
     {
-        return $this->used_capacity >= $this->capacity;
+        return $this->getTotalUsed() >= (float) $this->capacity;
     }
 
     /**
-     * Scope para contenedores disponibles (con capacidad)
+     * Scope para contenedores disponibles (con capacidad libre)
      */
     public function scopeAvailable($query)
     {
-        return $query->whereColumn('used_capacity', '<', 'capacity')
+        return $query->whereRaw('(used_capacity + wine_volume_liters) < capacity')
             ->where('archived', false);
     }
 
     /**
-     * Scope para contenedores vacíos
+     * Scope para contenedores vacíos (sin uva ni vino)
      */
     public function scopeEmpty($query)
     {
-        return $query->where('used_capacity', '<=', 0);
+        return $query->whereRaw('(used_capacity + wine_volume_liters) <= 0');
     }
 
     /**
@@ -244,7 +252,7 @@ class Container extends Model
      */
     public function scopeFull($query)
     {
-        return $query->whereColumn('used_capacity', '>=', 'capacity');
+        return $query->whereRaw('(used_capacity + wine_volume_liters) >= capacity');
     }
 
     /**

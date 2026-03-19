@@ -275,6 +275,67 @@
         </div>
     </div>
 
+    {{-- ── Análisis y fermentaciones ───────────────────────────────────────── --}}
+    @if($recentAnalyses->count() || $recentFermentations->count())
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {{-- Últimos análisis --}}
+        @if($recentAnalyses->count())
+        <x-agro.card title="Análisis recientes">
+            <div class="space-y-2">
+                @foreach($recentAnalyses as $a)
+                <div class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-zinc-50 text-sm">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-zinc-800 truncate">{{ \App\Models\WineAnalysis::ANALYSIS_TYPES[$a->analysis_type] ?? $a->analysis_type }}</p>
+                        <p class="text-xs text-zinc-400">{{ $a->wine?->name ?? '—' }} · {{ $a->laboratory ?? '' }}</p>
+                    </div>
+                    <div class="text-right shrink-0 ml-3">
+                        @php $rc = match($a->result ?? '') { 'pass' => 'text-agro-600', 'fail' => 'text-red-500', default => 'text-zinc-400' }; @endphp
+                        <p class="text-xs font-semibold {{ $rc }}">{{ \App\Models\WineAnalysis::RESULTS[$a->result] ?? '—' }}</p>
+                        <p class="text-xs text-zinc-300">{{ $a->analysis_date instanceof \Carbon\Carbon ? $a->analysis_date->format('d/m/Y') : $a->analysis_date }}</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <div class="mt-3">
+                <flux:button href="{{ roleRoute('wine-analysis.index', [], ['containerFilter' => $container->id]) }}" variant="ghost" size="sm" icon="beaker">
+                    Ver todos los análisis
+                </flux:button>
+            </div>
+        </x-agro.card>
+        @endif
+
+        {{-- Últimos controles de fermentación --}}
+        @if($recentFermentations->count())
+        <x-agro.card title="Controles de fermentación recientes">
+            <div class="space-y-2">
+                @foreach($recentFermentations as $f)
+                <div class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-zinc-50 text-sm">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-zinc-800 truncate">{{ $f->wine?->name ?? '—' }}</p>
+                        <p class="text-xs text-zinc-400">
+                            @if($f->density) Den: {{ number_format($f->density, 3) }} @endif
+                            @if($f->brix_degree) · Brix: {{ number_format($f->brix_degree, 1) }}° @endif
+                            @if($f->temperature) · {{ number_format($f->temperature, 1) }}°C @endif
+                        </p>
+                    </div>
+                    <p class="text-xs text-zinc-300 shrink-0 ml-3">
+                        {{ $f->control_date instanceof \Carbon\Carbon ? $f->control_date->format('d/m/Y') : $f->control_date }}
+                    </p>
+                </div>
+                @endforeach
+            </div>
+            <div class="mt-3">
+                <flux:button href="{{ roleRoute('fermentation-controls.index', [], ['containerFilter' => $container->id]) }}" variant="ghost" size="sm" icon="chart-bar">
+                    Ver todos los controles
+                </flux:button>
+            </div>
+        </x-agro.card>
+        @endif
+
+    </div>
+    @endif
+
 </div>
 
 {{-- ── Modal ajuste manual de stock ─────────────────────────────────────── --}}

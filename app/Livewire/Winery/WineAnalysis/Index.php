@@ -3,31 +3,36 @@
 namespace App\Livewire\Winery\WineAnalysis;
 
 use App\Livewire\Winery\AbstractIndex;
+use App\Models\Container;
 use App\Models\WineAnalysis;
 use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search       = '';
-    public string $typeFilter   = '';
-    public string $resultFilter = '';
+    public string $search            = '';
+    public string $typeFilter        = '';
+    public string $resultFilter      = '';
+    public string $containerFilter   = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'typeFilter'   => ['except' => ''],
-        'resultFilter' => ['except' => ''],
+        'search'          => ['except' => ''],
+        'typeFilter'      => ['except' => ''],
+        'resultFilter'    => ['except' => ''],
+        'containerFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void       { $this->resetPage(); }
-    public function updatingTypeFilter(): void   { $this->resetPage(); }
-    public function updatingResultFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void          { $this->resetPage(); }
+    public function updatingTypeFilter(): void      { $this->resetPage(); }
+    public function updatingResultFilter(): void    { $this->resetPage(); }
+    public function updatingContainerFilter(): void { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
         return [
-            'search'       => '',
-            'typeFilter'   => '',
-            'resultFilter' => '',
+            'search'          => '',
+            'typeFilter'      => '',
+            'resultFilter'    => '',
+            'containerFilter' => '',
         ];
     }
 
@@ -40,7 +45,7 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        return WineAnalysis::with('wine')->where('user_id', $this->wineryId());
+        return WineAnalysis::with(['wine', 'container'])->where('user_id', $this->wineryId());
     }
 
     protected function applyFilters(Builder $query): void
@@ -60,6 +65,10 @@ class Index extends AbstractIndex
         if ($this->resultFilter) {
             $query->where('result', $this->resultFilter);
         }
+
+        if ($this->containerFilter) {
+            $query->where('container_id', $this->containerFilter);
+        }
     }
 
     protected function applyOrderBy(Builder $query): void
@@ -73,9 +82,10 @@ class Index extends AbstractIndex
     protected function viewData(mixed $entries): array
     {
         return [
-            'analyses' => $entries,
-            'types'    => WineAnalysis::ANALYSIS_TYPES,
-            'results'  => WineAnalysis::RESULTS,
+            'analyses'   => $entries,
+            'types'      => WineAnalysis::ANALYSIS_TYPES,
+            'results'    => WineAnalysis::RESULTS,
+            'containers' => Container::where('user_id', $this->wineryId())->where('archived', false)->orderBy('name')->get(),
         ];
     }
 }

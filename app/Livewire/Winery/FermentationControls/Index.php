@@ -3,29 +3,33 @@
 namespace App\Livewire\Winery\FermentationControls;
 
 use App\Livewire\Winery\AbstractIndex;
+use App\Models\Container;
 use App\Models\Wine;
 use App\Models\WineFermentationControl;
 use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $search        = '';
-    public string $wineFilter    = '';
-    public string $statusFilter  = '';
+    public string $search            = '';
+    public string $wineFilter        = '';
+    public string $statusFilter      = '';
+    public string $containerFilter   = '';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'wineFilter'   => ['except' => ''],
-        'statusFilter' => ['except' => ''],
+        'search'          => ['except' => ''],
+        'wineFilter'      => ['except' => ''],
+        'statusFilter'    => ['except' => ''],
+        'containerFilter' => ['except' => ''],
     ];
 
-    public function updatingSearch(): void       { $this->resetPage(); }
-    public function updatingWineFilter(): void   { $this->resetPage(); }
-    public function updatingStatusFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void          { $this->resetPage(); }
+    public function updatingWineFilter(): void      { $this->resetPage(); }
+    public function updatingStatusFilter(): void    { $this->resetPage(); }
+    public function updatingContainerFilter(): void { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
-        return ['search' => '', 'wineFilter' => '', 'statusFilter' => ''];
+        return ['search' => '', 'wineFilter' => '', 'statusFilter' => '', 'containerFilter' => ''];
     }
 
     public function delete(int $id): void
@@ -62,6 +66,10 @@ class Index extends AbstractIndex
                 $q->whereNull('brix_degree')->orWhere('brix_degree', '<=', 2);
             });
         }
+
+        if ($this->containerFilter) {
+            $query->where('container_id', $this->containerFilter);
+        }
     }
 
     protected function applyOrderBy(Builder $query): void
@@ -75,8 +83,9 @@ class Index extends AbstractIndex
     protected function viewData(mixed $entries): array
     {
         return [
-            'controls' => $entries,
-            'wines'    => Wine::where('user_id', $this->wineryId())->orderBy('name')->get(),
+            'controls'   => $entries,
+            'wines'      => Wine::where('user_id', $this->wineryId())->orderBy('name')->get(),
+            'containers' => Container::where('user_id', $this->wineryId())->where('archived', false)->orderBy('name')->get(),
         ];
     }
 }

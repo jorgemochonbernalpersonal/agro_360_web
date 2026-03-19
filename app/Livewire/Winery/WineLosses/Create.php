@@ -84,6 +84,15 @@ class Create extends Component
 
         Wine::where('user_id', Auth::id())->findOrFail($this->wine_id);
 
+        // Validate container has enough wine stock
+        if ($this->container_id) {
+            $container = Container::where('user_id', Auth::id())->find($this->container_id);
+            if ($container && $container->wine_volume_liters < (float) $this->quantity) {
+                $this->addError('quantity', 'El contenedor solo tiene ' . number_format($container->wine_volume_liters, 1) . ' L de vino disponibles.');
+                return;
+            }
+        }
+
         $loss = WineLoss::create([
             'wine_id'                => $this->wine_id,
             'container_id'           => $this->container_id ?: null,
