@@ -77,12 +77,19 @@ class Index extends AbstractIndex
             ->orderBy('name')
             ->get();
 
-        $total = WineBottling::where('user_id', $this->wineryId())->count();
+        $base = WineBottling::where('user_id', $this->wineryId());
+
+        $stats = [
+            'total'         => (clone $base)->count(),
+            'this_year'     => (clone $base)->whereYear('bottling_date', now()->year)->count(),
+            'total_bottles' => (clone $base)->sum('quantity_bottles'),
+            'total_liters'  => (clone $base)->sum('quantity_liters'),
+        ];
 
         return [
             'bottlings' => $entries,
             'wines'     => $wines,
-            'total'     => $total,
+            'stats'     => $stats,
         ];
     }
 }

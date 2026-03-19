@@ -81,11 +81,21 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = WineAnalysis::where('user_id', $this->wineryId());
+
+        $stats = [
+            'total'     => (clone $base)->count(),
+            'this_year' => (clone $base)->whereYear('analysis_date', now()->year)->count(),
+            'passed'    => (clone $base)->where('result', 'passed')->count(),
+            'failed'    => (clone $base)->where('result', 'failed')->count(),
+        ];
+
         return [
             'analyses'   => $entries,
             'types'      => WineAnalysis::ANALYSIS_TYPES,
             'results'    => WineAnalysis::RESULTS,
             'containers' => Container::where('user_id', $this->wineryId())->where('archived', false)->orderBy('name')->get(),
+            'stats'      => $stats,
         ];
     }
 }

@@ -89,9 +89,18 @@ class Index extends AbstractIndex
             ->orderBy('year', 'desc')
             ->pluck('year');
 
+        $base = Campaign::forViticulturist($this->wineryId());
+        $stats = [
+            'total'    => (clone $base)->count(),
+            'active'   => (clone $base)->where('active', true)->count(),
+            'cerradas' => (clone $base)->where('active', false)->count(),
+            'locked'   => (clone $base)->whereNotNull('locked_at')->count(),
+        ];
+
         return [
             'campaigns' => $entries,
             'years'     => $years,
+            'stats'     => $stats,
         ];
     }
 }

@@ -1,102 +1,208 @@
 <div class="space-y-6 animate-fade-in">
-<x-agro.page-header
-    title="Trasvases y Coupage"
-    description="Registro de trasiegos, mezclas y movimientos de vino entre depósitos."
-    icon="arrows-right-left"
->
-    <x-slot:actions>
-        <flux:button variant="primary" icon="plus" href="{{ roleRoute('wine-transfers.create') }}" wire:navigate>
-            Nuevo trasvase
-        </flux:button>
-    </x-slot:actions>
-</x-agro.page-header>
 
-<x-agro.card>
-    <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live="search" placeholder="Buscar por vino..." />
-        <x-agro.filter-select wire:model.live="wineFilter" placeholder="Todos los vinos">
+    {{-- Header --}}
+    <x-agro.page-header
+        title="Trasvases y Coupage"
+        description="Registro de trasiegos, mezclas y movimientos de vino entre depósitos"
+        icon="arrows-right-left"
+    >
+        <x-slot:actions>
+            <flux:button variant="primary" icon="plus" href="{{ roleRoute('wine-transfers.create') }}" wire:navigate>
+                Nuevo trasvase
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
+
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <x-agro.stat-card
+            label="Total trasvases"
+            :value="$stats['total']"
+            icon="arrows-right-left"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Este año"
+            :value="$stats['this_year']"
+            icon="calendar-days"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Trasiegos"
+            :value="$stats['rackings']"
+            icon="arrow-right"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Coupages"
+            :value="$stats['blendings']"
+            icon="beaker"
+            color="amber"
+        />
+    </div>
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3">
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar por vino..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
+        </div>
+
+        <flux:select wire:model.live="wineFilter" class="w-44">
+            <flux:select.option value="">Todos los vinos</flux:select.option>
             @foreach($wines as $wine)
-                <option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' (' . $wine->vintage . ')' : '' }}</option>
+                <flux:select.option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' (' . $wine->vintage . ')' : '' }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-        <x-agro.filter-select wire:model.live="typeFilter" placeholder="Todos los tipos">
+        </flux:select>
+
+        <flux:select wire:model.live="typeFilter" class="w-44">
+            <flux:select.option value="">Todos los tipos</flux:select.option>
             @foreach($types as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-    </x-agro.filter-bar>
+        </flux:select>
 
-    <x-agro.data-table :headers="['Fecha', 'Vino', 'Tipo', 'Origen', 'Destino', 'Cantidad', 'Acciones']">
-        @forelse($transfers as $transfer)
-            <x-agro.table-row>
-                <x-agro.table-cell>
-                    {{ $transfer->transfer_date->format('d/m/Y') }}
-                </x-agro.table-cell>
+        @if($search || $wineFilter || $typeFilter)
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
+                Limpiar
+            </flux:button>
+        @endif
+    </div>
 
-                <x-agro.table-cell>
-                    @if($transfer->wine)
-                        <a href="{{ roleRoute('wines.show', $transfer->wine) }}" wire:navigate
-                           class="text-sm font-medium text-zinc-900 dark:text-zinc-100 hover:underline">
-                            {{ $transfer->wine->name }}
-                        </a>
-                        @if($transfer->wine->vintage)
-                            <div class="text-xs text-zinc-500">{{ $transfer->wine->vintage }}</div>
-                        @endif
-                    @else
-                        <span class="text-zinc-400">—</span>
-                    @endif
-                </x-agro.table-cell>
+    {{-- Loading skeleton --}}
+    <div wire:loading wire:target="search, wineFilter, typeFilter, clearFilters, nextPage, previousPage">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for($i = 0; $i < 6; $i++)
+                <x-agro.skeleton-card />
+            @endfor
+        </div>
+    </div>
 
-                <x-agro.table-cell>
+    {{-- Grid de cards --}}
+    <div wire:loading.remove wire:target="search, wineFilter, typeFilter, clearFilters, nextPage, previousPage">
+        @if($transfers->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($transfers as $transfer)
                     @php
-                        $typeColor = match($transfer->transfer_type) {
-                            'racking'  => 'blue',
-                            'blending' => 'violet',
-                            'top_up'   => 'green',
-                            default    => 'zinc',
+                        $delay = min($loop->index * 50, 300);
+                        $typeConfig = match($transfer->transfer_type) {
+                            'racking'  => ['color' => 'blue',   'badge' => 'blue',   'icon' => 'text-blue-600',   'bg' => 'bg-blue-100'],
+                            'blending' => ['color' => 'violet', 'badge' => 'violet', 'icon' => 'text-violet-600', 'bg' => 'bg-violet-100'],
+                            'top_up'   => ['color' => 'green',  'badge' => 'green',  'icon' => 'text-agro-600',   'bg' => 'bg-agro-100'],
+                            default    => ['color' => 'zinc',   'badge' => 'zinc',   'icon' => 'text-zinc-500',   'bg' => 'bg-zinc-100'],
                         };
                     @endphp
-                    <x-agro.status-badge :label="$transfer->transfer_type_label" :color="$typeColor" />
-                </x-agro.table-cell>
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="transfer-{{ $transfer->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $typeConfig['bg'] }}">
+                                    <flux:icon icon="arrows-right-left" class="size-5 {{ $typeConfig['icon'] }}" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">
+                                        @if($transfer->wine)
+                                            {{ $transfer->wine->name }}
+                                            @if($transfer->wine->vintage)
+                                                <span class="text-zinc-400 font-normal text-sm">{{ $transfer->wine->vintage }}</span>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
+                                    </h3>
+                                    <p class="text-xs text-zinc-400">{{ $transfer->transfer_date->format('d/m/Y') }}</p>
+                                </div>
+                                <flux:badge color="{{ $typeConfig['badge'] }}" size="sm" class="shrink-0">
+                                    {{ $transfer->transfer_type_label }}
+                                </flux:badge>
+                            </div>
+                        </x-slot:header>
 
-                <x-agro.table-cell>
-                    <span class="text-sm text-zinc-700 dark:text-zinc-300">
-                        {{ $transfer->fromContainer?->name ?? '—' }}
-                    </span>
-                </x-agro.table-cell>
+                        <div class="flex-1 space-y-4">
+                            {{-- Cantidad --}}
+                            <div class="bg-agro-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-0.5">Cantidad transferida</p>
+                                <p class="text-2xl font-bold text-agro-700 leading-none">
+                                    {{ number_format($transfer->quantity, 2) }}
+                                    <span class="text-sm font-normal text-agro-500">{{ $transfer->unitOfMeasurement?->symbol ?? '' }}</span>
+                                </p>
+                            </div>
 
-                <x-agro.table-cell>
-                    <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                        {{ $transfer->toContainer?->name ?? '—' }}
-                    </span>
-                </x-agro.table-cell>
+                            {{-- Origen → Destino --}}
+                            <div class="flex items-center gap-2 text-sm">
+                                <div class="flex-1 min-w-0 bg-zinc-50 rounded-lg px-3 py-2">
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Origen</p>
+                                    <p class="font-medium text-zinc-700 truncate">{{ $transfer->fromContainer?->name ?? '—' }}</p>
+                                </div>
+                                <flux:icon icon="arrow-right" class="size-4 text-zinc-300 shrink-0" />
+                                <div class="flex-1 min-w-0 bg-zinc-50 rounded-lg px-3 py-2">
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Destino</p>
+                                    <p class="font-medium text-zinc-700 truncate">{{ $transfer->toContainer?->name ?? '—' }}</p>
+                                </div>
+                            </div>
 
-                <x-agro.table-cell>
-                    <span class="text-sm font-semibold text-agro-700">
-                        {{ number_format($transfer->quantity, 2) }}
-                        {{ $transfer->unitOfMeasurement?->symbol ?? '' }}
-                    </span>
-                </x-agro.table-cell>
+                            {{-- Notas --}}
+                            @if($transfer->notes ?? false)
+                                <p class="text-xs text-zinc-400 line-clamp-2">{{ $transfer->notes }}</p>
+                            @endif
+                        </div>
 
-                <x-agro.table-cell align="right">
-                    <div class="flex justify-end gap-2">
-                        <flux:button size="sm" variant="ghost" icon="pencil"
-                            href="{{ roleRoute('wine-transfers.edit', $transfer) }}" wire:navigate />
-                        <flux:button size="sm" variant="ghost" icon="trash"
-                            wire:click="delete({{ $transfer->id }})"
-                            wire:loading.attr="disabled"
-                            wire:confirm="¿Eliminar este trasvase?" />
-                    </div>
-                </x-agro.table-cell>
-            </x-agro.table-row>
-        @empty
+                        <x-slot:footer>
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ roleRoute('wine-transfers.edit', $transfer) }}"
+                                   wire:navigate
+                                   title="Editar trasvase"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                <button
+                                    wire:click="delete({{ $transfer->id }})"
+                                    wire:confirm="¿Eliminar este trasvase?"
+                                    wire:loading.attr="disabled"
+                                    title="Eliminar trasvase"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                    <flux:icon icon="trash" class="size-4" />
+                                </button>
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            <div class="mt-6">
+                {{ $transfers->links() }}
+            </div>
+        @else
             <x-agro.empty-state
                 icon="arrows-right-left"
-                title="Sin trasvases registrados"
-                description="Registra los trasiegos, mezclas y movimientos de vino entre depósitos." />
-        @endforelse
-    </x-agro.data-table>
+                title="{{ $search || $wineFilter || $typeFilter ? 'Ningún trasvase coincide con los filtros' : 'Sin trasvases registrados' }}"
+                description="{{ $search || $wineFilter || $typeFilter ? 'Prueba a cambiar o limpiar los filtros aplicados.' : 'Registra los trasiegos, mezclas y movimientos de vino entre depósitos.' }}"
+            >
+                @if($search || $wineFilter || $typeFilter)
+                    <x-slot:action>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">
+                            Limpiar filtros
+                        </flux:button>
+                    </x-slot:action>
+                @else
+                    <x-slot:action>
+                        <flux:button href="{{ roleRoute('wine-transfers.create') }}" wire:navigate variant="primary" icon="plus">
+                            Nuevo trasvase
+                        </flux:button>
+                    </x-slot:action>
+                @endif
+            </x-agro.empty-state>
+        @endif
+    </div>
 
-    {{ $transfers->links() }}
-</x-agro.card>
 </div>
