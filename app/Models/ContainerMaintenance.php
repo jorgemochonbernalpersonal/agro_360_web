@@ -39,6 +39,9 @@ class ContainerMaintenance extends Model
 
     const STATUSES = [
         'scheduled'  => 'Programado',
+        'in_progress'=> 'En curso',
+        'in_review'  => 'En revisión',
+        'approved'   => 'Aprobado',
         'completed'  => 'Completado',
         'cancelled'  => 'Cancelado',
     ];

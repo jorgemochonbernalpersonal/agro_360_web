@@ -28,30 +28,37 @@ class Index extends Component
         $this->container = $container;
     }
 
-    public function markCompleted(int $id): void
+    public function transition(int $id, string $status): void
     {
         $maintenance = ContainerMaintenance::where('container_id', $this->container->id)->findOrFail($id);
-        $maintenance->update([
-            'status'         => 'completed',
-            'performed_date' => now()->toDateString(),
-        ]);
 
-        // Actualizar next_maintenance_date en el contenedor si hay una fecha programada
-        if ($maintenance->next_maintenance_date) {
-            $this->container->update([
-                'next_maintenance_date' => $maintenance->next_maintenance_date,
-            ]);
+        $updates = ['status' => $status];
+
+        if ($status === 'in_progress' && ! $maintenance->performed_date) {
+            $updates['performed_date'] = now()->toDateString();
         }
 
-        $this->toastSuccess('Mantenimiento marcado como completado.');
+        if ($status === 'completed') {
+            $updates['performed_date'] = $updates['performed_date'] ?? now()->toDateString();
+            if ($maintenance->next_maintenance_date) {
+                $this->container->update(['next_maintenance_date' => $maintenance->next_maintenance_date]);
+            }
+        }
+
+        $maintenance->update($updates);
+
+        $labels = ContainerMaintenance::STATUSES;
+        $this->toastSuccess('Estado actualizado a: ' . ($labels[$status] ?? $status));
+    }
+
+    public function markCompleted(int $id): void
+    {
+        $this->transition($id, 'completed');
     }
 
     public function cancel(int $id): void
     {
-        ContainerMaintenance::where('container_id', $this->container->id)
-            ->findOrFail($id)
-            ->update(['status' => 'cancelled']);
-        $this->toastSuccess('Mantenimiento cancelado.');
+        $this->transition($id, 'cancelled');
     }
 
     public function render()

@@ -47,12 +47,11 @@ class ContainerHistory extends Model
 
     /**
      * Vino
-     * Nota: La tabla wines aún no existe, esta relación es para futura integración
      */
-    // public function wine(): BelongsTo
-    // {
-    //     return $this->belongsTo(Wine::class);
-    // }
+    public function wine(): BelongsTo
+    {
+        return $this->belongsTo(Wine::class);
+    }
 
     /**
      * Usuario que creó el movimiento

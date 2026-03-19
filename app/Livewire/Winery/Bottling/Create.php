@@ -5,8 +5,8 @@ namespace App\Livewire\Winery\Bottling;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
-use App\Models\ContainerHistory;
 use App\Models\Oenologist;
+use App\Services\WineContainerStockService;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineBottling;
@@ -220,23 +220,8 @@ class Create extends Component
                 'created_by'             => Auth::id(),
             ]);
 
-            // Decrementar inventario del contenedor de origen
-            if ($data['container_id']) {
-                $container = Container::lockForUpdate()->find($data['container_id']);
-                if ($container) {
-                    $container->decrementUsedCapacity((float) $data['quantity_liters']);
-
-                    ContainerHistory::create([
-                        'container_id'           => $container->id,
-                        'wine_id'                => $wine->id,
-                        'wine_process_detail_id' => $data['wine_process_detail_id'] ?: null,
-                        'operation_type'         => 'bottling',
-                        'quantity'               => -(float) $data['quantity_liters'],
-                        'start_date'             => $data['bottling_date'],
-                        'created_by'             => Auth::id(),
-                    ]);
-                }
-            }
+            // Decrementar wine_volume_liters en el contenedor origen
+            app(WineContainerStockService::class)->recordBottling($bottling);
 
             foreach ($this->supplies as $row) {
                 if (empty($row['supply_name']) && empty($row['winery_supply_id'])) {

@@ -222,17 +222,41 @@ class Dashboard extends Component
 
     private function queryExistencias(int $wineryId): array
     {
-        $stock = DB::table('container_current_states as ccs')
-            ->join('containers as c', 'c.id', '=', 'ccs.container_id')
+        // Cosecha (uva) por contenedor
+        $stockHarvest = DB::table('containers as c')
             ->where('c.user_id', $wineryId)
-            ->where('ccs.current_quantity', '>', 0)
+            ->where('c.archived', false)
+            ->where('c.used_capacity', '>', 0)
+            ->leftJoin('container_rooms as cr', 'cr.id', '=', 'c.container_room_id')
+            ->select([
+                'c.id         as container_id',
+                'c.name       as container_name',
+                'c.capacity',
+                'c.used_capacity as current_quantity',
+                DB::raw('NULL as wine_id'),
+                DB::raw('"Uva / cosecha" as wine_name'),
+                DB::raw('"harvest" as wine_type'),
+                DB::raw('NULL as vintage'),
+                DB::raw('"harvest" as wine_status'),
+                'cr.name      as room_name',
+            ])
+            ->orderBy('cr.name')
+            ->orderBy('c.name')
+            ->get();
+
+        // Vino elaborado por contenedor
+        $stock = DB::table('containers as c')
+            ->where('c.user_id', $wineryId)
+            ->where('c.archived', false)
+            ->where('c.wine_volume_liters', '>', 0)
+            ->leftJoin('container_current_states as ccs', 'ccs.container_id', '=', 'c.id')
             ->leftJoin('wines as w', 'w.id', '=', 'ccs.wine_id')
             ->leftJoin('container_rooms as cr', 'cr.id', '=', 'c.container_room_id')
             ->select([
                 'c.id         as container_id',
                 'c.name       as container_name',
                 'c.capacity',
-                'ccs.current_quantity',
+                'c.wine_volume_liters as current_quantity',
                 'w.id         as wine_id',
                 'w.name       as wine_name',
                 'w.wine_type',
@@ -255,7 +279,8 @@ class Dashboard extends Component
 
         $totals = [
             'total_liters'    => $stock->sum('current_quantity'),
-            'container_count' => $stock->count(),
+            'harvest_kg'      => $stockHarvest->sum('current_quantity'),
+            'container_count' => $stock->count() + $stockHarvest->count(),
             'wine_count'      => $stock->pluck('wine_id')->filter()->unique()->count(),
         ];
 
@@ -264,7 +289,7 @@ class Dashboard extends Component
             ->orderByDesc('snapshot_date')
             ->value('snapshot_date');
 
-        return compact('stock', 'byWine', 'totals', 'lastSnapshot');
+        return compact('stock', 'stockHarvest', 'byWine', 'totals', 'lastSnapshot');
     }
 
     // ── Libro IV — Salidas ────────────────────────────────────────────────

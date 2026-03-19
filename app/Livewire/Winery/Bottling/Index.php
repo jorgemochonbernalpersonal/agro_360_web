@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Bottling;
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\Wine;
 use App\Models\WineBottling;
+use App\Services\WineContainerStockService;
 use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
@@ -34,6 +35,7 @@ class Index extends AbstractIndex
             return;
         }
 
+        app(WineContainerStockService::class)->revertBottling($bottling);
         $bottling->delete();
         $this->toastSuccess('Registro de embotellado eliminado.');
     }

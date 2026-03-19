@@ -182,7 +182,9 @@
       "Bash(where mysql:*)",
       "Read(//c/Program Files/**)",
       "Bash(php artisan tinker --execute=\":*)",
-      "Bash(powershell -Command \"Get-Process -Id \\(netstat -ano | Select-String '''':8000.*LISTENING'''' | ForEach-Object {\\($_-split ''''\\\\s+''''\\)[-1]} | Select-Object -First 1\\)\")"
+      "Bash(powershell -Command \"Get-Process -Id \\(netstat -ano | Select-String '''':8000.*LISTENING'''' | ForEach-Object {\\($_-split ''''\\\\s+''''\\)[-1]} | Select-Object -First 1\\)\")",
+      "Bash(xargs -I {} basename {})",
+      "Read(//c/Users/jorge/Desktop/vinai2 \\(1\\)/vinai2/**)"
     ]
   }
 }

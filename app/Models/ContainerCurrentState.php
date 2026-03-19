@@ -67,12 +67,11 @@ class ContainerCurrentState extends Model
 
     /**
      * Vino actual (si aplica)
-     * Nota: La tabla wines aún no existe, esta relación es para futura integración
      */
-    // public function wine(): BelongsTo
-    // {
-    //     return $this->belongsTo(Wine::class);
-    // }
+    public function wine(): BelongsTo
+    {
+        return $this->belongsTo(Wine::class);
+    }
 
     /**
      * Actualizar cantidad y sincronizar con contenedor

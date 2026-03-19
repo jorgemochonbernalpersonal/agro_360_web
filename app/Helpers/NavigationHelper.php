@@ -533,6 +533,12 @@ class NavigationHelper
                     'active' => request()->routeIs('winery.containers.index') || request()->routeIs('winery.containers.create') || request()->routeIs('winery.containers.edit') || request()->routeIs('winery.containers.show'),
                 ],
                 [
+                    'icon'   => 'chart-bar',
+                    'label'  => 'Analítica Contenedores',
+                    'route'  => 'winery.containers.analytics',
+                    'active' => request()->routeIs('winery.containers.analytics'),
+                ],
+                [
                     'icon'   => 'map',
                     'label'  => 'Mapa de Bodega',
                     'route'  => 'winery.containers.map',
@@ -576,6 +582,24 @@ class NavigationHelper
                     'label'  => 'Análisis de Lab.',
                     'route'  => 'winery.wine-analysis.index',
                     'active' => request()->routeIs('winery.wine-analysis*'),
+                ],
+                [
+                    'icon'   => 'fire',
+                    'label'  => 'Controles Fermentación',
+                    'route'  => 'winery.fermentation-controls.index',
+                    'active' => request()->routeIs('winery.fermentation-controls*'),
+                ],
+                [
+                    'icon'   => 'arrows-right-left',
+                    'label'  => 'Trasvases y Coupage',
+                    'route'  => 'winery.wine-transfers.index',
+                    'active' => request()->routeIs('winery.wine-transfers*'),
+                ],
+                [
+                    'icon'   => 'exclamation-triangle',
+                    'label'  => 'Mermas y Pérdidas',
+                    'route'  => 'winery.wine-losses.index',
+                    'active' => request()->routeIs('winery.wine-losses*'),
                 ],
                 [
                     'icon'   => 'calendar-days',
@@ -992,6 +1016,7 @@ class NavigationHelper
         // ── BODEGA — ELABORACIÓN ─────────────────────────────────────────
         $menu['cellar_elab'] = [
             ['icon' => 'beaker',            'label' => 'Contenedores',          'route' => 'producer.containers.index',        'active' => request()->routeIs('producer.containers.index') || request()->routeIs('producer.containers.create') || request()->routeIs('producer.containers.edit') || request()->routeIs('producer.containers.show')],
+            ['icon' => 'chart-bar',         'label' => 'Analítica Contenedores','route' => 'producer.containers.analytics',    'active' => request()->routeIs('producer.containers.analytics')],
             ['icon' => 'map',               'label' => 'Mapa de Bodega',        'route' => 'producer.containers.map',          'active' => request()->routeIs('producer.containers.map'), 'new' => true],
             ['icon' => 'home-modern',       'label' => 'Salas de Bodega',       'route' => 'producer.container-rooms.index',   'active' => request()->routeIs('producer.container-rooms*'), 'new' => true],
             ['icon' => 'calendar-days',     'label' => 'Operaciones de Bodega', 'route' => 'producer.cellar-operations.index', 'active' => request()->routeIs('producer.cellar-operations*'), 'new' => true],
@@ -1001,6 +1026,9 @@ class NavigationHelper
             ['icon' => 'queue-list',        'label' => 'Timeline de Vinos',     'route' => 'producer.wines.timeline',          'active' => request()->routeIs('producer.wines.timeline'), 'new' => true],
             ['icon' => 'user-circle',       'label' => 'Enólogos',              'route' => 'producer.oenologists.index',       'active' => request()->routeIs('producer.oenologists*')],
             ['icon' => 'magnifying-glass',  'label' => 'Análisis de Lab.',      'route' => 'producer.wine-analysis.index',     'active' => request()->routeIs('producer.wine-analysis*')],
+            ['icon' => 'fire',              'label' => 'Controles Fermentación','route' => 'producer.fermentation-controls.index', 'active' => request()->routeIs('producer.fermentation-controls*')],
+            ['icon' => 'arrows-right-left', 'label' => 'Trasvases y Coupage',   'route' => 'producer.wine-transfers.index',       'active' => request()->routeIs('producer.wine-transfers*')],
+            ['icon' => 'exclamation-triangle', 'label' => 'Mermas y Pérdidas',  'route' => 'producer.wine-losses.index',          'active' => request()->routeIs('producer.wine-losses*')],
         ];
 
         // ── BODEGA — SALIDA ───────────────────────────────────────────────

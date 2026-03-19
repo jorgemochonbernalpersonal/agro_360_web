@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Container;
 use App\Models\Oenologist;
+use App\Services\WineContainerStockService;
 use App\Models\UnitOfMeasurement;
 use App\Models\Wine;
 use App\Models\WineBottling;
@@ -21,6 +22,7 @@ class Edit extends Component
     use WithToastNotifications, WithRoleAwareRedirect;
 
     public WineBottling $bottling;
+    public array $oldBottlingData            = [];
 
     public string $wine_id                   = '';
     public string $container_id              = '';
@@ -41,6 +43,12 @@ class Edit extends Component
         abort_if($bottling->user_id !== Auth::id(), 403);
 
         $this->bottling = $bottling;
+
+        $this->oldBottlingData = [
+            'wine_id'      => $bottling->wine_id,
+            'container_id' => $bottling->container_id,
+            'quantity_liters' => $bottling->quantity_liters,
+        ];
 
         $this->wine_id                = (string) $bottling->wine_id;
         $this->container_id           = (string) ($bottling->container_id ?? '');
@@ -199,6 +207,9 @@ class Edit extends Component
                 'lot_number'             => $data['lot_number'] ?: null,
                 'notes'                  => $data['notes'] ?: null,
             ]);
+
+            $this->bottling->refresh();
+            app(WineContainerStockService::class)->updateBottling($this->bottling, $this->oldBottlingData);
 
             $this->bottling->supplies()->delete();
 

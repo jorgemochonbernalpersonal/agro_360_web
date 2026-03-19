@@ -62,11 +62,16 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-bold text-zinc-900 truncate">{{ $container->name }}</h3>
-                                @if($container->serial_number)
-                                    <p class="text-xs text-zinc-400">S/N: {{ $container->serial_number }}</p>
-                                @else
-                                    <p class="text-xs text-zinc-400">{{ $typeName }}</p>
-                                @endif
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    @if($container->serial_number)
+                                        <p class="text-xs text-zinc-400">S/N: {{ $container->serial_number }}</p>
+                                    @else
+                                        <p class="text-xs text-zinc-400">{{ $typeName }}</p>
+                                    @endif
+                                    @if(($container->quantity ?? 1) > 1)
+                                        <flux:badge color="blue" size="sm">× {{ $container->quantity }}</flux:badge>
+                                    @endif
+                                </div>
                             </div>
                             @if($container->isFull())
                                 <flux:badge color="red" size="sm" class="shrink-0">Lleno</flux:badge>
@@ -90,20 +95,27 @@
                             <x-agro.progress-bar :percent="$pct" />
                         </div>
 
-                        {{-- Kg usados / capacidad --}}
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-zinc-50 rounded-lg p-3 text-center">
-                                <p class="text-[10px] text-zinc-400 uppercase tracking-wide mb-0.5">En uso</p>
-                                <p class="text-lg font-bold text-zinc-700">
+                        {{-- Kg cosecha / vino / capacidad --}}
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-amber-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-amber-400 uppercase tracking-wide mb-0.5">Uva</p>
+                                <p class="text-sm font-bold text-amber-700">
                                     {{ number_format($container->used_capacity, 0) }}
-                                    <span class="text-xs font-normal text-zinc-400">kg</span>
+                                    <span class="text-[9px] font-normal text-amber-400">kg</span>
                                 </p>
                             </div>
-                            <div class="bg-agro-50 rounded-lg p-3 text-center">
-                                <p class="text-[10px] text-agro-400 uppercase tracking-wide mb-0.5">Capacidad</p>
-                                <p class="text-lg font-bold text-agro-700">
+                            <div class="bg-violet-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-violet-400 uppercase tracking-wide mb-0.5">Vino</p>
+                                <p class="text-sm font-bold text-violet-700">
+                                    {{ number_format($container->wine_volume_liters, 0) }}
+                                    <span class="text-[9px] font-normal text-violet-400">L</span>
+                                </p>
+                            </div>
+                            <div class="bg-zinc-50 rounded-lg p-2 text-center">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wide mb-0.5">Cap.</p>
+                                <p class="text-sm font-bold text-zinc-600">
                                     {{ number_format($container->capacity, 0) }}
-                                    <span class="text-xs font-normal text-agro-400">kg</span>
+                                    <span class="text-[9px] font-normal text-zinc-400">kg</span>
                                 </p>
                             </div>
                         </div>
@@ -126,6 +138,21 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
+                            <a href="{{ roleRoute('containers.show', $container) }}" title="Ver detalle">
+                                <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
+                                    <flux:icon icon="eye" class="size-4" />
+                                </button>
+                            </a>
+                            @if(!$container->archived && $container->wine_volume_liters > 0)
+                                <button
+                                    wire:click="emptyWine({{ $container->id }})"
+                                    wire:confirm="¿Vaciar el vino elaborado de «{{ $container->name }}»?"
+                                    wire:loading.attr="disabled"
+                                    title="Vaciar vino"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-orange-500 hover:bg-orange-50 transition-colors">
+                                    <flux:icon icon="arrow-path" class="size-4" />
+                                </button>
+                            @endif
                             <a href="{{ roleRoute('containers.edit', $container) }}" title="Editar">
                                 <button class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="pencil" class="size-4" />

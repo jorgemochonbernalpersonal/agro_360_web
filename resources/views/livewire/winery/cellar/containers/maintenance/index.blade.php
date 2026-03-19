@@ -109,7 +109,15 @@
 
                         <x-agro.table-cell>
                             @php
-                                $sc = match($maint->status) { 'scheduled' => 'amber', 'completed' => 'agro', 'cancelled' => 'zinc', default => 'zinc' };
+                                $sc = match($maint->status) {
+                                    'scheduled'   => 'amber',
+                                    'in_progress' => 'blue',
+                                    'in_review'   => 'violet',
+                                    'approved'    => 'indigo',
+                                    'completed'   => 'agro',
+                                    'cancelled'   => 'zinc',
+                                    default       => 'zinc'
+                                };
                                 $sl = \App\Models\ContainerMaintenance::STATUSES[$maint->status] ?? $maint->status;
                             @endphp
                             <x-agro.status-badge :color="$sc" :label="$sl" />
@@ -128,25 +136,29 @@
                         </x-agro.table-cell>
 
                         <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
+                            <div class="flex items-center justify-end gap-1 flex-wrap">
+                                {{-- Workflow de estados --}}
                                 @if($maint->status === 'scheduled')
-                                    <flux:button
-                                        wire:click="markCompleted({{ $maint->id }})"
-                                        wire:confirm="¿Marcar este mantenimiento como completado?"
-                                        variant="ghost"
-                                        size="sm"
-                                        icon="check-circle"
-                                        title="Marcar completado"
-                                    />
-                                    <flux:button
-                                        wire:click="cancel({{ $maint->id }})"
-                                        wire:confirm="¿Cancelar este mantenimiento?"
-                                        variant="ghost"
-                                        size="sm"
-                                        icon="x-circle"
-                                        title="Cancelar"
-                                    />
+                                    <flux:button wire:click="transition({{ $maint->id }}, 'in_progress')" variant="ghost" size="sm" icon="play" title="Iniciar" />
                                 @endif
+                                @if(in_array($maint->status, ['scheduled', 'in_progress']))
+                                    <flux:button wire:click="transition({{ $maint->id }}, 'in_review')" variant="ghost" size="sm" icon="eye" title="Enviar a revisión" />
+                                @endif
+                                @if($maint->status === 'in_review')
+                                    <flux:button wire:click="transition({{ $maint->id }}, 'approved')" variant="ghost" size="sm" icon="hand-thumb-up" title="Aprobar" class="text-agro-600" />
+                                @endif
+                                @if(in_array($maint->status, ['in_review', 'approved']))
+                                    <flux:button wire:click="transition({{ $maint->id }}, 'completed')" wire:confirm="¿Marcar como completado?" variant="ghost" size="sm" icon="check-circle" title="Completar" />
+                                @endif
+                                @if(!in_array($maint->status, ['completed', 'cancelled']))
+                                    <flux:button wire:click="transition({{ $maint->id }}, 'cancelled')" wire:confirm="¿Cancelar este mantenimiento?" variant="ghost" size="sm" icon="x-circle" title="Cancelar" />
+                                @endif
+                                {{-- Editar siempre --}}
+                                <a href="{{ roleRoute('containers.maintenance.edit', [$container, $maint]) }}" title="Editar">
+                                    <button class="inline-flex items-center justify-center w-7 h-7 rounded text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                        <flux:icon icon="pencil" class="size-3.5" />
+                                    </button>
+                                </a>
                             </div>
                         </x-agro.table-cell>
 

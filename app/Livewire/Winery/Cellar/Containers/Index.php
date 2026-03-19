@@ -5,6 +5,7 @@ namespace App\Livewire\Winery\Cellar\Containers;
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\Container;
 use App\Models\ContainerType;
+use App\Services\WineContainerStockService;
 use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
@@ -49,6 +50,13 @@ class Index extends AbstractIndex
         $this->currentTab = 'active';
     }
 
+    public function emptyWine(int $containerId): void
+    {
+        $container = Container::where('user_id', $this->wineryId())->findOrFail($containerId);
+        app(WineContainerStockService::class)->emptyWineContent($container);
+        $this->toastSuccess("Contenedor «{$container->name}» vaciado de vino.");
+    }
+
     public function delete(int $containerId): void
     {
         $container = Container::where('user_id', $this->wineryId())
@@ -66,7 +74,9 @@ class Index extends AbstractIndex
 
     protected function baseQuery(): Builder
     {
-        return Container::where('user_id', $this->wineryId())->withCount('harvests');
+        return Container::where('user_id', $this->wineryId())
+            ->withCount('harvests')
+            ->with('containerType');
     }
 
     protected function applyFilters(Builder $query): void

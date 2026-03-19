@@ -3,9 +3,13 @@
 namespace App\Livewire\Winery;
 
 use App\Models\Campaign;
+use App\Models\Container;
 use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
 use App\Models\ProductLot;
+use App\Models\Wine;
+use App\Models\WineFermentationControl;
+use App\Models\WineTransfer;
 use App\Models\WineryViticulturist;
 use App\Models\WineryYieldForecast;
 use Illuminate\Support\Facades\Auth;
@@ -72,6 +76,37 @@ class Dashboard extends Component
         // Lotes de vino en bodega
         $wineLotCount = ProductLot::where('user_id', $wineryId)->count();
 
+        // ── Módulo bodega: vinos, fermentaciones, contenedores ───────────────
+        $activeWines = Wine::where('user_id', $wineryId)->where('status', 'in_progress')->count();
+
+        $activeFermentations = WineFermentationControl::whereHas('wine', fn($q) => $q->where('user_id', $wineryId))
+            ->where(fn($q) => $q->where('density', '>', 1.000)->orWhere('brix_degree', '>', 2))
+            ->whereDate('control_date', '>=', now()->subDays(3))
+            ->distinct('wine_id')
+            ->count('wine_id');
+
+        $containerUsage = [
+            'total'    => (float) Container::where('user_id', $wineryId)->where('archived', false)->sum('capacity'),
+            'used'     => (float) Container::where('user_id', $wineryId)->where('archived', false)->sum('used_capacity'),
+        ];
+        $containerUsage['pct'] = $containerUsage['total'] > 0
+            ? min(($containerUsage['used'] / $containerUsage['total']) * 100, 100)
+            : 0;
+
+        // Últimos trasvases (3)
+        $recentTransfers = WineTransfer::with(['wine', 'fromContainer', 'toContainer'])
+            ->whereHas('wine', fn($q) => $q->where('user_id', $wineryId))
+            ->orderByDesc('transfer_date')
+            ->take(3)
+            ->get();
+
+        // Últimas fermentaciones (3)
+        $recentFermentations = WineFermentationControl::with(['wine', 'container'])
+            ->whereHas('wine', fn($q) => $q->where('user_id', $wineryId))
+            ->orderByDesc('control_date')
+            ->take(3)
+            ->get();
+
         // Últimas 5 recepciones
         $recentReceptions = Harvest::where('winery_id', $wineryId)
             ->where('status', 'active')
@@ -101,6 +136,11 @@ class Dashboard extends Component
             'alertsExceeded'       => $alertsExceeded,
             'alertsAtRisk'         => $alertsAtRisk,
             'wineLotCount'         => $wineLotCount,
+            'activeWines'          => $activeWines,
+            'activeFermentations'  => $activeFermentations,
+            'containerUsage'       => $containerUsage,
+            'recentTransfers'      => $recentTransfers,
+            'recentFermentations'  => $recentFermentations,
             'recentReceptions'     => $recentReceptions,
             'recentViticulturists' => $recentViticulturists,
         ])->layout('layouts.app');

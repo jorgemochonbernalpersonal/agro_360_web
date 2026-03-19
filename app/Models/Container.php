@@ -35,11 +35,13 @@ class Container extends Model
         'x_position',
         'y_position',
         'archived',
+        'wine_volume_liters',
     ];
 
     protected $casts = [
         'capacity' => 'decimal:2',
         'used_capacity' => 'decimal:2',
+        'wine_volume_liters' => 'decimal:3',
         'quantity' => 'integer',
         'purchase_date' => 'date',
         'next_maintenance_date' => 'datetime',

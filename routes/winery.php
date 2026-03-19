@@ -70,8 +70,10 @@ Route::middleware(['role:winery,producer'])
 
         // ── Contenedores de bodega ────────────────────────────────────
         Route::get('/containers', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('containers.index');
+        Route::get('/containers/analytics', \App\Livewire\Winery\Cellar\Containers\Analytics::class)->name('containers.analytics');
         Route::get('/containers/map', \App\Livewire\Winery\Cellar\Containers\Map::class)->name('containers.map');
         Route::get('/containers/create', \App\Livewire\Winery\Cellar\Containers\Create::class)->name('containers.create');
+        Route::get('/containers/{container}', \App\Livewire\Winery\Cellar\Containers\Show::class)->name('containers.show');
         Route::get('/containers/{container}/edit', \App\Livewire\Winery\Cellar\Containers\Edit::class)->name('containers.edit');
         Route::get('/containers/{container}/maintenance', \App\Livewire\Winery\Cellar\Containers\Maintenance\Index::class)->name('containers.maintenance.index');
         Route::get('/containers/{container}/maintenance/create', \App\Livewire\Winery\Cellar\Containers\Maintenance\Create::class)->name('containers.maintenance.create');
@@ -152,6 +154,21 @@ Route::middleware(['role:winery,producer'])
         Route::get('/wine-analysis', \App\Livewire\Winery\WineAnalysis\Index::class)->name('wine-analysis.index');
         Route::get('/wine-analysis/create', \App\Livewire\Winery\WineAnalysis\Create::class)->name('wine-analysis.create');
         Route::get('/wine-analysis/{analysis}/edit', \App\Livewire\Winery\WineAnalysis\Edit::class)->name('wine-analysis.edit');
+
+        // ── Controles de Fermentación ─────────────────────────────────
+        Route::get('/fermentation-controls', \App\Livewire\Winery\FermentationControls\Index::class)->name('fermentation-controls.index');
+        Route::get('/fermentation-controls/create', \App\Livewire\Winery\FermentationControls\Create::class)->name('fermentation-controls.create');
+        Route::get('/fermentation-controls/{control}/edit', \App\Livewire\Winery\FermentationControls\Edit::class)->name('fermentation-controls.edit');
+
+        // ── Trasvases y Coupage ───────────────────────────────────────
+        Route::get('/wine-transfers', \App\Livewire\Winery\WineTransfers\Index::class)->name('wine-transfers.index');
+        Route::get('/wine-transfers/create', \App\Livewire\Winery\WineTransfers\Create::class)->name('wine-transfers.create');
+        Route::get('/wine-transfers/{transfer}/edit', \App\Livewire\Winery\WineTransfers\Edit::class)->name('wine-transfers.edit');
+
+        // ── Mermas y Pérdidas ─────────────────────────────────────────
+        Route::get('/wine-losses', \App\Livewire\Winery\WineLosses\Index::class)->name('wine-losses.index');
+        Route::get('/wine-losses/create', \App\Livewire\Winery\WineLosses\Create::class)->name('wine-losses.create');
+        Route::get('/wine-losses/{loss}/edit', \App\Livewire\Winery\WineLosses\Edit::class)->name('wine-losses.edit');
 
         // ── Inventario de insumos de bodega ───────────────────────────
         Route::get('/inventory', fn() => redirect()->route('winery.winery-supplies.index'))->name('inventory.index');

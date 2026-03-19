@@ -76,8 +76,10 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── Contenedores (unificado bodega + campo) ───────────────────────
         Route::prefix('containers')->name('containers.')->group(function () {
             Route::get('/', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('index');
+            Route::get('/analytics', \App\Livewire\Winery\Cellar\Containers\Analytics::class)->name('analytics');
             Route::get('/map', \App\Livewire\Winery\Cellar\Containers\Map::class)->name('map');
             Route::get('/create', \App\Livewire\Winery\Cellar\Containers\Create::class)->name('create');
+            Route::get('/{container}', \App\Livewire\Winery\Cellar\Containers\Show::class)->name('show');
             Route::get('/{container}/edit', \App\Livewire\Winery\Cellar\Containers\Edit::class)->name('edit');
             Route::get('/{container}/maintenance', \App\Livewire\Winery\Cellar\Containers\Maintenance\Index::class)->name('maintenance.index');
             Route::get('/{container}/maintenance/create', \App\Livewire\Winery\Cellar\Containers\Maintenance\Create::class)->name('maintenance.create');
@@ -210,6 +212,27 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/', \App\Livewire\Winery\WineAnalysis\Index::class)->name('index');
             Route::get('/create', \App\Livewire\Winery\WineAnalysis\Create::class)->name('create');
             Route::get('/{analysis}/edit', \App\Livewire\Winery\WineAnalysis\Edit::class)->name('edit');
+        });
+
+        // ── Controles de Fermentación ─────────────────────────────────────
+        Route::prefix('fermentation-controls')->name('fermentation-controls.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\FermentationControls\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\FermentationControls\Create::class)->name('create');
+            Route::get('/{control}/edit', \App\Livewire\Winery\FermentationControls\Edit::class)->name('edit');
+        });
+
+        // ── Trasvases y Coupage ───────────────────────────────────────────
+        Route::prefix('wine-transfers')->name('wine-transfers.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\WineTransfers\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\WineTransfers\Create::class)->name('create');
+            Route::get('/{transfer}/edit', \App\Livewire\Winery\WineTransfers\Edit::class)->name('edit');
+        });
+
+        // ── Mermas y Pérdidas ─────────────────────────────────────────────
+        Route::prefix('wine-losses')->name('wine-losses.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\WineLosses\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\WineLosses\Create::class)->name('create');
+            Route::get('/{loss}/edit', \App\Livewire\Winery\WineLosses\Edit::class)->name('edit');
         });
 
         // ── Lotes de producto ─────────────────────────────────────────────
