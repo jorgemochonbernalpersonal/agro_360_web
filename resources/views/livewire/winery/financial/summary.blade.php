@@ -17,7 +17,7 @@
 </x-agro.page-header>
 
 {{-- ── KPIs principales ────────────────────────────────────────────── --}}
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
 
     {{-- Ingresos totales --}}
     <x-agro.card class="border-l-4 border-l-green-500">
@@ -63,6 +63,22 @@
                 </p>
             </div>
         @endif
+    </x-agro.card>
+
+    {{-- Costes de mantenimiento --}}
+    <x-agro.card class="border-l-4 border-l-orange-400">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Mantenimiento</p>
+                <p class="text-2xl font-bold text-orange-500 leading-none mt-1">
+                    {{ number_format($maintenanceCost, 0, ',', '.') }} €
+                </p>
+                <p class="text-xs text-zinc-400 mt-1">Contenedores completados</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                <flux:icon icon="wrench-screwdriver" class="size-5 text-orange-500" />
+            </div>
+        </div>
     </x-agro.card>
 
     {{-- Margen bruto --}}

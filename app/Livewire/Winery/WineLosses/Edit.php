@@ -72,6 +72,19 @@ class Edit extends Component
     {
         $this->validate();
 
+        // Validate container has enough wine stock (add back old quantity for same container)
+        if ($this->container_id) {
+            $container = Container::where('user_id', Auth::id())->find($this->container_id);
+            if ($container) {
+                $oldQty = (float) ($this->oldLossData['container_id'] == $this->container_id ? $this->oldLossData['quantity'] : 0);
+                $available = $container->wine_volume_liters + $oldQty;
+                if ($available < (float) $this->quantity) {
+                    $this->addError('quantity', 'El contenedor solo tiene ' . number_format($available, 1) . ' L de vino disponibles.');
+                    return;
+                }
+            }
+        }
+
         $this->loss->update([
             'wine_id'                => $this->wine_id,
             'container_id'           => $this->container_id ?: null,

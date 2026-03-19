@@ -70,7 +70,7 @@
     @endif
 
     {{-- Alertas --}}
-    @if($alertsExceeded > 0 || $alertsAtRisk > 0)
+    @if($alertsExceeded > 0 || $alertsAtRisk > 0 || $maintenanceOverdue > 0)
         <div class="flex flex-wrap gap-3">
             @if($alertsExceeded > 0)
                 <a href="{{ roleRoute('harvest-summary.index', ['alertFilter' => 'exceeded']) }}" wire:navigate
@@ -85,6 +85,14 @@
                     class="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors">
                     <flux:icon icon="bell-alert" class="size-4" />
                     {{ $alertsAtRisk }} en riesgo (≥80%)
+                    <flux:icon icon="arrow-right" class="size-3.5" />
+                </a>
+            @endif
+            @if($maintenanceOverdue > 0)
+                <a href="{{ roleRoute('containers.index') }}" wire:navigate
+                    class="flex items-center gap-2 px-4 py-2.5 bg-orange-50 border border-orange-200 rounded-xl text-sm font-medium text-orange-700 hover:bg-orange-100 transition-colors">
+                    <flux:icon icon="wrench-screwdriver" class="size-4" />
+                    {{ $maintenanceOverdue }} mantenimiento{{ $maintenanceOverdue > 1 ? 's' : '' }} vencido{{ $maintenanceOverdue > 1 ? 's' : '' }}
                     <flux:icon icon="arrow-right" class="size-3.5" />
                 </a>
             @endif

@@ -38,10 +38,22 @@ class Index extends Component
             $updates['performed_date'] = now()->toDateString();
         }
 
+        if ($status === 'in_review' && ! $maintenance->performed_date) {
+            // Work is done; record performed date when sending for review
+            $updates['performed_date'] = now()->toDateString();
+        }
+
         if ($status === 'completed') {
-            $updates['performed_date'] = $updates['performed_date'] ?? now()->toDateString();
+            $updates['performed_date'] = $maintenance->performed_date?->toDateString() ?? now()->toDateString();
             if ($maintenance->next_maintenance_date) {
                 $this->container->update(['next_maintenance_date' => $maintenance->next_maintenance_date]);
+            }
+        }
+
+        if ($status === 'cancelled') {
+            // Clear performed_date if cancelled before work started
+            if (in_array($maintenance->status, ['scheduled'])) {
+                $updates['performed_date'] = null;
             }
         }
 

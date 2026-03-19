@@ -194,6 +194,19 @@ class Edit extends Component
 
         Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
 
+        // Validate container has enough wine (add back old quantity if same container)
+        if (! empty($this->container_id)) {
+            $container = Container::where('user_id', Auth::id())->find($this->container_id);
+            if ($container) {
+                $oldQty = (float) ($this->oldBottlingData['container_id'] == $this->container_id ? $this->oldBottlingData['quantity_liters'] : 0);
+                $available = $container->wine_volume_liters + $oldQty;
+                if ($available < (float) $this->quantity_liters) {
+                    $this->addError('quantity_liters', 'El depósito solo tiene ' . number_format($available, 1) . ' L disponibles para embotellar.');
+                    return;
+                }
+            }
+        }
+
         DB::transaction(function () use ($data) {
             $this->bottling->update([
                 'wine_id'                => $data['wine_id'],

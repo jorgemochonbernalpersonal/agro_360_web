@@ -203,6 +203,15 @@ class Create extends Component
         // Ownership check
         $wine = Wine::where('user_id', Auth::id())->findOrFail($data['wine_id']);
 
+        // Validate container has enough wine_volume_liters to bottle
+        if (! empty($data['container_id'])) {
+            $container = Container::where('user_id', Auth::id())->find($data['container_id']);
+            if ($container && $container->wine_volume_liters < (float) $data['quantity_liters']) {
+                $this->addError('quantity_liters', 'El depósito solo tiene ' . number_format($container->wine_volume_liters, 1) . ' L disponibles para embotellar.');
+                return;
+            }
+        }
+
         DB::transaction(function () use ($data, $wine) {
             $bottling = WineBottling::create([
                 'user_id'                => Auth::id(),

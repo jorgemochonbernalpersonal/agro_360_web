@@ -31,7 +31,7 @@
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
-    <x-agro.data-table :headers="['Fecha', 'Vino', 'Tipo', 'Laboratorio', 'Graduación', 'pH', 'Resultado', 'Acciones']">
+    <x-agro.data-table :headers="['Fecha', 'Vino', 'Depósito', 'Tipo', 'Laboratorio', 'Graduación', 'pH', 'Resultado', 'Acciones']">
         @forelse($analyses as $analysis)
             <x-agro.table-row>
                 <x-agro.table-cell>
@@ -49,6 +49,17 @@
                         @endif
                     @else
                         <span class="text-zinc-400">—</span>
+                    @endif
+                </x-agro.table-cell>
+
+                <x-agro.table-cell>
+                    @if($analysis->container)
+                        <a href="{{ roleRoute('containers.show', $analysis->container) }}" wire:navigate
+                           class="text-sm text-zinc-700 hover:underline">
+                            {{ $analysis->container->name }}
+                        </a>
+                    @else
+                        <span class="text-zinc-300">—</span>
                     @endif
                 </x-agro.table-cell>
 
