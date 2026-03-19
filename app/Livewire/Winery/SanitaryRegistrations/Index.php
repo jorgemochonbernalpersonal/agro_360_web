@@ -67,10 +67,21 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = SanitaryRegistration::where('user_id', $this->wineryId());
+
+        $stats = [
+            'total'    => (clone $base)->count(),
+            'active'   => (clone $base)->where('status', 'active')->count(),
+            'expiring' => (clone $base)->where('status', 'active')->whereNotNull('renewal_date')
+                ->whereBetween('renewal_date', [today(), today()->addDays(90)])->count(),
+            'expired'  => (clone $base)->where('status', 'expired')->count(),
+        ];
+
         return [
             'registrations' => $entries,
             'types'         => SanitaryRegistration::REGISTRATION_TYPES,
             'statuses'      => SanitaryRegistration::STATUSES,
+            'stats'         => $stats,
         ];
     }
 }

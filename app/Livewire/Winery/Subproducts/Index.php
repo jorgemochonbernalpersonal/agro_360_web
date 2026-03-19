@@ -75,10 +75,18 @@ class Index extends AbstractIndex
             ->orderBy('name')
             ->get();
 
+        $base = WineSubproduct::where('user_id', $this->wineryId());
+
+        $stats = [
+            'total'     => (clone $base)->count(),
+            'this_year' => (clone $base)->whereYear('subproduct_date', now()->year)->count(),
+        ];
+
         return [
             'subproducts' => $entries,
             'wines'       => $wines,
             'types'       => WineSubproduct::TYPES,
+            'stats'       => $stats,
         ];
     }
 }

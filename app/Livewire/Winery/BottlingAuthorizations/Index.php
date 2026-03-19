@@ -66,10 +66,21 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = BottlingAuthorization::where('user_id', $this->wineryId());
+
+        $stats = [
+            'total'    => (clone $base)->count(),
+            'active'   => (clone $base)->where('status', 'active')->count(),
+            'expiring' => (clone $base)->where('status', 'active')->whereNotNull('valid_until')
+                ->whereBetween('valid_until', [today(), today()->addDays(90)])->count(),
+            'expired'  => (clone $base)->where('status', 'expired')->count(),
+        ];
+
         return [
             'authorizations' => $entries,
             'types'          => BottlingAuthorization::AUTHORIZATION_TYPES,
             'statuses'       => BottlingAuthorization::STATUSES,
+            'stats'          => $stats,
         ];
     }
 }

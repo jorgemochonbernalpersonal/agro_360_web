@@ -67,10 +67,21 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = EcoCertification::where('user_id', $this->wineryId());
+
+        $stats = [
+            'total'    => (clone $base)->count(),
+            'active'   => (clone $base)->where('status', 'active')->count(),
+            'expiring' => (clone $base)->where('status', 'active')->whereNotNull('valid_until')
+                ->whereBetween('valid_until', [today(), today()->addDays(90)])->count(),
+            'pending'  => (clone $base)->where('status', 'pending')->count(),
+        ];
+
         return [
             'certifications' => $entries,
             'types'          => EcoCertification::CERTIFICATION_TYPES,
             'statuses'       => EcoCertification::STATUSES,
+            'stats'          => $stats,
         ];
     }
 }

@@ -1,9 +1,32 @@
 <div class="space-y-6 animate-fade-in">
 
+    {{-- Header --}}
     <x-agro.page-header
         title="Actividades de Campo"
-        description="Registro de actividades agrícolas de tus viticultores vinculados (solo lectura)."
+        description="Registro de actividades agrícolas de tus viticultores vinculados (solo lectura)"
     />
+
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <x-agro.stat-card
+            label="Total actividades"
+            :value="$stats['total']"
+            icon="clipboard-document-list"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Vendimias"
+            :value="$stats['harvest']"
+            icon="sparkles"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Fitosanitarios"
+            :value="$stats['phyto']"
+            icon="beaker"
+            color="amber"
+        />
+    </div>
 
     {{-- Cuaderno access warning --}}
     @if($withoutCuadernoAccess->isNotEmpty())
@@ -29,8 +52,6 @@
 
     {{-- Toolbar --}}
     <div class="flex items-center gap-3">
-
-        {{-- Filtros --}}
         <button x-on:click="$dispatch('open-modal', 'field-activities-filters')"
             class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
             <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
@@ -42,10 +63,8 @@
             @endif
         </button>
 
-        {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        {{-- Navegación --}}
         <flux:button variant="ghost" icon="chart-bar" href="{{ roleRoute('harvest-summary.index') }}" wire:navigate size="sm">
             Cuadro de mando
         </flux:button>
@@ -101,18 +120,16 @@
         </div>
     @endif
 
-    {{-- Skeleton --}}
+    {{-- Loading skeleton --}}
     <div wire:loading wire:target="viticulturistFilter, activityTypeFilter, campaignFilter, plotFilter, gotoPage, previousPage, nextPage">
-        <x-agro.card>
-            <div class="space-y-3">
-                @for($i = 0; $i < 8; $i++)
-                    <div class="h-10 bg-zinc-100 rounded-lg animate-pulse"></div>
-                @endfor
-            </div>
-        </x-agro.card>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for($i = 0; $i < 6; $i++)
+                <x-agro.skeleton-card />
+            @endfor
+        </div>
     </div>
 
-    {{-- Contenido --}}
+    {{-- Grid de cards --}}
     <div wire:loading.remove wire:target="viticulturistFilter, activityTypeFilter, campaignFilter, plotFilter, gotoPage, previousPage, nextPage">
         @if($activities->isEmpty())
             <x-agro.empty-state
@@ -121,74 +138,87 @@
                 description="Tus viticultores vinculados aún no han registrado actividades que coincidan con los filtros aplicados."
             />
         @else
-            <x-agro.card>
-                <x-agro.data-table :headers="['Viticultor', 'Tipo', 'Parcela / Plantación', 'Campaña', 'Fecha', 'Condiciones', 'Notas']">
-                    @foreach($activities as $act)
-                        <x-agro.table-row wire:key="act-{{ $act->id }}">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($activities as $act)
+                    @php
+                        $delay = min($loop->index * 50, 300);
+                        $typeColors = [
+                            'harvest'       => ['badge' => 'agro',   'bg' => 'bg-agro-100',    'icon' => 'text-agro-600'],
+                            'phytosanitary' => ['badge' => 'amber',  'bg' => 'bg-amber-100',   'icon' => 'text-amber-600'],
+                            'fertilization' => ['badge' => 'blue',   'bg' => 'bg-blue-100',    'icon' => 'text-blue-600'],
+                            'irrigation'    => ['badge' => 'blue',   'bg' => 'bg-blue-100',    'icon' => 'text-blue-600'],
+                            'pruning'       => ['badge' => 'violet', 'bg' => 'bg-violet-100',  'icon' => 'text-violet-600'],
+                            'cultural'      => ['badge' => 'zinc',   'bg' => 'bg-zinc-100',    'icon' => 'text-zinc-500'],
+                            'observation'   => ['badge' => 'zinc',   'bg' => 'bg-zinc-100',    'icon' => 'text-zinc-500'],
+                            'phenology'     => ['badge' => 'violet', 'bg' => 'bg-violet-100',  'icon' => 'text-violet-600'],
+                            'post_harvest'  => ['badge' => 'zinc',   'bg' => 'bg-zinc-100',    'icon' => 'text-zinc-500'],
+                        ];
+                        $tc = $typeColors[$act->activity_type] ?? $typeColors['cultural'];
+                        $tl = $activityTypes[$act->activity_type] ?? $act->activity_type;
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="act-{{ $act->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $tc['bg'] }}">
+                                    <flux:icon icon="clipboard-document-list" class="size-5 {{ $tc['icon'] }}" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $act->viticulturist?->name ?? '—' }}</h3>
+                                    <p class="text-xs text-zinc-400">{{ $act->activity_date?->format('d/m/Y') ?? '—' }}</p>
+                                </div>
+                                <flux:badge color="{{ $tc['badge'] }}" size="sm" class="shrink-0">{{ $tl }}</flux:badge>
+                            </div>
+                        </x-slot:header>
 
-                            <x-agro.table-cell>
-                                <span class="font-medium text-zinc-900">{{ $act->viticulturist?->name ?? '—' }}</span>
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                @php
-                                    $typeColors = [
-                                        'harvest'       => 'agro',
-                                        'phytosanitary' => 'amber',
-                                        'fertilization' => 'blue',
-                                        'irrigation'    => 'blue',
-                                        'pruning'       => 'violet',
-                                        'cultural'      => 'zinc',
-                                        'observation'   => 'zinc',
-                                        'phenology'     => 'violet',
-                                        'post_harvest'  => 'zinc',
-                                    ];
-                                    $tc = $typeColors[$act->activity_type] ?? 'zinc';
-                                    $tl = $activityTypes[$act->activity_type] ?? $act->activity_type;
-                                @endphp
-                                <x-agro.status-badge :color="$tc" :label="$tl" />
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                <div class="font-medium text-zinc-900">{{ $act->plot?->name ?? '—' }}</div>
-                                @if($act->plotPlanting?->grapeVariety)
-                                    <div class="text-xs text-zinc-400">{{ $act->plotPlanting->grapeVariety->name }}</div>
-                                @endif
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                <span class="text-zinc-600">{{ $act->campaign?->year ?? '—' }}</span>
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                <span class="text-zinc-700">{{ $act->activity_date?->format('d/m/Y') ?? '—' }}</span>
-                            </x-agro.table-cell>
-
-                            <x-agro.table-cell>
-                                @if($act->weather_conditions || $act->temperature)
-                                    <div class="text-sm text-zinc-600">
-                                        @if($act->weather_conditions) {{ $act->weather_conditions }} @endif
-                                        @if($act->temperature) · {{ $act->temperature }}°C @endif
+                        <div class="flex-1 space-y-3">
+                            {{-- Parcela --}}
+                            @if($act->plot)
+                                <div class="flex items-center gap-2 text-sm text-zinc-600">
+                                    <flux:icon icon="map" class="size-4 text-zinc-400 shrink-0" />
+                                    <div class="min-w-0">
+                                        <span class="font-medium truncate">{{ $act->plot->name }}</span>
+                                        @if($act->plotPlanting?->grapeVariety)
+                                            <span class="text-xs text-zinc-400 ml-1">· {{ $act->plotPlanting->grapeVariety->name }}</span>
+                                        @endif
                                     </div>
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </x-agro.table-cell>
+                                </div>
+                            @endif
 
-                            <x-agro.table-cell>
-                                @if($act->notes)
-                                    <span class="text-xs text-zinc-500 line-clamp-2">{{ $act->notes }}</span>
-                                @else
-                                    <span class="text-zinc-300">—</span>
-                                @endif
-                            </x-agro.table-cell>
+                            {{-- Campaña --}}
+                            @if($act->campaign)
+                                <div class="flex items-center gap-2 text-sm text-zinc-600">
+                                    <flux:icon icon="calendar" class="size-4 text-zinc-400 shrink-0" />
+                                    <span class="text-xs">Campaña {{ $act->campaign->year }}</span>
+                                </div>
+                            @endif
 
-                        </x-agro.table-row>
-                    @endforeach
-                </x-agro.data-table>
-            </x-agro.card>
+                            {{-- Condiciones --}}
+                            @if($act->weather_conditions || $act->temperature)
+                                <div class="flex items-center gap-2 text-xs text-zinc-500 bg-zinc-50 rounded-lg px-3 py-2">
+                                    <flux:icon icon="sun" class="size-4 text-zinc-400 shrink-0" />
+                                    <span>
+                                        @if($act->weather_conditions){{ $act->weather_conditions }}@endif
+                                        @if($act->temperature) · {{ $act->temperature }}°C@endif
+                                    </span>
+                                </div>
+                            @endif
 
-            <x-agro.pagination :paginator="$activities" />
+                            {{-- Notas --}}
+                            @if($act->notes)
+                                <p class="text-xs text-zinc-400 line-clamp-2">{{ $act->notes }}</p>
+                            @endif
+                        </div>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            <div class="mt-6">
+                <x-agro.pagination :paginator="$activities" />
+            </div>
         @endif
     </div>
 

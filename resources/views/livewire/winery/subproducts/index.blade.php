@@ -1,4 +1,6 @@
 <div class="space-y-6 animate-fade-in">
+
+    {{-- Header --}}
     <x-agro.page-header
         title="Subproductos"
         description="Registro de orujo, lías, vinaza y otros subproductos de elaboración"
@@ -10,91 +12,176 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    <x-agro.filter-bar>
-        <x-agro.filter-input
-            wire:model.live.debounce.300ms="search"
-            placeholder="Buscar por vino, destino o lote..."
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <x-agro.stat-card
+            label="Total subproductos"
+            :value="$stats['total']"
+            icon="archive-box"
+            color="zinc"
         />
-        <x-agro.filter-select wire:model.live="typeFilter" size="sm" class="w-44">
+        <x-agro.stat-card
+            label="Este año"
+            :value="$stats['this_year']"
+            icon="calendar-days"
+            color="agro"
+        />
+    </div>
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3">
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar por vino, destino o lote..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
+        </div>
+
+        <flux:select wire:model.live="typeFilter" class="w-44">
             <flux:select.option value="">Todos los tipos</flux:select.option>
             @foreach($types as $key => $label)
                 <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-        <x-agro.filter-select wire:model.live="wineFilter" size="sm" class="w-52">
+        </flux:select>
+
+        <flux:select wire:model.live="wineFilter" class="w-48">
             <flux:select.option value="">Todos los vinos</flux:select.option>
             @foreach($wines as $wine)
                 <flux:select.option value="{{ $wine->id }}">{{ $wine->name }}{{ $wine->vintage ? ' ' . $wine->vintage : '' }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
+        </flux:select>
+
         @if($search || $typeFilter || $wineFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
+                Limpiar
+            </flux:button>
         @endif
-    </x-agro.filter-bar>
+    </div>
 
-    @if($subproducts->count() > 0)
-        <div wire:loading.class="opacity-60 pointer-events-none" wire:target="search, typeFilter, wineFilter, clearFilters">
-            <x-agro.data-table :headers="['Fecha', 'Tipo', 'Vino origen', 'Cantidad', 'Destino', 'Lote', '']">
-                @foreach($subproducts as $sp)
-                    <x-agro.table-row wire:key="sp-{{ $sp->id }}">
-                        <x-agro.table-cell>{{ $sp->subproduct_date->format('d/m/Y') }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <flux:badge color="{{ $sp->type_badge_color }}" size="sm">{{ $sp->type_label }}</flux:badge>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($sp->wine)
-                                <span class="font-medium text-zinc-900">{{ $sp->wine->name }}</span>
-                                @if($sp->wine->vintage)
-                                    <span class="text-xs text-zinc-400 ml-1">{{ $sp->wine->vintage }}</span>
-                                @endif
-                            @else
-                                <span class="text-zinc-300">—</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <span class="font-medium">{{ number_format($sp->quantity, 3) }}</span>
-                            @if($sp->unit)
-                                <span class="text-xs text-zinc-400 font-normal ml-0.5">{{ $sp->unit->abbreviation ?? $sp->unit->name }}</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="text-zinc-700">{{ $sp->destination_label }}</span>
-                            @if($sp->destination_name)
-                                <span class="text-xs text-zinc-400 block">{{ $sp->destination_name }}</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell class="font-mono text-xs">{{ $sp->lot_number ?: '—' }}</x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <x-agro.action-button variant="edit" :href="roleRoute('subproducts.edit', $sp)" />
-                                <x-agro.action-button
-                                    variant="delete"
-                                    wireClick="delete({{ $sp->id }})"
-                                    wireConfirm="¿Eliminar este registro de subproducto?"
-                                />
-                            </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
-            </x-agro.data-table>
+    {{-- Loading skeleton --}}
+    <div wire:loading wire:target="search, typeFilter, wineFilter, clearFilters, nextPage, previousPage">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for($i = 0; $i < 6; $i++)
+                <x-agro.skeleton-card />
+            @endfor
         </div>
+    </div>
 
-        <x-agro.pagination :paginator="$subproducts" />
-    @else
-        <x-agro.empty-state
-            icon="archive-box"
-            title="No hay subproductos"
-            :description="$search || $typeFilter || $wineFilter ? 'Ningún subproducto coincide con los filtros.' : 'Registra orujo, lías, vinaza y otros subproductos de elaboración.'"
-        >
-            @if($search || $typeFilter || $wineFilter)
-                <x-slot:action>
-                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
-                </x-slot:action>
-            @else
-                <x-slot:action>
-                    <flux:button href="{{ roleRoute('subproducts.create') }}" variant="primary" icon="plus">Nuevo subproducto</flux:button>
-                </x-slot:action>
-            @endif
-        </x-agro.empty-state>
-    @endif
+    {{-- Grid de cards --}}
+    <div wire:loading.remove wire:target="search, typeFilter, wineFilter, clearFilters, nextPage, previousPage">
+        @if($subproducts->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($subproducts as $sp)
+                    @php
+                        $delay = min($loop->index * 50, 300);
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="sp-{{ $sp->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-zinc-100">
+                                    <flux:icon icon="archive-box" class="size-5 text-zinc-500" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">
+                                        @if($sp->wine)
+                                            {{ $sp->wine->name }}
+                                            @if($sp->wine->vintage)
+                                                <span class="text-zinc-400 font-normal text-sm ml-1">{{ $sp->wine->vintage }}</span>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
+                                    </h3>
+                                    <p class="text-xs text-zinc-400">{{ $sp->subproduct_date->format('d/m/Y') }}</p>
+                                </div>
+                                <flux:badge color="{{ $sp->type_badge_color }}" size="sm" class="shrink-0">
+                                    {{ $sp->type_label }}
+                                </flux:badge>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            {{-- Cantidad --}}
+                            <div class="bg-zinc-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-2xl font-bold text-zinc-700 leading-none">
+                                    {{ number_format($sp->quantity, 3) }}
+                                    @if($sp->unit)
+                                        <span class="text-sm font-normal text-zinc-400 ml-1">{{ $sp->unit->abbreviation ?? $sp->unit->name }}</span>
+                                    @endif
+                                </p>
+                            </div>
+
+                            {{-- Destino --}}
+                            <div class="flex items-center gap-2 text-sm text-zinc-600">
+                                <flux:icon icon="truck" class="size-4 text-zinc-400 shrink-0" />
+                                <div class="min-w-0">
+                                    <span class="font-medium">{{ $sp->destination_label }}</span>
+                                    @if($sp->destination_name)
+                                        <span class="text-zinc-400 text-xs block">{{ $sp->destination_name }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Nº lote --}}
+                            @if($sp->lot_number)
+                                <div class="flex items-center gap-2">
+                                    <flux:icon icon="hashtag" class="size-4 text-zinc-400 shrink-0" />
+                                    <span class="text-xs font-mono text-zinc-600">{{ $sp->lot_number }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <x-slot:footer>
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ roleRoute('subproducts.edit', $sp) }}"
+                                   title="Editar subproducto"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                <button
+                                    wire:click="delete({{ $sp->id }})"
+                                    wire:confirm="¿Eliminar este registro de subproducto?"
+                                    wire:loading.attr="disabled"
+                                    title="Eliminar subproducto"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                    <flux:icon icon="trash" class="size-4" />
+                                </button>
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            <div class="mt-6">
+                {{ $subproducts->links() }}
+            </div>
+        @else
+            <x-agro.empty-state
+                icon="archive-box"
+                title="{{ $search || $typeFilter || $wineFilter ? 'Ningún subproducto coincide con los filtros' : 'No hay subproductos' }}"
+                description="{{ $search || $typeFilter || $wineFilter ? 'Prueba a cambiar o limpiar los filtros aplicados.' : 'Registra orujo, lías, vinaza y otros subproductos de elaboración.' }}"
+            >
+                @if($search || $typeFilter || $wineFilter)
+                    <x-slot:action>
+                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                    </x-slot:action>
+                @else
+                    <x-slot:action>
+                        <flux:button href="{{ roleRoute('subproducts.create') }}" variant="primary" icon="plus">Nuevo subproducto</flux:button>
+                    </x-slot:action>
+                @endif
+            </x-agro.empty-state>
+        @endif
+    </div>
+
 </div>

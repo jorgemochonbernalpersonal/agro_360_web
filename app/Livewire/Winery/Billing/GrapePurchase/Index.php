@@ -121,9 +121,19 @@ class Index extends AbstractIndex
         $viticulturists = User::whereIn('id', $viticulturistIds)
             ->orderBy('name')->get(['id', 'name']);
 
+        $base = Invoice::where('user_id', $this->wineryId())->where('invoice_type', 'grape_purchase');
+
+        $stats = [
+            'total'        => (clone $base)->count(),
+            'paid'         => (clone $base)->where('payment_status', 'paid')->count(),
+            'pending'      => (clone $base)->where('payment_status', 'unpaid')->where('status', '!=', 'cancelled')->count(),
+            'pending_amount' => (clone $base)->where('payment_status', 'unpaid')->where('status', '!=', 'cancelled')->sum('total_amount'),
+        ];
+
         return [
             'invoices'       => $entries,
             'viticulturists' => $viticulturists,
+            'stats'          => $stats,
         ];
     }
 
