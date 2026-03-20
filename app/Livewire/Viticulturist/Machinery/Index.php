@@ -93,9 +93,10 @@ class Index extends Component
         $allMachinery = Machinery::forViticulturist($user->id)->select('active', 'type')->get();
         $types = $allMachinery->pluck('type')->filter()->unique()->sort()->values();
         $stats = [
-            'total'    => $allMachinery->count(),
-            'active'   => $allMachinery->where('active', true)->count(),
-            'inactive' => $allMachinery->where('active', false)->count(),
+            'total'       => $allMachinery->count(),
+            'active'      => $allMachinery->where('active', true)->count(),
+            'inactive'    => $allMachinery->where('active', false)->count(),
+            'types_count' => $types->count(),
         ];
 
         return view('livewire.viticulturist.machinery.index', compact('machinery', 'types', 'stats'))
