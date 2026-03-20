@@ -16,31 +16,56 @@
     </x-agro.page-header>
 
     {{-- KPIs --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <x-agro.stat-card
-            label="Total vinos"
-            :value="$stats['total']"
-            icon="beaker"
-            color="zinc"
-        />
-        <x-agro.stat-card
-            label="En elaboración"
-            :value="$stats['active']"
-            icon="play-circle"
-            color="agro"
-        />
-        <x-agro.stat-card
-            label="Embotellados"
-            :value="$stats['bottled']"
-            icon="archive-box-arrow-down"
-            color="zinc"
-        />
-        <x-agro.stat-card
-            label="Con analítica"
-            :value="$stats['with_analysis']"
-            icon="chart-bar"
-            color="amber"
-        />
+    <div x-data="{
+        open: localStorage.getItem('product-sheets-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('product-sheets-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+        <div class="grid grid-cols-2 gap-4">
+            <x-agro.stat-card
+                label="Total vinos"
+                :value="$stats['total']"
+                icon="beaker"
+                color="zinc"
+            />
+            <x-agro.stat-card
+                label="En elaboración"
+                :value="$stats['active']"
+                icon="play-circle"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="Embotellados"
+                :value="$stats['bottled']"
+                icon="archive-box-arrow-down"
+                color="zinc"
+            />
+            <x-agro.stat-card
+                label="Con analítica"
+                :value="$stats['with_analysis']"
+                icon="chart-bar"
+                color="amber"
+            />
+        </div>
+        </div>
     </div>
 
     {{-- Toolbar --}}
@@ -231,3 +256,4 @@
     </div>
 
 </div>
+

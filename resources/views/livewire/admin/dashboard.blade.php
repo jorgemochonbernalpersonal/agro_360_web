@@ -5,7 +5,7 @@
     />
 
     {{-- Estadísticas Principales --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
             label="Total Usuarios"
             :value="$stats['users']['total']"
@@ -124,7 +124,7 @@
     {{-- Accesos Rápidos --}}
     <div>
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Accesos Rápidos</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 gap-4">
             <x-agro.card class="hover-lift transition-all duration-200">
                 <a href="{{ route('admin.users.index') }}" class="flex items-center gap-4 group">
                     <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition-colors">

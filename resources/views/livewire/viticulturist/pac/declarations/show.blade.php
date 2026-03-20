@@ -24,7 +24,7 @@
     </x-agro.page-header>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card label="Parcelas" :value="$declaration->items->count()" icon="map" color="zinc" />
         <x-agro.stat-card label="Superficie declarada" :value="number_format($declaration->total_declared_area, 2) . ' ha'" icon="globe-alt" color="agro" />
         <x-agro.stat-card label="Superficie admisible" :value="number_format($declaration->total_eligible_area, 2) . ' ha'" icon="check-circle" color="green" />
@@ -39,7 +39,7 @@
                 <span class="font-semibold text-zinc-900 text-sm">Datos de la declaración</span>
             </div>
         </x-slot:header>
-        <dl class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <dl class="grid grid-cols-2 gap-4 text-sm">
             <div>
                 <dt class="text-zinc-500">Año</dt>
                 <dd class="font-bold text-zinc-900 text-lg">{{ $declaration->year }}</dd>

@@ -14,31 +14,56 @@
     </x-agro.page-header>
 
     {{-- KPIs --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <x-agro.stat-card
-            label="Total análisis"
-            :value="$stats['total']"
-            icon="beaker"
-            color="zinc"
-        />
-        <x-agro.stat-card
-            label="Este año"
-            :value="$stats['this_year']"
-            icon="calendar-days"
-            color="agro"
-        />
-        <x-agro.stat-card
-            label="Conformes"
-            :value="$stats['passed']"
-            icon="check-circle"
-            color="agro"
-        />
-        <x-agro.stat-card
-            label="No conformes"
-            :value="$stats['failed']"
-            icon="x-circle"
-            color="amber"
-        />
+    <div x-data="{
+        open: localStorage.getItem('wine-analysis-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('wine-analysis-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+        <div class="grid grid-cols-2 gap-4">
+            <x-agro.stat-card
+                label="Total análisis"
+                :value="$stats['total']"
+                icon="beaker"
+                color="zinc"
+            />
+            <x-agro.stat-card
+                label="Este año"
+                :value="$stats['this_year']"
+                icon="calendar-days"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="Conformes"
+                :value="$stats['passed']"
+                icon="check-circle"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="No conformes"
+                :value="$stats['failed']"
+                icon="x-circle"
+                color="amber"
+            />
+        </div>
+        </div>
     </div>
 
     @php
@@ -311,3 +336,4 @@
     </x-agro.modal>
 
 </div>
+

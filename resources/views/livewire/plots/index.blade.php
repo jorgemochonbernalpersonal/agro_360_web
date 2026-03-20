@@ -1,15 +1,76 @@
 <div class="space-y-6 animate-fade-in">
 
-    <x-agro.page-header title="Gestion de Parcelas" description="Administra y visualiza todas tus parcelas agricolas" />
+    {{-- Header --}}
+    <x-agro.page-header
+        title="Gestión de Parcelas"
+        description="Administra y visualiza todas tus parcelas agrícolas"
+    />
 
-    {{-- Tabs --}}
+    {{-- Stats (colapsables) --}}
+    <div x-data="{
+        open: localStorage.getItem('plots-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('plots-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+            <div class="grid grid-cols-2 gap-4">
+                <x-agro.stat-card
+                    label="Total parcelas"
+                    :value="$stats['total']"
+                    :description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
+                    icon="map-pin"
+                    color="agro"
+                />
+                <x-agro.stat-card
+                    label="Superficie total"
+                    :value="number_format($stats['total_area'], 2) . ' ha'"
+                    description="Área declarada"
+                    icon="square-2-stack"
+                    color="blue"
+                />
+                <x-agro.stat-card
+                    label="Con SIGPAC"
+                    :value="$stats['with_sigpac']"
+                    :description="($stats['total'] - $stats['with_sigpac']) . ' sin código'"
+                    icon="rectangle-group"
+                    color="orange"
+                />
+                <x-agro.stat-card
+                    label="Inactivas"
+                    :value="$stats['inactive']"
+                    :description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
+                    icon="archive-box"
+                    color="zinc"
+                />
+            </div>
+        </div>
+    </div>
+
+    {{-- Tabs: Activas / Inactivas --}}
     <x-agro.tabs :tabs="[
-        'active' => ['label' => 'Activas', 'count' => $stats['active']],
+        'active'   => ['label' => 'Activas',   'count' => $stats['active']],
         'inactive' => ['label' => 'Inactivas', 'count' => $stats['inactive']],
     ]" :active="$currentTab" wireMethod="switchTab" />
 
-    {{-- ACTIVE / INACTIVE TABS --}}
-
+    {{-- Toolbar: search + filtros + acciones --}}
     @php
         $filterCount =
             (int) !empty($filterAutonomousCommunity) +
@@ -17,7 +78,6 @@
             (int) !empty($filterMunicipality);
     @endphp
 
-    {{-- Toolbar: search + filtros + acciones --}}
     <div class="flex items-center gap-3">
 
         {{-- Search --}}
@@ -25,18 +85,23 @@
             <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                 <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
             </div>
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Buscar parcela por nombre..."
-                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar parcela por nombre..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
         </div>
 
-        {{-- Filtros button --}}
-        <button x-on:click="$dispatch('open-modal', 'plot-filters')"
-            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
+        {{-- Filtros --}}
+        <button
+            x-on:click="$dispatch('open-modal', 'plot-filters')"
+            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+        >
             <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
             Filtros
             @if ($filterCount > 0)
-                <span
-                    class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
                     {{ $filterCount }}
                 </span>
             @endif
@@ -56,54 +121,58 @@
         <flux:button href="{{ route('plots.plantings.index') }}" variant="outline" icon="scissors">
             Plantaciones
         </flux:button>
+
     </div>
 
     {{-- Chips de filtros activos --}}
     @if ($filterAutonomousCommunity || $filterProvince || $filterMunicipality)
         <div class="flex flex-wrap items-center gap-2">
             @if ($filterAutonomousCommunity)
-                <span
-                    class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
                     <flux:icon icon="building-library" class="size-3" />
                     {{ $this->autonomousCommunities[$filterAutonomousCommunity] ?? '' }}
                     <button
                         wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
+                    >
                         <flux:icon icon="x-mark" class="size-3" />
                     </button>
                 </span>
             @endif
             @if ($filterProvince)
-                <span
-                    class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
                     <flux:icon icon="map-pin" class="size-3" />
                     {{ $this->provinces[$filterProvince] ?? '' }}
-                    <button wire:click="$set('filterProvince', ''); $set('filterMunicipality', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                    <button
+                        wire:click="$set('filterProvince', ''); $set('filterMunicipality', '')"
+                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
+                    >
                         <flux:icon icon="x-mark" class="size-3" />
                     </button>
                 </span>
             @endif
             @if ($filterMunicipality)
-                <span
-                    class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
                     <flux:icon icon="home" class="size-3" />
                     {{ $this->municipalities[$filterMunicipality] ?? '' }}
-                    <button wire:click="$set('filterMunicipality', '')"
-                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                    <button
+                        wire:click="$set('filterMunicipality', '')"
+                        class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors"
+                    >
                         <flux:icon icon="x-mark" class="size-3" />
                     </button>
                 </span>
             @endif
             <button
                 wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
-                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
+                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+            >
                 Limpiar todo
             </button>
         </div>
     @endif
 
-    {{-- Acciones Masivas para Municipio --}}
+    {{-- Acciones masivas para municipio --}}
     @if ($filterAutonomousCommunity && $filterProvince && $filterMunicipality && $this->municipalityHasSigpacCodes)
         <x-agro.card>
             <div class="flex items-center justify-between">
@@ -122,17 +191,21 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <flux:button wire:click="generateAllMapsForMunicipality" wire:loading.attr="disabled"
-                        variant="primary" icon="plus">
-                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">Generar Todos los
-                            Mapas</span>
+                    <flux:button
+                        wire:click="generateAllMapsForMunicipality"
+                        wire:loading.attr="disabled"
+                        variant="primary"
+                        icon="plus"
+                    >
+                        <span wire:loading.remove wire:target="generateAllMapsForMunicipality">Generar Todos los Mapas</span>
                         <span wire:loading wire:target="generateAllMapsForMunicipality">Generando...</span>
                     </flux:button>
-
                     @if ($firstPlotForMap)
                         <flux:button
                             href="{{ route('map', ['id' => $firstPlotForMap->id, 'municipality' => $filterMunicipality, 'return' => 'plots']) }}"
-                            variant="primary" icon="eye">
+                            variant="primary"
+                            icon="eye"
+                        >
                             Ver Todos los Mapas
                         </flux:button>
                     @endif
@@ -141,21 +214,25 @@
         </x-agro.card>
     @endif
 
-    {{-- Grid de Parcelas — skeleton durante carga --}}
-    <div wire:loading
-        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-2">
-            @for ($i = 0; $i < 6; $i++)
+    {{-- Grid de Parcelas —— skeleton durante carga --}}
+    <div
+        wire:loading
+        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage"
+    >
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @for ($i = 0; $i < 8; $i++)
                 <x-agro.skeleton-card />
             @endfor
         </div>
     </div>
 
-    {{-- Grid de Parcelas — contenido real --}}
-    <div wire:loading.remove
-        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage">
+    {{-- Grid de Parcelas —— contenido real --}}
+    <div
+        wire:loading.remove
+        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage"
+    >
         @if ($plots->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach ($plots as $plot)
                     @php
                         $wineryName = '-';
@@ -167,34 +244,34 @@
                             ->isNotEmpty();
                         $delay = min($loop->index * 50, 300);
 
-                        // Icono dinámico según completitud de datos
                         if (!$plot->active) {
-                            $headerIcon = 'archive-box';
-                            $headerIconBg = 'bg-zinc-100';
+                            $headerIcon    = 'archive-box';
+                            $headerIconBg  = 'bg-zinc-100';
                             $headerIconColor = 'text-zinc-400';
                         } elseif ($hasMap) {
-                            $headerIcon = 'map';
-                            $headerIconBg = 'bg-agro-100';
+                            $headerIcon    = 'map';
+                            $headerIconBg  = 'bg-agro-100';
                             $headerIconColor = 'text-agro-600';
                         } elseif ($plot->sigpacCodes->isNotEmpty()) {
-                            $headerIcon = 'rectangle-group';
-                            $headerIconBg = 'bg-amber-100';
+                            $headerIcon    = 'rectangle-group';
+                            $headerIconBg  = 'bg-amber-100';
                             $headerIconColor = 'text-amber-600';
                         } else {
-                            $headerIcon = 'map-pin';
-                            $headerIconBg = 'bg-zinc-100';
+                            $headerIcon    = 'map-pin';
+                            $headerIconBg  = 'bg-zinc-100';
                             $headerIconColor = 'text-zinc-400';
                         }
                     @endphp
 
                     <x-agro.card
                         class="animate-fade-in-up flex flex-col hover:-translate-y-1 {{ !$plot->active ? 'opacity-60' : '' }}"
-                        style="animation-delay: {{ $delay }}ms;" wire:key="plot-card-{{ $plot->id }}">
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="plot-card-{{ $plot->id }}"
+                    >
                         {{-- Header --}}
                         <x-slot:header>
                             <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 {{ $headerIconBg }} rounded-xl flex items-center justify-center shrink-0">
+                                <div class="w-10 h-10 {{ $headerIconBg }} rounded-xl flex items-center justify-center shrink-0">
                                     <flux:icon :icon="$headerIcon" class="size-5 {{ $headerIconColor }}" />
                                 </div>
                                 <div class="flex-1 min-w-0">
@@ -210,11 +287,10 @@
                         {{-- Body --}}
                         <div class="flex-1 space-y-4">
 
-                            {{-- Stats principales: superficie + SIGPAC --}}
+                            {{-- Stats: superficie + SIGPAC --}}
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-agro-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">
-                                        Superficie</p>
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">Superficie</p>
                                     @if ($plot->area)
                                         <p class="text-2xl font-bold text-agro-700 leading-none">
                                             {{ number_format($plot->area, 2) }}
@@ -225,8 +301,7 @@
                                     @endif
                                 </div>
                                 <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">
-                                        SIGPAC</p>
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">SIGPAC</p>
                                     @if ($plot->sigpacCodes->isNotEmpty())
                                         <p class="text-2xl font-bold text-zinc-600 leading-none">
                                             {{ $plot->sigpacCodes->count() }}
@@ -257,72 +332,58 @@
                                     <p class="text-xs text-zinc-400 truncate">{{ $plot->description }}</p>
                                 @endif
                             </div>
+
                         </div>
 
-                        {{-- Footer: iconos de acción en dos grupos --}}
+                        {{-- Footer: acciones --}}
                         <x-slot:footer>
                             @php
-                                $btnBase =
-                                    'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
-                                $btnDanger =
-                                    'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
-                                $btnSuccess =
-                                    'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+                                $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
+                                $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors';
+                                $btnSuccess = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
                             @endphp
                             <div class="flex items-center justify-between">
-                                {{-- Grupo izquierdo: navegar --}}
+                                {{-- Izquierda: navegar --}}
                                 <div class="flex items-center gap-0.5">
-                                    <a href="{{ route('plots.show', $plot) }}" class="{{ $btnBase }}"
-                                        title="Ver parcela">
+                                    <a href="{{ route('plots.show', $plot) }}" class="{{ $btnBase }}" title="Ver parcela">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
-
                                     @if ($hasMap)
-                                        <a href="{{ route('map', ['id' => $plot->id, 'return' => 'plots']) }}"
-                                            class="{{ $btnBase }}" title="Ver mapa">
+                                        <a href="{{ route('map', ['id' => $plot->id, 'return' => 'plots']) }}" class="{{ $btnBase }}" title="Ver mapa">
                                             <flux:icon icon="map" class="size-4" />
                                         </a>
                                     @elseif($plot->sigpacCodes->isNotEmpty())
                                         @can('update', $plot)
-                                            <button wire:click="generateMap(null, {{ $plot->id }})"
-                                                class="{{ $btnBase }}" title="Generar mapa desde SIGPAC">
+                                            <button wire:click="generateMap(null, {{ $plot->id }})" class="{{ $btnBase }}" title="Generar mapa desde SIGPAC">
                                                 <flux:icon icon="cpu-chip" class="size-4" />
                                             </button>
                                         @endcan
                                     @endif
-
                                     @can('update', $plot)
-                                        <a href="{{ route('plots.plantings.create', $plot) }}"
-                                            class="{{ $btnBase }}" title="Nueva plantación">
+                                        <a href="{{ route('plots.plantings.create', $plot) }}" class="{{ $btnBase }}" title="Nueva plantación">
                                             <flux:icon icon="scissors" class="size-4" />
                                         </a>
                                     @endcan
-
-                                    <button wire:click="selectAuditPlot({{ $plot->id }})"
-                                        class="{{ $btnBase }}" title="Historial de cambios">
+                                    <button wire:click="selectAuditPlot({{ $plot->id }})" class="{{ $btnBase }}" title="Historial de cambios">
                                         <flux:icon icon="list-bullet" class="size-4" />
                                     </button>
                                 </div>
 
-                                {{-- Separador vertical --}}
+                                {{-- Separador --}}
                                 <div class="w-px h-5 bg-zinc-200 mx-1"></div>
 
-                                {{-- Grupo derecho: gestionar --}}
+                                {{-- Derecha: gestionar --}}
                                 <div class="flex items-center gap-0.5">
                                     @can('update', $plot)
-                                        <a href="{{ route('plots.edit', $plot) }}" class="{{ $btnBase }}"
-                                            title="Editar">
+                                        <a href="{{ route('plots.edit', $plot) }}" class="{{ $btnBase }}" title="Editar">
                                             <flux:icon icon="pencil-square" class="size-4" />
                                         </a>
-
                                         @if ($plot->active)
-                                            <button wire:click="toggleActive({{ $plot->id }})"
-                                                class="{{ $btnDanger }}" title="Desactivar">
+                                            <button wire:click="toggleActive({{ $plot->id }})" class="{{ $btnDanger }}" title="Desactivar">
                                                 <flux:icon icon="no-symbol" class="size-4" />
                                             </button>
                                         @else
-                                            <button wire:click="toggleActive({{ $plot->id }})"
-                                                class="{{ $btnSuccess }}" title="Activar">
+                                            <button wire:click="toggleActive({{ $plot->id }})" class="{{ $btnSuccess }}" title="Activar">
                                                 <flux:icon icon="check-circle" class="size-4" />
                                             </button>
                                         @endif
@@ -338,21 +399,26 @@
                 {{ $plots->links() }}
             </div>
         @else
-            <x-agro.empty-state message="No hay parcelas registradas"
-                description="Comienza agregando tu primera parcela al sistema" icon="inbox">
-                @can('create', \App\Models\Plot::class)
-                    <x-slot name="action">
-                        <flux:button href="{{ roleRoute('plots.create') }}" variant="primary" icon="plus">
-                            Crear mi primera parcela
-                        </flux:button>
-                    </x-slot>
-                @endcan
+            <x-agro.empty-state
+                message="No hay parcelas {{ $currentTab === 'active' ? 'activas' : 'inactivas' }}"
+                description="{{ $currentTab === 'active' ? 'Comienza agregando tu primera parcela al sistema' : 'Todas las parcelas están actualmente activas' }}"
+                icon="inbox"
+            >
+                @if ($currentTab === 'active')
+                    @can('create', \App\Models\Plot::class)
+                        <x-slot name="action">
+                            <flux:button href="{{ roleRoute('plots.create') }}" variant="primary" icon="plus">
+                                Crear mi primera parcela
+                            </flux:button>
+                        </x-slot>
+                    @endcan
+                @endif
             </x-agro.empty-state>
         @endif
     </div>
 
 
-    {{-- Modal Filtros --}}
+    {{-- Modal: Filtros --}}
     <x-agro.modal name="plot-filters" maxWidth="sm">
         <div class="px-6 py-4 border-b border-zinc-200">
             <div class="flex items-center justify-between">
@@ -362,17 +428,13 @@
                     </div>
                     <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
                 </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'plot-filters')" variant="ghost" size="sm"
-                    icon="x-mark" />
+                <flux:button x-on:click="$dispatch('close-modal', 'plot-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
 
         <div class="px-6 py-5 space-y-5">
-            {{-- Comunidad Autónoma --}}
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">
-                    Comunidad Autónoma
-                </label>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Comunidad Autónoma</label>
                 <flux:select wire:model.live="filterAutonomousCommunity">
                     <option value="">Todas las comunidades</option>
                     @foreach ($this->autonomousCommunities as $id => $name)
@@ -380,13 +442,9 @@
                     @endforeach
                 </flux:select>
             </div>
-
-            {{-- Provincia --}}
             @if ($filterAutonomousCommunity)
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">
-                        Provincia
-                    </label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Provincia</label>
                     <flux:select wire:model.live="filterProvince">
                         <option value="">Todas las provincias</option>
                         @foreach ($this->provinces as $id => $name)
@@ -395,13 +453,9 @@
                     </flux:select>
                 </div>
             @endif
-
-            {{-- Municipio --}}
             @if ($filterProvince)
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">
-                        Municipio
-                    </label>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Municipio</label>
                     <flux:select wire:model.live="filterMunicipality">
                         <option value="">Todos los municipios</option>
                         @foreach ($this->municipalities as $id => $name)
@@ -416,7 +470,8 @@
             @if ($filterAutonomousCommunity || $filterProvince || $filterMunicipality)
                 <button
                     wire:click="$set('filterAutonomousCommunity', ''); $set('filterProvince', ''); $set('filterMunicipality', '')"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
+                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
+                >
                     Limpiar filtros
                 </button>
             @else
@@ -428,16 +483,15 @@
         </div>
     </x-agro.modal>
 
-    {{-- Modal Historial de Auditoria --}}
+
+    {{-- Modal: Historial de Auditoría --}}
     <x-agro.modal name="plot-audit" maxWidth="3xl">
         <div class="bg-zinc-50 px-6 py-4 border-b border-zinc-200 rounded-t-xl">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-zinc-900">Historial de Auditoria</h3>
-                <flux:button x-on:click="$dispatch('close-modal', 'plot-audit')" variant="ghost" size="sm"
-                    icon="x-mark" />
+                <h3 class="text-lg font-semibold text-zinc-900">Historial de Auditoría</h3>
+                <flux:button x-on:click="$dispatch('close-modal', 'plot-audit')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
-
         <div class="px-6 py-4 max-h-[65vh] overflow-y-auto">
             @if ($auditPlot)
                 @livewire('viticulturist.plots.plot-audit-history', ['plot' => $auditPlot], key('audit-' . $auditPlot->id))
@@ -448,13 +502,9 @@
                 </div>
             @endif
         </div>
-
         <div class="bg-zinc-50 px-6 py-3 border-t border-zinc-200 rounded-b-xl flex justify-end">
-            <flux:button x-on:click="$dispatch('close-modal', 'plot-audit')" variant="outline">
-                Cerrar
-            </flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'plot-audit')" variant="outline">Cerrar</flux:button>
         </div>
     </x-agro.modal>
-
 
 </div>

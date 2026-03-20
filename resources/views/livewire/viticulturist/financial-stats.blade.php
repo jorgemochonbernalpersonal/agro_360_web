@@ -16,7 +16,7 @@
     {{-- KPIs Ingresos --}}
     <div>
         <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Ingresos</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 gap-4">
             <x-agro.stat-card
                 :label="'Facturado ' . $selectedYear"
                 :value="number_format($totalInvoiced, 2) . ' €'"

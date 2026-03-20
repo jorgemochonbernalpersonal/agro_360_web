@@ -1,6 +1,6 @@
 @props(['tabs', 'active', 'wireMethod' => 'switchTab'])
 
-<div class="border-b border-zinc-200 mb-6">
+<div class="border-b border-zinc-200">
     <nav class="flex gap-1 -mb-px">
         @foreach($tabs as $key => $tab)
             @php

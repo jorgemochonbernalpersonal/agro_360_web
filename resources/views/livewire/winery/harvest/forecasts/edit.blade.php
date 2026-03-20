@@ -8,7 +8,7 @@
 
             {{-- Contexto (read-only) --}}
             <x-agro.form-section title="Información">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div class="grid grid-cols-2 gap-4 text-sm">
                     <div>
                         <p class="text-zinc-500">Viticultor</p>
                         <p class="font-medium text-zinc-900">{{ $viticulturistName }}</p>

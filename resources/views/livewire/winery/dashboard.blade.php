@@ -22,7 +22,7 @@
     @if($todayKg > 0 || $todayCount > 0)
         <div class="bg-agro-600 rounded-2xl p-4 text-white">
             <p class="text-xs font-semibold uppercase tracking-widest text-agro-200 mb-3">Hoy</p>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
                     <p class="text-3xl font-bold">{{ number_format($todayKg, 0) }} <span class="text-lg font-normal text-agro-200">kg</span></p>
                     <p class="text-xs text-agro-200 mt-0.5">Recibidos hoy</p>
@@ -43,7 +43,7 @@
         </div>
     @else
         {{-- Sin recepciones hoy: stat-bar neutral --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 gap-4">
             <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total campaña {{ $vintageYear }}</p>
                 <p class="text-2xl font-bold text-agro-700 leading-none">{{ number_format($totalKgCampaign, 0) }} <span class="text-sm font-medium text-zinc-400">kg</span></p>
@@ -100,7 +100,7 @@
     @endif
 
     {{-- ── Módulo Bodega: KPIs ───────────────────────────────────────────── --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
 
         <x-agro.card class="flex items-center gap-4">
             <div class="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">

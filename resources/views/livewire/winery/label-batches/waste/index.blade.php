@@ -15,7 +15,7 @@
     </x-agro.page-header>
 
     {{-- KPIs del lote --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
             label="Total etiquetas"
             :value="number_format($labelBatch->total_quantity)"

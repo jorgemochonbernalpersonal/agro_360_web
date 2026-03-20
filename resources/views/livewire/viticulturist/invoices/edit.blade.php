@@ -106,7 +106,7 @@
 
             {{-- Documento: albarán + factura + fechas --}}
             <x-agro.form-section title="Documento">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     {{-- Código albarán (siempre readonly) --}}
                     <flux:field>
                         <flux:label>Código de albarán</flux:label>

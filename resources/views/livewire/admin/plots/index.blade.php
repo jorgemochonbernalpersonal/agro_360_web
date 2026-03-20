@@ -5,31 +5,56 @@
     />
 
     {{-- Estadísticas --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <x-agro.stat-card
-            label="Total Parcelas"
-            :value="$stats['total']"
-            icon="map"
-            color="agro"
-        />
-        <x-agro.stat-card
-            label="Parcelas Activas"
-            :value="$stats['active']"
-            icon="check-circle"
-            color="blue"
-        />
-        <x-agro.stat-card
-            label="Área Total"
-            :value="number_format($stats['total_area'], 2) . ' ha'"
-            icon="squares-2x2"
-            color="purple"
-        />
-        <x-agro.stat-card
-            label="Por Viticultores"
-            :value="$stats['by_role']['viticulturist']"
-            icon="users"
-            color="orange"
-        />
+    <div x-data="{
+        open: localStorage.getItem('admin-plots-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('admin-plots-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+        <div class="grid grid-cols-2 gap-4">
+            <x-agro.stat-card
+                label="Total Parcelas"
+                :value="$stats['total']"
+                icon="map"
+                color="agro"
+            />
+            <x-agro.stat-card
+                label="Parcelas Activas"
+                :value="$stats['active']"
+                icon="check-circle"
+                color="blue"
+            />
+            <x-agro.stat-card
+                label="Área Total"
+                :value="number_format($stats['total_area'], 2) . ' ha'"
+                icon="squares-2x2"
+                color="purple"
+            />
+            <x-agro.stat-card
+                label="Por Viticultores"
+                :value="$stats['by_role']['viticulturist']"
+                icon="users"
+                color="orange"
+            />
+        </div>
+        </div>
     </div>
 
     {{-- Filtros --}}
@@ -143,3 +168,4 @@
         @endif
     </x-agro.data-table>
 </div>
+

@@ -62,7 +62,7 @@
         @if(isset($analysis['summary']) && count($analysis['summary']) > 0)
             <div class="mb-6">
                 <h4 class="text-lg font-semibold text-zinc-800 mb-4">Resumen Ejecutivo</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     @foreach($analysis['summary'] as $item)
                         <div class="bg-zinc-50 rounded-lg p-4">
                             <div class="flex items-center mb-2">

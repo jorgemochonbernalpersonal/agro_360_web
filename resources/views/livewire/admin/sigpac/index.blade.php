@@ -5,7 +5,7 @@
     />
 
     {{-- Estadísticas --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card label="Total Códigos"      :value="$stats['total']"                    icon="hashtag"    color="blue"   />
         <x-agro.stat-card label="Por Viticultores"   :value="$stats['by_role']['viticulturist']" icon="map"        color="agro"   />
         <x-agro.stat-card label="Por Bodegas"        :value="$stats['by_role']['winery']"        icon="building-office" color="purple" />

@@ -15,7 +15,7 @@
     </x-agro.page-header>
 
     {{-- Info del contenedor --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
             label="Programados"
             :value="$stats['scheduled']"

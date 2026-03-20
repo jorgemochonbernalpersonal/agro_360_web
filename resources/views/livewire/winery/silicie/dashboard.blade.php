@@ -37,7 +37,7 @@
     </x-agro.filter-bar>
 
     {{-- KPIs ────────────────────────────────────────────────────────────── --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
             label="Kg recibidos (añada {{ $vintage }})"
             :value="number_format($stats['kgRecibidos'], 0, ',', '.') . ' kg'"

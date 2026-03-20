@@ -55,7 +55,7 @@
             </div>
         </x-slot:header>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+        <div class="grid grid-cols-2 gap-4 p-4">
             <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center">
                 <p class="text-xs text-zinc-400 mb-1">Uva propia vendimiada</p>
                 <p class="text-2xl font-bold text-zinc-800">{{ number_format($entradas['kg_propia'], 0, ',', '.') }}</p>

@@ -25,7 +25,7 @@
     @if($todayKg > 0 || $todayCount > 0)
         <div class="bg-agro-600 rounded-2xl p-4 text-white">
             <p class="text-xs font-semibold uppercase tracking-widest text-agro-200 mb-3">Bodega · Hoy</p>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
                     <p class="text-3xl font-bold">{{ number_format($todayKg, 0) }} <span class="text-lg font-normal text-agro-200">kg</span></p>
                     <p class="text-xs text-agro-200 mt-0.5">Recibidos hoy</p>
@@ -47,7 +47,7 @@
     @endif
 
     {{-- KPIs 4 columnas --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
 
         {{-- Campo: parcelas --}}
         <x-agro.card class="flex items-center gap-4">
@@ -100,7 +100,7 @@
     </div>
 
     {{-- KPIs segunda fila: vinos activos y fermentaciones --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
 
         <x-agro.card class="flex items-center gap-4">
             <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center shrink-0">

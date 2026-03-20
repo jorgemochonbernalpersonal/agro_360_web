@@ -6,7 +6,7 @@
     :back-url="roleRoute('label-batches.index')"
 >
     {{-- ── Disponibilidad ──────────────────────────────────────────────────── --}}
-    <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="mb-6 grid grid-cols-2 gap-4">
         @php
             $pct = $batch->usage_percent;
         @endphp

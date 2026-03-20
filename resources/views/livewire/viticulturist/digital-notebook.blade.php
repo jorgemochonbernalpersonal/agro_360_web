@@ -8,7 +8,7 @@
     @if($currentCampaign)
         {{-- Stats rápidas --}}
         <x-agro.card>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 gap-4">
                 <div class="text-center">
                     <div class="text-2xl font-bold text-agro-700">{{ $stats['total'] }}</div>
                     <div class="text-sm text-zinc-500">Total</div>

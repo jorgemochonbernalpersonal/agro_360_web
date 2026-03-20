@@ -62,7 +62,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div class="text-center p-3 bg-white rounded-lg shadow-sm">
                         <div class="text-xs text-zinc-500 mb-1">NDVI</div>
                         <div class="text-xl font-bold" style="color: {{ $selected['ndvi_color'] }}">

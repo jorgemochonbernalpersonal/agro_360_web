@@ -105,7 +105,7 @@
 
             {{-- Documento --}}
             <x-agro.form-section title="Documento">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <flux:field>
                         <flux:label>Código de albarán</flux:label>
                         <flux:input value="{{ $invoice->delivery_note_code }}" disabled

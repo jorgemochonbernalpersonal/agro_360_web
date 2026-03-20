@@ -9,7 +9,7 @@
     <x-agro.harvest-nav />
 
     {{-- Stat-bar --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
             <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Total recibido</p>
             <p class="text-2xl font-bold text-agro-700 leading-none">

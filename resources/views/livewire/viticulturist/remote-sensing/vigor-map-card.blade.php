@@ -69,7 +69,7 @@
     {{-- Area Statistics --}}
     @if($areaStats)
         {{-- Stats Grid --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-2 gap-4 mb-6">
             <div class="bg-zinc-50 rounded-lg p-3">
                 <span class="text-xs text-zinc-500">Promedio</span>
                 <div class="text-xl font-bold text-zinc-900">{{ number_format($areaStats['mean'], 3) }}</div>

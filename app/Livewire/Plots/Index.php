@@ -138,9 +138,11 @@ class Index extends Component
         // Estadísticas
         $baseQuery = Plot::forUser(Auth::user());
         $stats = [
-            'total'    => (clone $baseQuery)->count(),
-            'active'   => (clone $baseQuery)->where('active', true)->count(),
-            'inactive' => (clone $baseQuery)->where('active', false)->count(),
+            'total'      => (clone $baseQuery)->count(),
+            'active'     => (clone $baseQuery)->where('active', true)->count(),
+            'inactive'   => (clone $baseQuery)->where('active', false)->count(),
+            'total_area' => (clone $baseQuery)->sum('area') ?? 0,
+            'with_sigpac' => (clone $baseQuery)->whereHas('sigpacCodes')->count(),
         ];
 
         $firstPlotForMap = $this->filterMunicipality

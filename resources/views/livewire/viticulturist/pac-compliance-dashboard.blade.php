@@ -64,7 +64,7 @@
             </div>
         </x-slot:header>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        <div class="grid grid-cols-2 gap-4 mb-5">
             <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
                 <div class="text-2xl font-bold text-blue-900">{{ $totalProducts }}</div>
                 <div class="text-xs text-blue-600 mt-1 font-medium">Total Productos</div>

@@ -6,27 +6,52 @@
     />
 
     {{-- Stats --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <x-agro.stat-card
-            label="Bodegas supervisadas"
-            :value="$totalWineries"
-            icon="building-office-2"
-            color="blue"
-        />
-        <x-agro.stat-card
-            label="Total uva recibida (kg)"
-            :value="number_format($harvestStats->sum('total_kg'), 0, ',', '.')"
-            icon="scale"
-            color="agro"
-            :description="'Vendimia ' . $vintage"
-        />
-        <x-agro.stat-card
-            label="Recepciones de uva"
-            :value="$harvestStats->sum('reception_count')"
-            icon="inbox"
-            color="yellow"
-            :description="'Vendimia ' . $vintage"
-        />
+    <div x-data="{
+        open: localStorage.getItem('oversight-wineries-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('oversight-wineries-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <x-agro.stat-card
+                label="Bodegas supervisadas"
+                :value="$totalWineries"
+                icon="building-office-2"
+                color="blue"
+            />
+            <x-agro.stat-card
+                label="Total uva recibida (kg)"
+                :value="number_format($harvestStats->sum('total_kg'), 0, ',', '.')"
+                icon="scale"
+                color="agro"
+                :description="'Vendimia ' . $vintage"
+            />
+            <x-agro.stat-card
+                label="Recepciones de uva"
+                :value="$harvestStats->sum('reception_count')"
+                icon="inbox"
+                color="yellow"
+                :description="'Vendimia ' . $vintage"
+            />
+        </div>
+        </div>
     </div>
 
     {{-- Filters --}}
@@ -98,3 +123,4 @@
     </x-agro.data-table>
 
 </div>
+

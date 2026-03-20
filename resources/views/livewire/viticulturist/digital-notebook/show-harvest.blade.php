@@ -217,7 +217,7 @@
                                     <x-agro.status-badge :label="$containerLabel" :type="$containerType" />
                                 </div>
 
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3 text-sm">
+                                <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
                                     <div>
                                         <span class="text-zinc-500">Cantidad</span>
                                         <p class="font-semibold text-zinc-900">{{ $container->quantity }}</p>

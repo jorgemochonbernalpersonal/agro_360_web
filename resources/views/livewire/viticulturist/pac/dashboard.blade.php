@@ -12,7 +12,7 @@
     </x-agro.page-header>
 
     {{-- Stats superficies --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card label="Parcelas activas" :value="$stats['total_plots']" icon="map" color="zinc" />
         <x-agro.stat-card label="Superficie total" :value="number_format($stats['total_area'], 2) . ' ha'" icon="globe-alt" color="agro" />
         <x-agro.stat-card label="Superficie admisible PAC" :value="number_format($stats['total_eligible'], 2) . ' ha'" icon="check-circle" color="green" />

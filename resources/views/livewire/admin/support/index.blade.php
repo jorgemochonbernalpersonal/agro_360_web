@@ -5,12 +5,37 @@
     />
 
     {{-- Estadísticas --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        <x-agro.stat-card label="Total"       :value="$stats['total']"       icon="inbox"          color="agro"   />
-        <x-agro.stat-card label="Abiertos"    :value="$stats['open']"        icon="envelope-open"  color="blue"   />
-        <x-agro.stat-card label="En Progreso" :value="$stats['in_progress']" icon="clock"          color="yellow" />
-        <x-agro.stat-card label="Resueltos"   :value="$stats['resolved']"    icon="check-circle"   color="agro"   />
-        <x-agro.stat-card label="Cerrados"    :value="$stats['closed']"      icon="archive-box"    color="purple" />
+    <div x-data="{
+        open: localStorage.getItem('admin-support-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('admin-support-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            <x-agro.stat-card label="Total"       :value="$stats['total']"       icon="inbox"          color="agro"   />
+            <x-agro.stat-card label="Abiertos"    :value="$stats['open']"        icon="envelope-open"  color="blue"   />
+            <x-agro.stat-card label="En Progreso" :value="$stats['in_progress']" icon="clock"          color="yellow" />
+            <x-agro.stat-card label="Resueltos"   :value="$stats['resolved']"    icon="check-circle"   color="agro"   />
+            <x-agro.stat-card label="Cerrados"    :value="$stats['closed']"      icon="archive-box"    color="purple" />
+        </div>
+        </div>
     </div>
 
     {{-- Filtros --}}
@@ -242,3 +267,4 @@
         </div>
     @endif
 </div>
+

@@ -20,7 +20,7 @@
     </x-agro.page-header>
 
     {{-- ── Stat cards ───────────────────────────────────────────────────────── --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         @php
             $statusColor = match($wine->status) {
                 'in_progress' => 'blue', 'aged' => 'yellow',
@@ -764,7 +764,7 @@
                 <flux:subheading>Registra los parámetros fisicoquímicos del vino.</flux:subheading>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 gap-4">
                 {{-- Cabecera --}}
                 <flux:field>
                     <flux:label required>Tipo</flux:label>

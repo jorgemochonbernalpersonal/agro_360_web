@@ -5,11 +5,36 @@
         description="Revisa y actualiza la superficie elegible PAC de cada parcela."
     />
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <x-agro.stat-card label="Total parcelas" :value="$stats['total']" icon="map" color="zinc" />
-        <x-agro.stat-card label="Con datos PAC" :value="$stats['with_pac']" icon="check-circle" color="green" />
-        <x-agro.stat-card label="Sin datos PAC" :value="$stats['without_pac']" icon="exclamation-triangle" color="amber" />
-        <x-agro.stat-card label="Superficie admisible" :value="number_format($stats['total_eligible'], 2) . ' ha'" icon="globe-alt" color="agro" />
+    <div x-data="{
+        open: localStorage.getItem('pac-surfaces-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('pac-surfaces-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+        <div class="grid grid-cols-2 gap-4">
+            <x-agro.stat-card label="Total parcelas" :value="$stats['total']" icon="map" color="zinc" />
+            <x-agro.stat-card label="Con datos PAC" :value="$stats['with_pac']" icon="check-circle" color="green" />
+            <x-agro.stat-card label="Sin datos PAC" :value="$stats['without_pac']" icon="exclamation-triangle" color="amber" />
+            <x-agro.stat-card label="Superficie admisible" :value="number_format($stats['total_eligible'], 2) . ' ha'" icon="globe-alt" color="agro" />
+        </div>
+        </div>
     </div>
 
     <x-agro.filter-bar :active-count="collect([$search, $filterPac])->filter()->count()">
@@ -83,3 +108,4 @@
     @endif
 
 </div>
+

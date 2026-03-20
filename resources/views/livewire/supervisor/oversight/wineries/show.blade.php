@@ -49,7 +49,7 @@
     </div>
 
     {{-- Stats de la vendimia actual --}}
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
             label="Viticultores DO"
             :value="$viticulturistRelations->count()"

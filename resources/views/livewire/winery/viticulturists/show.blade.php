@@ -23,7 +23,7 @@
     </x-agro.page-header>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
             label="Parcelas"
             :value="$plots->count()"

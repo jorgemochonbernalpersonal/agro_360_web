@@ -12,7 +12,7 @@
     </x-agro.page-header>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card label="Pagos en {{ $filterYear }}" :value="$stats['count_year']" icon="document-text" color="zinc" />
         <x-agro.stat-card label="Total {{ $filterYear }}" :value="number_format($stats['total_year'], 2) . ' €'" icon="banknotes" color="green" />
         <x-agro.stat-card label="Total histórico" :value="number_format($stats['total_historic'], 2) . ' €'" icon="chart-bar" color="agro" />

@@ -32,7 +32,7 @@
         </div>
     @else
         <!-- Weather Cards Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-4">
             <!-- Temperature -->
             <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
                 <div class="flex items-center justify-between mb-2">

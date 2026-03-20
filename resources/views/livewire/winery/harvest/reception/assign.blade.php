@@ -29,7 +29,7 @@
             </div>
         </x-slot:header>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
                 <p class="text-xs text-zinc-500 mb-0.5">Fecha</p>
                 <p class="font-medium text-zinc-900">{{ $harvest->harvest_start_date?->format('d/m/Y') ?? '—' }}</p>

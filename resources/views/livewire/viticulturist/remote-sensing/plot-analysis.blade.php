@@ -197,7 +197,7 @@
 
             <!-- Weather Tab -->
             @if($activeTab === 'weather')
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm font-semibold text-zinc-600">Temperatura</span>
