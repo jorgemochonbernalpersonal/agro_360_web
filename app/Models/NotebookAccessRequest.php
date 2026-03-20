@@ -4,10 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 class NotebookAccessRequest extends Model
 {
     protected $table = 'notebook_access_requests';
+
+    protected static function booted(): void
+    {
+        static::saved(function (NotebookAccessRequest $request) {
+            if ($request->wasRecentlyCreated || $request->wasChanged('status')) {
+                Cache::forget("nav_badge_notebook_access_{$request->viticulturist_id}");
+            }
+        });
+    }
 
     public const STATUS_PENDING  = 'pending';
     public const STATUS_APPROVED = 'approved';

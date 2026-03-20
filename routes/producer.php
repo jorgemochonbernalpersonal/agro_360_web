@@ -640,4 +640,10 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{record}/edit', \App\Livewire\Viticulturist\PlotCosts\Edit::class)->name('edit');
         });
 
+        // ── Soporte ───────────────────────────────────────────────────────
+        Route::prefix('support')->name('support.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Support\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Support\CreateTicket::class)->name('create');
+        });
+
     });
