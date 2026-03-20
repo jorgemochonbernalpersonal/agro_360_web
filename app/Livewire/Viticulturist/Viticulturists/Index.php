@@ -137,11 +137,19 @@ class Index extends Component
             ->get()
             ->keyBy('viticulturist_id');
 
+        $allIds = $allVisibleViticulturists->pluck('id');
+        $stats = [
+            'total'      => $allIds->count(),
+            'with_crew'  => CrewMember::whereIn('viticulturist_id', $allIds)->distinct('viticulturist_id')->count(),
+            'with_access'=> User::whereIn('id', $allIds)->where('can_login', true)->count(),
+        ];
+
         return view('livewire.viticulturist.viticulturists.index', [
-            'viticulturists' => $viticulturists,
-            'crews' => $crews,
-            'wineries' => $wineries,
-            'membersByViticulturist' => $membersByViticulturist,
+            'viticulturists'          => $viticulturists,
+            'crews'                   => $crews,
+            'wineries'                => $wineries,
+            'membersByViticulturist'  => $membersByViticulturist,
+            'stats'                   => $stats,
         ]);
     }
 

@@ -39,9 +39,18 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = AdvisoryMembership::where('viticulturist_id', $this->viticulturistId())->active();
+
+        $stats = [
+            'total'      => (clone $base)->count(),
+            'permanent'  => (clone $base)->whereNull('campaign_id')->count(),
+            'this_year'  => (clone $base)->whereHas('campaign', fn($q) => $q->where('year', now()->year))->count(),
+        ];
+
         return [
             'entries'     => $entries,
             'specialties' => AdvisoryMembership::SPECIALTIES,
+            'stats'       => $stats,
         ];
     }
 }

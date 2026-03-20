@@ -140,10 +140,17 @@ class Index extends Component
         $entries = $query->orderByDesc('created_at')->paginate(15);
         $campaigns = Campaign::forViticulturist($user->id)->orderByDesc('year')->get();
 
+        $base = CampaignDocument::where('viticulturist_id', $user->id);
+        $stats = [
+            'total'        => (clone $base)->count(),
+            'this_campaign'=> $this->filterCampaign ? (clone $base)->where('campaign_id', $this->filterCampaign)->count() : (clone $base)->count(),
+        ];
+
         return view('livewire.viticulturist.campaign-documents.index', [
             'entries'       => $entries,
             'campaigns'     => $campaigns,
             'documentTypes' => CampaignDocument::DOCUMENT_TYPES,
+            'stats'         => $stats,
         ]);
     }
 }

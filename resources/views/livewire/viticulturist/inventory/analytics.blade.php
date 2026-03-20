@@ -37,35 +37,64 @@
 
     {{-- Proyecciones de Agotamiento --}}
     @if(count($projections) > 0)
-        <x-agro.data-table
-            :headers="['Producto', 'Stock Actual', 'Consumo Diario', 'Días Restantes', 'Fecha Estimada', 'Estado']"
-            empty-message="Sin proyecciones"
-        >
+        <x-agro.card>
             <x-slot:header>
-                <div class="px-6 py-4 border-b border-zinc-200">
-                    <flux:heading size="lg">Proyección de Agotamiento de Stock</flux:heading>
-                    <flux:subheading>Estimación basada en consumo promedio de los últimos 30 días</flux:subheading>
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 rounded-lg bg-red-50">
+                        <flux:icon icon="exclamation-triangle" class="size-4 text-red-600" />
+                    </div>
+                    <div>
+                        <span class="font-semibold text-zinc-900 text-sm">Proyección de Agotamiento de Stock</span>
+                        <p class="text-xs text-zinc-400">Estimación basada en consumo promedio de los últimos 30 días</p>
+                    </div>
                 </div>
             </x-slot:header>
-            @foreach($projections as $projection)
-                <x-agro.table-row>
-                    <x-agro.table-cell class="font-medium text-zinc-900">{{ $projection['product'] }}</x-agro.table-cell>
-                    <x-agro.table-cell class="text-zinc-700">{{ number_format($projection['current_stock'], 2) }} {{ $projection['unit'] }}</x-agro.table-cell>
-                    <x-agro.table-cell class="text-zinc-700">{{ number_format($projection['avg_daily_consumption'], 3) }} {{ $projection['unit'] }}</x-agro.table-cell>
-                    <x-agro.table-cell class="font-semibold text-zinc-900">{{ $projection['days_until_empty'] }} días</x-agro.table-cell>
-                    <x-agro.table-cell class="text-zinc-700">{{ $projection['estimated_empty_date']->format('d/m/Y') }}</x-agro.table-cell>
-                    <x-agro.table-cell>
-                        @if($projection['status'] === 'critical')
-                            <x-agro.status-badge :status="false" label="Crítico" type="danger" />
-                        @elseif($projection['status'] === 'warning')
-                            <x-agro.status-badge :status="false" label="Advertencia" type="warning" />
-                        @else
-                            <x-agro.status-badge :status="true" label="OK" />
-                        @endif
-                    </x-agro.table-cell>
-                </x-agro.table-row>
-            @endforeach
-        </x-agro.data-table>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($projections as $projection)
+                    @php
+                        $statusColor = match($projection['status']) {
+                            'critical' => 'red',
+                            'warning'  => 'yellow',
+                            default    => 'green',
+                        };
+                        $statusLabel = match($projection['status']) {
+                            'critical' => 'Crítico',
+                            'warning'  => 'Advertencia',
+                            default    => 'OK',
+                        };
+                        $bgClass = match($projection['status']) {
+                            'critical' => 'bg-red-50',
+                            'warning'  => 'bg-amber-50',
+                            default    => 'bg-agro-50',
+                        };
+                    @endphp
+                    <div class="p-4 {{ $bgClass }} rounded-xl border border-zinc-100">
+                        <div class="flex items-start justify-between mb-3">
+                            <p class="font-semibold text-zinc-900 text-sm leading-tight">{{ $projection['product'] }}</p>
+                            <flux:badge :color="$statusColor" size="sm">{{ $statusLabel }}</flux:badge>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                                <p class="text-zinc-500">Stock actual</p>
+                                <p class="font-bold text-zinc-700">{{ number_format($projection['current_stock'], 2) }} {{ $projection['unit'] }}</p>
+                            </div>
+                            <div>
+                                <p class="text-zinc-500">Días restantes</p>
+                                <p class="font-bold text-zinc-700">{{ $projection['days_until_empty'] }} días</p>
+                            </div>
+                            <div>
+                                <p class="text-zinc-500">Consumo diario</p>
+                                <p class="font-medium text-zinc-600">{{ number_format($projection['avg_daily_consumption'], 3) }} {{ $projection['unit'] }}</p>
+                            </div>
+                            <div>
+                                <p class="text-zinc-500">Agotamiento est.</p>
+                                <p class="font-medium text-zinc-600">{{ $projection['estimated_empty_date']->format('d/m/Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </x-agro.card>
     @endif
 
     {{-- Productos con Baja Rotación --}}

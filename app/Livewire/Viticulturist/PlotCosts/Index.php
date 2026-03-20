@@ -53,21 +53,27 @@ class Index extends Component
 
         $costs = $query->orderByDesc('cost_date')->paginate(20);
 
-        $totalAmount = PlotCost::where('viticulturist_id', $user->id)
+        $base = PlotCost::where('viticulturist_id', $user->id);
+        $filtered = (clone $base)
             ->when($this->filter_campaign_id, fn($q) => $q->where('campaign_id', $this->filter_campaign_id))
             ->when($this->filter_plot_id, fn($q) => $q->where('plot_id', $this->filter_plot_id))
-            ->when($this->filter_category, fn($q) => $q->where('category', $this->filter_category))
-            ->sum('amount');
+            ->when($this->filter_category, fn($q) => $q->where('category', $this->filter_category));
+
+        $stats = [
+            'total'        => (clone $base)->count(),
+            'total_amount' => (clone $base)->sum('amount'),
+            'filtered_amount' => (clone $filtered)->sum('amount'),
+        ];
 
         $campaigns = Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get();
         $plots      = Plot::where('viticulturist_id', $user->id)->orderBy('name')->get();
 
         return view('livewire.viticulturist.plot-costs.index', [
-            'costs'       => $costs,
-            'totalAmount' => $totalAmount,
-            'campaigns'   => $campaigns,
-            'plots'       => $plots,
-            'categories'  => PlotCost::CATEGORIES,
+            'costs'      => $costs,
+            'stats'      => $stats,
+            'campaigns'  => $campaigns,
+            'plots'      => $plots,
+            'categories' => PlotCost::CATEGORIES,
         ])->layout('layouts.app');
     }
 }

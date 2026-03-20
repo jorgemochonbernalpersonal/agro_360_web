@@ -1,130 +1,269 @@
 <div class="space-y-6 animate-fade-in">
 
-<x-agro.page-header
-    title="Subcontratación"
-    description="Gestión de servicios subcontratados a empresas externas"
-    icon="user-plus"
->
-    <x-slot:actions>
-        <flux:button href="{{ route('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
-            Registrar Servicio
-        </flux:button>
-    </x-slot:actions>
-</x-agro.page-header>
+    {{-- Header --}}
+    <x-agro.page-header
+        title="Subcontratación"
+        description="Gestión de servicios subcontratados a empresas externas"
+        icon="user-plus"
+    >
+        <x-slot:actions>
+            <flux:button href="{{ route('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
+                Registrar Servicio
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
-<x-agro.filter-bar>
-    <x-agro.filter-select wire:model.live="filter_campaign_id" label="Campaña" placeholder="Todas las campañas">
-        @foreach($campaigns as $campaign)
-            <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
-        @endforeach
-    </x-agro.filter-select>
-
-    <x-agro.filter-select wire:model.live="filter_plot_id" label="Parcela" placeholder="Todas las parcelas">
-        @foreach($plots as $plot)
-            <option value="{{ $plot->id }}">{{ $plot->name }}</option>
-        @endforeach
-    </x-agro.filter-select>
-
-    <x-agro.filter-select wire:model.live="filter_service_type" label="Tipo" placeholder="Todos los tipos">
-        @foreach($serviceTypes as $value => $label)
-            <option value="{{ $value }}">{{ $label }}</option>
-        @endforeach
-    </x-agro.filter-select>
-
-    <x-agro.filter-select wire:model.live="filter_invoiced" label="Facturación" placeholder="Todos">
-        <option value="1">Facturado</option>
-        <option value="0">Pendiente</option>
-    </x-agro.filter-select>
-</x-agro.filter-bar>
-
-@if($records->total() > 0 && $totalAmount > 0)
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            title="Total subcontratado"
-            :value="number_format($totalAmount, 2) . ' €'"
-            icon="banknotes"
-            color="orange"
-        />
-        <x-agro.stat-card
-            title="Servicios registrados"
-            :value="$records->total()"
+            label="Total servicios"
+            :value="$stats['total']"
             icon="user-plus"
             color="zinc"
         />
+        <x-agro.stat-card
+            label="Importe total"
+            :value="number_format($stats['total_amount'], 2) . ' €'"
+            icon="banknotes"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Facturados"
+            :value="$stats['invoiced']"
+            icon="document-check"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Pendientes"
+            :value="$stats['pending']"
+            icon="clock"
+            color="amber"
+        />
     </div>
-@endif
 
-<x-agro.card>
+    @php
+        $filterCount = (int) !empty($filter_campaign_id) + (int) !empty($filter_plot_id) + (int) !empty($filter_service_type) + (int) ($filter_invoiced !== '');
+    @endphp
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3">
+        <button x-on:click="$dispatch('open-modal', 'subcontracting-filters')"
+            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
+            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+            Filtros
+            @if($filterCount > 0)
+                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                    {{ $filterCount }}
+                </span>
+            @endif
+        </button>
+    </div>
+
+    {{-- Chips de filtros activos --}}
+    @if($filterCount > 0)
+        <div class="flex flex-wrap items-center gap-2">
+            @if($filter_campaign_id)
+                @php $campaignLabel = $campaigns->firstWhere('id', $filter_campaign_id)?->name ?? $filter_campaign_id; @endphp
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="calendar-days" class="size-3" />
+                    {{ $campaignLabel }}
+                    <button wire:click="$set('filter_campaign_id', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            @if($filter_plot_id)
+                @php $plotLabel = $plots->firstWhere('id', $filter_plot_id)?->name ?? $filter_plot_id; @endphp
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="map" class="size-3" />
+                    {{ $plotLabel }}
+                    <button wire:click="$set('filter_plot_id', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            @if($filter_service_type)
+                @php $typeLabel = $serviceTypes[$filter_service_type] ?? $filter_service_type; @endphp
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="tag" class="size-3" />
+                    {{ $typeLabel }}
+                    <button wire:click="$set('filter_service_type', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            @if($filter_invoiced !== '')
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="document-check" class="size-3" />
+                    {{ $filter_invoiced ? 'Facturado' : 'Pendiente' }}
+                    <button wire:click="$set('filter_invoiced', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
+                Limpiar todo
+            </button>
+        </div>
+    @endif
+
+    {{-- Grid de cards --}}
     @if($records->count() === 0)
         <x-agro.empty-state
             icon="user-plus"
-            title="Sin servicios subcontratados"
-            description="Registra los servicios que contratas externamente: vendimia mecanizada, tratamientos, transporte, etc."
+            title="{{ $filterCount > 0 ? 'Ningún servicio coincide con los filtros' : 'Sin servicios subcontratados' }}"
+            description="{{ $filterCount > 0 ? 'Prueba a cambiar o limpiar los filtros.' : 'Registra los servicios que contratas externamente: vendimia mecanizada, tratamientos, transporte, etc.' }}"
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
-                    Registrar primer servicio
-                </flux:button>
+                @if($filterCount > 0)
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                @else
+                    <flux:button href="{{ route('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
+                        Registrar primer servicio
+                    </flux:button>
+                @endif
             </x-slot:action>
         </x-agro.empty-state>
     @else
-        <x-agro.data-table :headers="['Fecha', 'Empresa', 'Tipo de Servicio', 'Parcela', 'Importe', 'Facturado', 'Acciones']">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($records as $record)
-                <x-agro.table-row>
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">{{ $record->service_date->format('d/m/Y') }}</span>
-                        @if($record->service_end_date)
-                            <span class="text-xs text-zinc-400 block">hasta {{ $record->service_end_date->format('d/m/Y') }}</span>
-                        @endif
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        <div>
-                            <p class="text-sm font-medium text-zinc-900">{{ $record->company_name }}</p>
-                            @if($record->contact_person)
-                                <p class="text-xs text-zinc-500">{{ $record->contact_person }}</p>
-                            @endif
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="sub-{{ $record->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-orange-100">
+                                <flux:icon icon="user-plus" class="size-5 text-orange-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $record->company_name }}</h3>
+                                <p class="text-xs text-zinc-400">{{ $record->service_date->format('d/m/Y') }}{{ $record->service_end_date ? ' — ' . $record->service_end_date->format('d/m/Y') : '' }}</p>
+                            </div>
+                            <button wire:click="toggleInvoiced({{ $record->id }})" class="shrink-0">
+                                <flux:badge color="{{ $record->invoiced ? 'green' : 'amber' }}" size="sm">
+                                    {{ $record->invoiced ? 'Facturado' : 'Pendiente' }}
+                                </flux:badge>
+                            </button>
                         </div>
-                    </x-agro.table-cell>
+                    </x-slot:header>
 
-                    <x-agro.table-cell>
-                        <x-agro.status-badge :label="$record->service_type_label" color="orange" />
-                    </x-agro.table-cell>
+                    <div class="flex-1 space-y-3">
+                        <flux:badge color="orange" size="sm">{{ $record->service_type_label }}</flux:badge>
 
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">{{ $record->plot?->name ?? '—' }}</span>
-                    </x-agro.table-cell>
+                        @if($record->contact_person)
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                <flux:icon icon="user" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span class="truncate">{{ $record->contact_person }}</span>
+                            </div>
+                        @endif
 
-                    <x-agro.table-cell>
+                        @if($record->plot)
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                <flux:icon icon="map" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span>{{ $record->plot->name }}</span>
+                            </div>
+                        @endif
+
                         @if($record->amount)
-                            <span class="text-sm font-semibold text-orange-700">{{ number_format($record->amount, 2) }} €</span>
-                        @else
-                            <span class="text-zinc-400">—</span>
+                            <div class="bg-orange-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Importe</p>
+                                <p class="text-xl font-bold text-orange-700 leading-none">
+                                    {{ number_format($record->amount, 2) }}<span class="text-xs font-normal text-zinc-400 ml-0.5">€</span>
+                                </p>
+                            </div>
                         @endif
-                    </x-agro.table-cell>
+                    </div>
 
-                    <x-agro.table-cell>
-                        <button wire:click="toggleInvoiced({{ $record->id }})" class="inline-flex">
-                            @if($record->invoiced)
-                                <x-agro.status-badge label="Facturado" color="green" />
-                            @else
-                                <x-agro.status-badge label="Pendiente" color="amber" />
-                            @endif
-                        </button>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell align="right">
-                        <div class="flex items-center justify-end gap-2">
-                            <flux:button href="{{ route('viticulturist.subcontracting.edit', $record->id) }}" size="sm" variant="ghost" icon="pencil">Editar</flux:button>
-                            <flux:button wire:click="delete({{ $record->id }})" wire:confirm="¿Eliminar este registro?" size="sm" variant="ghost" icon="trash">Eliminar</flux:button>
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ route('viticulturist.subcontracting.edit', $record->id) }}"
+                               title="Editar"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                <flux:icon icon="pencil-square" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $record->id }})"
+                                wire:confirm="¿Eliminar este registro?"
+                                title="Eliminar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
                         </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
+                    </x-slot:footer>
+                </x-agro.card>
             @endforeach
-        </x-agro.data-table>
+        </div>
 
-        <div class="mt-4">{{ $records->links() }}</div>
+        <div class="mt-6">{{ $records->links() }}</div>
     @endif
-</x-agro.card>
+
+    {{-- Modal Filtros --}}
+    <x-agro.modal name="subcontracting-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'subcontracting-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-5">
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <flux:select wire:model.live="filter_campaign_id">
+                    <option value="">Todas las campañas</option>
+                    @foreach($campaigns as $campaign)
+                        <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Parcela</label>
+                <flux:select wire:model.live="filter_plot_id">
+                    <option value="">Todas las parcelas</option>
+                    @foreach($plots as $plot)
+                        <option value="{{ $plot->id }}">{{ $plot->name }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de servicio</label>
+                <flux:select wire:model.live="filter_service_type">
+                    <option value="">Todos los tipos</option>
+                    @foreach($serviceTypes as $value => $label)
+                        <option value="{{ $value }}">{{ $label }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Facturación</label>
+                <flux:select wire:model.live="filter_invoiced">
+                    <option value="">Todos</option>
+                    <option value="1">Facturado</option>
+                    <option value="0">Pendiente</option>
+                </flux:select>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
+            @if($filterCount > 0)
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
+                    Limpiar filtros
+                </button>
+            @else
+                <span></span>
+            @endif
+            <flux:button x-on:click="$dispatch('close-modal', 'subcontracting-filters')" variant="primary">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
 
 </div>

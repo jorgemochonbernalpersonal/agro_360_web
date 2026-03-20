@@ -1,120 +1,159 @@
-﻿<div class="space-y-6 animate-fade-in">
-    <!-- Header -->
+<div class="space-y-6 animate-fade-in">
+
     <x-agro.page-header
         title="Gestión de Viticultores"
         description="Administra los viticultores que has creado para tus cuadrillas y parcelas"
+        icon="users"
     >
         <x-slot:actions>
-            <a href="{{ route('viticulturist.viticulturists.create') }}">
-                <flux:button variant="primary" icon="plus">
-                    Nuevo Viticultor
-                </flux:button>
-            </a>
+            <flux:button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary" icon="plus" wire:navigate>
+                Nuevo Viticultor
+            </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
-    <!-- Filtros -->
-    <x-agro.filter-bar>
-        <x-agro.filter-input wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre o email..." />
-        @if ($search)
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <x-agro.stat-card label="Total viticultores" :value="$stats['total']" icon="users" color="zinc" />
+        <x-agro.stat-card label="En cuadrilla" :value="$stats['with_crew']" icon="user-group" color="agro" />
+        <x-agro.stat-card label="Con acceso" :value="$stats['with_access']" icon="key" color="blue" />
+    </div>
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3 flex-wrap">
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar por nombre o email..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
+        </div>
+        @if($search)
             <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
         @endif
-    </x-agro.filter-bar>
+    </div>
 
-    <!-- Tabla de Viticultores -->
-    <x-agro.data-table :headers="['Viticultor', 'Email', 'Cuadrilla', 'Acceso', 'Acciones']" empty-message="No hay viticultores registrados"
-        empty-description="Comienza creando tu primer viticultor para gestionarlo en el sistema">
-        @if ($viticulturists->count() > 0)
-            @foreach ($viticulturists as $v)
-                <x-agro.table-row>
-                    <x-agro.table-cell>
+    {{-- Cards --}}
+    @if($viticulturists->isEmpty())
+        <x-agro.empty-state
+            icon="users"
+            title="{{ $search ? 'Ningún viticultor coincide con la búsqueda' : 'Sin viticultores registrados' }}"
+            description="{{ $search ? 'Prueba a cambiar los términos de búsqueda.' : 'Comienza creando tu primer viticultor para gestionarlo en el sistema.' }}"
+        >
+            @if($search)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar búsqueda</flux:button>
+                </x-slot:action>
+            @else
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary" icon="plus" wire:navigate>
+                        Nuevo Viticultor
+                    </flux:button>
+                </x-slot:action>
+            @endif
+        </x-agro.empty-state>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($viticulturists as $v)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="vit-{{ $v->id }}"
+                >
+                    <x-slot:header>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-agro-50 flex items-center justify-center">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-agro-100">
                                 <flux:icon icon="user" class="size-5 text-agro-600" />
                             </div>
-                            <div>
-                                <div class="text-sm font-bold text-zinc-900">{{ $v->name }}@if($v->id === auth()->id()) <span class="text-agro-700">(Yo)</span>@endif</div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">
+                                    {{ $v->name }}
+                                    @if($v->id === auth()->id())
+                                        <span class="text-xs font-normal text-agro-600">(Yo)</span>
+                                    @endif
+                                </h3>
+                                <p class="text-xs text-zinc-400 truncate">{{ $v->email }}</p>
                             </div>
                         </div>
-                    </x-agro.table-cell>
+                    </x-slot:header>
 
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-700">{{ $v->email }}</span>
-                    </x-agro.table-cell>
+                    <div class="flex-1 space-y-3">
+                        @php $member = $membersByViticulturist->get($v->id); @endphp
 
-                    {{-- Cuadrilla actual --}}
-                    <x-agro.table-cell>
-                        @php
-                            $member = $membersByViticulturist->get($v->id);
-                        @endphp
-                        @if ($member && $member->crew)
-                            <flux:badge color="green" size="sm">{{ $member->crew->name }}</flux:badge>
-                        @else
-                            <span class="text-sm text-zinc-500">Sin cuadrilla</span>
-                        @endif
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        @php
-                            $hasAccess = $v->can_login;
-                        @endphp
-                        <flux:badge :color="$hasAccess ? 'green' : null" :icon="$hasAccess ? 'check' : 'x-mark'" size="sm">
-                            {{ $hasAccess ? 'Con acceso' : 'Sin acceso' }}
-                        </flux:badge>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        <div class="flex items-center justify-end gap-2">
-                            {{-- Asignar a cuadrilla --}}
-                            @if ($crews->count() > 0)
-                                <div class="relative" x-data="{ open: false }">
-                                    <button
-                                        @click="open = !open"
-                                        class="p-2 text-agro-700 hover:bg-agro-50 rounded-lg transition-colors"
-                                        title="Asignar a Cuadrilla"
-                                    >
-                                        <flux:icon icon="plus" class="size-5" />
-                                    </button>
-                                    <div
-                                        x-show="open"
-                                        @click.away="open = false"
-                                        x-transition
-                                        class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-10 border border-zinc-200 p-4"
-                                    >
-                                        <p class="text-sm font-semibold text-zinc-700 mb-3">Asignar a Cuadrilla</p>
-                                        <select
-                                            wire:model="assignToCrewId"
-                                            class="w-full px-3 py-2 border border-zinc-300 rounded-lg mb-3"
-                                        >
-                                            <option value="">Selecciona una cuadrilla</option>
-                                            @foreach ($crews as $crew)
-                                                <option value="{{ $crew->id }}">{{ $crew->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <flux:button
-                                            wire:click="assignToCrew({{ $v->id }})"
-                                            wire:target="assignToCrew"
-                                            x-on:click="open = false"
-                                            variant="primary"
-                                            class="w-full"
-                                        >
-                                            Asignar
-                                        </flux:button>
-                                    </div>
-                                </div>
+                        <div class="flex flex-wrap gap-2">
+                            @if($member && $member->crew)
+                                <flux:badge color="green" size="sm" icon="user-group">{{ $member->crew->name }}</flux:badge>
+                            @else
+                                <flux:badge color="zinc" size="sm">Sin cuadrilla</flux:badge>
                             @endif
 
-                            <x-agro.action-button variant="delete"
-                                wire:click="delete({{ $v->id }})"
-                                wire:confirm="¿Estás seguro de eliminar este viticultor? Esta acción no se puede deshacer." />
+                            @php $hasAccess = $v->can_login; @endphp
+                            <flux:badge :color="$hasAccess ? 'blue' : null" :icon="$hasAccess ? 'check' : 'x-mark'" size="sm">
+                                {{ $hasAccess ? 'Con acceso' : 'Sin acceso' }}
+                            </flux:badge>
                         </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
-            @endforeach
 
-            <x-slot name="pagination">
-                {{ $viticulturists->links() }}
-            </x-slot>
-        @endif
-    </x-agro.data-table>
+                        {{-- Asignar a cuadrilla --}}
+                        @if($crews->count() > 0)
+                            <div x-data="{ open: false }" class="relative">
+                                <button
+                                    @click="open = !open"
+                                    class="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-agro-700 bg-agro-50 hover:bg-agro-100 border border-agro-200 rounded-lg transition-colors"
+                                >
+                                    <flux:icon icon="user-group" class="size-3.5" />
+                                    Asignar a cuadrilla
+                                </button>
+                                <div
+                                    x-show="open"
+                                    @click.away="open = false"
+                                    x-transition
+                                    class="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-xl z-10 border border-zinc-200 p-3"
+                                >
+                                    <p class="text-xs font-semibold text-zinc-600 mb-2">Seleccionar cuadrilla</p>
+                                    <select
+                                        wire:model="assignToCrewId"
+                                        class="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-lg mb-2"
+                                    >
+                                        <option value="">Selecciona una cuadrilla</option>
+                                        @foreach($crews as $crew)
+                                            <option value="{{ $crew->id }}">{{ $crew->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <flux:button
+                                        wire:click="assignToCrew({{ $v->id }})"
+                                        x-on:click="open = false"
+                                        variant="primary"
+                                        size="sm"
+                                        class="w-full"
+                                    >
+                                        Asignar
+                                    </flux:button>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end">
+                            <button
+                                wire:click="delete({{ $v->id }})"
+                                wire:confirm="¿Estás seguro de eliminar este viticultor? Esta acción no se puede deshacer."
+                                title="Eliminar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        <div class="mt-6">{{ $viticulturists->links() }}</div>
+    @endif
+
 </div>

@@ -25,9 +25,19 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = FieldEquipment::where('viticulturist_id', $this->viticulturistId())->active();
+
+        $stats = [
+            'total'   => (clone $base)->count(),
+            'overdue' => (clone $base)->whereNotNull('next_inspection_date')->where('next_inspection_date', '<', now())->count(),
+            'due'     => (clone $base)->whereNotNull('next_inspection_date')->whereBetween('next_inspection_date', [now(), now()->addDays(90)])->count(),
+            'no_date' => (clone $base)->whereNull('next_inspection_date')->count(),
+        ];
+
         return [
             'equipment' => $entries,
             'types'     => FieldEquipment::TYPES,
+            'stats'     => $stats,
         ];
     }
 }

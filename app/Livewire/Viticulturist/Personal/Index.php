@@ -40,12 +40,19 @@ class Index extends Component
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        // Obtener bodegas del viticultor usando relación
         $wineries = $user->wineries;
 
+        $base = Crew::forViticulturist($user->id)->withCount(['members', 'activities']);
+        $stats = [
+            'total'    => Crew::forViticulturist($user->id)->count(),
+            'members'  => Crew::forViticulturist($user->id)->withCount('members')->get()->sum('members_count'),
+            'with_activities' => Crew::forViticulturist($user->id)->has('activities')->count(),
+        ];
+
         return view('livewire.viticulturist.personal.index', [
-            'crews' => $crews,
+            'crews'    => $crews,
             'wineries' => $wineries,
+            'stats'    => $stats,
         ]);
     }
 

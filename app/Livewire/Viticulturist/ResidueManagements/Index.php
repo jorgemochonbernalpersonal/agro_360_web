@@ -56,10 +56,20 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = ResidueManagement::where('viticulturist_id', $this->viticulturistId())->active();
+
+        $stats = [
+            'total'        => (clone $base)->count(),
+            'this_campaign'=> $this->filterCampaign ? (clone $base)->where('campaign_id', $this->filterCampaign)->count() : (clone $base)->count(),
+            'composted'    => (clone $base)->where('practice_type', 'composting')->count(),
+            'removed'      => (clone $base)->whereIn('practice_type', ['contractor', 'winery_delivery'])->count(),
+        ];
+
         return [
             'entries'       => $entries,
             'campaigns'     => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
             'practiceTypes' => ResidueManagement::PRACTICE_TYPES,
+            'stats'         => $stats,
         ];
     }
 }

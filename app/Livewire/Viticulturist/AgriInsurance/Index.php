@@ -42,17 +42,19 @@ class Index extends Component
             $query->where('coverage_type', $this->filter_coverage_type);
         }
 
-        $insurances  = $query->orderByDesc('end_date')->paginate(20);
-        $activeCount = AgriInsurance::where('viticulturist_id', $user->id)->active()->count();
-        $expiringSoon = AgriInsurance::where('viticulturist_id', $user->id)
-            ->active()
-            ->whereBetween('end_date', [now(), now()->addDays(30)])
-            ->count();
+        $insurances = $query->orderByDesc('end_date')->paginate(20);
+
+        $base = AgriInsurance::where('viticulturist_id', $user->id);
+        $stats = [
+            'total'    => (clone $base)->count(),
+            'active'   => (clone $base)->active()->count(),
+            'expiring' => (clone $base)->active()->whereBetween('end_date', [now(), now()->addDays(30)])->count(),
+            'expired'  => (clone $base)->where('status', 'expired')->count(),
+        ];
 
         return view('livewire.viticulturist.agri-insurance.index', [
             'insurances'    => $insurances,
-            'activeCount'   => $activeCount,
-            'expiringSoon'  => $expiringSoon,
+            'stats'         => $stats,
             'coverageTypes' => AgriInsurance::COVERAGE_TYPES,
             'statuses'      => AgriInsurance::STATUSES,
         ])->layout('layouts.app');

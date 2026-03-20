@@ -1,7 +1,9 @@
 <div class="space-y-6 animate-fade-in">
+
+    {{-- Header --}}
     <x-agro.page-header
         title="Documentos de Campaña"
-        subtitle="Facturas, certificados, informes y autorizaciones del cuaderno de campo"
+        description="Facturas, certificados, informes y autorizaciones del cuaderno de campo"
         icon="document-text"
     >
         <x-slot:actions>
@@ -9,60 +11,128 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="filterCampaign" label="Campaña">
-            <option value="">Todas las campañas</option>
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <x-agro.stat-card
+            label="Total documentos"
+            :value="$stats['total']"
+            icon="document-text"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Esta campaña"
+            :value="$stats['this_campaign']"
+            icon="calendar-days"
+            color="agro"
+        />
+    </div>
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3 flex-wrap">
+        <flux:select wire:model.live="filterCampaign" class="w-48">
+            <flux:select.option value="">Todas las campañas</flux:select.option>
             @foreach($campaigns as $c)
-                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-        <x-agro.filter-select wire:model.live="filterType" label="Tipo">
-            <option value="">Todos los tipos</option>
+        </flux:select>
+        <flux:select wire:model.live="filterType" class="w-44">
+            <flux:select.option value="">Todos los tipos</flux:select.option>
             @foreach($documentTypes as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-    </x-agro.filter-bar>
-
-    <x-agro.card>
-        @if($entries->isEmpty())
-            <x-agro.empty-state
-                icon="document-text"
-                title="Sin documentos"
-                description="Sube facturas de insumos, certificados, informes de laboratorio y otras autorizaciones vinculadas al cuaderno de campo."
-            />
-        @else
-            <x-agro.data-table :headers="['Nombre', 'Tipo', 'Archivo original', 'Tamaño', 'Fecha subida', 'Acciones']">
-                @foreach($entries as $entry)
-                    <x-agro.table-row>
-                        <x-agro.table-cell class="font-medium">
-                            {{ $entry->name }}
-                            @if($entry->notes)
-                                <span class="text-zinc-400 text-xs block">{{ Str::limit($entry->notes, 60) }}</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <x-agro.status-badge :status="$entry->document_type" :label="$entry->document_type_label" />
-                        </x-agro.table-cell>
-                        <x-agro.table-cell class="text-sm text-zinc-500">{{ $entry->original_filename ?? '-' }}</x-agro.table-cell>
-                        <x-agro.table-cell class="text-sm">{{ $entry->file_size_formatted }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->created_at->format('d/m/Y') }}</x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-2">
-                                @if($entry->file_path)
-                                    <flux:button size="sm" variant="ghost" icon="arrow-down-tray" href="{{ route('viticulturist.campaign-documents.download', $entry) }}">Descargar</flux:button>
-                                @endif
-                                <flux:button size="sm" variant="ghost" icon="pencil" wire:click="openEdit({{ $entry->id }})">Editar</flux:button>
-                                <flux:button size="sm" variant="ghost" icon="trash" wire:click="delete({{ $entry->id }})" wire:confirm="¿Eliminar este documento? Esta acción no se puede deshacer.">Eliminar</flux:button>
-                            </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
-            </x-agro.data-table>
-            <div class="mt-4">{{ $entries->links() }}</div>
+        </flux:select>
+        @if($filterCampaign || $filterType)
+            <flux:button wire:click="$set('filterCampaign', ''); $set('filterType', '')" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
         @endif
-    </x-agro.card>
+    </div>
 
+    {{-- Grid de cards --}}
+    @if($entries->isEmpty())
+        <x-agro.empty-state
+            icon="document-text"
+            title="{{ $filterCampaign || $filterType ? 'Ningún documento coincide con los filtros' : 'Sin documentos' }}"
+            description="{{ $filterCampaign || $filterType ? 'Prueba a cambiar o limpiar los filtros.' : 'Sube facturas de insumos, certificados, informes de laboratorio y otras autorizaciones vinculadas al cuaderno de campo.' }}"
+        >
+            <x-slot:action>
+                @if($filterCampaign || $filterType)
+                    <flux:button wire:click="$set('filterCampaign', ''); $set('filterType', '')" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                @else
+                    <flux:button variant="primary" icon="arrow-up-tray" wire:click="openCreate">Subir Documento</flux:button>
+                @endif
+            </x-slot:action>
+        </x-agro.empty-state>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($entries as $entry)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="doc-{{ $entry->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-blue-100">
+                                <flux:icon icon="document-text" class="size-5 text-blue-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $entry->name }}</h3>
+                                <p class="text-xs text-zinc-400">{{ $entry->created_at->format('d/m/Y') }}</p>
+                            </div>
+                            <flux:badge color="blue" size="sm" class="shrink-0">{{ $entry->document_type_label }}</flux:badge>
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-3">
+                        @if($entry->notes)
+                            <p class="text-xs text-zinc-500 line-clamp-2">{{ $entry->notes }}</p>
+                        @endif
+
+                        @if($entry->original_filename)
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                <flux:icon icon="paper-clip" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span class="truncate">{{ $entry->original_filename }}</span>
+                            </div>
+                        @endif
+
+                        <div class="flex items-center gap-2 text-xs text-zinc-400">
+                            <flux:icon icon="document" class="size-3.5 shrink-0" />
+                            <span>{{ $entry->file_size_formatted }}</span>
+                        </div>
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end gap-0.5">
+                            @if($entry->file_path)
+                                <a href="{{ route('viticulturist.campaign-documents.download', $entry) }}"
+                                   title="Descargar"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                    <flux:icon icon="arrow-down-tray" class="size-4" />
+                                </a>
+                            @endif
+                            <button
+                                wire:click="openEdit({{ $entry->id }})"
+                                title="Editar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                <flux:icon icon="pencil-square" class="size-4" />
+                            </button>
+                            <button
+                                wire:click="delete({{ $entry->id }})"
+                                wire:confirm="¿Eliminar este documento? Esta acción no se puede deshacer."
+                                title="Eliminar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        <div class="mt-6">{{ $entries->links() }}</div>
+    @endif
+
+    {{-- Modal subida/edición de documento --}}
     <flux:modal wire:model="showModal" class="max-w-xl">
         <div class="p-6 space-y-6">
             <h2 class="text-lg font-semibold text-zinc-900">
@@ -130,4 +200,5 @@
             </div>
         </div>
     </flux:modal>
+
 </div>

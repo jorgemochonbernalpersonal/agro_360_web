@@ -1,115 +1,155 @@
 <div class="space-y-6 animate-fade-in">
 
-<x-agro.page-header
-    title="Costes por Parcela"
-    description="Registro y análisis de costes por parcela y campaña"
-    icon="banknotes"
->
-    <x-slot:actions>
-        <flux:button href="{{ route('viticulturist.plot-costs.create') }}" variant="primary" icon="plus">
-            Registrar Coste
-        </flux:button>
-    </x-slot:actions>
-</x-agro.page-header>
+    {{-- Header --}}
+    <x-agro.page-header
+        title="Costes por Parcela"
+        description="Registro y análisis de costes por parcela y campaña"
+        icon="banknotes"
+    >
+        <x-slot:actions>
+            <flux:button href="{{ route('viticulturist.plot-costs.create') }}" variant="primary" icon="plus">
+                Registrar Coste
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
-{{-- Filtros --}}
-<x-agro.filter-bar>
-    <x-agro.filter-select wire:model.live="filter_campaign_id" label="Campaña" placeholder="Todas las campañas">
-        @foreach($campaigns as $campaign)
-            <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
-        @endforeach
-    </x-agro.filter-select>
-
-    <x-agro.filter-select wire:model.live="filter_plot_id" label="Parcela" placeholder="Todas las parcelas">
-        @foreach($plots as $plot)
-            <option value="{{ $plot->id }}">{{ $plot->name }}</option>
-        @endforeach
-    </x-agro.filter-select>
-
-    <x-agro.filter-select wire:model.live="filter_category" label="Categoría" placeholder="Todas las categorías">
-        @foreach($categories as $value => $label)
-            <option value="{{ $value }}">{{ $label }}</option>
-        @endforeach
-    </x-agro.filter-select>
-</x-agro.filter-bar>
-
-{{-- Total --}}
-@if($costs->total() > 0)
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <x-agro.stat-card
-            title="Total costes (filtro)"
-            :value="number_format($totalAmount, 2) . ' €'"
-            icon="banknotes"
-            color="red"
-        />
-        <x-agro.stat-card
-            title="Registros"
-            :value="$costs->total()"
+            label="Total registros"
+            :value="$stats['total']"
             icon="document-text"
             color="zinc"
         />
+        <x-agro.stat-card
+            label="Importe total"
+            :value="number_format($stats['total_amount'], 2) . ' €'"
+            icon="banknotes"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Importe filtrado"
+            :value="number_format($stats['filtered_amount'], 2) . ' €'"
+            icon="funnel"
+            color="agro"
+        />
     </div>
-@endif
 
-{{-- Tabla --}}
-<x-agro.card>
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3 flex-wrap">
+        <flux:select wire:model.live="filter_campaign_id" class="w-48">
+            <flux:select.option value="">Todas las campañas</flux:select.option>
+            @foreach($campaigns as $campaign)
+                <flux:select.option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</flux:select.option>
+            @endforeach
+        </flux:select>
+        <flux:select wire:model.live="filter_plot_id" class="w-44">
+            <flux:select.option value="">Todas las parcelas</flux:select.option>
+            @foreach($plots as $plot)
+                <flux:select.option value="{{ $plot->id }}">{{ $plot->name }}</flux:select.option>
+            @endforeach
+        </flux:select>
+        <flux:select wire:model.live="filter_category" class="w-44">
+            <flux:select.option value="">Todas las categorías</flux:select.option>
+            @foreach($categories as $value => $label)
+                <flux:select.option value="{{ $value }}">{{ $label }}</flux:select.option>
+            @endforeach
+        </flux:select>
+        @if($filter_campaign_id || $filter_plot_id || $filter_category)
+            <flux:button wire:click="$set('filter_campaign_id', ''); $set('filter_plot_id', ''); $set('filter_category', '')" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
+        @endif
+    </div>
+
+    {{-- Grid de cards --}}
     @if($costs->count() === 0)
         <x-agro.empty-state
             icon="banknotes"
-            title="Sin costes registrados"
-            description="Registra los costes de tus parcelas: mano de obra, fitosanitarios, maquinaria y más."
+            title="{{ $filter_campaign_id || $filter_plot_id || $filter_category ? 'Ningún coste coincide con los filtros' : 'Sin costes registrados' }}"
+            description="{{ $filter_campaign_id || $filter_plot_id || $filter_category ? 'Prueba a cambiar o limpiar los filtros.' : 'Registra los costes de tus parcelas: mano de obra, fitosanitarios, maquinaria y más.' }}"
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.plot-costs.create') }}" variant="primary" icon="plus">
-                    Registrar primer coste
-                </flux:button>
+                @if($filter_campaign_id || $filter_plot_id || $filter_category)
+                    <flux:button wire:click="$set('filter_campaign_id', ''); $set('filter_plot_id', ''); $set('filter_category', '')" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                @else
+                    <flux:button href="{{ route('viticulturist.plot-costs.create') }}" variant="primary" icon="plus">
+                        Registrar primer coste
+                    </flux:button>
+                @endif
             </x-slot:action>
         </x-agro.empty-state>
     @else
-        <x-agro.data-table :headers="['Fecha', 'Descripción', 'Categoría', 'Parcela', 'Campaña', 'Importe', 'Acciones']">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($costs as $cost)
-                <x-agro.table-row>
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">{{ $cost->cost_date->format('d/m/Y') }}</span>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell>
-                        <div>
-                            <p class="text-sm font-medium text-zinc-900">{{ $cost->description }}</p>
-                            @if($cost->supplier)
-                                <p class="text-xs text-zinc-500">{{ $cost->supplier }}</p>
-                            @endif
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="cost-{{ $cost->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-red-100">
+                                <flux:icon icon="banknotes" class="size-5 text-red-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $cost->description }}</h3>
+                                <p class="text-xs text-zinc-400">{{ $cost->cost_date->format('d/m/Y') }}</p>
+                            </div>
+                            <flux:badge color="blue" size="sm" class="shrink-0">{{ $cost->category_label }}</flux:badge>
                         </div>
-                    </x-agro.table-cell>
+                    </x-slot:header>
 
-                    <x-agro.table-cell>
-                        <x-agro.status-badge :label="$cost->category_label" color="blue" />
-                    </x-agro.table-cell>
+                    <div class="flex-1 space-y-3">
+                        @if($cost->supplier)
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                <flux:icon icon="building-office" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span class="truncate">{{ $cost->supplier }}</span>
+                            </div>
+                        @endif
 
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">{{ $cost->plot?->name ?? '—' }}</span>
-                    </x-agro.table-cell>
+                        @if($cost->plot)
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                <flux:icon icon="map" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span>{{ $cost->plot->name }}</span>
+                            </div>
+                        @endif
 
-                    <x-agro.table-cell>
-                        <span class="text-sm text-zinc-600">{{ $cost->campaign ? 'Campaña ' . $cost->campaign->year : '—' }}</span>
-                    </x-agro.table-cell>
+                        @if($cost->campaign)
+                            <div class="flex items-center gap-2 text-xs text-zinc-400">
+                                <flux:icon icon="calendar-days" class="size-3.5 shrink-0" />
+                                <span>Campaña {{ $cost->campaign->year }}</span>
+                            </div>
+                        @endif
 
-                    <x-agro.table-cell>
-                        <span class="text-sm font-semibold text-red-700">{{ number_format($cost->amount, 2) }} €</span>
-                    </x-agro.table-cell>
-
-                    <x-agro.table-cell align="right">
-                        <div class="flex items-center justify-end gap-2">
-                            <flux:button href="{{ route('viticulturist.plot-costs.edit', $cost->id) }}" size="sm" variant="ghost" icon="pencil">Editar</flux:button>
-                            <flux:button wire:click="delete({{ $cost->id }})" wire:confirm="¿Eliminar este coste?" size="sm" variant="ghost" icon="trash">Eliminar</flux:button>
+                        <div class="bg-red-50 rounded-xl p-3">
+                            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Importe</p>
+                            <p class="text-xl font-bold text-red-700 leading-none">
+                                {{ number_format($cost->amount, 2) }}<span class="text-xs font-normal text-zinc-400 ml-0.5">€</span>
+                            </p>
                         </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ route('viticulturist.plot-costs.edit', $cost->id) }}"
+                               title="Editar"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                <flux:icon icon="pencil-square" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $cost->id }})"
+                                wire:confirm="¿Eliminar este coste?"
+                                title="Eliminar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
             @endforeach
-        </x-agro.data-table>
+        </div>
 
-        <div class="mt-4">{{ $costs->links() }}</div>
+        <div class="mt-6">{{ $costs->links() }}</div>
     @endif
-</x-agro.card>
 
 </div>

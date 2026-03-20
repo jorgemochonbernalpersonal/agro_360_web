@@ -1,8 +1,9 @@
 <div class="space-y-6 animate-fade-in">
 
+    {{-- Header --}}
     <x-agro.page-header
         title="Consumo Energético"
-        subtitle="Huella de carbono y costes energéticos de la explotación"
+        description="Huella de carbono y costes energéticos de la explotación"
         icon="bolt"
     >
         <x-slot:actions>
@@ -23,45 +24,42 @@
     />
 
     {{-- Filtros --}}
-    <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="filterCampaign" label="Campaña">
-            <option value="">Todas</option>
+    <div class="flex items-center gap-3 flex-wrap">
+        <flux:select wire:model.live="filterCampaign" class="w-48">
+            <flux:select.option value="">Todas las campañas</flux:select.option>
             @foreach($campaigns as $c)
-                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-
-        <x-agro.filter-select wire:model.live="filterEnergyType" label="Tipo de energía">
-            <option value="">Todos</option>
+        </flux:select>
+        <flux:select wire:model.live="filterEnergyType" class="w-44">
+            <flux:select.option value="">Todos los tipos</flux:select.option>
             @foreach($energyTypes as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-
+        </flux:select>
         @if($filterCampaign || $filterEnergyType)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
         @endif
-    </x-agro.filter-bar>
+    </div>
 
     {{-- Chips filtros activos --}}
     @if($filterCampaign || $filterEnergyType)
         <div class="flex flex-wrap items-center gap-2">
-            <span class="text-xs text-zinc-400">Filtros activos:</span>
             @if($filterCampaign)
                 @php $camp = $campaigns->firstWhere('id', $filterCampaign); @endphp
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="calendar-days" class="size-3" />
                     {{ $camp?->name ?? $filterCampaign }}
-                    <button wire:click="$set('filterCampaign', '')" class="hover:text-agro-900 ml-0.5">
+                    <button wire:click="$set('filterCampaign', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
                         <flux:icon icon="x-mark" class="size-3" />
                     </button>
                 </span>
             @endif
             @if($filterEnergyType)
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="bolt" class="size-3" />
                     {{ $energyTypes[$filterEnergyType] ?? $filterEnergyType }}
-                    <button wire:click="$set('filterEnergyType', '')" class="hover:text-agro-900 ml-0.5">
+                    <button wire:click="$set('filterEnergyType', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
                         <flux:icon icon="x-mark" class="size-3" />
                     </button>
                 </span>
@@ -73,7 +71,7 @@
     @if($co2Total > 0)
         <x-agro.card>
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                     <flux:icon icon="globe-europe-africa" class="w-6 h-6 text-emerald-600" />
                 </div>
                 <div>
@@ -85,73 +83,108 @@
         </x-agro.card>
     @endif
 
-    {{-- Tabla --}}
-    <x-agro.card>
-        @if($entries->isEmpty())
-            <x-agro.empty-state
-                icon="bolt"
-                title="{{ $currentTab === 'active' ? 'Sin registros energéticos' : 'Sin registros archivados' }}"
-                description="{{ $filterCampaign || $filterEnergyType ? 'Ningún registro coincide con los filtros aplicados.' : 'Registra el consumo de gasóleo, electricidad y otros combustibles para calcular tu huella de carbono.' }}"
-            >
-                @if($filterCampaign || $filterEnergyType)
-                    <x-slot:action>
-                        <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
-                    </x-slot:action>
-                @elseif($currentTab === 'active')
-                    <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
-                            Registrar Consumo
-                        </flux:button>
-                    </x-slot:action>
-                @endif
-            </x-agro.empty-state>
-        @else
-            <x-agro.data-table :headers="['Fecha', 'Tipo de energía', 'Cantidad', 'Coste', 'CO₂ (kg)', 'Descripción', 'Acciones']">
-                @foreach($entries as $entry)
-                    <x-agro.table-row>
-                        <x-agro.table-cell>{{ $entry->date->format('d/m/Y') }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <x-agro.status-badge :status="$entry->energy_type" :label="$entry->energy_type_label" />
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>{{ number_format($entry->quantity, 3, ',', '.') }} {{ $entry->unit_label }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->total_cost ? number_format($entry->total_cost, 2, ',', '.') . ' €' : '—' }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <span class="font-mono text-sm">{{ number_format($entry->co2_kg_equivalent ?? 0, 2, ',', '.') }}</span>
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->usage_description ?? '—' }}</x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                @if($currentTab === 'active')
-                                    <a href="{{ route('viticulturist.energy-usages.edit', $entry) }}"
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                       title="Editar">
-                                        <flux:icon icon="pencil-square" class="size-4" />
-                                    </a>
-                                    <button
-                                        wire:click="archive({{ $entry->id }})"
-                                        wire:confirm="¿Archivar este registro?"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                        title="Archivar">
-                                        <flux:icon icon="archive-box" class="size-4" />
-                                    </button>
-                                @else
-                                    <button
-                                        wire:click="unarchive({{ $entry->id }})"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors"
-                                        title="Restaurar">
-                                        <flux:icon icon="arrow-uturn-left" class="size-4" />
-                                    </button>
-                                @endif
-                            </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
-            </x-agro.data-table>
-
-            @if($entries->hasPages())
-                <div class="mt-4">{{ $entries->links() }}</div>
+    {{-- Grid de cards --}}
+    @if($entries->isEmpty())
+        <x-agro.empty-state
+            icon="bolt"
+            title="{{ $currentTab === 'active' ? 'Sin registros energéticos' : 'Sin registros archivados' }}"
+            description="{{ $filterCampaign || $filterEnergyType ? 'Ningún registro coincide con los filtros aplicados.' : 'Registra el consumo de gasóleo, electricidad y otros combustibles para calcular tu huella de carbono.' }}"
+        >
+            @if($filterCampaign || $filterEnergyType)
+                <x-slot:action>
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                </x-slot:action>
+            @elseif($currentTab === 'active')
+                <x-slot:action>
+                    <flux:button href="{{ route('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
+                        Registrar Consumo
+                    </flux:button>
+                </x-slot:action>
             @endif
+        </x-agro.empty-state>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($entries as $entry)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="energy-{{ $entry->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-emerald-100">
+                                <flux:icon icon="bolt" class="size-5 text-emerald-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $entry->energy_type_label }}</h3>
+                                <p class="text-xs text-zinc-400">{{ $entry->date->format('d/m/Y') }}</p>
+                            </div>
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-3">
+                        @if($entry->usage_description)
+                            <p class="text-xs text-zinc-500 line-clamp-2">{{ $entry->usage_description }}</p>
+                        @endif
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-zinc-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-base font-bold text-zinc-700 leading-none">
+                                    {{ number_format($entry->quantity, 2, ',', '.') }}<span class="text-xs font-normal text-zinc-400 ml-0.5">{{ $entry->unit_label }}</span>
+                                </p>
+                            </div>
+                            @if($entry->co2_kg_equivalent)
+                                <div class="bg-emerald-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">CO₂</p>
+                                    <p class="text-base font-bold text-emerald-700 leading-none">
+                                        {{ number_format($entry->co2_kg_equivalent, 1, ',', '.') }}<span class="text-xs font-normal text-zinc-400 ml-0.5">kg</span>
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($entry->total_cost)
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-zinc-400">Coste</span>
+                                <span class="font-semibold text-zinc-700">{{ number_format($entry->total_cost, 2, ',', '.') }} €</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end gap-0.5">
+                            @if($currentTab === 'active')
+                                <a href="{{ route('viticulturist.energy-usages.edit', $entry) }}"
+                                   title="Editar"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                <button
+                                    wire:click="archive({{ $entry->id }})"
+                                    wire:confirm="¿Archivar este registro?"
+                                    title="Archivar"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors">
+                                    <flux:icon icon="archive-box" class="size-4" />
+                                </button>
+                            @else
+                                <button
+                                    wire:click="unarchive({{ $entry->id }})"
+                                    title="Restaurar"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
+                                    <flux:icon icon="arrow-uturn-left" class="size-4" />
+                                </button>
+                            @endif
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($entries->hasPages())
+            <div class="mt-6">{{ $entries->links() }}</div>
         @endif
-    </x-agro.card>
+    @endif
 
 </div>

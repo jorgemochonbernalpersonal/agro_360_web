@@ -1,7 +1,9 @@
 <div class="space-y-6 animate-fade-in">
+
+    {{-- Header --}}
     <x-agro.page-header
         title="Entorno de Parcelas"
-        subtitle="Zonas protegidas, captaciones de agua y condiciones ambientales"
+        description="Zonas protegidas, captaciones de agua y condiciones ambientales"
         icon="map"
     >
         <x-slot:actions>
@@ -15,92 +17,145 @@
         El registro de zonas protegidas y captaciones de agua es obligatorio en programas de Producción Integrada y para el uso de fitosanitarios cerca de masas de agua (RD 1311/2012).
     </flux:callout>
 
-    <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="filterCampaign" label="Campaña">
-            <option value="">Todas</option>
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <x-agro.stat-card
+            label="Total fichas"
+            :value="$stats['total']"
+            icon="map"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Con captación agua"
+            :value="$stats['water']"
+            icon="beaker"
+            color="amber"
+        />
+        <x-agro.stat-card
+            label="Zona protegida"
+            :value="$stats['protected']"
+            icon="shield-check"
+            color="amber"
+        />
+        <x-agro.stat-card
+            label="Riesgo erosión"
+            :value="$stats['erosion']"
+            icon="exclamation-triangle"
+            color="zinc"
+        />
+    </div>
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3">
+        <flux:select wire:model.live="filterCampaign" class="w-48">
+            <flux:select.option value="">Todas las campañas</flux:select.option>
             @foreach($campaigns as $c)
-                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
+        </flux:select>
         @if($filterCampaign)
             <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
         @endif
-    </x-agro.filter-bar>
+    </div>
 
-    <x-agro.card>
-        @if($entries->isEmpty())
-            <x-agro.empty-state
-                icon="map"
-                title="Sin fichas de entorno"
-                description="Registra las condiciones ambientales de cada parcela: zonas protegidas, distancia a captaciones de agua, pendiente..."
-            >
-                <x-slot:action>
+    {{-- Grid de cards --}}
+    @if($entries->isEmpty())
+        <x-agro.empty-state
+            icon="map"
+            title="{{ $filterCampaign ? 'Ninguna ficha coincide con el filtro' : 'Sin fichas de entorno' }}"
+            description="{{ $filterCampaign ? 'Prueba a cambiar o limpiar el filtro.' : 'Registra las condiciones ambientales de cada parcela: zonas protegidas, distancia a captaciones de agua, pendiente...' }}"
+        >
+            <x-slot:action>
+                @if($filterCampaign)
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtro</flux:button>
+                @else
                     <flux:button href="{{ route('viticulturist.plot-environments.create') }}" variant="primary" icon="plus">
                         Nueva Ficha
                     </flux:button>
-                </x-slot:action>
-            </x-agro.empty-state>
-        @else
-            <x-agro.data-table :headers="['Parcela', 'Variedad', 'Captación agua', 'Zona protegida', 'Pendiente', 'Riesgo erosión', 'Acciones']">
-                @foreach($entries as $entry)
-                    <x-agro.table-row>
-                        <x-agro.table-cell class="font-medium">{{ $entry->plot->name ?? '-' }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->plotPlanting?->grapeVariety?->name ?? 'Global' }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($entry->water_intake_nearby)
-                                <span class="text-amber-600 font-medium text-sm flex items-center gap-1">
-                                    <flux:icon icon="exclamation-triangle" class="size-3" /> Sí
-                                </span>
-                                @if($entry->water_intake_distance_m)
-                                    <span class="text-zinc-400 text-xs block">a {{ $entry->water_intake_distance_m }} m</span>
-                                @endif
-                            @else
-                                <span class="text-zinc-400 text-sm">No</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($entry->protected_zone_total)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">Total</span>
-                            @elseif($entry->protected_zone_partial)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">Parcial</span>
-                                @if($entry->protection_zone_type)
-                                    <span class="text-zinc-400 text-xs block">{{ $entry->protection_zone_type }}</span>
-                                @endif
-                            @else
-                                <span class="text-zinc-400 text-sm">No</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->slope_pct ? $entry->slope_pct . '%' : '-' }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            @if($entry->erosion_risk)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-700">⚠️ Sí</span>
-                            @else
-                                <span class="text-zinc-400 text-sm">No</span>
-                            @endif
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <a href="{{ route('viticulturist.plot-environments.edit', $entry) }}"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                   title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
-                                    wire:click="delete({{ $entry->id }})"
-                                    wire:confirm="¿Eliminar esta ficha?"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                    title="Eliminar">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
+                @endif
+            </x-slot:action>
+        </x-agro.empty-state>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($entries as $entry)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="env-{{ $entry->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-agro-100">
+                                <flux:icon icon="map" class="size-5 text-agro-600" />
                             </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
-            </x-agro.data-table>
-            @if($entries->hasPages())
-                <div class="mt-4">{{ $entries->links() }}</div>
-            @endif
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">{{ $entry->plot->name ?? '—' }}</h3>
+                                <p class="text-xs text-zinc-400">{{ $entry->plotPlanting?->grapeVariety?->name ?? 'Global parcela' }}</p>
+                            </div>
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-3">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            @if($entry->water_intake_nearby)
+                                <flux:badge color="amber" size="sm" icon="exclamation-triangle">Captación agua</flux:badge>
+                            @endif
+                            @if($entry->protected_zone_total)
+                                <flux:badge color="red" size="sm">Zona protegida total</flux:badge>
+                            @elseif($entry->protected_zone_partial)
+                                <flux:badge color="orange" size="sm">Zona protegida parcial</flux:badge>
+                            @endif
+                            @if($entry->erosion_risk)
+                                <flux:badge color="orange" size="sm">Riesgo erosión</flux:badge>
+                            @endif
+                        </div>
+
+                        @if($entry->water_intake_nearby && $entry->water_intake_distance_m)
+                            <div class="flex items-center gap-2 text-xs text-amber-600">
+                                <flux:icon icon="beaker" class="size-3.5 shrink-0" />
+                                <span>Captación a {{ $entry->water_intake_distance_m }} m</span>
+                            </div>
+                        @endif
+
+                        @if($entry->protected_zone_partial && $entry->protection_zone_type)
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                <flux:icon icon="shield-check" class="size-3.5 text-zinc-400 shrink-0" />
+                                <span>{{ $entry->protection_zone_type }}</span>
+                            </div>
+                        @endif
+
+                        @if($entry->slope_pct)
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-zinc-400">Pendiente</span>
+                                <span class="text-zinc-700 font-medium">{{ $entry->slope_pct }}%</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ route('viticulturist.plot-environments.edit', $entry) }}"
+                               title="Editar"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                <flux:icon icon="pencil-square" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="delete({{ $entry->id }})"
+                                wire:confirm="¿Eliminar esta ficha?"
+                                title="Eliminar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                <flux:icon icon="trash" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($entries->hasPages())
+            <div class="mt-6">{{ $entries->links() }}</div>
         @endif
-    </x-agro.card>
+    @endif
 
 </div>

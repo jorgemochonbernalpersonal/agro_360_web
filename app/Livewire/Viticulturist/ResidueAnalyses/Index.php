@@ -56,9 +56,18 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = ResidueAnalysis::where('viticulturist_id', $this->viticulturistId())->active();
+
+        $stats = [
+            'total'     => (clone $base)->count(),
+            'compliant' => (clone $base)->where('overall_compliant', true)->count(),
+            'failed'    => (clone $base)->where('overall_compliant', false)->count(),
+        ];
+
         return [
             'entries'   => $entries,
             'campaigns' => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
+            'stats'     => $stats,
         ];
     }
 }

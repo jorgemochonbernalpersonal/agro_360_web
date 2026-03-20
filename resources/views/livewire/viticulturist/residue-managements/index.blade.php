@@ -1,7 +1,9 @@
 <div class="space-y-6 animate-fade-in">
+
+    {{-- Header --}}
     <x-agro.page-header
         title="Gestión de Residuos Agrícolas"
-        subtitle="Registro de gestión de podas, orujos y subproductos vitícolas"
+        description="Registro de gestión de podas, orujos y subproductos vitícolas"
         icon="trash"
     >
         <x-slot:actions>
@@ -11,73 +13,137 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="filterCampaign" label="Campaña">
-            <option value="">Todas las campañas</option>
+    {{-- KPIs --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <x-agro.stat-card
+            label="Total registros"
+            :value="$stats['total']"
+            icon="trash"
+            color="zinc"
+        />
+        <x-agro.stat-card
+            label="Esta campaña"
+            :value="$stats['this_campaign']"
+            icon="calendar-days"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Compostados"
+            :value="$stats['composted']"
+            icon="arrow-path"
+            color="agro"
+        />
+        <x-agro.stat-card
+            label="Retirados"
+            :value="$stats['removed']"
+            icon="truck"
+            color="zinc"
+        />
+    </div>
+
+    {{-- Toolbar --}}
+    <div class="flex items-center gap-3 flex-wrap">
+        <flux:select wire:model.live="filterCampaign" class="w-48">
+            <flux:select.option value="">Todas las campañas</flux:select.option>
             @foreach($campaigns as $c)
-                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
-        <x-agro.filter-select wire:model.live="filterPractice" label="Práctica">
-            <option value="">Todas</option>
+        </flux:select>
+        <flux:select wire:model.live="filterPractice" class="w-44">
+            <flux:select.option value="">Todas las prácticas</flux:select.option>
             @foreach($practiceTypes as $key => $label)
-                <option value="{{ $key }}">{{ $label }}</option>
+                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
             @endforeach
-        </x-agro.filter-select>
+        </flux:select>
         @if($filterCampaign || $filterPractice)
             <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
         @endif
-    </x-agro.filter-bar>
+    </div>
 
-    <x-agro.card>
-        @if($entries->isEmpty())
-            <x-agro.empty-state
-                icon="trash"
-                title="Sin registros de gestión de residuos"
-                description="Registra cómo gestionas los residuos de poda, orujo y otros subproductos vitícolas."
-            >
-                <x-slot:action>
+    {{-- Grid de cards --}}
+    @if($entries->isEmpty())
+        <x-agro.empty-state
+            icon="trash"
+            title="{{ $filterCampaign || $filterPractice ? 'Ningún registro coincide con los filtros' : 'Sin registros de gestión de residuos' }}"
+            description="{{ $filterCampaign || $filterPractice ? 'Prueba a cambiar o limpiar los filtros.' : 'Registra cómo gestionas los residuos de poda, orujo y otros subproductos vitícolas.' }}"
+        >
+            <x-slot:action>
+                @if($filterCampaign || $filterPractice)
+                    <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                @else
                     <flux:button href="{{ route('viticulturist.residue-managements.create') }}" variant="primary" icon="plus">
                         Nueva Gestión
                     </flux:button>
-                </x-slot:action>
-            </x-agro.empty-state>
-        @else
-            <x-agro.data-table :headers="['Fecha', 'Parcela', 'Material', 'Práctica', 'Cantidad', 'Acciones']">
-                @foreach($entries as $entry)
-                    <x-agro.table-row>
-                        <x-agro.table-cell>{{ $entry->date->format('d/m/Y') }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->plot->name ?? ($entry->plotPlanting?->plot->name ?? 'Global campaña') }}</x-agro.table-cell>
-                        <x-agro.table-cell>{{ $entry->material_label }}</x-agro.table-cell>
-                        <x-agro.table-cell>
-                            <x-agro.status-badge :status="$entry->practice_type" :label="$entry->practice_label" />
-                        </x-agro.table-cell>
-                        <x-agro.table-cell>
-                            {{ $entry->estimated_quantity ? number_format($entry->estimated_quantity, 2, ',', '.') . ' ' . $entry->quantity_unit : '-' }}
-                        </x-agro.table-cell>
-                        <x-agro.table-cell align="right">
-                            <div class="flex items-center justify-end gap-1">
-                                <a href="{{ route('viticulturist.residue-managements.edit', $entry) }}"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                                   title="Editar">
-                                    <flux:icon icon="pencil-square" class="size-4" />
-                                </a>
-                                <button
-                                    wire:click="deactivate({{ $entry->id }})"
-                                    wire:confirm="¿Archivar este registro?"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                                    title="Archivar">
-                                    <flux:icon icon="archive-box" class="size-4" />
-                                </button>
+                @endif
+            </x-slot:action>
+        </x-agro.empty-state>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($entries as $entry)
+                @php $delay = min($loop->index * 50, 300); @endphp
+                <x-agro.card
+                    class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                    style="animation-delay: {{ $delay }}ms;"
+                    wire:key="residue-{{ $entry->id }}"
+                >
+                    <x-slot:header>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-agro-100">
+                                <flux:icon icon="trash" class="size-5 text-agro-600" />
                             </div>
-                        </x-agro.table-cell>
-                    </x-agro.table-row>
-                @endforeach
-            </x-agro.data-table>
-            @if($entries->hasPages())
-                <div class="mt-4">{{ $entries->links() }}</div>
-            @endif
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-zinc-900 truncate">
+                                    {{ $entry->plot->name ?? ($entry->plotPlanting?->plot->name ?? 'Global campaña') }}
+                                </h3>
+                                <p class="text-xs text-zinc-400">{{ $entry->date->format('d/m/Y') }}</p>
+                            </div>
+                            <flux:badge color="blue" size="sm" class="shrink-0">{{ $entry->practice_label }}</flux:badge>
+                        </div>
+                    </x-slot:header>
+
+                    <div class="flex-1 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <flux:badge color="zinc" size="sm">{{ $entry->material_label }}</flux:badge>
+                        </div>
+
+                        @if($entry->estimated_quantity)
+                            <div class="bg-zinc-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad estimada</p>
+                                <p class="text-xl font-bold text-zinc-700 leading-none">
+                                    {{ number_format($entry->estimated_quantity, 2, ',', '.') }}
+                                    <span class="text-xs font-normal text-zinc-400 ml-0.5">{{ $entry->quantity_unit }}</span>
+                                </p>
+                            </div>
+                        @endif
+
+                        @if($entry->notes)
+                            <p class="text-xs text-zinc-500 line-clamp-2">{{ $entry->notes }}</p>
+                        @endif
+                    </div>
+
+                    <x-slot:footer>
+                        <div class="flex items-center justify-end gap-0.5">
+                            <a href="{{ route('viticulturist.residue-managements.edit', $entry) }}"
+                               title="Editar"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
+                                <flux:icon icon="pencil-square" class="size-4" />
+                            </a>
+                            <button
+                                wire:click="deactivate({{ $entry->id }})"
+                                wire:confirm="¿Archivar este registro?"
+                                title="Archivar"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-amber-600 hover:bg-amber-50 transition-colors">
+                                <flux:icon icon="archive-box" class="size-4" />
+                            </button>
+                        </div>
+                    </x-slot:footer>
+                </x-agro.card>
+            @endforeach
+        </div>
+
+        @if($entries->hasPages())
+            <div class="mt-6">{{ $entries->links() }}</div>
         @endif
-    </x-agro.card>
+    @endif
 
 </div>

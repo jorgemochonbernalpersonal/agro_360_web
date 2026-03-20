@@ -31,6 +31,15 @@ class Index extends Component
     public function updatingFilterServiceType(): void { $this->resetPage(); }
     public function updatingFilterInvoiced(): void { $this->resetPage(); }
 
+    public function clearFilters(): void
+    {
+        $this->filter_campaign_id  = '';
+        $this->filter_plot_id      = '';
+        $this->filter_service_type = '';
+        $this->filter_invoiced     = '';
+        $this->resetPage();
+    }
+
     public function delete(int $id): void
     {
         Subcontracting::where('viticulturist_id', Auth::id())->findOrFail($id)->delete();
@@ -66,17 +75,22 @@ class Index extends Component
 
         $records = $query->orderByDesc('service_date')->paginate(20);
 
-        $totalAmount = Subcontracting::where('viticulturist_id', $user->id)
-            ->when($this->filter_campaign_id, fn($q) => $q->where('campaign_id', $this->filter_campaign_id))
-            ->when($this->filter_plot_id, fn($q) => $q->where('plot_id', $this->filter_plot_id))
-            ->whereNotNull('amount')
-            ->sum('amount');
+        $base = Subcontracting::where('viticulturist_id', $user->id);
+        $stats = [
+            'total'        => (clone $base)->count(),
+            'total_amount' => (clone $base)->whereNotNull('amount')->sum('amount'),
+            'invoiced'     => (clone $base)->where('invoiced', true)->count(),
+            'pending'      => (clone $base)->where('invoiced', false)->count(),
+        ];
+
+        $campaigns    = Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get();
+        $plots        = Plot::where('viticulturist_id', $user->id)->orderBy('name')->get();
 
         return view('livewire.viticulturist.subcontracting.index', [
             'records'      => $records,
-            'totalAmount'  => $totalAmount,
-            'campaigns'    => Campaign::where('viticulturist_id', $user->id)->orderByDesc('year')->get(),
-            'plots'        => Plot::where('viticulturist_id', $user->id)->orderBy('name')->get(),
+            'stats'        => $stats,
+            'campaigns'    => $campaigns,
+            'plots'        => $plots,
             'serviceTypes' => Subcontracting::SERVICE_TYPES,
         ])->layout('layouts.app');
     }

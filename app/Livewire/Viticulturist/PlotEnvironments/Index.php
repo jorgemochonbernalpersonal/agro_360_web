@@ -48,9 +48,19 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
+        $base = PlotEnvironment::where('viticulturist_id', $this->viticulturistId());
+
+        $stats = [
+            'total'     => (clone $base)->count(),
+            'water'     => (clone $base)->where('water_intake_nearby', true)->count(),
+            'protected' => (clone $base)->where(fn($q) => $q->where('protected_zone_total', true)->orWhere('protected_zone_partial', true))->count(),
+            'erosion'   => (clone $base)->where('erosion_risk', true)->count(),
+        ];
+
         return [
             'entries'   => $entries,
             'campaigns' => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
+            'stats'     => $stats,
         ];
     }
 }
