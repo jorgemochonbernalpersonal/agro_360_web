@@ -109,9 +109,10 @@ class Index extends Component
 
         $baseQuery = PlotPlanting::whereIn('plot_id', $visiblePlotIds);
         $stats = [
-            'total'    => (clone $baseQuery)->count(),
-            'active'   => (clone $baseQuery)->where('active', true)->count(),
-            'inactive' => (clone $baseQuery)->where('active', false)->count(),
+            'total'      => (clone $baseQuery)->count(),
+            'active'     => (clone $baseQuery)->where('active', true)->count(),
+            'inactive'   => (clone $baseQuery)->where('active', false)->count(),
+            'total_area' => (clone $baseQuery)->sum('area_planted'),
         ];
 
         return view('livewire.plots.plantings.index', compact('plantings', 'years', 'stats'))
