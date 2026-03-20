@@ -99,6 +99,7 @@ class Index extends Component
         $clients = $query->orderBy('created_at', 'desc')->paginate(12);
 
         $stats = [
+            'total'    => Client::forUser($user->id)->count(),
             'active'   => Client::forUser($user->id)->where('active', true)->count(),
             'inactive' => Client::forUser($user->id)->where('active', false)->count(),
         ];

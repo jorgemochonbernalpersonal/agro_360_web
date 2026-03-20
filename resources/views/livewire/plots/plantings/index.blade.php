@@ -5,6 +5,118 @@
         description="Gestiona las plantaciones de variedades en tus parcelas"
     />
 
+    {{-- Stats --}}
+    <div x-data="{
+        open: localStorage.getItem('plantings-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('plantings-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+            <div class="grid grid-cols-2 gap-4">
+                <x-agro.stat-card
+                    label="Total plantaciones"
+                    :value="$stats['total']"
+                    description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
+                    icon="scissors"
+                    color="agro"
+                />
+                <x-agro.stat-card
+                    label="Superficie total"
+                    :value="number_format($stats['total_area'], 2) . ' ha'"
+                    description="'Área plantada declarada'"
+                    icon="square-2-stack"
+                    color="blue"
+                />
+                <x-agro.stat-card
+                    label="Activas"
+                    :value="$stats['active']"
+                    description="'En producción'"
+                    icon="check-circle"
+                    color="agro"
+                />
+                <x-agro.stat-card
+                    label="Inactivas"
+                    :value="$stats['inactive']"
+                    description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
+                    icon="archive-box"
+                    color="zinc"
+                />
+            </div>
+        </div>
+    </div>
+    {{-- Stats --}}
+    <div x-data="{
+        open: localStorage.getItem('plantings-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('plantings-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+            <div class="grid grid-cols-2 gap-4">
+                <x-agro.stat-card
+                    label="Total plantaciones"
+                    :value="$stats['total']"
+                    description="$stats['active'] . ' activas · ' . $stats['inactive'] . ' inactivas'"
+                    icon="scissors"
+                    color="agro"
+                />
+                <x-agro.stat-card
+                    label="Superficie total"
+                    :value="number_format($stats['total_area'], 2) . ' ha'"
+                    description="'Área plantada declarada'"
+                    icon="square-2-stack"
+                    color="blue"
+                />
+                <x-agro.stat-card
+                    label="Activas"
+                    :value="$stats['active']"
+                    description="'En producción'"
+                    icon="check-circle"
+                    color="agro"
+                />
+                <x-agro.stat-card
+                    label="Inactivas"
+                    :value="$stats['inactive']"
+                    description="$stats['inactive'] > 0 ? 'Archivadas' : 'Todas activas'"
+                    icon="archive-box"
+                    color="zinc"
+                />
+            </div>
+        </div>
+    </div>
     {{-- Tabs --}}
     <x-agro.tabs
         :tabs="[

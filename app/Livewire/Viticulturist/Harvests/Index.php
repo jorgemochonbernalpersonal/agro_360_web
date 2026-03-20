@@ -195,8 +195,10 @@ class Index extends Component
         // ── Tab counts ────────────────────────────────────────────────────────
 
         $stats = [
-            'delivered' => $allRows->where('has_delivery', true)->count(),
-            'pending'   => $allRows->where('has_delivery', false)->count(),
+            'delivered'          => $allRows->where('has_delivery', true)->count(),
+            'pending'            => $allRows->where('has_delivery', false)->count(),
+            'total_harvest_kg'   => round($allRows->sum('harvest_kg'), 0),
+            'total_delivered_kg' => round($allRows->sum('total_delivered_kg'), 0),
         ];
 
         // ── Apply tab filter ──────────────────────────────────────────────────

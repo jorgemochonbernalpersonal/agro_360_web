@@ -11,7 +11,63 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    @if($expiring > 0)
+    {{-- Stats --}}
+    <div x-data="{
+        open: localStorage.getItem('commercial-auth-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('commercial-auth-stats-open', String(this.open));
+        }
+    }">
+        <button
+            @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3"
+        >
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1"
+        >
+            <div class="grid grid-cols-2 gap-4">
+                <x-agro.stat-card
+                    label="Total activas"
+                    :value="$stats['total']"
+                    description="'Autorizaciones vigentes'"
+                    icon="shield-check"
+                    color="agro"
+                />
+                <x-agro.stat-card
+                    label="Tipos distintos"
+                    :value="$stats['types']"
+                    description="'Categorías de autorización'"
+                    icon="squares-2x2"
+                    color="blue"
+                />
+                <x-agro.stat-card
+                    label="Próximas a vencer"
+                    :value="$stats['expiring']"
+                    description="'En los próximos 60 días'"
+                    icon="exclamation-triangle"
+                    color="orange"
+                />
+                <x-agro.stat-card
+                    label="Vencidas"
+                    :value="$stats['expired']"
+                    description="$stats['expired'] > 0 ? 'Requieren renovación' : 'Todas vigentes'"
+                    icon="x-circle"
+                    color="red"
+                />
+            </div>
+        </div>
+    </div>
+        @if($expiring > 0)
         <flux:callout variant="warning" icon="exclamation-triangle">
             Tienes <strong>{{ $expiring }}</strong> {{ $expiring === 1 ? 'autorización que vence' : 'autorizaciones que vencen' }} en los próximos 60 días. Revisa y renuévalas a tiempo.
         </flux:callout>

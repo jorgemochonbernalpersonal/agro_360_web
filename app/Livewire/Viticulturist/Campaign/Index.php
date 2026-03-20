@@ -139,6 +139,7 @@ class Index extends Component
         $campaigns = $query->paginate(12);
 
         $stats = [
+            'total'    => Campaign::forViticulturist($user->id)->count(),
             'active'   => Campaign::forViticulturist($user->id)->where('active', true)->count(),
             'inactive' => Campaign::forViticulturist($user->id)->where('active', false)->count(),
         ];

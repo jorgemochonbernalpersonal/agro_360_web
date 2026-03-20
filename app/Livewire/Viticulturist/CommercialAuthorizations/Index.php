@@ -40,15 +40,23 @@ class Index extends AbstractIndex
 
     protected function viewData(mixed $entries): array
     {
-        $expiring = CommercialAuthorization::where('viticulturist_id', $this->viticulturistId())
-            ->active()
-            ->expiringSoon(60)
-            ->count();
+        $vitId = $this->viticulturistId();
+        $base  = CommercialAuthorization::where('viticulturist_id', $vitId);
+
+        $expiring = (clone $base)->active()->expiringSoon(60)->count();
+
+        $stats = [
+            'total'    => (clone $base)->active()->count(),
+            'expiring' => $expiring,
+            'expired'  => (clone $base)->active()->whereNotNull('expiry_date')->where('expiry_date', '<', now())->count(),
+            'types'    => (clone $base)->active()->distinct()->count('authorization_type'),
+        ];
 
         return [
             'entries'   => $entries,
             'authTypes' => CommercialAuthorization::AUTHORIZATION_TYPES,
             'expiring'  => $expiring,
+            'stats'     => $stats,
         ];
     }
 }
