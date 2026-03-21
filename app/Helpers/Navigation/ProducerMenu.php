@@ -11,9 +11,18 @@ class ProducerMenu
         $menu = [];
 
         $menu['main'] = [
-            ['icon' => 'squares-2x2',  'label' => 'Vista general',  'route' => 'producer.dashboard',             'active' => request()->routeIs('producer.dashboard')],
-            ['icon' => 'calendar-days','label' => 'Calendario',      'route' => 'viticulturist.calendar',         'active' => request()->routeIs('viticulturist.calendar')],
-            ['icon' => 'bell',         'label' => 'Notificaciones',  'route' => 'viticulturist.notifications.index','active' => request()->routeIs('viticulturist.notifications*'), 'new' => true],
+            ['icon' => 'squares-2x2',   'label' => 'Vista general', 'route' => 'producer.dashboard',              'active' => request()->routeIs('producer.dashboard')],
+            ['icon' => 'calendar-days', 'label' => 'Calendario',    'route' => 'viticulturist.calendar',           'active' => request()->routeIs('viticulturist.calendar')],
+            ['icon' => 'bell',          'label' => 'Notificaciones','route' => 'viticulturist.notifications.index', 'active' => request()->routeIs('viticulturist.notifications*'), 'new' => true],
+        ];
+
+        // Acceso directo a recursos comunes a ambos lados del producer (viñedo + bodega).
+        // Se renderizan entre main y el tab switcher 🌿/🏛, con separador visual propio.
+        $menu['main_shortcuts'] = [
+            ['icon' => 'map',               'label' => 'Parcelas',         'route' => 'producer.plots.index',          'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
+            ['icon' => 'book-open',         'label' => 'Plantaciones',     'route' => 'plots.plantings.index',         'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
+            ['icon' => 'map-pin',           'label' => 'SIGPAC',           'route' => 'sigpac.codes',                  'active' => request()->routeIs('sigpac.*')],
+            ['icon' => 'document-arrow-up', 'label' => 'Albaranes Mixtos', 'route' => 'producer.invoices.mixed.index', 'active' => request()->routeIs('producer.invoices.mixed.*')],
         ];
 
         $menu['operations'] = [
@@ -85,7 +94,8 @@ class ProducerMenu
         ];
 
         $menu['billing'] = [
-            ['icon' => 'calculator',             'label' => 'Facturas',               'route' => 'producer.invoices.index',          'active' => request()->routeIs('producer.invoices.*') && !request()->routeIs('producer.invoices.products.*') && !request()->routeIs('producer.invoices.grape-purchase.*')],
+            ['icon' => 'calculator',             'label' => 'Facturas',               'route' => 'producer.invoices.index',          'active' => request()->routeIs('producer.invoices.*') && !request()->routeIs('producer.invoices.products.*') && !request()->routeIs('producer.invoices.grape-purchase.*') && !request()->routeIs('producer.invoices.mixed.*')],
+            ['icon' => 'document-arrow-up',      'label' => 'Albaranes Mixtos',       'route' => 'producer.invoices.mixed.index',    'active' => request()->routeIs('producer.invoices.mixed.*')],
             ['icon' => 'document-check',         'label' => 'VeriFactu',              'route' => 'producer.verifactu.index',         'active' => request()->routeIs('producer.verifactu*'), 'new' => true],
             ['icon' => 'shopping-cart',          'label' => 'Cosecha Comercializada', 'route' => 'producer.marketed-harvests.index', 'active' => request()->routeIs('producer.marketed-harvests.*')],
             ['icon' => 'table-cells',            'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',        'active' => request()->routeIs('producer.plot-costs*'), 'new' => true],
