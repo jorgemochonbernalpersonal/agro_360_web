@@ -11,14 +11,9 @@ class ProducerMenu
         $menu = [];
 
         $menu['main'] = [
-            ['icon' => 'squares-2x2',       'label' => 'Vista general',    'route' => 'producer.dashboard',              'active' => request()->routeIs('producer.dashboard')],
-            ['icon' => 'calendar-days',     'label' => 'Calendario',       'route' => 'viticulturist.calendar',           'active' => request()->routeIs('viticulturist.calendar')],
-            ['icon' => 'bell',              'label' => 'Notificaciones',   'route' => 'viticulturist.notifications.index', 'active' => request()->routeIs('viticulturist.notifications*'), 'new' => true],
-            // Atajos comunes (viñedo + bodega): accesibles sin abrir ningún capítulo
-            ['icon' => 'map',               'label' => 'Parcelas',         'route' => 'producer.plots.index',            'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
-            ['icon' => 'book-open',         'label' => 'Plantaciones',     'route' => 'plots.plantings.index',           'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
-            ['icon' => 'map-pin',           'label' => 'SIGPAC',           'route' => 'sigpac.codes',                    'active' => request()->routeIs('sigpac.*')],
-            ['icon' => 'document-arrow-up', 'label' => 'Albaranes Mixtos', 'route' => 'producer.invoices.mixed.index',   'active' => request()->routeIs('producer.invoices.mixed.*')],
+            ['icon' => 'squares-2x2', 'label' => 'Vista general',  'route' => 'producer.dashboard',               'active' => request()->routeIs('producer.dashboard')],
+            ['icon' => 'calendar-days','label' => 'Calendario',    'route' => 'viticulturist.calendar',            'active' => request()->routeIs('viticulturist.calendar')],
+            ['icon' => 'bell',         'label' => 'Notificaciones','route' => 'viticulturist.notifications.index', 'active' => request()->routeIs('viticulturist.notifications*'), 'new' => true],
         ];
 
         $menu['operations'] = [
