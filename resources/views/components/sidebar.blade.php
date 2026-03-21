@@ -56,17 +56,33 @@
         ['key' => 'sistema',       'icon' => 'cog-6-tooth',            'label' => 'Sistema',           'sections' => ['resources', 'compliance', 'system']],
     ];
 
-    // Capítulos winery específicos para el producer (sin territorio — cubierto por parcelas de campo)
+    // ── Producer: capítulos comunes (siempre visibles en el rail) ──────────────
+    // Unión de lo que tienen viticulturist + winery en Parcelas y Negocio.
+    $producerCommonChapters = [
+        ['key' => 'prod_parcelas', 'icon' => 'map',        'label' => 'Parcelas', 'sections' => ['plots_analysis_all']],
+        ['key' => 'prod_negocio',  'icon' => 'calculator', 'label' => 'Negocio',  'sections' => ['billing_all']],
+    ];
+    $chapterColors['prod_parcelas'] = $chapterColors['parcelas'];
+    $chapterColors['prod_negocio']  = $chapterColors['negocio'];
+
+    // ── Producer: capítulos exclusivos viñedo (sin Parcelas ni Negocio — van en common) ──
+    $producerViticulturistChapters = [
+        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',             'sections' => ['operations']],
+        ['key' => 'cuaderno',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',   'sections' => ['cuaderno_inputs']],
+        ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales', 'sections' => ['registros_oficiales']],
+        ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',            'sections' => ['resources']],
+        ['key' => 'normativa', 'icon' => 'shield-check',             'label' => 'Normativa',           'sections' => ['compliance']],
+        ['key' => 'pac',       'icon' => 'document-chart-bar',       'label' => 'PAC',                 'sections' => ['pac']],
+    ];
+
+    // ── Producer: capítulos exclusivos bodega (sin Negocio — va en common) ────
     $producerWineryChapters = [
-        ['key' => 'vendimia',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',          'sections' => ['harvest']],
-        ['key' => 'bodega_elab',   'icon' => 'beaker',                 'label' => 'Bodega — Elab.',    'sections' => ['cellar_elab']],
-        ['key' => 'bodega_salida', 'icon' => 'cube',                   'label' => 'Bodega — Salida',   'sections' => ['cellar_salida']],
-        ['key' => 'normativa_w',   'icon' => 'shield-check',           'label' => 'Normativa Bodega',  'sections' => ['winery_normativa']],
-        ['key' => 'negocio_w',     'icon' => 'calculator',             'label' => 'Negocio Bodega',    'sections' => ['winery_billing']],
+        ['key' => 'vendimia',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',         'sections' => ['harvest']],
+        ['key' => 'bodega_elab',   'icon' => 'beaker',                 'label' => 'Bodega — Elab.',   'sections' => ['cellar_elab']],
+        ['key' => 'bodega_salida', 'icon' => 'cube',                   'label' => 'Bodega — Salida',  'sections' => ['cellar_salida']],
+        ['key' => 'normativa_w',   'icon' => 'shield-check',           'label' => 'Normativa Bodega', 'sections' => ['winery_normativa']],
     ];
     $chapterColors['normativa_w'] = $chapterColors['normativa'];
-    $chapterColors['negocio_w']   = $chapterColors['negocio'];
-    // bodega_elab y bodega_salida ya están definidos en $chapterColors
 
     $doChapters = [
         ['key' => 'do_censo',        'icon' => 'users',              'label' => 'Censo',              'sections' => ['do_census']],
@@ -87,7 +103,8 @@
     $chapters = match($user->role) {
         'viticulturist' => $viticulturistChapters,
         'winery'        => $wineryChapters,
-        'producer'      => array_merge($viticulturistChapters, $producerWineryChapters), // para flyouts
+        // Producer: comunes + exclusivos viñedo + exclusivos bodega (todos necesitan flyout)
+        'producer'      => array_merge($producerCommonChapters, $producerViticulturistChapters, $producerWineryChapters),
         'supervisor'    => $doChapters,
         default         => [],
     };
@@ -161,21 +178,22 @@
 
         <div class="w-8 border-t border-white/10 my-1"></div>
 
-        @if($user->role === 'producer' && !empty($menu['main_shortcuts']))
-        {{-- Producer: accesos directos comunes (viñedo + bodega) --}}
-        @foreach($menu['main_shortcuts'] as $item)
-            <a href="{{ route($item['route']) }}" wire:navigate
-               title="{{ $item['label'] }}"
-               class="relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150
-                      {{ ($item['active'] ?? false) ? 'bg-white/20 text-white' : 'text-white/45 hover:bg-white/10 hover:text-white' }}">
-                <flux:icon icon="{{ $item['icon'] }}" class="w-5 h-5" />
-                <span class="rail-tooltip">{{ $item['label'] }}</span>
-            </a>
-        @endforeach
-        <div class="w-8 border-t border-white/10 my-1"></div>
-        @endif
-
         @if($user->role === 'producer')
+        {{-- Producer: capítulos comunes (Parcelas + Negocio) — siempre visibles, sin tab --}}
+        @foreach($producerCommonChapters as $ch)
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['negocio']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
+                class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
+                :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
+                data-key="{{ $ch['key'] }}" data-active="{{ $isActive ? 'true' : 'false' }}"
+                style="--tab-accent: {{ $color['accent'] }}; --tab-bg: {{ $color['bg'] }}; --tab-border: {{ $color['border'] }};">
+                <flux:icon icon="{{ $ch['icon'] }}" class="w-5 h-5 tab-icon transition-colors duration-150" />
+                <span class="rail-tooltip" style="border-left: 2px solid {{ $color['accent'] }}">{{ $ch['label'] }}</span>
+            </button>
+        @endforeach
+
+        <div class="w-8 border-t border-white/10 my-1 flex-shrink-0"></div>
+
         {{-- Producer: tab switcher Viñedo / Bodega --}}
         <div class="flex w-full px-2 gap-1 mb-0.5 flex-shrink-0">
             <button type="button"
@@ -189,10 +207,10 @@
                 class="flex-1 h-7 rounded-lg text-[10px] font-bold transition-all leading-none"
                 title="Bodega">🏛</button>
         </div>
-        {{-- Producer: Viñedo chapters --}}
+        {{-- Producer: capítulos exclusivos Viñedo --}}
         <div x-show="producerTab === 'vineyard'"
              class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
-        @foreach($viticulturistChapters as $ch)
+        @foreach($producerViticulturistChapters as $ch)
             @php $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema']; $isActive = ($activeChapterKey === $ch['key']); @endphp
             <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
@@ -204,7 +222,7 @@
             </button>
         @endforeach
         </div>
-        {{-- Producer: Bodega chapters --}}
+        {{-- Producer: capítulos exclusivos Bodega --}}
         <div x-show="producerTab === 'bodega'"
              class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
         @foreach($producerWineryChapters as $ch)

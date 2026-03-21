@@ -11,18 +11,14 @@ class ProducerMenu
         $menu = [];
 
         $menu['main'] = [
-            ['icon' => 'squares-2x2',   'label' => 'Vista general', 'route' => 'producer.dashboard',              'active' => request()->routeIs('producer.dashboard')],
-            ['icon' => 'calendar-days', 'label' => 'Calendario',    'route' => 'viticulturist.calendar',           'active' => request()->routeIs('viticulturist.calendar')],
-            ['icon' => 'bell',          'label' => 'Notificaciones','route' => 'viticulturist.notifications.index', 'active' => request()->routeIs('viticulturist.notifications*'), 'new' => true],
-        ];
-
-        // Acceso directo a recursos comunes a ambos lados del producer (viñedo + bodega).
-        // Se renderizan entre main y el tab switcher 🌿/🏛, con separador visual propio.
-        $menu['main_shortcuts'] = [
-            ['icon' => 'map',               'label' => 'Parcelas',         'route' => 'producer.plots.index',          'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
-            ['icon' => 'book-open',         'label' => 'Plantaciones',     'route' => 'plots.plantings.index',         'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
-            ['icon' => 'map-pin',           'label' => 'SIGPAC',           'route' => 'sigpac.codes',                  'active' => request()->routeIs('sigpac.*')],
-            ['icon' => 'document-arrow-up', 'label' => 'Albaranes Mixtos', 'route' => 'producer.invoices.mixed.index', 'active' => request()->routeIs('producer.invoices.mixed.*')],
+            ['icon' => 'squares-2x2',       'label' => 'Vista general',    'route' => 'producer.dashboard',              'active' => request()->routeIs('producer.dashboard')],
+            ['icon' => 'calendar-days',     'label' => 'Calendario',       'route' => 'viticulturist.calendar',           'active' => request()->routeIs('viticulturist.calendar')],
+            ['icon' => 'bell',              'label' => 'Notificaciones',   'route' => 'viticulturist.notifications.index', 'active' => request()->routeIs('viticulturist.notifications*'), 'new' => true],
+            // Atajos comunes (viñedo + bodega): accesibles sin abrir ningún capítulo
+            ['icon' => 'map',               'label' => 'Parcelas',         'route' => 'producer.plots.index',            'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
+            ['icon' => 'book-open',         'label' => 'Plantaciones',     'route' => 'plots.plantings.index',           'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
+            ['icon' => 'map-pin',           'label' => 'SIGPAC',           'route' => 'sigpac.codes',                    'active' => request()->routeIs('sigpac.*')],
+            ['icon' => 'document-arrow-up', 'label' => 'Albaranes Mixtos', 'route' => 'producer.invoices.mixed.index',   'active' => request()->routeIs('producer.invoices.mixed.*')],
         ];
 
         $menu['operations'] = [
@@ -58,15 +54,44 @@ class ProducerMenu
             ['icon' => 'document',                 'label' => 'Informes Oficiales',    'route' => 'producer.official-reports.index',    'active' => request()->routeIs('producer.official-reports.*')],
         ];
 
-        $menu['plots_analysis'] = [
+        // ── Secciones unificadas (comunes viñedo + bodega) ────────────────────────
+
+        // Unión de plots_analysis (viticulturist) + territory (winery)
+        $menu['plots_analysis_all'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',            'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                     'active' => request()->routeIs('sigpac.*')],
             ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',         'active' => request()->routeIs('remote-sensing.*')],
             ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial', 'route' => 'plots.territory',                  'active' => request()->routeIs('plots.territory')],
+            ['icon' => 'cloud',               'label' => 'Meteorología',        'route' => 'producer.meteorology.index',       'active' => request()->routeIs('producer.meteorology*'), 'new' => true],
             ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas', 'route' => 'producer.plot-environments.index', 'active' => request()->routeIs('producer.plot-environments.*')],
             ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'producer.field-activities.index',  'active' => request()->routeIs('producer.field-activities*')],
         ];
+
+        // Unión de billing (viticulturist) + winery_billing (winery)
+        $menu['billing_all'] = [
+            // Documentos de venta y compra
+            ['icon' => 'calculator',              'label' => 'Facturas',               'route' => 'producer.invoices.index',               'active' => request()->routeIs('producer.invoices.*') && !request()->routeIs('producer.invoices.products.*') && !request()->routeIs('producer.invoices.grape-purchase.*') && !request()->routeIs('producer.invoices.mixed.*')],
+            ['icon' => 'document-arrow-up',       'label' => 'Albaranes Mixtos',       'route' => 'producer.invoices.mixed.index',         'active' => request()->routeIs('producer.invoices.mixed.*')],
+            ['icon' => 'arrow-down-tray',         'label' => 'Compra de Uva',          'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
+            ['icon' => 'arrow-up-tray',           'label' => 'Venta de Productos',     'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
+            ['icon' => 'document-check',          'label' => 'VeriFactu',              'route' => 'producer.verifactu.index',               'active' => request()->routeIs('producer.verifactu*'), 'new' => true],
+            ['divider' => true],
+            // Análisis económico (unión viticulturist + winery)
+            ['icon' => 'chart-bar-square',        'label' => 'Resumen Económico',      'route' => 'producer.financial-summary.index',       'active' => request()->routeIs('producer.financial-summary*'), 'new' => true],
+            ['icon' => 'presentation-chart-bar',  'label' => 'Estadísticas Viñedo',    'route' => 'producer.financial-stats',               'active' => request()->routeIs('producer.financial-stats')],
+            ['icon' => 'presentation-chart-line', 'label' => 'Estadísticas Bodega',    'route' => 'producer.financial-stats-winery',        'active' => request()->routeIs('producer.financial-stats-winery'), 'new' => true],
+            ['icon' => 'shopping-cart',           'label' => 'Cosecha Comercializada', 'route' => 'producer.marketed-harvests.index',       'active' => request()->routeIs('producer.marketed-harvests.*')],
+            ['icon' => 'table-cells',             'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',              'active' => request()->routeIs('producer.plot-costs*'), 'new' => true],
+            ['divider' => true],
+            // Clientes y canales (unión viticulturist + winery)
+            ['icon' => 'users',                   'label' => 'Clientes Viñedo',        'route' => 'producer.clients.index',                 'active' => request()->routeIs('producer.clients.*')],
+            ['icon' => 'user-group',              'label' => 'Clientes Bodega',        'route' => 'producer.winery-clients.index',          'active' => request()->routeIs('producer.winery-clients*'), 'new' => true],
+            ['icon' => 'globe-alt',               'label' => 'Exportación',            'route' => 'producer.exports.index',                 'active' => request()->routeIs('producer.exports*'), 'wip' => true, 'new' => true],
+            ['icon' => 'sparkles',                'label' => 'Enoturismo',             'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true, 'new' => true],
+        ];
+
+        // ── Secciones heredadas (usadas por los tabs viñedo/bodega) ───────────────
 
         $menu['resources'] = [
             ['icon' => 'user-group',          'label' => 'Personal',                 'route' => 'producer.personal.index',               'active' => request()->routeIs('producer.personal*')],
