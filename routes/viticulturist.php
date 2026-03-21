@@ -439,6 +439,13 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{containerReturn}/edit', \App\Livewire\Viticulturist\ContainerReturns\Edit::class)->name('edit');
         });
 
+        // Subproductos de Vendimia
+        Route::prefix('harvest-byproducts')->name('harvest-byproducts.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\HarvestByproducts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\HarvestByproducts\Create::class)->name('create');
+            Route::get('/{byproduct}/edit', \App\Livewire\Viticulturist\HarvestByproducts\Edit::class)->name('edit');
+        });
+
         // Declaraciones de Vendimia
         Route::prefix('harvest-declarations')->name('harvest-declarations.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\HarvestDeclarations\Index::class)->name('index');
@@ -501,6 +508,13 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{insurance}/edit', \App\Livewire\Viticulturist\AgriInsurance\Edit::class)->name('edit');
         });
 
+        // ── Certificaciones y Sellos ──────────────────────────────────
+        Route::prefix('certifications')->name('certifications.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Certifications\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Certifications\Create::class)->name('create');
+            Route::get('/{certification}/edit', \App\Livewire\Viticulturist\Certifications\Edit::class)->name('edit');
+        });
+
         // ── Costes por Parcela ────────────────────────────────────────
         Route::prefix('plot-costs')->name('plot-costs.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\PlotCosts\Index::class)->name('index');
@@ -508,7 +522,21 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{cost}/edit', \App\Livewire\Viticulturist\PlotCosts\Edit::class)->name('edit');
         });
 
+        // ── Registro de Agua / Concesiones de Riego ──────────────────
+        Route::prefix('water-concessions')->name('water-concessions.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\WaterConcessions\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\WaterConcessions\Create::class)->name('create');
+            Route::get('/{concession}/edit', \App\Livewire\Viticulturist\WaterConcessions\Edit::class)->name('edit');
+        });
+
         Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
+
+        // ── Plan de Fertilización / Gestión de Nitrógenos ────────────
+        Route::prefix('fertilization-plans')->name('fertilization-plans.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\FertilizationPlans\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\FertilizationPlans\Create::class)->name('create');
+            Route::get('/{plan}/edit', \App\Livewire\Viticulturist\FertilizationPlans\Edit::class)->name('edit');
+        });
 
         }); // end require.complete
     });

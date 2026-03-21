@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\Builder;
 class Index extends AbstractIndex
 {
     public string $currentTab              = 'active';
+    public string $search                  = '';
     public string $filterCampaign          = '';
     public string $filterCollectionSystem  = '';
 
     protected $queryString = [
         'currentTab'             => ['as' => 'tab',    'except' => 'active'],
+        'search'                 => ['as' => 'q',      'except' => ''],
         'filterCampaign'         => ['as' => 'campaign','except' => ''],
         'filterCollectionSystem' => ['as' => 'system', 'except' => ''],
     ];
@@ -27,12 +29,13 @@ class Index extends AbstractIndex
         }
     }
 
+    public function updatingSearch(): void                  { $this->resetPage(); }
     public function updatingFilterCampaign(): void          { $this->resetPage(); }
     public function updatingFilterCollectionSystem(): void  { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
-        return ['filterCampaign' => '', 'filterCollectionSystem' => ''];
+        return ['search' => '', 'filterCampaign' => '', 'filterCollectionSystem' => ''];
     }
 
     public function switchTab(string $tab): void
@@ -67,6 +70,13 @@ class Index extends AbstractIndex
 
     protected function applyFilters(Builder $query): void
     {
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('product_name', 'like', '%' . $this->search . '%')
+                  ->orWhere('collection_point', 'like', '%' . $this->search . '%')
+                  ->orWhere('registration_number', 'like', '%' . $this->search . '%');
+            });
+        }
         if ($this->filterCampaign) {
             $query->where('campaign_id', $this->filterCampaign);
         }

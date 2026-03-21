@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
+    public string $search         = '';
     public string $filterCampaign = '';
     public string $filterStatus   = '';
 
     protected $queryString = [
-        'filterCampaign' => ['as' => 'campaign', 'except' => ''],
-        'filterStatus'   => ['as' => 'status',   'except' => ''],
+        'search'         => ['as' => 'q',        'except' => ''],
+        'filterCampaign' => ['as' => 'campaign',  'except' => ''],
+        'filterStatus'   => ['as' => 'status',    'except' => ''],
     ];
 
     public function mount(): void
@@ -25,12 +27,13 @@ class Index extends AbstractIndex
         }
     }
 
+    public function updatingSearch(): void         { $this->resetPage(); }
     public function updatingFilterCampaign(): void { $this->resetPage(); }
     public function updatingFilterStatus(): void   { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
-        return ['filterCampaign' => '', 'filterStatus' => ''];
+        return ['search' => '', 'filterCampaign' => '', 'filterStatus' => ''];
     }
 
     public function delete(int $id): void
@@ -68,6 +71,13 @@ class Index extends AbstractIndex
 
     protected function applyFilters(Builder $query): void
     {
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('authority', 'like', '%' . $this->search . '%')
+                  ->orWhere('reference_number', 'like', '%' . $this->search . '%')
+                  ->orWhere('declaration_year', 'like', '%' . $this->search . '%');
+            });
+        }
         if ($this->filterCampaign) {
             $query->where('campaign_id', $this->filterCampaign);
         }

@@ -516,6 +516,34 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{harvestDeclaration}/edit', \App\Livewire\Viticulturist\HarvestDeclarations\Edit::class)->name('edit');
         });
 
+        // Subproductos de Vendimia
+        Route::prefix('harvest-byproducts')->name('harvest-byproducts.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\HarvestByproducts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\HarvestByproducts\Create::class)->name('create');
+            Route::get('/{byproduct}/edit', \App\Livewire\Viticulturist\HarvestByproducts\Edit::class)->name('edit');
+        });
+
+        // Registro de Agua / Concesiones de Riego
+        Route::prefix('water-concessions')->name('water-concessions.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\WaterConcessions\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\WaterConcessions\Create::class)->name('create');
+            Route::get('/{concession}/edit', \App\Livewire\Viticulturist\WaterConcessions\Edit::class)->name('edit');
+        });
+
+        // Plan de Fertilización
+        Route::prefix('fertilization-plans')->name('fertilization-plans.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\FertilizationPlans\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\FertilizationPlans\Create::class)->name('create');
+            Route::get('/{plan}/edit', \App\Livewire\Viticulturist\FertilizationPlans\Edit::class)->name('edit');
+        });
+
+        // Certificaciones y Sellos
+        Route::prefix('certifications')->name('certifications.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\Certifications\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\Certifications\Create::class)->name('create');
+            Route::get('/{certification}/edit', \App\Livewire\Viticulturist\Certifications\Edit::class)->name('edit');
+        });
+
         Route::get('/official-reports', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('official-reports.index');
         Route::get('/official-reports/create', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('official-reports.create');
         Route::get('/official-reports/{report}/download', function (\App\Models\OfficialReport $report) {

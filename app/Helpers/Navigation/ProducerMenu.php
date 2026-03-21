@@ -41,14 +41,18 @@ class ProducerMenu
         ];
 
         $menu['registros_oficiales'] = [
-            ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno',   'route' => 'producer.pac-compliance',                   'active' => request()->routeIs('producer.pac-compliance')],
-            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',    'route' => 'producer.residue-analyses.index',           'active' => request()->routeIs('producer.residue-analyses.*')],
-            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',     'route' => 'producer.residue-managements.index',        'active' => request()->routeIs('producer.residue-managements.*')],
-            ['icon' => 'bolt',                     'label' => 'Consumo Energético',      'route' => 'producer.energy-usages.index',              'active' => request()->routeIs('producer.energy-usages.*')],
-            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',  'route' => 'producer.container-returns.index',          'active' => request()->routeIs('producer.container-returns.*')],
-            ['icon' => 'document-arrow-up',        'label' => 'Declaración de Vendimia', 'route' => 'producer.harvest-declarations.index',       'active' => request()->routeIs('producer.harvest-declarations.*')],
-            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',       'route' => 'producer.cue-exports.index',                'active' => request()->routeIs('producer.cue-exports.*')],
-            ['icon' => 'document',                 'label' => 'Informes Oficiales',      'route' => 'producer.official-reports.index',           'active' => request()->routeIs('producer.official-reports.*')],
+            ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno',    'route' => 'producer.pac-compliance',                        'active' => request()->routeIs('producer.pac-compliance')],
+            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',     'route' => 'producer.residue-analyses.index',                'active' => request()->routeIs('producer.residue-analyses.*')],
+            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',      'route' => 'producer.residue-managements.index',             'active' => request()->routeIs('producer.residue-managements.*')],
+            ['icon' => 'bolt',                     'label' => 'Consumo Energético',       'route' => 'producer.energy-usages.index',                   'active' => request()->routeIs('producer.energy-usages.*')],
+            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',   'route' => 'producer.container-returns.index',               'active' => request()->routeIs('producer.container-returns.*')],
+            ['icon' => 'document-arrow-up',        'label' => 'Declaración de Vendimia',  'route' => 'producer.harvest-declarations.index',            'active' => request()->routeIs('producer.harvest-declarations.*')],
+            ['icon' => 'cube-transparent',         'label' => 'Subproductos Vendimia',    'route' => 'producer.harvest-byproducts.index',              'active' => request()->routeIs('producer.harvest-byproducts.*')],
+            ['icon' => 'beaker',                   'label' => 'Registro de Agua',         'route' => 'producer.water-concessions.index',               'active' => request()->routeIs('producer.water-concessions.*')],
+            ['icon' => 'funnel',                   'label' => 'Plan de Fertilización',    'route' => 'producer.fertilization-plans.index',             'active' => request()->routeIs('producer.fertilization-plans.*')],
+            ['icon' => 'shield-check',             'label' => 'Certificaciones y Sellos', 'route' => 'producer.certifications.index',                  'active' => request()->routeIs('producer.certifications.*')],
+            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',        'route' => 'producer.cue-exports.index',                     'active' => request()->routeIs('producer.cue-exports.*')],
+            ['icon' => 'document',                 'label' => 'Informes Oficiales',       'route' => 'producer.official-reports.index',                'active' => request()->routeIs('producer.official-reports.*')],
         ];
 
         // ── Secciones unificadas (comunes viñedo + bodega) ────────────────────────

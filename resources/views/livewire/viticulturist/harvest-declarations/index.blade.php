@@ -1,5 +1,6 @@
 <div class="space-y-6 animate-fade-in">
 
+    {{-- Header --}}
     <x-agro.page-header
         title="Declaraciones de Vendimia"
         description="Declaraciones oficiales de cosecha ante CCAA / DO (Reglamento UE 2018/273)"
@@ -12,114 +13,298 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <x-agro.stat-card label="Borradores"  :value="$stats['draft']"     color="zinc" icon="document" />
-        <x-agro.stat-card label="Presentadas" :value="$stats['submitted']" color="blue" icon="paper-airplane" />
-        <x-agro.stat-card label="Aceptadas"   :value="$stats['accepted']"  color="green" icon="check-circle" />
-        <x-agro.stat-card label="Rechazadas"  :value="$stats['rejected']"  color="red" icon="x-circle" />
+    {{-- Stats (colapsables) --}}
+    <div x-data="{
+        open: localStorage.getItem('harvest-declarations-stats-open') !== 'false',
+        toggle() {
+            this.open = !this.open;
+            localStorage.setItem('harvest-declarations-stats-open', String(this.open));
+        }
+    }">
+        <button @click="toggle()"
+            class="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors mb-3">
+            <span>Estadísticas</span>
+            <flux:icon icon="chevron-up" class="size-3.5 transition-transform duration-200" ::class="{ 'rotate-180': !open }" />
+        </button>
+        <div x-show="open"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-1">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <x-agro.stat-card
+                    label="Borradores"
+                    :value="$stats['draft']"
+                    description="Pendientes de presentar"
+                    icon="document"
+                    color="zinc"
+                />
+                <x-agro.stat-card
+                    label="Presentadas"
+                    :value="$stats['submitted']"
+                    description="Enviadas al organismo"
+                    icon="paper-airplane"
+                    color="blue"
+                />
+                <x-agro.stat-card
+                    label="Aceptadas"
+                    :value="$stats['accepted']"
+                    description="Confirmadas oficialmente"
+                    icon="check-circle"
+                    color="green"
+                />
+                <x-agro.stat-card
+                    label="Rechazadas"
+                    :value="$stats['rejected']"
+                    :description="$stats['rejected'] > 0 ? 'Requieren corrección' : 'Sin rechazos'"
+                    icon="x-circle"
+                    color="red"
+                />
+            </div>
+        </div>
     </div>
 
-    {{-- Filtros --}}
-    <div class="flex items-center gap-3 flex-wrap">
-        <flux:select wire:model.live="filterCampaign" class="w-48">
-            <flux:select.option value="">Todas las campañas</flux:select.option>
-            @foreach($campaigns as $c)
-                <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
-            @endforeach
-        </flux:select>
-        <flux:select wire:model.live="filterStatus" class="w-44">
-            <flux:select.option value="">Todos los estados</flux:select.option>
-            @foreach($statuses as $key => $label)
-                <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
-            @endforeach
-        </flux:select>
-        @if($filterCampaign || $filterStatus)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">Limpiar</flux:button>
-        @endif
-    </div>
-
-    {{-- Tabla --}}
-    @if($entries->isEmpty())
-        <x-agro.empty-state
-            icon="document-arrow-up"
-            title="Sin declaraciones"
-            description="Crea la declaración de vendimia anual obligatoria ante la CCAA o Denominación de Origen correspondiente."
+    {{-- Toolbar --}}
+    @php
+        $filterCount = (int) !empty($filterCampaign) + (int) !empty($filterStatus);
+    @endphp
+    <div class="flex items-center gap-3">
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar por organismo, referencia, año..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
+        </div>
+        <button
+            x-on:click="$dispatch('open-modal', 'harvest-declarations-filters')"
+            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
         >
-            <x-slot:action>
-                <flux:button href="{{ route('viticulturist.harvest-declarations.create') }}" variant="primary" icon="plus">
-                    Nueva Declaración
-                </flux:button>
-            </x-slot:action>
-        </x-agro.empty-state>
-    @else
-        <x-agro.data-table>
-            <x-slot:header>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Año</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Organismo</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Sup. (ha)</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Total (kg)</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Estado</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Presentación</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Referencia</th>
-                <th class="px-4 py-3"></th>
-            </x-slot:header>
-            @foreach($entries as $entry)
-                <x-agro.table-row wire:key="hd-{{ $entry->id }}">
-                    <x-agro.table-cell class="font-bold text-zinc-900">{{ $entry->declaration_year }}</x-agro.table-cell>
-                    <x-agro.table-cell>{{ $entry->authority }}</x-agro.table-cell>
-                    <x-agro.table-cell>{{ $entry->total_surface_ha ? number_format($entry->total_surface_ha, 4, ',', '.') : '—' }}</x-agro.table-cell>
-                    <x-agro.table-cell class="font-semibold">
-                        {{ $entry->total_kg ? number_format($entry->total_kg, 0, ',', '.') . ' kg' : '—' }}
-                    </x-agro.table-cell>
-                    <x-agro.table-cell>
-                        <x-agro.status-badge :color="$entry->status_color">
-                            {{ $entry->status_label }}
-                        </x-agro.status-badge>
-                    </x-agro.table-cell>
-                    <x-agro.table-cell class="text-sm text-zinc-500">
-                        {{ $entry->submission_date?->format('d/m/Y') ?? '—' }}
-                    </x-agro.table-cell>
-                    <x-agro.table-cell class="text-sm text-zinc-400">
-                        {{ $entry->reference_number ?? '—' }}
-                    </x-agro.table-cell>
-                    <x-agro.table-cell class="text-right">
-                        <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.harvest-declarations.edit', $entry) }}"
-                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-                               title="Editar">
-                                <flux:icon icon="pencil-square" class="size-4" />
-                            </a>
-                            @if($entry->status === 'draft')
-                                <button wire:click="markSubmitted({{ $entry->id }})"
-                                        wire:confirm="¿Marcar como presentada ante {{ $entry->authority }}?"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                        title="Marcar como presentada">
-                                    <flux:icon icon="paper-airplane" class="size-4" />
-                                </button>
-                                <button wire:click="delete({{ $entry->id }})"
-                                        wire:confirm="¿Eliminar este borrador?"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                        title="Eliminar borrador">
-                                    <flux:icon icon="trash" class="size-4" />
-                                </button>
-                            @elseif($entry->status === 'submitted')
-                                <button wire:click="markAccepted({{ $entry->id }})"
-                                        wire:confirm="¿Confirmar aceptación de la declaración?"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors"
-                                        title="Marcar como aceptada">
-                                    <flux:icon icon="check-circle" class="size-4" />
-                                </button>
-                            @endif
-                        </div>
-                    </x-agro.table-cell>
-                </x-agro.table-row>
-            @endforeach
-        </x-agro.data-table>
+            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+            Filtros
+            @if($filterCount > 0)
+                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{{ $filterCount }}</span>
+            @endif
+        </button>
+    </div>
 
-        @if($entries->hasPages())
-            <div class="mt-6">{{ $entries->links() }}</div>
-        @endif
+    {{-- Chips filtros activos --}}
+    @if($filterCampaign || $filterStatus)
+        <div class="flex flex-wrap items-center gap-2">
+            @if($filterCampaign)
+                @php $camp = $campaigns->firstWhere('id', $filterCampaign); @endphp
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="calendar-days" class="size-3" />
+                    {{ $camp?->name ?? $filterCampaign }}
+                    <button wire:click="$set('filterCampaign', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            @if($filterStatus)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="document-arrow-up" class="size-3" />
+                    {{ $statuses[$filterStatus] ?? $filterStatus }}
+                    <button wire:click="$set('filterStatus', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+            <button wire:click="clearFilters" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar todo</button>
+        </div>
     @endif
+
+    {{-- Skeleton carga --}}
+    <div wire:loading wire:target="search, filterCampaign, filterStatus, nextPage, previousPage, gotoPage">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @for($i = 0; $i < 8; $i++)
+                <x-agro.skeleton-card />
+            @endfor
+        </div>
+    </div>
+
+    {{-- Grid de cards --}}
+    <div wire:loading.remove wire:target="search, filterCampaign, filterStatus, nextPage, previousPage, gotoPage">
+        @if($entries->isEmpty())
+            <x-agro.empty-state
+                icon="document-arrow-up"
+                title="{{ $search || $filterCampaign || $filterStatus ? 'Sin resultados' : 'Sin declaraciones registradas' }}"
+                description="{{ $search || $filterCampaign || $filterStatus ? 'Ninguna declaración coincide con los filtros aplicados.' : 'Crea la declaración de vendimia anual obligatoria ante la CCAA o Denominación de Origen correspondiente.' }}"
+            >
+                @if(!$search && !$filterCampaign && !$filterStatus)
+                    <x-slot:action>
+                        <flux:button href="{{ route('viticulturist.harvest-declarations.create') }}" variant="primary" icon="plus">
+                            Nueva Declaración
+                        </flux:button>
+                    </x-slot:action>
+                @endif
+            </x-agro.empty-state>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach($entries as $entry)
+                    @php
+                        $delay = min($loop->index * 50, 300);
+                        $statusColor = match($entry->status) {
+                            'draft'     => ['bg' => 'bg-zinc-100',  'icon' => 'text-zinc-500'],
+                            'submitted' => ['bg' => 'bg-blue-100',  'icon' => 'text-blue-600'],
+                            'accepted'  => ['bg' => 'bg-green-100', 'icon' => 'text-green-600'],
+                            'rejected'  => ['bg' => 'bg-red-100',   'icon' => 'text-red-600'],
+                            default     => ['bg' => 'bg-zinc-100',  'icon' => 'text-zinc-400'],
+                        };
+                    @endphp
+                    <x-agro.card
+                        class="animate-fade-in-up flex flex-col hover:-translate-y-1"
+                        style="animation-delay: {{ $delay }}ms;"
+                        wire:key="hd-{{ $entry->id }}"
+                    >
+                        <x-slot:header>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 {{ $statusColor['bg'] }} rounded-xl flex items-center justify-center shrink-0">
+                                    <flux:icon icon="document-arrow-up" class="size-5 {{ $statusColor['icon'] }}" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $entry->declaration_year }}</h3>
+                                    <p class="text-xs text-zinc-500 truncate">{{ $entry->authority }}</p>
+                                </div>
+                                <x-agro.status-badge :color="$entry->status_color" class="shrink-0">
+                                    {{ $entry->status_label }}
+                                </x-agro.status-badge>
+                            </div>
+                        </x-slot:header>
+
+                        <div class="flex-1 space-y-4">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-agro-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-agro-400 uppercase tracking-widest mb-1">Total kg</p>
+                                    <p class="text-xl font-bold text-agro-700 leading-none">
+                                        {{ $entry->total_kg ? number_format($entry->total_kg, 0, ',', '.') : '—' }}
+                                        @if($entry->total_kg)
+                                            <span class="text-xs font-medium text-zinc-400 ml-0.5">kg</span>
+                                        @endif
+                                    </p>
+                                </div>
+                                <div class="bg-zinc-50 rounded-xl p-3">
+                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Sup. (ha)</p>
+                                    <p class="text-xl font-bold text-zinc-600 leading-none">
+                                        {{ $entry->total_surface_ha ? number_format($entry->total_surface_ha, 2, ',', '.') : '—' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                @if($entry->declaration_date)
+                                    <div class="flex items-center gap-2 text-zinc-600">
+                                        <flux:icon icon="calendar-days" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate">{{ $entry->declaration_date->format('d/m/Y') }}</span>
+                                    </div>
+                                @endif
+                                @if($entry->submission_date)
+                                    <div class="flex items-center gap-2 text-zinc-500">
+                                        <flux:icon icon="paper-airplane" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate text-xs">Pres. {{ $entry->submission_date->format('d/m/Y') }}</span>
+                                    </div>
+                                @endif
+                                @if($entry->reference_number)
+                                    <div class="flex items-center gap-2 text-zinc-500">
+                                        <flux:icon icon="identification" class="size-4 text-zinc-400 shrink-0" />
+                                        <span class="truncate font-mono text-xs">{{ $entry->reference_number }}</span>
+                                    </div>
+                                @endif
+                                @if($entry->status === 'rejected' && $entry->rejection_reason)
+                                    <div class="mt-2 p-2 bg-red-50 rounded-lg">
+                                        <p class="text-xs text-red-600 leading-snug">{{ Str::limit($entry->rejection_reason, 60) }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <x-slot:footer>
+                            <div class="flex items-center justify-end gap-0.5">
+                                <a href="{{ route('viticulturist.harvest-declarations.edit', $entry) }}"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                                   title="Editar">
+                                    <flux:icon icon="pencil-square" class="size-4" />
+                                </a>
+                                @if($entry->status === 'draft')
+                                    <button wire:click="markSubmitted({{ $entry->id }})"
+                                            wire:confirm="¿Marcar como presentada ante {{ $entry->authority }}?"
+                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                            title="Marcar como presentada">
+                                        <flux:icon icon="paper-airplane" class="size-4" />
+                                    </button>
+                                    <button wire:click="delete({{ $entry->id }})"
+                                            wire:confirm="¿Eliminar este borrador permanentemente?"
+                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                            title="Eliminar borrador">
+                                        <flux:icon icon="trash" class="size-4" />
+                                    </button>
+                                @elseif($entry->status === 'submitted')
+                                    <button wire:click="markAccepted({{ $entry->id }})"
+                                            wire:confirm="¿Confirmar aceptación de la declaración?"
+                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-green-600 hover:bg-green-50 transition-colors"
+                                            title="Marcar como aceptada">
+                                        <flux:icon icon="check-circle" class="size-4" />
+                                    </button>
+                                @endif
+                            </div>
+                        </x-slot:footer>
+                    </x-agro.card>
+                @endforeach
+            </div>
+
+            @if($entries->hasPages())
+                <div class="mt-6">{{ $entries->links() }}</div>
+            @endif
+        @endif
+    </div>
+
+    {{-- Modal: Filtros --}}
+    <x-agro.modal name="harvest-declarations-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'harvest-declarations-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+        <div class="px-6 py-5 space-y-5">
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Campaña</label>
+                <flux:select wire:model.live="filterCampaign">
+                    <flux:select.option value="">Todas las campañas</flux:select.option>
+                    @foreach($campaigns as $c)
+                        <flux:select.option value="{{ $c->id }}">{{ $c->name }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Estado</label>
+                <flux:select wire:model.live="filterStatus">
+                    <flux:select.option value="">Todos los estados</flux:select.option>
+                    @foreach($statuses as $key => $label)
+                        <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
+            @if($filterCampaign || $filterStatus)
+                <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar filtros</button>
+            @else
+                <span></span>
+            @endif
+            <flux:button x-on:click="$dispatch('close-modal', 'harvest-declarations-filters')" variant="primary">Aplicar</flux:button>
+        </div>
+    </x-agro.modal>
 
 </div>

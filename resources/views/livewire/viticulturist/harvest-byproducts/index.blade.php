@@ -2,23 +2,23 @@
 
     {{-- Header --}}
     <x-agro.page-header
-        title="Gestión de Envases Fitosanitarios"
-        description="Registro de entregas de envases vacíos en puntos SIGFITO / FIELD (RD 1311/2012)"
-        icon="archive-box-x-mark"
+        title="Subproductos de Vendimia"
+        description="Registro de salida de orujos, raspones y lías (Reglamento UE 2018/273)"
+        icon="beaker"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
-                Registrar Entrega
+            <flux:button href="{{ route('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
+                Registrar Subproducto
             </flux:button>
         </x-slot:actions>
     </x-agro.page-header>
 
     {{-- Stats (colapsables) --}}
     <div x-data="{
-        open: localStorage.getItem('container-returns-stats-open') !== 'false',
+        open: localStorage.getItem('harvest-byproducts-stats-open') !== 'false',
         toggle() {
             this.open = !this.open;
-            localStorage.setItem('container-returns-stats-open', String(this.open));
+            localStorage.setItem('harvest-byproducts-stats-open', String(this.open));
         }
     }">
         <button @click="toggle()"
@@ -33,27 +33,27 @@
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-1">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <x-agro.stat-card
-                    label="Total registros"
-                    :value="$stats['active'] + $stats['archived']"
-                    :description="$stats['active'] . ' activos · ' . $stats['archived'] . ' archivados'"
-                    icon="archive-box-x-mark"
+                    label="Registros activos"
+                    :value="$stats['active']"
+                    :description="$stats['active'] . ' en total'"
+                    icon="beaker"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    label="Envases entregados"
-                    :value="number_format($stats['total_containers'], 0, ',', '.')"
+                    label="kg totales campaña"
+                    :value="number_format($stats['total_kg'], 0, ',', '.') . ' kg'"
                     description="Campaña seleccionada"
-                    icon="cube"
+                    icon="scale"
                     color="green"
                 />
                 <x-agro.stat-card
-                    label="Activos"
-                    :value="$stats['active']"
-                    description="Registros en curso"
-                    icon="check-circle"
-                    color="blue"
+                    label="Orujo + Hollejo"
+                    :value="number_format($stats['orujo_kg'], 0, ',', '.') . ' kg'"
+                    description="Campaña seleccionada"
+                    icon="cube"
+                    color="amber"
                 />
                 <x-agro.stat-card
                     label="Archivados"
@@ -78,7 +78,7 @@
 
     {{-- Toolbar --}}
     @php
-        $filterCount = (int) !empty($filterCampaign) + (int) !empty($filterCollectionSystem);
+        $filterCount = (int) !empty($filterCampaign) + (int) !empty($filterByproductType);
     @endphp
     <div class="flex items-center gap-3">
         <div class="flex-1 relative">
@@ -88,12 +88,12 @@
             <input
                 wire:model.live.debounce.300ms="search"
                 type="text"
-                placeholder="Buscar por producto, punto de recogida..."
+                placeholder="Buscar por destino, nº documento..."
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
             />
         </div>
         <button
-            x-on:click="$dispatch('open-modal', 'container-returns-filters')"
+            x-on:click="$dispatch('open-modal', 'harvest-byproducts-filters')"
             class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
         >
             <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
@@ -105,7 +105,7 @@
     </div>
 
     {{-- Chips filtros activos --}}
-    @if($filterCampaign || $filterCollectionSystem)
+    @if($filterCampaign || $filterByproductType)
         <div class="flex flex-wrap items-center gap-2">
             @if($filterCampaign)
                 @php $camp = $campaigns->firstWhere('id', $filterCampaign); @endphp
@@ -117,11 +117,11 @@
                     </button>
                 </span>
             @endif
-            @if($filterCollectionSystem)
+            @if($filterByproductType)
                 <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
-                    <flux:icon icon="archive-box-x-mark" class="size-3" />
-                    {{ $collectionSystems[$filterCollectionSystem] ?? $filterCollectionSystem }}
-                    <button wire:click="$set('filterCollectionSystem', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                    <flux:icon icon="beaker" class="size-3" />
+                    {{ $byproductTypes[$filterByproductType] ?? $filterByproductType }}
+                    <button wire:click="$set('filterByproductType', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
                         <flux:icon icon="x-mark" class="size-3" />
                     </button>
                 </span>
@@ -131,7 +131,7 @@
     @endif
 
     {{-- Skeleton carga --}}
-    <div wire:loading wire:target="switchTab, search, filterCampaign, filterCollectionSystem, nextPage, previousPage, gotoPage">
+    <div wire:loading wire:target="switchTab, search, filterCampaign, filterByproductType, nextPage, previousPage, gotoPage">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @for($i = 0; $i < 8; $i++)
                 <x-agro.skeleton-card />
@@ -140,17 +140,17 @@
     </div>
 
     {{-- Grid de cards --}}
-    <div wire:loading.remove wire:target="switchTab, search, filterCampaign, filterCollectionSystem, nextPage, previousPage, gotoPage">
+    <div wire:loading.remove wire:target="switchTab, search, filterCampaign, filterByproductType, nextPage, previousPage, gotoPage">
         @if($entries->isEmpty())
             <x-agro.empty-state
-                icon="archive-box-x-mark"
-                title="{{ $currentTab === 'active' ? 'Sin entregas registradas' : 'Sin registros archivados' }}"
-                description="{{ $search || $filterCampaign || $filterCollectionSystem ? 'Ningún registro coincide con los filtros aplicados.' : 'Registra cada entrega de envases vacíos en puntos de recogida autorizados.' }}"
+                icon="beaker"
+                title="{{ $currentTab === 'active' ? 'Sin subproductos registrados' : 'Sin registros archivados' }}"
+                description="{{ $search || $filterCampaign || $filterByproductType ? 'Ningún registro coincide con los filtros aplicados.' : 'Registra la salida de orujos, raspones y lías conforme al Reglamento UE 2018/273.' }}"
             >
-                @if(!$search && !$filterCampaign && !$filterCollectionSystem && $currentTab === 'active')
+                @if(!$search && !$filterCampaign && !$filterByproductType && $currentTab === 'active')
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
-                            Registrar Entrega
+                        <flux:button href="{{ route('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
+                            Registrar Subproducto
                         </flux:button>
                     </x-slot:action>
                 @endif
@@ -160,71 +160,74 @@
                 @foreach($entries as $entry)
                     @php
                         $delay = min($loop->index * 50, 300);
-                        $systemColor = match($entry->collection_system) {
-                            'sigfito' => ['bg' => 'bg-green-100',  'icon' => 'text-green-600'],
-                            'field'   => ['bg' => 'bg-blue-100',   'icon' => 'text-blue-600'],
-                            default   => ['bg' => 'bg-zinc-100',   'icon' => 'text-zinc-400'],
+                        $typeColor = match($entry->byproduct_type) {
+                            'orujo'  => ['bg' => 'bg-amber-100',  'icon' => 'text-amber-600'],
+                            'raspon' => ['bg' => 'bg-orange-100', 'icon' => 'text-orange-600'],
+                            'lia'    => ['bg' => 'bg-yellow-100', 'icon' => 'text-yellow-600'],
+                            default  => ['bg' => 'bg-zinc-100',   'icon' => 'text-zinc-400'],
+                        };
+                        $typeBadgeClass = match($entry->byproduct_type) {
+                            'orujo'  => 'bg-amber-100 text-amber-700',
+                            'raspon' => 'bg-orange-100 text-orange-700',
+                            'lia'    => 'bg-yellow-100 text-yellow-700',
+                            default  => 'bg-zinc-100 text-zinc-500',
                         };
                     @endphp
                     <x-agro.card
                         class="animate-fade-in-up flex flex-col hover:-translate-y-1 {{ $currentTab === 'archived' ? 'opacity-60' : '' }}"
                         style="animation-delay: {{ $delay }}ms;"
-                        wire:key="cr-{{ $entry->id }}"
+                        wire:key="hbp-{{ $entry->id }}"
                     >
                         <x-slot:header>
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 {{ $systemColor['bg'] }} rounded-xl flex items-center justify-center shrink-0">
-                                    <flux:icon icon="archive-box-x-mark" class="size-5 {{ $systemColor['icon'] }}" />
+                                <div class="w-10 h-10 {{ $typeColor['bg'] }} rounded-xl flex items-center justify-center shrink-0">
+                                    <flux:icon icon="beaker" class="size-5 {{ $typeColor['icon'] }}" />
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-zinc-900 truncate">{{ $entry->product_name }}</h3>
+                                    <h3 class="font-bold text-zinc-900 truncate">{{ $entry->destination_name }}</h3>
                                     <p class="text-xs text-zinc-500">{{ $entry->date->format('d/m/Y') }}</p>
                                 </div>
-                                <x-agro.status-badge :color="$entry->collection_system === 'sigfito' ? 'green' : ($entry->collection_system === 'field' ? 'blue' : 'zinc')" class="shrink-0">
-                                    {{ $entry->collection_system_label }}
-                                </x-agro.status-badge>
+                                <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $typeBadgeClass }}">
+                                    {{ $entry->byproduct_type_label }}
+                                </span>
                             </div>
                         </x-slot:header>
 
-                        <div class="flex-1 space-y-4">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="bg-green-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-green-400 uppercase tracking-widest mb-1">Envases</p>
-                                    <p class="text-2xl font-bold text-green-700 leading-none">
-                                        {{ $entry->containers_quantity }}
-                                        <span class="text-xs font-medium text-zinc-400 ml-0.5">uds.</span>
-                                    </p>
-                                </div>
-                                <div class="bg-zinc-50 rounded-xl p-3">
-                                    <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Tipo</p>
-                                    <p class="text-sm font-semibold text-zinc-600 leading-tight">{{ $entry->container_type_label }}</p>
-                                </div>
+                        <div class="flex-1 space-y-3">
+                            {{-- Cantidad destacada --}}
+                            <div class="bg-zinc-50 rounded-xl p-3">
+                                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">Cantidad</p>
+                                <p class="text-2xl font-bold text-zinc-700 leading-none">
+                                    {{ number_format($entry->quantity_kg, 3, ',', '.') }}
+                                    <span class="text-xs font-normal text-zinc-400 ml-0.5">kg</span>
+                                </p>
                             </div>
 
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center gap-2 text-zinc-600">
-                                    <flux:icon icon="map-pin" class="size-4 text-zinc-400 shrink-0" />
-                                    <span class="truncate">{{ $entry->collection_point }}</span>
+                            {{-- Destino --}}
+                            <div class="flex items-center gap-2 text-sm text-zinc-600">
+                                <flux:icon icon="truck" class="size-4 text-zinc-400 shrink-0" />
+                                <span class="truncate">{{ $entry->destination_type_label }}</span>
+                            </div>
+
+                            {{-- Documento referencia --}}
+                            @if($entry->document_reference)
+                                <div class="flex items-center gap-2 text-zinc-500">
+                                    <flux:icon icon="document-text" class="size-4 text-zinc-400 shrink-0" />
+                                    <span class="truncate font-mono text-xs">{{ $entry->document_reference }}</span>
                                 </div>
-                                @if($entry->registration_number)
-                                    <div class="flex items-center gap-2 text-zinc-500">
-                                        <flux:icon icon="identification" class="size-4 text-zinc-400 shrink-0" />
-                                        <span class="truncate font-mono text-xs">{{ $entry->registration_number }}</span>
-                                    </div>
-                                @endif
-                                @if($entry->transport_document)
-                                    <div class="flex items-center gap-2 text-zinc-500">
-                                        <flux:icon icon="document-text" class="size-4 text-zinc-400 shrink-0" />
-                                        <span class="truncate text-xs">Alb. {{ $entry->transport_document }}</span>
-                                    </div>
-                                @endif
+                            @endif
+
+                            {{-- Campaña --}}
+                            <div class="flex items-center gap-2 text-zinc-400">
+                                <flux:icon icon="calendar-days" class="size-3.5 shrink-0" />
+                                <span class="text-xs truncate">{{ $entry->campaign->name ?? '—' }}</span>
                             </div>
                         </div>
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
                                 @if($currentTab === 'active')
-                                    <a href="{{ route('viticulturist.container-returns.edit', $entry) }}"
+                                    <a href="{{ route('viticulturist.harvest-byproducts.edit', $entry) }}"
                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                                        title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
@@ -261,7 +264,7 @@
     </div>
 
     {{-- Modal: Filtros --}}
-    <x-agro.modal name="container-returns-filters" maxWidth="sm">
+    <x-agro.modal name="harvest-byproducts-filters" maxWidth="sm">
         <div class="px-6 py-4 border-b border-zinc-200">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -270,7 +273,7 @@
                     </div>
                     <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
                 </div>
-                <flux:button x-on:click="$dispatch('close-modal', 'container-returns-filters')" variant="ghost" size="sm" icon="x-mark" />
+                <flux:button x-on:click="$dispatch('close-modal', 'harvest-byproducts-filters')" variant="ghost" size="sm" icon="x-mark" />
             </div>
         </div>
         <div class="px-6 py-5 space-y-5">
@@ -284,22 +287,22 @@
                 </flux:select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Sistema de recogida</label>
-                <flux:select wire:model.live="filterCollectionSystem">
-                    <flux:select.option value="">Todos los sistemas</flux:select.option>
-                    @foreach($collectionSystems as $key => $label)
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de subproducto</label>
+                <flux:select wire:model.live="filterByproductType">
+                    <flux:select.option value="">Todos los tipos</flux:select.option>
+                    @foreach($byproductTypes as $key => $label)
                         <flux:select.option value="{{ $key }}">{{ $label }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
         </div>
         <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
-            @if($filterCampaign || $filterCollectionSystem)
+            @if($filterCampaign || $filterByproductType)
                 <button wire:click="clearFilters" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors">Limpiar filtros</button>
             @else
                 <span></span>
             @endif
-            <flux:button x-on:click="$dispatch('close-modal', 'container-returns-filters')" variant="primary">Aplicar</flux:button>
+            <flux:button x-on:click="$dispatch('close-modal', 'harvest-byproducts-filters')" variant="primary">Aplicar</flux:button>
         </div>
     </x-agro.modal>
 
