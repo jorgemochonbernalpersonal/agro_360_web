@@ -39,27 +39,27 @@
         >
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <x-agro.stat-card
-                    title="Concesiones activas"
+                    label="Concesiones activas"
                     :value="$stats['active']"
                     icon="beaker"
                     color="blue"
                 />
                 <x-agro.stat-card
-                    title="M³ autorizados"
+                    label="M³ autorizados"
                     :value="number_format($stats['total_m3'], 0, ',', '.')"
                     description="Volumen total concedido"
                     icon="beaker"
                     color="agro"
                 />
                 <x-agro.stat-card
-                    title="M³ utilizados"
+                    label="M³ utilizados"
                     :value="number_format($stats['used_m3'] ?? 0, 0, ',', '.')"
                     description="Consumo registrado"
                     icon="beaker"
                     color="green"
                 />
                 <x-agro.stat-card
-                    title="Próximas a vencer"
+                    label="Próximas a vencer"
                     :value="$stats['expiring_soon']"
                     description="En los próximos 90 días"
                     icon="clock"

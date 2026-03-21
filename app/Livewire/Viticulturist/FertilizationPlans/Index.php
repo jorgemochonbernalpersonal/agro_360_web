@@ -44,7 +44,7 @@ class Index extends AbstractIndex
 
     public function archive(int $id): void
     {
-        $this->findOwned(FertilizationPlan::class, $id)->update(['status' => 'archived', 'active' => false]);
+        $this->findOwned(FertilizationPlan::class, $id)->update(['status' => 'archived']);
         $this->toastSuccess('Plan archivado.');
     }
 
@@ -92,7 +92,7 @@ class Index extends AbstractIndex
         $stats = [
             'draft'        => (clone $baseQuery)->where('status', 'draft')->count(),
             'active'       => (clone $baseQuery)->where('status', 'active')->count(),
-            'archived'     => FertilizationPlan::where('viticulturist_id', $userId)->where('active', false)->count(),
+            'archived'     => (clone $baseQuery)->where('status', 'archived')->count(),
             'nitrate_zone' => (clone $baseQuery)->where('nitrate_zone', true)->count(),
         ];
 

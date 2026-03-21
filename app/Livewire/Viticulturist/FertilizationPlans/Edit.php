@@ -105,7 +105,6 @@ class Edit extends AbstractEdit
             'plan_lines'       => array_values($filteredLines) ?: null,
             'status'           => $this->status,
             'notes'            => $this->notes ?: null,
-            'active'           => $this->status !== 'archived',
         ]);
     }
 

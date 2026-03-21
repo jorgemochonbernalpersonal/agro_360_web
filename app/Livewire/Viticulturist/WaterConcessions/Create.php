@@ -3,10 +3,12 @@
 namespace App\Livewire\Viticulturist\WaterConcessions;
 
 use App\Livewire\Viticulturist\AbstractCreate;
+use App\Models\Campaign;
 use App\Models\WaterConcession;
 
 class Create extends AbstractCreate
 {
+    public string $campaign_id       = '';
     public string $concession_type   = 'superficial';
     public string $concession_number = '';
     public string $water_body        = '';
@@ -18,9 +20,16 @@ class Create extends AbstractCreate
     public string $surface_ha        = '';
     public string $notes             = '';
 
+    public function mount(): void
+    {
+        $campaign = Campaign::getOrCreateActiveForYear($this->viticulturistId());
+        $this->campaign_id = (string) ($campaign?->id ?? '');
+    }
+
     protected function rules(): array
     {
         return [
+            'campaign_id'       => 'nullable|exists:campaigns,id',
             'concession_type'   => 'required|in:' . implode(',', array_keys(WaterConcession::CONCESSION_TYPES)),
             'concession_number' => 'nullable|string|max:100',
             'water_body'        => 'required|string|max:255',
@@ -38,6 +47,7 @@ class Create extends AbstractCreate
     {
         WaterConcession::create([
             'viticulturist_id'  => $this->viticulturistId(),
+            'campaign_id'       => $this->campaign_id ?: null,
             'concession_type'   => $this->concession_type,
             'concession_number' => $this->concession_number ?: null,
             'water_body'        => $this->water_body,
@@ -58,6 +68,7 @@ class Create extends AbstractCreate
     protected function viewData(): array
     {
         return [
+            'campaigns'       => Campaign::forViticulturist($this->viticulturistId())->orderByDesc('year')->get(),
             'concessionTypes' => WaterConcession::CONCESSION_TYPES,
         ];
     }

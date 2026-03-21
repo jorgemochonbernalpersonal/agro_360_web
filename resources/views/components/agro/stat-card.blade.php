@@ -9,6 +9,8 @@ $colorMap = [
     'orange' => ['bg' => 'bg-orange-50', 'icon' => 'text-orange-600', 'value' => 'text-orange-700'],
     'purple' => ['bg' => 'bg-purple-50', 'icon' => 'text-purple-600', 'value' => 'text-purple-700'],
     'zinc'   => ['bg' => 'bg-zinc-100',  'icon' => 'text-zinc-500',   'value' => 'text-zinc-700'],
+    'green'  => ['bg' => 'bg-green-50',  'icon' => 'text-green-600',  'value' => 'text-green-700'],
+    'amber'  => ['bg' => 'bg-amber-50',  'icon' => 'text-amber-600',  'value' => 'text-amber-700'],
 ];
 $c = $colorMap[$color] ?? $colorMap['agro'];
 $trendClasses = $trend > 0 ? 'text-green-600' : ($trend < 0 ? 'text-red-600' : 'text-zinc-500');

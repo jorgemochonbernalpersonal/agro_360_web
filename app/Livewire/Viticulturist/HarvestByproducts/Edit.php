@@ -21,7 +21,7 @@ class Edit extends AbstractEdit
 
     public function mount(HarvestByproduct $byproduct): void
     {
-        $this->authorize($byproduct);
+        $this->authorizeOwnership($byproduct);
         $this->byproduct          = $byproduct;
         $this->campaign_id        = (string) $byproduct->campaign_id;
         $this->date               = $byproduct->date->format('Y-m-d');

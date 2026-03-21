@@ -50,9 +50,8 @@ class EditTest extends ViticulturistTestCase
 
         $this->actingAs($viticulturist);
 
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-
-        Livewire::test(Edit::class, ['cost' => $cost]);
+        Livewire::test(Edit::class, ['cost' => $cost])
+            ->assertStatus(403);
     }
 
     public function test_mount_populates_fields(): void

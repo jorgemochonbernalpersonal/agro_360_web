@@ -190,7 +190,8 @@
       "Bash(php -r \":*)",
       "Bash(docker compose:*)",
       "Bash(docker start:*)",
-      "Bash(1:*)"
+      "Bash(1:*)",
+      "Bash(where mariadb:*)"
     ]
   }
 }
