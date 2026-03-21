@@ -464,21 +464,21 @@
                     <div class="max-w-xs ml-auto space-y-2">
                         <div class="flex justify-between text-sm text-zinc-600">
                             <span>Subtotal</span>
-                            <span class="font-semibold text-zinc-900">{{ number_format($subtotal, 2, ',', '.') }} €</span>
+                            <span class="font-semibold text-zinc-900">{{ number_format($this->subtotal, 2, ',', '.') }} €</span>
                         </div>
-                        @if($discountAmount > 0)
+                        @if($this->discountAmount > 0)
                             <div class="flex justify-between text-sm text-zinc-600">
                                 <span>Descuentos</span>
-                                <span class="font-semibold text-red-600">-{{ number_format($discountAmount, 2, ',', '.') }} €</span>
+                                <span class="font-semibold text-red-600">-{{ number_format($this->discountAmount, 2, ',', '.') }} €</span>
                             </div>
                         @endif
                         <div class="flex justify-between text-sm text-zinc-600">
                             <span>IVA</span>
-                            <span class="font-semibold text-zinc-900">{{ number_format($taxAmount, 2, ',', '.') }} €</span>
+                            <span class="font-semibold text-zinc-900">{{ number_format($this->taxAmount, 2, ',', '.') }} €</span>
                         </div>
                         <div class="flex justify-between pt-3 border-t border-zinc-300">
                             <span class="text-base font-bold text-zinc-900">Total</span>
-                            <span class="text-2xl font-bold text-green-600">{{ number_format($totalAmount, 2, ',', '.') }} €</span>
+                            <span class="text-2xl font-bold text-green-600">{{ number_format($this->totalAmount, 2, ',', '.') }} €</span>
                         </div>
                     </div>
                 </div>

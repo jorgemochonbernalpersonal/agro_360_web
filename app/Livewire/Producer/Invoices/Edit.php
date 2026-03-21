@@ -81,7 +81,8 @@ class Edit extends Component
 
     public function mount($invoice): void
     {
-        $user = Auth::user();
+        $user       = Auth::user();
+        $invoiceKey = $invoice instanceof Invoice ? $invoice->id : $invoice;
 
         $this->invoice = Invoice::where('user_id', $user->id)
             ->where('invoice_type', 'producer_sale')
@@ -92,7 +93,7 @@ class Edit extends Component
                 'client.addresses.province',
                 'client.addresses.autonomousCommunity',
             ])
-            ->findOrFail($invoice);
+            ->findOrFail($invoiceKey);
 
         $this->loadInvoiceData();
     }
@@ -118,7 +119,7 @@ class Edit extends Component
         // Batch-load latest HarvestStock per harvest item (avoid N+1)
         $itemHarvestIds = $this->invoice->items->pluck('harvest_id')->filter();
         $itemLatestStocks = HarvestStock::whereIn('harvest_id', $itemHarvestIds)
-            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stocks hs2 WHERE hs2.harvest_id = harvest_stocks.harvest_id)')
             ->get()
             ->keyBy('harvest_id');
 
@@ -190,7 +191,7 @@ class Edit extends Component
 
         $harvestIds   = $harvests->pluck('id');
         $latestStocks = HarvestStock::whereIn('harvest_id', $harvestIds)
-            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stock hs2 WHERE hs2.harvest_id = harvest_stock.harvest_id)')
+            ->whereRaw('id = (SELECT MAX(hs2.id) FROM harvest_stocks hs2 WHERE hs2.harvest_id = harvest_stocks.harvest_id)')
             ->get()
             ->keyBy('harvest_id');
 
