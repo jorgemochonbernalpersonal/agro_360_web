@@ -8,7 +8,9 @@ use App\Models\ContainerType;
 use App\Models\GrapeVariety;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
+use App\Models\UnitOfMeasurement;
 use App\Models\User;
+use App\Models\Wine;
 use App\Models\WineryViticulturist;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -153,10 +155,74 @@ class CypressTestUserSeeder extends Seeder
                 ]
             );
 
+            // Contenedor con vino para tests de trasvases y mermas
+            Container::firstOrCreate(
+                [
+                    'user_id' => $winery->id,
+                    'name'    => 'Depósito Vino Cypress A',
+                ],
+                [
+                    'type_id'            => $containerType->id,
+                    'capacity'           => 10000,
+                    'used_capacity'      => 0,
+                    'wine_volume_liters' => 5000.0,
+                    'unit'               => 'litros',
+                    'archived'           => false,
+                ]
+            );
+
+            Container::firstOrCreate(
+                [
+                    'user_id' => $winery->id,
+                    'name'    => 'Depósito Vino Cypress B',
+                ],
+                [
+                    'type_id'            => $containerType->id,
+                    'capacity'           => 10000,
+                    'used_capacity'      => 0,
+                    'wine_volume_liters' => 0.0,
+                    'unit'               => 'litros',
+                    'archived'           => false,
+                ]
+            );
+
             $this->command->info('✅ Contenedores de bodega creados');
         } else {
             $this->command->warn('⚠ No hay ContainerTypes — ejecuta las migraciones primero');
         }
+
+        // ── Vinos de la bodega para tests de mermas, trasvases y embotellado ──
+
+        $uomLitros = UnitOfMeasurement::firstOrCreate(
+            ['symbol' => 'L'],
+            ['name' => 'Litros', 'type' => 'volume']
+        );
+
+        Wine::firstOrCreate(
+            [
+                'user_id' => $winery->id,
+                'name'    => 'Tempranillo Cypress 2023',
+            ],
+            [
+                'wine_type'    => 'red',
+                'status'       => 'in_progress',
+                'volume_liters' => 5000.0,
+            ]
+        );
+
+        Wine::firstOrCreate(
+            [
+                'user_id' => $winery->id,
+                'name'    => 'Blanco Cypress 2023',
+            ],
+            [
+                'wine_type'    => 'white',
+                'status'       => 'in_progress',
+                'volume_liters' => 3000.0,
+            ]
+        );
+
+        $this->command->info('✅ Vinos de bodega creados');
 
         // ── Campaña activa de la bodega ───────────────────────────────────────
 

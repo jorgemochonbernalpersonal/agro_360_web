@@ -68,6 +68,11 @@ class Index extends AbstractIndex
             return;
         }
 
+        if ((float) $container->wine_volume_liters > 0) {
+            $this->toastError('No se puede eliminar un contenedor con vino elaborado. Vacíalo primero.');
+            return;
+        }
+
         $container->delete();
         $this->toastSuccess('Contenedor eliminado.');
     }
