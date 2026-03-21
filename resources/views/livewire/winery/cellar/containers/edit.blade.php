@@ -10,15 +10,15 @@
         </x-slot:actions>
     </x-agro.page-header>
 
-    @if($container->used_capacity > 0)
+    @if($container->getTotalUsed() > 0)
         <x-agro.card>
             <div class="space-y-2">
                 <p class="text-sm font-medium text-zinc-700">Estado actual del contenedor</p>
                 <x-agro.progress-bar
                     :percentage="$container->getOccupancyPercentage()"
-                    :currentValue="$container->used_capacity"
+                    :currentValue="$container->getTotalUsed()"
                     :maxValue="$container->capacity"
-                    unit="kg"
+                    :unit="$container->unit ?? 'kg'"
                 />
             </div>
         </x-agro.card>
@@ -45,14 +45,42 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Capacidad (kg)</flux:label>
+                    <flux:label>Unidad de capacidad</flux:label>
+                    @if($hasStock)
+                        <flux:input value="{{ $unit === 'litros' ? 'Litros (L)' : 'Kilogramos (kg)' }}" disabled />
+                        <flux:description>No se puede cambiar la unidad mientras el contenedor tenga contenido.</flux:description>
+                        {{-- campo oculto para que Livewire mantenga el valor --}}
+                        <input type="hidden" wire:model="unit" />
+                    @else
+                        <flux:select wire:model.live="unit">
+                            <flux:select.option value="kg">Kilogramos (kg) — uva / mosto</flux:select.option>
+                            <flux:select.option value="litros">Litros (L) — vino elaborado</flux:select.option>
+                        </flux:select>
+                    @endif
+                    <flux:error name="unit" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Capacidad ({{ $unit === 'litros' ? 'L' : 'kg' }})</flux:label>
                     <flux:input wire:model="capacity" type="number" step="0.01" min="0.01" placeholder="Ej: 5000" />
-                    @if($container->used_capacity > 0)
+                    @if($hasStock)
                         <flux:description>
-                            Mínimo: {{ number_format($container->used_capacity, 0) }} kg (ya utilizado).
+                            Mínimo: {{ number_format($container->getTotalUsed(), 0) }} {{ $container->unit ?? 'kg' }} (ya utilizado).
                         </flux:description>
                     @endif
                     <flux:error name="capacity" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Sala de bodega</flux:label>
+                    <flux:select wire:model="container_room_id">
+                        <flux:select.option value="">Sin sala asignada</flux:select.option>
+                        @foreach($rooms as $room)
+                            <flux:select.option value="{{ $room->id }}">{{ $room->name }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:description>Opcional. Agrupa el contenedor en una zona de tu bodega.</flux:description>
+                    <flux:error name="container_room_id" />
                 </flux:field>
 
                 <flux:field>

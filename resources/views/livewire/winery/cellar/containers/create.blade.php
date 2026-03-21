@@ -24,10 +24,32 @@
                 </flux:field>
 
                 <flux:field>
-                    <flux:label>Capacidad (kg)</flux:label>
+                    <flux:label>Unidad de capacidad</flux:label>
+                    <flux:select wire:model.live="unit">
+                        <flux:select.option value="kg">Kilogramos (kg) — uva / mosto</flux:select.option>
+                        <flux:select.option value="litros">Litros (L) — vino elaborado</flux:select.option>
+                    </flux:select>
+                    <flux:description>Elige kg para depósitos de vendimia, litros para crianza y embotellado.</flux:description>
+                    <flux:error name="unit" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Capacidad ({{ $unit === 'litros' ? 'L' : 'kg' }})</flux:label>
                     <flux:input wire:model="capacity" type="number" step="0.01" min="1" placeholder="Ej: 5000" />
-                    <flux:description>Capacidad total en kilogramos.</flux:description>
+                    <flux:description>Capacidad total en {{ $unit === 'litros' ? 'litros' : 'kilogramos' }}.</flux:description>
                     <flux:error name="capacity" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Sala de bodega</flux:label>
+                    <flux:select wire:model="container_room_id">
+                        <flux:select.option value="">Sin sala asignada</flux:select.option>
+                        @foreach($rooms as $room)
+                            <flux:select.option value="{{ $room->id }}">{{ $room->name }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:description>Opcional. Agrupa el contenedor en una zona de tu bodega.</flux:description>
+                    <flux:error name="container_room_id" />
                 </flux:field>
 
                 <flux:field>

@@ -21,6 +21,7 @@ class Container extends Model
         'photos',
         'thumbnail_img',
         'capacity',
+        'unit',
         'used_capacity',
         'quantity',
         'serial_number',
@@ -40,6 +41,7 @@ class Container extends Model
 
     protected $casts = [
         'capacity' => 'decimal:2',
+        'unit' => 'string',
         'used_capacity' => 'decimal:2',
         'wine_volume_liters' => 'decimal:3',
         'quantity' => 'integer',

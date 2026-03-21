@@ -220,6 +220,45 @@ class CreateReceptionTest extends WineryTestCase
         ]);
     }
 
+    // ── Seguridad: container_id ───────────────────────────────────────────────
+
+    public function test_container_from_other_winery_is_rejected(): void
+    {
+        $otherWinery     = $this->makeOtherWinery();
+        $foreignContainer = $this->makeContainer(['user_id' => $otherWinery->id]);
+
+        Livewire::test(Create::class)
+            ->set('viticulturist_id', (string) $this->viticulturist->id)
+            ->set('plot_id', (string) $this->plot->id)
+            ->set('plot_planting_id', (string) $this->planting->id)
+            ->set('vintage_year', 2024)
+            ->set('harvest_start_date', '2024-09-15')
+            ->set('total_weight', '500')
+            ->set('container_id', (string) $foreignContainer->id)
+            ->call('save')
+            ->assertHasErrors(['container_id']);
+
+        $this->assertDatabaseMissing('harvests', ['winery_id' => $this->winery->id]);
+    }
+
+    public function test_container_with_litros_unit_is_rejected(): void
+    {
+        $litrosContainer = $this->makeContainer(['unit' => 'litros', 'capacity' => 10000]);
+
+        Livewire::test(Create::class)
+            ->set('viticulturist_id', (string) $this->viticulturist->id)
+            ->set('plot_id', (string) $this->plot->id)
+            ->set('plot_planting_id', (string) $this->planting->id)
+            ->set('vintage_year', 2024)
+            ->set('harvest_start_date', '2024-09-15')
+            ->set('total_weight', '500')
+            ->set('container_id', (string) $litrosContainer->id)
+            ->call('save')
+            ->assertHasErrors(['container_id']);
+
+        $this->assertDatabaseMissing('harvests', ['winery_id' => $this->winery->id]);
+    }
+
     // ── Auto-link (winery creates → links viticulturist delivery) ────────────
 
     public function test_creating_reception_links_pending_delivery(): void

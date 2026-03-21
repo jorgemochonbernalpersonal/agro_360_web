@@ -186,7 +186,11 @@
       "Bash(xargs -I {} basename {})",
       "Read(//c/Users/jorge/Desktop/vinai2 \\(1\\)/vinai2/**)",
       "Bash(do)",
-      "Bash(echo \"=== $f \\(first 25 lines\\) ===\")"
+      "Bash(echo \"=== $f \\(first 25 lines\\) ===\")",
+      "Bash(php -r \":*)",
+      "Bash(docker compose:*)",
+      "Bash(docker start:*)",
+      "Bash(1:*)"
     ]
   }
 }

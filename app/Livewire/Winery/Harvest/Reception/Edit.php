@@ -10,6 +10,7 @@ use App\Models\PlotPlanting;
 use App\Models\WineryYieldForecast;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Edit extends Component
@@ -196,7 +197,7 @@ class Edit extends Component
             'transport_document_number'  => ['nullable', 'string', 'max:50'],
             'destination_rega_code'      => ['nullable', 'string', 'max:20'],
             'vehicle_plate'              => ['nullable', 'string', 'max:20'],
-            'container_id'               => ['required', 'exists:containers,id'],
+            'container_id'               => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())->where('unit', 'kg')],
             'disqualified'               => ['boolean'],
             'disqualified_reason'        => ['nullable', 'string', 'max:500'],
             'notes'                      => ['nullable', 'string'],
@@ -297,6 +298,7 @@ class Edit extends Component
     {
         $availableContainers = Container::where('user_id', Auth::id())
             ->where('archived', false)
+            ->where('unit', 'kg')
             ->orderBy('name')
             ->get(['id', 'name', 'capacity', 'used_capacity']);
 

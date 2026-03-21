@@ -92,6 +92,34 @@ class EditReceptionTest extends WineryTestCase
         ]);
     }
 
+    // ── Seguridad: container_id ───────────────────────────────────────────────
+
+    public function test_container_from_other_winery_is_rejected(): void
+    {
+        $otherWinery      = $this->makeOtherWinery();
+        $foreignContainer = $this->makeContainer(['user_id' => $otherWinery->id]);
+
+        Livewire::test(Edit::class, ['harvest' => $this->reception])
+            ->set('container_id', (string) $foreignContainer->id)
+            ->call('save')
+            ->assertHasErrors(['container_id']);
+
+        $this->assertDatabaseHas('harvests', [
+            'id'           => $this->reception->id,
+            'container_id' => $this->container->id, // sin cambios
+        ]);
+    }
+
+    public function test_container_with_litros_unit_is_rejected(): void
+    {
+        $litrosContainer = $this->makeContainer(['unit' => 'litros', 'capacity' => 10000]);
+
+        Livewire::test(Edit::class, ['harvest' => $this->reception])
+            ->set('container_id', (string) $litrosContainer->id)
+            ->call('save')
+            ->assertHasErrors(['container_id']);
+    }
+
     // ── Container capacity ────────────────────────────────────────────────────
 
     public function test_same_container_allows_editing_to_higher_weight(): void

@@ -12,6 +12,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class Create extends Component
 {
@@ -76,7 +77,7 @@ class Create extends Component
             'quantity' => 'nullable|integer|min:1',
             'unit_of_measurement_id' => 'required|integer',
             
-            'container_room_id' => 'nullable|integer',
+            'container_room_id' => ['nullable', Rule::exists('container_rooms', 'id')->where('user_id', Auth::id())],
             
             'purchase_date' => 'nullable|date|before_or_equal:today',
             'next_maintenance_date' => 'nullable|date|after:today',

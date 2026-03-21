@@ -8,6 +8,7 @@ use App\Models\Container;
 use App\Models\ContainerType;
 use App\Models\Harvest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Assign extends Component
@@ -38,7 +39,7 @@ class Assign extends Component
     public function save(): mixed
     {
         $this->validate([
-            'container_id' => ['required', 'exists:containers,id'],
+            'container_id' => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())->where('unit', 'kg')],
         ], [
             'container_id.required' => 'Selecciona un contenedor.',
         ]);
@@ -73,6 +74,7 @@ class Assign extends Component
 
         $availableContainers = Container::where('user_id', $wineryId)
             ->where('archived', false)
+            ->where('unit', 'kg')
             ->orderBy('name')
             ->get();
 

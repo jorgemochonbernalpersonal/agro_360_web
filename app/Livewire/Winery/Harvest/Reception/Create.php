@@ -14,6 +14,7 @@ use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Create extends Component
@@ -295,7 +296,7 @@ class Create extends Component
             'destination_rega_code'      => ['nullable', 'string', 'max:20'],
             'vehicle_plate'              => ['nullable', 'string', 'max:20'],
             'harvest_time'               => ['nullable', 'date_format:H:i'],
-            'container_id'               => ['required', 'exists:containers,id'],
+            'container_id'               => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())->where('unit', 'kg')],
             'disqualified'               => ['boolean'],
             'disqualified_reason'        => ['nullable', 'string', 'max:500'],
             'notes'                      => ['nullable', 'string'],
@@ -471,6 +472,7 @@ class Create extends Component
 
         $availableContainers = Container::where('user_id', $wineryId)
             ->where('archived', false)
+            ->where('unit', 'kg')
             ->orderBy('name')
             ->get(['id', 'name', 'capacity', 'used_capacity']);
 

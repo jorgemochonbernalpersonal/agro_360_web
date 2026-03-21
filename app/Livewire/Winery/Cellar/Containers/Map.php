@@ -42,9 +42,9 @@ class Map extends Component
             ->orderBy('name');
 
         match ($this->statusFilter) {
-            'full'   => $query->whereRaw('capacity > 0 AND used_capacity / capacity >= 0.9'),
-            'empty'  => $query->where(fn($q) => $q->whereNull('used_capacity')->orWhere('used_capacity', 0)),
-            'in_use' => $query->where('used_capacity', '>', 0)->whereRaw('capacity <= 0 OR used_capacity / capacity < 0.9'),
+            'full'   => $query->whereRaw('capacity > 0 AND (used_capacity + COALESCE(wine_volume_liters, 0)) / capacity >= 0.9'),
+            'empty'  => $query->whereRaw('(used_capacity + COALESCE(wine_volume_liters, 0)) <= 0'),
+            'in_use' => $query->whereRaw('(used_capacity + COALESCE(wine_volume_liters, 0)) > 0 AND (capacity <= 0 OR (used_capacity + COALESCE(wine_volume_liters, 0)) / capacity < 0.9)'),
             default  => null,
         };
 
@@ -52,7 +52,7 @@ class Map extends Component
         $rooms = ContainerRoom::where('user_id', $userId)->orderBy('name')->get();
 
         $totalCapacity = $containers->sum('capacity') ?: 1;
-        $totalUsed     = $containers->sum('used_capacity');
+        $totalUsed     = $containers->sum(fn($c) => $c->getTotalUsed());
 
         $stats = [
             'total'          => $containers->count(),
