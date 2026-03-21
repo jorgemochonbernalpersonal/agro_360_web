@@ -41,12 +41,14 @@ class ProducerMenu
         ];
 
         $menu['registros_oficiales'] = [
-            ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno', 'route' => 'producer.pac-compliance',            'active' => request()->routeIs('producer.pac-compliance')],
-            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',  'route' => 'producer.residue-analyses.index',    'active' => request()->routeIs('producer.residue-analyses.*')],
-            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',   'route' => 'producer.residue-managements.index', 'active' => request()->routeIs('producer.residue-managements.*')],
-            ['icon' => 'bolt',                     'label' => 'Consumo Energético',    'route' => 'producer.energy-usages.index',       'active' => request()->routeIs('producer.energy-usages.*')],
-            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',     'route' => 'producer.cue-exports.index',         'active' => request()->routeIs('producer.cue-exports.*')],
-            ['icon' => 'document',                 'label' => 'Informes Oficiales',    'route' => 'producer.official-reports.index',    'active' => request()->routeIs('producer.official-reports.*')],
+            ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno',   'route' => 'producer.pac-compliance',                   'active' => request()->routeIs('producer.pac-compliance')],
+            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',    'route' => 'producer.residue-analyses.index',           'active' => request()->routeIs('producer.residue-analyses.*')],
+            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',     'route' => 'producer.residue-managements.index',        'active' => request()->routeIs('producer.residue-managements.*')],
+            ['icon' => 'bolt',                     'label' => 'Consumo Energético',      'route' => 'producer.energy-usages.index',              'active' => request()->routeIs('producer.energy-usages.*')],
+            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',  'route' => 'producer.container-returns.index',          'active' => request()->routeIs('producer.container-returns.*')],
+            ['icon' => 'document-arrow-up',        'label' => 'Declaración de Vendimia', 'route' => 'producer.harvest-declarations.index',       'active' => request()->routeIs('producer.harvest-declarations.*')],
+            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',       'route' => 'producer.cue-exports.index',                'active' => request()->routeIs('producer.cue-exports.*')],
+            ['icon' => 'document',                 'label' => 'Informes Oficiales',      'route' => 'producer.official-reports.index',           'active' => request()->routeIs('producer.official-reports.*')],
         ];
 
         // ── Secciones unificadas (comunes viñedo + bodega) ────────────────────────
@@ -91,9 +93,10 @@ class ProducerMenu
         $menu['resources'] = [
             ['icon' => 'user-group',          'label' => 'Personal',                 'route' => 'producer.personal.index',               'active' => request()->routeIs('producer.personal*')],
             ['icon' => 'adjustments-vertical','label' => 'Maquinaria',               'route' => 'producer.machinery.index',              'active' => request()->routeIs('producer.machinery*')],
-            ['icon' => 'building-storefront', 'label' => 'Almacén de Insumos',       'route' => 'producer.almacen.index',                'active' => request()->routeIs('producer.almacen.*')],
+            ['icon' => 'building-storefront', 'label' => 'Almacén de Insumos',       'route' => 'producer.almacen.index',                'active' => request()->routeIs('producer.almacen.*') && !request()->routeIs('producer.almacen.stock.analytics')],
+            ['icon' => 'chart-bar-square',    'label' => 'Analítica de Stock',       'route' => 'producer.almacen.stock.analytics',      'active' => request()->routeIs('producer.almacen.stock.analytics')],
             ['icon' => 'beaker',              'label' => 'Productos Fitosanitarios', 'route' => 'producer.phytosanitary-products.index', 'active' => request()->routeIs('producer.phytosanitary-products.*')],
-            ['icon' => 'user-plus',           'label' => 'Subcontratación',          'route' => 'producer.subcontracting.index',         'active' => request()->routeIs('producer.subcontracting*'), 'new' => true],
+            ['icon' => 'user-plus',           'label' => 'Subcontratación',          'route' => 'producer.subcontracting.index',         'active' => request()->routeIs('producer.subcontracting*')],
         ];
 
         $menu['compliance'] = [
@@ -101,7 +104,7 @@ class ProducerMenu
             ['icon' => 'shield-check',       'label' => 'Autorizaciones Comerciales', 'route' => 'producer.commercial-authorizations.index', 'active' => request()->routeIs('producer.commercial-authorizations.*')],
             ['icon' => 'user',               'label' => 'Asesorías Técnicas',         'route' => 'producer.advisory-memberships.index',      'active' => request()->routeIs('producer.advisory-memberships.*')],
             ['icon' => 'identification',     'label' => 'Aplicadores ROPO',           'route' => 'producer.field-applicators.index',         'active' => request()->routeIs('producer.field-applicators.*')],
-            ['icon' => 'cog-6-tooth',        'label' => 'Equipos ITB/ITEA',           'route' => 'producer.field-equipment.index',           'active' => request()->routeIs('producer.field-equipment.*')],
+            ['icon' => 'cog-8-tooth',        'label' => 'Equipos ITB/ITEA',           'route' => 'producer.field-equipment.index',           'active' => request()->routeIs('producer.field-equipment.*')],
             ['icon' => 'lifebuoy',           'label' => 'Seguros Agrarios',           'route' => 'producer.agri-insurance.index',            'active' => request()->routeIs('producer.agri-insurance*'), 'new' => true],
         ];
 

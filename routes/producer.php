@@ -502,6 +502,20 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/{cueExport}/edit', \App\Livewire\Viticulturist\CueExports\Edit::class)->name('edit');
         });
 
+        // Gestión de Envases Fitosanitarios (SIGFITO / FIELD)
+        Route::prefix('container-returns')->name('container-returns.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\ContainerReturns\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\ContainerReturns\Create::class)->name('create');
+            Route::get('/{containerReturn}/edit', \App\Livewire\Viticulturist\ContainerReturns\Edit::class)->name('edit');
+        });
+
+        // Declaraciones de Vendimia
+        Route::prefix('harvest-declarations')->name('harvest-declarations.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\HarvestDeclarations\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\HarvestDeclarations\Create::class)->name('create');
+            Route::get('/{harvestDeclaration}/edit', \App\Livewire\Viticulturist\HarvestDeclarations\Edit::class)->name('edit');
+        });
+
         Route::get('/official-reports', \App\Livewire\Viticulturist\OfficialReports\Index::class)->name('official-reports.index');
         Route::get('/official-reports/create', \App\Livewire\Viticulturist\OfficialReports\Create::class)->name('official-reports.create');
         Route::get('/official-reports/{report}/download', function (\App\Models\OfficialReport $report) {

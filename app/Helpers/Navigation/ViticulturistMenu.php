@@ -100,29 +100,35 @@ class ViticulturistMenu
         ];
 
         $menu['registros_oficiales'] = [
-            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos', 'route' => 'viticulturist.residue-analyses.index',    'active' => request()->routeIs('viticulturist.residue-analyses.*')],
-            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',  'route' => 'viticulturist.residue-managements.index', 'active' => request()->routeIs('viticulturist.residue-managements.*')],
-            ['icon' => 'bolt',                     'label' => 'Consumo Energético',   'route' => 'viticulturist.energy-usages.index',       'active' => request()->routeIs('viticulturist.energy-usages.*')],
-            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',    'route' => 'viticulturist.cue-exports.index',         'active' => request()->routeIs('viticulturist.cue-exports.*')],
-            ['icon' => 'document',                 'label' => 'Informes Oficiales',   'route' => 'viticulturist.official-reports.index',    'active' => request()->routeIs('viticulturist.official-reports.*')],
+            ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno',      'route' => 'viticulturist.pac-compliance',                  'active' => request()->routeIs('viticulturist.pac-compliance')],
+            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',       'route' => 'viticulturist.residue-analyses.index',          'active' => request()->routeIs('viticulturist.residue-analyses.*')],
+            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',        'route' => 'viticulturist.residue-managements.index',       'active' => request()->routeIs('viticulturist.residue-managements.*')],
+            ['icon' => 'bolt',                     'label' => 'Consumo Energético',         'route' => 'viticulturist.energy-usages.index',             'active' => request()->routeIs('viticulturist.energy-usages.*')],
+            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',     'route' => 'viticulturist.container-returns.index',         'active' => request()->routeIs('viticulturist.container-returns.*')],
+            ['icon' => 'document-arrow-up',        'label' => 'Declaración de Vendimia',    'route' => 'viticulturist.harvest-declarations.index',      'active' => request()->routeIs('viticulturist.harvest-declarations.*')],
+            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',          'route' => 'viticulturist.cue-exports.index',               'active' => request()->routeIs('viticulturist.cue-exports.*')],
+            ['icon' => 'document',                 'label' => 'Informes Oficiales',         'route' => 'viticulturist.official-reports.index',          'active' => request()->routeIs('viticulturist.official-reports.*')],
         ];
 
         $menu['plots_analysis'] = [
-            ['icon' => 'map',                 'label' => 'Parcelas',           'route' => 'plots.index',                          'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*')],
-            ['icon' => 'book-open',           'label' => 'Plantaciones',       'route' => 'plots.plantings.index',                'active' => request()->routeIs('plots.plantings.*')],
-            ['icon' => 'map-pin',             'label' => 'SIGPAC',             'route' => 'sigpac.codes',                         'active' => request()->routeIs('sigpac.*')],
-            ['icon' => 'globe-alt',           'label' => 'Teledetección',      'route' => 'remote-sensing.dashboard',             'active' => request()->routeIs('remote-sensing.*')],
-            ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial','route' => 'plots.territory',                      'active' => request()->routeIs('plots.territory')],
-            ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas','route' => 'viticulturist.plot-environments.index','active' => request()->routeIs('viticulturist.plot-environments.*')],
+            ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'plots.index',                           'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*')],
+            ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',                 'active' => request()->routeIs('plots.plantings.*')],
+            ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                          'active' => request()->routeIs('sigpac.*')],
+            ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',              'active' => request()->routeIs('remote-sensing.*')],
+            ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial', 'route' => 'plots.territory',                       'active' => request()->routeIs('plots.territory')],
+            ['icon' => 'cloud',               'label' => 'Meteorología',        'route' => 'viticulturist.meteorology.index',       'active' => request()->routeIs('viticulturist.meteorology*')],
+            ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas', 'route' => 'viticulturist.plot-environments.index', 'active' => request()->routeIs('viticulturist.plot-environments.*')],
+            ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'viticulturist.field-activities.index',  'active' => request()->routeIs('viticulturist.field-activities*')],
         ];
 
         $menu['resources'] = [
-            ['icon' => 'user-group',          'label' => 'Personal',                 'route' => 'viticulturist.personal.index',              'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*')],
-            ['icon' => 'adjustments-vertical','label' => 'Maquinaria',               'route' => 'viticulturist.machinery.index',             'active' => request()->routeIs('viticulturist.machinery*')],
-            ['icon' => 'cube',                'label' => 'Contenedores',             'route' => 'viticulturist.containers.index',            'active' => request()->routeIs('viticulturist.containers.*')],
-            ['icon' => 'building-storefront', 'label' => 'Almacén de Insumos',       'route' => 'viticulturist.almacen.index',               'active' => request()->routeIs('viticulturist.almacen.*')],
-            ['icon' => 'beaker',              'label' => 'Productos Fitosanitarios', 'route' => 'viticulturist.phytosanitary-products.index', 'active' => request()->routeIs('viticulturist.phytosanitary-products.*')],
-            ['icon' => 'user-plus',           'label' => 'Subcontratación',          'route' => 'viticulturist.subcontracting.index',        'active' => request()->routeIs('viticulturist.subcontracting*')],
+            ['icon' => 'user-group',          'label' => 'Personal',                 'route' => 'viticulturist.personal.index',               'active' => request()->routeIs('viticulturist.personal*') || request()->routeIs('viticulturist.viticulturists.*')],
+            ['icon' => 'adjustments-vertical','label' => 'Maquinaria',               'route' => 'viticulturist.machinery.index',              'active' => request()->routeIs('viticulturist.machinery*')],
+            ['icon' => 'cube',                'label' => 'Contenedores',             'route' => 'viticulturist.containers.index',             'active' => request()->routeIs('viticulturist.containers.*')],
+            ['icon' => 'building-storefront', 'label' => 'Almacén de Insumos',       'route' => 'viticulturist.almacen.index',                'active' => request()->routeIs('viticulturist.almacen.*') && !request()->routeIs('viticulturist.almacen.stock.analytics') && !request()->routeIs('viticulturist.almacen.stock.movements')],
+            ['icon' => 'chart-bar-square',    'label' => 'Analítica de Stock',       'route' => 'viticulturist.almacen.stock.analytics',      'active' => request()->routeIs('viticulturist.almacen.stock.analytics')],
+            ['icon' => 'beaker',              'label' => 'Productos Fitosanitarios', 'route' => 'viticulturist.phytosanitary-products.index',  'active' => request()->routeIs('viticulturist.phytosanitary-products.*')],
+            ['icon' => 'user-plus',           'label' => 'Subcontratación',          'route' => 'viticulturist.subcontracting.index',         'active' => request()->routeIs('viticulturist.subcontracting*')],
         ];
 
         $menu['compliance'] = [
@@ -130,7 +136,7 @@ class ViticulturistMenu
             ['icon' => 'shield-check',      'label' => 'Autorizaciones Comerciales', 'route' => 'viticulturist.commercial-authorizations.index', 'active' => request()->routeIs('viticulturist.commercial-authorizations.*')],
             ['icon' => 'user',              'label' => 'Asesorías Técnicas',         'route' => 'viticulturist.advisory-memberships.index',      'active' => request()->routeIs('viticulturist.advisory-memberships.*')],
             ['icon' => 'identification',    'label' => 'Aplicadores ROPO',           'route' => 'viticulturist.field-applicators.index',         'active' => request()->routeIs('viticulturist.field-applicators.*')],
-            ['icon' => 'cog-8-tooth',       'label' => 'Equipos ITB/ITEA',           'route' => 'viticulturist.field-equipment.index',           'active' => request()->routeIs('viticulturist.field-equipment.*')],
+            ['icon' => 'cog-8-tooth',        'label' => 'Equipos ITB/ITEA',           'route' => 'viticulturist.field-equipment.index',           'active' => request()->routeIs('viticulturist.field-equipment.*')],
             ['icon' => 'lifebuoy',          'label' => 'Seguros Agrarios',           'route' => 'viticulturist.agri-insurance.index',            'active' => request()->routeIs('viticulturist.agri-insurance*')],
         ];
 
@@ -140,8 +146,6 @@ class ViticulturistMenu
             ['icon' => 'document-text','label' => 'Declaraciones',        'route' => 'viticulturist.pac.declarations.index', 'active' => request()->routeIs('viticulturist.pac.declarations.*')],
             ['icon' => 'sparkles',     'label' => 'Eco-regímenes',        'route' => 'viticulturist.pac.eco-schemes.index',  'active' => request()->routeIs('viticulturist.pac.eco-schemes.*')],
             ['icon' => 'banknotes',    'label' => 'Historial de Ayudas',  'route' => 'viticulturist.pac.payments.index',     'active' => request()->routeIs('viticulturist.pac.payments.*')],
-            ['divider' => true],
-            ['icon' => 'chart-bar',    'label' => 'Cumplimiento Cuaderno','route' => 'viticulturist.pac-compliance',         'active' => request()->routeIs('viticulturist.pac-compliance')],
         ];
 
         $menu['billing'] = [

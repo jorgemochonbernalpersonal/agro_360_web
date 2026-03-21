@@ -306,6 +306,12 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{plotEnvironment}/edit', \App\Livewire\Viticulturist\PlotEnvironments\Edit::class)->name('edit');
         });
 
+        // Meteorología
+        Route::get('/meteorology', \App\Livewire\Winery\UnderConstruction::class)->name('meteorology.index');
+
+        // Actividades de Campo
+        Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');
+
         // Contenedores
         Route::prefix('containers')->name('containers.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Containers\Index::class)->name('index');
@@ -424,6 +430,20 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/{invoice}/pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'invoice'])->name('pdf');
             Route::get('/{invoice}/albaran-pdf', [\App\Http\Controllers\Viticulturist\InvoicePdfController::class, 'deliveryNote'])->name('delivery-note-pdf');
             Route::get('/{invoice}', \App\Livewire\Viticulturist\Invoices\Show::class)->name('show');
+        });
+
+        // Gestión de Envases Fitosanitarios (SIGFITO / FIELD)
+        Route::prefix('container-returns')->name('container-returns.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\ContainerReturns\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\ContainerReturns\Create::class)->name('create');
+            Route::get('/{containerReturn}/edit', \App\Livewire\Viticulturist\ContainerReturns\Edit::class)->name('edit');
+        });
+
+        // Declaraciones de Vendimia
+        Route::prefix('harvest-declarations')->name('harvest-declarations.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\HarvestDeclarations\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\HarvestDeclarations\Create::class)->name('create');
+            Route::get('/{harvestDeclaration}/edit', \App\Livewire\Viticulturist\HarvestDeclarations\Edit::class)->name('edit');
         });
 
         // Informes Oficiales
