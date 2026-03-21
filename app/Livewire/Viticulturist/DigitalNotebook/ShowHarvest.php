@@ -38,7 +38,8 @@ class ShowHarvest extends Component
             'activity.machinery',
             'plotPlanting.grapeVariety',
             'container',
-            'editor'
+            'editor',
+            'grapeReception',
         ])
         ->findOrFail($this->harvest_id);
 

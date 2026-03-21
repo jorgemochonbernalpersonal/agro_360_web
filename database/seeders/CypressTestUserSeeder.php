@@ -82,6 +82,24 @@ class CypressTestUserSeeder extends Seeder
 
         $this->command->info('✅ Usuario supervisor creado: supervisor@test.com / password');
 
+        $producer = User::firstOrCreate(
+            ['email' => 'producer@test.com'],
+            [
+                'name'                => 'Test Producer',
+                'password'            => Hash::make('password'),
+                'role'                => 'producer',
+                'email_verified_at'   => now(),
+                'can_login'           => true,
+                'password_must_reset' => false,
+            ]
+        );
+
+        if (!$producer->is_beta_user) {
+            $producer->grantBetaAccess();
+        }
+
+        $this->command->info('✅ Usuario producer creado: producer@test.com / password');
+
         // ── Vínculo bodega ↔ viticultor ───────────────────────────────────────
 
         WineryViticulturist::firstOrCreate(
@@ -215,6 +233,98 @@ class CypressTestUserSeeder extends Seeder
         );
 
         $this->command->info('✅ Plantación del viticultor creada');
+
+        // ── Datos de apoyo del producer (auto-recepción) ──────────────────────
+
+        if ($containerType) {
+            $unitId = DB::table('units_of_measurement')->where('symbol', 'kg')->value('id')
+                ?? DB::table('units_of_measurement')->first()?->id;
+
+            // Contenedor principal del producer
+            Container::firstOrCreate(
+                [
+                    'user_id' => $producer->id,
+                    'name'    => 'Depósito Producer Cypress A',
+                ],
+                [
+                    'type_id'                => $containerType->id,
+                    'capacity'               => 30000,
+                    'used_capacity'          => 0,
+                    'unit'                   => 'kg',
+                    'unit_of_measurement_id' => $unitId,
+                    'archived'               => false,
+                ]
+            );
+
+            // Segundo contenedor para tests de assign
+            Container::firstOrCreate(
+                [
+                    'user_id' => $producer->id,
+                    'name'    => 'Depósito Producer Cypress B',
+                ],
+                [
+                    'type_id'                => $containerType->id,
+                    'capacity'               => 15000,
+                    'used_capacity'          => 0,
+                    'unit'                   => 'kg',
+                    'unit_of_measurement_id' => $unitId,
+                    'archived'               => false,
+                ]
+            );
+
+            $this->command->info('✅ Contenedores del producer creados');
+        }
+
+        Campaign::firstOrCreate(
+            [
+                'viticulturist_id' => $producer->id,
+                'year'             => $currentYear,
+            ],
+            [
+                'name'        => "Vendimia Producer Cypress {$currentYear}",
+                'start_date'  => "{$currentYear}-08-01",
+                'end_date'    => "{$currentYear}-11-30",
+                'active'      => true,
+                'description' => 'Campaña producer para tests E2E Cypress',
+            ]
+        );
+
+        $this->command->info("✅ Campaña producer {$currentYear} creada");
+
+        if ($communityId && $provinceId && $municipalityId) {
+            $producerPlot = Plot::firstOrCreate(
+                [
+                    'viticulturist_id' => $producer->id,
+                    'name'             => 'Parcela Producer Cypress',
+                ],
+                [
+                    'area'                    => 3.0,
+                    'autonomous_community_id' => $communityId,
+                    'province_id'             => $provinceId,
+                    'municipality_id'         => $municipalityId,
+                    'active'                  => true,
+                    'is_locked'               => false,
+                ]
+            );
+
+            PlotPlanting::firstOrCreate(
+                [
+                    'plot_id' => $producerPlot->id,
+                    'name'    => 'Plantación Producer Cypress',
+                ],
+                [
+                    'grape_variety_id' => $grapeVariety->id,
+                    'area_planted'     => 3.0,
+                    'harvest_limit_kg' => 15000,
+                    'planting_year'    => 2012,
+                    'status'           => 'active',
+                    'active'           => true,
+                ]
+            );
+
+            $this->command->info('✅ Parcela + plantación del producer creadas');
+        }
+
         $this->command->info('');
         $this->command->info('🎉 Datos de apoyo para flujos E2E listos');
     }

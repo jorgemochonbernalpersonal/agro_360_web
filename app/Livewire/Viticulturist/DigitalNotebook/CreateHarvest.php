@@ -29,7 +29,7 @@ class CreateHarvest extends Component
     // Básico
     public $plot_id = '';
     public $plot_planting_id = '';
-    public $container_id = ''; // Contenedor obligatorio
+    public $container_id = ''; // Contenedor opcional (cuaderno de campo)
     public $activity_date = '';
     public $harvest_start_date = '';
     public $harvest_end_date = '';

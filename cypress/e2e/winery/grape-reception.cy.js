@@ -1,6 +1,6 @@
 /**
  * Winery Grape Reception - E2E Tests
- * Cubre: Index (list, filtros), Create, Show, Edit
+ * Cubre: Index (list, filtros), Create, Show, Edit, Assign
  *
  * NOTA: Create requiere datos previos en BD:
  *  - Viticultor vinculado a la bodega (WineryViticulturist)
@@ -319,6 +319,101 @@ describe('Winery Grape Reception', () => {
         cy.wait(2000)
 
         cy.url().should('include', '/edit')
+      })
+    })
+  })
+
+  // ─── ASSIGN ───────────────────────────────────────────────────────────────
+
+  describe('Assign', () => {
+    it('navega al formulario de asignación de contenedor', () => {
+      cy.get('body').then(($body) => {
+        const assignLinks = $body.find('a[href*="/winery/grape-reception/"][href*="/assign"]')
+
+        if (assignLinks.length > 0) {
+          cy.wrap(assignLinks.first()).click({ force: true })
+          cy.waitForLivewire()
+          cy.url().should('include', '/assign')
+          cy.get('[wire\\:model="container_id"]').should('exist')
+        } else {
+          cy.log('No assign links found on index - skipping')
+        }
+      })
+    })
+
+    it('el formulario de assign precarga el contenedor actual', () => {
+      cy.get('body').then(($body) => {
+        const assignLinks = $body.find('a[href*="/winery/grape-reception/"][href*="/assign"]')
+
+        if (assignLinks.length === 0) {
+          cy.log('No assign links found - skipping')
+          return
+        }
+
+        cy.wrap(assignLinks.first()).click({ force: true })
+        cy.waitForLivewire()
+
+        // El select debe tener una opción seleccionada (el contenedor actual)
+        cy.get('[wire\\:model="container_id"]').then(($sel) => {
+          const selected = $sel.val()
+          cy.log(`Contenedor precargado: ${selected}`)
+          expect(selected).to.not.equal('')
+        })
+      })
+    })
+
+    it('reasigna recepción a un contenedor diferente', () => {
+      cy.get('body').then(($body) => {
+        const assignLinks = $body.find('a[href*="/winery/grape-reception/"][href*="/assign"]')
+
+        if (assignLinks.length === 0) {
+          cy.log('No assign links found - skipping')
+          return
+        }
+
+        cy.wrap(assignLinks.first()).click({ force: true })
+        cy.waitForLivewire()
+
+        cy.get('[wire\\:model="container_id"]').then(($sel) => {
+          const currentVal = $sel.val()
+          const options    = $sel.find('option').filter((i, el) => el.value !== '' && el.value !== currentVal)
+
+          if (options.length === 0) {
+            cy.log('No alternative containers available - skipping reassign test')
+            return
+          }
+
+          cy.get('[wire\\:model="container_id"]').select(options.first().val(), { force: true })
+          cy.waitForLivewire()
+
+          cy.get('[data-cy="submit-button"]').click({ force: true })
+          cy.wait(3000)
+
+          cy.url().should('include', '/winery/grape-reception')
+          cy.url().should('not.include', '/assign')
+        })
+      })
+    })
+
+    it('muestra error al intentar asignar sin seleccionar contenedor', () => {
+      cy.get('body').then(($body) => {
+        const assignLinks = $body.find('a[href*="/winery/grape-reception/"][href*="/assign"]')
+
+        if (assignLinks.length === 0) {
+          cy.log('No assign links found - skipping')
+          return
+        }
+
+        cy.wrap(assignLinks.first()).click({ force: true })
+        cy.waitForLivewire()
+
+        cy.get('[wire\\:model="container_id"]').select('', { force: true })
+        cy.waitForLivewire()
+
+        cy.get('[data-cy="submit-button"]').click({ force: true })
+        cy.wait(2000)
+
+        cy.url().should('include', '/assign')
       })
     })
   })

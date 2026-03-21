@@ -14,6 +14,7 @@ class Harvest extends Model
 
     protected $fillable = [
         'activity_id',
+        'notebook_harvest_id',
         'winery_id',
         'batch_id',
         'plot_planting_id',
@@ -79,6 +80,24 @@ class Harvest extends Model
         'potential_alcohol' => 'decimal:2',
         'disqualified' => 'boolean',
     ];
+
+    /**
+     * Cosecha del cuaderno de campo que originó esta recepción (solo producer, flujo "Promover").
+     * Null en recepciones winery puras o en registros del cuaderno.
+     */
+    public function notebookHarvest(): BelongsTo
+    {
+        return $this->belongsTo(Harvest::class, 'notebook_harvest_id');
+    }
+
+    /**
+     * Recepción de bodega generada a partir de esta cosecha del cuaderno (flujo "Promover").
+     * Null hasta que el producer la promueva.
+     */
+    public function grapeReception(): HasOne
+    {
+        return $this->hasOne(Harvest::class, 'notebook_harvest_id');
+    }
 
     /**
      * Actividad agrícola base (solo registros del viticultor; null en recepciones de bodega)

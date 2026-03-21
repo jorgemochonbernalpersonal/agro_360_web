@@ -123,6 +123,51 @@ Cypress.Commands.add('loginAsWinery', (email = 'winery@test.com', password = 'pa
 })
 
 /**
+ * Login as a producer user
+ * @param {string} email - User email (default: producer@test.com)
+ * @param {string} password - User password (default: password)
+ */
+Cypress.Commands.add('loginAsProducer', (email = 'producer@test.com', password = 'password') => {
+  cy.session([email, password], () => {
+    cy.visit('/login')
+    cy.get('input[wire\\:model="email"]').should('be.visible')
+    cy.wait(500)
+    cy.get('input[wire\\:model="email"]').clear({ force: true }).type(email, { force: true })
+    cy.wait(200)
+    cy.get('input[wire\\:model="password"]').clear({ force: true }).type(password, { force: true })
+    cy.wait(200)
+    cy.get('button[type="submit"]').first().click({ force: true })
+    cy.wait(3000)
+    cy.url({ timeout: 15000 }).then((url) => {
+      if (url.includes('/login')) {
+        cy.get('body').then(($body) => {
+          if ($body.text().includes('credenciales') || $body.text().includes('error')) {
+            throw new Error('Login failed - invalid credentials or user does not exist')
+          }
+        })
+      } else if (url.includes('/beta/expired')) {
+        throw new Error('User beta access expired - check CypressTestUserSeeder grants beta access')
+      } else {
+        cy.log('✓ Login producer successful')
+      }
+    })
+  }, {
+    validate: () => {
+      cy.visit('/producer/dashboard')
+      cy.url().should('include', '/producer/')
+    }
+  })
+
+  cy.visit('/producer/dashboard')
+  cy.url({ timeout: 10000 }).then((url) => {
+    if (url.includes('/beta/expired')) {
+      throw new Error('User needs beta access - check CypressTestUserSeeder')
+    }
+    expect(url).to.satisfy((u) => u.includes('/producer/'))
+  })
+})
+
+/**
  * Login as a specific user type
  * @param {string} role - User role (admin, supervisor, winery, viticulturist)
  * @param {string} email - User email

@@ -449,6 +449,7 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/harvest/create', CreateHarvest::class)->name('harvest.create');
             Route::get('/harvest/{harvest}', ShowHarvest::class)->name('harvest.show');
             Route::get('/harvest/{harvest}/edit', EditHarvest::class)->name('harvest.edit');
+            Route::get('/harvest/{harvest}/promote', \App\Livewire\Producer\Harvest\PromoteToReception::class)->name('harvest.promote');
         });
 
         // ── Fenología ─────────────────────────────────────────────────────

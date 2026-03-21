@@ -4,6 +4,26 @@
         description="Información completa de la cosecha y sus contenedores"
     >
         <x-slot:actions>
+            @if(auth()->user()->isProducer())
+                @if($harvest->grapeReception)
+                    <flux:button
+                        :href="route('producer.grape-reception.show', $harvest->grapeReception->id)"
+                        variant="ghost"
+                        icon="check-circle"
+                    >
+                        Ver recepción en bodega
+                    </flux:button>
+                @else
+                    <flux:button
+                        :href="route('producer.digital-notebook.harvest.promote', $harvest->id)"
+                        variant="filled"
+                        icon="arrow-right-circle"
+                        wire:navigate
+                    >
+                        Registrar en bodega
+                    </flux:button>
+                @endif
+            @endif
             <flux:button
                 :href="route('viticulturist.digital-notebook.harvest.edit', $harvest->id)"
                 variant="primary"
