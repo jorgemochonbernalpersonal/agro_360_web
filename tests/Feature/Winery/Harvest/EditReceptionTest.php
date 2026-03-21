@@ -47,6 +47,12 @@ class EditReceptionTest extends WineryTestCase
             'id'           => $this->reception->id,
             'total_weight' => 1200,
         ]);
+
+        // HarvestObserver → ContainerStockService::adjustWeight() debe reflejar el nuevo peso
+        $this->assertDatabaseHas('containers', [
+            'id'            => $this->container->id,
+            'used_capacity' => 1200,
+        ]);
     }
 
     public function test_can_update_ticket_number_and_notes(): void
@@ -132,6 +138,38 @@ class EditReceptionTest extends WineryTestCase
             ->set('container_id', (string) $this->container->id)
             ->call('save')
             ->assertHasNoErrors();
+
+        // HarvestObserver → adjustWeight(): used_capacity debe reflejar el peso nuevo
+        $this->assertDatabaseHas('containers', [
+            'id'            => $this->container->id,
+            'used_capacity' => 4500,
+        ]);
+    }
+
+    public function test_edit_changing_container_transfers_stock(): void
+    {
+        // Contenedor original: capacity=5000, used=1000 (from setUp).
+        // Nuevo contenedor: capacity=2000, used=0.
+        // Tras editar a peso=800 en nuevo contenedor:
+        //   - original debe quedar used=0
+        //   - nuevo debe quedar used=800
+        $newContainer = $this->makeContainer(['capacity' => 2000, 'used_capacity' => 0]);
+
+        Livewire::test(Edit::class, ['harvest' => $this->reception])
+            ->set('total_weight', '800')
+            ->set('container_id', (string) $newContainer->id)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        // HarvestObserver → ContainerStockService::transferContainer()
+        $this->assertDatabaseHas('containers', [
+            'id'            => $this->container->id,
+            'used_capacity' => 0,     // liberado
+        ]);
+        $this->assertDatabaseHas('containers', [
+            'id'            => $newContainer->id,
+            'used_capacity' => 800,   // incrementado
+        ]);
     }
 
     public function test_new_container_capacity_exceeded_shows_error(): void

@@ -44,6 +44,16 @@ class AssignReceptionTest extends WineryTestCase
             'id'           => $this->reception->id,
             'container_id' => $newContainer->id,
         ]);
+
+        // HarvestObserver → ContainerStockService::transferContainer()
+        $this->assertDatabaseHas('containers', [
+            'id'            => $this->container->id,
+            'used_capacity' => 0,     // contenedor original liberado
+        ]);
+        $this->assertDatabaseHas('containers', [
+            'id'            => $newContainer->id,
+            'used_capacity' => 1000,  // nuevo contenedor incrementado
+        ]);
     }
 
     public function test_mount_preloads_current_container(): void

@@ -139,6 +139,12 @@ class ProducerReceptionTest extends ProducerTestCase
             'total_weight' => 800,
             'status'       => 'active',
         ]);
+
+        // HarvestObserver → ContainerStockService::initializeStock()
+        $this->assertDatabaseHas('containers', [
+            'id'            => $this->container->id,
+            'used_capacity' => 800,
+        ]);
     }
 
     // ── Seguridad: container_id ───────────────────────────────────────────────
@@ -220,6 +226,12 @@ class ProducerReceptionTest extends ProducerTestCase
         $this->assertDatabaseHas('harvests', [
             'id'           => $reception->id,
             'total_weight' => 1200,
+        ]);
+
+        // HarvestObserver → adjustWeight()
+        $this->assertDatabaseHas('containers', [
+            'id'            => $this->container->id,
+            'used_capacity' => 1200,
         ]);
     }
 

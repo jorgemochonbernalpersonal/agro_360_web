@@ -47,6 +47,12 @@ class CreateReceptionTest extends WineryTestCase
             'total_weight'     => 1000,
             'status'           => 'active',
         ]);
+
+        // HarvestObserver → ContainerStockService::initializeStock() debe incrementar used_capacity
+        $this->assertDatabaseHas('containers', [
+            'id'            => $this->container->id,
+            'used_capacity' => 1000,
+        ]);
     }
 
     // ── Validation ────────────────────────────────────────────────────────────
