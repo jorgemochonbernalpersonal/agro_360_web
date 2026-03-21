@@ -151,4 +151,45 @@ describe('Winery Bottling', () => {
       })
     })
   })
+
+  // ── Validación de stock del contenedor ────────────────────────────────────
+
+  describe('Validación de capacidad del contenedor', () => {
+    it('muestra error si litros superan el vino disponible en contenedor', () => {
+      cy.visit('/winery/bottling/create')
+      cy.waitForLivewire()
+
+      cy.getByWireModel('wine_id').then(($sel) => {
+        const opts = $sel.find('option').filter((i, el) => el.value !== '')
+        if (opts.length === 0) {
+          cy.log('Sin vinos, omitiendo')
+          return
+        }
+
+        cy.wrap($sel).select(opts.first().val(), { force: true })
+        cy.waitForLivewire()
+
+        cy.getByWireModel('container_id').then(($contSel) => {
+          const contOpts = $contSel.find('option').filter((i, el) => el.value !== '')
+          if (contOpts.length === 0) {
+            cy.log('Sin contenedores, omitiendo')
+            return
+          }
+
+          cy.wrap($contSel).select(contOpts.first().val(), { force: true })
+          cy.waitForLivewire()
+
+          cy.get('[wire\\:model="quantity_liters"]').clear().type('999999999')
+          cy.get('[wire\\:model="quantity_bottles"]').clear().type('1000')
+          cy.get('[wire\\:model="bottling_date"]').clear().type(new Date().toISOString().split('T')[0])
+          cy.get('[wire\\:model="bottle_format"]').clear().type('750')
+          cy.get('[wire\\:model="lot_number"]').clear().type('LOT-OVERTEST')
+
+          cy.get('[data-cy="submit-button"]').click({ force: true })
+          cy.wait(2000)
+          cy.url().should('include', '/winery/bottling/create')
+        })
+      })
+    })
+  })
 })

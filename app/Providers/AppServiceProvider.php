@@ -15,7 +15,6 @@ use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\WineLoss;
 use App\Models\PlotRemoteSensing;
-use App\Models\WineTransfer;
 use App\Observers\AgriculturalActivityObserver;
 use App\Observers\PlotRemoteSensingObserver;
 use App\Observers\CampaignObserver;
@@ -27,7 +26,6 @@ use App\Observers\PhytosanitaryTreatmentObserver;
 use App\Observers\PlotObserver;
 use App\Observers\PlotPlantingObserver;
 use App\Observers\WineLossObserver;
-use App\Observers\WineTransferObserver;
 use App\Policies\AgriculturalActivityPolicy;
 use App\Policies\CampaignPolicy;
 use App\Policies\CrewPolicy;
@@ -124,7 +122,9 @@ class AppServiceProvider extends ServiceProvider
         Campaign::observe(CampaignObserver::class);
         PhytosanitaryProduct::observe(PhytosanitaryProductObserver::class);
         PhytosanitaryTreatment::observe(PhytosanitaryTreatmentObserver::class);
-        WineTransfer::observe(WineTransferObserver::class);
+        // WineTransferObserver eliminado: WineContainerStockService::recordTransfer/revertTransfer
+        // gestiona wine_volume_liters y ContainerHistory. El observer era código anterior al servicio
+        // y provocaba doble conteo en getTotalUsed() al modificar used_capacity erróneamente.
         WineLoss::observe(WineLossObserver::class);
         PlotRemoteSensing::observe(PlotRemoteSensingObserver::class);
     }
