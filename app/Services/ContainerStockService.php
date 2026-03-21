@@ -55,7 +55,7 @@ class ContainerStockService
             ]);
 
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     if (! $container->hasAvailableCapacity($harvest->total_weight)) {
                         throw new \Exception(
@@ -133,7 +133,7 @@ class ContainerStockService
             ]);
 
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     if ($difference > 0) {
                         if (! $container->hasAvailableCapacity($difference)) {
@@ -184,7 +184,7 @@ class ContainerStockService
         DB::transaction(function () use ($harvest, $oldContainerId, $newContainerId) {
             // Liberar del contenedor antiguo
             if ($oldContainerId) {
-                $oldContainer = Container::find($oldContainerId);
+                $oldContainer = Container::lockForUpdate()->find($oldContainerId);
                 if ($oldContainer) {
                     $oldContainer->decrementUsedCapacity($harvest->total_weight);
 
@@ -210,7 +210,7 @@ class ContainerStockService
 
             // Asignar al nuevo contenedor
             if ($newContainerId) {
-                $newContainer = Container::find($newContainerId);
+                $newContainer = Container::lockForUpdate()->find($newContainerId);
                 if ($newContainer) {
                     if (! $newContainer->hasAvailableCapacity($harvest->total_weight)) {
                         throw new \Exception(
@@ -291,7 +291,7 @@ class ContainerStockService
 
             // Liberar contenedor antiguo con el PESO VIEJO
             if ($oldContainerId) {
-                $oldContainer = Container::find($oldContainerId);
+                $oldContainer = Container::lockForUpdate()->find($oldContainerId);
                 if ($oldContainer) {
                     $oldContainer->decrementUsedCapacity($oldWeight);
 
@@ -317,7 +317,7 @@ class ContainerStockService
 
             // Asignar contenedor nuevo con el PESO NUEVO
             if ($newContainerId) {
-                $newContainer = Container::find($newContainerId);
+                $newContainer = Container::lockForUpdate()->find($newContainerId);
                 if ($newContainer) {
                     if (! $newContainer->hasAvailableCapacity($newWeight)) {
                         throw new \Exception(
@@ -367,7 +367,7 @@ class ContainerStockService
                 return;
             }
 
-            $container = Container::find($harvest->container_id);
+            $container = Container::lockForUpdate()->find($harvest->container_id);
             if (! $container) {
                 return;
             }
@@ -448,7 +448,7 @@ class ContainerStockService
 
             // Solo actualiza los sub-campos de stock, NO current_quantity ni used_capacity
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     $state = $this->getOrCreateContainerState($container, $harvest);
                     $state->update([
@@ -508,7 +508,7 @@ class ContainerStockService
 
             // Solo actualiza sub-campos, NO current_quantity ni used_capacity
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     $state = ContainerCurrentState::where('container_id', $container->id)
                         ->where('harvest_id', $harvest->id)
@@ -577,7 +577,7 @@ class ContainerStockService
 
             // Salida física: baja used_capacity y current_quantity
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     $container->decrementUsedCapacity($item->quantity);
 
@@ -640,7 +640,7 @@ class ContainerStockService
 
             // Vuelta física: sube used_capacity y current_quantity
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     $container->incrementUsedCapacity($item->quantity);
 
@@ -711,7 +711,7 @@ class ContainerStockService
             ]);
 
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     $state = ContainerCurrentState::where('container_id', $container->id)
                         ->where('harvest_id', $harvest->id)
@@ -788,7 +788,7 @@ class ContainerStockService
             ]);
 
             if ($harvest->container_id) {
-                $container = Container::find($harvest->container_id);
+                $container = Container::lockForUpdate()->find($harvest->container_id);
                 if ($container) {
                     $container->decrementUsedCapacity($item->quantity);
 
@@ -859,7 +859,7 @@ class ContainerStockService
 
                 // La reserva no cambia used_capacity
                 if ($harvest->container_id) {
-                    $container = Container::find($harvest->container_id);
+                    $container = Container::lockForUpdate()->find($harvest->container_id);
                     if ($container) {
                         $state = ContainerCurrentState::where('container_id', $container->id)
                         ->where('harvest_id', $harvest->id)
@@ -897,7 +897,7 @@ class ContainerStockService
 
                 // Ajuste físico en el contenedor
                 if ($harvest->container_id) {
-                    $container = Container::find($harvest->container_id);
+                    $container = Container::lockForUpdate()->find($harvest->container_id);
                     if ($container) {
                         if ($diff > 0) {
                             $container->decrementUsedCapacity($diff);
