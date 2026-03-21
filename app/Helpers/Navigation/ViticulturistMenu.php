@@ -100,18 +100,25 @@ class ViticulturistMenu
         ];
 
         $menu['registros_oficiales'] = [
-            ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno',      'route' => 'viticulturist.pac-compliance',                       'active' => request()->routeIs('viticulturist.pac-compliance')],
-            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',       'route' => 'viticulturist.residue-analyses.index',               'active' => request()->routeIs('viticulturist.residue-analyses.*')],
-            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',        'route' => 'viticulturist.residue-managements.index',            'active' => request()->routeIs('viticulturist.residue-managements.*')],
-            ['icon' => 'bolt',                     'label' => 'Consumo Energético',         'route' => 'viticulturist.energy-usages.index',                  'active' => request()->routeIs('viticulturist.energy-usages.*')],
-            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',     'route' => 'viticulturist.container-returns.index',              'active' => request()->routeIs('viticulturist.container-returns.*')],
-            ['icon' => 'document-arrow-up',        'label' => 'Declaración de Vendimia',    'route' => 'viticulturist.harvest-declarations.index',           'active' => request()->routeIs('viticulturist.harvest-declarations.*')],
-            ['icon' => 'cube-transparent',         'label' => 'Subproductos Vendimia',      'route' => 'viticulturist.harvest-byproducts.index',             'active' => request()->routeIs('viticulturist.harvest-byproducts.*')],
-            ['icon' => 'beaker',                   'label' => 'Registro de Agua',           'route' => 'viticulturist.water-concessions.index',              'active' => request()->routeIs('viticulturist.water-concessions.*')],
-            ['icon' => 'funnel',                   'label' => 'Plan de Fertilización',      'route' => 'viticulturist.fertilization-plans.index',            'active' => request()->routeIs('viticulturist.fertilization-plans.*')],
-            ['icon' => 'shield-check',             'label' => 'Certificaciones y Sellos',   'route' => 'viticulturist.certifications.index',                 'active' => request()->routeIs('viticulturist.certifications.*')],
-            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',          'route' => 'viticulturist.cue-exports.index',                    'active' => request()->routeIs('viticulturist.cue-exports.*')],
-            ['icon' => 'document',                 'label' => 'Informes Oficiales',         'route' => 'viticulturist.official-reports.index',               'active' => request()->routeIs('viticulturist.official-reports.*')],
+            // ── Cuaderno ──────────────────────────────────────────────────
+            ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno',    'route' => 'viticulturist.pac-compliance',                     'active' => request()->routeIs('viticulturist.pac-compliance')],
+            ['divider' => true],
+            // ── Medio Ambiente ────────────────────────────────────────────
+            ['icon' => 'clipboard-document-check', 'label' => 'Análisis de Residuos',     'route' => 'viticulturist.residue-analyses.index',             'active' => request()->routeIs('viticulturist.residue-analyses.*')],
+            ['icon' => 'trash',                    'label' => 'Gestión de Residuos',      'route' => 'viticulturist.residue-managements.index',          'active' => request()->routeIs('viticulturist.residue-managements.*')],
+            ['icon' => 'bolt',                     'label' => 'Consumo Energético',       'route' => 'viticulturist.energy-usages.index',                'active' => request()->routeIs('viticulturist.energy-usages.*')],
+            ['icon' => 'beaker',                   'label' => 'Registro de Agua',         'route' => 'viticulturist.water-concessions.index',            'active' => request()->routeIs('viticulturist.water-concessions.*')],
+            ['icon' => 'funnel',                   'label' => 'Plan de Fertilización',    'route' => 'viticulturist.fertilization-plans.index',          'active' => request()->routeIs('viticulturist.fertilization-plans.*')],
+            ['divider' => true],
+            // ── Producción ────────────────────────────────────────────────
+            ['icon' => 'archive-box-x-mark',       'label' => 'Envases Fitosanitarios',   'route' => 'viticulturist.container-returns.index',            'active' => request()->routeIs('viticulturist.container-returns.*')],
+            ['icon' => 'document-arrow-up',        'label' => 'Declaración de Vendimia',  'route' => 'viticulturist.harvest-declarations.index',         'active' => request()->routeIs('viticulturist.harvest-declarations.*')],
+            ['icon' => 'cube-transparent',         'label' => 'Subproductos Vendimia',    'route' => 'viticulturist.harvest-byproducts.index',           'active' => request()->routeIs('viticulturist.harvest-byproducts.*')],
+            ['divider' => true],
+            // ── Calidad y Salida ──────────────────────────────────────────
+            ['icon' => 'shield-check',             'label' => 'Certificaciones y Sellos', 'route' => 'viticulturist.certifications.index',               'active' => request()->routeIs('viticulturist.certifications.*')],
+            ['icon' => 'arrow-up-tray',            'label' => 'Exportaciones CUE',        'route' => 'viticulturist.cue-exports.index',                  'active' => request()->routeIs('viticulturist.cue-exports.*')],
+            ['icon' => 'document',                 'label' => 'Informes Oficiales',       'route' => 'viticulturist.official-reports.index',             'active' => request()->routeIs('viticulturist.official-reports.*')],
         ];
 
         $menu['plots_analysis'] = [
