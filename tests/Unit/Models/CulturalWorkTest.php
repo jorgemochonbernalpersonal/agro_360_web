@@ -130,5 +130,80 @@ class CulturalWorkTest extends TestCase
         $this->assertNull($culturalWork->workers_count);
         $this->assertNull($culturalWork->description);
     }
+
+    // ── Campos de poda (Feb 2026) ───────────────────────────────────────────────
+
+    public function test_pruning_type_stored_correctly(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'cultural',
+            'activity_date' => now(),
+        ]);
+
+        $culturalWork = CulturalWork::create([
+            'activity_id'  => $activity->id,
+            'work_type'    => 'poda',
+            'pruning_type' => 'guyot',
+        ]);
+
+        $this->assertEquals('guyot', $culturalWork->pruning_type);
+    }
+
+    public function test_productive_buds_per_hectare_cast_to_integer(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'cultural',
+            'activity_date' => now(),
+        ]);
+
+        $culturalWork = CulturalWork::create([
+            'activity_id'                 => $activity->id,
+            'work_type'                   => 'poda',
+            'pruning_type'               => 'doble_guyot',
+            'productive_buds_per_hectare' => 45000,
+        ]);
+
+        $this->assertIsInt($culturalWork->productive_buds_per_hectare);
+        $this->assertEquals(45000, $culturalWork->productive_buds_per_hectare);
+    }
+
+    public function test_pruning_fields_nullable(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'cultural',
+            'activity_date' => now(),
+        ]);
+
+        $culturalWork = CulturalWork::create([
+            'activity_id'                 => $activity->id,
+            'work_type'                   => 'deshojado',
+            'pruning_type'               => null,
+            'productive_buds_per_hectare' => null,
+        ]);
+
+        $this->assertNull($culturalWork->pruning_type);
+        $this->assertNull($culturalWork->productive_buds_per_hectare);
+    }
 }
 

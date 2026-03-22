@@ -176,7 +176,7 @@
 
         <x-agro.form-actions
             :cancel-url="route('viticulturist.digital-notebook.cultural.index')"
-            submit-label="Registrar Labor"
+            submit-label="Actualizar Labor"
         />
     </form>
 </x-agro.form-card>
