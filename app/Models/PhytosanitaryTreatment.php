@@ -10,6 +10,7 @@ class PhytosanitaryTreatment extends Model
 {
     protected $fillable = [
         'activity_id',
+        'field_applicator_id',
         'product_id',
         'pest_id',
         'dose_per_hectare',
@@ -23,10 +24,12 @@ class PhytosanitaryTreatment extends Model
         'applicator_ropo_number',
         'reentry_period_days',
         'spray_volume',
-        // Caldo y asesoramiento
+        // Caldo, zona tampón y asesoramiento
         'water_volume_liters_ha',
+        'buffer_zone_respected',
+        'distance_to_water_m',
         'under_advisory',
-        'advisory_action_date',
+        'advisory_recommendation_date',
         // Flags IPM — Gestión Integrada de Plagas (RD 1311/2012)
         'prior_non_chemical_methods',
         'plague_monitoring',
@@ -36,21 +39,23 @@ class PhytosanitaryTreatment extends Model
     ];
 
     protected $casts = [
-        'dose_per_hectare'           => 'decimal:3',
-        'total_dose'                 => 'decimal:3',
-        'area_treated'               => 'decimal:3',
-        'wind_speed'                 => 'decimal:2',
-        'humidity'                   => 'decimal:2',
-        'spray_volume'               => 'decimal:2',
-        'water_volume_liters_ha'     => 'decimal:2',
-        'reentry_period_days'        => 'integer',
-        'advisory_action_date'       => 'date',
-        'under_advisory'             => 'boolean',
-        'prior_non_chemical_methods' => 'boolean',
-        'plague_monitoring'          => 'boolean',
-        'manual_mechanical_control'  => 'boolean',
-        'biological_control'         => 'boolean',
-        'cultural_preventions'       => 'boolean',
+        'dose_per_hectare'              => 'decimal:3',
+        'total_dose'                    => 'decimal:3',
+        'area_treated'                  => 'decimal:3',
+        'wind_speed'                    => 'decimal:2',
+        'humidity'                      => 'decimal:2',
+        'spray_volume'                  => 'decimal:2',
+        'water_volume_liters_ha'        => 'decimal:2',
+        'distance_to_water_m'           => 'decimal:2',
+        'reentry_period_days'           => 'integer',
+        'advisory_recommendation_date'  => 'date',
+        'under_advisory'                => 'boolean',
+        'buffer_zone_respected'         => 'boolean',
+        'prior_non_chemical_methods'    => 'boolean',
+        'plague_monitoring'             => 'boolean',
+        'manual_mechanical_control'     => 'boolean',
+        'biological_control'            => 'boolean',
+        'cultural_preventions'          => 'boolean',
     ];
 
     /**
@@ -75,6 +80,14 @@ class PhytosanitaryTreatment extends Model
     public function pest(): BelongsTo
     {
         return $this->belongsTo(Pest::class, 'pest_id');
+    }
+
+    /**
+     * Aplicador ROPO vinculado (FieldApplicator registrado)
+     */
+    public function fieldApplicator(): BelongsTo
+    {
+        return $this->belongsTo(FieldApplicator::class, 'field_applicator_id');
     }
 
     /**
