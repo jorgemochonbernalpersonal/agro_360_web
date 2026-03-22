@@ -167,7 +167,7 @@ class Create extends Component
             $campaignId = $this->campaign_id;
             $this->availablePlots = Plot::where('active', true)
                 ->where(function ($q) use ($user, $campaignId) {
-                    $q->whereHas('activities', function ($aq) use ($user, $campaignId) {
+                    $q->whereHas('agriculturalActivities', function ($aq) use ($user, $campaignId) {
                         $aq->where('campaign_id', $campaignId)
                            ->where('viticulturist_id', $user->id);
                     })

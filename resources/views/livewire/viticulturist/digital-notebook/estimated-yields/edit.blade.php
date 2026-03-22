@@ -2,6 +2,7 @@
     $icon = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>';
 @endphp
 
+<div class="space-y-0">
 @if($estimatedYield)
     <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
         <div class="flex items-start gap-3">
@@ -32,14 +33,14 @@
     icon-color="from-agro-500 to-agro-700"
     :back-url="route('viticulturist.digital-notebook.estimated-yields.index')"
 >
-    <form wire:submit="update" class="space-y-8">
+    <form wire:submit="update" class="space-y-8" data-cy="edit-estimated-yield-form">
         
         {{-- Filtros para seleccionar plantación --}}
         <x-agro.form-section title="Seleccionar Plantación" color="green">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
                     <flux:label required>Campaña</flux:label>
-                    <flux:select wire:model.live="campaign_id" id="campaign_id" required>
+                    <flux:select wire:model.live="campaign_id" id="campaign_id" data-cy="campaign-select" required>
                         <option value="">Selecciona una campaña</option>
                         @foreach($campaigns as $campaign)
                             <option value="{{ $campaign->id }}">Campaña {{ $campaign->year }}</option>
@@ -65,7 +66,7 @@
             <div class="mt-6">
                 <flux:field>
                     <flux:label required>Plantación</flux:label>
-                    <flux:select wire:model.live="plot_planting_id" id="plot_planting_id" required>
+                    <flux:select wire:model.live="plot_planting_id" id="plot_planting_id" data-cy="planting-select" required>
                         <option value="">Selecciona una plantación</option>
                         @foreach($plantings as $planting)
                             <option value="{{ $planting->id }}">
@@ -88,7 +89,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <flux:field>
                     <flux:label required>Ronda</flux:label>
-                    <flux:select wire:model="estimation_round" id="estimation_round" required>
+                    <flux:select wire:model="estimation_round" id="estimation_round" data-cy="estimation-round-select" required>
                         <option value="1">1 — Pre-envero</option>
                         <option value="2">2 — Envero</option>
                         <option value="3">3 — Pre-vendimia</option>
@@ -173,7 +174,7 @@
 
                 <flux:field>
                     <flux:label>Alcohol probable (%)</flux:label>
-                    <flux:input wire:model="potential_alcohol" type="number" step="0.1" min="0" max="25" id="potential_alcohol" />
+                    <flux:input wire:model="potential_alcohol" type="number" step="0.1" min="0" max="25" id="potential_alcohol" data-cy="potential-alcohol-input" />
                     <flux:error name="potential_alcohol" />
                 </flux:field>
 
@@ -213,7 +214,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
                     <flux:label required>Rendimiento por Hectárea (kg/ha)</flux:label>
-                    <flux:input wire:model.live="estimated_yield_per_hectare" type="number" step="0.001" min="0.01" id="estimated_yield_per_hectare" placeholder="0.00" required />
+                    <flux:input wire:model.live="estimated_yield_per_hectare" type="number" step="0.001" min="0.01" id="estimated_yield_per_hectare" data-cy="yield-per-hectare-input" placeholder="0.00" required />
                     <flux:error name="estimated_yield_per_hectare" />
                 </flux:field>
 
@@ -238,4 +239,5 @@
         <x-agro.form-actions :back-url="route('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Actualizar Estimación" />
     </form>
 </x-agro.form-card>
+</div>
 
