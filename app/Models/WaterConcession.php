@@ -55,6 +55,6 @@ class WaterConcession extends Model
     {
         return $this->expiry_date
             && !$this->expiry_date->isPast()
-            && $this->expiry_date->diffInDays(now()) <= 90;
+            && now()->diffInDays($this->expiry_date) <= 90;
     }
 }

@@ -59,7 +59,7 @@ class Certification extends Model
     {
         return $this->expiry_date
             && !$this->expiry_date->isPast()
-            && $this->expiry_date->diffInDays(now()) <= 60;
+            && now()->diffInDays($this->expiry_date) <= 60;
     }
 
     public function getTypeColorAttribute(): string
