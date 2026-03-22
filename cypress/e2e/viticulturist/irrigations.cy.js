@@ -82,6 +82,14 @@ describe('Riegos', () => {
       cy.get('input[id="flow_rate"]').should('exist')
     })
 
+    it('tiene selector de unidad de volumen (L / m³)', () => {
+      cy.get('[data-cy="water-volume-unit-select"]').should('exist')
+    })
+
+    it('tiene checkbox de fertirrigación', () => {
+      cy.get('[data-cy="is-fertirrigation-checkbox"]').should('exist')
+    })
+
     it('tiene radios de tipo de trabajo', () => {
       cy.get('[data-cy="work-type-crew-radio"]').should('exist')
       cy.get('[data-cy="work-type-individual-radio"]').should('exist')
@@ -121,6 +129,36 @@ describe('Riegos', () => {
       })
       cy.waitForLivewire()
       cy.url().should('include', '/irrigation/create')
+    })
+  })
+
+  // ── Create — fertirrigación condicional ────────────────────────────────────
+
+  describe('Create — fertirrigación', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/irrigation/create')
+      cy.waitForLivewire()
+    })
+
+    it('al marcar fertirrigación aparecen campos de producto y dosis', () => {
+      cy.get('[data-cy="is-fertirrigation-checkbox"]').check({ force: true })
+      cy.waitForLivewire()
+      cy.get('input[id="fertilizer_product"]').should('exist')
+      cy.get('input[id="fertilizer_dose_per_ha"]').should('exist')
+    })
+
+    it('al desmarcar fertirrigación se ocultan los campos de producto y dosis', () => {
+      cy.get('[data-cy="is-fertirrigation-checkbox"]').check({ force: true })
+      cy.waitForLivewire()
+      cy.get('[data-cy="is-fertirrigation-checkbox"]').uncheck({ force: true })
+      cy.waitForLivewire()
+      cy.get('input[id="fertilizer_product"]').should('not.exist')
+      cy.get('input[id="fertilizer_dose_per_ha"]').should('not.exist')
+    })
+
+    it('puede seleccionar unidad m³', () => {
+      cy.get('[data-cy="water-volume-unit-select"]').select('m3', { force: true })
+      cy.get('[data-cy="water-volume-unit-select"]').should('have.value', 'm3')
     })
   })
 
@@ -222,6 +260,7 @@ describe('Riegos', () => {
 
         cy.get('[data-cy="phenological-stage-select"]').select('Envero', { force: true })
         cy.get('[data-cy="water-volume-input"]').clear().type('750', { force: true })
+        cy.get('[data-cy="water-volume-unit-select"]').select('L', { force: true })
         cy.get('[data-cy="irrigation-method-select"]').select('goteo', { force: true })
 
         cy.get('[data-cy="water-source-select"]').select('Pozo legalizado', { force: true })

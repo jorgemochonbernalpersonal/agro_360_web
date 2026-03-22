@@ -36,6 +36,12 @@ class CreateIrrigation extends Component
     public $water_source = '';
     public $water_concession = '';
     public $flow_rate = '';
+    // Unidad de volumen
+    public $water_volume_unit = 'L';
+    // Fertirrigación
+    public $is_fertirrigation = false;
+    public $fertilizer_product = '';
+    public $fertilizer_dose_per_ha = '';
     // Resto
     public $workType = ''; // 'crew' o 'individual'
     public $crew_id = '';
@@ -114,6 +120,11 @@ class CreateIrrigation extends Component
             'water_source' => 'required|string|max:100',
             'water_concession' => 'required|string|max:100',
             'flow_rate' => 'required|numeric|min:0|max:100000',
+            'water_volume_unit' => 'required|in:L,m3',
+            // Fertirrigación
+            'is_fertirrigation' => 'boolean',
+            'fertilizer_product' => 'nullable|string|max:150',
+            'fertilizer_dose_per_ha' => 'nullable|numeric|min:0',
             // Resto
             'workType' => 'required|in:crew,individual',
             'crew_id' => 'required_if:workType,crew|nullable|exists:crews,id',
@@ -193,6 +204,7 @@ class CreateIrrigation extends Component
                 Irrigation::create([
                     'activity_id' => $activity->id,
                     'water_volume' => $this->water_volume ?: null,
+                    'water_volume_unit' => $this->water_volume_unit,
                     'irrigation_method' => $this->irrigation_method,
                     'duration_minutes' => $this->duration_minutes ?: null,
                     'soil_moisture_before' => $this->soil_moisture_before ?: null,
@@ -201,6 +213,10 @@ class CreateIrrigation extends Component
                     'water_source' => $this->water_source ?: null,
                     'water_concession' => $this->water_concession ?: null,
                     'flow_rate' => $this->flow_rate ?: null,
+                    // Fertirrigación
+                    'is_fertirrigation' => $this->is_fertirrigation,
+                    'fertilizer_product' => $this->is_fertirrigation ? ($this->fertilizer_product ?: null) : null,
+                    'fertilizer_dose_per_ha' => $this->is_fertirrigation ? ($this->fertilizer_dose_per_ha ?: null) : null,
                 ]);
             });
 

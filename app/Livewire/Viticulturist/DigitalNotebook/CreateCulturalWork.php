@@ -41,6 +41,8 @@ class CreateCulturalWork extends Component
     public $campaign_id = '';
     public $pruning_type = '';
     public $productive_buds_per_hectare = '';
+    public $defoliation_face = '';
+    public $topping_height_cm = '';
 
     public function mount()
     {
@@ -114,6 +116,8 @@ class CreateCulturalWork extends Component
             'notes' => 'nullable|string',
             'pruning_type' => 'nullable|string|max:50',
             'productive_buds_per_hectare' => 'nullable|integer|min:0',
+            'defoliation_face' => 'nullable|in:norte,sur,ambas',
+            'topping_height_cm' => 'nullable|integer|min:1|max:300',
         ];
     }
 
@@ -190,6 +194,8 @@ class CreateCulturalWork extends Component
                     'description' => $this->description,
                     'pruning_type' => $this->work_type === 'poda' ? ($this->pruning_type ?: null) : null,
                     'productive_buds_per_hectare' => $this->work_type === 'poda' ? ($this->productive_buds_per_hectare ?: null) : null,
+                    'defoliation_face' => $this->work_type === 'deshojado' ? ($this->defoliation_face ?: null) : null,
+                    'topping_height_cm' => $this->work_type === 'despuntado' ? ($this->topping_height_cm ?: null) : null,
                 ]);
             });
 

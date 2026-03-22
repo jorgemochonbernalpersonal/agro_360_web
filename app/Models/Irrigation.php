@@ -10,6 +10,7 @@ class Irrigation extends Model
     protected $fillable = [
         'activity_id',
         'water_volume',
+        'water_volume_unit',
         'irrigation_method',
         'duration_minutes',
         'soil_moisture_before',
@@ -18,6 +19,10 @@ class Irrigation extends Model
         'water_source',
         'water_concession',
         'flow_rate',
+        // Fertirrigación
+        'is_fertirrigation',
+        'fertilizer_product',
+        'fertilizer_dose_per_ha',
     ];
 
     protected $casts = [
@@ -25,6 +30,8 @@ class Irrigation extends Model
         'soil_moisture_before' => 'decimal:2',
         'soil_moisture_after' => 'decimal:2',
         'flow_rate' => 'decimal:2',
+        'is_fertirrigation' => 'boolean',
+        'fertilizer_dose_per_ha' => 'decimal:2',
     ];
 
     /**

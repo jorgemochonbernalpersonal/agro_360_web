@@ -12,6 +12,8 @@ class CulturalWork extends Model
         'work_type',
         'pruning_type',
         'productive_buds_per_hectare',
+        'defoliation_face',
+        'topping_height_cm',
         'hours_worked',
         'workers_count',
         'description',

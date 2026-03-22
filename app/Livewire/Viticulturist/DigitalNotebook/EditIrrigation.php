@@ -37,6 +37,10 @@ class EditIrrigation extends Component
     public $water_source = '';
     public $water_concession = '';
     public $flow_rate = '';
+    public $water_volume_unit = 'L';
+    public $is_fertirrigation = false;
+    public $fertilizer_product = '';
+    public $fertilizer_dose_per_ha = '';
     public $workType = '';
     public $crew_id = '';
     public $crew_member_id = '';
@@ -87,6 +91,7 @@ class EditIrrigation extends Component
         $this->machinery_id = $this->activity->machinery_id;
         
         $this->water_volume = $this->irrigation->water_volume;
+        $this->water_volume_unit = $this->irrigation->water_volume_unit ?? 'L';
         $this->irrigation_method = $this->irrigation->irrigation_method;
         $this->duration_minutes = $this->irrigation->duration_minutes;
         $this->soil_moisture_before = $this->irrigation->soil_moisture_before;
@@ -94,6 +99,9 @@ class EditIrrigation extends Component
         $this->water_source = $this->irrigation->water_source;
         $this->water_concession = $this->irrigation->water_concession;
         $this->flow_rate = $this->irrigation->flow_rate;
+        $this->is_fertirrigation = $this->irrigation->is_fertirrigation ?? false;
+        $this->fertilizer_product = $this->irrigation->fertilizer_product ?? '';
+        $this->fertilizer_dose_per_ha = $this->irrigation->fertilizer_dose_per_ha ?? '';
         
         if ($this->plot_id) {
             $this->availablePlantings = PlotPlanting::where('plot_id', $this->plot_id)
@@ -151,6 +159,10 @@ class EditIrrigation extends Component
             'water_source' => 'required|string|max:100',
             'water_concession' => 'required|string|max:100',
             'flow_rate' => 'required|numeric|min:0|max:100000',
+            'water_volume_unit' => 'required|in:L,m3',
+            'is_fertirrigation' => 'boolean',
+            'fertilizer_product' => 'nullable|string|max:150',
+            'fertilizer_dose_per_ha' => 'nullable|numeric|min:0',
             'crew_id' => $this->crewOwnershipRule(),
             'crew_member_id' => 'nullable|exists:users,id',
             'machinery_id' => $this->machineryOwnershipRule(),
@@ -219,6 +231,7 @@ class EditIrrigation extends Component
 
                 $this->irrigation->update([
                     'water_volume' => $this->water_volume ?: null,
+                    'water_volume_unit' => $this->water_volume_unit,
                     'irrigation_method' => $this->irrigation_method,
                     'duration_minutes' => $this->duration_minutes ?: null,
                     'soil_moisture_before' => $this->soil_moisture_before ?: null,
@@ -226,6 +239,9 @@ class EditIrrigation extends Component
                     'water_source' => $this->water_source ?: null,
                     'water_concession' => $this->water_concession ?: null,
                     'flow_rate' => $this->flow_rate ?: null,
+                    'is_fertirrigation' => $this->is_fertirrigation,
+                    'fertilizer_product' => $this->is_fertirrigation ? ($this->fertilizer_product ?: null) : null,
+                    'fertilizer_dose_per_ha' => $this->is_fertirrigation ? ($this->fertilizer_dose_per_ha ?: null) : null,
                 ]);
             });
 

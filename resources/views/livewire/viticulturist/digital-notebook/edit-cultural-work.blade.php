@@ -49,12 +49,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <flux:label for="work_type">Tipo de Labor</flux:label>
-                        <flux:select wire:model="work_type" id="work_type" data-cy="work-type-select" :error="$errors->first('work_type')">
+                        <flux:select wire:model.live="work_type" id="work_type" data-cy="work-type-select" :error="$errors->first('work_type')">
                             <option value="">Selecciona un tipo</option>
                             <option value="poda">Poda</option>
                             <option value="deshojado">Deshojado</option>
                             <option value="despuntado">Despuntado</option>
-                            <option value="vendimia">Vendimia</option>
                             <option value="laboreo">Laboreo</option>
                             <option value="desbroce">Desbroce</option>
                             <option value="otro">Otro</option>
@@ -69,7 +68,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div>
                         <flux:label for="pruning_type">Tipo de Poda</flux:label>
-                        <flux:select wire:model="pruning_type" id="pruning_type" :error="$errors->first('pruning_type')">
+                        <flux:select wire:model="pruning_type" id="pruning_type" data-cy="pruning-type-select" :error="$errors->first('pruning_type')">
                             <option value="">Selecciona un tipo</option>
                             <option value="guyot">Guyot</option>
                             <option value="doble_guyot">Doble Guyot</option>
@@ -83,6 +82,25 @@
                         <flux:input wire:model="productive_buds_per_hectare" type="number" min="0" id="productive_buds_per_hectare" placeholder="Ej: 40000" :error="$errors->first('productive_buds_per_hectare')" />
                         <p class="text-xs text-zinc-500 mt-1">Yemas productivas resultantes de la poda</p>
                     </div>
+                </div>
+                @endif
+                @if($work_type === 'deshojado')
+                <div class="mt-6 md:w-1/2">
+                    <flux:label for="defoliation_face">Cara de la Cepa</flux:label>
+                    <flux:select wire:model="defoliation_face" id="defoliation_face" data-cy="defoliation-face-select" :error="$errors->first('defoliation_face')">
+                        <option value="">Selecciona la cara</option>
+                        <option value="norte">Cara norte</option>
+                        <option value="sur">Cara sur</option>
+                        <option value="ambas">Ambas caras</option>
+                    </flux:select>
+                    <p class="text-xs text-zinc-500 mt-1">Orientación del deshojado para control de podredumbre y maduración</p>
+                </div>
+                @endif
+                @if($work_type === 'despuntado')
+                <div class="mt-6 md:w-1/2">
+                    <flux:label for="topping_height_cm">Altura de Despunte (cm)</flux:label>
+                    <flux:input wire:model="topping_height_cm" type="number" min="1" max="300" id="topping_height_cm" data-cy="topping-height-input" placeholder="Ej: 180" :error="$errors->first('topping_height_cm')" />
+                    <p class="text-xs text-zinc-500 mt-1">Altura desde el suelo a la que se realiza el despuntado</p>
                 </div>
                 @endif
                 <div class="mt-6">

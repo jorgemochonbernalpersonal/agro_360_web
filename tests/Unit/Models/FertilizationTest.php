@@ -161,5 +161,113 @@ class FertilizationTest extends TestCase
         $this->assertNull($fertilization->fertilizer_name);
         $this->assertNull($fertilization->quantity);
     }
+
+    // ── PAC: campos UF nitrógeno/fósforo/potasio ──────────────────────────────
+
+    public function test_npk_uf_fields_stored_with_decimal3_precision(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'fertilization',
+            'activity_date' => now(),
+        ]);
+
+        $fertilization = Fertilization::create([
+            'activity_id'    => $activity->id,
+            'nitrogen_uf'    => 123.456,
+            'phosphorus_uf'  => 78.9,
+            'potassium_uf'   => 45.0,
+        ]);
+
+        $this->assertEquals('123.456', $fertilization->nitrogen_uf);
+        $this->assertEquals('78.900', $fertilization->phosphorus_uf);
+        $this->assertEquals('45.000', $fertilization->potassium_uf);
+    }
+
+    public function test_npk_uf_fields_are_nullable(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'fertilization',
+            'activity_date' => now(),
+        ]);
+
+        $fertilization = Fertilization::create([
+            'activity_id'   => $activity->id,
+            'nitrogen_uf'   => null,
+            'phosphorus_uf' => null,
+            'potassium_uf'  => null,
+        ]);
+
+        $this->assertNull($fertilization->nitrogen_uf);
+        $this->assertNull($fertilization->phosphorus_uf);
+        $this->assertNull($fertilization->potassium_uf);
+    }
+
+    public function test_burial_date_is_cast_to_carbon_date(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'fertilization',
+            'activity_date' => now(),
+        ]);
+
+        $burialDate = now()->subDays(3)->format('Y-m-d');
+
+        $fertilization = Fertilization::create([
+            'activity_id'  => $activity->id,
+            'fertilizer_type' => 'Fertilizante orgánico',
+            'manure_type'  => 'Estiércol vacuno',
+            'burial_date'  => $burialDate,
+        ]);
+
+        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $fertilization->burial_date);
+        $this->assertEquals($burialDate, $fertilization->burial_date->format('Y-m-d'));
+    }
+
+    public function test_organic_pac_fields_stored_correctly(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'fertilization',
+            'activity_date' => now(),
+        ]);
+
+        $fertilization = Fertilization::create([
+            'activity_id'               => $activity->id,
+            'fertilizer_type'           => 'Fertilizante orgánico',
+            'manure_type'               => 'Estiércol vacuno',
+            'burial_date'               => now()->subDays(1)->format('Y-m-d'),
+            'emission_reduction_method' => 'Enterrado en menos de 24h',
+        ]);
+
+        $this->assertEquals('Fertilizante orgánico', $fertilization->fertilizer_type);
+        $this->assertEquals('Estiércol vacuno', $fertilization->manure_type);
+        $this->assertEquals('Enterrado en menos de 24h', $fertilization->emission_reduction_method);
+    }
 }
 

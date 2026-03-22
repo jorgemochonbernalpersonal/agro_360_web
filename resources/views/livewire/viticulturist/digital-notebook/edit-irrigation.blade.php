@@ -64,8 +64,15 @@
         <x-agro.form-section title="Información del Riego">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <flux:label for="water_volume">Volumen de Agua (L)</flux:label>
-                        <flux:input wire:model="water_volume" type="number" step="0.001" id="water_volume" data-cy="water-volume-input" placeholder="0.000" :error="$errors->first('water_volume')" />
+                        <flux:label for="water_volume">Volumen de Agua</flux:label>
+                        <div class="flex gap-2">
+                            <flux:input wire:model="water_volume" type="number" step="0.001" id="water_volume" data-cy="water-volume-input" placeholder="0.000" :error="$errors->first('water_volume')" class="flex-1" />
+                            <flux:select wire:model="water_volume_unit" id="water_volume_unit" data-cy="water-volume-unit-select" class="w-20">
+                                <option value="L">L</option>
+                                <option value="m3">m³</option>
+                            </flux:select>
+                        </div>
+                        @error('water_volume') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <flux:label for="irrigation_method">Método de Riego</flux:label>
@@ -162,6 +169,53 @@
                         :error="$errors->first('flow_rate')"
                     />
                 </div>
+            </div>
+        </x-agro.form-section>
+
+        {{-- Fertirrigación --}}
+        <x-agro.form-section title="Fertirrigación">
+            <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                    <input
+                        type="checkbox"
+                        wire:model.live="is_fertirrigation"
+                        id="is_fertirrigation"
+                        data-cy="is-fertirrigation-checkbox"
+                        class="mt-1 w-4 h-4 rounded border-zinc-300 text-agro-600 focus:ring-agro-500"
+                    />
+                    <label for="is_fertirrigation" class="text-sm font-medium text-zinc-700 cursor-pointer">
+                        Este riego incluye fertirrigación (abonado disuelto en el agua de riego)
+                        <p class="text-xs text-zinc-500 font-normal mt-0.5">Si se añaden nutrientes al agua de riego, debe registrarse también en el cuaderno de fertilización.</p>
+                    </label>
+                </div>
+                @if($is_fertirrigation)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <div>
+                        <flux:label for="fertilizer_product">Producto Fertilizante</flux:label>
+                        <flux:input
+                            wire:model="fertilizer_product"
+                            type="text"
+                            id="fertilizer_product"
+                            data-cy="fertilizer-product-input"
+                            placeholder="Ej: Nitrato amónico 33%"
+                            :error="$errors->first('fertilizer_product')"
+                        />
+                    </div>
+                    <div>
+                        <flux:label for="fertilizer_dose_per_ha">Dosis (kg o L / ha)</flux:label>
+                        <flux:input
+                            wire:model="fertilizer_dose_per_ha"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            id="fertilizer_dose_per_ha"
+                            data-cy="fertilizer-dose-input"
+                            placeholder="Ej: 50.00"
+                            :error="$errors->first('fertilizer_dose_per_ha')"
+                        />
+                    </div>
+                </div>
+                @endif
             </div>
         </x-agro.form-section>
 
