@@ -121,6 +121,43 @@
                     <flux:label for="description" required>Descripción</flux:label>
                     <flux:textarea wire:model="description" id="description" data-cy="description-textarea" rows="6" placeholder="Describe detalladamente la observación..." :error="$errors->first('description')" required />
                 </div>
+
+                {{-- IPM PAC ──────────────────────────────────────────────── --}}
+                <div class="mt-6 border-t pt-6">
+                    <h4 class="text-sm font-medium text-zinc-900 mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        Gestión Integrada de Plagas (IPM — PAC)
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <flux:label for="affected_area_percentage">% Superficie Afectada</flux:label>
+                            <flux:input wire:model="affected_area_percentage" type="number" step="0.01" min="0" max="100" id="affected_area_percentage" data-cy="affected-area-input" placeholder="Ej: 15.50" :error="$errors->first('affected_area_percentage')" />
+                            <p class="mt-1 text-xs text-zinc-500">Porcentaje estimado de la parcela afectada (0–100%)</p>
+                        </div>
+                        <div>
+                            <flux:label for="follow_up_date">Fecha de Revisión</flux:label>
+                            <flux:input wire:model="follow_up_date" type="date" id="follow_up_date" data-cy="follow-up-date-input" :error="$errors->first('follow_up_date')" />
+                            <p class="mt-1 text-xs text-zinc-500">Cuándo volver a inspeccionar esta parcela</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-start gap-3">
+                        <input
+                            type="checkbox"
+                            wire:model="threshold_exceeded"
+                            id="threshold_exceeded"
+                            data-cy="threshold-exceeded-checkbox"
+                            class="mt-1 w-4 h-4 rounded border-zinc-300 text-agro-600 focus:ring-agro-500"
+                        />
+                        <label for="threshold_exceeded" class="text-sm font-medium text-zinc-700 cursor-pointer">
+                            Umbral de daño económico superado
+                            <p class="text-xs text-zinc-500 font-normal mt-0.5">Si se supera el umbral, la intervención fitosanitaria queda justificada en el cuaderno PAC.</p>
+                        </label>
+                    </div>
+                    @error('affected_area_percentage')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="mt-6">
                     <flux:label for="action_taken">Acción Tomada</flux:label>
                     <flux:textarea wire:model="action_taken" id="action_taken" rows="4" placeholder="Describe las acciones tomadas o previstas..." :error="$errors->first('action_taken')" />

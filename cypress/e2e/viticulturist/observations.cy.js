@@ -74,6 +74,18 @@ describe('Observaciones', () => {
       cy.get('[data-cy="description-textarea"]').should('exist')
     })
 
+    it('tiene campo de porcentaje de superficie afectada', () => {
+      cy.get('[data-cy="affected-area-input"]').should('exist')
+    })
+
+    it('tiene checkbox de umbral de daño económico', () => {
+      cy.get('[data-cy="threshold-exceeded-checkbox"]').should('exist')
+    })
+
+    it('tiene campo de fecha de revisión', () => {
+      cy.get('[data-cy="follow-up-date-input"]').should('exist')
+    })
+
     it('tiene radios de tipo de trabajo', () => {
       cy.get('[data-cy="work-type-crew-radio"]').should('exist')
       cy.get('[data-cy="work-type-individual-radio"]').should('exist')
@@ -132,6 +144,56 @@ describe('Observaciones', () => {
           cy.wrap(severitySelect).should('have.value', 'grave')
         }
       })
+    })
+  })
+
+  // ── Create — sección IPM PAC ──────────────────────────────────────────────
+
+  describe('Create — IPM PAC', () => {
+    beforeEach(() => {
+      cy.visit('/viticulturist/digital-notebook/observation/create')
+      cy.waitForLivewire()
+    })
+
+    it('muestra la sección IPM', () => {
+      cy.contains('Gestión Integrada de Plagas').should('be.visible')
+    })
+
+    it('puede introducir porcentaje de superficie afectada', () => {
+      cy.get('[data-cy="affected-area-input"]').clear().type('25.5', { force: true })
+      cy.get('[data-cy="affected-area-input"]').should('have.value', '25.5')
+    })
+
+    it('puede marcar que el umbral de daño económico está superado', () => {
+      cy.get('[data-cy="threshold-exceeded-checkbox"]').check({ force: true })
+      cy.get('[data-cy="threshold-exceeded-checkbox"]').should('be.checked')
+    })
+
+    it('puede introducir fecha de revisión futura', () => {
+      const future = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]
+      cy.get('[data-cy="follow-up-date-input"]').type(future, { force: true })
+      cy.get('[data-cy="follow-up-date-input"]').should('have.value', future)
+    })
+
+    it('rechaza porcentaje mayor de 100', () => {
+      cy.get('body').then(($body) => {
+        const plotSelect = $body.find('[data-cy="plot-select"]')
+        if (plotSelect.length > 0 && plotSelect.find('option').length > 1) {
+          cy.wrap(plotSelect).select(1, { force: true })
+          cy.waitForLivewire()
+        }
+      })
+      cy.get('[data-cy="phenological-stage-select"]').select('Brotación', { force: true })
+      cy.get('[data-cy="observation-type-select"]').select('plaga', { force: true })
+      cy.get('[data-cy="description-textarea"]').type('Descripción', { force: true })
+      cy.get('[data-cy="affected-area-input"]').clear().type('150', { force: true })
+      cy.get('[data-cy="work-type-individual-radio"]').click({ force: true })
+      cy.waitForLivewire()
+      cy.get('[data-cy="observation-form"]').within(() => {
+        cy.get('button[type="submit"]').click({ force: true })
+      })
+      cy.waitForLivewire()
+      cy.url().should('include', '/observation/create')
     })
   })
 
@@ -271,6 +333,11 @@ describe('Observaciones', () => {
             cy.wrap(severitySelect).select('leve', { force: true })
           }
         })
+
+        cy.get('[data-cy="affected-area-input"]').clear().type('15', { force: true })
+
+        const followUpDate = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]
+        cy.get('[data-cy="follow-up-date-input"]').type(followUpDate, { force: true })
 
         cy.get('[data-cy="work-type-individual-radio"]').click({ force: true })
         cy.waitForLivewire()

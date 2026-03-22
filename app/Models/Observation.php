@@ -14,11 +14,17 @@ class Observation extends Model
         'description',
         'photos',
         'severity',
+        'affected_area_percentage',
+        'threshold_exceeded',
+        'follow_up_date',
         'action_taken',
     ];
 
     protected $casts = [
-        'photos' => 'array',
+        'photos'                   => 'array',
+        'affected_area_percentage' => 'decimal:2',
+        'threshold_exceeded'       => 'boolean',
+        'follow_up_date'           => 'date',
     ];
 
     /**

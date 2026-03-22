@@ -140,6 +140,111 @@ class ObservationTest extends TestCase
         $this->assertEquals('Applied insecticide', $observation->action_taken);
     }
 
+    // ── IPM PAC ────────────────────────────────────────────────────────────────
+
+    public function test_affected_area_percentage_stored_with_decimal2_precision(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'observation',
+            'activity_date' => now(),
+        ]);
+
+        $observation = Observation::create([
+            'activity_id'              => $activity->id,
+            'observation_type'         => 'plaga',
+            'description'              => 'Trips en flores',
+            'affected_area_percentage' => 33.5,
+        ]);
+
+        $this->assertEquals('33.50', $observation->affected_area_percentage);
+    }
+
+    public function test_threshold_exceeded_cast_to_boolean(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'observation',
+            'activity_date' => now(),
+        ]);
+
+        $observationTrue = Observation::create([
+            'activity_id'        => $activity->id,
+            'observation_type'   => 'plaga',
+            'description'        => 'Umbral superado',
+            'threshold_exceeded' => true,
+        ]);
+
+        $this->assertIsBool($observationTrue->threshold_exceeded);
+        $this->assertTrue($observationTrue->threshold_exceeded);
+    }
+
+    public function test_follow_up_date_cast_to_carbon_date(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'observation',
+            'activity_date' => now(),
+        ]);
+
+        $followUpDate = now()->addDays(7)->format('Y-m-d');
+
+        $observation = Observation::create([
+            'activity_id'      => $activity->id,
+            'observation_type' => 'enfermedad',
+            'description'      => 'Mildiu incipiente',
+            'follow_up_date'   => $followUpDate,
+        ]);
+
+        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $observation->follow_up_date);
+        $this->assertEquals($followUpDate, $observation->follow_up_date->format('Y-m-d'));
+    }
+
+    public function test_ipm_fields_are_nullable(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'observation',
+            'activity_date' => now(),
+        ]);
+
+        $observation = Observation::create([
+            'activity_id'              => $activity->id,
+            'observation_type'         => 'general',
+            'description'              => 'Observación general sin datos IPM',
+            'affected_area_percentage' => null,
+            'follow_up_date'           => null,
+        ]);
+
+        $this->assertNull($observation->affected_area_percentage);
+        $this->assertNull($observation->follow_up_date);
+        $this->assertFalse((bool) $observation->fresh()->threshold_exceeded);
+    }
+
     public function test_observation_can_have_nullable_fields(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);

@@ -161,6 +161,49 @@ class CreateTest extends ViticulturistTestCase
             ->assertHasErrors(['severity']);
     }
 
+    // ── validaciones IPM ──────────────────────────────────────────────────────
+
+    public function test_validates_affected_area_percentage_max_100(): void
+    {
+        $viticulturist = $this->makeViticulturist();
+        $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+
+        $this->actingAs($viticulturist);
+
+        Livewire::test(CreateObservation::class)
+            ->set('plot_id', $plot->id)
+            ->set('phenological_stage', 'Floración')
+            ->set('observation_type', 'plaga')
+            ->set('description', 'Descripción válida')
+            ->set('affected_area_percentage', 150) // > 100
+            ->set('workType', 'individual')
+            ->set('crew_member_id', $viticulturist->id)
+            ->call('save')
+            ->assertHasErrors(['affected_area_percentage']);
+    }
+
+    public function test_validates_follow_up_date_must_be_after_activity_date(): void
+    {
+        $viticulturist = $this->makeViticulturist();
+        $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+
+        $this->actingAs($viticulturist);
+
+        Livewire::test(CreateObservation::class)
+            ->set('plot_id', $plot->id)
+            ->set('phenological_stage', 'Floración')
+            ->set('observation_type', 'plaga')
+            ->set('description', 'Descripción válida')
+            ->set('activity_date', now()->format('Y-m-d'))
+            ->set('follow_up_date', now()->subDays(5)->format('Y-m-d')) // anterior a hoy
+            ->set('workType', 'individual')
+            ->set('crew_member_id', $viticulturist->id)
+            ->call('save')
+            ->assertHasErrors(['follow_up_date']);
+    }
+
     // ── guardado completo ──────────────────────────────────────────────────────
 
     public function test_can_save_observation(): void
@@ -193,6 +236,41 @@ class CreateTest extends ViticulturistTestCase
             'observation_type' => 'plaga',
             'severity'         => 'leve',
         ]);
+    }
+
+    public function test_can_save_observation_with_ipm_fields(): void
+    {
+        $viticulturist = $this->makeViticulturist();
+        $this->makeCampaign($viticulturist);
+        $plot = $this->makePlot($viticulturist);
+
+        $this->actingAs($viticulturist);
+
+        $followUpDate = now()->addDays(7)->format('Y-m-d');
+
+        Livewire::test(CreateObservation::class)
+            ->set('plot_id', $plot->id)
+            ->set('phenological_stage', 'Floración')
+            ->set('observation_type', 'plaga')
+            ->set('description', 'Mildiu incipiente en hojas basales')
+            ->set('severity', 'moderada')
+            ->set('affected_area_percentage', 25.5)
+            ->set('threshold_exceeded', true)
+            ->set('follow_up_date', $followUpDate)
+            ->set('workType', 'individual')
+            ->set('crew_member_id', $viticulturist->id)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $activity = AgriculturalActivity::where([
+            'viticulturist_id' => $viticulturist->id,
+            'activity_type'    => 'observation',
+        ])->first();
+
+        $observation = Observation::where('activity_id', $activity->id)->first();
+        $this->assertEquals('25.50', $observation->affected_area_percentage);
+        $this->assertTrue($observation->threshold_exceeded);
+        $this->assertEquals($followUpDate, $observation->follow_up_date->format('Y-m-d'));
     }
 
     public function test_can_save_observation_with_action_taken(): void

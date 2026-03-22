@@ -38,6 +38,9 @@ class CreateObservation extends Component
     public $temperature = '';
     public $notes = '';
     public $campaign_id = '';
+    public $affected_area_percentage = '';
+    public $threshold_exceeded = false;
+    public $follow_up_date = '';
     public $pest_id = '';
     public $selectedPest = null;
 
@@ -114,6 +117,9 @@ class CreateObservation extends Component
             'observation_type' => 'required|string|max:50',
             'description' => 'required|string',
             'severity' => 'nullable|string|in:leve,moderada,grave',
+            'affected_area_percentage' => 'nullable|numeric|min:0|max:100',
+            'threshold_exceeded' => 'boolean',
+            'follow_up_date' => 'nullable|date|after_or_equal:activity_date',
             'action_taken' => 'nullable|string',
             'phenological_stage' => 'required|string|max:50',
             'crew_id' => $this->crewOwnershipRule(),
@@ -192,13 +198,16 @@ class CreateObservation extends Component
 
                 // Crear la observación
                 Observation::create([
-                    'activity_id' => $activity->id,
-                    'pest_id' => $this->pest_id ?: null,
-                    'observation_type' => $this->observation_type,
-                    'description' => $this->description,
-                    'severity' => $this->severity,
-                    'action_taken' => $this->action_taken,
-                    'photos' => null, // Para futuro: subida de fotos
+                    'activity_id'              => $activity->id,
+                    'pest_id'                  => $this->pest_id ?: null,
+                    'observation_type'         => $this->observation_type,
+                    'description'              => $this->description,
+                    'severity'                 => $this->severity ?: null,
+                    'affected_area_percentage' => $this->affected_area_percentage ?: null,
+                    'threshold_exceeded'       => (bool) $this->threshold_exceeded,
+                    'follow_up_date'           => $this->follow_up_date ?: null,
+                    'action_taken'             => $this->action_taken,
+                    'photos'                   => null,
                 ]);
             });
 

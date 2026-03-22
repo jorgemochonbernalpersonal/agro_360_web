@@ -54,11 +54,14 @@ class EditTest extends ViticulturistTestCase
         ]);
 
         Observation::create([
-            'activity_id'      => $activity->id,
-            'observation_type' => 'plaga',
-            'description'      => 'Presencia de trips en flores',
-            'severity'         => 'leve',
-            'action_taken'     => null,
+            'activity_id'              => $activity->id,
+            'observation_type'         => 'plaga',
+            'description'              => 'Presencia de trips en flores',
+            'severity'                 => 'leve',
+            'affected_area_percentage' => 20.0,
+            'threshold_exceeded'       => false,
+            'follow_up_date'           => now()->addDays(7)->format('Y-m-d'),
+            'action_taken'             => null,
         ]);
 
         return $activity->load('observation');
@@ -81,7 +84,8 @@ class EditTest extends ViticulturistTestCase
             ->assertSet('phenological_stage', 'Floración')
             ->assertSet('observation_type', 'plaga')
             ->assertSet('description', 'Presencia de trips en flores')
-            ->assertSet('severity', 'leve');
+            ->assertSet('severity', 'leve')
+            ->assertSet('threshold_exceeded', false);
     }
 
     // ── update correcto ────────────────────────────────────────────────────────
@@ -110,6 +114,34 @@ class EditTest extends ViticulturistTestCase
             'observation_type' => 'enfermedad',
             'severity'         => 'moderada',
         ]);
+    }
+
+    // ── update con campos IPM ─────────────────────────────────────────────────
+
+    public function test_can_update_ipm_fields(): void
+    {
+        $viticulturist = $this->makeViticulturist();
+        $campaign      = $this->makeCampaign($viticulturist);
+        $plot          = $this->makePlot($viticulturist);
+        $activity      = $this->makeActivityWithObservation($viticulturist, $plot, $campaign);
+
+        $this->actingAs($viticulturist);
+
+        $followUpDate = now()->addDays(14)->format('Y-m-d');
+
+        Livewire::test(EditObservation::class, ['activity' => $activity])
+            ->set('affected_area_percentage', 45.75)
+            ->set('threshold_exceeded', true)
+            ->set('follow_up_date', $followUpDate)
+            ->set('workType', 'individual')
+            ->set('crew_member_id', $viticulturist->id)
+            ->call('update')
+            ->assertHasNoErrors();
+
+        $observation = Observation::where('activity_id', $activity->id)->first();
+        $this->assertEquals('45.75', $observation->affected_area_percentage);
+        $this->assertTrue($observation->threshold_exceeded);
+        $this->assertEquals($followUpDate, $observation->follow_up_date->format('Y-m-d'));
     }
 
     // ── validaciones en edición ────────────────────────────────────────────────
