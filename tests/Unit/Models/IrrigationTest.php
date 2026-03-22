@@ -163,5 +163,84 @@ class IrrigationTest extends TestCase
         $this->assertNull($irrigation->water_volume);
         $this->assertNull($irrigation->irrigation_method);
     }
+
+    // ── Campos PAC ─────────────────────────────────────────────────────────────
+
+    public function test_pac_fields_stored_correctly(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'irrigation',
+            'activity_date' => now(),
+        ]);
+
+        $irrigation = Irrigation::create([
+            'activity_id'      => $activity->id,
+            'water_source'     => 'Pozo legalizado',
+            'water_concession' => 'EXP-2024/001',
+            'flow_rate'        => 2500.50,
+        ]);
+
+        $this->assertEquals('Pozo legalizado', $irrigation->water_source);
+        $this->assertEquals('EXP-2024/001', $irrigation->water_concession);
+        // flow_rate cast decimal:2
+        $this->assertIsString($irrigation->flow_rate);
+        $this->assertEquals('2500.50', $irrigation->flow_rate);
+    }
+
+    public function test_flow_rate_cast_to_decimal(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'irrigation',
+            'activity_date' => now(),
+        ]);
+
+        $irrigation = Irrigation::create([
+            'activity_id' => $activity->id,
+            'flow_rate'   => 1800,
+        ]);
+
+        $this->assertIsString($irrigation->flow_rate);
+        $this->assertEquals('1800.00', $irrigation->flow_rate);
+    }
+
+    public function test_pac_fields_nullable(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'irrigation',
+            'activity_date' => now(),
+        ]);
+
+        $irrigation = Irrigation::create([
+            'activity_id'      => $activity->id,
+            'water_source'     => null,
+            'water_concession' => null,
+            'flow_rate'        => null,
+        ]);
+
+        $this->assertNull($irrigation->water_source);
+        $this->assertNull($irrigation->water_concession);
+        $this->assertNull($irrigation->flow_rate);
+    }
 }
 
