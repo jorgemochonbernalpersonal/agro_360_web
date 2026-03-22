@@ -30,6 +30,7 @@ class EditPruning extends Component
     public $activity_date = '';
     public $pruning_type = '';
     public $productive_buds_per_hectare = '';
+    public $residue_management = '';
     public $hours_worked = '';
     public $workers_count = '';
     public $description = '';
@@ -83,6 +84,7 @@ class EditPruning extends Component
 
         $this->pruning_type                = $this->culturalWork->pruning_type ?? '';
         $this->productive_buds_per_hectare = $this->culturalWork->productive_buds_per_hectare ?? '';
+        $this->residue_management          = $this->culturalWork->residue_management ?? '';
         $this->hours_worked                = $this->culturalWork->hours_worked;
         $this->workers_count               = $this->culturalWork->workers_count;
         $this->description                 = $this->culturalWork->description;
@@ -125,6 +127,7 @@ class EditPruning extends Component
             'activity_date'               => 'required|date',
             'pruning_type'                => 'required|string|max:50',
             'productive_buds_per_hectare' => 'nullable|integer|min:0',
+            'residue_management'          => 'nullable|string|in:triturado_incorporado,triturado_superficie,retirado,quemado,otro',
             'hours_worked'                => 'nullable|numeric|min:0',
             'workers_count'               => 'nullable|integer|min:1',
             'description'                 => 'required|string|min:10',
@@ -186,6 +189,7 @@ class EditPruning extends Component
                 $this->culturalWork->update([
                     'pruning_type'                => $this->pruning_type,
                     'productive_buds_per_hectare' => $this->productive_buds_per_hectare ?: null,
+                    'residue_management'          => $this->residue_management ?: null,
                     'hours_worked'                => $this->hours_worked ?: null,
                     'workers_count'               => $this->workers_count ?: null,
                     'description'                 => $this->description,

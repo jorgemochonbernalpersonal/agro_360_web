@@ -181,6 +181,54 @@ class CulturalWorkTest extends TestCase
         $this->assertEquals(45000, $culturalWork->productive_buds_per_hectare);
     }
 
+    public function test_residue_management_stored_correctly(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'cultural',
+            'activity_date' => now(),
+        ]);
+
+        $culturalWork = CulturalWork::create([
+            'activity_id'        => $activity->id,
+            'work_type'          => 'poda',
+            'pruning_type'       => 'guyot',
+            'residue_management' => 'triturado_incorporado',
+        ]);
+
+        $this->assertEquals('triturado_incorporado', $culturalWork->residue_management);
+    }
+
+    public function test_residue_management_is_nullable(): void
+    {
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+        $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
+        $campaign = Campaign::factory()->create(['viticulturist_id' => $viticulturist->id]);
+
+        $activity = AgriculturalActivity::create([
+            'plot_id' => $plot->id,
+            'viticulturist_id' => $viticulturist->id,
+            'campaign_id' => $campaign->id,
+            'activity_type' => 'cultural',
+            'activity_date' => now(),
+        ]);
+
+        $culturalWork = CulturalWork::create([
+            'activity_id'        => $activity->id,
+            'work_type'          => 'poda',
+            'pruning_type'       => 'vaso',
+            'residue_management' => null,
+        ]);
+
+        $this->assertNull($culturalWork->residue_management);
+    }
+
     public function test_pruning_fields_nullable(): void
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
