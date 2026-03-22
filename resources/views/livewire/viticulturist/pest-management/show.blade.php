@@ -19,7 +19,8 @@
                             {{ $pest->type === 'pest' ? '🐛 Plaga' : '🦠 Enfermedad' }}
                         </span>
                         @if($pest->isInRiskPeriod())
-                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"
+                                  data-cy="risk-period-badge">
                                 ⚠️ En período de riesgo
                             </span>
                         @endif
@@ -58,9 +59,36 @@
 
             {{-- Prevención --}}
             @if($pest->prevention_methods)
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white rounded-lg shadow p-6" data-cy="prevention-methods-section">
                     <h2 class="text-xl font-semibold text-zinc-900 mb-3">🛡️ Métodos de Prevención</h2>
                     <p class="text-zinc-700">{{ $pest->prevention_methods }}</p>
+                </div>
+            @endif
+
+            {{-- Métodos de Control IPM (PAC) --}}
+            @if($pest->control_methods && count($pest->control_methods) > 0)
+                <div class="bg-white rounded-lg shadow p-6" data-cy="control-methods-section">
+                    <h2 class="text-xl font-semibold text-zinc-900 mb-4">⚙️ Métodos de Control IPM (PAC)</h2>
+                    <p class="text-xs text-zinc-500 mb-3">Ordenados por prioridad según el Plan de Acción Comunitario</p>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($pest->control_methods as $method)
+                            @php
+                                $colors = [
+                                    'biologico' => 'bg-green-100 text-green-800 border-green-200',
+                                    'cultural'  => 'bg-blue-100 text-blue-800 border-blue-200',
+                                    'fisico'    => 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                                    'quimico'   => 'bg-red-100 text-red-800 border-red-200',
+                                ];
+                                $labels = \App\Models\Pest::CONTROL_METHOD_LABELS;
+                                $colorClass = $colors[$method] ?? 'bg-zinc-100 text-zinc-800 border-zinc-200';
+                                $label = $labels[$method] ?? $method;
+                            @endphp
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border {{ $colorClass }}"
+                                  data-cy="control-method-{{ $method }}">
+                                {{ $label }}
+                            </span>
+                        @endforeach
+                    </div>
                 </div>
             @endif
 

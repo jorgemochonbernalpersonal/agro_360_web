@@ -35,6 +35,7 @@ class CreatePostHarvest extends Component
     public $dose_per_hectare = '';
     public $dose_unit = 'kg/ha';
     public $water_volume_liters = '';
+    public $reentry_interval_hours = '';
     public $workType = '';
     public $crew_id = '';
     public $crew_member_id = '';
@@ -93,8 +94,9 @@ class CreatePostHarvest extends Component
             'treated_area_ha'    => 'required|numeric|min:0.001',
             'dose_per_hectare'   => 'nullable|numeric|min:0',
             'dose_unit'          => 'nullable|string|max:20',
-            'water_volume_liters'=> 'nullable|numeric|min:0',
-            'workType'           => 'required|in:crew,individual',
+            'water_volume_liters'     => 'nullable|numeric|min:0',
+            'reentry_interval_hours'  => 'nullable|integer|min:0|max:168',
+            'workType'                => 'required|in:crew,individual',
             'crew_id'            => 'required_if:workType,crew|nullable|exists:crews,id',
             'crew_member_id'     => 'required_if:workType,individual|nullable|exists:users,id',
             'machinery_id'       => 'nullable|exists:machinery,id',
@@ -148,14 +150,15 @@ class CreatePostHarvest extends Component
                 ]);
 
                 PostHarvestTreatment::create([
-                    'activity_id'         => $activity->id,
-                    'product_id'          => $this->product_id ?: null,
-                    'application_type'    => $this->application_type,
-                    'treated_area_ha'     => $this->treated_area_ha,
-                    'dose_per_hectare'    => $this->dose_per_hectare ?: null,
-                    'dose_unit'           => $this->dose_per_hectare ? ($this->dose_unit ?: 'kg/ha') : null,
-                    'water_volume_liters' => $this->water_volume_liters ?: null,
-                    'notes'               => $this->notes,
+                    'activity_id'            => $activity->id,
+                    'product_id'             => $this->product_id ?: null,
+                    'application_type'       => $this->application_type,
+                    'treated_area_ha'        => $this->treated_area_ha,
+                    'dose_per_hectare'       => $this->dose_per_hectare ?: null,
+                    'dose_unit'              => $this->dose_per_hectare ? ($this->dose_unit ?: 'kg/ha') : null,
+                    'water_volume_liters'    => $this->water_volume_liters ?: null,
+                    'reentry_interval_hours' => $this->reentry_interval_hours !== '' ? (int) $this->reentry_interval_hours : null,
+                    'notes'                  => $this->notes,
                 ]);
             });
 

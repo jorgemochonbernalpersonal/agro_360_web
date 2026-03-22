@@ -27,13 +27,15 @@ class PostHarvestTreatment extends Model
         'dose_per_hectare',
         'dose_unit',
         'water_volume_liters',
+        'reentry_interval_hours',
         'notes',
     ];
 
     protected $casts = [
-        'treated_area_ha'     => 'decimal:4',
-        'dose_per_hectare'    => 'decimal:4',
-        'water_volume_liters' => 'decimal:2',
+        'treated_area_ha'        => 'decimal:4',
+        'dose_per_hectare'       => 'decimal:4',
+        'water_volume_liters'    => 'decimal:2',
+        'reentry_interval_hours' => 'integer',
     ];
 
     public function activity(): BelongsTo

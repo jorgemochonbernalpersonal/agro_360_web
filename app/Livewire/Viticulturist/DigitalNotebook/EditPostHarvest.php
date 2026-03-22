@@ -36,6 +36,7 @@ class EditPostHarvest extends Component
     public $dose_per_hectare = '';
     public $dose_unit = 'kg/ha';
     public $water_volume_liters = '';
+    public $reentry_interval_hours = '';
     public $workType = '';
     public $crew_id = '';
     public $crew_member_id = '';
@@ -83,12 +84,13 @@ class EditPostHarvest extends Component
             $this->crew_member_id = $this->activity->crewMember?->viticulturist_id ?? '';
         }
 
-        $this->product_id           = $this->postHarvestTreatment->product_id ?? '';
-        $this->application_type     = $this->postHarvestTreatment->application_type;
-        $this->treated_area_ha      = $this->postHarvestTreatment->treated_area_ha;
-        $this->dose_per_hectare     = $this->postHarvestTreatment->dose_per_hectare ?? '';
-        $this->dose_unit            = $this->postHarvestTreatment->dose_unit ?? 'kg/ha';
-        $this->water_volume_liters  = $this->postHarvestTreatment->water_volume_liters ?? '';
+        $this->product_id              = $this->postHarvestTreatment->product_id ?? '';
+        $this->application_type        = $this->postHarvestTreatment->application_type;
+        $this->treated_area_ha         = $this->postHarvestTreatment->treated_area_ha;
+        $this->dose_per_hectare        = $this->postHarvestTreatment->dose_per_hectare ?? '';
+        $this->dose_unit               = $this->postHarvestTreatment->dose_unit ?? 'kg/ha';
+        $this->water_volume_liters     = $this->postHarvestTreatment->water_volume_liters ?? '';
+        $this->reentry_interval_hours  = $this->postHarvestTreatment->reentry_interval_hours ?? '';
 
         if ($this->plot_id) {
             $this->availablePlantings = PlotPlanting::where('plot_id', $this->plot_id)
@@ -132,8 +134,9 @@ class EditPostHarvest extends Component
             'treated_area_ha'    => 'required|numeric|min:0.001',
             'dose_per_hectare'   => 'nullable|numeric|min:0',
             'dose_unit'          => 'nullable|string|max:20',
-            'water_volume_liters'=> 'nullable|numeric|min:0',
-            'crew_id'            => 'nullable|exists:crews,id',
+            'water_volume_liters'    => 'nullable|numeric|min:0',
+            'reentry_interval_hours' => 'nullable|integer|min:0|max:168',
+            'crew_id'                => 'nullable|exists:crews,id',
             'crew_member_id'     => 'nullable|exists:users,id',
             'machinery_id'       => 'nullable|exists:machinery,id',
             'weather_conditions' => 'nullable|string|max:255',
@@ -188,13 +191,14 @@ class EditPostHarvest extends Component
                 ]);
 
                 $this->postHarvestTreatment->update([
-                    'product_id'          => $this->product_id ?: null,
-                    'application_type'    => $this->application_type,
-                    'treated_area_ha'     => $this->treated_area_ha,
-                    'dose_per_hectare'    => $this->dose_per_hectare ?: null,
-                    'dose_unit'           => $this->dose_per_hectare ? ($this->dose_unit ?: 'kg/ha') : null,
-                    'water_volume_liters' => $this->water_volume_liters ?: null,
-                    'notes'               => $this->notes,
+                    'product_id'             => $this->product_id ?: null,
+                    'application_type'       => $this->application_type,
+                    'treated_area_ha'        => $this->treated_area_ha,
+                    'dose_per_hectare'       => $this->dose_per_hectare ?: null,
+                    'dose_unit'              => $this->dose_per_hectare ? ($this->dose_unit ?: 'kg/ha') : null,
+                    'water_volume_liters'    => $this->water_volume_liters ?: null,
+                    'reentry_interval_hours' => $this->reentry_interval_hours !== '' ? (int) $this->reentry_interval_hours : null,
+                    'notes'                  => $this->notes,
                 ]);
             });
 

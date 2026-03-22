@@ -44,7 +44,8 @@ class EditHarvest extends Component
     public $brix_degree = '';
     public $acidity_level = '';
     public $ph_level = '';
-    
+    public $potential_alcohol = '';
+
     // Evaluación organoléptica (opcional)
     public $color_rating = '';
     public $aroma_rating = '';
@@ -53,6 +54,9 @@ class EditHarvest extends Component
     // Destino
     public $destination_type = '';
     public $destination = '';
+    public $transport_document_number = '';
+    public $destination_rega_code = '';
+    public $vehicle_plate = '';
     public $buyer_name = '';
     
     // Económico (opcional)
@@ -164,11 +168,15 @@ class EditHarvest extends Component
         $this->brix_degree = $this->harvest->brix_degree ?? '';
         $this->acidity_level = $this->harvest->acidity_level ?? '';
         $this->ph_level = $this->harvest->ph_level ?? '';
+        $this->potential_alcohol = $this->harvest->potential_alcohol ?? '';
         $this->color_rating = $this->harvest->color_rating ?? '';
         $this->aroma_rating = $this->harvest->aroma_rating ?? '';
         $this->health_status = $this->harvest->health_status ?? '';
         $this->destination_type = $this->harvest->destination_type ?? '';
         $this->destination = $this->harvest->destination ?? '';
+        $this->transport_document_number = $this->harvest->transport_document_number ?? '';
+        $this->destination_rega_code = $this->harvest->destination_rega_code ?? '';
+        $this->vehicle_plate = $this->harvest->vehicle_plate ?? '';
         $this->buyer_name = $this->harvest->buyer_name ?? '';
         $this->price_per_kg = $this->harvest->price_per_kg ?? '';
         $this->total_value = $this->harvest->total_value ?? '';
@@ -212,7 +220,7 @@ class EditHarvest extends Component
             if ($container && $container->hasAvailableCapacity($this->total_weight ?? 0)) {
                 // No actualizamos el peso automáticamente, el usuario lo define
                 // Solo validamos que el contenedor tenga capacidad disponible
-                $this->calculateYieldPerHectare();
+                $this->calculateYield();
                 $this->calculateTotalValue();
                 $this->updateControlPanelData();
             }
@@ -439,7 +447,7 @@ class EditHarvest extends Component
         $rules = [
             'plot_id' => $this->plotOwnershipRule(),
             'plot_planting_id' => $this->plotPlantingOwnershipRule(required: true),
-            'container_id' => 'required|exists:containers,id',
+            'container_id' => 'nullable|exists:containers,id',
             'campaign_id' => $this->campaignOwnershipRule(),
             'activity_date' => 'required|date',
             'harvest_start_date' => 'required|date',
@@ -452,13 +460,17 @@ class EditHarvest extends Component
             'brix_degree' => 'nullable|numeric|min:0|max:40',
             'acidity_level' => 'nullable|numeric|min:0|max:20',
             'ph_level' => 'nullable|numeric|min:0|max:14',
-            
+            'potential_alcohol' => 'nullable|numeric|min:0|max:25',
+
             'color_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'aroma_rating' => 'nullable|in:excelente,bueno,aceptable,deficiente',
             'health_status' => 'nullable|in:sano,daño_leve,daño_moderado,daño_grave',
             
             'destination_type' => 'nullable|in:winery,direct_sale,cooperative,self_consumption,other',
             'destination' => 'nullable|string|max:255',
+            'transport_document_number' => 'nullable|string|max:50',
+            'destination_rega_code' => 'nullable|string|max:20',
+            'vehicle_plate' => 'nullable|string|max:20',
             'buyer_name' => 'nullable|string|max:255',
             
             'price_per_kg' => 'nullable|numeric|min:0',
@@ -515,16 +527,17 @@ class EditHarvest extends Component
         $plot = $this->authorizeCreateActivityForPlot($this->plot_id);
         
         // Validar que el contenedor existe y está disponible (o es el actual)
-        $container = Container::find($this->container_id);
-        if (!$container) {
-            $this->addError('container_id', 'El contenedor seleccionado no existe.');
-            return;
-        }
-        
-        // Si se cambió de contenedor, verificar que el nuevo esté disponible
-        if ($this->container_id != $this->original_container_id && !$container->isAvailable()) {
-            $this->addError('container_id', 'El contenedor seleccionado ya está asignado a otra cosecha.');
-            return;
+        $container = null;
+        if ($this->container_id) {
+            $container = Container::find($this->container_id);
+            if (!$container) {
+                $this->addError('container_id', 'El contenedor seleccionado no existe.');
+                return;
+            }
+            if ($this->container_id != $this->original_container_id && !$container->isAvailable()) {
+                $this->addError('container_id', 'El contenedor seleccionado ya está asignado a otra cosecha.');
+                return;
+            }
         }
 
         try {
@@ -565,15 +578,16 @@ class EditHarvest extends Component
                         Container::where('id', $this->original_container_id)
                             ->update(['harvest_id' => null]);
                     }
-                    
-                    // Asignar el nuevo contenedor a esta cosecha
-                    $container->update(['harvest_id' => $this->harvest->id]);
+                    // Asignar el nuevo contenedor a esta cosecha (si se eligió uno)
+                    if ($container) {
+                        $container->update(['harvest_id' => $this->harvest->id]);
+                    }
                 }
                 
                 // Actualizar cosecha
                 $this->harvest->update([
                     'plot_planting_id' => $this->plot_planting_id,
-                    'container_id' => $this->container_id,
+                    'container_id' => $this->container_id ?: null,
                     'harvest_start_date' => $this->harvest_start_date,
                     'harvest_end_date' => $this->harvest_end_date ?: null,
                     'total_weight' => $this->total_weight,
@@ -582,11 +596,15 @@ class EditHarvest extends Component
                     'brix_degree' => $this->brix_degree ?: null,
                     'acidity_level' => $this->acidity_level ?: null,
                     'ph_level' => $this->ph_level ?: null,
+                    'potential_alcohol' => $this->potential_alcohol ?: null,
                     'color_rating' => $this->color_rating ?: null,
                     'aroma_rating' => $this->aroma_rating ?: null,
                     'health_status' => $this->health_status ?: null,
                     'destination_type' => $this->destination_type ?: null,
                     'destination' => $this->destination,
+                    'transport_document_number' => $this->transport_document_number ?: null,
+                    'destination_rega_code' => $this->destination_rega_code ?: null,
+                    'vehicle_plate' => $this->vehicle_plate ?: null,
                     'buyer_name' => $this->buyer_name,
                     'price_per_kg' => $this->price_per_kg ?: null,
                     'total_value' => $this->total_value ?: null,

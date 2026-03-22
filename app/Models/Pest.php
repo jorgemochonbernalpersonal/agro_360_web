@@ -11,6 +11,15 @@ class Pest extends Model
 {
     use HasFactory;
 
+    const CONTROL_METHOD_TYPES = ['biologico', 'cultural', 'fisico', 'quimico'];
+
+    const CONTROL_METHOD_LABELS = [
+        'biologico' => 'Control biológico',
+        'cultural'  => 'Control cultural',
+        'fisico'    => 'Control físico',
+        'quimico'   => 'Control químico',
+    ];
+
     protected $fillable = [
         'type',
         'name',
@@ -21,14 +30,16 @@ class Pest extends Model
         'risk_months',
         'threshold',
         'prevention_methods',
+        'control_methods',
         'photos',
         'active',
     ];
 
     protected $casts = [
-        'risk_months' => 'array',
-        'photos' => 'array',
-        'active' => 'boolean',
+        'risk_months'     => 'array',
+        'control_methods' => 'array',
+        'photos'          => 'array',
+        'active'          => 'boolean',
     ];
 
     /**
@@ -130,5 +141,20 @@ class Pest extends Model
     public function getIconAttribute(): string
     {
         return $this->type === 'pest' ? '🐛' : '🦠';
+    }
+
+    /**
+     * Obtener etiquetas legibles de los métodos de control (IPM PAC)
+     */
+    public function getControlMethodLabelsAttribute(): array
+    {
+        if (!$this->control_methods) {
+            return [];
+        }
+
+        return array_map(
+            fn($m) => self::CONTROL_METHOD_LABELS[$m] ?? $m,
+            $this->control_methods
+        );
     }
 }

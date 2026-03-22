@@ -21,6 +21,7 @@ class PestSeeder extends Seeder
                 'risk_months' => [4, 5, 6, 7, 8, 9],
                 'threshold' => '5% de racimos afectados o captura de 10 adultos/trampa/semana',
                 'prevention_methods' => 'Confusión sexual, trampas de feromonas, eliminación de restos de poda.',
+                'control_methods' => ['biologico', 'cultural', 'quimico'],
                 'active' => true,
             ],
             [
@@ -33,6 +34,7 @@ class PestSeeder extends Seeder
                 'risk_months' => [6, 7, 8, 9],
                 'threshold' => '50% de hojas con presencia o 5-10 ácaros/hoja',
                 'prevention_methods' => 'Mantener humedad adecuada, favorecer fauna auxiliar, evitar polvo en hojas.',
+                'control_methods' => ['biologico', 'cultural', 'quimico'],
                 'active' => true,
             ],
             [
@@ -45,9 +47,10 @@ class PestSeeder extends Seeder
                 'risk_months' => [5, 6, 7, 8, 9],
                 'threshold' => 'Cualquier presencia requiere acción inmediata',
                 'prevention_methods' => 'Uso de portainjertos resistentes (obligatorio en la mayoría de zonas).',
+                'control_methods' => ['cultural'],
                 'active' => true,
             ],
-            
+
             // ENFERMEDADES
             [
                 'type' => 'disease',
@@ -59,6 +62,7 @@ class PestSeeder extends Seeder
                 'risk_months' => [4, 5, 6, 7, 8, 9],
                 'threshold' => 'Modelo de riesgo: >10mm lluvia + >10°C durante 24h',
                 'prevention_methods' => 'Tratamientos preventivos, drenaje adecuado, poda para ventilación, variedades resistentes.',
+                'control_methods' => ['cultural', 'quimico'],
                 'active' => true,
             ],
             [
@@ -71,6 +75,7 @@ class PestSeeder extends Seeder
                 'risk_months' => [5, 6, 7, 8, 9],
                 'threshold' => '1% de órganos afectados en floración',
                 'prevention_methods' => 'Azufre preventivo, poda para aireación, eliminación de órganos afectados.',
+                'control_methods' => ['cultural', 'quimico'],
                 'active' => true,
             ],
             [
@@ -83,6 +88,7 @@ class PestSeeder extends Seeder
                 'risk_months' => [8, 9, 10],
                 'threshold' => 'Cualquier presencia en pre-vendimia',
                 'prevention_methods' => 'Deshojado, aclareo de racimos, ventilación, evitar daños mecánicos.',
+                'control_methods' => ['cultural', 'quimico'],
                 'active' => true,
             ],
             [
@@ -95,6 +101,7 @@ class PestSeeder extends Seeder
                 'risk_months' => [5, 6, 7, 8],
                 'threshold' => '1% de racimos afectados',
                 'prevention_methods' => 'Eliminación de momias, tratamientos preventivos, poda sanitaria.',
+                'control_methods' => ['cultural', 'quimico'],
                 'active' => true,
             ],
         ];

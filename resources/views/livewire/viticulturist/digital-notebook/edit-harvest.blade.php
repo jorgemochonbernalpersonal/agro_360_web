@@ -16,7 +16,7 @@
         </flux:callout>
     @endif
 
-    <form wire:submit="update" class="space-y-8">
+    <form wire:submit="update" class="space-y-8" data-cy="harvest-edit-form">
         
         {{-- Alerta de Plazo de Seguridad --}}
         @if($hasActiveWithdrawal)
@@ -95,7 +95,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
                     <flux:label required>Parcela</flux:label>
-                    <flux:select wire:model.live="plot_id" id="plot_id" required>
+                    <flux:select wire:model.live="plot_id" id="plot_id" data-cy="plot-select" required>
                         <option value="">Selecciona una parcela</option>
                         @foreach($plots as $plot)
                             <option value="{{ $plot->id }}">{{ $plot->name }} ({{ $plot->area }} ha)</option>
@@ -107,7 +107,7 @@
 
                 <flux:field>
                     <flux:label required>Plantación / Variedad</flux:label>
-                    <flux:select wire:model.live="plot_planting_id" id="plot_planting_id" :disabled="!$plot_id || count($availablePlantings) === 0" required>
+                    <flux:select wire:model.live="plot_planting_id" id="plot_planting_id" data-cy="plot-planting-select" :disabled="!$plot_id || count($availablePlantings) === 0" required>
                         <option value="">Selecciona una plantación</option>
                         @foreach($availablePlantings as $planting)
                             <option value="{{ $planting->id }}">
@@ -166,6 +166,7 @@
                         </flux:callout>
                     @endif
                 @endif
+                </flux:field>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
@@ -338,7 +339,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <flux:field>
                     <flux:label required>Peso Total Cosechado (kg)</flux:label>
-                    <flux:input wire:model.live="total_weight" type="number" step="0.001" min="0" id="total_weight" placeholder="0.00" required />
+                    <flux:input wire:model.live="total_weight" type="number" step="0.001" min="0" id="total_weight" data-cy="total-weight-input" placeholder="0.00" required />
                     <flux:error name="total_weight" />
                 </flux:field>
                 <flux:field>
@@ -376,8 +377,13 @@
                 </flux:field>
                 <flux:field>
                     <flux:label>pH</flux:label>
-                    <flux:input wire:model="ph_level" type="number" step="0.001" min="0" max="14" id="ph_level" placeholder="0.00" />
+                    <flux:input wire:model="ph_level" type="number" step="0.001" min="0" max="14" id="ph_level" data-cy="ph-level-input" placeholder="0.00" />
                     <flux:error name="ph_level" />
+                </flux:field>
+                <flux:field>
+                    <flux:label>Alcohol potencial (%vol)</flux:label>
+                    <flux:input wire:model="potential_alcohol" type="number" step="0.01" min="0" max="25" id="potential_alcohol" data-cy="potential-alcohol-input" placeholder="0.00" />
+                    <flux:error name="potential_alcohol" />
                 </flux:field>
             </div>
 
@@ -482,6 +488,30 @@
                     <flux:input wire:model="buyer_name" type="text" id="buyer_name" placeholder="Nombre del comprador" />
                     <flux:error name="buyer_name" />
                 </flux:field>
+            </div>
+
+            <div class="mt-6 border-t pt-6">
+                <h4 class="text-sm font-semibold text-zinc-900 mb-4 flex items-center gap-2">
+                    <flux:icon icon="truck" class="text-agro-600 w-4 h-4" />
+                    Trazabilidad y Transporte (SIEX)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <flux:field>
+                        <flux:label>Nº Documento Transporte</flux:label>
+                        <flux:input wire:model="transport_document_number" type="text" id="transport_document_number" data-cy="transport-document-input" placeholder="Ej: GUIA-2023-001" />
+                        <flux:error name="transport_document_number" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>REGA Destino</flux:label>
+                        <flux:input wire:model="destination_rega_code" type="text" id="destination_rega_code" data-cy="destination-rega-input" placeholder="Ej: ES000000000000" />
+                        <flux:error name="destination_rega_code" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Matrícula Vehículo</flux:label>
+                        <flux:input wire:model="vehicle_plate" type="text" id="vehicle_plate" data-cy="vehicle-plate-input" placeholder="Ej: 1234 ABC" />
+                        <flux:error name="vehicle_plate" />
+                    </flux:field>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">

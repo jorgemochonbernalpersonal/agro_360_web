@@ -155,7 +155,7 @@
                 </flux:field>
                 <flux:field>
                     <flux:label required>Fecha Inicio Vendimia</flux:label>
-                    <flux:input wire:model="harvest_start_date" type="date" id="harvest_start_date" required />
+                    <flux:input wire:model="harvest_start_date" type="date" id="harvest_start_date" data-cy="harvest-start-date-input" required />
                     <flux:error name="harvest_start_date" />
                 </flux:field>
                 <flux:field>

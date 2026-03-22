@@ -35,6 +35,7 @@
                     wire:model.live.debounce.300ms="search"
                     type="text"
                     placeholder="Buscar por nombre o nombre científico..."
+                    data-cy="pest-search-input"
                     class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
                 />
             </div>
@@ -42,6 +43,7 @@
             @php $filterCount = ($typeFilter !== 'all' ? 1 : 0) + ($showOnlyRisk ? 1 : 0); @endphp
             <button
                 x-on:click="$dispatch('open-modal', 'pest-filters')"
+                data-cy="pest-filter-btn"
                 class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
             >
                 <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
@@ -110,6 +112,7 @@
 
                 <x-agro.card
                     wire:key="pest-{{ $pest->id }}"
+                    data-cy="pest-card"
                     class="animate-fade-in-up hover:-translate-y-1"
                     style="animation-delay: {{ min($i * 50, 400) }}ms"
                 >
@@ -193,6 +196,7 @@
             <div>
                 <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tipo</label>
                 <select wire:model.live="typeFilter"
+                        data-cy="pest-type-filter"
                         class="w-full px-3 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-agro-400 focus:border-transparent">
                     <option value="all">Todos los tipos</option>
                     <option value="pest">Solo Plagas</option>
@@ -204,6 +208,7 @@
                     type="checkbox"
                     id="showOnlyRisk"
                     wire:model.live="showOnlyRisk"
+                    data-cy="pest-risk-filter"
                     class="rounded border-zinc-300 text-agro-600 focus:ring-agro-500"
                 />
                 <label for="showOnlyRisk" class="text-sm font-medium text-zinc-700 cursor-pointer">
