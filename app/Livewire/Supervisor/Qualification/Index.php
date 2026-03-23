@@ -28,6 +28,23 @@ class Index extends Component
     public string $qualification_date = '';
     public string $tasting_notes      = '';
 
+    // Edit modal
+    public bool   $showEdit             = false;
+    public ?int   $editId               = null;
+    public string $editWineName         = '';
+    public string $editVintage          = '';
+    public string $editColor            = '';
+    public string $editAlcohol          = '';
+    public string $editBrix             = '';
+    public string $editAcidity          = '';
+    public string $editPh               = '';
+    public string $editVisualScore      = '';
+    public string $editAromaScore       = '';
+    public string $editTasteScore       = '';
+    public string $editOverallScore     = '';
+    public string $editTastingNotes     = '';
+    public string $editQualificationDate = '';
+
     protected $queryString = [
         'currentTab'    => ['except' => 'all', 'as' => 'tab'],
         'vintageFilter' => ['except' => ''],
@@ -88,6 +105,73 @@ class Index extends Component
         $this->reset(['wine_name', 'color', 'alcohol_percentage', 'tasting_notes']);
         $this->showCreate = false;
         $this->toastSuccess('Calificación registrada.');
+    }
+
+    public function openEdit(int $id): void
+    {
+        $q = DoQualification::forSupervisor(Auth::id())->findOrFail($id);
+
+        $this->editId               = $id;
+        $this->editWineName         = $q->wine_name;
+        $this->editVintage          = (string) $q->vintage;
+        $this->editColor            = $q->color ?? '';
+        $this->editAlcohol          = $q->alcohol_percentage !== null ? (string) $q->alcohol_percentage : '';
+        $this->editBrix             = $q->brix_degree       !== null ? (string) $q->brix_degree       : '';
+        $this->editAcidity          = $q->acidity_level     !== null ? (string) $q->acidity_level     : '';
+        $this->editPh               = $q->ph_level          !== null ? (string) $q->ph_level          : '';
+        $this->editVisualScore      = $q->visual_score      !== null ? (string) $q->visual_score      : '';
+        $this->editAromaScore       = $q->aroma_score       !== null ? (string) $q->aroma_score       : '';
+        $this->editTasteScore       = $q->taste_score       !== null ? (string) $q->taste_score       : '';
+        $this->editOverallScore     = $q->overall_score     !== null ? (string) $q->overall_score     : '';
+        $this->editTastingNotes     = $q->tasting_notes ?? '';
+        $this->editQualificationDate = $q->qualification_date?->format('Y-m-d') ?? '';
+        $this->showEdit             = true;
+        $this->resetValidation();
+    }
+
+    public function closeEdit(): void
+    {
+        $this->showEdit = false;
+        $this->editId   = null;
+        $this->resetValidation();
+    }
+
+    public function updateQualification(): void
+    {
+        $this->validate([
+            'editWineName'          => 'required|string|max:200',
+            'editVintage'           => 'required|integer|min:1990|max:2100',
+            'editColor'             => 'nullable|in:tinto,blanco,rosado,espumoso,dulce,otro',
+            'editAlcohol'           => 'nullable|numeric|min:0|max:25',
+            'editBrix'              => 'nullable|numeric|min:0|max:50',
+            'editAcidity'           => 'nullable|numeric|min:0|max:30',
+            'editPh'                => 'nullable|numeric|min:2|max:5',
+            'editVisualScore'       => 'nullable|numeric|min:0|max:10',
+            'editAromaScore'        => 'nullable|numeric|min:0|max:10',
+            'editTasteScore'        => 'nullable|numeric|min:0|max:10',
+            'editOverallScore'      => 'nullable|numeric|min:0|max:100',
+            'editTastingNotes'      => 'nullable|string',
+            'editQualificationDate' => 'required|date',
+        ]);
+
+        DoQualification::forSupervisor(Auth::id())->findOrFail($this->editId)->update([
+            'wine_name'          => $this->editWineName,
+            'vintage'            => $this->editVintage,
+            'color'              => $this->editColor ?: null,
+            'alcohol_percentage' => $this->editAlcohol  ?: null,
+            'brix_degree'        => $this->editBrix      ?: null,
+            'acidity_level'      => $this->editAcidity   ?: null,
+            'ph_level'           => $this->editPh        ?: null,
+            'visual_score'       => $this->editVisualScore  ?: null,
+            'aroma_score'        => $this->editAromaScore   ?: null,
+            'taste_score'        => $this->editTasteScore   ?: null,
+            'overall_score'      => $this->editOverallScore ?: null,
+            'tasting_notes'      => $this->editTastingNotes ?: null,
+            'qualification_date' => $this->editQualificationDate,
+        ]);
+
+        $this->closeEdit();
+        $this->toastSuccess('Calificación actualizada.');
     }
 
     public function qualify(int $id): void

@@ -5,7 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Notifications\VerifyEmailNotification;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -90,7 +90,7 @@ class EmailVerificationTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('status', 'verification-link-sent');
 
-        Notification::assertSentTo($user, VerifyEmail::class);
+        Notification::assertSentTo($user, VerifyEmailNotification::class);
     }
 
     public function test_user_can_verify_email_via_link(): void
@@ -194,7 +194,7 @@ class EmailVerificationTest extends TestCase
 
         $user = User::where('email', 'test@example.com')->first();
         
-        Notification::assertSentTo($user, VerifyEmail::class);
+        Notification::assertSentTo($user, VerifyEmailNotification::class);
         $this->assertNull($user->email_verified_at);
     }
 }

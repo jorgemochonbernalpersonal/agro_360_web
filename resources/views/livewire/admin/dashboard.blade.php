@@ -2,7 +2,13 @@
     <x-agro.page-header
         title="Dashboard Administrador"
         description="Panel de control principal con estadísticas generales del sistema"
-    />
+    >
+        <x-slot:actions>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
+                Exportar Usuarios CSV
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Estadísticas Principales --}}
     <div class="grid grid-cols-2 gap-4">
@@ -126,6 +132,31 @@
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Accesos Rápidos</h2>
         <div class="grid grid-cols-2 gap-4">
             <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.security-log.index') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-100 transition-colors">
+                        <flux:icon icon="shield-exclamation" class="size-5 text-orange-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-orange-600 transition-colors text-sm">Log de Seguridad</p>
+                        <p class="text-xs text-zinc-500 truncate">Eventos y alertas</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-orange-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.notifications.index') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
+                        <flux:icon icon="paper-airplane" class="size-5 text-blue-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors text-sm">Notificaciones</p>
+                        <p class="text-xs text-zinc-500 truncate">Email masivo a usuarios</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-blue-400 transition-colors" />
+                </a>
+            </x-agro.card>
+            <x-agro.card class="hover-lift transition-all duration-200">
                 <a href="{{ route('admin.users.index') }}" class="flex items-center gap-4 group">
                     <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition-colors">
                         <flux:icon icon="users" class="size-5 text-purple-600" />
@@ -174,6 +205,19 @@
                         <p class="text-xs text-zinc-500 truncate">Códigos SIGPAC</p>
                     </div>
                     <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-blue-400 transition-colors" />
+                </a>
+            </x-agro.card>
+
+            <x-agro.card class="hover-lift transition-all duration-200">
+                <a href="{{ route('admin.subscriptions.index') }}" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0 group-hover:bg-green-100 transition-colors">
+                        <flux:icon icon="credit-card" class="size-5 text-green-600" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-zinc-900 group-hover:text-green-600 transition-colors text-sm">Suscripciones</p>
+                        <p class="text-xs text-zinc-500 truncate">Pagos y planes</p>
+                    </div>
+                    <flux:icon icon="chevron-right" class="size-4 text-zinc-300 ml-auto group-hover:text-green-400 transition-colors" />
                 </a>
             </x-agro.card>
         </div>

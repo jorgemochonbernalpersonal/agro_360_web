@@ -109,6 +109,8 @@
                                 <button wire:click="updateStatus({{ $inspection->id }}, 'cancelled')"
                                     class="text-xs text-red-500 hover:underline ml-1">Cancelar</button>
                             @endif
+                            <button wire:click="openEdit({{ $inspection->id }})"
+                                class="text-xs text-zinc-500 hover:text-zinc-700 hover:underline ml-1">Editar</button>
                         </div>
                     </td>
                 </tr>
@@ -117,5 +119,55 @@
             <x-slot name="pagination">{{ $inspections->links() }}</x-slot>
         </x-agro.data-table>
     </div>
+
+    {{-- Edit modal --}}
+    @if($showEdit)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" wire:key="edit-inspection-{{ $editInspectionId }}">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
+                <h3 class="text-base font-semibold text-zinc-800">Editar inspección</h3>
+                <button wire:click="closeEdit" class="text-zinc-400 hover:text-zinc-600">
+                    <flux:icon icon="x-mark" class="w-5 h-5" />
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha inspección</label>
+                        <input type="date" wire:model="editInspectionDate" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                        @error('editInspectionDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">Resultado</label>
+                        <select wire:model="editResult" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                            <option value="">— Sin resultado —</option>
+                            @foreach(\App\Models\DoInspection::RESULT_LABELS as $key => $label)
+                                <option value="{{ $key }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('editResult') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">Nº referencia</label>
+                        <input type="text" wire:model="editReferenceNumber" placeholder="Ej: INSP-2026-001" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                        @error('editReferenceNumber') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">Hallazgos</label>
+                        <textarea wire:model="editFindings" rows="2" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">Notas</label>
+                        <textarea wire:model="editNotes" rows="2" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 px-6 py-4 border-t border-zinc-100">
+                <button wire:click="closeEdit" class="px-4 py-2 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancelar</button>
+                <button wire:click="updateInspection" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+    @endif
 
 </div>

@@ -2,7 +2,13 @@
     <x-agro.page-header
         title="Parcelas del Sistema"
         description="Visualiza todas las parcelas registradas por todos los usuarios"
-    />
+    >
+        <x-slot:actions>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
+                Exportar CSV
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Estadísticas --}}
     <div x-data="{
@@ -150,10 +156,19 @@
                     </x-agro.table-cell>
 
                     <x-agro.table-cell align="right">
-                        <x-agro.action-button
-                            variant="view"
-                            href="{{ route('plots.show', $plot->id) }}"
-                        />
+                        <div class="flex items-center gap-1 justify-end">
+                            <x-agro.action-button
+                                variant="view"
+                                href="{{ route('plots.show', $plot->id) }}"
+                            />
+                            <flux:button
+                                variant="ghost"
+                                size="sm"
+                                icon="arrow-path"
+                                wire:click="openReassignModal({{ $plot->id }})"
+                                tooltip="Reasignar viticultor"
+                            />
+                        </div>
                     </x-agro.table-cell>
                 </x-agro.table-row>
             @endforeach
@@ -167,5 +182,60 @@
             </x-slot>
         @endif
     </x-agro.data-table>
+
+    {{-- Modal: Reasignar viticultor --}}
+    <flux:modal wire:model="showReassignModal" class="w-full max-w-lg">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 rounded-lg bg-agro-50">
+                    <flux:icon icon="arrow-path" class="size-5 text-agro-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-zinc-900">Reasignar Parcela</h3>
+                    <p class="text-xs text-zinc-500">{{ $reassignPlotName }}</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">Buscar usuario</label>
+                    <flux:input wire:model.live="reassignSearch" placeholder="Nombre o email..." />
+                </div>
+
+                @if($availableUsers->count() > 0)
+                <div>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">Seleccionar</label>
+                    <div class="space-y-1 max-h-48 overflow-y-auto border border-zinc-200 rounded-lg p-1">
+                        @foreach($availableUsers as $u)
+                        <label class="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-zinc-50 transition-colors {{ (string)$reassignViticulturistId === (string)$u->id ? 'bg-agro-50' : '' }}">
+                            <input
+                                type="radio"
+                                wire:model.live="reassignViticulturistId"
+                                value="{{ $u->id }}"
+                                class="text-agro-600 focus:ring-agro-500"
+                            />
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-medium text-zinc-900 truncate">{{ $u->name }}</p>
+                                <p class="text-xs text-zinc-400 truncate">{{ $u->email }} · {{ $u->role }}</p>
+                            </div>
+                        </label>
+                        @endforeach
+                    </div>
+                </div>
+                @elseif($reassignSearch)
+                    <p class="text-sm text-zinc-400 text-center py-3">No se encontraron usuarios</p>
+                @else
+                    <p class="text-sm text-zinc-400 text-center py-3">Escribe para buscar un usuario</p>
+                @endif
+
+                @error('reassignViticulturistId') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="closeReassignModal">Cancelar</flux:button>
+                <flux:button variant="primary" wire:click="reassignViticulturist">Reasignar</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>
 

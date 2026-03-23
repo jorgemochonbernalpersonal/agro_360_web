@@ -49,4 +49,7 @@ Route::middleware(['role:supervisor'])
 
         // ── Settings ──────────────────────────────────────────────────
         Route::get('/settings', \App\Livewire\Supervisor\Settings\Index::class)->name('settings.index');
+
+        // ── Acceso al cuaderno ────────────────────────────────────────
+        Route::get('/notebook-access', \App\Livewire\Supervisor\Notebook\Index::class)->name('notebook.index');
     });

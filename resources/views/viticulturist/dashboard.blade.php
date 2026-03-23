@@ -211,6 +211,14 @@
 
         {{-- Quick Links Row --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <a href="{{ route('viticulturist.quick-entry') }}" wire:navigate class="bg-white rounded-xl shadow border border-agro-200 p-4 hover:shadow-lg hover:border-agro-400 transition-all flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-agro-100 flex items-center justify-center text-xl">⚡</div>
+                <div>
+                    <p class="font-semibold text-gray-900">Entrada rápida</p>
+                    <p class="text-xs text-gray-500">Actividad en 2 pasos</p>
+                </div>
+            </a>
+
             <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate class="bg-white rounded-xl shadow border border-gray-200 p-4 hover:shadow-lg hover:border-purple-300 transition-all flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-xl">📓</div>
                 <div>

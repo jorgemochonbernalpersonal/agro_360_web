@@ -24,16 +24,18 @@
             <p class="text-2xl font-bold text-emerald-600 leading-none">{{ $viticulturistCount }}</p>
             <p class="text-xs text-zinc-400 mt-0.5">Adscritos a la denominación</p>
         </div>
-        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+        <a href="{{ route('supervisor.qualification.index') }}" wire:navigate
+            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-amber-300 transition-colors">
             <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Calificaciones pendientes</p>
-            <p class="text-2xl font-bold text-amber-600 leading-none">—</p>
-            <p class="text-xs text-zinc-400 mt-0.5">Pendiente de datos</p>
-        </div>
-        <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-2xl font-bold text-amber-600 leading-none">{{ $pendingQualifications }}</p>
+            <p class="text-xs text-zinc-400 mt-0.5">En espera de revisión</p>
+        </a>
+        <a href="{{ route('supervisor.labels.index') }}" wire:navigate
+            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-rose-300 transition-colors">
             <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Contraetiquetas emitidas</p>
-            <p class="text-2xl font-bold text-rose-600 leading-none">—</p>
-            <p class="text-xs text-zinc-400 mt-0.5">Campaña actual</p>
-        </div>
+            <p class="text-2xl font-bold text-rose-600 leading-none">{{ number_format($issuedLabelsThisYear) }}</p>
+            <p class="text-xs text-zinc-400 mt-0.5">Este año ({{ now()->year }})</p>
+        </a>
     </div>
 
     {{-- Bloques de acceso rápido --}}
@@ -122,6 +124,14 @@
                     <flux:icon icon="map" class="w-4 h-4 text-zinc-400 group-hover:text-teal-500 flex-shrink-0" />
                     Territorio
                 </a>
+                <a href="{{ route('supervisor.notebook.index') }}" wire:navigate
+                   class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition group">
+                    <flux:icon icon="book-open" class="w-4 h-4 text-zinc-400 group-hover:text-indigo-500 flex-shrink-0" />
+                    Acceso cuaderno
+                    @if($pendingNotebookRequests > 0)
+                        <span class="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full">{{ $pendingNotebookRequests }}</span>
+                    @endif
+                </a>
             </div>
         </div>
 
@@ -155,11 +165,14 @@
     </div>
 
     {{-- Info callout --}}
-    <flux:callout variant="info" icon="information-circle">
-        <flux:callout.heading>Módulo en construcción</flux:callout.heading>
-        <flux:callout.text>
-            El rol Denominación de Origen está en fase de implementación. Los módulos están disponibles para navegación y se irán activando progresivamente. 13 capítulos · 88 funciones · 4 bloques funcionales.
-        </flux:callout.text>
-    </flux:callout>
+    @if($pendingNotebookRequests > 0)
+        <flux:callout variant="warning" icon="book-open">
+            <flux:callout.heading>Solicitudes de cuaderno pendientes</flux:callout.heading>
+            <flux:callout.text>
+                Tienes {{ $pendingNotebookRequests }} solicitud{{ $pendingNotebookRequests > 1 ? 'es' : '' }} de acceso al cuaderno pendiente{{ $pendingNotebookRequests > 1 ? 's' : '' }} de respuesta por parte de los viticultores.
+                <a href="{{ route('supervisor.notebook.index') }}" wire:navigate class="underline font-medium">Ver solicitudes →</a>
+            </flux:callout.text>
+        </flux:callout>
+    @endif
 
 </div>

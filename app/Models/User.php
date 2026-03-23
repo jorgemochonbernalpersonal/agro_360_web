@@ -31,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'dni',
         'password_must_reset',
         'can_login',
+        'email_verified_at',
         'invitation_sent_at',
         'invitation_token',
         'invitation_expires_at',

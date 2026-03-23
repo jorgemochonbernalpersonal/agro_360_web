@@ -226,6 +226,18 @@
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
                                 @endcan
+                                @can('delete', $item)
+                                    @if($item->activities_count === 0)
+                                        <button
+                                            wire:click="delete({{ $item->id }})"
+                                            wire:confirm="¿Eliminar esta maquinaria? Esta acción no se puede deshacer."
+                                            class="{{ $btnDanger }}"
+                                            title="Eliminar maquinaria"
+                                        >
+                                            <flux:icon icon="trash" class="size-4" />
+                                        </button>
+                                    @endif
+                                @endcan
                             </div>
 
                             @can('update', $item)

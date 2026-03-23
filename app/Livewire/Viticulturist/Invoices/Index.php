@@ -274,6 +274,32 @@ class Index extends Component
         }
     }
 
+    // ── Eliminar (solo draft) ─────────────────────────────────────────────────
+
+    public function delete(int $id): void
+    {
+        $invoice = $this->findInvoice($id);
+        if (!$invoice) return;
+
+        if ($invoice->status !== 'draft') {
+            $this->toastError('Solo se pueden eliminar facturas en estado borrador.');
+            return;
+        }
+
+        try {
+            DB::transaction(function () use ($invoice) {
+                // Release any reserved stock before deleting (same path as cancel)
+                $invoice->update(['status' => 'cancelled']);
+                $invoice->updateQuietly(['delivery_status' => 'cancelled']);
+                $invoice->delete();
+            });
+            $this->toastSuccess('Factura eliminada correctamente.');
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar factura: ' . $e->getMessage(), ['invoice_id' => $id]);
+            $this->toastError('Error al eliminar la factura.');
+        }
+    }
+
     // ── Cancelar (solo draft) ─────────────────────────────────────────────────
 
     public function cancel(int $id): void

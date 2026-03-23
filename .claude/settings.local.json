@@ -191,7 +191,17 @@
       "Bash(docker compose:*)",
       "Bash(docker start:*)",
       "Bash(1:*)",
-      "Bash(where mariadb:*)"
+      "Bash(where mariadb:*)",
+      "Bash(__NEW_LINE_01435af47d93f714__ for:*)",
+      "Bash(__NEW_LINE_dc8a47f9b8217d7b__ echo:*)",
+      "Bash(__NEW_LINE_db639f7df78d5ecc__ echo:*)",
+      "Bash(__NEW_LINE_09975b1636363f18__ echo:*)",
+      "Bash(for feature:*)",
+      "Bash(xargs -I {} basename {} done)",
+      "Bash(/tmp/producer_features.txt:*)",
+      "Bash(xargs -I {} basename {} fi done)",
+      "Bash(__NEW_LINE_aa72421f059419c8__ bash:*)",
+      "Bash(__NEW_LINE_af3ee81937d47129__ bash:*)"
     ]
   }
 }

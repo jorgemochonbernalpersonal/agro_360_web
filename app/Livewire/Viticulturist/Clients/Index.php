@@ -45,6 +45,19 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function delete(int $clientId): void
+    {
+        $client = Client::forUser(Auth::id())->findOrFail($clientId);
+
+        if ($client->invoices()->exists()) {
+            $this->toastError('No se puede eliminar un cliente con facturas asociadas.');
+            return;
+        }
+
+        $client->delete();
+        $this->toastSuccess('Cliente eliminado correctamente.');
+    }
+
     public function toggleActive($clientId)
     {
         $user = Auth::user();

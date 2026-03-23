@@ -90,13 +90,9 @@ require __DIR__ . '/auth.php';
 Route::middleware('guest')->get('/activar-cuenta/{token}', \App\Livewire\Auth\ClaimAccount::class)
     ->name('auth.claim-account');
 
-Route::middleware(['auth', 'password.changed'])->group(function () {
-    // password.changed debe ejecutarse ANTES de verified
-    // Si tiene password_must_reset, redirige a force-reset sin verificar email
-})->withoutMiddleware('verified'); // Asegurar que verified no se ejecute aquí
-
 // Rutas protegidas: password cambiado Y email verificado
-Route::middleware(['auth', 'password.changed', 'verified'])->group(function () {
+// require.password.change debe ejecutarse ANTES de verified para usuarios creados por otro
+Route::middleware(['auth', 'password.changed', 'require.password.change', 'verified'])->group(function () {
     // Laravel Log Viewer - Solo para administradores
     Route::get('logs', function () {
         if (auth()->user()->role !== 'admin') {

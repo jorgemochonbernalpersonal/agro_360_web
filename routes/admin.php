@@ -25,9 +25,18 @@ Route::middleware(['role:admin'])
             Route::get('/', \App\Livewire\Admin\Plots\Index::class)->name('index');
         });
 
-        // SIGPACs (solo lectura)
+        // SIGPACs
         Route::prefix('sigpac')->name('sigpac.')->group(function () {
             Route::get('/', \App\Livewire\Admin\Sigpac\Index::class)->name('index');
         });
+
+        // Log de seguridad
+        Route::get('/security-log', \App\Livewire\Admin\SecurityLog\Index::class)->name('security-log.index');
+
+        // Notificaciones masivas
+        Route::get('/notifications', \App\Livewire\Admin\Notifications\Index::class)->name('notifications.index');
+
+        // Suscripciones y pagos
+        Route::get('/subscriptions', \App\Livewire\Admin\Subscriptions\Index::class)->name('subscriptions.index');
     });
 

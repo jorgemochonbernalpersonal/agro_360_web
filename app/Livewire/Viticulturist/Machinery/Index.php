@@ -52,6 +52,24 @@ class Index extends Component
         }
     }
 
+    public function delete(int $machineryId): void
+    {
+        $user      = Auth::user();
+        $machinery = Machinery::forViticulturist($user->id)->findOrFail($machineryId);
+
+        if (!$user->can('delete', $machinery)) {
+            abort(403);
+        }
+
+        if ($machinery->activities()->exists()) {
+            $this->toastError('No se puede eliminar maquinaria con actividades asociadas.');
+            return;
+        }
+
+        $machinery->delete();
+        $this->toastSuccess('Maquinaria eliminada correctamente.');
+    }
+
     public function clearFilters()
     {
         $this->search     = '';

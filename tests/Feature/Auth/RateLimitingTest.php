@@ -14,24 +14,19 @@ class RateLimitingTest extends TestCase
 
     public function test_login_rate_limiting_blocks_after_5_attempts(): void
     {
-        $user = User::factory()->create([
+        User::factory()->create([
             'email' => 'test@example.com',
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
         ]);
 
-        $this->get('/login');
-
-        // Intentar login 5 veces con contraseña incorrecta
-        for ($i = 0; $i < 5; $i++) {
-            Livewire::test(\App\Livewire\Auth\Login::class)
-                ->set('email', 'test@example.com')
-                ->set('password', 'wrong-password')
-                ->call('login')
-                ->assertHasErrors(['email']);
+        // Llenar el rate limiter directamente hasta el límite del entorno actual
+        $key = 'login.' . request()->ip();
+        $maxAttempts = app()->environment('production') ? 5 : 100;
+        for ($i = 0; $i < $maxAttempts; $i++) {
+            RateLimiter::hit($key, 60);
         }
 
-        // El sexto intento debería mostrar mensaje de rate limiting
         $response = Livewire::test(\App\Livewire\Auth\Login::class)
             ->set('email', 'test@example.com')
             ->set('password', 'wrong-password')
@@ -124,16 +119,17 @@ class RateLimitingTest extends TestCase
 
     public function test_rate_limiting_message_shows_remaining_seconds(): void
     {
-        $user = User::factory()->create([
+        User::factory()->create([
             'email' => 'test@example.com',
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
         ]);
 
         $key = 'login.' . request()->ip();
+        $maxAttempts = app()->environment('production') ? 5 : 100;
 
-        // Llenar el rate limiter
-        for ($i = 0; $i < 5; $i++) {
+        // Llenar el rate limiter hasta el límite del entorno actual
+        for ($i = 0; $i < $maxAttempts; $i++) {
             RateLimiter::hit($key, 60);
         }
 

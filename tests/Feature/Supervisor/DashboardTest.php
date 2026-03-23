@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Supervisor;
 
+use App\Models\DoLabel;
+use App\Models\DoQualification;
+use App\Models\NotebookAccessRequest;
 use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -93,5 +96,127 @@ class DashboardTest extends SupervisorTestCase
 
         Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
             ->assertViewHas('wineryCount', 0);
+    }
+
+    // ── pending qualifications ────────────────────────────────────────────────
+
+    public function test_dashboard_shows_pending_qualifications_count(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+
+        DoQualification::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id'     => $winery->id,
+            'vintage'       => now()->year,
+            'wine_name'     => 'Vino Test',
+            'result'        => DoQualification::RESULT_PENDING,
+        ]);
+
+        // A non-pending qualification should not be counted
+        DoQualification::create([
+            'supervisor_id' => $supervisor->id,
+            'winery_id'     => $winery->id,
+            'vintage'       => now()->year,
+            'wine_name'     => 'Vino Calificado',
+            'result'        => DoQualification::RESULT_QUALIFIED,
+        ]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingQualifications', 1);
+    }
+
+    public function test_dashboard_pending_qualifications_scoped_to_own_supervisor(): void
+    {
+        $supervisor      = $this->makeSupervisor();
+        $otherSupervisor = $this->makeSupervisor();
+        $winery          = $this->makeWinery();
+
+        DoQualification::create([
+            'supervisor_id' => $otherSupervisor->id,
+            'winery_id'     => $winery->id,
+            'vintage'       => now()->year,
+            'wine_name'     => 'Vino Otro',
+            'result'        => DoQualification::RESULT_PENDING,
+        ]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingQualifications', 0);
+    }
+
+    // ── issued labels ─────────────────────────────────────────────────────────
+
+    public function test_dashboard_shows_issued_labels_this_year(): void
+    {
+        [$supervisor, $winery] = $this->makeSupervisorWithWinery();
+
+        DoLabel::create([
+            'supervisor_id'      => $supervisor->id,
+            'winery_id'          => $winery->id,
+            'vintage'            => now()->year,
+            'quantity_requested' => 500,
+            'quantity_issued'    => 400,
+            'quantity_stock'     => 0,
+            'status'             => DoLabel::STATUS_ISSUED,
+            'issued_at'          => now(),
+        ]);
+
+        // A label from last year should not be counted
+        DoLabel::create([
+            'supervisor_id'      => $supervisor->id,
+            'winery_id'          => $winery->id,
+            'vintage'            => now()->year - 1,
+            'quantity_requested' => 200,
+            'quantity_issued'    => 200,
+            'quantity_stock'     => 0,
+            'status'             => DoLabel::STATUS_ISSUED,
+            'issued_at'          => now()->subYear(),
+        ]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('issuedLabelsThisYear', 400);
+    }
+
+    // ── pending notebook requests ─────────────────────────────────────────────
+
+    public function test_dashboard_shows_pending_notebook_requests_count(): void
+    {
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+
+        NotebookAccessRequest::create([
+            'winery_id'        => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'status'           => NotebookAccessRequest::STATUS_PENDING,
+            'requested_at'     => now(),
+        ]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingNotebookRequests', 1);
+    }
+
+    public function test_approved_notebook_requests_not_counted_as_pending(): void
+    {
+        $supervisor    = $this->makeSupervisor();
+        $viticulturist = User::factory()->create(['role' => 'viticulturist']);
+
+        NotebookAccessRequest::create([
+            'winery_id'        => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'status'           => NotebookAccessRequest::STATUS_APPROVED,
+            'requested_at'     => now(),
+        ]);
+
+        $this->actingAs($supervisor);
+
+        Livewire::test(\App\Livewire\Supervisor\Dashboard::class)
+            ->assertViewHas('pendingNotebookRequests', 0);
     }
 }

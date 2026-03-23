@@ -228,6 +228,16 @@
                                 <a href="{{ route('viticulturist.clients.edit', $client->id) }}" class="{{ $btnBase }}" title="Editar">
                                     <flux:icon icon="pencil-square" class="size-4" />
                                 </a>
+                                @if($client->invoices->isEmpty())
+                                    <button
+                                        wire:click="delete({{ $client->id }})"
+                                        wire:confirm="¿Eliminar este cliente? Esta acción no se puede deshacer."
+                                        class="{{ $btnDanger }}"
+                                        title="Eliminar cliente"
+                                    >
+                                        <flux:icon icon="trash" class="size-4" />
+                                    </button>
+                                @endif
                             </div>
                             <button
                                 wire:click="toggleActive({{ $client->id }})"

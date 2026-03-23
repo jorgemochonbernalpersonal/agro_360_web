@@ -2,14 +2,27 @@
     <x-agro.page-header
         title="Códigos SIGPAC del Sistema"
         description="Visualiza todos los códigos SIGPAC registrados por todos los usuarios"
-    />
+    >
+        <x-slot:actions>
+            @if($stats['orphaned'] > 0)
+                <flux:button
+                    wire:click="deleteOrphaned"
+                    wire:confirm="¿Eliminar {{ $stats['orphaned'] }} código(s) SIGPAC sin parcelas asociadas?"
+                    variant="danger"
+                    icon="trash"
+                >
+                    Limpiar huérfanos ({{ $stats['orphaned'] }})
+                </flux:button>
+            @endif
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Estadísticas --}}
     <div class="grid grid-cols-2 gap-4">
-        <x-agro.stat-card label="Total Códigos"      :value="$stats['total']"                    icon="hashtag"    color="blue"   />
-        <x-agro.stat-card label="Por Viticultores"   :value="$stats['by_role']['viticulturist']" icon="map"        color="agro"   />
+        <x-agro.stat-card label="Total Códigos"      :value="$stats['total']"                    icon="hashtag"        color="blue"   />
+        <x-agro.stat-card label="Huérfanos"          :value="$stats['orphaned']"                 icon="exclamation-circle" color="{{ $stats['orphaned'] > 0 ? 'red' : 'agro' }}" />
+        <x-agro.stat-card label="Por Viticultores"   :value="$stats['by_role']['viticulturist']" icon="map"            color="agro"   />
         <x-agro.stat-card label="Por Bodegas"        :value="$stats['by_role']['winery']"        icon="building-office" color="purple" />
-        <x-agro.stat-card label="Por Supervisores"   :value="$stats['by_role']['supervisor']"    icon="shield-check"    color="blue"   />
     </div>
 
     {{-- Filtros --}}
@@ -28,7 +41,7 @@
 
     {{-- Tabla --}}
     <x-agro.data-table
-        :headers="['Código SIGPAC', 'Parcelas', 'Usuario', 'Registro']"
+        :headers="['Código SIGPAC', 'Parcelas', 'Usuario', 'Registro', '']"
         empty-message="No se encontraron códigos SIGPAC"
         empty-description="No hay códigos que coincidan con los filtros seleccionados"
         empty-icon="hashtag"
@@ -82,6 +95,20 @@
                     <x-agro.table-cell>
                         <p class="text-sm text-zinc-700">{{ $sigpac->created_at->format('d/m/Y') }}</p>
                         <p class="text-xs text-zinc-400">{{ $sigpac->created_at->diffForHumans() }}</p>
+                    </x-agro.table-cell>
+
+                    <x-agro.table-cell align="right">
+                        @if($sigpac->plots_count === 0)
+                            <flux:button
+                                variant="ghost"
+                                size="sm"
+                                icon="trash"
+                                class="text-red-400 hover:text-red-600"
+                                wire:click="deleteSigpac({{ $sigpac->id }})"
+                                wire:confirm="¿Eliminar el código SIGPAC {{ $sigpac->code }}?"
+                                tooltip="Eliminar (huérfano)"
+                            />
+                        @endif
                     </x-agro.table-cell>
                 </x-agro.table-row>
             @endforeach

@@ -27,6 +27,15 @@ class Index extends Component
     public string $notes            = '';
     public string $reference_number = '';
 
+    // Edit modal
+    public bool   $showEdit              = false;
+    public ?int   $editInspectionId      = null;
+    public string $editInspectionDate    = '';
+    public string $editNotes             = '';
+    public string $editFindings          = '';
+    public string $editResult            = '';
+    public string $editReferenceNumber   = '';
+
     protected $queryString = [
         'currentTab' => ['except' => 'all', 'as' => 'tab'],
         'search'     => ['except' => ''],
@@ -91,6 +100,49 @@ class Index extends Component
         $this->reset(['subject_id', 'notes', 'reference_number']);
         $this->showCreate = false;
         $this->toastSuccess('Inspección programada correctamente.');
+    }
+
+    public function openEdit(int $inspectionId): void
+    {
+        $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
+
+        $this->editInspectionId    = $inspectionId;
+        $this->editInspectionDate  = $inspection->inspection_date->format('Y-m-d');
+        $this->editNotes           = $inspection->notes           ?? '';
+        $this->editFindings        = $inspection->findings        ?? '';
+        $this->editResult          = $inspection->result          ?? '';
+        $this->editReferenceNumber = $inspection->reference_number ?? '';
+        $this->showEdit            = true;
+        $this->resetValidation();
+    }
+
+    public function closeEdit(): void
+    {
+        $this->showEdit          = false;
+        $this->editInspectionId  = null;
+        $this->resetValidation();
+    }
+
+    public function updateInspection(): void
+    {
+        $this->validate([
+            'editInspectionDate'  => 'required|date',
+            'editResult'          => 'nullable|in:compliant,non_compliant,pending',
+            'editFindings'        => 'nullable|string',
+            'editNotes'           => 'nullable|string',
+            'editReferenceNumber' => 'nullable|string|max:100',
+        ]);
+
+        DoInspection::forSupervisor(Auth::id())->findOrFail($this->editInspectionId)->update([
+            'inspection_date'  => $this->editInspectionDate,
+            'result'           => $this->editResult           ?: null,
+            'findings'         => $this->editFindings         ?: null,
+            'notes'            => $this->editNotes            ?: null,
+            'reference_number' => $this->editReferenceNumber  ?: null,
+        ]);
+
+        $this->closeEdit();
+        $this->toastSuccess('Inspección actualizada.');
     }
 
     public function updateStatus(int $inspectionId, string $status): void

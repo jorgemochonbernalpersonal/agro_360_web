@@ -48,6 +48,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             return view('viticulturist.dashboard');
         })->name('dashboard');
 
+        Route::get('/quick-entry', \App\Livewire\Viticulturist\QuickEntry::class)->name('quick-entry');
         Route::get('/calendar', Calendar::class)->name('calendar');
         Route::get('/settings', \App\Livewire\Viticulturist\Settings::class)->name('settings');
         Route::get('/settings/taxes', function() {
@@ -337,6 +338,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
                 return redirect()->route('viticulturist.personal.index', ['viewMode' => 'personal']);
             })->name('workers');
             Route::get('/viticulturist/create', \App\Livewire\Viticulturist\Viticulturists\Create::class)->name('viticulturist.create');
+            Route::get('/viticulturist/{viticulturist}/edit', \App\Livewire\Viticulturist\Viticulturists\Edit::class)->name('viticulturist.edit');
             Route::get('/viticulturist/download-credentials', function (\Illuminate\Http\Request $request) {
                 $viticulturistId = $request->query('id');
 

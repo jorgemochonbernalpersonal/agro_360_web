@@ -12,9 +12,36 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
+    public function exportCsv()
+    {
+        $users    = User::orderBy('created_at', 'desc')->get();
+        $filename = 'usuarios_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        return response()->streamDownload(function () use ($users) {
+            $handle = fopen('php://output', 'w');
+            fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM for Excel
+            fputcsv($handle, ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Email Verificado', 'Beta', 'Fin Beta', 'Registro']);
+
+            foreach ($users as $user) {
+                fputcsv($handle, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->role,
+                    $user->can_login ? 'Activo' : 'Inactivo',
+                    $user->email_verified_at ? 'Sí' : 'No',
+                    $user->is_beta_user ? 'Sí' : 'No',
+                    $user->beta_ends_at ? $user->beta_ends_at->format('d/m/Y') : '',
+                    $user->created_at->format('d/m/Y H:i'),
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function render()
     {
-        // Estadísticas generales del sistema
         $stats = [
             'users' => [
                 'total' => User::count(),
@@ -25,46 +52,45 @@ class Dashboard extends Component
                     'viticulturist' => User::where('role', 'viticulturist')->count(),
                     'producer'      => User::where('role', 'producer')->count(),
                 ],
-                'active' => User::where('can_login', true)->count(),
-                'verified' => User::whereNotNull('email_verified_at')->count(),
+                'active'         => User::where('can_login', true)->count(),
+                'verified'       => User::whereNotNull('email_verified_at')->count(),
                 'new_this_month' => User::whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
                     ->count(),
             ],
             'plots' => [
-                'total' => Plot::count(),
-                'total_area' => Plot::sum('area') ?? 0,
+                'total'          => Plot::count(),
+                'total_area'     => Plot::sum('area') ?? 0,
                 'new_this_month' => Plot::whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
                     ->count(),
             ],
             'clients' => [
-                'total' => Client::count(),
-                'active' => Client::where('active', true)->count(),
+                'total'      => Client::count(),
+                'active'     => Client::where('active', true)->count(),
                 'individual' => Client::where('client_type', 'individual')->count(),
-                'company' => Client::where('client_type', 'company')->count(),
+                'company'    => Client::where('client_type', 'company')->count(),
             ],
             'invoices' => [
-                'total' => Invoice::count(),
-                'this_year' => Invoice::whereYear('invoice_date', now()->year)->count(),
-                'this_year_amount' => Invoice::whereYear('invoice_date', now()->year)
-                    ->sum('total_amount') ?? 0,
-                'pending' => Invoice::where('payment_status', 'unpaid')
+                'total'           => Invoice::count(),
+                'this_year'       => Invoice::whereYear('invoice_date', now()->year)->count(),
+                'this_year_amount'=> Invoice::whereYear('invoice_date', now()->year)->sum('total_amount') ?? 0,
+                'pending'         => Invoice::where('payment_status', 'unpaid')
                     ->where('status', '!=', 'cancelled')
                     ->count(),
             ],
             'activities' => [
-                'total' => AgriculturalActivity::count(),
-                'this_year' => AgriculturalActivity::whereYear('activity_date', now()->year)->count(),
+                'total'      => AgriculturalActivity::count(),
+                'this_year'  => AgriculturalActivity::whereYear('activity_date', now()->year)->count(),
                 'this_month' => AgriculturalActivity::whereYear('activity_date', now()->year)
                     ->whereMonth('activity_date', now()->month)
                     ->count(),
             ],
             'support' => [
-                'total' => SupportTicket::count(),
-                'open' => SupportTicket::open()->count(),
-                'in_progress' => SupportTicket::where('status', 'in_progress')->count(),
-                'resolved' => SupportTicket::where('status', 'resolved')->count(),
+                'total'         => SupportTicket::count(),
+                'open'          => SupportTicket::open()->count(),
+                'in_progress'   => SupportTicket::where('status', 'in_progress')->count(),
+                'resolved'      => SupportTicket::where('status', 'resolved')->count(),
                 'new_this_week' => SupportTicket::where('created_at', '>=', now()->subWeek())->count(),
             ],
         ];
@@ -72,9 +98,8 @@ class Dashboard extends Component
         return view('livewire.admin.dashboard', [
             'stats' => $stats,
         ])->layout('layouts.app', [
-            'title' => 'Dashboard Administrador - Agro365',
+            'title'       => 'Dashboard Administrador - Agro365',
             'description' => 'Panel de control con estadísticas generales del sistema',
         ]);
     }
 }
-

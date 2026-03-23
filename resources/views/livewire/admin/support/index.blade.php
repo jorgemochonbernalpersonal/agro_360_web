@@ -2,7 +2,13 @@
     <x-agro.page-header
         title="Tickets de Soporte"
         description="Gestiona todos los tickets de soporte del sistema"
-    />
+    >
+        <x-slot:actions>
+            <flux:button wire:click="exportCsv" variant="ghost" icon="arrow-down-tray">
+                Exportar CSV
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Estadísticas --}}
     <div x-data="{
@@ -58,6 +64,13 @@
             <option value="improvement">Mejoras</option>
             <option value="question">Preguntas</option>
         </x-agro.filter-select>
+        <x-agro.filter-select wire:model.live="filterPriority">
+            <option value="all">Todas las prioridades</option>
+            <option value="low">Baja</option>
+            <option value="medium">Media</option>
+            <option value="high">Alta</option>
+            <option value="critical">Crítica</option>
+        </x-agro.filter-select>
     </x-agro.filter-bar>
 
     {{-- Tabla de Tickets --}}
@@ -108,13 +121,24 @@
                     </x-agro.table-cell>
 
                     <x-agro.table-cell align="right">
-                        <flux:button
-                            variant="ghost"
-                            size="sm"
-                            icon="eye"
-                            wire:click.stop="selectTicket({{ $ticket->id }})"
-                            tooltip="Ver detalles"
-                        />
+                        <div class="flex items-center gap-1 justify-end">
+                            <flux:button
+                                variant="ghost"
+                                size="sm"
+                                icon="eye"
+                                wire:click.stop="selectTicket({{ $ticket->id }})"
+                                tooltip="Ver detalles"
+                            />
+                            <flux:button
+                                variant="ghost"
+                                size="sm"
+                                icon="trash"
+                                class="text-red-400 hover:text-red-600"
+                                wire:click.stop="deleteTicket({{ $ticket->id }})"
+                                wire:confirm="¿Eliminar el ticket '{{ $ticket->title }}'? Esta acción no se puede deshacer."
+                                tooltip="Eliminar ticket"
+                            />
+                        </div>
                     </x-agro.table-cell>
                 </x-agro.table-row>
             @endforeach

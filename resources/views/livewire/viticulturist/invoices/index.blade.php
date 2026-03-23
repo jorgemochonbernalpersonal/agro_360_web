@@ -347,6 +347,12 @@
                                             title="Cancelar factura">
                                         <flux:icon icon="x-circle" class="size-4" />
                                     </button>
+                                    <button wire:click="delete({{ $invoice->id }})"
+                                            wire:confirm="¿Eliminar permanentemente esta factura? Esta acción no se puede deshacer."
+                                            class="{{ $btnBase }} text-red-600 hover:text-red-800 hover:bg-red-50"
+                                            title="Eliminar factura">
+                                        <flux:icon icon="trash" class="size-4" />
+                                    </button>
                                 @endif
 
                             </div>

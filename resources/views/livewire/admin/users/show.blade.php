@@ -7,6 +7,44 @@
             <flux:button href="{{ route('admin.users.index') }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
+
+            @if(!$user->email_verified_at)
+                <flux:button
+                    wire:click="verifyEmailManually"
+                    wire:confirm="¿Verificar el email de {{ $user->name }} manualmente?"
+                    variant="ghost"
+                    icon="check-badge"
+                >
+                    Verificar Email
+                </flux:button>
+            @endif
+
+            <flux:button
+                wire:click="sendPasswordReset"
+                wire:confirm="¿Enviar email de restablecimiento de contraseña a {{ $user->email }}?"
+                variant="ghost"
+                icon="key"
+            >
+                Reset Contraseña
+            </flux:button>
+
+            <flux:button
+                wire:click="toggleActive"
+                wire:confirm="{{ $user->can_login ? '¿Desactivar a ' . $user->name . '?' : '¿Activar a ' . $user->name . '?' }}"
+                variant="ghost"
+                icon="{{ $user->can_login ? 'lock-closed' : 'lock-open' }}"
+            >
+                {{ $user->can_login ? 'Desactivar' : 'Activar' }}
+            </flux:button>
+
+            <flux:button
+                wire:click="openEditModal"
+                variant="ghost"
+                icon="pencil"
+            >
+                Editar
+            </flux:button>
+
             @if(!$user->isAdmin() && $user->can_login)
                 <flux:button
                     wire:click="impersonate"
@@ -15,6 +53,17 @@
                     icon="arrow-right-end-on-rectangle"
                 >
                     Entrar como usuario
+                </flux:button>
+            @endif
+
+            @if(!$user->isAdmin())
+                <flux:button
+                    wire:click="deleteUser"
+                    wire:confirm="¿Eliminar a {{ $user->name }}? Esta acción no se puede deshacer."
+                    variant="danger"
+                    icon="trash"
+                >
+                    Eliminar
                 </flux:button>
             @endif
         </x-slot:actions>
@@ -73,7 +122,7 @@
                 @else
                     <div class="flex items-center gap-1.5 mt-0.5 text-zinc-400">
                         <flux:icon icon="x-circle" class="size-4" />
-                        <span class="text-sm font-semibold">No</span>
+                        <span class="text-sm font-semibold">No verificado</span>
                     </div>
                 @endif
             </div>
@@ -124,6 +173,110 @@
             @endif
         </div>
     </x-agro.card>
+
+    {{-- Jerarquía de relaciones --}}
+    @if(!empty($hierarchy))
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center gap-2">
+                <div class="p-1.5 rounded-lg bg-zinc-100">
+                    <flux:icon icon="share" class="size-4 text-zinc-600" />
+                </div>
+                <span class="font-semibold text-zinc-900 text-sm">Relaciones</span>
+            </div>
+        </x-slot:header>
+
+        <div class="space-y-4">
+            @if(isset($hierarchy['viticulturists']) && $hierarchy['viticulturists']->count() > 0)
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-2">
+                    Viticultores vinculados ({{ $hierarchy['viticulturists']->count() }})
+                </p>
+                <div class="space-y-1.5">
+                    @foreach($hierarchy['viticulturists'] as $rel)
+                    <a href="{{ route('admin.users.show', $rel->id) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors group">
+                        <div class="w-7 h-7 rounded-md bg-agro-50 flex items-center justify-center flex-shrink-0">
+                            <flux:icon icon="user" class="size-3.5 text-agro-600" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-zinc-900 group-hover:text-agro-600 truncate">{{ $rel->name }}</p>
+                            <p class="text-xs text-zinc-400 truncate">{{ $rel->email }}</p>
+                        </div>
+                        <x-agro.status-badge :active="$rel->can_login" />
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if(isset($hierarchy['wineries']) && $hierarchy['wineries']->count() > 0)
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-2">
+                    Bodegas vinculadas ({{ $hierarchy['wineries']->count() }})
+                </p>
+                <div class="space-y-1.5">
+                    @foreach($hierarchy['wineries'] as $rel)
+                    <a href="{{ route('admin.users.show', $rel->id) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors group">
+                        <div class="w-7 h-7 rounded-md bg-violet-50 flex items-center justify-center flex-shrink-0">
+                            <flux:icon icon="building-office" class="size-3.5 text-violet-600" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-zinc-900 group-hover:text-violet-600 truncate">{{ $rel->name }}</p>
+                            <p class="text-xs text-zinc-400 truncate">{{ $rel->email }}</p>
+                        </div>
+                        <x-agro.status-badge :active="$rel->can_login" />
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if(isset($hierarchy['supervised_wineries']) && $hierarchy['supervised_wineries']->count() > 0)
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-2">
+                    Bodegas supervisadas ({{ $hierarchy['supervised_wineries']->count() }})
+                </p>
+                <div class="space-y-1.5">
+                    @foreach($hierarchy['supervised_wineries'] as $rel)
+                    <a href="{{ route('admin.users.show', $rel->id) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors group">
+                        <div class="w-7 h-7 rounded-md bg-blue-50 flex items-center justify-center flex-shrink-0">
+                            <flux:icon icon="building-office" class="size-3.5 text-blue-600" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-zinc-900 group-hover:text-blue-600 truncate">{{ $rel->name }}</p>
+                            <p class="text-xs text-zinc-400 truncate">{{ $rel->email }}</p>
+                        </div>
+                        <x-agro.status-badge :active="$rel->can_login" />
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if(isset($hierarchy['supervised_viticulturists']) && $hierarchy['supervised_viticulturists']->count() > 0)
+            <div>
+                <p class="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-2">
+                    Viticultores supervisados ({{ $hierarchy['supervised_viticulturists']->count() }})
+                </p>
+                <div class="space-y-1.5">
+                    @foreach($hierarchy['supervised_viticulturists'] as $rel)
+                    <a href="{{ route('admin.users.show', $rel->id) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors group">
+                        <div class="w-7 h-7 rounded-md bg-agro-50 flex items-center justify-center flex-shrink-0">
+                            <flux:icon icon="user" class="size-3.5 text-agro-600" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-zinc-900 group-hover:text-agro-600 truncate">{{ $rel->name }}</p>
+                            <p class="text-xs text-zinc-400 truncate">{{ $rel->email }}</p>
+                        </div>
+                        <x-agro.status-badge :active="$rel->can_login" />
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+    </x-agro.card>
+    @endif
 
     {{-- Estadísticas de Viticultor --}}
     @if(isset($stats['viticulturist']))
@@ -263,4 +416,53 @@
             <p class="text-sm text-zinc-600">{{ $stats['admin']['note'] }}</p>
         </x-agro.card>
     @endif
+
+    {{-- Modal: Editar usuario --}}
+    <flux:modal wire:model="showEditModal" class="w-full max-w-lg">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 rounded-lg bg-blue-50">
+                    <flux:icon icon="pencil-square" class="size-5 text-blue-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-zinc-900">Editar Usuario</h3>
+                    <p class="text-xs text-zinc-500">Modifica los datos de {{ $user->name }}</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">Nombre completo</label>
+                    <flux:input wire:model="editName" placeholder="Nombre del usuario" />
+                    @error('editName') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">Email</label>
+                    <flux:input wire:model="editEmail" type="email" placeholder="email@ejemplo.com" />
+                    @error('editEmail') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    @if($editEmail !== $user->email)
+                        <p class="text-xs text-amber-600 mt-1">Al cambiar el email, se requerirá nueva verificación.</p>
+                    @endif
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-zinc-700 mb-1">Rol</label>
+                    <flux:select wire:model="editRole">
+                        <option value="viticulturist">Viticultor</option>
+                        <option value="winery">Bodega</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="producer">Productor</option>
+                        <option value="admin">Admin</option>
+                    </flux:select>
+                    @error('editRole') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="closeEditModal">Cancelar</flux:button>
+                <flux:button variant="primary" wire:click="saveUser">Guardar Cambios</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>

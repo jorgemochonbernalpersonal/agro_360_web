@@ -135,21 +135,25 @@ class Index extends Component
             $vitCountByWinery = collect();
         }
 
-        // Bodegas disponibles para asignar (no adscritas aún a este supervisor)
-        $assignedWineryIds = SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id');
+        // Bodegas disponibles para asignar (solo cuando el modal está abierto)
+        $availableWineries = collect();
 
-        $availableQuery = User::whereIn('role', ['winery', 'producer'])
-            ->whereNotIn('id', $assignedWineryIds);
+        if ($this->showAssignModal) {
+            $assignedWineryIds = SupervisorWinery::where('supervisor_id', $doId)->pluck('winery_id');
 
-        if ($this->assignSearch) {
-            $s = '%' . strtolower($this->assignSearch) . '%';
-            $availableQuery->where(function ($q) use ($s) {
-                $q->whereRaw('LOWER(name) LIKE ?', [$s])
-                  ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
-            });
+            $availableQuery = User::whereIn('role', ['winery', 'producer'])
+                ->whereNotIn('id', $assignedWineryIds);
+
+            if ($this->assignSearch) {
+                $s = '%' . strtolower($this->assignSearch) . '%';
+                $availableQuery->where(function ($q) use ($s) {
+                    $q->whereRaw('LOWER(name) LIKE ?', [$s])
+                      ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
+                });
+            }
+
+            $availableWineries = $availableQuery->orderBy('name')->limit(20)->get(['id', 'name', 'email']);
         }
-
-        $availableWineries = $availableQuery->orderBy('name')->limit(20)->get(['id', 'name', 'email']);
 
         return view('livewire.supervisor.census.index', [
             'items'              => $items,

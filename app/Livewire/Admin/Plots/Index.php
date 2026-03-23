@@ -3,48 +3,106 @@
 namespace App\Livewire\Admin\Plots;
 
 use App\Models\Plot;
+use App\Models\User;
+use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
-    public $search = '';
+    public $search       = '';
     public $activeFilter = '';
-    public $roleFilter = 'all';
+    public $roleFilter   = 'all';
+
+    // Reassign modal
+    public $showReassignModal    = false;
+    public $reassignPlotId       = null;
+    public $reassignPlotName     = '';
+    public $reassignViticulturistId = '';
+    public $reassignSearch       = '';
 
     protected $queryString = ['search', 'activeFilter', 'roleFilter'];
 
-    public function updatingSearch()
+    public function updatingSearch()      { $this->resetPage(); }
+    public function updatingActiveFilter(){ $this->resetPage(); }
+    public function updatingRoleFilter()  { $this->resetPage(); }
+
+    // ─── Reassign ─────────────────────────────────────────────────────────────
+
+    public function openReassignModal($plotId)
     {
-        $this->resetPage();
+        $plot = Plot::findOrFail($plotId);
+        $this->reassignPlotId       = $plotId;
+        $this->reassignPlotName     = $plot->name;
+        $this->reassignViticulturistId = $plot->viticulturist_id ?? '';
+        $this->reassignSearch       = '';
+        $this->showReassignModal    = true;
+        $this->resetValidation();
     }
 
-    public function updatingActiveFilter()
+    public function closeReassignModal()
     {
-        $this->resetPage();
+        $this->showReassignModal = false;
+        $this->reassignPlotId    = null;
     }
 
-    public function updatingRoleFilter()
+    public function reassignViticulturist()
     {
-        $this->resetPage();
+        $this->validate([
+            'reassignViticulturistId' => 'required|exists:users,id',
+        ], [
+            'reassignViticulturistId.required' => 'Selecciona un viticultor.',
+            'reassignViticulturistId.exists'   => 'El usuario seleccionado no existe.',
+        ]);
+
+        $plot = Plot::findOrFail($this->reassignPlotId);
+        $plot->viticulturist_id = $this->reassignViticulturistId;
+        $plot->save();
+
+        $newOwner = User::find($this->reassignViticulturistId);
+        $this->closeReassignModal();
+        $this->toastSuccess("Parcela \"{$plot->name}\" reasignada a {$newOwner->name}.");
     }
+
+    // ─── Export ───────────────────────────────────────────────────────────────
+
+    public function exportCsv()
+    {
+        $plots    = Plot::with(['viticulturist', 'municipality.province'])->orderBy('created_at', 'desc')->get();
+        $filename = 'parcelas_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        return response()->streamDownload(function () use ($plots) {
+            $handle = fopen('php://output', 'w');
+            fputs($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['ID', 'Nombre', 'Viticultor', 'Email Viticultor', 'Rol', 'Municipio', 'Provincia', 'Área (ha)', 'Estado', 'Registro']);
+
+            foreach ($plots as $plot) {
+                fputcsv($handle, [
+                    $plot->id,
+                    $plot->name,
+                    $plot->viticulturist?->name ?? '',
+                    $plot->viticulturist?->email ?? '',
+                    $plot->viticulturist?->role ?? '',
+                    $plot->municipality?->name ?? '',
+                    $plot->municipality?->province?->name ?? '',
+                    number_format($plot->area, 2),
+                    $plot->active ? 'Activa' : 'Inactiva',
+                    $plot->created_at->format('d/m/Y'),
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    // ─── Render ───────────────────────────────────────────────────────────────
 
     public function render()
     {
         $query = Plot::query()
-            ->select([
-                'id',
-                'name',
-                'description',
-                'area',
-                'active',
-                'viticulturist_id',
-                'municipality_id',
-                'created_at',
-                'updated_at',
-            ])
+            ->select(['id', 'name', 'description', 'area', 'active', 'viticulturist_id', 'municipality_id', 'created_at', 'updated_at'])
             ->with([
                 'viticulturist:id,name,email,role',
                 'municipality:id,name,province_id',
@@ -52,56 +110,59 @@ class Index extends Component
                 'sigpacCodes:id,code',
             ]);
 
-        // Búsqueda
         if ($this->search) {
             $search = '%' . strtolower($this->search) . '%';
             $query->where(function ($q) use ($search) {
-                $q
-                    ->whereRaw('LOWER(name) LIKE ?', [$search])
-                    ->orWhereRaw('LOWER(description) LIKE ?', [$search])
-                    ->orWhereHas('viticulturist', function ($q) use ($search) {
-                        $q
-                            ->whereRaw('LOWER(name) LIKE ?', [$search])
-                            ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
-                    });
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(description) LIKE ?', [$search])
+                  ->orWhereHas('viticulturist', function ($q) use ($search) {
+                      $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                        ->orWhereRaw('LOWER(email) LIKE ?', [$search]);
+                  });
             });
         }
 
-        // Filtro por estado activo
         if ($this->activeFilter !== '') {
             $query->where('active', $this->activeFilter === '1');
         }
 
-        // Filtro por rol del viticultor
         if ($this->roleFilter !== 'all') {
-            $query->whereHas('viticulturist', function ($q) {
-                $q->where('role', $this->roleFilter);
-            });
+            $query->whereHas('viticulturist', fn($q) => $q->where('role', $this->roleFilter));
         }
 
-        $plots = $query
-            ->orderBy('created_at', 'desc')
-            ->orderBy('id', 'desc')
-            ->paginate(20);
+        $plots = $query->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate(20);
 
-        // Estadísticas
+        // Viticulturists available for reassign search
+        $viticulturistQuery = User::whereIn('role', ['viticulturist', 'winery', 'producer', 'supervisor']);
+        if ($this->reassignSearch) {
+            $s = '%' . strtolower($this->reassignSearch) . '%';
+            $viticulturistQuery->where(function ($q) use ($s) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$s])
+                  ->orWhereRaw('LOWER(email) LIKE ?', [$s]);
+            });
+        }
+        $availableUsers = $this->showReassignModal
+            ? $viticulturistQuery->orderBy('name')->limit(15)->get(['id', 'name', 'email', 'role'])
+            : collect();
+
         $stats = [
-            'total' => Plot::count(),
-            'active' => Plot::where('active', true)->count(),
+            'total'      => Plot::count(),
+            'active'     => Plot::where('active', true)->count(),
             'total_area' => Plot::sum('area') ?? 0,
-            'by_role' => [
+            'by_role'    => [
                 'viticulturist' => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'viticulturist'))->count(),
-                'winery' => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'winery'))->count(),
-                'supervisor' => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'supervisor'))->count(),
+                'winery'        => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'winery'))->count(),
+                'supervisor'    => Plot::whereHas('viticulturist', fn($q) => $q->where('role', 'supervisor'))->count(),
             ],
         ];
 
         return view('livewire.admin.plots.index', [
-            'plots' => $plots,
-            'stats' => $stats,
+            'plots'          => $plots,
+            'stats'          => $stats,
+            'availableUsers' => $availableUsers,
         ])->layout('layouts.app', [
-            'title' => 'Parcelas - Admin - Agro365',
-            'description' => 'Visualiza todas las parcelas del sistema',
+            'title'       => 'Parcelas - Admin - Agro365',
+            'description' => 'Visualiza y gestiona todas las parcelas del sistema',
         ]);
     }
 }

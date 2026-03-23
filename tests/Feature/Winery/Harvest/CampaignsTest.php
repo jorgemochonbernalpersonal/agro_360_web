@@ -4,6 +4,8 @@ namespace Tests\Feature\Winery\Harvest;
 
 use App\Livewire\Winery\Harvest\Campaigns\Create;
 use App\Livewire\Winery\Harvest\Campaigns\Edit;
+use App\Livewire\Winery\Harvest\Campaigns\Index;
+use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\User;
 use Livewire\Livewire;
@@ -95,5 +97,77 @@ class CampaignsTest extends WineryTestCase
         $this->actingAs($otherWinery)
             ->get(route('winery.campaigns.edit', $campaign))
             ->assertForbidden();
+    }
+
+    // ── Duplicate year guard ──────────────────────────────────────────────────
+
+    public function test_create_rejects_duplicate_year(): void
+    {
+        Campaign::factory()->create([
+            'viticulturist_id' => $this->winery->id,
+            'year'             => 2020,
+        ]);
+
+        Livewire::test(Create::class)
+            ->set('name', 'Otra Vendimia 2020')
+            ->set('year', '2020')
+            ->set('start_date', '2020-08-01')
+            ->set('end_date', '2020-11-30')
+            ->call('save')
+            ->assertHasErrors(['year']);
+    }
+
+    // ── toggleActive ─────────────────────────────────────────────────────────
+
+    public function test_can_toggle_campaign_active(): void
+    {
+        $campaign = Campaign::factory()->create([
+            'viticulturist_id' => $this->winery->id,
+            'year'             => 2019,
+            'active'           => true,
+        ]);
+
+        Livewire::test(Index::class)
+            ->call('toggleActive', $campaign->id);
+
+        $this->assertDatabaseHas('campaigns', [
+            'id'     => $campaign->id,
+            'active' => false,
+        ]);
+    }
+
+    // ── delete ────────────────────────────────────────────────────────────────
+
+    public function test_can_delete_campaign_without_activities(): void
+    {
+        $campaign = Campaign::factory()->create([
+            'viticulturist_id' => $this->winery->id,
+            'year'             => 2018,
+        ]);
+
+        Livewire::test(Index::class)
+            ->call('delete', $campaign->id);
+
+        $this->assertDatabaseMissing('campaigns', ['id' => $campaign->id]);
+    }
+
+    public function test_cannot_delete_campaign_with_activities(): void
+    {
+        $campaign = Campaign::factory()->create([
+            'viticulturist_id' => $this->winery->id,
+            'year'             => 2017,
+        ]);
+
+        AgriculturalActivity::create([
+            'viticulturist_id' => $this->winery->id,
+            'campaign_id'      => $campaign->id,
+            'activity_type'    => 'harvest',
+            'activity_date'    => now()->toDateString(),
+        ]);
+
+        Livewire::test(Index::class)
+            ->call('delete', $campaign->id);
+
+        $this->assertDatabaseHas('campaigns', ['id' => $campaign->id]);
     }
 }
