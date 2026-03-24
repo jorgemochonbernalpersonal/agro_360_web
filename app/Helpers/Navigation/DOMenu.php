@@ -42,9 +42,12 @@ class DOMenu
         ];
 
         $menu['do_oversight_growers'] = [
-            ['icon' => 'eye',                    'label' => 'Panel de viticultores',    'route' => 'supervisor.oversight.growers.index', 'active' => request()->routeIs('supervisor.oversight.growers.*')],
-            ['icon' => 'map',                    'label' => 'Parcelas y plantaciones',  'route' => 'supervisor.oversight.growers.index', 'active' => false],
-            ['icon' => 'clipboard-document-check','label' => 'Registros y cumplimiento','route' => 'supervisor.oversight.growers.index', 'active' => false],
+            ['icon' => 'eye',                     'label' => 'Panel de viticultores',   'route' => 'supervisor.oversight.growers.index',       'active' => request()->routeIs('supervisor.oversight.growers.index')],
+            ['icon' => 'map',                     'label' => 'Parcelas DO',             'route' => 'supervisor.oversight.plots.index',          'active' => request()->routeIs('supervisor.oversight.plots.*')],
+            ['icon' => 'book-open',               'label' => 'Cuaderno de campo',       'route' => 'supervisor.oversight.notebook.index',       'active' => request()->routeIs('supervisor.oversight.notebook.*')],
+            ['icon' => 'document-check',          'label' => 'Cumplimiento PAC',        'route' => 'supervisor.oversight.pac.index',            'active' => request()->routeIs('supervisor.oversight.pac.*')],
+            ['icon' => 'check-badge',             'label' => 'Certificaciones',         'route' => 'supervisor.oversight.certifications.index', 'active' => request()->routeIs('supervisor.oversight.certifications.*')],
+            ['icon' => 'clipboard-document-list', 'label' => 'Stream de actividad',     'route' => 'supervisor.oversight.activity.index',       'active' => request()->routeIs('supervisor.oversight.activity.*')],
         ];
 
         $menu['do_qualification'] = [

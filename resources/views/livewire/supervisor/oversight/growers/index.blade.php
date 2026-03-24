@@ -47,7 +47,8 @@
         @foreach($growers as $grower)
             <tr class="hover:bg-zinc-50 transition">
                 <td class="px-6 py-3 text-sm font-medium text-zinc-800">
-                    <div>{{ $grower->name }}</div>
+                    <a href="{{ route('supervisor.oversight.growers.show', $grower) }}" wire:navigate
+                       class="hover:text-emerald-700 transition">{{ $grower->name }}</a>
                     <div class="text-xs text-zinc-400">{{ $grower->email }}</div>
                 </td>
                 <td class="px-6 py-3 text-sm text-zinc-500">

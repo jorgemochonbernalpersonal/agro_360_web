@@ -22,6 +22,12 @@ Route::middleware(['role:supervisor'])
         Route::get('/oversight/wineries', \App\Livewire\Supervisor\Oversight\Wineries\Index::class)->name('oversight.wineries.index');
         Route::get('/oversight/wineries/{winery}', \App\Livewire\Supervisor\Oversight\Wineries\Show::class)->name('oversight.wineries.show');
         Route::get('/oversight/growers', \App\Livewire\Supervisor\Oversight\Growers\Index::class)->name('oversight.growers.index');
+        Route::get('/oversight/growers/{viticulturist}', \App\Livewire\Supervisor\Oversight\Growers\Show::class)->name('oversight.growers.show');
+        Route::get('/oversight/plots', \App\Livewire\Supervisor\Oversight\Plots\Index::class)->name('oversight.plots.index');
+        Route::get('/oversight/notebook', \App\Livewire\Supervisor\Oversight\Notebook\Index::class)->name('oversight.notebook.index');
+        Route::get('/oversight/pac', \App\Livewire\Supervisor\Oversight\Pac\Index::class)->name('oversight.pac.index');
+        Route::get('/oversight/certifications', \App\Livewire\Supervisor\Oversight\Certifications\Index::class)->name('oversight.certifications.index');
+        Route::get('/oversight/activity', \App\Livewire\Supervisor\Oversight\Activity\Index::class)->name('oversight.activity.index');
 
         // ── Qualification ─────────────────────────────────────────────
         Route::get('/qualification', \App\Livewire\Supervisor\Qualification\Index::class)->name('qualification.index');
