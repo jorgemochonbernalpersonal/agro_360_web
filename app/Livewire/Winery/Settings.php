@@ -4,6 +4,7 @@ namespace App\Livewire\Winery;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\InvoicingSetting;
+use App\Models\Organization;
 use App\Models\Tax;
 use App\Models\UserProfile;
 use App\Models\UserTax;
@@ -207,13 +208,14 @@ class Settings extends Component
         $user    = Auth::user();
         $profile = UserProfile::where('user_id', $user->id)->first();
         $inv     = InvoicingSetting::forUser($user->id)->first();
+        $org     = $user->organization;
 
-        $this->fiscal_nif         = $user->dni ?? '';
+        $this->fiscal_nif         = $user->dni ?? $org?->vat_number ?? '';
         $this->fiscal_legal_name  = $inv?->issuer_legal_name ?? '';
-        $this->fiscal_address     = $profile?->address ?? '';
-        $this->fiscal_city        = $profile?->city ?? '';
-        $this->fiscal_postal_code = $profile?->postal_code ?? '';
-        $this->fiscal_phone       = $profile?->phone ?? '';
+        $this->fiscal_address     = $profile?->address ?? $org?->address ?? '';
+        $this->fiscal_city        = $profile?->city ?? $org?->city ?? '';
+        $this->fiscal_postal_code = $profile?->postal_code ?? $org?->postal_code ?? '';
+        $this->fiscal_phone       = $profile?->phone ?? $org?->phone ?? '';
     }
 
     public function saveFiscal(): void
@@ -247,6 +249,17 @@ class Settings extends Component
                 'phone'       => $this->fiscal_phone ?: null,
             ]
         );
+
+        // Sync to Organization record if this user has one
+        $user->organization?->update([
+            'name'        => $this->fiscal_legal_name ?: $user->name,
+            'vat_number'  => $this->fiscal_nif ?: null,
+            'address'     => $this->fiscal_address ?: null,
+            'city'        => $this->fiscal_city ?: null,
+            'postal_code' => $this->fiscal_postal_code ?: null,
+            'phone'       => $this->fiscal_phone ?: null,
+            'email'       => !str_contains($user->email, '@noemail.agro365.es') ? $user->email : null,
+        ]);
 
         $this->toastSuccess('Datos fiscales guardados correctamente');
     }

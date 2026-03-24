@@ -13,9 +13,13 @@ use App\Models\PhytosanitaryProduct;
 use App\Models\PhytosanitaryTreatment;
 use App\Models\Plot;
 use App\Models\PlotPlanting;
+use App\Models\User;
 use App\Models\WineLoss;
+use App\Models\WineryViticulturist;
 use App\Models\PlotRemoteSensing;
 use App\Observers\AgriculturalActivityObserver;
+use App\Observers\UserObserver;
+use App\Observers\WineryViticulturistObserver;
 use App\Observers\PlotRemoteSensingObserver;
 use App\Observers\CampaignObserver;
 use App\Observers\HarvestObserver;
@@ -127,6 +131,8 @@ class AppServiceProvider extends ServiceProvider
         // y provocaba doble conteo en getTotalUsed() al modificar used_capacity erróneamente.
         WineLoss::observe(WineLossObserver::class);
         PlotRemoteSensing::observe(PlotRemoteSensingObserver::class);
+        User::observe(UserObserver::class);
+        WineryViticulturist::observe(WineryViticulturistObserver::class);
     }
 
     private function registerEmailRedirect(): void

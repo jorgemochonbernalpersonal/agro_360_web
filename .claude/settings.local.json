@@ -201,7 +201,8 @@
       "Bash(/tmp/producer_features.txt:*)",
       "Bash(xargs -I {} basename {} fi done)",
       "Bash(__NEW_LINE_aa72421f059419c8__ bash:*)",
-      "Bash(__NEW_LINE_af3ee81937d47129__ bash:*)"
+      "Bash(__NEW_LINE_af3ee81937d47129__ bash:*)",
+      "Bash(mariadb -u agro365 -pagro365 agro365_test -e 'SHOW TABLES')"
     ]
   }
 }

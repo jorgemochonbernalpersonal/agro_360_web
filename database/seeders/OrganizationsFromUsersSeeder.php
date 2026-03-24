@@ -21,8 +21,8 @@ class OrganizationsFromUsersSeeder extends Seeder
     public function run(): void
     {
         $roleToType = [
-            'winery'                 => Organization::TYPE_WINERY,
-            'denomination_of_origin' => Organization::TYPE_DENOMINATION,
+            'winery'     => Organization::TYPE_WINERY,
+            'supervisor' => Organization::TYPE_DENOMINATION, // DO uses 'supervisor' as DB value
         ];
 
         $users = User::whereIn('role', array_keys($roleToType))->get();
