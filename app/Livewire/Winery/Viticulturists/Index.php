@@ -4,14 +4,21 @@ namespace App\Livewire\Winery\Viticulturists;
 
 use App\Exports\ViticulturistExport;
 use App\Livewire\Winery\AbstractIndex;
+use App\Models\SupervisorViticulturist;
+use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends AbstractIndex
 {
     public string $search       = '';
     public string $sourceFilter = '';
+
+    // ── D.O. pool modal ───────────────────────────────────────────────────────
+    public bool   $showDOModal = false;
+    public string $doSearch    = '';
 
     protected $queryString = [
         'search'       => ['except' => ''],
@@ -55,6 +62,59 @@ class Index extends AbstractIndex
         return ['created_at', 'desc'];
     }
 
+    // ── D.O. pool actions ─────────────────────────────────────────────────────
+
+    public function openDOModal(): void
+    {
+        $this->doSearch    = '';
+        $this->showDOModal = true;
+    }
+
+    public function closeDOModal(): void
+    {
+        $this->showDOModal = false;
+    }
+
+    public function assignFromDO(int $viticulturistId): void
+    {
+        $wineryId      = $this->wineryId();
+        $supervisorIds = SupervisorWinery::where('winery_id', $wineryId)->pluck('supervisor_id');
+
+        $sv = SupervisorViticulturist::where('viticulturist_id', $viticulturistId)
+            ->whereIn('supervisor_id', $supervisorIds)
+            ->firstOrFail();
+
+        // Idempotent — no duplicate
+        if (WineryViticulturist::where('winery_id', $wineryId)->where('viticulturist_id', $viticulturistId)->exists()) {
+            $this->closeDOModal();
+            return;
+        }
+
+        WineryViticulturist::create([
+            'winery_id'        => $wineryId,
+            'viticulturist_id' => $viticulturistId,
+            'source'           => WineryViticulturist::SOURCE_SUPERVISOR,
+            'supervisor_id'    => $sv->supervisor_id,
+            'assigned_by'      => Auth::id(),
+        ]);
+
+        $this->closeDOModal();
+        $this->toastSuccess('Viticultor asignado correctamente.');
+    }
+
+    public function unassignFromDO(int $viticulturistId): void
+    {
+        WineryViticulturist::where('winery_id', $this->wineryId())
+            ->where('viticulturist_id', $viticulturistId)
+            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+            ->firstOrFail()
+            ->delete();
+
+        $this->toastSuccess('Viticultor desasignado.');
+    }
+
+    // ── Export ────────────────────────────────────────────────────────────────
+
     public function export()
     {
         return Excel::download(
@@ -63,15 +123,50 @@ class Index extends AbstractIndex
         );
     }
 
+    // ── View data ─────────────────────────────────────────────────────────────
+
     protected function viewData(mixed $entries): array
     {
-        $base = WineryViticulturist::where('winery_id', $this->wineryId());
+        $wineryId      = $this->wineryId();
+        $base          = WineryViticulturist::where('winery_id', $wineryId);
+        $supervisorIds = SupervisorWinery::where('winery_id', $wineryId)->pluck('supervisor_id');
+
         $stats = [
             'total'         => (clone $base)->count(),
             'own'           => (clone $base)->where('source', 'own')->count(),
             'supervisor'    => (clone $base)->where('source', 'supervisor')->count(),
             'with_cuaderno' => (clone $base)->where('cuaderno_access', true)->count(),
         ];
-        return ['relations' => $entries, 'stats' => $stats];
+
+        // Pool: supervisor viticultors not yet assigned to this winery
+        $doPool = collect();
+        if ($this->showDOModal && $supervisorIds->isNotEmpty()) {
+            $alreadyAssigned = WineryViticulturist::where('winery_id', $wineryId)
+                ->pluck('viticulturist_id');
+
+            $poolQuery = SupervisorViticulturist::whereIn('supervisor_id', $supervisorIds)
+                ->whereNotIn('viticulturist_id', $alreadyAssigned)
+                ->with([
+                    'viticulturist:id,name,email,can_login',
+                    'supervisor:id,name',
+                ]);
+
+            if ($this->doSearch) {
+                $s = '%' . mb_strtolower($this->doSearch) . '%';
+                $poolQuery->whereHas('viticulturist', fn($q) =>
+                    $q->whereRaw('LOWER(name) LIKE ?', [$s])
+                      ->orWhereRaw('LOWER(email) LIKE ?', [$s])
+                );
+            }
+
+            $doPool = $poolQuery->get();
+        }
+
+        return [
+            'relations'      => $entries,
+            'stats'          => $stats,
+            'hasSupervisors' => $supervisorIds->isNotEmpty(),
+            'doPool'         => $doPool,
+        ];
     }
 }

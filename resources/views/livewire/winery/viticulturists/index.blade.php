@@ -58,6 +58,7 @@
             </div>
         </div>
     </div>
+
     {{-- Toolbar: search + acciones --}}
     <div class="flex items-center gap-3">
 
@@ -87,6 +88,13 @@
         <flux:button wire:click="export" variant="ghost" icon="arrow-down-tray">
             Exportar
         </flux:button>
+
+        {{-- Asignar de D.O. (solo si hay supervisor vinculado) --}}
+        @if($hasSupervisors)
+            <flux:button wire:click="openDOModal" variant="ghost" icon="building-library">
+                Asignar de D.O.
+            </flux:button>
+        @endif
 
         {{-- Invitar existente --}}
         <flux:button href="{{ roleRoute('viticulturists.invite') }}" variant="ghost" icon="link">
@@ -140,6 +148,7 @@
 
                         $btnBase    = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors';
                         $btnPrimary = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-agro-600 hover:bg-agro-50 transition-colors';
+                        $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors';
                     @endphp
 
                     <x-agro.card
@@ -233,6 +242,15 @@
                                                 <flux:icon icon="paper-airplane" class="size-4" />
                                             </a>
                                         @endif
+                                    @elseif ($relation->source === 'supervisor')
+                                        <button
+                                            wire:click="unassignFromDO({{ $v->id }})"
+                                            wire:confirm="¿Desasignar a {{ $v->name }} de tu bodega?"
+                                            class="{{ $btnDanger }}"
+                                            title="Desasignar de D.O."
+                                        >
+                                            <flux:icon icon="x-mark" class="size-4" />
+                                        </button>
                                     @endif
                                 </div>
 
@@ -259,5 +277,69 @@
             </x-agro.empty-state>
         @endif
     </div>
+
+    {{-- Modal: Asignar viticultor de D.O. --}}
+    <flux:modal wire:model="showDOModal" class="w-full max-w-lg">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="p-2 rounded-lg bg-purple-50">
+                    <flux:icon icon="building-library" class="size-5 text-purple-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-zinc-900">Asignar viticultor de D.O.</h3>
+                    <p class="text-xs text-zinc-500">Elige un viticultor del pool de tu denominación de origen</p>
+                </div>
+            </div>
+
+            {{-- Búsqueda --}}
+            <div class="relative mb-4">
+                <flux:icon icon="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400 pointer-events-none" />
+                <input
+                    wire:model.live.debounce.300ms="doSearch"
+                    type="text"
+                    placeholder="Buscar por nombre o email..."
+                    class="w-full pl-9 pr-3 py-2 text-sm border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"
+                />
+            </div>
+
+            {{-- Lista del pool --}}
+            <div class="space-y-2 max-h-80 overflow-y-auto">
+                @forelse($doPool as $sv)
+                    <div class="flex items-center justify-between px-3 py-2.5 rounded-lg border border-zinc-100 hover:border-purple-200 hover:bg-purple-50 transition">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-zinc-800 truncate">{{ $sv->viticulturist->name }}</p>
+                            <p class="text-xs text-zinc-400 truncate">
+                                @if(!str_starts_with($sv->viticulturist->email ?? '', 'viticultores.'))
+                                    {{ $sv->viticulturist->email }}
+                                @else
+                                    Sin email · D.O. {{ $sv->supervisor->name }}
+                                @endif
+                            </p>
+                        </div>
+                        <flux:button
+                            wire:click="assignFromDO({{ $sv->viticulturist_id }})"
+                            size="xs"
+                            variant="ghost"
+                            icon="plus"
+                        >
+                            Asignar
+                        </flux:button>
+                    </div>
+                @empty
+                    <div class="py-8 text-center text-sm text-zinc-400">
+                        @if($doSearch)
+                            Sin resultados para "{{ $doSearch }}"
+                        @else
+                            Todos los viticultores de la D.O. ya están asignados
+                        @endif
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-zinc-100 flex justify-end">
+                <flux:button variant="ghost" wire:click="closeDOModal">Cerrar</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 
 </div>

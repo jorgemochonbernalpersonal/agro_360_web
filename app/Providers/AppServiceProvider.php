@@ -34,6 +34,7 @@ use App\Policies\AgriculturalActivityPolicy;
 use App\Policies\CampaignPolicy;
 use App\Policies\CrewPolicy;
 use App\Policies\MachineryPolicy;
+use App\Policies\PlotPlantingPolicy;
 use App\Policies\PlotPolicy;
 use App\Services\ContainerStockService;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -54,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Plot::class               => PlotPolicy::class,
+        PlotPlanting::class       => PlotPlantingPolicy::class,
         Campaign::class           => CampaignPolicy::class,
         AgriculturalActivity::class => AgriculturalActivityPolicy::class,
         Crew::class               => CrewPolicy::class,

@@ -19,13 +19,14 @@ Route::middleware(['auth', 'role:admin,supervisor,winery,viticulturist,producer'
         // Índice global de plantaciones
         Route::get('/plantings', PlantingsIndex::class)->name('plantings.index');
         // Edición de plantación (no depende de capturar la parcela en la URL)
-        Route::get('/plantings/{planting}/edit', PlantingEdit::class)->name('plantings.edit');
+        Route::get('/plantings/{planting}/edit', PlantingEdit::class)->name('plantings.edit')
+            ->middleware('can:update,App\Models\PlotPlanting,planting');
         Route::get('/create', Create::class)->name('create')->middleware('can:create,App\Models\Plot');
         Route::get('/{plot}', Show::class)->name('show');
         Route::get('/{plot}/edit', Edit::class)->name('edit')->middleware('can:update,plot');
 
         Route::get('/{plot}/plantings/create', PlantingCreate::class)
             ->name('plantings.create')
-            ->middleware('can:update,plot');
+            ->middleware('can:create,App\Models\PlotPlanting,plot');
     });
 

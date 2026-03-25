@@ -28,6 +28,12 @@
         'do_estadisticas' => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
         'do_negocio_do'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // green
         'do_sistema'      => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
+        // do mega-chapters (5 agrupados)
+        'do_registro'      => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // indigo
+        'do_supervision'   => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
+        'do_campanas_gral' => ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'],   // amber
+        'do_control_gral'  => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // red
+        'do_gestion'       => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
         // winery
         'vendimia'      => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
         'bodega_elab'   => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino
@@ -85,19 +91,41 @@
     $chapterColors['normativa_w'] = $chapterColors['normativa'];
 
     $doChapters = [
-        ['key' => 'do_censo',        'icon' => 'users',              'label' => 'Censo',              'sections' => ['do_census']],
-        ['key' => 'do_viticultores', 'icon' => 'user-group',         'label' => 'Viticultores DO',    'sections' => ['do_growers']],
-        ['key' => 'do_campanas',     'icon' => 'flag',               'label' => 'Campañas',           'sections' => ['do_campaigns']],
-        ['key' => 'do_sup_bodegas',  'icon' => 'building-office-2',  'label' => 'Bodegas',            'sections' => ['do_oversight_wineries']],
-        ['key' => 'do_sup_vitic',    'icon' => 'eye',                'label' => 'Viticultores',       'sections' => ['do_oversight_growers']],
-        ['key' => 'do_calificacion', 'icon' => 'star',               'label' => 'Calificación',       'sections' => ['do_qualification']],
-        ['key' => 'do_etiquetas',    'icon' => 'tag',                'label' => 'Contraetiquetas',    'sections' => ['do_labels']],
-        ['key' => 'do_control',      'icon' => 'shield-check',       'label' => 'Control',            'sections' => ['do_inspection']],
-        ['key' => 'do_normativa_do', 'icon' => 'document-text',      'label' => 'Normativa',          'sections' => ['do_regulation']],
-        ['key' => 'do_territorio',   'icon' => 'map',                'label' => 'Territorio',         'sections' => ['do_territory']],
-        ['key' => 'do_estadisticas', 'icon' => 'chart-bar',          'label' => 'Estadísticas',       'sections' => ['do_statistics']],
-        ['key' => 'do_negocio_do',   'icon' => 'calculator',         'label' => 'Negocio DO',         'sections' => ['do_finance']],
-        ['key' => 'do_sistema',      'icon' => 'cog-6-tooth',        'label' => 'Sistema',            'sections' => ['do_settings']],
+        [
+            'key'            => 'do_registro',
+            'icon'           => 'users',
+            'label'          => 'Registro',
+            'sections'       => ['do_census', 'do_growers'],
+            'section_labels' => ['do_census' => 'Censo DO', 'do_growers' => 'Mis Viticultores'],
+        ],
+        [
+            'key'            => 'do_supervision',
+            'icon'           => 'eye',
+            'label'          => 'Supervisión',
+            'sections'       => ['do_oversight_wineries', 'do_oversight_growers'],
+            'section_labels' => ['do_oversight_wineries' => 'Bodegas', 'do_oversight_growers' => 'Viticultores'],
+        ],
+        [
+            'key'            => 'do_campanas_gral',
+            'icon'           => 'flag',
+            'label'          => 'Campañas',
+            'sections'       => ['do_campaigns', 'do_qualification', 'do_labels'],
+            'section_labels' => ['do_campaigns' => 'Vendimia', 'do_qualification' => 'Calificación', 'do_labels' => 'Contraetiquetas'],
+        ],
+        [
+            'key'            => 'do_control_gral',
+            'icon'           => 'shield-check',
+            'label'          => 'Control',
+            'sections'       => ['do_inspection', 'do_regulation', 'do_territory'],
+            'section_labels' => ['do_inspection' => 'Inspección', 'do_regulation' => 'Normativa', 'do_territory' => 'Territorio'],
+        ],
+        [
+            'key'            => 'do_gestion',
+            'icon'           => 'chart-bar',
+            'label'          => 'Gestión DO',
+            'sections'       => ['do_statistics', 'do_finance', 'do_settings'],
+            'section_labels' => ['do_statistics' => 'Estadísticas', 'do_finance' => 'Finanzas', 'do_settings' => 'Sistema'],
+        ],
     ];
 
     $chapters = match($user->role) {
@@ -278,8 +306,16 @@
         @php
             $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
             $chapterItems = [];
+            $activeSections  = array_filter($ch['sections'], fn($k) => isset($menu[$k]));
+            $isFirstSection  = true;
             foreach ($ch['sections'] as $sectionKey) {
                 if (!isset($menu[$sectionKey])) continue;
+                if (count($activeSections) > 1) {
+                    if (!$isFirstSection) $chapterItems[] = ['divider' => true];
+                    $sectionLabel = ($ch['section_labels'] ?? [])[$sectionKey] ?? null;
+                    if ($sectionLabel) $chapterItems[] = ['section_header' => true, 'label' => $sectionLabel];
+                    $isFirstSection = false;
+                }
                 foreach ($menu[$sectionKey] as $item) { $chapterItems[] = $item; }
             }
         @endphp
@@ -322,6 +358,9 @@
                     @foreach($chapterItems as $item)
                         @if(isset($item['divider']) && $item['divider'])
                             <div class="mx-4 my-1.5 border-t border-zinc-300/50"></div>
+                        @elseif(isset($item['section_header']) && $item['section_header'])
+                            <p class="px-4 pt-3 pb-1 text-[10px] font-bold tracking-widest uppercase"
+                               style="color: {{ $color['accent'] }}; opacity: 0.75;">{{ $item['label'] }}</p>
                         @else
                             <a
                                 href="{{ route($item['route']) }}"
@@ -458,8 +497,16 @@
                     @php
                         $color  = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
                         $chItems = [];
+                        $activeSecsMob  = array_filter($ch['sections'], fn($k) => isset($menu[$k]));
+                        $isFirstSecMob  = true;
                         foreach ($ch['sections'] as $sk) {
                             if (!isset($menu[$sk])) continue;
+                            if (count($activeSecsMob) > 1) {
+                                if (!$isFirstSecMob) $chItems[] = ['divider' => true];
+                                $secLabel = ($ch['section_labels'] ?? [])[$sk] ?? null;
+                                if ($secLabel) $chItems[] = ['section_header' => true, 'label' => $secLabel];
+                                $isFirstSecMob = false;
+                            }
                             foreach ($menu[$sk] as $itm) { $chItems[] = $itm; }
                         }
                         $chTab = 'vineyard';
@@ -498,6 +545,9 @@
                             @foreach($chItems as $item)
                                 @if(isset($item['divider']) && $item['divider'])
                                     <div class="my-1 border-t border-white/10"></div>
+                                @elseif(isset($item['section_header']) && $item['section_header'])
+                                    <p class="px-3 pt-2.5 pb-0.5 text-[9px] font-bold tracking-widest uppercase"
+                                       style="color: {{ $color['accent'] }}; opacity: 0.75;">{{ $item['label'] }}</p>
                                 @else
                                     <a href="{{ route($item['route']) }}" wire:navigate
                                        @click="mobileOpen = false"
