@@ -18,19 +18,26 @@ class PlotFactory extends Factory
      */
     public function definition(): array
     {
-        // Obtener los primeros registros existentes (creados por seeders)
-        // Si no existen, usar valores por defecto que se crearán en el test
-        $autonomousCommunity = \App\Models\AutonomousCommunity::first();
-        $province = \App\Models\Province::first();
-        $municipality = \App\Models\Municipality::first();
+        $autonomousCommunity = \App\Models\AutonomousCommunity::firstOrCreate(
+            ['code' => 'TEST'],
+            ['name' => 'Comunidad Test'],
+        );
+        $province = \App\Models\Province::firstOrCreate(
+            ['code' => 'TEST'],
+            ['name' => 'Provincia Test', 'autonomous_community_id' => $autonomousCommunity->id],
+        );
+        $municipality = \App\Models\Municipality::firstOrCreate(
+            ['code' => 'TEST'],
+            ['name' => 'Municipio Test', 'province_id' => $province->id],
+        );
 
         return [
             'name' => fake()->words(3, true) . ' Parcela',
             'description' => fake()->sentence(),
             'viticulturist_id' => User::factory(),
-            'autonomous_community_id' => $autonomousCommunity?->id ?? 1,
-            'province_id' => $province?->id ?? 1,
-            'municipality_id' => $municipality?->id ?? 1,
+            'autonomous_community_id' => $autonomousCommunity->id,
+            'province_id' => $province->id,
+            'municipality_id' => $municipality->id,
             'area' => fake()->randomFloat(3, 0.1, 100),
             'active' => true,
         ];

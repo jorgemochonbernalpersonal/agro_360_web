@@ -127,6 +127,27 @@
                             </div>
                         </label>
 
+                        {{-- Denominación de Origen --}}
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="role" value="supervisor" class="sr-only peer">
+                            <div class="flex items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200
+                                        border-zinc-200 hover:border-indigo-300
+                                        peer-checked:border-indigo-500 peer-checked:bg-indigo-50">
+                                <span class="text-2xl leading-none mt-0.5">🏛️</span>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-zinc-800 text-sm">
+                                        Denominación de Origen
+                                        <span class="text-xs font-normal text-indigo-600 ml-1">Organismo regulador</span>
+                                    </p>
+                                    <p class="text-xs text-zinc-500 mt-0.5">
+                                        Gestiono el consejo regulador de una DO. Superviso bodegas y viticultores, emito contraetiquetas, realizo inspecciones y calificaciones de vino.
+                                    </p>
+                                    <p class="text-xs text-zinc-400 mt-1 italic">Solo para consejos reguladores y organismos de control oficiales.</p>
+                                    <p class="text-xs text-indigo-700 font-medium mt-1.5">✓ Plan institucional · Contacta con nosotros para condiciones</p>
+                                </div>
+                            </div>
+                        </label>
+
                     </div>
                     <flux:error name="role" class="mt-1" />
                 </div>

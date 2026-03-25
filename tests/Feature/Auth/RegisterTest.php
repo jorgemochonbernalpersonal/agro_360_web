@@ -62,7 +62,7 @@ class RegisterTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function test_public_users_cannot_register_as_admin_or_supervisor(): void
+    public function test_public_users_cannot_register_as_admin(): void
     {
         $this->get('/register');
 
@@ -80,6 +80,27 @@ class RegisterTest extends TestCase
         ]);
 
         $this->assertGuest();
+    }
+
+    public function test_public_users_can_register_as_supervisor(): void
+    {
+        $this->get('/register');
+
+        Livewire::test(\App\Livewire\Auth\Register::class)
+            ->set('name', 'DO Ribera del Duero')
+            ->set('email', 'do@ribera.com')
+            ->set('password', 'password123')
+            ->set('password_confirmation', 'password123')
+            ->set('role', 'supervisor')
+            ->call('register')
+            ->assertRedirect(route('verification.notice'));
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'do@ribera.com',
+            'role'  => 'supervisor',
+        ]);
+
+        $this->assertAuthenticated();
     }
 
     public function test_registration_requires_all_fields(): void

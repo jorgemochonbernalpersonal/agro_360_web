@@ -108,6 +108,7 @@ class WineryAssignmentTest extends SupervisorTestCase
 
         Livewire::actingAs($supervisor)
             ->test(Index::class)
+            ->call('openAssignModal')
             ->assertViewHas('availableWineries', fn ($list) => $list->contains('id', $other->id))
             ->assertViewHas('availableWineries', fn ($list) => $list->doesntContain('id', $winery->id));
     }

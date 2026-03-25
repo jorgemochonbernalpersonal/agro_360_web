@@ -58,8 +58,8 @@ class Register extends Component
             $allowedRoles = $this->getAllowedRoles($user);
             $rules['role'] = 'required|in:' . implode(',', $allowedRoles);
         } else {
-            // Registro público: viticulturist, winery y producer
-            $rules['role'] = 'required|in:viticulturist,winery,producer';
+            // Registro público: viticulturist, winery, producer y supervisor (DO)
+            $rules['role'] = 'required|in:viticulturist,winery,producer,supervisor';
         }
 
         return $rules;
@@ -86,7 +86,7 @@ class Register extends Component
     public function getAllowedRoles(?User $user = null): array
     {
         if (!$user) {
-            return ['viticulturist', 'winery', 'producer']; // Registro público
+            return ['viticulturist', 'winery', 'producer', 'supervisor']; // Registro público
         }
 
         return match($user->role) {
