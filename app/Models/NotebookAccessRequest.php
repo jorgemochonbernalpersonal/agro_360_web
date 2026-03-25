@@ -25,6 +25,7 @@ class NotebookAccessRequest extends Model
 
     protected $fillable = [
         'winery_id',
+        'supervisor_id',
         'viticulturist_id',
         'status',
         'requested_at',
@@ -41,9 +42,26 @@ class NotebookAccessRequest extends Model
         return $this->belongsTo(User::class, 'winery_id');
     }
 
+    public function supervisor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
+    }
+
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    public function isFromSupervisor(): bool
+    {
+        return $this->supervisor_id !== null;
+    }
+
+    public function requester(): ?\App\Models\User
+    {
+        return $this->isFromSupervisor() ? $this->supervisor : $this->winery;
     }
 
     public function scopePending($query)

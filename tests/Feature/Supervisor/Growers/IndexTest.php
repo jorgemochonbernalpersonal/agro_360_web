@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Supervisor\Growers;
 
+use App\Models\SupervisorViticulturist;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Livewire\Livewire;
@@ -53,6 +54,14 @@ class IndexTest extends SupervisorTestCase
             'name'              => 'Viticultor Propio',
         ]);
 
+        // Add to supervisor pool first
+        SupervisorViticulturist::create([
+            'supervisor_id'    => $supervisor->id,
+            'viticulturist_id' => $viticulturist->id,
+            'assigned_by'      => $supervisor->id,
+        ]);
+
+        // Also assign to a winery (optional, but reflects realistic state)
         WineryViticulturist::create([
             'winery_id'        => $winery->id,
             'viticulturist_id' => $viticulturist->id,

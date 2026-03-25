@@ -322,6 +322,6 @@ class WineryAccessTest extends ViticulturistTestCase
     public function test_index_renders_empty_state_when_no_accesses(): void
     {
         Livewire::test(Index::class)
-            ->assertSee('Ninguna bodega tiene acceso');
+            ->assertSee('Ninguna bodega ni denominación tiene acceso');
     }
 }

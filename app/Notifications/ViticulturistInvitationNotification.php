@@ -42,12 +42,18 @@ class ViticulturistInvitationNotification extends Notification
         return (new MailMessage)
             ->subject('Invitación a Agro365')
             ->greeting('Hola ' . ($notifiable->name ?: ''))
-            ->line('La bodega **' . $this->creator->name . '** te ha invitado a acceder a Agro365.')
+            ->line($this->creatorLabel() . ' te ha invitado a acceder a Agro365.')
             ->line('Ya tienes tus parcelas y plantaciones configuradas. Solo necesitas activar tu cuenta para acceder al cuaderno de campo digital.')
             ->line('El enlace de activación es válido — úsalo para elegir tu contraseña:')
             ->action('Activar mi cuenta', $registerUrl)
             ->line('Si no esperabas esta invitación, puedes ignorar este correo.')
             ->salutation("Saludos,\nAgro365");
+    }
+
+    private function creatorLabel(): string
+    {
+        $type = $this->creator->isSupervisor() ? 'La denominación de origen' : 'La bodega';
+        return "{$type} **{$this->creator->name}**";
     }
 
     /**

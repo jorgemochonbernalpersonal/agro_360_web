@@ -15,25 +15,27 @@ class SupervisorWinery extends Model
         'assigned_by',
     ];
 
-    /**
-     * Supervisor que tiene esta bodega
-     */
+    protected static function booted(): void
+    {
+        static::deleting(function (SupervisorWinery $sw) {
+            // Remove viticulturists this supervisor assigned to this winery
+            WineryViticulturist::where('winery_id', $sw->winery_id)
+                ->where('supervisor_id', $sw->supervisor_id)
+                ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
+                ->delete();
+        });
+    }
+
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
-    /**
-     * Bodega asignada al supervisor
-     */
     public function winery(): BelongsTo
     {
         return $this->belongsTo(User::class, 'winery_id');
     }
 
-    /**
-     * Usuario que asignó esta relación
-     */
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');

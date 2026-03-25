@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header
         title="Acceso al Cuaderno de Campo"
-        description="Controla qué bodegas pueden ver tus actividades de campo. Solo tú decides quién tiene acceso."
+        description="Controla qué bodegas y denominaciones de origen pueden ver tus actividades de campo. Solo tú decides quién tiene acceso."
     />
 
     {{-- Pending requests --}}
@@ -19,15 +19,22 @@
 
         <div class="divide-y divide-zinc-100">
             @foreach($pending as $request)
+                @php
+                    $isSupervisor = $request->isFromSupervisor();
+                    $requester    = $isSupervisor ? $request->supervisor : $request->winery;
+                    $label        = $isSupervisor ? 'Denominación de Origen' : 'Bodega';
+                    $iconBg       = $isSupervisor ? 'bg-indigo-100' : 'bg-zinc-100';
+                    $iconColor    = $isSupervisor ? 'text-indigo-600' : 'text-zinc-500';
+                @endphp
                 <div class="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
-                            <flux:icon icon="building-office-2" class="size-5 text-zinc-500" />
+                        <div class="w-9 h-9 rounded-full {{ $iconBg }} flex items-center justify-center shrink-0">
+                            <flux:icon icon="{{ $isSupervisor ? 'building-library' : 'building-office-2' }}" class="size-5 {{ $iconColor }}" />
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-zinc-900">{{ $request->winery->name }}</p>
+                            <p class="text-sm font-medium text-zinc-900">{{ $requester?->name }}</p>
                             <p class="text-xs text-zinc-400">
-                                Solicitud recibida el {{ $request->requested_at->format('d/m/Y') }}
+                                {{ $label }} · Solicitud recibida el {{ $request->requested_at->format('d/m/Y') }}
                             </p>
                         </div>
                     </div>
@@ -37,7 +44,7 @@
                             variant="ghost"
                             icon="x-mark"
                             wire:click="reject({{ $request->id }})"
-                            wire:confirm="¿Rechazar el acceso al cuaderno para {{ $request->winery->name }}?"
+                            wire:confirm="¿Rechazar el acceso al cuaderno para {{ $requester?->name }}?"
                         >
                             Rechazar
                         </flux:button>
@@ -70,20 +77,26 @@
         @if($granted->isEmpty())
             <div class="py-8 text-center">
                 <flux:icon icon="lock-closed" class="size-8 text-zinc-300 mx-auto mb-2" />
-                <p class="text-sm text-zinc-400">Ninguna bodega tiene acceso a tu cuaderno ahora mismo.</p>
+                <p class="text-sm text-zinc-400">Ninguna bodega ni denominación tiene acceso a tu cuaderno ahora mismo.</p>
             </div>
         @else
             <div class="divide-y divide-zinc-100">
-                @foreach($granted as $relation)
+                @foreach($granted as $item)
+                    @php
+                        $isSupervisor = $item->type === 'supervisor';
+                        $iconBg       = $isSupervisor ? 'bg-indigo-50' : 'bg-green-50';
+                        $iconColor    = $isSupervisor ? 'text-indigo-600' : 'text-green-600';
+                        $label        = $isSupervisor ? 'Denominación de Origen' : 'Bodega';
+                    @endphp
                     <div class="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-                                <flux:icon icon="building-office-2" class="size-5 text-green-600" />
+                            <div class="w-9 h-9 rounded-full {{ $iconBg }} flex items-center justify-center shrink-0">
+                                <flux:icon icon="{{ $isSupervisor ? 'building-library' : 'building-office-2' }}" class="size-5 {{ $iconColor }}" />
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-zinc-900">{{ $relation->winery->name }}</p>
+                                <p class="text-sm font-medium text-zinc-900">{{ $item->name }}</p>
                                 <p class="text-xs text-zinc-400">
-                                    Acceso desde {{ $relation->cuaderno_granted_at?->format('d/m/Y') ?? '—' }}
+                                    {{ $label }} · Acceso desde {{ $item->granted_at?->format('d/m/Y') ?? '—' }}
                                 </p>
                             </div>
                         </div>
@@ -91,8 +104,8 @@
                             size="sm"
                             variant="ghost"
                             icon="lock-closed"
-                            wire:click="revoke({{ $relation->winery_id }})"
-                            wire:confirm="¿Revocar el acceso al cuaderno para {{ $relation->winery->name }}? Dejarán de ver tus actividades de campo."
+                            wire:click="revoke({{ $item->id }}, '{{ $item->type }}')"
+                            wire:confirm="¿Revocar el acceso al cuaderno para {{ $item->name }}? Dejarán de ver tus actividades de campo."
                         >
                             Revocar
                         </flux:button>
@@ -116,15 +129,19 @@
 
         <div class="divide-y divide-zinc-100">
             @foreach($rejected as $request)
+                @php
+                    $requester = $request->requester();
+                    $label     = $request->isFromSupervisor() ? 'Denominación de Origen' : 'Bodega';
+                @endphp
                 <div class="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
                             <flux:icon icon="building-office-2" class="size-5 text-zinc-400" />
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-zinc-500">{{ $request->winery->name }}</p>
+                            <p class="text-sm font-medium text-zinc-500">{{ $requester?->name }}</p>
                             <p class="text-xs text-zinc-400">
-                                Rechazada el {{ $request->responded_at?->format('d/m/Y') ?? '—' }}
+                                {{ $label }} · Rechazada el {{ $request->responded_at?->format('d/m/Y') ?? '—' }}
                             </p>
                         </div>
                     </div>
@@ -138,7 +155,7 @@
     <flux:callout variant="info" icon="shield-check">
         <flux:callout.heading>Tu cuaderno es privado por defecto</flux:callout.heading>
         <flux:callout.text>
-            Solo las bodegas a las que hayas aprobado el acceso pueden ver tus actividades de campo.
+            Solo las bodegas y denominaciones de origen a las que hayas aprobado el acceso pueden ver tus actividades de campo.
             Puedes revocar el acceso en cualquier momento.
         </flux:callout.text>
     </flux:callout>

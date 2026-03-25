@@ -4,9 +4,11 @@ namespace App\Livewire\Supervisor\Notebook;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\NotebookAccessRequest;
+use App\Models\SupervisorViticulturist;
 use App\Models\User;
-use App\Models\WineryViticulturist;
+use App\Notifications\NotebookAccessRequestedNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -18,8 +20,8 @@ class Index extends Component
     public string $filterStatus = 'all';
     public string $search       = '';
 
-    public bool  $showRequestModal       = false;
-    public ?int  $targetViticulturistId  = null;
+    public bool  $showRequestModal      = false;
+    public ?int  $targetViticulturistId = null;
 
     protected $queryString = ['filterStatus', 'search'];
 
@@ -43,7 +45,12 @@ class Index extends Component
 
         $doId = Auth::id();
 
-        $existing = NotebookAccessRequest::where('winery_id', $doId)
+        // Guard: viticulturist must be in supervisor's pool
+        SupervisorViticulturist::where('supervisor_id', $doId)
+            ->where('viticulturist_id', $this->targetViticulturistId)
+            ->firstOrFail();
+
+        $existing = NotebookAccessRequest::where('supervisor_id', $doId)
             ->where('viticulturist_id', $this->targetViticulturistId)
             ->first();
 
@@ -55,11 +62,23 @@ class Index extends Component
             return;
         }
 
-        // Reuse existing rejected record or create new one (unique constraint on winery+viticulturist)
         NotebookAccessRequest::updateOrCreate(
-            ['winery_id' => $doId, 'viticulturist_id' => $this->targetViticulturistId],
-            ['status' => NotebookAccessRequest::STATUS_PENDING, 'requested_at' => now(), 'responded_at' => null]
+            [
+                'supervisor_id'    => $doId,
+                'viticulturist_id' => $this->targetViticulturistId,
+            ],
+            [
+                'winery_id'    => null,
+                'status'       => NotebookAccessRequest::STATUS_PENDING,
+                'requested_at' => now(),
+                'responded_at' => null,
+            ]
         );
+
+        $viticulturist = User::find($this->targetViticulturistId);
+        $viticulturist?->notify(new NotebookAccessRequestedNotification(Auth::user()));
+
+        Cache::forget("nav_badge_notebook_access_{$this->targetViticulturistId}");
 
         $this->closeRequestModal();
         $this->toastSuccess('Solicitud de acceso al cuaderno enviada.');
@@ -68,8 +87,15 @@ class Index extends Component
     public function revokeAccess(int $id): void
     {
         $request = NotebookAccessRequest::where('id', $id)
-            ->where('winery_id', Auth::id())
+            ->where('supervisor_id', Auth::id())
             ->firstOrFail();
+
+        // Also revoke the cuaderno_access flag on the relation
+        $relation = \App\Models\SupervisorViticulturist::where('supervisor_id', Auth::id())
+            ->where('viticulturist_id', $request->viticulturist_id)
+            ->first();
+
+        $relation?->revokeNotebookAccess();
 
         $request->delete();
         $this->toastSuccess('Acceso al cuaderno revocado.');
@@ -80,12 +106,15 @@ class Index extends Component
     {
         $doId = Auth::id();
 
-        $viticulturistIds = WineryViticulturist::where('supervisor_id', $doId)
-            ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-            ->pluck('viticulturist_id')
-            ->unique();
+        // Only viticulturists who have logged in (can grant access)
+        $poolIds = SupervisorViticulturist::where('supervisor_id', $doId)
+            ->pluck('viticulturist_id');
 
-        $query = NotebookAccessRequest::where('winery_id', $doId)
+        $activeVitIds = User::whereIn('id', $poolIds)
+            ->where('can_login', true)
+            ->pluck('id');
+
+        $query = NotebookAccessRequest::where('supervisor_id', $doId)
             ->with(['viticulturist:id,name,email']);
 
         if ($this->filterStatus !== 'all') {
@@ -103,19 +132,20 @@ class Index extends Component
         $requests = $query->orderByDesc('requested_at')->paginate(20);
 
         $stats = [
-            'total'    => NotebookAccessRequest::where('winery_id', $doId)->count(),
-            'pending'  => NotebookAccessRequest::where('winery_id', $doId)->pending()->count(),
-            'approved' => NotebookAccessRequest::where('winery_id', $doId)->approved()->count(),
-            'rejected' => NotebookAccessRequest::where('winery_id', $doId)
+            'total'    => NotebookAccessRequest::where('supervisor_id', $doId)->count(),
+            'pending'  => NotebookAccessRequest::where('supervisor_id', $doId)->pending()->count(),
+            'approved' => NotebookAccessRequest::where('supervisor_id', $doId)->approved()->count(),
+            'rejected' => NotebookAccessRequest::where('supervisor_id', $doId)
                 ->where('status', NotebookAccessRequest::STATUS_REJECTED)->count(),
         ];
 
-        $alreadyRequested = NotebookAccessRequest::where('winery_id', $doId)
+        $alreadyRequested = NotebookAccessRequest::where('supervisor_id', $doId)
             ->whereIn('status', [NotebookAccessRequest::STATUS_PENDING, NotebookAccessRequest::STATUS_APPROVED])
             ->pluck('viticulturist_id');
 
+        // Only active (can_login=true) viticultors can approve requests
         $availableForRequest = $this->showRequestModal
-            ? User::whereIn('id', $viticulturistIds)
+            ? User::whereIn('id', $activeVitIds)
                 ->whereNotIn('id', $alreadyRequested)
                 ->orderBy('name')
                 ->get(['id', 'name', 'email'])

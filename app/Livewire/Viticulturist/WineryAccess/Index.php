@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist\WineryAccess;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\NotebookAccessRequest;
+use App\Models\SupervisorViticulturist;
 use App\Models\WineryViticulturist;
 use App\Notifications\NotebookAccessRespondedNotification;
 use Illuminate\Support\Facades\Auth;
@@ -22,13 +23,28 @@ class Index extends Component
             ->where('status', NotebookAccessRequest::STATUS_PENDING)
             ->firstOrFail();
 
-        $relation = WineryViticulturist::where('winery_id', $request->winery_id)
-            ->where('viticulturist_id', Auth::id())
-            ->first();
+        if ($request->isFromSupervisor()) {
+            $relation = SupervisorViticulturist::where('supervisor_id', $request->supervisor_id)
+                ->where('viticulturist_id', Auth::id())
+                ->first();
 
-        if (!$relation) {
-            $this->toastError('No se encontró la relación con esta bodega.');
-            return;
+            if (!$relation) {
+                $this->toastError('No se encontró la relación con esta denominación de origen.');
+                return;
+            }
+
+            $relation->grantNotebookAccess();
+        } else {
+            $relation = WineryViticulturist::where('winery_id', $request->winery_id)
+                ->where('viticulturist_id', Auth::id())
+                ->first();
+
+            if (!$relation) {
+                $this->toastError('No se encontró la relación con esta bodega.');
+                return;
+            }
+
+            $relation->grantNotebookAccess();
         }
 
         $request->update([
@@ -36,13 +52,12 @@ class Index extends Component
             'responded_at' => now(),
         ]);
 
-        $relation->grantNotebookAccess();
-
         Cache::forget('nav_badge_notebook_access_' . Auth::id());
 
-        $request->winery->notify(new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_APPROVED));
+        $requester = $request->requester();
+        $requester?->notify(new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_APPROVED));
 
-        $this->toastSuccess("Acceso al cuaderno concedido a {$request->winery->name}.");
+        $this->toastSuccess("Acceso al cuaderno concedido a {$requester?->name}.");
     }
 
     public function reject(int $requestId): void
@@ -59,50 +74,93 @@ class Index extends Component
 
         Cache::forget('nav_badge_notebook_access_' . Auth::id());
 
-        $request->winery->notify(new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED));
+        $requester = $request->requester();
+        $requester?->notify(new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED));
 
-        $this->toastSuccess("Solicitud de {$request->winery->name} rechazada.");
+        $this->toastSuccess("Solicitud de {$requester?->name} rechazada.");
     }
 
-    public function revoke(int $wineryId): void
+    public function revoke(int $id, string $type = 'winery'): void
     {
-        $relation = WineryViticulturist::where('winery_id', $wineryId)
-            ->where('viticulturist_id', Auth::id())
-            ->where('cuaderno_access', true)
-            ->firstOrFail();
+        if ($type === 'supervisor') {
+            $relation = SupervisorViticulturist::where('supervisor_id', $id)
+                ->where('viticulturist_id', Auth::id())
+                ->where('cuaderno_access', true)
+                ->firstOrFail();
 
-        $relation->revokeNotebookAccess();
+            $relation->revokeNotebookAccess();
 
-        NotebookAccessRequest::where('winery_id', $wineryId)
-            ->where('viticulturist_id', Auth::id())
-            ->update(['status' => NotebookAccessRequest::STATUS_REJECTED, 'responded_at' => now()]);
+            NotebookAccessRequest::where('supervisor_id', $id)
+                ->where('viticulturist_id', Auth::id())
+                ->update(['status' => NotebookAccessRequest::STATUS_REJECTED, 'responded_at' => now()]);
 
-        $relation->winery->notify(new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED));
+            $relation->supervisor->notify(
+                new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED)
+            );
+        } else {
+            $relation = WineryViticulturist::where('winery_id', $id)
+                ->where('viticulturist_id', Auth::id())
+                ->where('cuaderno_access', true)
+                ->firstOrFail();
+
+            $relation->revokeNotebookAccess();
+
+            NotebookAccessRequest::where('winery_id', $id)
+                ->where('viticulturist_id', Auth::id())
+                ->update(['status' => NotebookAccessRequest::STATUS_REJECTED, 'responded_at' => now()]);
+
+            $relation->winery->notify(
+                new NotebookAccessRespondedNotification(Auth::user(), NotebookAccessRequest::STATUS_REJECTED)
+            );
+        }
 
         $this->toastSuccess('Acceso al cuaderno revocado.');
     }
 
     #[Layout('layouts.app', [
         'title'       => 'Notebook Access - Agro365',
-        'description' => 'Gestiona qué bodegas pueden ver tu cuaderno de campo digital.',
+        'description' => 'Gestiona qué bodegas y denominaciones de origen pueden ver tu cuaderno de campo digital.',
     ])]
     public function render()
     {
         $viticulturistId = Auth::id();
 
-        $pending = NotebookAccessRequest::with('winery')
+        $pending = NotebookAccessRequest::with(['winery', 'supervisor'])
             ->where('viticulturist_id', $viticulturistId)
             ->where('status', NotebookAccessRequest::STATUS_PENDING)
             ->orderBy('requested_at', 'desc')
             ->get();
 
-        $granted = WineryViticulturist::with('winery')
+        // Granted: both winery and supervisor accesses normalized for the view
+        $grantedWineries = WineryViticulturist::with('winery')
             ->where('viticulturist_id', $viticulturistId)
             ->where('cuaderno_access', true)
             ->orderBy('cuaderno_granted_at', 'desc')
-            ->get();
+            ->get()
+            ->map(fn($r) => (object) [
+                'id'         => $r->winery_id,
+                'type'       => 'winery',
+                'name'       => $r->winery?->name,
+                'granted_at' => $r->cuaderno_granted_at,
+            ]);
 
-        $rejected = NotebookAccessRequest::with('winery')
+        $grantedSupervisors = SupervisorViticulturist::with('supervisor')
+            ->where('viticulturist_id', $viticulturistId)
+            ->where('cuaderno_access', true)
+            ->orderBy('cuaderno_granted_at', 'desc')
+            ->get()
+            ->map(fn($r) => (object) [
+                'id'         => $r->supervisor_id,
+                'type'       => 'supervisor',
+                'name'       => $r->supervisor?->name,
+                'granted_at' => $r->cuaderno_granted_at,
+            ]);
+
+        $granted = $grantedWineries->merge($grantedSupervisors)
+            ->sortByDesc('granted_at')
+            ->values();
+
+        $rejected = NotebookAccessRequest::with(['winery', 'supervisor'])
             ->where('viticulturist_id', $viticulturistId)
             ->where('status', NotebookAccessRequest::STATUS_REJECTED)
             ->orderBy('responded_at', 'desc')
