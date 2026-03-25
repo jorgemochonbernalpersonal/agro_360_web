@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Supervisor\Regulation;
 
+use App\Livewire\Supervisor\Regulation\Index;
 use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\SupervisorTestCase;
@@ -42,13 +43,48 @@ class IndexTest extends SupervisorTestCase
 
     // ── render ────────────────────────────────────────────────────────────────
 
-    public function test_regulation_livewire_component_renders(): void
+    public function test_livewire_component_renders(): void
     {
         $supervisor = $this->makeSupervisor();
 
-        $this->actingAs($supervisor);
-
-        Livewire::test(\App\Livewire\Supervisor\Regulation\Index::class)
+        Livewire::actingAs($supervisor)
+            ->test(Index::class)
             ->assertOk();
+    }
+
+    public function test_default_tab_is_autorizaciones(): void
+    {
+        $supervisor = $this->makeSupervisor();
+
+        Livewire::actingAs($supervisor)
+            ->test(Index::class)
+            ->assertSet('currentTab', 'autorizaciones');
+    }
+
+    public function test_can_switch_tabs(): void
+    {
+        $supervisor = $this->makeSupervisor();
+
+        Livewire::actingAs($supervisor)
+            ->test(Index::class)
+            ->call('switchTab', 'certificaciones')
+            ->assertSet('currentTab', 'certificaciones')
+            ->call('switchTab', 'pliego')
+            ->assertSet('currentTab', 'pliego')
+            ->call('switchTab', 'reglamento')
+            ->assertSet('currentTab', 'reglamento');
+    }
+
+    public function test_switching_tab_resets_filters(): void
+    {
+        $supervisor = $this->makeSupervisor();
+
+        Livewire::actingAs($supervisor)
+            ->test(Index::class)
+            ->set('filterVit', '99')
+            ->set('search', 'algo')
+            ->call('switchTab', 'certificaciones')
+            ->assertSet('filterVit', '')
+            ->assertSet('search', '');
     }
 }

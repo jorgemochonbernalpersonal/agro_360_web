@@ -226,8 +226,12 @@
                                 <div class="flex items-center gap-2 text-xs text-zinc-500 bg-zinc-50 rounded-lg px-3 py-2">
                                     <flux:icon icon="sun" class="size-4 text-zinc-400 shrink-0" />
                                     <span>
-                                        @if($act->weather_conditions){{ $act->weather_conditions }}@endif
-                                        @if($act->temperature) · {{ $act->temperature }}°C@endif
+                                        @if($act->weather_conditions)
+                                            {{ $act->weather_conditions }}
+                                        @endif
+                                        @if($act->temperature)
+                                            · {{ $act->temperature }}°C
+                                        @endif
                                     </span>
                                 </div>
                             @endif

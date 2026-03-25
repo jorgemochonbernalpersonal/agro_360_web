@@ -142,7 +142,7 @@ class Index extends Component
                 'type'       => 'winery',
                 'name'       => $r->winery?->name,
                 'granted_at' => $r->cuaderno_granted_at,
-            ]);
+            ])->toBase();
 
         $grantedSupervisors = SupervisorViticulturist::with('supervisor')
             ->where('viticulturist_id', $viticulturistId)
@@ -154,7 +154,7 @@ class Index extends Component
                 'type'       => 'supervisor',
                 'name'       => $r->supervisor?->name,
                 'granted_at' => $r->cuaderno_granted_at,
-            ]);
+            ])->toBase();
 
         $granted = $grantedWineries->merge($grantedSupervisors)
             ->sortByDesc('granted_at')
