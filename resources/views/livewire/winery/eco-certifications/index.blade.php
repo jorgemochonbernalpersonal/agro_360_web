@@ -59,7 +59,7 @@
             <x-agro.stat-card
                 label="Pendientes"
                 :value="$stats['pending']"
-                icon="hourglass"
+                icon="queue-list"
                 color="zinc"
             />
         </div>

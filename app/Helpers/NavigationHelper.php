@@ -45,6 +45,12 @@ class NavigationHelper
                     'active' => request()->routeIs('admin.users.*'),
                 ],
                 [
+                    'icon'   => 'building-office-2',
+                    'label'  => 'Organizaciones',
+                    'route'  => 'admin.organizations.index',
+                    'active' => request()->routeIs('admin.organizations.*'),
+                ],
+                [
                     'icon'   => 'lifebuoy',
                     'label'  => 'Soporte',
                     'route'  => 'admin.support.index',

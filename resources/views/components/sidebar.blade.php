@@ -68,7 +68,7 @@
     // ── Producer: capítulos comunes (siempre visibles en el rail) ──────────────
     // Unión de lo que tienen viticulturist + winery en Parcelas y Negocio.
     $producerCommonChapters = [
-        ['key' => 'prod_parcelas', 'icon' => 'map',        'label' => 'Parcelas', 'sections' => ['plots_analysis_all']],
+        ['key' => 'prod_parcelas', 'icon' => 'map',        'label' => 'Parcelas', 'sections' => ['plots_analysis']],
         ['key' => 'prod_negocio',  'icon' => 'calculator', 'label' => 'Negocio',  'sections' => ['billing_all']],
     ];
     $chapterColors['prod_parcelas'] = $chapterColors['parcelas'];

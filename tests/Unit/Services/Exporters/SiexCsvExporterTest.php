@@ -62,15 +62,15 @@ class SiexCsvExporterTest extends TestCase
     #[Test]
     public function it_exports_phytosanitary_treatments_with_sigpac_data()
     {
-        // Crear código SIGPAC
+        // Crear código SIGPAC (24 chars required for formatted_code accessor)
         $sigpacCode = SigpacCode::create([
-            'code' => '1328079001200045003',
+            'code' => '132807900000001200045003',
             'code_autonomous_community' => '13',
             'code_province' => '28',
             'code_municipality' => '079',
-            'code_aggregate' => '0',
-            'code_zone' => '0',
-            'code_polygon' => '12',
+            'code_aggregate' => '000',
+            'code_zone' => '000',
+            'code_polygon' => '012',
             'code_plot' => '00045',
             'code_enclosure' => '003',
         ]);
@@ -87,7 +87,7 @@ class SiexCsvExporterTest extends TestCase
             'name' => 'Parcela Test',
             'area' => 2.5,
         ]);
-        
+
         $plot->sigpacCodes()->attach($sigpacCode->id);
         $plot->sigpacUses()->attach($sigpacUse->id);
 
@@ -130,7 +130,7 @@ class SiexCsvExporterTest extends TestCase
 
         // Verificar que contiene datos SIGPAC
         $this->assertStringContainsString('Código SIGPAC', $csvContent);
-        $this->assertStringContainsString('13-28-079-0-0-12-00045-003', $csvContent);
+        $this->assertStringContainsString('13-28-079-000-000-012-00045-003', $csvContent);
         $this->assertStringContainsString('Viñedo', $csvContent);
         $this->assertStringContainsString('2.5', $csvContent);
     }
@@ -138,12 +138,15 @@ class SiexCsvExporterTest extends TestCase
     #[Test]
     public function it_exports_full_notebook_with_sigpac_data()
     {
-        // Crear código SIGPAC
+        // Crear código SIGPAC (24 chars required for formatted_code accessor)
         $sigpacCode = SigpacCode::create([
-            'code' => '1328079001200045003',
+            'code' => '132807900000001200045003',
+            'code_autonomous_community' => '13',
             'code_province' => '28',
             'code_municipality' => '079',
-            'code_polygon' => '12',
+            'code_aggregate' => '000',
+            'code_zone' => '000',
+            'code_polygon' => '012',
             'code_plot' => '00045',
             'code_enclosure' => '003',
         ]);
@@ -182,7 +185,7 @@ class SiexCsvExporterTest extends TestCase
         $csvContent = Storage::disk('local')->get($csvPath);
 
         $this->assertStringContainsString('Código SIGPAC', $csvContent);
-        $this->assertStringContainsString('13-28-079', $csvContent);
+        $this->assertStringContainsString('13-28-079-000', $csvContent);
     }
 
     #[Test]

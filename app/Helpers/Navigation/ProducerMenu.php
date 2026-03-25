@@ -65,7 +65,7 @@ class ProducerMenu
         // ── Secciones unificadas (comunes viñedo + bodega) ────────────────────────
 
         // Unión de plots_analysis (viticulturist) + territory (winery)
-        $menu['plots_analysis_all'] = [
+        $menu['plots_analysis'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',            'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                     'active' => request()->routeIs('sigpac.*')],
@@ -87,7 +87,7 @@ class ProducerMenu
             ['divider' => true],
             // Análisis económico (unión viticulturist + winery)
             ['icon' => 'chart-bar-square',        'label' => 'Resumen Económico',      'route' => 'producer.financial-summary.index',       'active' => request()->routeIs('producer.financial-summary*'), 'new' => true],
-            ['icon' => 'presentation-chart-bar',  'label' => 'Estadísticas Viñedo',    'route' => 'producer.financial-stats',               'active' => request()->routeIs('producer.financial-stats')],
+            ['icon' => 'presentation-chart-bar',  'label' => 'Estadísticas Viñedo',    'route' => 'producer.financial-stats.index',               'active' => request()->routeIs('producer.financial-stats.index')],
             ['icon' => 'presentation-chart-line', 'label' => 'Estadísticas Bodega',    'route' => 'producer.financial-stats-winery',        'active' => request()->routeIs('producer.financial-stats-winery'), 'new' => true],
             ['icon' => 'shopping-cart',           'label' => 'Cosecha Comercializada', 'route' => 'producer.marketed-harvests.index',       'active' => request()->routeIs('producer.marketed-harvests.*')],
             ['icon' => 'table-cells',             'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',              'active' => request()->routeIs('producer.plot-costs*'), 'new' => true],

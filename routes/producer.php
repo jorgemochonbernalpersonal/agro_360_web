@@ -147,7 +147,7 @@ Route::middleware(['role:producer', 'check.beta'])
         Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
 
         // ── Estadísticas Financieras ──────────────────────────────────────
-        Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats');
+        Route::get('/financial-stats', \App\Livewire\Viticulturist\FinancialStats::class)->name('financial-stats.index');
         Route::get('/financial-stats-winery', \App\Livewire\Winery\Financial\Stats::class)->name('financial-stats-winery');
 
         // ── Configuración ─────────────────────────────────────────────────

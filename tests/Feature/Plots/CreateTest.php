@@ -93,7 +93,7 @@ class CreateTest extends TestCase
         ]);
     }
 
-    public function test_viticulturist_without_created_viticulturists_cannot_create_plot(): void
+    public function test_viticulturist_without_created_viticulturists_can_access_create(): void
     {
         $viticulturist = User::factory()->create([
             'role' => 'viticulturist',
@@ -111,13 +111,13 @@ class CreateTest extends TestCase
 
         $this->actingAs($viticulturist);
 
-        // Intentar acceder a la página de creación
+        // Any viticulturist with a role can access the create form (auto-assigns themselves)
         $response = $this->get(route('plots.create'));
-        
-        $response->assertStatus(403);
+
+        $response->assertStatus(200);
     }
 
-    public function test_viticulturist_without_winery_cannot_create_plot(): void
+    public function test_viticulturist_without_winery_can_access_create(): void
     {
         $viticulturist = User::factory()->create([
             'role' => 'viticulturist',
@@ -139,10 +139,10 @@ class CreateTest extends TestCase
 
         $this->actingAs($viticulturist);
 
-        // Intentar acceder a la página de creación debería redirigir
+        // Parent viticulturists can access the create form regardless of winery link
         $response = $this->get(route('plots.create'));
-        
-        $response->assertRedirect(route('plots.index'));
+
+        $response->assertStatus(200);
     }
 
     public function test_viticulturist_can_create_plot_for_self(): void
@@ -182,16 +182,17 @@ class CreateTest extends TestCase
 
         Livewire::test(\App\Livewire\Plots\Create::class)
             ->set('name', 'Mi Parcela')
+            ->set('area', '5.0')
+            ->set('viticulturist_id', $childViticulturist->id)
             ->set('autonomous_community_id', $autonomousCommunity->id)
             ->set('province_id', $province->id)
             ->set('municipality_id', $municipality->id)
             ->call('save');
 
-        // Debe auto-asignarse a sí mismo si no selecciona viticultor
+        // Creates a plot for the managed child viticulturist
         $this->assertDatabaseHas('plots', [
             'name' => 'Mi Parcela',
-            'viticulturist_id' => $viticulturist->id,
-            // winery_id removed: plots no longer have direct winery_id column
+            'viticulturist_id' => $childViticulturist->id,
         ]);
     }
 
@@ -329,14 +330,13 @@ class CreateTest extends TestCase
         $component = Livewire::test(\App\Livewire\Plots\Create::class)
             ->set('name', 'Parcela Winery')
             ->set('viticulturist_id', $viticulturist->id)
+            ->set('area', '8.0')
             ->set('autonomous_community_id', $autonomousCommunity->id)
             ->set('province_id', $province->id)
             ->set('municipality_id', $municipality->id)
-            ->set('sigpac_use', [$sigpacUse->id])
-            ->set('sigpac_code', [$sigpacCode->id])
             ->call('save');
 
-        $component->assertRedirect(route('plots.index'));
+        $component->assertRedirect(route('winery.plots.index'));
 
         $this->assertDatabaseHas('plots', [
             'name' => 'Parcela Winery',

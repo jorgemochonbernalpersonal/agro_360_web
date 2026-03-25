@@ -36,7 +36,7 @@ class OfficialReportServiceTest extends TestCase
             MunicipalitySeeder::class,
         ]);
 
-        $this->service = new OfficialReportService();
+        $this->service = app(OfficialReportService::class);
     }
 
     protected function tearDown(): void

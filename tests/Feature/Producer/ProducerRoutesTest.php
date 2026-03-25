@@ -97,7 +97,7 @@ class ProducerRoutesTest extends ProducerTestCase
 
     public function test_financial_stats_campo_renders(): void
     {
-        $this->get(route('producer.financial-stats'))->assertOk();
+        $this->get(route('producer.financial-stats.index'))->assertOk();
     }
 
     // ── Bloqueo a otros roles ──────────────────────────────────────────────

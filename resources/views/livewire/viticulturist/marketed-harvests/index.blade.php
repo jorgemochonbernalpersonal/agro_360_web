@@ -102,7 +102,7 @@
                     </x-slot:header>
 
                     <div class="flex-1 space-y-3">
-                        @if($entry->harvest->plotPlanting->grapeVariety)
+                        @if($entry->harvest->plotPlanting?->grapeVariety)
                             <div class="flex items-center gap-2 text-xs text-zinc-500">
                                 <flux:icon icon="scissors" class="size-3.5 text-zinc-400 shrink-0" />
                                 <span>{{ $entry->harvest->plotPlanting->grapeVariety->name }}</span>

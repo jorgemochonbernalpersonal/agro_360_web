@@ -55,6 +55,8 @@ class Index extends Component
         return view('livewire.viticulturist.agri-insurance.index', [
             'insurances'    => $insurances,
             'stats'         => $stats,
+            'expiringSoon'  => $stats['expiring'],
+            'activeCount'   => $stats['active'],
             'coverageTypes' => AgriInsurance::COVERAGE_TYPES,
             'statuses'      => AgriInsurance::STATUSES,
         ])->layout('layouts.app');

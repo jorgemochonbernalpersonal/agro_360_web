@@ -62,7 +62,6 @@ class CleanupUnverifiedUsers extends Command
                 SupervisorWinery::where('winery_id', $user->id)->delete();
                 WineryViticulturist::where('winery_id', $user->id)->delete();
                 Crew::where('winery_id', $user->id)->delete();
-                Plot::where('winery_id', $user->id)->delete();
 
                 SupervisorViticulturist::where('viticulturist_id', $user->id)->delete();
                 WineryViticulturist::where('viticulturist_id', $user->id)->delete();

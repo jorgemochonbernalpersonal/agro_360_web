@@ -77,7 +77,7 @@ class WineryViticulturistObserver
         }
 
         $assignment->update([
-            'cuaderno_access'     => $rel->cuaderno_access,
+            'cuaderno_access'     => $rel->cuaderno_access ?? false,
             'cuaderno_granted_at' => $rel->cuaderno_granted_at,
             'cuaderno_revoked_at' => $rel->cuaderno_revoked_at,
         ]);

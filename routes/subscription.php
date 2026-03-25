@@ -10,3 +10,8 @@ Route::middleware(['auth', 'verified'])
         Route::get('/', Manage::class)->name('manage');
     });
 
+// Alias for pricing page (redirects to subscription management)
+Route::middleware(['auth', 'verified'])
+    ->get('/pricing', fn () => redirect()->route('subscription.manage'))
+    ->name('pricing');
+

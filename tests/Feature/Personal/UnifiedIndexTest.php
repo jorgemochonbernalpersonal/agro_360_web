@@ -23,8 +23,9 @@ class UnifiedIndexTest extends TestCase
     public function test_viticulturist_can_view_unified_index(): void
     {
         $viticulturist = User::factory()->create([
-            'role' => 'viticulturist',
+            'role'              => 'viticulturist',
             'email_verified_at' => now(),
+            'is_beta_user'      => true,
         ]);
 
         $this->actingAs($viticulturist);
@@ -492,16 +493,14 @@ class UnifiedIndexTest extends TestCase
 
         $this->actingAs($viticulturist);
 
-        // El método deleteViticulturist verifica hasWineryRelations
-        // que incluye la relación WineryViticulturist que acabamos de crear
-        // Por lo tanto, el viticultor NO se eliminará porque tiene esa relación
-        // Este test verifica que el método detecta correctamente las relaciones
+        // The creator's own SOURCE_VITICULTURIST link is excluded from hasWineryRelations,
+        // so a sub-viticulturist with only that link has no blocking relations → delete succeeds.
         $component = Livewire::test(UnifiedIndex::class)
             ->set('viewMode', 'personal')
             ->call('deleteViticulturist', $created->id);
 
-        // No debería eliminarse porque tiene la relación WineryViticulturist
-        $this->assertDatabaseHas('users', [
+        // Should be deleted since the only relation is the creator's own link
+        $this->assertDatabaseMissing('users', [
             'id' => $created->id,
         ]);
 

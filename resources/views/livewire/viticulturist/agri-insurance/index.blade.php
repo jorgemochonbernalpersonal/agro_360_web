@@ -46,13 +46,13 @@
         >
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <x-agro.stat-card
-                title="Pólizas activas"
+                label="Pólizas activas"
                 :value="$activeCount"
                 icon="shield-check"
                 color="green"
             />
             <x-agro.stat-card
-                title="Total pólizas"
+                label="Total pólizas"
                 :value="$insurances->total()"
                 icon="document-text"
                 color="zinc"

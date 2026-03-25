@@ -38,5 +38,10 @@ Route::middleware(['role:admin'])
 
         // Suscripciones y pagos
         Route::get('/subscriptions', \App\Livewire\Admin\Subscriptions\Index::class)->name('subscriptions.index');
+
+        // Organizaciones (bodegas y DOs)
+        Route::prefix('organizations')->name('organizations.')->group(function () {
+            Route::get('/', \App\Livewire\Admin\Organizations\Index::class)->name('index');
+        });
     });
 

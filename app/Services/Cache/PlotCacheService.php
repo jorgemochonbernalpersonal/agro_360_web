@@ -63,11 +63,11 @@ class PlotCacheService
             "plot_{$plot->id}_stats",
             self::CACHE_TTL,
             fn() => [
-                'total_activities' => $plot->activities()->count(),
+                'total_activities' => $plot->agriculturalActivities()->count(),
                 'total_area' => $plot->area,
                 'plantings_count' => $plot->plantings()->count(),
-                'last_activity_date' => $plot->activities()->max('activity_date'),
-                'activities_this_month' => $plot->activities()
+                'last_activity_date' => $plot->agriculturalActivities()->max('activity_date'),
+                'activities_this_month' => $plot->agriculturalActivities()
                     ->whereMonth('activity_date', now()->month)
                     ->whereYear('activity_date', now()->year)
                     ->count(),
@@ -82,7 +82,11 @@ class PlotCacheService
     {
         // Invalidar todas las variaciones de cache de plots del usuario
         Cache::forget("user_{$user->id}_plots");
-        Cache::tags(['user_plots', "user_{$user->id}"])->flush();
+        try {
+            Cache::tags(['user_plots', "user_{$user->id}"])->flush();
+        } catch (\BadMethodCallException) {
+            // Cache store doesn't support tags — key-based forget is sufficient
+        }
     }
 
     /**
@@ -92,12 +96,16 @@ class PlotCacheService
     {
         Cache::forget("plot_{$plot->id}_details");
         Cache::forget("plot_{$plot->id}_stats");
-        
+
         if ($plot->viticulturist) {
             $this->invalidateUserPlots($plot->viticulturist);
         }
 
-        Cache::tags(['plots', "plot_{$plot->id}"])->flush();
+        try {
+            Cache::tags(['plots', "plot_{$plot->id}"])->flush();
+        } catch (\BadMethodCallException) {
+            // Cache store doesn't support tags — key-based forget is sufficient
+        }
     }
 
     /**
