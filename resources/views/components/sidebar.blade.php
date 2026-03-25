@@ -28,12 +28,15 @@
         'do_estadisticas' => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
         'do_negocio_do'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // green
         'do_sistema'      => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
-        // do mega-chapters (5 agrupados)
+        // do mega-chapters (8 agrupados)
         'do_registro'      => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // indigo
         'do_supervision'   => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
         'do_campanas_gral' => ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'],   // amber
+        'do_calidad'       => ['accent' => '#facc15', 'bg' => 'rgba(250,204,21,0.12)',  'border' => 'rgba(250,204,21,0.5)'],   // yellow
         'do_control_gral'  => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // red
-        'do_gestion'       => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
+        'do_territorio'    => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
+        'do_estadisticas'  => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
+        'do_admin'         => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
         // winery
         'vendimia'      => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
         'bodega_elab'   => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino
@@ -109,22 +112,40 @@
             'key'            => 'do_campanas_gral',
             'icon'           => 'flag',
             'label'          => 'Campañas',
-            'sections'       => ['do_campaigns', 'do_qualification', 'do_labels'],
-            'section_labels' => ['do_campaigns' => 'Vendimia', 'do_qualification' => 'Calificación', 'do_labels' => 'Contraetiquetas'],
+            'sections'       => ['do_campaigns'],
+        ],
+        [
+            'key'            => 'do_calidad',
+            'icon'           => 'star',
+            'label'          => 'Calidad',
+            'sections'       => ['do_qualification', 'do_labels'],
+            'section_labels' => ['do_qualification' => 'Calificación', 'do_labels' => 'Contraetiquetas'],
         ],
         [
             'key'            => 'do_control_gral',
             'icon'           => 'shield-check',
             'label'          => 'Control',
-            'sections'       => ['do_inspection', 'do_regulation', 'do_territory'],
-            'section_labels' => ['do_inspection' => 'Inspección', 'do_regulation' => 'Normativa', 'do_territory' => 'Territorio'],
+            'sections'       => ['do_inspection', 'do_regulation'],
+            'section_labels' => ['do_inspection' => 'Inspección', 'do_regulation' => 'Normativa'],
         ],
         [
-            'key'            => 'do_gestion',
+            'key'            => 'do_territorio',
+            'icon'           => 'map',
+            'label'          => 'Territorio',
+            'sections'       => ['do_territory'],
+        ],
+        [
+            'key'            => 'do_estadisticas',
             'icon'           => 'chart-bar',
-            'label'          => 'Gestión DO',
-            'sections'       => ['do_statistics', 'do_finance', 'do_settings'],
-            'section_labels' => ['do_statistics' => 'Estadísticas', 'do_finance' => 'Finanzas', 'do_settings' => 'Sistema'],
+            'label'          => 'Estadísticas',
+            'sections'       => ['do_statistics'],
+        ],
+        [
+            'key'            => 'do_admin',
+            'icon'           => 'cog-6-tooth',
+            'label'          => 'Administración',
+            'sections'       => ['do_finance', 'do_settings'],
+            'section_labels' => ['do_finance' => 'Finanzas', 'do_settings' => 'Sistema'],
         ],
     ];
 
