@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\HarvestDelivery;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -40,7 +41,7 @@ class HarvestDeliveryDeletedNotification extends Notification
                     <p style="margin:0;"><strong>Kg que declaraba el viticultor:</strong> ' . number_format($this->declaredKg, 0) . ' kg</p>
                  </div>'
             ))
-            ->action('Ver recepciones', $this->wineryReceptionUrl)
+            ->action('Ver recepciones', AppLink::url($this->wineryReceptionUrl, 'agro365://home'))
             ->line('Tu recepción permanece activa. Puedes contactar con el viticultor si necesitas aclaración.')
             ->salutation("Saludos,\nAgro365");
     }

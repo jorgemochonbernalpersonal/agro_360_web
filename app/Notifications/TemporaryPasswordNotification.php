@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -38,8 +39,8 @@ class TemporaryPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $loginUrl = url('/login');
-        
+        $loginUrl = AppLink::url(url('/login'), 'agro365://login');
+
         // Solo forzar HTTPS en producción
         if (app()->environment('production')) {
             $loginUrl = str_replace('http://', 'https://', $loginUrl);

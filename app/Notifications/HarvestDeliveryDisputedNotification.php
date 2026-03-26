@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\HarvestDelivery;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -30,9 +31,12 @@ class HarvestDeliveryDisputedNotification extends Notification
 
         $variety  = $planting?->grapeVariety?->name ?? $planting?->name ?? '—';
         $plot     = $planting?->plot?->name ?? '—';
-        $showUrl  = $harvest
-            ? route('winery.grape-reception.show', $harvest->id)
-            : route('winery.grape-reception.index');
+        $showUrl  = AppLink::url(
+            $harvest
+                ? route('winery.grape-reception.show', $harvest->id)
+                : route('winery.grape-reception.index'),
+            'agro365://home'
+        );
 
         if (app()->environment('production')) {
             $showUrl = str_replace('http://', 'https://', $showUrl);

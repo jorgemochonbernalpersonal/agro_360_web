@@ -150,6 +150,20 @@ class SecurityLogger
     }
 
     /**
+     * Loguear acción crítica genérica — usado por LogCriticalActions middleware
+     */
+    public static function log(array $data): void
+    {
+        $level = $data['event'] === 'critical_action_completed' ? 'info' : 'warning';
+
+        Log::channel(self::CHANNEL)->$level('Acción crítica', array_merge([
+            'ip'         => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'timestamp'  => now()->toDateTimeString(),
+        ], $data));
+    }
+
+    /**
      * Loguear fin de impersonación
      */
     public static function logImpersonationEnded(int $adminId, int $targetUserId): void

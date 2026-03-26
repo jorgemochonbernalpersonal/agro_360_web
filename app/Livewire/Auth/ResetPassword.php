@@ -21,10 +21,12 @@ class ResetPassword extends Component
     public $password_confirmation = '';
     public $token = '';
     public $tokenValid = false;
+    public $platform = '';
 
     public function mount($token, $email = null)
     {
-        $this->token = $token;
+        $this->token    = $token;
+        $this->platform = request()->query('platform', '');
         
         // Obtener email del query string si no viene como parámetro
         if (!$email && request()->has('email')) {
@@ -122,6 +124,9 @@ class ResetPassword extends Component
         );
 
         if ($status === Password::PASSWORD_RESET) {
+            if ($this->platform === 'mobile') {
+                return redirect()->route('password.reset.mobile-success');
+            }
             $this->toastSuccess('Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.');
             return $this->redirect(route('login'), navigate: true);
         } else {

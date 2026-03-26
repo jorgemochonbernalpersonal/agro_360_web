@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Payment;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -42,7 +43,7 @@ class PaymentConfirmation extends Notification implements ShouldQueue
             ->line('- Monto: €' . number_format($this->payment->amount, 2))
             ->line('- Plan: ' . $this->payment->plan_type)
             ->line('- ID de transacción: ' . $this->payment->paypal_order_id)
-            ->action('Ver mis suscripciones', url('/dashboard/subscriptions'))
+            ->action('Ver mis suscripciones', AppLink::url(url('/dashboard/subscriptions'), 'agro365://home'))
             ->line('Gracias por confiar en Agro365.');
     }
 

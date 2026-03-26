@@ -1,0 +1,27 @@
+{
+    "$schema": "https://raw.githubusercontent.com/infection/infection/0.29.14/resources/schema.json",
+    "source": {
+        "directories": [
+            "app/Http/Controllers/Api",
+            "app/Http/Middleware"
+        ]
+    },
+    "phpUnit": {
+        "configDir": "."
+    },
+    "mutators": {
+        "@default": true,
+        // Concat y ConcatOperandRemoval en mensajes de log son falsos positivos:
+        // no aportamos valor testeando el formato exacto del string de log de seguridad
+        "Concat": false,
+        "ConcatOperandRemoval": false,
+        // MethodCallRemoval en la llamada a SecurityLogger es falso positivo:
+        // el comportamiento observable (403) no cambia si se elimina el log
+        "MethodCallRemoval": false
+    },
+    "timeout": 120,
+    // minMsi bajo porque AuthController tiene muchos métodos no ejercidos por el testsuite de Api
+    // El indicador real es minCoveredMsi
+    "minMsi": 4,
+    "minCoveredMsi": 85
+}

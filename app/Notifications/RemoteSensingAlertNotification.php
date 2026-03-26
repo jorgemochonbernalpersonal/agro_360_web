@@ -2,11 +2,12 @@
 
 namespace App\Notifications;
 
+use App\Models\Plot;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\Plot;
 
 class RemoteSensingAlertNotification extends Notification
 {
@@ -53,7 +54,7 @@ class RemoteSensingAlertNotification extends Notification
                     ->line("Hemos detectado un valor bajo de vigor (NDVI) en tu parcela **{$this->plot->name}**.")
                     ->line("Valor actual: **{$this->currentNdvi}**")
                     ->line("Tu umbral de alerta: **{$this->threshold}**")
-                    ->action('Ver detalle en Teledetección', url('/viticulturist/remote-sensing?selectedPlotId='.$this->plot->id))
+                    ->action('Ver detalle en Teledetección', AppLink::url(url('/viticulturist/remote-sensing?selectedPlotId='.$this->plot->id), 'agro365://plots/' . $this->plot->id))
                     ->line('Te recomendamos revisar la parcela para identificar posibles problemas.');
     }
 

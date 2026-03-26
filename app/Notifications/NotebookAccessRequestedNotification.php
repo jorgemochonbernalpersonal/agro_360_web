@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -22,7 +23,7 @@ class NotebookAccessRequestedNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $url = route('viticulturist.winery-access.index');
+        $url = AppLink::url(route('viticulturist.winery-access.index'), 'agro365://home');
 
         if (app()->environment('production')) {
             $url = str_replace('http://', 'https://', $url);

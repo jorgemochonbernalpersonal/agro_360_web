@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -42,7 +43,7 @@ class WelcomeToAgro365 extends Notification implements ShouldQueue
             ->line('✅ Generar informes oficiales con firma digital')
             ->line('✅ Monitorear la salud de tus viñedos con teledetección')
             ->line('✅ Controlar el stock de productos y maquinaria')
-            ->action('Ir al Dashboard', url('/dashboard'))
+            ->action('Ir al Dashboard', AppLink::url(url('/dashboard'), 'agro365://home'))
             ->line('Si necesitas ayuda, no dudes en contactarnos en info@agro365.es')
             ->line('¡Comienza hoy tu gestión agrícola digital!');
     }

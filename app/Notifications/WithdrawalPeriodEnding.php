@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\PhytosanitaryTreatment;
+use App\Support\AppLink;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,7 +49,7 @@ class WithdrawalPeriodEnding extends Notification implements ShouldQueue
             ->line("**Fecha de aplicación:** {$activity->activity_date->format('d/m/Y')}")
             ->line("**Fecha segura para cosecha:** {$this->safeDate->format('d/m/Y')}")
             ->line("**Días restantes:** {$this->daysRemaining}")
-            ->action('Ver actividad', route('activities.show', $activity))
+            ->action('Ver actividad', AppLink::url(route('activities.show', $activity), 'agro365://home'))
             ->line('No olvides respetar el plazo de seguridad antes de la cosecha.');
     }
 

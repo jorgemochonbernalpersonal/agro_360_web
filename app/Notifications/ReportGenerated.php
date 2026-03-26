@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\OfficialReport;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -46,7 +47,7 @@ class ReportGenerated extends Notification implements ShouldQueue
             ->line("Tu informe de **{$reportType}** ha sido generado exitosamente.")
             ->line('**Código de verificación:** ' . $this->report->verification_code)
             ->line('Este código permite verificar la autenticidad del documento.')
-            ->action('Descargar informe', route('reports.download', $this->report))
+            ->action('Descargar informe', AppLink::url(route('reports.download', $this->report), 'agro365://home'))
             ->line('El informe incluye firma digital y puede ser verificado oficialmente.');
     }
 

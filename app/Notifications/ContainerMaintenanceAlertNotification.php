@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -36,7 +37,7 @@ class ContainerMaintenanceAlertNotification extends Notification
             ? 'Aviso de mantenimiento de contenedor'
             : "{$total} avisos de mantenimiento de contenedores";
 
-        $url = route('winery.cellar.containers.index');
+        $url = AppLink::url(route('winery.cellar.containers.index'), 'agro365://containers');
         if (app()->environment('production')) {
             $url = str_replace('http://', 'https://', $url);
         }

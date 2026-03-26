@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Plot;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -44,7 +45,7 @@ class NdviAlertNotification extends Notification implements ShouldQueue
             ->line("- NDVI actual: {$this->currentNdvi}")
             ->line("- Umbral configurado: {$this->threshold}")
             ->line('Un NDVI bajo puede indicar estrés hídrico, plagas o enfermedades.')
-            ->action('Ver parcela', route('plots.show', $this->plot))
+            ->action('Ver parcela', AppLink::url(route('plots.show', $this->plot), 'agro365://plots/' . $this->plot->id))
             ->line('Recomendamos inspeccionar la parcela lo antes posible.');
     }
 

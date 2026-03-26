@@ -2,11 +2,12 @@
 
 namespace App\Notifications;
 
+use App\Models\SupportTicket;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
-use App\Models\SupportTicket;
 
 class SupportTicketCreatedNotification extends Notification
 {
@@ -31,8 +32,8 @@ class SupportTicketCreatedNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $ticketUrl = route('viticulturist.support.index');
-        
+        $ticketUrl = AppLink::url(route('viticulturist.support.index'), 'agro365://home');
+
         // Solo forzar HTTPS en producción
         if (app()->environment('production')) {
             $ticketUrl = str_replace('http://', 'https://', $ticketUrl);

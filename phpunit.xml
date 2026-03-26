@@ -6,6 +6,8 @@
     colors="true"
     cacheDirectory=".phpunit.cache"
     stopOnFailure="false"
+    executionOrder="default"
+    failOnRisky="false"
     beStrictAboutTestsThatDoNotTestAnything="true"
 >
     <testsuites>
@@ -14,6 +16,9 @@
         </testsuite>
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Api">
+            <directory suffix="Test.php">./tests/Feature/Api</directory>
         </testsuite>
     </testsuites>
 

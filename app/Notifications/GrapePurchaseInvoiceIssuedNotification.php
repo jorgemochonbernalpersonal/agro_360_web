@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Invoice;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -40,7 +41,7 @@ class GrapePurchaseInvoiceIssuedNotification extends Notification
                     <p style="margin:0;font-size:18px;font-weight:bold;color:#166534;">A cobrar: ' . number_format((float) $invoice->total_amount, 2) . ' €</p>
                  </div>'
             ))
-            ->action('Ver mis liquidaciones', route('viticulturist.invoices.grape-purchase.index'))
+            ->action('Ver mis liquidaciones', AppLink::url(route('viticulturist.invoices.grape-purchase.index'), 'agro365://invoices'))
             ->salutation("Saludos,\nAgro365");
     }
 

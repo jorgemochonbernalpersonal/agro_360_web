@@ -1,10 +1,45 @@
 <?php
 
 use App\Livewire\Auth\Login;
+use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+
+// ─── Página intermedia de apertura para notificaciones (web o app móvil) ──────
+Route::get('/app/open', [\App\Http\Controllers\AppRedirectController::class, 'open'])
+    ->name('app.open');
+
+// ─── Verificación de email (sin sesión web, compatible con app móvil) ─────────
+// Seguridad garantizada por: URL firmada (signed) + hash del email del usuario.
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, string $id, string $hash) {
+    $user = User::findOrFail($id);
+
+    if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+        abort(403, 'Enlace de verificación inválido.');
+    }
+
+    if (! $user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+        event(new Verified($user));
+    }
+
+    // Móvil: parámetro firmado incluido en la URL por MobileVerifyEmailNotification
+    if ($request->query('platform') === 'mobile') {
+        return view('auth.email-verified-mobile');
+    }
+
+    // Web con sesión activa → flujo web normal
+    if (auth()->check()) {
+        return redirect()->route('verification.verified');
+    }
+
+    // Web sin sesión (incógnito / otro dispositivo) → login (ya está verificado)
+    return redirect()->route('login');
+})->middleware(['signed'])->name('verification.verify');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
@@ -14,6 +49,11 @@ Route::middleware('guest')->group(function () {
         ->name('password.reset')
         ->where('token', '.*'); // Permitir cualquier carácter en el token (incluye caracteres especiales)
 });
+
+// Página de éxito de reset de contraseña desde app móvil (sin sesión, sin middleware)
+Route::get('/password/reset/mobile-success', function () {
+    return view('auth.password-reset-mobile');
+})->name('password.reset.mobile-success');
 
 Route::middleware('auth')->group(function () {
     // Cambio de contraseña obligatorio (debe estar antes de otras rutas protegidas)
@@ -44,11 +84,8 @@ Route::middleware('auth')->group(function () {
         return view('auth.verify-email');
     })->name('verification.notice');
 
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
-        return redirect()->route('verification.verified')
-            ->with('verified', true);
-    })->middleware(['signed'])->name('verification.verify');
+    // La ruta verification.verify está fuera de este grupo (ver abajo) para soportar
+    // verificación desde app móvil sin sesión web activa.
 
     // Página de éxito de verificación
     Route::get('/email/verified', function () {

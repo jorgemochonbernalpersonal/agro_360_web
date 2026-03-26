@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\OfficialReport;
+use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -36,7 +37,7 @@ class ReportFailedNotification extends Notification implements ShouldQueue
             'report_icon' => $this->report->report_icon ?? '📄',
             'error_message' => $this->errorMessage,
             'message' => '❌ Error al generar el informe',
-            'action_url' => route('viticulturist.official-reports.create'),
+            'action_url' => AppLink::url(route('viticulturist.official-reports.create'), 'agro365://home'),
             'action_text' => 'Reintentar',
         ];
     }
