@@ -4,7 +4,15 @@
         title="SILICIE — Libro de Registro"
         description="Registro oficial de entradas, elaboración, existencias y salidas. Campaña {{ $vintage }}."
         icon="document-chart-bar"
-    />
+    >
+        <x-slot:actions>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"
+                  title="Conforme a Orden HAC/1505/2024 — SILICIE 2.0 (TIPO_DOCUMENTO + PERIODO_FISCAL)">
+                <flux:icon icon="check-circle" class="size-3.5" />
+                SILICIE 2.0 · HAC/1505/2024
+            </span>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Filtro y acciones ───────────────────────────────────────────────── --}}
     <x-agro.filter-bar>
@@ -35,6 +43,44 @@
             Exportar CSV SILICIE
         </flux:button>
     </x-agro.filter-bar>
+
+    {{-- Guía post-exportación ───────────────────────────────────────────── --}}
+    @if($showExportGuide)
+        <div class="rounded-xl border border-blue-200 bg-blue-50 p-4" x-data>
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+                        <flux:icon icon="check-circle" class="size-5 text-blue-600" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-blue-900 mb-1">CSV descargado — ¿Qué hago ahora?</p>
+                        <ol class="text-xs text-blue-800 space-y-1 list-decimal list-inside leading-relaxed">
+                            <li>Accede al portal oficial de SILICIE</li>
+                            <li>Ve a <strong>Importar movimientos</strong> → selecciona el fichero CSV descargado</li>
+                            <li>Verifica que todos los movimientos se han importado correctamente</li>
+                            <li>Confirma la presentación desde el portal</li>
+                        </ol>
+                        <a
+                            href="https://silicie.es"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors"
+                        >
+                            <flux:icon icon="arrow-top-right-on-square" class="size-3.5" />
+                            Ir a silicie.es
+                        </a>
+                    </div>
+                </div>
+                <button
+                    wire:click="dismissExportGuide"
+                    class="text-blue-400 hover:text-blue-600 transition-colors shrink-0"
+                    title="Cerrar"
+                >
+                    <flux:icon icon="x-mark" class="size-4" />
+                </button>
+            </div>
+        </div>
+    @endif
 
     {{-- KPIs ────────────────────────────────────────────────────────────── --}}
     <div class="grid grid-cols-2 gap-4">
@@ -73,6 +119,7 @@
                     'elaboracion' => ['label' => 'Libro II — Elaboración',   'icon' => 'beaker'],
                     'existencias' => ['label' => 'Libro III — Existencias',  'icon' => 'squares-2x2'],
                     'salidas'     => ['label' => 'Libro IV — Salidas',       'icon' => 'arrow-up-tray'],
+                    'apertura'    => ['label' => 'Apertura ejercicio',        'icon' => 'calendar-days'],
                 ] as $tab => $meta)
                     <button
                         wire:click="switchTab('{{ $tab }}')"
@@ -456,6 +503,113 @@
                         </x-agro.table-row>
                     @endforeach
                 </x-agro.data-table>
+            @endif
+        @endif
+
+        {{-- ══════════════════════════════════════════════════════════════ --}}
+        {{-- APERTURA EJERCICIO — A22 SILICIE 2.0                          --}}
+        {{-- ══════════════════════════════════════════════════════════════ --}}
+        @if($currentTab === 'apertura')
+            @php $ab = $tabData; @endphp
+
+            <div class="px-4 py-3 flex flex-wrap items-center gap-4 border-b border-zinc-100 bg-zinc-50/50">
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-zinc-500">Ejercicio fiscal</label>
+                    <select
+                        wire:model.live="filterFiscalYear"
+                        class="text-sm border border-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    >
+                        @foreach($fiscalYears as $fy)
+                            <option value="{{ $fy }}">{{ $fy }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @if($ab['snapshot_date'])
+                    <span class="text-xs text-zinc-400">
+                        Instantánea de referencia: {{ \Carbon\Carbon::parse($ab['snapshot_date'])->translatedFormat('d M Y') }}
+                    </span>
+                @endif
+                @if(!empty($ab['rows']))
+                    <span class="text-xs font-medium text-blue-600">
+                        Total existencias apertura: {{ number_format($ab['total_hl'], 3, ',', '.') }} HL
+                    </span>
+                @endif
+            </div>
+
+            @if(!$ab['snapshot_date'])
+                <div class="p-4">
+                    <flux:callout variant="warning" icon="exclamation-triangle">
+                        <flux:callout.heading>Sin instantánea de existencias disponible</flux:callout.heading>
+                        <flux:callout.text>
+                            No se encontró ninguna instantánea de existencias anterior al 1 de enero de {{ $ab['fiscal_year'] }}.
+                            Registra una instantánea desde el panel SILICIE al cierre del ejercicio anterior
+                            para poder generar los movimientos de apertura A22.
+                        </flux:callout.text>
+                    </flux:callout>
+                </div>
+            @else
+                <div class="px-4 pt-4 pb-2">
+                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">
+                        A22 — Existencias en apertura · 1 enero {{ $ab['fiscal_year'] }}
+                    </p>
+                    <p class="text-xs text-zinc-400 mt-0.5">
+                        Estos datos corresponden al movimiento SILICIE de tipo A22 (Entrada almacén auxiliar)
+                        que debe declararse al abrir el ejercicio {{ $ab['fiscal_year'] }} en la sede electrónica de la AEAT.
+                    </p>
+                </div>
+
+                <x-agro.data-table :headers="['Producto', 'Tipo', 'Nº vinos', 'HL apertura', 'SILICIE A22']">
+                    @foreach($ab['rows'] as $row)
+                        <x-agro.table-row>
+                            <x-agro.table-cell>
+                                <span class="{{ $row['hl'] > 0 ? 'text-zinc-800 font-medium' : 'text-zinc-300' }}">
+                                    {{ $row['label'] }}
+                                </span>
+                            </x-agro.table-cell>
+                            <x-agro.table-cell>
+                                @if($row['is_must'])
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200">Mosto</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-violet-50 text-violet-700 border border-violet-200">Vino</span>
+                                @endif
+                            </x-agro.table-cell>
+                            <x-agro.table-cell>
+                                <span class="{{ $row['hl'] > 0 ? 'text-zinc-600' : 'text-zinc-300' }}">
+                                    {{ $row['wine_count'] ?: '—' }}
+                                </span>
+                            </x-agro.table-cell>
+                            <x-agro.table-cell>
+                                @if($row['hl'] > 0)
+                                    <span class="font-semibold text-blue-700">{{ number_format($row['hl'], 3, ',', '.') }}</span>
+                                    <span class="text-zinc-400 text-xs ml-1">HL</span>
+                                @else
+                                    <span class="text-zinc-300">0,000</span>
+                                @endif
+                            </x-agro.table-cell>
+                            <x-agro.table-cell>
+                                <code class="text-xs text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
+                                    A22;{{ $row['silicie_row']['FECHA_OPERACION'] }};OTR;{{ $row['silicie_row']['PERIODO_FISCAL'] }};{{ $row['silicie_row']['CODIGO_NC'] }};{{ number_format($row['hl'], 3, ',', '') }};HL
+                                </code>
+                            </x-agro.table-cell>
+                        </x-agro.table-row>
+                    @endforeach
+                </x-agro.data-table>
+
+                <div class="p-4 border-t border-zinc-100 mt-2">
+                    <flux:callout variant="info" icon="information-circle">
+                        <flux:callout.text class="text-xs">
+                            <strong>SILICIE 2.0 (Orden HAC/1505/2024)</strong> —
+                            Los campos
+                            <code>TIPO_DOCUMENTO</code>
+                            <x-agro.help-tip title="TIPO_DOCUMENTO" text="Tipo de documento que ampara el movimiento: FAC (factura), ALB (albarán de entrega), OTR (otro documento). Obligatorio desde enero 2025. En movimientos internos o de elaboración se usa OTR." />
+                            y <code>PERIODO_FISCAL</code>
+                            <x-agro.help-tip title="PERIODO_FISCAL" text="Mes y año del movimiento en formato AAAA-MM (ej. 2025-03). Obligatorio desde enero 2025. Corresponde al mes en que se realiza la operación, no a la fecha de factura." />
+                            son obligatorios desde el 1 de enero de 2025.
+                            El movimiento A22 (entrada almacén auxiliar) se utiliza para las existencias de apertura de ejercicio.
+                            Exporta el CSV SILICIE desde este panel para obtener el fichero con todos los campos requeridos.
+                        </flux:callout.text>
+                    </flux:callout>
+                </div>
             @endif
         @endif
 

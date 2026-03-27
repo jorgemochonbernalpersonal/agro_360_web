@@ -18,6 +18,9 @@
         </flux:button>
     </div>
 
+    {{-- Onboarding checklist --}}
+    @livewire('winery.onboarding-checklist')
+
     {{-- Stat-bar: hoy --}}
     @if($todayKg > 0 || $todayCount > 0)
         <div class="bg-agro-600 rounded-2xl p-4 text-white">

@@ -12,6 +12,29 @@
         </div>
     </div>
 
+    {{-- Onboarding checklist --}}
+    @livewire('supervisor.onboarding-checklist')
+
+    {{-- Empty state: DO sin entidades vinculadas --}}
+    @if($wineryCount === 0 && $viticulturistCount === 0)
+        <flux:callout variant="warning" icon="exclamation-triangle">
+            <flux:callout.heading>Tu denominación de origen aún no tiene entidades vinculadas</flux:callout.heading>
+            <flux:callout.text>
+                Para empezar a trabajar necesitas añadir al menos una bodega o un viticultor a tu denominación.
+                <span class="flex flex-wrap gap-3 mt-3">
+                    <a href="{{ route('supervisor.oversight.wineries.index') }}" wire:navigate
+                       class="inline-flex items-center gap-1.5 text-sm font-medium text-amber-800 underline underline-offset-2 hover:text-amber-900">
+                        Añadir bodegas →
+                    </a>
+                    <a href="{{ route('supervisor.growers.index') }}" wire:navigate
+                       class="inline-flex items-center gap-1.5 text-sm font-medium text-amber-800 underline underline-offset-2 hover:text-amber-900">
+                        Añadir viticultores →
+                    </a>
+                </span>
+            </flux:callout.text>
+        </flux:callout>
+    @endif
+
     {{-- Stat cards --}}
     <div class="grid grid-cols-2 gap-4">
         <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">

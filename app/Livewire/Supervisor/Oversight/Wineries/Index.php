@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Supervisor\Oversight\Wineries;
 
+use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\SupervisorWinery;
 use App\Models\User;
 use App\Models\WineryViticulturist;
@@ -13,10 +14,15 @@ use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, WithToastNotifications;
 
     public string $search = '';
     public string $vintageFilter = '';
+
+    // ── Link winery modal ─────────────────────────────────────────────────────
+    public bool   $showLinkModal  = false;
+    public string $linkSearch     = '';
+    public ?int   $linkWineryId   = null;
 
     protected $queryString = [
         'search'        => ['except' => ''],
@@ -38,6 +44,72 @@ class Index extends Component
         $this->search        = '';
         $this->vintageFilter = '';
         $this->resetPage();
+    }
+
+    // ── Link winery ───────────────────────────────────────────────────────────
+
+    public function openLinkModal(): void
+    {
+        $this->reset(['linkSearch', 'linkWineryId']);
+        $this->resetErrorBag();
+        $this->showLinkModal = true;
+    }
+
+    public function closeLinkModal(): void
+    {
+        $this->showLinkModal = false;
+    }
+
+    public function updatingLinkSearch(): void
+    {
+        $this->linkWineryId = null;
+    }
+
+    public function linkWinery(): void
+    {
+        $this->validate([
+            'linkWineryId' => ['required', 'exists:users,id'],
+        ], [
+            'linkWineryId.required' => 'Selecciona una bodega.',
+        ]);
+
+        $doId = Auth::id();
+
+        $winery = User::where('id', $this->linkWineryId)
+            ->where('role', User::ROLE_WINERY)
+            ->firstOrFail();
+
+        $alreadyLinked = SupervisorWinery::where('supervisor_id', $doId)
+            ->where('winery_id', $winery->id)
+            ->exists();
+
+        if ($alreadyLinked) {
+            $this->toastError("{$winery->name} ya está adscrita a esta denominación.");
+            return;
+        }
+
+        SupervisorWinery::create([
+            'supervisor_id' => $doId,
+            'winery_id'     => $winery->id,
+            'assigned_by'   => $doId,
+        ]);
+
+        $this->showLinkModal = false;
+        $this->toastSuccess("{$winery->name} adscrita a la denominación correctamente.");
+    }
+
+    public function unlinkWinery(int $wineryId): void
+    {
+        $doId = Auth::id();
+
+        $relation = SupervisorWinery::where('supervisor_id', $doId)
+            ->where('winery_id', $wineryId)
+            ->firstOrFail();
+
+        $winery = User::find($wineryId);
+        $relation->delete();
+
+        $this->toastSuccess(($winery?->name ?? 'La bodega') . ' desvinculada de la denominación.');
     }
 
     #[Layout('layouts.app')]
@@ -85,6 +157,21 @@ class Index extends Component
 
         $wineries = $query->orderBy('name')->paginate(15);
 
+        // Candidates for linking: winery/producer users not already under this DO
+        $linkCandidates = collect();
+        if ($this->showLinkModal && strlen($this->linkSearch) >= 2) {
+            $term = '%' . mb_strtolower($this->linkSearch) . '%';
+            $linkCandidates = User::whereIn('role', [User::ROLE_WINERY, User::ROLE_PRODUCER])
+                ->whereNotIn('id', $wineryIds)
+                ->where(function ($q) use ($term) {
+                    $q->whereRaw('LOWER(name) LIKE ?', [$term])
+                      ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
+                })
+                ->orderBy('name')
+                ->limit(10)
+                ->get(['id', 'name', 'email']);
+        }
+
         return view('livewire.supervisor.oversight.wineries.index', [
             'wineries'          => $wineries,
             'harvestStats'      => $harvestStats,
@@ -92,6 +179,7 @@ class Index extends Component
             'availableVintages' => $availableVintages,
             'vintage'           => $vintage,
             'totalWineries'     => $wineryIds->count(),
+            'linkCandidates'    => $linkCandidates,
         ]);
     }
 }

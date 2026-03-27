@@ -184,6 +184,8 @@ Route::middleware(['role:winery,producer'])
         Route::get('/silicie/movements', fn() => redirect()->route('winery.silicie.dashboard'))->name('silicie.movements.index');
         Route::get('/silicie/infovi', \App\Livewire\Winery\Silicie\Infovi::class)
             ->name('silicie.infovi');
+        Route::get('/silicie/infovi/pdf', [\App\Http\Controllers\Winery\InfoviController::class, 'exportPdf'])
+            ->name('silicie.infovi.pdf');
 
         // ── Documentos Bodega ─────────────────────────────────────────
         Route::get('/documents', \App\Livewire\Winery\Documents\Index::class)->name('documents.index');

@@ -16,6 +16,7 @@ class WineStockSnapshot extends Model
         'alcohol_percentage',
         'vintage',
         'wine_type',
+        'is_must',
         'observations',
         'created_by',
     ];
@@ -24,6 +25,7 @@ class WineStockSnapshot extends Model
         'snapshot_date'      => 'date',
         'quantity_liters'    => 'decimal:3',
         'alcohol_percentage' => 'decimal:2',
+        'is_must'            => 'boolean',
     ];
 
     public function user(): BelongsTo

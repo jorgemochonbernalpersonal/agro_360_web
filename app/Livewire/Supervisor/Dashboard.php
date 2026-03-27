@@ -32,7 +32,7 @@ class Dashboard extends Component
             ->whereYear('issued_at', now()->year)
             ->sum('quantity_issued');
 
-        $pendingNotebookRequests = NotebookAccessRequest::where('winery_id', $doId)
+        $pendingNotebookRequests = NotebookAccessRequest::where('supervisor_id', $doId)
             ->where('status', NotebookAccessRequest::STATUS_PENDING)
             ->count();
 

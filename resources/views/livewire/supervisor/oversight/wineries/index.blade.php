@@ -3,7 +3,13 @@
     <x-agro.page-header
         title="Supervisión — Bodegas"
         description="Actividad de vendimia y viticultores por bodega adscrita."
-    />
+    >
+        <x-slot:actions>
+            <flux:button wire:click="openLinkModal" variant="primary" icon="plus">
+                Adscribir bodega
+            </flux:button>
+        </x-slot:actions>
+    </x-agro.page-header>
 
     {{-- Stats --}}
     <div x-data="{
@@ -86,7 +92,7 @@
 
     {{-- Table --}}
     <x-agro.data-table
-        :headers="['Bodega', 'Viticultores DO', 'Recepciones ' . $vintage, 'Uva recibida (kg)']"
+        :headers="['Bodega', 'Viticultores DO', 'Recepciones ' . $vintage, 'Uva recibida (kg)', '']"
         emptyMessage="No hay bodegas adscritas a esta denominación."
     >
         @foreach($wineries as $winery)
@@ -100,6 +106,7 @@
                        class="hover:text-blue-600 transition">
                         {{ $winery->name }}
                     </a>
+                    <div class="text-xs text-zinc-400">{{ $winery->email }}</div>
                 </td>
                 <td class="px-6 py-3 text-sm text-zinc-500">
                     {{ $vitCountByWinery[$winery->id] ?? 0 }}
@@ -114,6 +121,16 @@
                         —
                     @endif
                 </td>
+                <td class="px-6 py-3 text-right">
+                    <flux:button
+                        wire:click="unlinkWinery({{ $winery->id }})"
+                        wire:confirm="¿Desvincular {{ addslashes($winery->name) }} de la denominación? Se eliminarán también las asignaciones de viticultores DO a esta bodega."
+                        variant="ghost"
+                        size="sm"
+                        icon="x-mark"
+                        class="text-zinc-400 hover:text-red-500"
+                    />
+                </td>
             </tr>
         @endforeach
 
@@ -121,6 +138,68 @@
             {{ $wineries->links() }}
         </x-slot>
     </x-agro.data-table>
+
+    {{-- Modal: adscribir bodega existente --}}
+    <flux:modal wire:model="showLinkModal" class="max-w-lg">
+        <div class="space-y-5">
+            <div>
+                <flux:heading size="lg">Adscribir bodega a la denominación</flux:heading>
+                <flux:text class="mt-1 text-zinc-500">
+                    Busca la bodega por nombre o email y confírmala para incluirla bajo la supervisión de esta DO.
+                </flux:text>
+            </div>
+
+            <div>
+                <flux:label>Buscar bodega</flux:label>
+                <flux:input
+                    wire:model.live.debounce.300ms="linkSearch"
+                    placeholder="Nombre o email de la bodega..."
+                    icon="magnifying-glass"
+                    autofocus
+                />
+                <p class="mt-1 text-xs text-zinc-400">Introduce al menos 2 caracteres para buscar.</p>
+            </div>
+
+            @if($linkCandidates->isNotEmpty())
+                <div class="border border-zinc-200 rounded-xl divide-y divide-zinc-100 overflow-hidden">
+                    @foreach($linkCandidates as $candidate)
+                        <button
+                            type="button"
+                            wire:click="$set('linkWineryId', {{ $candidate->id }})"
+                            class="w-full flex items-center justify-between px-4 py-3 text-left text-sm hover:bg-zinc-50 transition {{ $linkWineryId === $candidate->id ? 'bg-blue-50 ring-1 ring-inset ring-blue-200' : '' }}"
+                        >
+                            <div>
+                                <span class="font-medium text-zinc-800">{{ $candidate->name }}</span>
+                                <span class="ml-2 text-xs text-zinc-400">{{ $candidate->email }}</span>
+                            </div>
+                            @if($linkWineryId === $candidate->id)
+                                <flux:icon icon="check-circle" class="w-4 h-4 text-blue-600 flex-shrink-0" />
+                            @endif
+                        </button>
+                    @endforeach
+                </div>
+            @elseif(strlen($linkSearch) >= 2)
+                <p class="text-sm text-zinc-400 text-center py-3">
+                    No se encontraron bodegas con ese nombre o email.
+                </p>
+            @endif
+
+            @error('linkWineryId')
+                <p class="text-sm text-red-600">{{ $message }}</p>
+            @enderror
+
+            <div class="flex justify-end gap-3 pt-1">
+                <flux:button wire:click="closeLinkModal" variant="ghost">Cancelar</flux:button>
+                <flux:button
+                    wire:click="linkWinery"
+                    variant="primary"
+                    :disabled="!$linkWineryId"
+                >
+                    Adscribir bodega
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
 
 </div>
 

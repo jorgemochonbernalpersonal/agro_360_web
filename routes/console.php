@@ -56,3 +56,14 @@ Schedule::command('viticulturists:clean-stale-invitations', ['--days' => 30])
     ->weeklyOn(1, '04:00')
     ->withoutOverlapping();
 
+// 📋 Recordatorios de plazos regulatorios INFOVI (diario a las 8:30 AM)
+// Envía aviso 7 días y 1 día antes del vencimiento; con deduplicación por BD
+Schedule::command('agro:regulatory-reminders')
+    ->dailyAt('08:30')
+    ->withoutOverlapping();
+
+// 📓 Recordatorios de solicitudes de cuaderno de campo sin respuesta (lunes 9 AM)
+Schedule::command('agro:notebook-access-reminders')
+    ->weeklyOn(1, '09:00')
+    ->withoutOverlapping();
+

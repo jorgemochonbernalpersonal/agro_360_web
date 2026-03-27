@@ -18,6 +18,10 @@ class Settings extends Component
 
     public $currentTab = 'taxes';
 
+    // === INFOVI TAB ===
+    public string $reovi_number = '';
+    public string $nidpb        = '';
+
     protected $queryString = ['currentTab' => ['as' => 'tab']];
 
     // === TAXES TAB ===
@@ -53,6 +57,7 @@ class Settings extends Component
         $this->loadInvoicing();
         $this->loadPlots();
         $this->loadFiscal();
+        $this->loadInfovi();
     }
 
     public function switchTab($tab): void
@@ -262,6 +267,32 @@ class Settings extends Component
         ]);
 
         $this->toastSuccess('Datos fiscales guardados correctamente');
+    }
+
+    // ==========================================
+    // INFOVI
+    // ==========================================
+
+    public function loadInfovi(): void
+    {
+        $org = Auth::user()->organization;
+        $this->reovi_number = $org?->reovi_number ?? '';
+        $this->nidpb        = $org?->nidpb ?? '';
+    }
+
+    public function saveInfovi(): void
+    {
+        $this->validate([
+            'reovi_number' => 'nullable|string|max:50',
+            'nidpb'        => 'nullable|string|max:50',
+        ]);
+
+        Auth::user()->organization?->update([
+            'reovi_number' => $this->reovi_number ?: null,
+            'nidpb'        => $this->nidpb ?: null,
+        ]);
+
+        $this->toastSuccess('Configuración INFOVI guardada correctamente');
     }
 
     public function render()

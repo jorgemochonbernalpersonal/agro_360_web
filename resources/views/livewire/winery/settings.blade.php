@@ -7,7 +7,7 @@
     <x-agro.card :padding="false">
         <div class="px-6 py-5">
             <x-agro.tabs
-                :tabs="['taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'plots' => 'Parcelas y Vendimia', 'fiscal' => 'Datos Fiscales']"
+                :tabs="['taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'plots' => 'Parcelas y Vendimia', 'fiscal' => 'Datos Fiscales', 'infovi' => 'INFOVI / SILICIE']"
                 :active="$currentTab"
                 wireMethod="switchTab"
             />
@@ -302,6 +302,71 @@
                     <div class="flex justify-end">
                         <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="saveFiscal">
                             Guardar Datos Fiscales
+                        </flux:button>
+                    </div>
+                </form>
+            @endif
+
+            {{-- INFOVI TAB --}}
+            @if($currentTab === 'infovi')
+                <form wire:submit="saveInfovi" class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-zinc-900 mb-1">Identificación INFOVI / SILICIE</h3>
+                        <p class="text-sm text-zinc-500">
+                            Números de registro obligatorios para generar las declaraciones ante AICA
+                            (Real Decreto 739/2015). Están disponibles en el portal <strong>mapa.gob.es/infovi</strong>
+                            y en la resolución de inscripción en el REOVI de tu comunidad autónoma.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <flux:label for="reovi_number">
+                                Número REOVI
+                            </flux:label>
+                            <flux:input
+                                id="reovi_number"
+                                wire:model="reovi_number"
+                                placeholder="Ej: ES-AN-0001234"
+                                maxlength="50"
+                            />
+                            <p class="text-xs text-zinc-400">
+                                Registro de Operadores Vitivinícolas. Asignado por tu comunidad autónoma.
+                            </p>
+                            @error('reovi_number') <p class="text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div class="space-y-1">
+                            <flux:label for="nidpb">
+                                NIDPB — Código de instalación
+                            </flux:label>
+                            <flux:input
+                                id="nidpb"
+                                wire:model="nidpb"
+                                placeholder="Ej: E12345678"
+                                maxlength="50"
+                            />
+                            <p class="text-xs text-zinc-400">
+                                Número de Identificación del Depósito o Punto de Bodega. Aparece en el nombre
+                                del fichero XML de la declaración INFOVI.
+                            </p>
+                            @error('nidpb') <p class="text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <flux:callout variant="info" icon="information-circle">
+                        <flux:callout.text>
+                            El <strong>número REOVI</strong> y el <strong>NIDPB</strong> identifican tu instalación
+                            en el sistema de declaraciones INFOVI de la AICA. Son necesarios para que Agro365 genere
+                            los cuadros de declaración correctamente y para que puedas cumplimentar el portal oficial.
+                            Si aún no estás registrado, consulta la
+                            <strong>sección de INFOVI del MAPA</strong> o la consejería de agricultura de tu comunidad autónoma.
+                        </flux:callout.text>
+                    </flux:callout>
+
+                    <div class="flex justify-end">
+                        <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="saveInfovi">
+                            Guardar configuración INFOVI
                         </flux:button>
                     </div>
                 </form>

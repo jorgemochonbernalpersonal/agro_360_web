@@ -203,7 +203,19 @@
       "Bash(__NEW_LINE_aa72421f059419c8__ bash:*)",
       "Bash(__NEW_LINE_af3ee81937d47129__ bash:*)",
       "Bash(mariadb -u agro365 -pagro365 agro365_test -e 'SHOW TABLES')",
-      "Bash(php -r \"echo ''''PHP works'''';\")"
+      "Bash(php -r \"echo ''''PHP works'''';\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(echo \"Done: $?\")",
+      "Bash(kill 1802 1977 1842)",
+      "Bash(echo \"DB reset: $?\")",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(CREATE DATABASE agro365_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)",
+      "Bash(EOF cd:*)",
+      "Bash(kill 1333 1427 1403 1379 1452)",
+      "Bash(mysqldump --version)",
+      "Bash(echo \"Migrate EXIT:$?\")",
+      "Bash(taskkill:*)",
+      "Bash(php -r \"require_once ''''C:/Users/dispo/Desktop/personal/agro_360_web/vendor/autoload.php''''; echo ''''PHP syntax OK'''';\")"
     ]
   }
 }

@@ -26,6 +26,8 @@ class Organization extends Model
         'website',
         'active',
         'owner_user_id',
+        'reovi_number',
+        'nidpb',
     ];
 
     protected $casts = [

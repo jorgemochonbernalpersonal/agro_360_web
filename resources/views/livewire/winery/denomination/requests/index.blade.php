@@ -83,8 +83,14 @@
 
         @empty
             <x-agro.table-row>
-                <td colspan="5" class="px-6 py-10 text-center text-sm text-zinc-400">
-                    No hay solicitudes de tu denominación de origen.
+                <td colspan="5" class="px-6 py-12 text-center">
+                    <div class="flex flex-col items-center gap-2">
+                        <div class="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center">
+                            <flux:icon icon="document-text" class="size-5 text-zinc-400" />
+                        </div>
+                        <p class="text-sm font-medium text-zinc-500">Sin solicitudes de la DO</p>
+                        <p class="text-xs text-zinc-400">Cuando tu denominación de origen te envíe actuaciones aparecerán aquí.</p>
+                    </div>
                 </td>
             </x-agro.table-row>
         @endforelse

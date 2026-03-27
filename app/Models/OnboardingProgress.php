@@ -44,6 +44,32 @@ class OnboardingProgress extends Model
         self::STEP_REGISTER_ACTIVITY,    // 4. Primera actividad (¡ya puedes trabajar!)
     ];
 
+    // Winery onboarding steps
+    public const STEP_WINERY_FISCAL        = 'winery_fiscal_data';
+    public const STEP_WINERY_CONTAINERS    = 'winery_add_containers';
+    public const STEP_WINERY_VITICULTURIST = 'winery_link_viticulturist';
+    public const STEP_WINERY_HARVEST       = 'winery_first_harvest';
+    public const STEP_WINERY_WINE          = 'winery_first_wine';
+
+    public const WINERY_STEPS = [
+        self::STEP_WINERY_FISCAL,        // 1. Datos fiscales / configuración
+        self::STEP_WINERY_CONTAINERS,    // 2. Añadir depósitos o barricas
+        self::STEP_WINERY_VITICULTURIST, // 3. Vincular primer viticultor
+        self::STEP_WINERY_HARVEST,       // 4. Primera recepción de uva
+        self::STEP_WINERY_WINE,          // 5. Primer vino o lote
+    ];
+
+    // Supervisor (Denomination of Origin) onboarding steps
+    public const STEP_SUPERVISOR_PROFILE         = 'supervisor_configure_profile';
+    public const STEP_SUPERVISOR_ADD_WINERY      = 'supervisor_add_winery';
+    public const STEP_SUPERVISOR_ADD_VITICULTURIST = 'supervisor_add_viticulturist';
+
+    public const SUPERVISOR_STEPS = [
+        self::STEP_SUPERVISOR_PROFILE,          // 1. Configurar perfil de la DO
+        self::STEP_SUPERVISOR_ADD_WINERY,       // 2. Vincular primera bodega
+        self::STEP_SUPERVISOR_ADD_VITICULTURIST, // 3. Añadir primer viticultor
+    ];
+
     /**
      * Usuario propietario del progreso
      */
