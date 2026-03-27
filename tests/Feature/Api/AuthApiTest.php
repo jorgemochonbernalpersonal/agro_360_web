@@ -425,4 +425,69 @@ class AuthApiTest extends TestCase
 
         $this->assertEquals(0, $user->tokens()->count());
     }
+
+    // ── expires_in en segundos ────────────────────────────────────────────────
+
+    public function test_expires_in_is_seconds_on_login(): void
+    {
+        // 30 días = 2.592.000 segundos (no minutos)
+        User::factory()->create([
+            'email'     => 'test@example.com',
+            'password'  => Hash::make('Password123abc'),
+            'can_login' => true,
+        ]);
+
+        $response = $this->postJson('/api/v1/login', [
+            'email'    => 'test@example.com',
+            'password' => 'Password123abc',
+        ])->assertStatus(200);
+
+        $this->assertEquals(30 * 24 * 60 * 60, $response->json('expires_in'));
+    }
+
+    public function test_expires_in_is_seconds_on_refresh(): void
+    {
+        $user  = User::factory()->create(['can_login' => true]);
+        $token = $user->createToken('mobile')->plainTextToken;
+
+        $response = $this->withToken($token)
+            ->postJson('/api/v1/refresh')
+            ->assertStatus(200);
+
+        $this->assertEquals(30 * 24 * 60 * 60, $response->json('expires_in'));
+    }
+
+    // ── Login con email no verificado ─────────────────────────────────────────
+
+    public function test_login_rejects_unverified_email(): void
+    {
+        User::factory()->unverified()->create([
+            'email'     => 'test@example.com',
+            'password'  => Hash::make('Password123abc'),
+            'can_login' => true,
+        ]);
+
+        $this->postJson('/api/v1/login', [
+            'email'    => 'test@example.com',
+            'password' => 'Password123abc',
+        ])->assertStatus(403)
+          ->assertJsonPath('email_unverified', true);
+    }
+
+    // ── forgot-password usa notificación móvil dedicada ───────────────────────
+
+    public function test_forgot_password_sends_mobile_notification(): void
+    {
+        \Illuminate\Support\Facades\Notification::fake();
+
+        $user = User::factory()->create(['email' => 'test@example.com']);
+
+        $this->postJson('/api/v1/forgot-password', ['email' => 'test@example.com'])
+            ->assertStatus(200);
+
+        \Illuminate\Support\Facades\Notification::assertSentTo(
+            $user,
+            \App\Notifications\MobileResetPasswordNotification::class
+        );
+    }
 }

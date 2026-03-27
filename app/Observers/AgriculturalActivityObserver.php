@@ -79,16 +79,11 @@ class AgriculturalActivityObserver
             throw new \Exception('No se puede eliminar una actividad bloqueada. Desbloquéala primero.');
         }
 
-        return true;
-    }
-
-    /**
-     * Handle the AgriculturalActivity "deleted" event.
-     */
-    public function deleted(AgriculturalActivity $activity): void
-    {
+        // Registrar la eliminación ANTES de borrar la fila para no violar la FK
         AgriculturalActivityAuditLog::log($activity, 'deleted', [
             'old' => $activity->getOriginal(),
         ]);
+
+        return true;
     }
 }

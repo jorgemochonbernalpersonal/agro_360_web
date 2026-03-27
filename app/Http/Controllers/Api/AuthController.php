@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\SecurityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
@@ -53,7 +52,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60, // minutos
+            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
             'user'       => new UserResource($user),
         ], 201);
     }
@@ -97,6 +96,13 @@ class AuthController extends Controller
             return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
         }
 
+        if (! $user->hasVerifiedEmail()) {
+            return response()->json([
+                'message'          => 'Verifica tu email para continuar.',
+                'email_unverified' => true,
+            ], 403);
+        }
+
         // Login exitoso → limpiar contador de intentos
         $hadFailures = RateLimiter::attempts($throttleKey) > 0;
         RateLimiter::clear($throttleKey);
@@ -126,7 +132,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60,
+            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
             'user'       => new UserResource($user->load('profile')),
         ]);
     }
@@ -189,7 +195,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60,
+            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
             'user'       => new UserResource($user->fresh()),
         ], 201);
     }
@@ -290,7 +296,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token'      => $token,
-            'expires_in' => 30 * 24 * 60,
+            'expires_in' => 30 * 24 * 60 * 60, // segundos (estándar OAuth2)
         ]);
     }
 
@@ -313,18 +319,13 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        // URL con ?platform=mobile para que la página post-reset lo sepa
-        ResetPassword::createUrlUsing(function ($notifiable, string $token) {
-            $email = $notifiable->getEmailForPasswordReset();
-            return route('password.reset', ['token' => $token])
-                . '?email=' . urlencode($email)
-                . '&platform=mobile';
-        });
+        // Buscamos el usuario sin revelar si existe o no en la respuesta
+        $user = User::where('email', $request->email)->first();
 
-        // Siempre devolvemos 200 para no revelar si el email existe o no
-        Password::sendResetLink($request->only('email'));
-
-        ResetPassword::createUrlUsing(null);
+        if ($user) {
+            $token = Password::createToken($user);
+            $user->notify(new \App\Notifications\MobileResetPasswordNotification($token));
+        }
 
         return response()->json([
             'message' => 'Si el correo está registrado, recibirás un enlace de recuperación.',

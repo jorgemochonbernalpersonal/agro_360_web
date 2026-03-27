@@ -94,6 +94,17 @@ export default defineConfig({
         }
 
         const testEnv = loadEnvFile(envCypressPath)
+
+        // ── GUARD: nunca tocar la BD de producción ────────────────────────
+        const allowedDbs = ['agro365_test']
+        if (!allowedDbs.includes(testEnv.DB_DATABASE)) {
+          throw new Error(
+            `🚨 PELIGRO: .env.cypress apunta a '${testEnv.DB_DATABASE}'. ` +
+            `Solo se permite: ${allowedDbs.join(', ')}. ` +
+            `Cambia DB_DATABASE en .env.cypress antes de continuar.`
+          )
+        }
+
         console.log(`\n🔄 Preparando entorno de test → BD: ${testEnv.DB_DATABASE}`)
 
         // ── 1. Migrar y seedear la BD de test ────────────────────────────

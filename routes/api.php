@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\RemoteSensingController;
 use App\Http\Controllers\Api\Winery\ContainerController;
 use App\Http\Controllers\Api\Winery\DashboardController as WineryDashboard;
 use App\Http\Controllers\Api\Winery\FermentationControlController;
@@ -30,7 +31,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     // ── Auth ──────────────────────────────────────────────────────────────────
     Route::get('/me',               [AuthController::class, 'me']);
     Route::put('/me',               [AuthController::class, 'updateMe']);
-    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('throttle:10,1');
     Route::post('/logout',          [AuthController::class, 'logout']);
     Route::post('/logout-all',      [AuthController::class, 'logoutAll']);
     Route::post('/refresh',         [AuthController::class, 'refresh']);
@@ -44,6 +45,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Contenedores
         Route::get('/containers',      [ContainerController::class, 'index']);
         Route::get('/containers/{id}', [ContainerController::class, 'show']);
+        Route::put('/containers/{id}', [ContainerController::class, 'update'])->middleware('throttle:60,1');
 
         // Vinos
         Route::get('/wines',                                [WineController::class, 'index']);
@@ -52,16 +54,16 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
         // Controles de fermentación
         Route::get('/fermentation-controls',  [FermentationControlController::class, 'index']);
-        Route::post('/fermentation-controls', [FermentationControlController::class, 'store']);
+        Route::post('/fermentation-controls', [FermentationControlController::class, 'store'])->middleware('throttle:60,1');
 
         // Recepción de uva
         Route::get('/grape-receptions',  [GrapeReceptionController::class, 'index']);
-        Route::post('/grape-receptions', [GrapeReceptionController::class, 'store']);
+        Route::post('/grape-receptions', [GrapeReceptionController::class, 'store'])->middleware('throttle:60,1');
         Route::get('/viticulturists',    [GrapeReceptionController::class, 'viticulturists']);
 
         // Trasvases y mermas
-        Route::post('/transfers', [WineProcessController::class, 'storeTransfer']);
-        Route::post('/losses',    [WineProcessController::class, 'storeLoss']);
+        Route::post('/transfers', [WineProcessController::class, 'storeTransfer'])->middleware('throttle:60,1');
+        Route::post('/losses',    [WineProcessController::class, 'storeLoss'])->middleware('throttle:60,1');
     });
 
     // ── Viticulturist / Producer ───────────────────────────────────────────────
@@ -72,15 +74,23 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Parcelas
         Route::get('/plots',      [PlotController::class, 'index']);
         Route::get('/plots/{id}', [PlotController::class, 'show']);
+        Route::put('/plots/{id}', [PlotController::class, 'update'])->middleware('throttle:60,1');
 
         // Campañas
-        Route::get('/campaigns',               [CampaignController::class, 'index']);
-        Route::get('/campaigns/active',        [CampaignController::class, 'active']);
+        Route::get('/campaigns',                 [CampaignController::class, 'index']);
+        Route::get('/campaigns/active',          [CampaignController::class, 'active']);
         Route::get('/campaigns/{id}/activities', [CampaignController::class, 'activities']);
 
         // Cuaderno de campo
-        Route::get('/notebook',  [NotebookController::class, 'index']);
-        Route::post('/notebook', [NotebookController::class, 'store']);
+        Route::get('/notebook',         [NotebookController::class, 'index']);
+        Route::post('/notebook',        [NotebookController::class, 'store'])->middleware('throttle:60,1');
+        Route::get('/notebook/{id}',    [NotebookController::class, 'show']);
+        Route::put('/notebook/{id}',    [NotebookController::class, 'update'])->middleware('throttle:60,1');
+        Route::delete('/notebook/{id}', [NotebookController::class, 'destroy'])->middleware('throttle:30,1');
+
+        // Teledetección NDVI
+        Route::get('/plots/{plot}/ndvi', [RemoteSensingController::class, 'getPlotNdviColors']);
+        Route::get('/ndvi',              [RemoteSensingController::class, 'getAllPlotsNdvi']);
     });
 
     // ── Supervisor ────────────────────────────────────────────────────────────
@@ -88,9 +98,9 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
         Route::get('/dashboard', SupervisorDashboard::class);
 
-        Route::get('/wineries',                [OversightController::class, 'wineries']);
-        Route::get('/wineries/{id}',           [OversightController::class, 'winery']);
-        Route::get('/viticulturists',          [OversightController::class, 'viticulturists']);
-        Route::get('/viticulturists/{id}',     [OversightController::class, 'viticulturist']);
+        Route::get('/wineries',            [OversightController::class, 'wineries']);
+        Route::get('/wineries/{id}',       [OversightController::class, 'winery']);
+        Route::get('/viticulturists',      [OversightController::class, 'viticulturists']);
+        Route::get('/viticulturists/{id}', [OversightController::class, 'viticulturist']);
     });
 });

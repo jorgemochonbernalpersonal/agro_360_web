@@ -59,4 +59,26 @@ class ContainerController extends Controller
 
         return response()->json(['data' => new ContainerResource($container)]);
     }
+
+    // ─── PUT /winery/containers/{id} ──────────────────────────────────────────
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $container = Container::where('user_id', $user->id)->findOrFail($id);
+
+        $validated = $request->validate([
+            'name'               => 'sometimes|string|max:255',
+            'notes'              => 'nullable|string|max:1000',
+            'container_room_id'  => 'nullable|integer|exists:container_rooms,id',
+        ]);
+
+        $container->update($validated);
+
+        $container->load(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
+
+        return response()->json(['data' => new ContainerResource($container)]);
+    }
 }

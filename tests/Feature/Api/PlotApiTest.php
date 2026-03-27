@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Api;
 
-use App\Models\User;
 use App\Models\Plot;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,82 +17,120 @@ class PlotApiTest extends TestCase
     {
         parent::setUp();
 
-        $this->markTestSkipped('REST API for plots not yet implemented.');
-
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->viticulturist()->create(['can_login' => true]);
     }
 
-    public function test_can_list_plots(): void
+    // ─── GET /viticulturist/plots ─────────────────────────────────────────────
+
+    public function test_index_returns_plots_with_meta(): void
     {
-        Plot::factory()->count(5)->create(['viticulturist_id' => $this->user->id]);
+        Plot::factory()->count(3)->forViticulturist($this->user)->create();
 
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->getJson('/api/plots');
-
-        $response->assertStatus(200)
-            ->assertJsonCount(5, 'data');
-    }
-
-    public function test_can_show_single_plot(): void
-    {
-        $plot = Plot::factory()->create(['viticulturist_id' => $this->user->id]);
-
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->getJson("/api/plots/{$plot->id}");
-
-        $response->assertStatus(200)
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson('/api/v1/viticulturist/plots')
+            ->assertStatus(200)
             ->assertJsonStructure([
-                'data' => [
-                    'id',
-                    'name',
-                    'area',
-                    'location',
-                    'created_at',
-                ],
-            ]);
+                'data',
+                'meta' => ['total', 'total_area', 'organic_area'],
+            ])
+            ->assertJsonPath('meta.total', 3);
     }
 
-    public function test_cannot_view_other_user_plots(): void
+    public function test_index_only_returns_own_plots(): void
     {
-        $otherUser = User::factory()->create();
-        $plot = Plot::factory()->create(['viticulturist_id' => $otherUser->id]);
+        $other = User::factory()->viticulturist()->create(['can_login' => true]);
+        Plot::factory()->count(2)->forViticulturist($this->user)->create();
+        Plot::factory()->forViticulturist($other)->create();
 
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->getJson("/api/plots/{$plot->id}");
-
-        $response->assertStatus(403);
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson('/api/v1/viticulturist/plots')
+            ->assertJsonPath('meta.total', 2);
     }
 
-    public function test_can_create_plot(): void
+    public function test_index_only_returns_active_plots(): void
     {
-        $plotData = [
-            'name' => 'Nueva Parcela',
-            'area' => 5.5,
-            'tenure_regime' => 'propiedad',
-            'viticulturist_id' => $this->user->id,
-            'autonomous_community_id' => 1,
-            'province_id' => 1,
-            'municipality_id' => 1,
-        ];
+        Plot::factory()->count(2)->forViticulturist($this->user)->create(['active' => true]);
+        Plot::factory()->forViticulturist($this->user)->create(['active' => false]);
 
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->postJson('/api/plots', $plotData);
-
-        $response->assertStatus(201)
-            ->assertJsonFragment(['name' => 'Nueva Parcela']);
-
-        $this->assertDatabaseHas('plots', ['name' => 'Nueva Parcela']);
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson('/api/v1/viticulturist/plots')
+            ->assertJsonPath('meta.total', 2);
     }
 
-    public function test_cannot_create_plot_with_invalid_data(): void
-    {
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->postJson('/api/plots', [
-                'name' => '', // Invalid: required
-                'area' => -5, // Invalid: must be positive
-            ]);
+    // ─── GET /viticulturist/plots/{id} ────────────────────────────────────────
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name', 'area']);
+    public function test_show_returns_plot_details(): void
+    {
+        $plot = Plot::factory()->forViticulturist($this->user)->create();
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson("/api/v1/viticulturist/plots/{$plot->id}")
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['id', 'name']]);
+    }
+
+    public function test_show_other_user_plot_returns_404(): void
+    {
+        $other = User::factory()->viticulturist()->create(['can_login' => true]);
+        $plot = Plot::factory()->forViticulturist($other)->create();
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson("/api/v1/viticulturist/plots/{$plot->id}")
+            ->assertStatus(404);
+    }
+
+    // ─── PUT /viticulturist/plots/{id} ────────────────────────────────────────
+
+    public function test_update_changes_plot_name(): void
+    {
+        $plot = Plot::factory()->forViticulturist($this->user)->create(['name' => 'Parcela Vieja']);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->putJson("/api/v1/viticulturist/plots/{$plot->id}", ['name' => 'Parcela Nueva'])
+            ->assertStatus(200)
+            ->assertJsonPath('data.name', 'Parcela Nueva');
+
+        $this->assertDatabaseHas('plots', [
+            'id'   => $plot->id,
+            'name' => 'Parcela Nueva',
+        ]);
+    }
+
+    public function test_update_validates_name_max_length(): void
+    {
+        $plot = Plot::factory()->forViticulturist($this->user)->create();
+
+        $this->actingAs($this->user, 'sanctum')
+            ->putJson("/api/v1/viticulturist/plots/{$plot->id}", [
+                'name' => str_repeat('a', 256),
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['name']);
+    }
+
+    public function test_update_other_user_plot_returns_404(): void
+    {
+        $other = User::factory()->viticulturist()->create(['can_login' => true]);
+        $plot = Plot::factory()->forViticulturist($other)->create();
+
+        $this->actingAs($this->user, 'sanctum')
+            ->putJson("/api/v1/viticulturist/plots/{$plot->id}", ['name' => 'Hack'])
+            ->assertStatus(404);
+    }
+
+    // ─── Auth ─────────────────────────────────────────────────────────────────
+
+    public function test_requires_authentication(): void
+    {
+        $this->getJson('/api/v1/viticulturist/plots')->assertStatus(401);
+    }
+
+    public function test_requires_viticulturist_role(): void
+    {
+        $winery = User::factory()->winery()->create(['can_login' => true]);
+
+        $this->actingAs($winery, 'sanctum')
+            ->getJson('/api/v1/viticulturist/plots')
+            ->assertStatus(403);
     }
 }

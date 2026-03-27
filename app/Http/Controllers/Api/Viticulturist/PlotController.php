@@ -46,4 +46,27 @@ class PlotController extends Controller
 
         return response()->json(['data' => new PlotResource($plot)]);
     }
+
+    // ─── PUT /viticulturist/plots/{id} ────────────────────────────────────────
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($id);
+
+        $validated = $request->validate([
+            'name'              => 'sometimes|string|max:255',
+            'notes'             => 'nullable|string|max:2000',
+            'is_organic'        => 'sometimes|boolean',
+            'cultivation_type'  => 'sometimes|string|max:100',
+        ]);
+
+        $plot->update($validated);
+
+        $plot->load(['province', 'municipality', 'plantings.grapeVariety']);
+
+        return response()->json(['data' => new PlotResource($plot)]);
+    }
 }

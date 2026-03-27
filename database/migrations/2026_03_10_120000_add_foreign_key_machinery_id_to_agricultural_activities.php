@@ -8,11 +8,22 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // La FK puede existir ya si fue creada en la migración original de la tabla
         Schema::table('agricultural_activities', function (Blueprint $table) {
-            $table->foreign('machinery_id')
-                ->references('id')
-                ->on('machinery')
-                ->nullOnDelete();
+            $fks = collect(\DB::select("
+                SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'agricultural_activities'
+                AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+                AND CONSTRAINT_NAME = 'agricultural_activities_machinery_id_foreign'
+            "));
+
+            if ($fks->isEmpty()) {
+                $table->foreign('machinery_id')
+                    ->references('id')
+                    ->on('machinery')
+                    ->nullOnDelete();
+            }
         });
     }
 
