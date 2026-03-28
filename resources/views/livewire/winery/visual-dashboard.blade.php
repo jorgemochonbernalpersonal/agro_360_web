@@ -70,14 +70,77 @@
     {{--                   TAB: PARCELAS                       --}}
     {{-- ══════════════════════════════════════════════════════ --}}
     @if ($activeTab === 'plots')
-    <div class="flex flex-1 overflow-hidden">
+    <div class="flex flex-col flex-1 overflow-hidden"
+         x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions))">
+
+        {{-- Barra de filtros --}}
+        @if(count($mapPlots) > 0)
+        <div class="shrink-0 flex items-center gap-3 px-6 py-3 bg-white border-b border-zinc-100 z-10 flex-wrap">
+            {{-- Búsqueda --}}
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                    <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+                </div>
+                <input x-model="search"
+                       @input.debounce.250ms="updateMapData()"
+                       type="text"
+                       placeholder="Buscar parcela..."
+                       class="pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm w-44 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
+            </div>
+            {{-- CCAA --}}
+            <select x-model="communityId"
+                    @change="provinceId = ''; municipalityId = ''; updateMapData()"
+                    x-show="filterOptions.communities.length > 1"
+                    class="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition max-w-[160px]">
+                <option value="">Todas las CCAA</option>
+                <template x-for="c in filterOptions.communities" :key="c.id">
+                    <option :value="c.id" x-text="c.name"></option>
+                </template>
+            </select>
+            {{-- Provincia --}}
+            <select x-model="provinceId"
+                    @change="municipalityId = ''; updateMapData()"
+                    x-show="availableProvinces.length > 1"
+                    :disabled="availableProvinces.length === 0"
+                    class="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition max-w-[160px] disabled:opacity-40">
+                <option value="">Todas las prov.</option>
+                <template x-for="p in availableProvinces" :key="p.id">
+                    <option :value="p.id" x-text="p.name"></option>
+                </template>
+            </select>
+            {{-- Municipio --}}
+            <select x-model="municipalityId"
+                    @change="updateMapData()"
+                    x-show="availableMunicipalities.length > 1"
+                    :disabled="availableMunicipalities.length === 0"
+                    class="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition max-w-[160px] disabled:opacity-40">
+                <option value="">Todos los mun.</option>
+                <template x-for="m in availableMunicipalities" :key="m.id">
+                    <option :value="m.id" x-text="m.name"></option>
+                </template>
+            </select>
+            {{-- Limpiar --}}
+            <button x-show="search || communityId || provinceId || municipalityId"
+                    x-cloak
+                    @click="clearFilters()"
+                    class="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-700 transition-colors px-2 py-1.5 rounded-lg hover:bg-zinc-100">
+                <flux:icon icon="x-mark" class="size-3.5" />
+                Limpiar
+            </button>
+            <span class="ml-auto text-xs text-zinc-400">
+                <span x-text="filteredCount"></span> parcelas
+            </span>
+        </div>
+        @endif
+
+        {{-- Mapa + panel detalle --}}
+        <div class="flex flex-1 overflow-hidden">
 
         {{-- Mapa Leaflet --}}
         <div class="flex-1 relative">
             @if(count($mapPlots) > 0)
                 <div wire:ignore
-                     x-data="visualPlotsMap(@js($mapPlots))"
-                     x-init="init()"
+                     x-init="initMap()"
                      class="w-full h-full">
                     <div id="visual-plots-map" class="w-full h-full"></div>
                 </div>
@@ -260,7 +323,8 @@
 
         @endif
 
-    </div>
+        </div>{{-- /Mapa + panel detalle --}}
+    </div>{{-- /x-data plots --}}
     @endif
 
     {{-- ══════════════════════════════════════════════════════ --}}
@@ -780,69 +844,99 @@
     </div>
     @endif
 
-    {{-- ── FAB acciones rápidas (plots + containers) ── --}}
-    @if ($activeTab !== 'dashboard')
-    <div class="absolute bottom-6 right-6 z-30"
-         x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
-        {{-- Menú desplegable --}}
-        <div x-show="open"
-             x-transition:enter="transition ease-out duration-150"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-100"
-             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-             class="absolute bottom-14 right-0 w-56 bg-white rounded-2xl shadow-xl border border-zinc-100 py-2 origin-bottom-right">
-            <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
-               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-800 transition-colors">
-                <span class="w-7 h-7 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                    <flux:icon icon="archive-box-arrow-down" class="size-4 text-amber-600" />
-                </span>
-                Recibir uva
-            </a>
-            <a href="{{ route('winery.wine-transfers.create') }}" wire:navigate
-               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-800 transition-colors">
-                <span class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
-                    <flux:icon icon="arrows-right-left" class="size-4 text-blue-600" />
-                </span>
-                Traslado de vino
-            </a>
-            <a href="{{ route('winery.wine-losses.create') }}" wire:navigate
-               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-orange-50 hover:text-orange-800 transition-colors">
-                <span class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
-                    <flux:icon icon="minus-circle" class="size-4 text-orange-500" />
-                </span>
-                Registrar merma
-            </a>
-            <div class="my-1 border-t border-zinc-100"></div>
-            <a href="{{ roleRoute('containers.create') }}" wire:navigate
-               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors">
-                <span class="w-7 h-7 bg-zinc-100 rounded-lg flex items-center justify-center shrink-0">
-                    <flux:icon icon="beaker" class="size-4 text-zinc-500" />
-                </span>
-                Nuevo contenedor
-            </a>
-        </div>
-        {{-- Botón FAB --}}
-        <button @click="open = !open"
-                class="flex items-center gap-2 pl-3 pr-4 py-3 rounded-2xl shadow-lg transition-all duration-200 font-semibold text-sm text-white
-                       {{ 'bg-agro-600 hover:bg-agro-700 hover:shadow-xl' }}"
-                :class="open ? 'bg-agro-700 shadow-xl' : ''">
-            <flux:icon icon="plus" class="size-5 transition-transform duration-200" x-bind:class="open ? 'rotate-45' : ''" />
-            Registrar
-        </button>
-    </div>
-    @endif
 
 </div>
 
 @script
 <script>
-Alpine.data('visualPlotsMap', (plots) => ({
+Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
     map: null,
     markers: {},
+    polygonLayers: {},
+    search: '',
+    communityId: '',
+    provinceId: '',
+    municipalityId: '',
+    filterOptions: filterOptions,
 
-    init() {
+    get availableProvinces() {
+        if (!this.communityId) return this.filterOptions.provinces;
+        return this.filterOptions.provinces.filter(p => p.community_id == this.communityId);
+    },
+
+    get availableMunicipalities() {
+        if (this.provinceId) {
+            return this.filterOptions.municipalities.filter(m => m.province_id == this.provinceId);
+        }
+        if (this.communityId) {
+            const pIds = this.availableProvinces.map(p => p.id);
+            return this.filterOptions.municipalities.filter(m => pIds.includes(m.province_id));
+        }
+        return this.filterOptions.municipalities;
+    },
+
+    get filteredPlots() {
+        return allPlots.filter(p => {
+            if (this.search && !p.name.toLowerCase().includes(this.search.toLowerCase())) return false;
+            if (this.communityId && p.autonomous_community_id != this.communityId) return false;
+            if (this.provinceId && p.province_id != this.provinceId) return false;
+            if (this.municipalityId && p.municipality_id != this.municipalityId) return false;
+            return true;
+        });
+    },
+
+    get filteredCount() {
+        return this.filteredPlots.length;
+    },
+
+    clearFilters() {
+        this.search = '';
+        this.communityId = '';
+        this.provinceId = '';
+        this.municipalityId = '';
+        this.updateMapData();
+    },
+
+    makeIcon(selected, source) {
+        const isSigpac = source === 'sigpac';
+        const color = selected ? '#f59e0b' : (isSigpac ? '#4ade80' : '#86efac');
+        const size  = selected ? 20 : 14;
+        return L.divIcon({
+            html: `<div style="width:${size}px;height:${size}px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.5);transition:all .2s;${isSigpac && !selected ? 'outline:2px solid rgba(74,222,128,0.4);outline-offset:2px;' : ''}"></div>`,
+            className: '',
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2],
+        });
+    },
+
+    updateMapData() {
+        if (!this.map) return;
+        const filtered   = this.filteredPlots;
+        const filteredIds = new Set(filtered.map(p => p.id));
+
+        // Show/hide markers
+        Object.entries(this.markers).forEach(([id, { marker }]) => {
+            const visible = filteredIds.has(parseInt(id));
+            if (visible && !this.map.hasLayer(marker)) marker.addTo(this.map);
+            else if (!visible && this.map.hasLayer(marker)) this.map.removeLayer(marker);
+        });
+
+        // Show/hide polygon layers
+        Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
+            const visible = filteredIds.has(parseInt(plotId));
+            layers.forEach(layer => {
+                if (visible && !this.map.hasLayer(layer)) layer.addTo(this.map);
+                else if (!visible && this.map.hasLayer(layer)) this.map.removeLayer(layer);
+            });
+        });
+
+        // Fit to visible plots
+        if (filtered.length > 0) {
+            this.map.fitBounds(filtered.map(p => [p.lat, p.lng]), { padding: [50, 50], maxZoom: 13 });
+        }
+    },
+
+    initMap() {
         const loadLeaflet = (cb) => {
             if (window.L) { cb(); return; }
             if (!document.getElementById('leaflet-css')) {
@@ -862,52 +956,66 @@ Alpine.data('visualPlotsMap', (plots) => ({
 
             this.map = L.map('visual-plots-map', { zoomControl: false }).setView([40.0, -3.5], 6);
 
-            // Satellite (Esri World Imagery)
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri &mdash; Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
+                attribution: 'Tiles &copy; Esri',
                 maxZoom: 19,
             }).addTo(this.map);
-            // Labels overlay (carreteras, municipios, etc.)
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-                attribution: '',
-                maxZoom: 19,
-                opacity: 0.75,
+                attribution: '', maxZoom: 19, opacity: 0.75,
             }).addTo(this.map);
 
-            // Zoom control bottom-left
             L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
 
-            const makeIcon = (selected) => L.divIcon({
-                html: `<div style="width:${selected ? 20 : 14}px;height:${selected ? 20 : 14}px;background:${selected ? '#f59e0b' : '#4ade80'};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.5);transition:all .2s;"></div>`,
-                className: '',
-                iconSize: selected ? [20, 20] : [14, 14],
-                iconAnchor: selected ? [10, 10] : [7, 7],
-            });
-
             const bounds = [];
-            plots.forEach(plot => {
+
+            // Añadir marcadores
+            allPlots.forEach(plot => {
                 const marker = L.marker([plot.lat, plot.lng], {
-                    icon: makeIcon(false),
+                    icon: this.makeIcon(false, plot.source),
                     title: plot.name,
                 }).addTo(this.map);
-
                 marker.bindTooltip(plot.name, { permanent: false, direction: 'top', offset: [0, -8] });
                 marker.on('click', () => $wire.selectPlot(plot.id));
-
-                this.markers[plot.id] = marker;
+                this.markers[plot.id] = { marker, source: plot.source };
                 bounds.push([plot.lat, plot.lng]);
+            });
+
+            // Añadir polígonos SIGPAC
+            allPolygons.forEach(poly => {
+                if (!poly.coords || poly.coords.length < 3) return;
+                const layer = L.polygon(poly.coords, {
+                    color: '#4ade80',
+                    fillColor: '#4ade80',
+                    fillOpacity: 0.15,
+                    weight: 2,
+                    opacity: 0.85,
+                });
+                layer.addTo(this.map);
+                layer.bindTooltip(poly.sigpac_code, { permanent: false, direction: 'center' });
+                layer.on('click', () => $wire.selectPlot(poly.plot_id));
+                if (!this.polygonLayers[poly.plot_id]) this.polygonLayers[poly.plot_id] = [];
+                this.polygonLayers[poly.plot_id].push(layer);
             });
 
             if (bounds.length > 0) {
                 this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
             }
 
-            // Actualizar icono del marcador seleccionado reactivamente
+            // Actualizar estilo al seleccionar parcela
             $wire.$watch('selectedPlotId', (newId) => {
-                Object.entries(this.markers).forEach(([id, marker]) => {
+                Object.entries(this.markers).forEach(([id, { marker, source }]) => {
                     const selected = parseInt(id) === newId;
-                    marker.setIcon(makeIcon(selected));
+                    marker.setIcon(this.makeIcon(selected, source));
                     if (selected) marker.openTooltip();
+                });
+                Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
+                    const selected = parseInt(plotId) === newId;
+                    layers.forEach(layer => layer.setStyle({
+                        color:       selected ? '#f59e0b' : '#4ade80',
+                        fillColor:   selected ? '#f59e0b' : '#4ade80',
+                        fillOpacity: selected ? 0.30 : 0.15,
+                        weight:      selected ? 3 : 2,
+                    }));
                 });
             });
         });

@@ -4,10 +4,13 @@ namespace App\Livewire\Winery;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
+use App\Models\AutonomousCommunity;
 use App\Models\Container;
 use App\Models\ContainerType;
 use App\Models\Harvest;
+use App\Models\Municipality;
 use App\Models\Plot;
+use App\Models\Province;
 use App\Models\Wine;
 use App\Models\WineFermentationControl;
 use App\Services\WineContainerStockService;
@@ -84,25 +87,128 @@ class VisualDashboard extends Component
         $user   = Auth::user();
 
         // ── Parcelas (tab mapa) ─────────────────────────────────────────
-        $mapPlots = Plot::forUser($user)
+        $allPlots = Plot::forUser($user)
             ->where('active', true)
-            ->with(['municipality:id,name,lat,lng', 'province:id,name', 'viticulturist:id,name', 'sigpacCodes:id'])
-            ->select(['id', 'name', 'area', 'active', 'municipality_id', 'province_id', 'viticulturist_id'])
-            ->get()
-            ->filter(fn($p) => $p->municipality?->lat && $p->municipality?->lng)
-            ->map(fn($p) => [
-                'id'            => $p->id,
-                'name'          => $p->name,
-                'area'          => $p->area,
-                'lat'           => (float) $p->municipality->lat,
-                'lng'           => (float) $p->municipality->lng,
-                'municipality'  => $p->municipality?->name,
-                'province'      => $p->province?->name,
-                'viticulturist' => $p->viticulturist?->name,
-                'has_sigpac'    => $p->sigpacCodes->isNotEmpty(),
-            ])
+            ->with(['municipality:id,name,lat,lng', 'province:id,name', 'viticulturist:id,name', 'sigpacCodes:id', 'autonomousCommunity:id,name'])
+            ->select(['id', 'name', 'area', 'active', 'municipality_id', 'province_id', 'autonomous_community_id', 'viticulturist_id'])
+            ->get();
+
+        // Parcelas sin municipio con coordenadas → fallback al centroide SIGPAC
+        $needsFallback = $allPlots
+            ->filter(fn($p) => !($p->municipality?->lat && $p->municipality?->lng))
+            ->pluck('id')
+            ->all();
+
+        $sigpacCentroids = [];
+        if (!empty($needsFallback)) {
+            $placeholders = implode(',', array_fill(0, count($needsFallback), '?'));
+            // Centroide de la unión de TODOS los polígonos SIGPAC del plot
+            // (un plot puede tener varios multipart_plot_sigpac, cada uno con su geometry)
+            $rows = \Illuminate\Support\Facades\DB::select(
+                "SELECT mps.plot_id,
+                        ST_AsText(ST_Centroid(ST_Union(pg.coordinates))) AS centroid_wkt
+                 FROM   multipart_plot_sigpac mps
+                 JOIN   plot_geometry pg ON mps.plot_geometry_id = pg.id
+                 WHERE  mps.plot_id IN ($placeholders)
+                 AND    pg.coordinates IS NOT NULL
+                 GROUP BY mps.plot_id",
+                $needsFallback
+            );
+            foreach ($rows as $row) {
+                if ($row->centroid_wkt && preg_match('/POINT\(([^)]+)\)/', $row->centroid_wkt, $m)) {
+                    $parts = explode(' ', trim($m[1]));
+                    if (count($parts) >= 2) {
+                        $sigpacCentroids[$row->plot_id] = ['lat' => (float) $parts[1], 'lng' => (float) $parts[0]];
+                    }
+                }
+            }
+        }
+
+        $mapPlots = $allPlots
+            ->map(function ($p) use ($sigpacCentroids) {
+                if ($p->municipality?->lat && $p->municipality?->lng) {
+                    $lat    = (float) $p->municipality->lat;
+                    $lng    = (float) $p->municipality->lng;
+                    $source = 'municipality';
+                } elseif (isset($sigpacCentroids[$p->id])) {
+                    $lat    = $sigpacCentroids[$p->id]['lat'];
+                    $lng    = $sigpacCentroids[$p->id]['lng'];
+                    $source = 'sigpac';
+                } else {
+                    return null; // sin coordenadas de ningún tipo
+                }
+                return [
+                    'id'                      => $p->id,
+                    'name'                    => $p->name,
+                    'area'                    => $p->area,
+                    'lat'                     => $lat,
+                    'lng'                     => $lng,
+                    'source'                  => $source,
+                    'municipality'            => $p->municipality?->name,
+                    'municipality_id'         => $p->municipality_id,
+                    'province'                => $p->province?->name,
+                    'province_id'             => $p->province_id,
+                    'community'               => $p->autonomousCommunity?->name,
+                    'autonomous_community_id' => $p->autonomous_community_id,
+                    'viticulturist'           => $p->viticulturist?->name,
+                    'has_sigpac'              => $p->sigpacCodes->isNotEmpty(),
+                ];
+            })
+            ->filter()
             ->values()
             ->toArray();
+
+        // ── Polígonos SIGPAC ───────────────────────────────────────────────
+        $allPlotIds  = $allPlots->pluck('id')->all();
+        $mapPolygons = [];
+        if (!empty($allPlotIds)) {
+            $placeholders = implode(',', array_fill(0, count($allPlotIds), '?'));
+            $polyRows = \Illuminate\Support\Facades\DB::select(
+                "SELECT mps.plot_id, sc.code AS sigpac_code,
+                        ST_AsText(pg.coordinates) AS wkt
+                 FROM   multipart_plot_sigpac mps
+                 JOIN   sigpac_code sc ON mps.sigpac_code_id  = sc.id
+                 JOIN   plot_geometry pg ON mps.plot_geometry_id = pg.id
+                 WHERE  mps.plot_id IN ($placeholders)
+                 AND    pg.coordinates IS NOT NULL",
+                $allPlotIds
+            );
+            foreach ($polyRows as $row) {
+                $coords = $this->parseWktToLatLng($row->wkt);
+                if (!empty($coords)) {
+                    $mapPolygons[] = [
+                        'plot_id'     => $row->plot_id,
+                        'sigpac_code' => $row->sigpac_code,
+                        'coords'      => $coords,
+                    ];
+                }
+            }
+        }
+
+        // ── Opciones de filtro (CCAA / Provincia / Municipio) ──────────────
+        $communityIds    = $allPlots->pluck('autonomous_community_id')->filter()->unique()->values()->all();
+        $provinceIds     = $allPlots->pluck('province_id')->filter()->unique()->values()->all();
+        $municipalityIds = $allPlots->pluck('municipality_id')->filter()->unique()->values()->all();
+
+        $filterOptions = ['communities' => [], 'provinces' => [], 'municipalities' => []];
+        if (!empty($communityIds)) {
+            $filterOptions['communities'] = AutonomousCommunity::whereIn('id', $communityIds)
+                ->orderBy('name')->get(['id', 'name'])
+                ->map(fn($c) => ['id' => $c->id, 'name' => $c->name])
+                ->values()->toArray();
+        }
+        if (!empty($provinceIds)) {
+            $filterOptions['provinces'] = Province::whereIn('id', $provinceIds)
+                ->orderBy('name')->get(['id', 'name', 'autonomous_community_id'])
+                ->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'community_id' => $p->autonomous_community_id])
+                ->values()->toArray();
+        }
+        if (!empty($municipalityIds)) {
+            $filterOptions['municipalities'] = Municipality::whereIn('id', $municipalityIds)
+                ->orderBy('name')->get(['id', 'name', 'province_id'])
+                ->map(fn($m) => ['id' => $m->id, 'name' => $m->name, 'province_id' => $m->province_id])
+                ->values()->toArray();
+        }
 
         // Detalle de la parcela seleccionada
         $selectedPlot = $this->selectedPlotId
@@ -213,6 +319,8 @@ class VisualDashboard extends Component
 
         return view('livewire.winery.visual-dashboard', [
             'mapPlots'            => $mapPlots,
+            'mapPolygons'         => $mapPolygons,
+            'filterOptions'       => $filterOptions,
             'selectedPlot'        => $selectedPlot,
             'containers'          => $containers,
             'containerTypes'      => $containerTypes,
@@ -222,5 +330,20 @@ class VisualDashboard extends Component
             'criticalContainers'  => $criticalContainers,
             'recentControls'      => $recentControls,
         ])->layout('layouts.app', ['title' => 'Vista Visual — Agro365']);
+    }
+
+    private function parseWktToLatLng(?string $wkt): array
+    {
+        if (!$wkt) return [];
+        if (!preg_match('/POLYGON\(\(([^)]+)\)\)/', $wkt, $m)) return [];
+
+        $points = [];
+        foreach (explode(',', $m[1]) as $coord) {
+            $parts = explode(' ', trim($coord));
+            if (count($parts) >= 2) {
+                $points[] = [(float) $parts[1], (float) $parts[0]]; // [lat, lng] for Leaflet
+            }
+        }
+        return $points;
     }
 }
