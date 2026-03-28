@@ -322,20 +322,24 @@
         {{-- Winery: toggle Vista Sidebar / Vista Visual --}}
         @if($user->role === 'winery')
             @php $isVisual = request()->routeIs('winery.visual'); @endphp
-            <div class="w-8 border-t border-white/10 my-1 flex-shrink-0"></div>
-            <div class="flex w-full px-2 gap-1 mb-0.5 flex-shrink-0">
-                <a href="{{ route('winery.dashboard') }}" wire:navigate
-                   title="Vista Sidebar"
-                   class="{{ !$isVisual ? 'bg-sky-500/20 text-sky-300 ring-1 ring-inset ring-sky-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10' }}
-                          flex-1 h-7 rounded-lg text-[9px] font-bold transition-all leading-none flex items-center justify-center gap-0.5">
-                    <flux:icon icon="bars-3" class="w-3 h-3 shrink-0" />Nav
-                </a>
-                <a href="{{ route('winery.visual') }}" wire:navigate
-                   title="Vista Visual"
-                   class="{{ $isVisual ? 'bg-sky-500/20 text-sky-300 ring-1 ring-inset ring-sky-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10' }}
-                          flex-1 h-7 rounded-lg text-[9px] font-bold transition-all leading-none flex items-center justify-center gap-0.5">
-                    <flux:icon icon="squares-plus" class="w-3 h-3 shrink-0" />Map
-                </a>
+            <div class="w-8 border-t border-white/10 mt-1 mb-2 flex-shrink-0"></div>
+            <div class="w-full px-2 mb-1 flex-shrink-0">
+                <div class="flex rounded-xl bg-white/[0.06] ring-1 ring-white/[0.09] p-0.5 gap-0.5">
+                    <a href="{{ route('winery.dashboard') }}" wire:navigate
+                       title="Vista con menú lateral"
+                       class="flex-1 flex flex-col items-center justify-center py-2 gap-1 rounded-[10px] transition-all duration-200
+                              {{ !$isVisual ? 'bg-white/[0.18] text-white shadow-sm' : 'text-white/35 hover:text-white/65 hover:bg-white/[0.08]' }}">
+                        <flux:icon icon="bars-3" class="w-4 h-4 shrink-0" />
+                        <span class="text-[8px] font-semibold tracking-wide leading-none">Nav</span>
+                    </a>
+                    <a href="{{ route('winery.visual') }}" wire:navigate
+                       title="Vista mapa + bodega"
+                       class="flex-1 flex flex-col items-center justify-center py-2 gap-1 rounded-[10px] transition-all duration-200
+                              {{ $isVisual ? 'bg-white/[0.18] text-white shadow-sm' : 'text-white/35 hover:text-white/65 hover:bg-white/[0.08]' }}">
+                        <flux:icon icon="map" class="w-4 h-4 shrink-0" />
+                        <span class="text-[8px] font-semibold tracking-wide leading-none">Mapa</span>
+                    </a>
+                </div>
             </div>
         @endif
 
