@@ -5,75 +5,105 @@
 </style>
 <div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 flex flex-col bg-white relative" style="height: calc(100vh - 4rem);">
 
-    {{-- ══ Top bar: tabs + stats + volver ══ --}}
-    <div class="shrink-0 flex items-center gap-4 px-6 py-3 bg-white border-b border-zinc-200 z-20">
+    {{-- ══ Top bar: tabs descriptivos + volver ══ --}}
+    <div class="shrink-0 bg-white border-b border-zinc-200 z-20 relative">
 
-        {{-- Tabs --}}
-        <div class="flex gap-1 bg-zinc-100 rounded-xl p-1 shrink-0">
-            <button wire:click="switchTab('dashboard')"
-                class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
-                       {{ $activeTab === 'dashboard' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-500 hover:text-zinc-700' }}">
-                <flux:icon icon="chart-bar" class="size-4" />
-                <span class="hidden sm:inline">Resumen</span>
-            </button>
-            <button wire:click="switchTab('plots')"
-                class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
-                       {{ $activeTab === 'plots' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-500 hover:text-zinc-700' }}">
-                <flux:icon icon="map" class="size-4" />
-                Parcelas
-                <span class="text-[10px] font-semibold text-zinc-400">{{ count($mapPlots) }}</span>
-            </button>
-            <button wire:click="switchTab('containers')"
-                class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
-                       {{ $activeTab === 'containers' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-500 hover:text-zinc-700' }}">
-                <flux:icon icon="beaker" class="size-4" />
-                Bodega
-                @if($containerStats['full'] > 0)
-                    <span class="inline-flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full">
-                        {{ $containerStats['full'] }}
-                    </span>
-                @else
-                    <span class="text-[10px] font-semibold text-zinc-400">{{ $containerStats['total'] }}</span>
-                @endif
-            </button>
+        {{-- Fila superior: título + volver --}}
+        <div class="flex items-center justify-between px-6 pt-3 pb-0">
+            <div class="flex items-center gap-2">
+                <flux:icon icon="map" class="size-4 text-agro-500" />
+                <span class="text-xs font-semibold text-zinc-400 uppercase tracking-widest">Vista Visual</span>
+            </div>
+            <a href="{{ route('winery.dashboard') }}" wire:navigate
+               class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors border border-zinc-200">
+                <flux:icon icon="bars-3" class="size-3.5 shrink-0" />
+                <span>Vista Sidebar</span>
+            </a>
         </div>
 
-        {{-- Stats inline --}}
-        @if ($activeTab === 'containers' && $containerStats['total'] > 0)
-            <div class="hidden sm:flex items-center gap-3 text-xs">
-                @if($containerStats['full'] > 0)
-                    <span class="flex items-center gap-1 text-red-600 font-medium">
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                        {{ $containerStats['full'] }} llenos
-                    </span>
-                @endif
-                @if($containerStats['critical'] > 0)
-                    <span class="flex items-center gap-1 text-amber-600 font-medium">
-                        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                        {{ $containerStats['critical'] }} críticos
-                    </span>
-                @endif
-                @if($containerStats['empty'] > 0)
-                    <span class="flex items-center gap-1 text-zinc-400">
-                        <span class="w-2 h-2 rounded-full bg-zinc-300"></span>
-                        {{ $containerStats['empty'] }} vacíos
-                    </span>
-                @endif
-            </div>
-        @endif
+        {{-- Tabs descriptivos --}}
+        <div class="flex gap-0 px-4 pb-0 mt-1">
 
-        {{-- Modo actual + volver al sidebar --}}
-        <div class="ml-auto flex items-center gap-2 shrink-0">
-            <span class="hidden sm:flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
-                <flux:icon icon="map" class="size-3.5 text-agro-500" />
-                Vista Mapa
-            </span>
-            <a href="{{ route('winery.dashboard') }}" wire:navigate
-               title="Ir a Vista Sidebar"
-               class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors border border-zinc-200">
-                <flux:icon icon="bars-3" class="size-4 shrink-0" />
-                <span class="hidden sm:inline">Sidebar</span>
-            </a>
+            {{-- Tab: Resumen --}}
+            @php
+                $kgFmt = $dashboardStats['kg_received'] >= 1000
+                    ? number_format($dashboardStats['kg_received']/1000,1).'t'
+                    : number_format($dashboardStats['kg_received'],0).'kg';
+            @endphp
+            <button wire:click="switchTab('dashboard')"
+                    class="group relative flex items-center gap-3 px-5 py-3 transition-all border-b-2 -mb-px
+                           {{ $activeTab === 'dashboard'
+                               ? 'border-agro-500 bg-agro-50/50'
+                               : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50' }}">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors
+                            {{ $activeTab === 'dashboard' ? 'bg-agro-100' : 'bg-zinc-100 group-hover:bg-zinc-200' }}">
+                    <flux:icon icon="chart-bar" class="size-4 {{ $activeTab === 'dashboard' ? 'text-agro-600' : 'text-zinc-400' }}" />
+                </div>
+                <div class="text-left hidden sm:block">
+                    <p class="text-sm font-semibold leading-tight {{ $activeTab === 'dashboard' ? 'text-agro-700' : 'text-zinc-600 group-hover:text-zinc-800' }}">Resumen</p>
+                    <p class="text-[10px] leading-tight mt-0.5 {{ $activeTab === 'dashboard' ? 'text-agro-400' : 'text-zinc-400' }}">
+                        {{ $kgFmt }} · {{ $dashboardStats['campaign_year'] }}
+                    </p>
+                </div>
+            </button>
+
+            {{-- Tab: Mapa de parcelas --}}
+            @php
+                $totalHa = collect($mapPlots)->sum(fn($p) => (float)($p['area'] ?? 0));
+                $haFmt   = $totalHa > 0 ? number_format($totalHa, 1).' ha' : count($mapPlots).' parcelas';
+            @endphp
+            <button wire:click="switchTab('plots')"
+                    class="group relative flex items-center gap-3 px-5 py-3 transition-all border-b-2 -mb-px
+                           {{ $activeTab === 'plots'
+                               ? 'border-blue-500 bg-blue-50/40'
+                               : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50' }}">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors
+                            {{ $activeTab === 'plots' ? 'bg-blue-100' : 'bg-zinc-100 group-hover:bg-zinc-200' }}">
+                    <flux:icon icon="map-pin" class="size-4 {{ $activeTab === 'plots' ? 'text-blue-600' : 'text-zinc-400' }}" />
+                </div>
+                <div class="text-left hidden sm:block">
+                    <p class="text-sm font-semibold leading-tight {{ $activeTab === 'plots' ? 'text-blue-700' : 'text-zinc-600 group-hover:text-zinc-800' }}">
+                        Mapa de parcelas
+                    </p>
+                    <p class="text-[10px] leading-tight mt-0.5 {{ $activeTab === 'plots' ? 'text-blue-400' : 'text-zinc-400' }}">
+                        {{ count($mapPlots) }} parcelas · {{ $haFmt }}
+                    </p>
+                </div>
+            </button>
+
+            {{-- Tab: Bodega --}}
+            @php
+                $bodegaAlert = $containerStats['full'] + $containerStats['critical'];
+            @endphp
+            <button wire:click="switchTab('containers')"
+                    class="group relative flex items-center gap-3 px-5 py-3 transition-all border-b-2 -mb-px
+                           {{ $activeTab === 'containers'
+                               ? 'border-violet-500 bg-violet-50/40'
+                               : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50' }}">
+                <div class="relative w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors
+                            {{ $activeTab === 'containers' ? 'bg-violet-100' : 'bg-zinc-100 group-hover:bg-zinc-200' }}">
+                    <flux:icon icon="beaker" class="size-4 {{ $activeTab === 'containers' ? 'text-violet-600' : 'text-zinc-400' }}" />
+                    @if($bodegaAlert > 0)
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">
+                        {{ $bodegaAlert }}
+                    </span>
+                    @endif
+                </div>
+                <div class="text-left hidden sm:block">
+                    <p class="text-sm font-semibold leading-tight {{ $activeTab === 'containers' ? 'text-violet-700' : 'text-zinc-600 group-hover:text-zinc-800' }}">
+                        Bodega
+                    </p>
+                    <p class="text-[10px] leading-tight mt-0.5 {{ $activeTab === 'containers' ? 'text-violet-400' : 'text-zinc-400' }}">
+                        {{ $containerStats['total'] }} depósitos
+                        @if($bodegaAlert > 0)
+                        · <span class="text-red-400 font-semibold">{{ $bodegaAlert }} alertas</span>
+                        @else
+                        · {{ $containerStats['used_pct'] }}% ocupado
+                        @endif
+                    </p>
+                </div>
+            </button>
+
         </div>
     </div>
 
