@@ -1,4 +1,8 @@
 {{-- Vista Visual Winery: full-height, elimina padding del layout --}}
+<style>
+.plot-map-label { background:rgba(0,0,0,.65); border:none!important; border-radius:5px; color:#fff; font-size:10px; font-weight:700; padding:3px 7px; text-align:center; white-space:nowrap; box-shadow:0 1px 6px rgba(0,0,0,.4); pointer-events:none; }
+.plot-map-label::before { display:none; }
+</style>
 <div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 flex flex-col bg-white relative" style="height: calc(100vh - 4rem);">
 
     {{-- ══ Top bar: tabs + stats + volver ══ --}}
@@ -78,7 +82,8 @@
     {{-- ══════════════════════════════════════════════════════ --}}
     @if ($activeTab === 'plots')
     <div class="flex flex-col flex-1 overflow-hidden"
-         x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions))">
+         x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions))"
+         @keydown.escape.window="$wire.set('selectedPlotId', null)">
 
         {{-- Barra de filtros --}}
         @if(count($mapPlots) > 0)
@@ -134,6 +139,14 @@
                 <flux:icon icon="x-mark" class="size-3.5" />
                 Limpiar
             </button>
+            {{-- Toggle lista lateral --}}
+            <button @click="showList = !showList"
+                    title="Mostrar lista de parcelas"
+                    class="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border text-xs font-medium transition-all"
+                    :class="showList ? 'bg-agro-50 border-agro-300 text-agro-700' : 'bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100'">
+                <flux:icon icon="list-bullet" class="size-4 shrink-0" />
+                <span class="hidden sm:inline">Lista</span>
+            </button>
             <span class="ml-auto text-xs text-zinc-400 whitespace-nowrap">
                 <span x-text="filteredCount"></span> parcelas
                 <template x-if="filteredArea > 0">
@@ -146,32 +159,86 @@
         {{-- Mapa + panel detalle --}}
         <div class="flex flex-1 overflow-hidden">
 
+        {{-- Lista lateral colapsable --}}
+        <div x-show="showList" x-cloak
+             class="w-56 shrink-0 border-r border-zinc-200 bg-white flex flex-col overflow-hidden">
+            <div class="px-3 py-2.5 border-b border-zinc-100 flex items-center justify-between">
+                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    <span x-text="filteredCount"></span> parcelas
+                </p>
+                <button @click="showList = false" class="text-zinc-300 hover:text-zinc-500 transition-colors">
+                    <flux:icon icon="x-mark" class="size-3.5" />
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto py-1.5">
+                <template x-for="plot in filteredPlots" :key="plot.id">
+                    <button @click="$wire.selectPlot(plot.id)"
+                            class="w-full text-left flex items-center gap-2 px-3 py-2 transition-colors"
+                            :class="$wire.selectedPlotId === plot.id
+                                ? 'bg-agro-50 text-agro-700'
+                                : 'text-zinc-700 hover:bg-zinc-50'">
+                        <span class="w-2.5 h-2.5 rounded-sm shrink-0 ring-1 ring-black/10"
+                              :style="`background:${getPlotColor(plot.id)}`"></span>
+                        <span class="truncate text-xs font-medium" x-text="plot.name"></span>
+                        <span class="ml-auto text-[10px] text-zinc-400 shrink-0"
+                              x-text="plot.area ? parseFloat(plot.area).toFixed(1)+'ha' : ''"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
+
         {{-- Mapa Leaflet --}}
-        <div class="flex-1 relative">
+        <div class="flex-1 relative" data-map-wrap>
             @if(count($mapPlots) > 0)
                 <div wire:ignore
                      x-init="initMap()"
                      class="w-full h-full">
                     <div id="visual-plots-map" class="w-full h-full"></div>
                 </div>
-                {{-- Toggle capa mapa: fuera de wire:ignore para que Alpine lo controle --}}
-                <button @click="toggleTile()"
-                        title="Cambiar capa del mapa"
-                        class="absolute top-3 right-3 z-[1000] flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg border transition-all
-                               bg-white/90 backdrop-blur-sm border-zinc-200 text-zinc-700 hover:bg-white hover:shadow-xl">
-                    <template x-if="tileMode === 'satellite'">
-                        <span class="flex items-center gap-1.5">
-                            <flux:icon icon="map" class="size-3.5 text-zinc-500" />
-                            Callejero
-                        </span>
+
+                {{-- Leyenda de variedades --}}
+                <div x-show="legendItems.length > 0" x-cloak
+                     class="absolute bottom-10 left-3 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-zinc-200 px-3 py-2.5 max-w-[160px]">
+                    <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Variedades</p>
+                    <template x-for="item in legendItems" :key="item.name">
+                        <div class="flex items-center gap-1.5 mb-1 last:mb-0">
+                            <span class="w-3 h-3 rounded-sm shrink-0 ring-1 ring-black/10"
+                                  :style="`background:${item.color}`"></span>
+                            <span class="text-[10px] text-zinc-700 leading-tight" x-text="item.name"></span>
+                        </div>
                     </template>
-                    <template x-if="tileMode === 'street'">
-                        <span class="flex items-center gap-1.5">
-                            <flux:icon icon="globe-europe-africa" class="size-3.5 text-agro-500" />
-                            Satélite
-                        </span>
-                    </template>
-                </button>
+                </div>
+
+                {{-- Botones flotantes top-right (fullscreen + tile toggle) --}}
+                <div class="absolute top-3 right-3 z-[1000] flex items-center gap-1.5">
+                    <button @click="toggleFullscreen()"
+                            title="Pantalla completa"
+                            class="flex items-center justify-center w-8 h-8 rounded-xl text-xs font-semibold shadow-lg border transition-all bg-white/90 backdrop-blur-sm border-zinc-200 text-zinc-600 hover:bg-white hover:shadow-xl">
+                        <template x-if="!isFullscreen">
+                            <flux:icon icon="arrows-pointing-out" class="size-4" />
+                        </template>
+                        <template x-if="isFullscreen">
+                            <flux:icon icon="arrows-pointing-in" class="size-4" />
+                        </template>
+                    </button>
+                    <button @click="toggleTile()"
+                            title="Cambiar capa del mapa"
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg border transition-all
+                                   bg-white/90 backdrop-blur-sm border-zinc-200 text-zinc-700 hover:bg-white hover:shadow-xl">
+                        <template x-if="tileMode === 'satellite'">
+                            <span class="flex items-center gap-1.5">
+                                <flux:icon icon="map" class="size-3.5 text-zinc-500" />
+                                Callejero
+                            </span>
+                        </template>
+                        <template x-if="tileMode === 'street'">
+                            <span class="flex items-center gap-1.5">
+                                <flux:icon icon="globe-europe-africa" class="size-3.5 text-agro-500" />
+                                Satélite
+                            </span>
+                        </template>
+                    </button>
+                </div>
             @else
                 <div class="flex flex-col items-center justify-center h-full bg-zinc-50 gap-4">
                     <div class="w-16 h-16 bg-zinc-100 rounded-2xl flex items-center justify-center">
@@ -222,7 +289,20 @@
                             </p>
                         </div>
                         @endif
-                        @if($selectedPlot->sigpacCodes->isNotEmpty())
+                        @php $varieties = $selectedPlot->plantings->pluck('grapeVariety')->filter()->unique('id'); @endphp
+                        @if($varieties->isNotEmpty())
+                        <div class="bg-amber-50 rounded-xl p-3">
+                            <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest mb-1.5">Variedades</p>
+                            <div class="flex flex-wrap gap-1">
+                                @foreach($varieties->take(3) as $v)
+                                <span class="text-[9px] font-bold text-amber-700 bg-amber-100 rounded-md px-1.5 py-0.5 leading-tight">{{ $v->name }}</span>
+                                @endforeach
+                                @if($varieties->count() > 3)
+                                <span class="text-[9px] text-amber-400 self-center">+{{ $varieties->count() - 3 }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        @elseif($selectedPlot->sigpacCodes->isNotEmpty())
                         <div class="bg-amber-50 rounded-xl p-3">
                             <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest">SIGPAC</p>
                             <p class="text-xl font-black text-amber-700 mt-0.5">
@@ -232,6 +312,31 @@
                         </div>
                         @endif
                     </div>
+
+                    {{-- Última actividad --}}
+                    @if($selectedPlotLastActivity)
+                    @php
+                        $actLabels = ['phytosanitary' => 'Tratamiento', 'fertilization' => 'Fertilización',
+                                      'irrigation' => 'Riego', 'cultural' => 'Labor', 'observation' => 'Observación',
+                                      'harvest' => 'Vendimia', 'post_harvest' => 'Post-vendimia'];
+                        $actColors = ['phytosanitary' => 'text-orange-600 bg-orange-50',
+                                      'fertilization' => 'text-green-600 bg-green-50',
+                                      'irrigation' => 'text-blue-600 bg-blue-50',
+                                      'cultural' => 'text-zinc-600 bg-zinc-100',
+                                      'observation' => 'text-violet-600 bg-violet-50',
+                                      'harvest' => 'text-agro-600 bg-agro-50',
+                                      'post_harvest' => 'text-amber-600 bg-amber-50'];
+                        $actType = $selectedPlotLastActivity->activity_type;
+                    @endphp
+                    <div class="flex items-center gap-2 px-3 py-2 bg-zinc-50 rounded-xl">
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $actColors[$actType] ?? 'text-zinc-500 bg-zinc-100' }}">
+                            {{ $actLabels[$actType] ?? $actType }}
+                        </span>
+                        <span class="text-xs text-zinc-500 flex-1 truncate">
+                            {{ $selectedPlotLastActivity->activity_date?->diffForHumans() }}
+                        </span>
+                    </div>
+                    @endif
 
                     {{-- Chip viticulturist: enlaza a su ficha --}}
                     @if($selectedPlot->viticulturist)
@@ -310,7 +415,7 @@
                 {{-- ── Vendimia ── --}}
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2 px-1">Vendimia</p>
-                    <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+                    <a href="{{ route('winery.grape-reception.create') . ($selectedPlot->viticulturist ? '?viticulturist_id=' . $selectedPlot->viticulturist->id : '') }}" wire:navigate
                        class="flex items-center justify-center gap-2 w-full px-3 py-2.5 mb-2 rounded-xl text-sm font-semibold bg-agro-600 text-white hover:bg-agro-700 transition-colors shadow-sm">
                         <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
                         Recibir uva
@@ -333,13 +438,25 @@
                 <div class="border-t border-zinc-100"></div>
 
                 {{-- ── Explorar ── --}}
-                <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Explorar</p>
-                    <div class="space-y-0.5">
-                        <a href="{{ route('winery.field-activities.index') }}" wire:navigate
+                <div x-data="{ open: false }">
+                    <button @click="open = !open"
+                            class="flex items-center justify-between w-full px-1 mb-1 group">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-zinc-500 transition-colors">Explorar</p>
+                        <flux:icon icon="chevron-down" class="size-3.5 text-zinc-300 transition-transform duration-200"
+                                   ::class="open ? 'rotate-180' : ''" />
+                    </button>
+                    <div x-show="open" x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 -translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         style="display:none;"
+                         class="space-y-0.5">
+                        <a href="{{ route('winery.field-activities.index') . '?plot_id=' . $selectedPlot->id }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="pencil-square" class="size-4 text-zinc-400 shrink-0" />
-                            Actividades de campo
+                            Actividades de esta parcela
                         </a>
                         <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
@@ -877,10 +994,13 @@
 <script>
 Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
     map: null,
-    markers: {},        // solo parcelas SIN polígono SIGPAC
     polygonLayers: {},
     tileLayers: {},
     tileMode: 'satellite',
+    showList: false,
+    isFullscreen: false,
+    legendItems: [],
+    _plotColorMap: {},
     search: '',
     communityId: '',
     provinceId: '',
@@ -895,7 +1015,7 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
     ],
 
     getPlotColor(plotId) {
-        return this.PALETTE[plotId % this.PALETTE.length];
+        return this._plotColorMap[plotId] ?? this.PALETTE[plotId % this.PALETTE.length];
     },
 
     get availableProvinces() {
@@ -933,6 +1053,15 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
         return sum > 0 ? sum.toFixed(2) : 0;
     },
 
+    toggleFullscreen() {
+        const el = document.getElementById('visual-plots-map')?.closest('[data-map-wrap]');
+        if (!document.fullscreenElement) {
+            (el || document.documentElement).requestFullscreen?.();
+        } else {
+            document.exitFullscreen?.();
+        }
+    },
+
     toggleTile() {
         if (!this.map) return;
         if (this.tileMode === 'satellite') {
@@ -956,18 +1085,7 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
         this.updateMapData();
     },
 
-    makeIcon(selected, color) {
-        const size = selected ? 22 : 16;
-        const border = selected ? `3px solid #f59e0b` : `2.5px solid #fff`;
-        return L.divIcon({
-            html: `<div style="width:${size}px;height:${size}px;background:${color};border:${border};border-radius:50%;box-shadow:0 2px 12px rgba(0,0,0,.6);transition:all .2s;"></div>`,
-            className: '',
-            iconSize: [size, size],
-            iconAnchor: [size / 2, size / 2],
-        });
-    },
-
-    // Devuelve un L.LatLngBounds combinando polígonos visibles + marcadores fallback visibles
+    // Devuelve un L.LatLngBounds combinando polígonos visibles
     _visibleBounds(filteredIds) {
         let bounds = null;
         const ext = (b) => { bounds = bounds ? bounds.extend(b) : (b instanceof L.LatLngBounds ? b : L.latLngBounds([b])); };
@@ -975,23 +1093,13 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
             if (!filteredIds.has(parseInt(plotId))) return;
             layers.forEach(l => ext(l.getBounds()));
         });
-        Object.entries(this.markers).forEach(([id, { marker }]) => {
-            if (!filteredIds.has(parseInt(id))) return;
-            ext(marker.getLatLng());
-        });
         return bounds;
     },
 
-    // Aplica filtros: oculta/muestra polígonos + marcadores fallback y hace fitBounds
+    // Aplica filtros: oculta/muestra polígonos y hace fitBounds
     updateMapData() {
         if (!this.map) return;
         const filteredIds = new Set(this.filteredPlots.map(p => p.id));
-
-        Object.entries(this.markers).forEach(([id, { marker }]) => {
-            const visible = filteredIds.has(parseInt(id));
-            if (visible && !this.map.hasLayer(marker)) marker.addTo(this.map);
-            else if (!visible && this.map.hasLayer(marker)) this.map.removeLayer(marker);
-        });
 
         Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
             const visible = filteredIds.has(parseInt(plotId));
@@ -1044,18 +1152,53 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
             this.tileLayers.labels.addTo(this.map);
 
             L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
+            L.control.scale({ position: 'bottomright', imperial: false }).addTo(this.map);
 
-            // Índice: qué parcelas tienen polígono SIGPAC
-            const plotsWithPolygons = new Set(allPolygons.map(p => p.plot_id));
+            // ── Escuchar fullscreen ────────────────────────────────────────
+            document.addEventListener('fullscreenchange', () => {
+                this.isFullscreen = !!document.fullscreenElement;
+                setTimeout(() => this.map?.invalidateSize(), 100);
+            });
+
+            // ── Click en fondo del mapa → cierra panel ─────────────────────
+            this.map.on('click', () => $wire.set('selectedPlotId', null));
 
             // Índice: nombre de parcela por id
             const plotNames = {};
             allPlots.forEach(p => { plotNames[p.id] = p.name; });
 
-            // ── Polígonos SIGPAC (colores por parcela) ──────────────────────
+            // Índice: área por plot id
+            const plotArea = {};
+            allPlots.forEach(p => { plotArea[p.id] = p.area ? parseFloat(p.area).toFixed(1) : null; });
+
+            // ── Colores por variedad (mismo color = misma variedad) ─────────
+            const varietyColorIdx = {};
+            let nextColorIdx = 0;
+            allPlots.forEach(p => {
+                const key = p.variety_id != null ? `v${p.variety_id}` : `p${p.id}`;
+                if (varietyColorIdx[key] === undefined) {
+                    varietyColorIdx[key] = nextColorIdx++ % this.PALETTE.length;
+                }
+                this._plotColorMap[p.id] = this.PALETTE[varietyColorIdx[key]];
+            });
+
+            // ── Leyenda de variedades ───────────────────────────────────────
+            const seenVarieties = new Set();
+            const newLegend = [];
+            allPlots.forEach(p => {
+                if (p.variety_id && !seenVarieties.has(p.variety_id)) {
+                    seenVarieties.add(p.variety_id);
+                    newLegend.push({ name: p.variety_name, color: this._plotColorMap[p.id] });
+                }
+            });
+            this.legendItems = newLegend;
+
+            // ── Polígonos SIGPAC (colores por variedad) ─────────────────────
             allPolygons.forEach(poly => {
                 if (!poly.coords || poly.coords.length < 3) return;
                 const color = this.getPlotColor(poly.plot_id);
+                const name  = plotNames[poly.plot_id] || poly.sigpac_code;
+                const area  = plotArea[poly.plot_id];
                 const layer = L.polygon(poly.coords, {
                     color,
                     fillColor: color,
@@ -1064,24 +1207,57 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
                     opacity: 0.9,
                 });
                 layer.addTo(this.map);
-                layer.bindTooltip(plotNames[poly.plot_id] || poly.sigpac_code, { permanent: false, direction: 'center' });
-                layer.on('click', () => $wire.selectPlot(poly.plot_id));
+                layer.bindTooltip(area ? `${name} · ${area} ha` : name, {
+                    permanent: false, direction: 'center', sticky: false,
+                });
+                // Hover: iluminar polígono
+                layer.on('mouseover', function() {
+                    const isSelected = $wire.get('selectedPlotId') === poly.plot_id;
+                    if (!isSelected) this.setStyle({ fillOpacity: 0.55, weight: 3.5, opacity: 1 });
+                    this.bringToFront();
+                });
+                layer.on('mouseout', function() {
+                    const isSelected = $wire.get('selectedPlotId') === poly.plot_id;
+                    if (!isSelected) this.setStyle({ fillOpacity: 0.3, weight: 2, opacity: 0.9 });
+                });
+                // Click: seleccionar parcela (sin propagar al fondo del mapa)
+                layer.on('click', (e) => {
+                    L.DomEvent.stopPropagation(e);
+                    $wire.selectPlot(poly.plot_id);
+                });
                 if (!this.polygonLayers[poly.plot_id]) this.polygonLayers[poly.plot_id] = [];
                 this.polygonLayers[poly.plot_id].push(layer);
             });
 
-            // ── Marcadores fallback solo para parcelas SIN polígono ─────────
-            allPlots.forEach(plot => {
-                if (plotsWithPolygons.has(plot.id)) return;
-                const color  = this.getPlotColor(plot.id);
-                const marker = L.marker([plot.lat, plot.lng], {
-                    icon: this.makeIcon(false, color),
-                    title: plot.name,
-                }).addTo(this.map);
-                marker.bindTooltip(plot.name, { permanent: false, direction: 'top', offset: [0, -8] });
-                marker.on('click', () => $wire.selectPlot(plot.id));
-                this.markers[plot.id] = { marker, color };
-            });
+            // ── Etiquetas permanentes dentro del polígono (zoom ≥ 14) ──────
+            const _toggleLabels = () => {
+                const show = this.map.getZoom() >= 14;
+                Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
+                    const name = plotNames[plotId] || '';
+                    const area = plotArea[plotId];
+                    layers.forEach((layer, idx) => {
+                        if (show) {
+                            if (!layer._permLabel) {
+                                const lbl = L.tooltip({
+                                    permanent: true, direction: 'center',
+                                    className: 'plot-map-label', interactive: false,
+                                }).setContent(area ? `${name}<br><span style="opacity:.7;font-weight:400">${area} ha</span>` : name);
+                                layer.bindTooltip(lbl);
+                                layer._permLabel = true;
+                            }
+                        } else {
+                            if (layer._permLabel) {
+                                layer.bindTooltip(
+                                    area ? `${name} · ${area} ha` : name,
+                                    { permanent: false, direction: 'center', sticky: false }
+                                );
+                                layer._permLabel = false;
+                            }
+                        }
+                    });
+                });
+            };
+            this.map.on('zoomend', _toggleLabels);
 
             // fitBounds desde los propios polígonos (+ marcadores fallback)
             const allIds = new Set(allPlots.map(p => p.id));
@@ -1092,15 +1268,6 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
 
             // ── Al seleccionar parcela: resaltar + auto-zoom ────────────────
             $wire.$watch('selectedPlotId', (newId) => {
-                // Marcadores fallback
-                Object.entries(this.markers).forEach(([id, { marker, color }]) => {
-                    const selected = parseInt(id) === newId;
-                    marker.setIcon(this.makeIcon(selected, color));
-                    if (selected) {
-                        marker.openTooltip();
-                        this.map.setView(marker.getLatLng(), 14, { animate: true });
-                    }
-                });
                 // Polígonos + zoom al seleccionado
                 let selBounds = null;
                 Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {

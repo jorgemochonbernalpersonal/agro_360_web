@@ -84,11 +84,13 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/wine-analysis/{id}', [WineAnalysisController::class, 'show']);
 
         // Parcelas de los viticultores de la bodega
-        Route::get('/plots/centroids',       [WineryPlotController::class, 'centroids']);
-        Route::get('/plots/geometries',      [WineryPlotController::class, 'allGeometries']);
-        Route::get('/plots',                 [WineryPlotController::class, 'index']);
-        Route::get('/plots/{id}',            [WineryPlotController::class, 'show']);
-        Route::get('/plots/{id}/geometries', [WineryPlotController::class, 'geometries']);
+        Route::get('/plots/centroids',              [WineryPlotController::class, 'centroids']);
+        Route::get('/plots/geometries',             [WineryPlotController::class, 'allGeometries']);
+        Route::get('/plots',                        [WineryPlotController::class, 'index']);
+        Route::get('/plots/{id}',                   [WineryPlotController::class, 'show']);
+        Route::get('/plots/{id}/geometries',        [WineryPlotController::class, 'geometries']);
+        Route::get('/plots/{id}/harvest-quality',   [WineryPlotController::class, 'harvestQuality']);
+        Route::get('/plots/{id}/notebook',          [WineryPlotController::class, 'notebook']);
     });
 
     // ── Viticulturist / Producer ───────────────────────────────────────────────

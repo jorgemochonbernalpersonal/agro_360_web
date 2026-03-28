@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\PlotResource;
+use App\Models\AgriculturalActivity;
 use App\Models\Plot;
 use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
@@ -208,6 +209,78 @@ class PlotController extends Controller
             'plot_id'      => $id,
             'has_geometry' => $geometries->isNotEmpty(),
             'geometries'   => $geometries,
+        ]);
+    }
+
+    // ─── GET /winery/plots/{id}/harvest-quality ───────────────────────────────
+
+    public function harvestQuality(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id');
+
+        Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
+
+        $activities = AgriculturalActivity::where('plot_id', $id)
+            ->where('activity_type', 'harvest')
+            ->whereIn('viticulturist_id', $viticulturistIds)
+            ->with(['harvest', 'plotPlanting.grapeVariety'])
+            ->orderByDesc('activity_date')
+            ->paginate($request->integer('per_page', 15));
+
+        return response()->json([
+            'data' => $activities->map(fn ($a) => [
+                'id'                => $a->id,
+                'activity_date'     => $a->activity_date?->format('Y-m-d'),
+                'grape_variety'     => $a->plotPlanting?->grapeVariety?->name,
+                'baume_degree'      => $a->harvest?->baume_degree,
+                'brix_degree'       => $a->harvest?->brix_degree,
+                'ph_level'          => $a->harvest?->ph_level,
+                'acidity_level'     => $a->harvest?->acidity_level,
+                'potential_alcohol' => $a->harvest?->potential_alcohol,
+                'total_weight'      => $a->harvest?->total_weight,
+                'notes'             => $a->notes ?? $a->harvest?->notes,
+            ]),
+            'meta' => [
+                'total'        => $activities->total(),
+                'current_page' => $activities->currentPage(),
+                'last_page'    => $activities->lastPage(),
+            ],
+        ]);
+    }
+
+    // ─── GET /winery/plots/{id}/notebook ─────────────────────────────────────
+
+    public function notebook(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id');
+
+        Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
+
+        $activities = AgriculturalActivity::where('plot_id', $id)
+            ->whereIn('viticulturist_id', $viticulturistIds)
+            ->orderByDesc('activity_date')
+            ->paginate($request->integer('per_page', 20));
+
+        return response()->json([
+            'data' => $activities->map(fn ($a) => [
+                'id'            => $a->id,
+                'activity_type' => $a->activity_type,
+                'activity_date' => $a->activity_date?->format('Y-m-d'),
+                'notes'         => $a->notes,
+            ]),
+            'meta' => [
+                'total'        => $activities->total(),
+                'current_page' => $activities->currentPage(),
+                'last_page'    => $activities->lastPage(),
+            ],
         ]);
     }
 

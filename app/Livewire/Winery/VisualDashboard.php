@@ -4,6 +4,7 @@ namespace App\Livewire\Winery;
 
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
+use App\Models\AgriculturalActivity;
 use App\Models\AutonomousCommunity;
 use App\Models\Container;
 use App\Models\ContainerType;
@@ -90,7 +91,7 @@ class VisualDashboard extends Component
         // ── Parcelas (tab mapa) ─────────────────────────────────────────
         $allPlots = Plot::forUser($user)
             ->where('active', true)
-            ->with(['municipality:id,name,lat,lng', 'province:id,name', 'viticulturist:id,name', 'sigpacCodes:id', 'autonomousCommunity:id,name'])
+            ->with(['municipality:id,name,lat,lng', 'province:id,name', 'viticulturist:id,name', 'sigpacCodes:id', 'autonomousCommunity:id,name', 'plantings.grapeVariety:id,name'])
             ->select(['id', 'name', 'area', 'active', 'municipality_id', 'province_id', 'autonomous_community_id', 'viticulturist_id'])
             ->get();
 
@@ -138,6 +139,7 @@ class VisualDashboard extends Component
                 } else {
                     return null; // sin coordenadas de ningún tipo
                 }
+                $primaryVariety = $p->plantings->first()?->grapeVariety;
                 return [
                     'id'                      => $p->id,
                     'name'                    => $p->name,
@@ -153,6 +155,8 @@ class VisualDashboard extends Component
                     'autonomous_community_id' => $p->autonomous_community_id,
                     'viticulturist'           => $p->viticulturist?->name,
                     'has_sigpac'              => $p->sigpacCodes->isNotEmpty(),
+                    'variety_id'              => $primaryVariety?->id,
+                    'variety_name'            => $primaryVariety?->name,
                 ];
             })
             ->filter()
@@ -211,6 +215,13 @@ class VisualDashboard extends Component
                 ->values()->toArray();
         }
 
+        // Última actividad de la parcela seleccionada
+        $selectedPlotLastActivity = $this->selectedPlotId
+            ? AgriculturalActivity::where('plot_id', $this->selectedPlotId)
+                ->latest('activity_date')
+                ->first(['id', 'activity_type', 'activity_date'])
+            : null;
+
         // Detalle de la parcela seleccionada
         $selectedPlot = $this->selectedPlotId
             ? Plot::forUser($user)
@@ -220,6 +231,7 @@ class VisualDashboard extends Component
                     'viticulturist:id,name',
                     'sigpacCodes:id,code',
                     'multiplePlotSigpacs.plotGeometry',
+                    'plantings.grapeVariety:id,name',
                 ])
                 ->find($this->selectedPlotId)
             : null;
@@ -331,7 +343,8 @@ class VisualDashboard extends Component
         ];
 
         return view('livewire.winery.visual-dashboard', [
-            'mapPlots'            => $mapPlots,
+            'mapPlots'                  => $mapPlots,
+            'selectedPlotLastActivity'  => $selectedPlotLastActivity,
             'mapPolygons'         => $mapPolygons,
             'filterOptions'       => $filterOptions,
             'selectedPlot'        => $selectedPlot,
