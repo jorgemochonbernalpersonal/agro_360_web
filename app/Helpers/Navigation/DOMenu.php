@@ -24,7 +24,7 @@ class DOMenu
             ['icon' => 'user-group',         'label' => 'Mis viticultores DO',  'route' => 'supervisor.growers.index', 'active' => request()->routeIs('supervisor.growers.*')],
             ['icon' => 'map',                'label' => 'Parcelas',             'route' => 'supervisor.growers.index', 'active' => false],
             ['icon' => 'book-open',          'label' => 'Plantaciones',         'route' => 'supervisor.growers.index', 'active' => false],
-            ['icon' => 'globe-europe-africa','label' => 'SIGPAC',               'route' => 'supervisor.growers.index', 'active' => false],
+            ['icon' => 'map-pin',            'label' => 'SIGPAC',               'route' => 'sigpac.codes',             'active' => request()->routeIs('sigpac.*')],
             ['icon' => 'users',              'label' => 'Asignación a bodegas', 'route' => 'supervisor.growers.index', 'active' => false],
         ];
 

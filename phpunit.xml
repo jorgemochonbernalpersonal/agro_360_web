@@ -29,6 +29,7 @@
     </source>
 
     <php>
+        <ini name="memory_limit" value="-1"/>
         <!-- Laravel loads .env.testing when APP_ENV=testing (no DB vars = use .env.testing) -->
         <env name="APP_ENV" value="testing"/>
         <env name="APP_KEY" value="base64:2fl+Ktvkujt7GgAsMohK/Vw9HdtcfVGMGmqPzJmMKj8="/>
