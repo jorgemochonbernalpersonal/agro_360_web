@@ -116,7 +116,7 @@ class PlotController extends Controller
         $params       = $plotIds;
 
         $sql = "SELECT mps.plot_id, sc.code,
-                        ST_AsText(ST_Simplify(pg.coordinates, 0.00004)) AS coordinates_wkt,
+                        ST_AsText(pg.coordinates) AS coordinates_wkt,
                         ST_AsText(pg.centroid) AS centroid_wkt
                  FROM   multipart_plot_sigpac mps
                  JOIN   sigpac_code   sc ON mps.sigpac_code_id  = sc.id
@@ -129,7 +129,7 @@ class PlotController extends Controller
             if (count($parts) === 4) {
                 [$south, $west, $north, $east] = $parts;
                 $bboxWkt = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
-                $sql    .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?))';
+                $sql    .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
                 $params[] = $bboxWkt;
             }
         }

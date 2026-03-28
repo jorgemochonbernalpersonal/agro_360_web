@@ -219,7 +219,8 @@
       "Bash(xargs grep:*)",
       "Bash(taskkill /F /IM php.exe)",
       "Bash(./vendor/bin/phpunit tests/Feature/Api/PlotApiTest.php)",
-      "Bash(./vendor/bin/phpunit)"
+      "Bash(./vendor/bin/phpunit)",
+      "Bash(wmic process:*)"
     ]
   }
 }

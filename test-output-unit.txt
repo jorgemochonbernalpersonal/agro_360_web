@@ -1,0 +1,392 @@
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Calculators\LAICalculatorTest::it_calculates_lai_from_ndvi(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Calculators\LAICalculatorTest::it_classifies_lai_correctly(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Calculators\LAICalculatorTest::it_estimates_yield_from_lai(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Calculators\LAICalculatorTest::it_provides_management_recommendations(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Calculators\LAICalculatorTest::it_adjusts_treatment_dose_by_lai(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Detectors\AnomalyDetectorTest::it_detects_rapid_ndvi_decline(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Detectors\AnomalyDetectorTest::it_detects_water_stress(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Detectors\AnomalyDetectorTest::it_detects_spatial_heterogeneity(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Detectors\AnomalyDetectorTest::it_calculates_risk_level_correctly(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Detectors\AnomalyDetectorTest::it_generates_alert_messages(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Detectors\AnomalyDetectorTest::it_determines_notification_necessity(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [30;43;1m WARN [39;49;22m Metadata found in doc-comment for method Tests\Unit\Services\RemoteSensing\Detectors\AnomalyDetectorTest::it_handles_insufficient_historical_data(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Unit\Jobs\GenerateOfficialReportJobTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mjob can be instantiated[39m
+  [31;1m⨯[39;22m[90m [39m[90mjob has retry configuration[39m
+  [31;1m⨯[39;22m[90m [39m[90mjob accepts different report types[39m
+  [31;1m⨯[39;22m[90m [39m[90mjob handles optional date filters[39m
+Iniciando migración de datos existentes...
+Migrando 0 cosechas...
+✓ 0 cosechas migradas.
+
+Migrando 0 items de factura...
+✓ 0 items de factura migrados.
+Migración completada.
+✅ Constraint único restaurado exitosamente.
+
+📊 Resumen:
+   Total municipios: 0
+   Con código de 5 dígitos: 0
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\AgriculturalActivityTest[39m
+  [33;1m![39;22m[90m [39m[90mactivity relationships are configured correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m94.18s[39m  
+  [33;1m![39;22m[90m [39m[90mscopes filter correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                [39m [90m4.27s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity can have nullable relationships[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its o[39m[90m…[39m [90m3.69s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity has harvest relationship[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m4.41s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity has phytosanitary treatment relationship[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m3.98s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity has fertilization relationship[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m4.05s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity has irrigation relationship[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m4.71s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for date range filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m3.97s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity has cultural work relationship[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m4.12s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity has observation relationship[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m4.00s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity can have crew member relationship[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m4.03s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity can have both crew and crew member[39m[90m [39m[33m→ Test code or tested code removed error handlers other than it[39m[90m…[39m [90m4.41s[39m  
+  [33;1m![39;22m[90m [39m[90mactivity date is cast to date[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m3.82s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for campaign filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m4.21s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\Campaign2024Test[39m
+  [33;1m![39;22m[90m [39m[90mcampaign 2024 exists and is inactive[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m27.26s[39m  
+  [33;1m![39;22m[90m [39m[90mcampaign 2024 has activities[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m26.82s[39m  
+  [33;1m![39;22m[90m [39m[90mcampaign 2024 activities have related data[39m[90m [39m[33m→ Test code or tested code removed error handlers other than it[39m[90m…[39m [90m24.02s[39m  
+  [33;1m![39;22m[90m [39m[90mcampaign 2024 can be activated[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m18.85s[39m  
+  [33;1m![39;22m[90m [39m[90mcampaign 2024 activities are associated with plots[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m19.68s[39m  
+  [33;1m![39;22m[90m [39m[90mcampaign 2024 statistics are correct[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m17.70s[39m  
+  [33;1m![39;22m[90m [39m[90mcampaign 2024 date range is correct[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m19.90s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\CampaignTest[39m
+  [33;1m![39;22m[90m [39m[90mcampaign belongs to viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mscopes filter correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mactivate makes only one active per viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mget or create active for year creates new campaign when none exists[39m[90m [39m[33m→ Test code or tested code removed erro[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mget or create active for year returns existing active campaign[39m[90m [39m[33m→ Test code or tested code removed error han[39m[90m…[39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mget or create active for year activates existing inactive campaign[39m[90m [39m[33m→ Test code or tested code removed error[39m[90m…[39m [90m0.36s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\CertificationTest[39m
+  [33;1m![39;22m[90m [39m[90mcertification type label returns correct label[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m0.38s[39m  
+  [33;1m![39;22m[90m [39m[90mcertification type label returns label for every type[39m[90m [39m[33m→ Test code or tested code removed error handlers oth[39m[90m…[39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mcertification type label returns raw value for unknown type[39m[90m [39m[33m→ Test code or tested code removed error handle[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mtype color returns correct color for each type[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mtype color returns zinc for unknown type[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its o[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mis expired returns true when expiry date is past[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mis expired returns false when expiry date is future[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mis expired returns false when no expiry date[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mis expiring soon returns true when within 60 days[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mis expiring soon returns true on boundary of 60 days[39m[90m [39m[33m→ Test code or tested code removed error handlers othe[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mis expiring soon returns false when beyond 60 days[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m0.40s[39m  
+  [33;1m![39;22m[90m [39m[90mis expiring soon returns false when already expired[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mis expiring soon returns false when no expiry date[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m0.37s[39m  
+  [33;1m![39;22m[90m [39m[90mcertification belongs to viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m0.39s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\ClientAddressTest[39m
+  [33;1m![39;22m[90m [39m[90mclient address belongs to client[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m4.12s[39m  
+  [33;1m![39;22m[90m [39m[90mclient address belongs to autonomous community[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m4.14s[39m  
+  [33;1m![39;22m[90m [39m[90mclient address belongs to province[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m4.43s[39m  
+  [33;1m![39;22m[90m [39m[90mclient address belongs to municipality[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m3.92s[39m  
+  [33;1m![39;22m[90m [39m[90mclient address has many invoices[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m4.54s[39m  
+  [33;1m![39;22m[90m [39m[90mfull address attribute formats correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its o[39m[90m…[39m [90m4.43s[39m  
+  [33;1m![39;22m[90m [39m[90mfull address handles missing fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m3.99s[39m  
+  [33;1m![39;22m[90m [39m[90mfull address returns only address when no location data[39m[90m [39m[33m→ Test code or tested code removed error handlers o[39m[90m…[39m [90m4.05s[39m  
+  [33;1m![39;22m[90m [39m[90mscope default returns only default addresses[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m4.10s[39m  
+  [33;1m![39;22m[90m [39m[90mis default is cast to boolean[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m3.92s[39m  
+  [33;1m![39;22m[90m [39m[90maddress can have optional fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m4.27s[39m  
+  [33;1m![39;22m[90m [39m[90maddress can store contact information[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m3.92s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\ClientTest[39m
+  [33;1m![39;22m[90m [39m[90mclient belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                 [39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mclient has many addresses[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mclient has default address[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m             [39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mclient has many invoices[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m               [39m [90m0.38s[39m  
+  [33;1m![39;22m[90m [39m[90mget full name returns company name for company[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mget full name returns full name for individual[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mget full name handles missing names[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mis company returns true for company[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mis company returns false for individual[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mis individual returns true for individual[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mis individual returns false for company[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mscope active filters active clients[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m0.43s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for user filters by user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m         [39m [90m0.42s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\ContainerTest[39m
+  [33;1m![39;22m[90m [39m[90mcontainer belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m4.90s[39m  
+  [33;1m![39;22m[90m [39m[90mcontainer has many harvests[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m            [39m [90m4.55s[39m  
+  [33;1m![39;22m[90m [39m[90mget available capacity returns correct value[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m4.56s[39m  
+  [33;1m![39;22m[90m [39m[90mget available capacity returns zero when full[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m… [39m [90m4.58s[39m  
+  [33;1m![39;22m[90m [39m[90mhas available capacity returns true when has space[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m4.17s[39m  
+  [33;1m![39;22m[90m [39m[90mhas available capacity returns false when no space[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m5.08s[39m  
+  [33;1m![39;22m[90m [39m[90mget occupancy percentage returns correct value[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m4.50s[39m  
+  [33;1m![39;22m[90m [39m[90mget occupancy percentage returns zero when capacity is zero[39m[90m [39m[33m→ Test code or tested code removed error handle[39m[90m…[39m [90m4.50s[39m  
+  [33;1m![39;22m[90m [39m[90mis empty returns true when used capacity is zero[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m3.99s[39m  
+  [33;1m![39;22m[90m [39m[90mis empty returns false when has content[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m4.44s[39m  
+  [33;1m![39;22m[90m [39m[90mis full returns true when used capacity equals capacity[39m[90m [39m[33m→ Test code or tested code removed error handlers o[39m[90m…[39m [90m4.07s[39m  
+  [33;1m![39;22m[90m [39m[90mis full returns false when not full[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m3.94s[39m  
+  [33;1m![39;22m[90m [39m[90mincrement used capacity updates correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m4.71s[39m  
+  [33;1m![39;22m[90m [39m[90mincrement used capacity returns false when exceeds capacity[39m[90m [39m[33m→ Test code or tested code removed error handle[39m[90m…[39m [90m4.23s[39m  
+  [33;1m![39;22m[90m [39m[90mdecrement used capacity updates correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m4.32s[39m  
+  [33;1m![39;22m[90m [39m[90mdecrement used capacity never goes below zero[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m… [39m [90m4.10s[39m  
+  [33;1m![39;22m[90m [39m[90mscope available filters containers with available capacity[39m[90m [39m[33m→ Test code or tested code removed error handler[39m[90m…[39m [90m4.37s[39m  
+  [33;1m![39;22m[90m [39m[90mscope empty filters empty containers[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m4.30s[39m  
+  [33;1m![39;22m[90m [39m[90mscope full filters full containers[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m4.43s[39m  
+  [33;1m![39;22m[90m [39m[90mscope active filters non archived containers[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m4.64s[39m  
+  [33;1m![39;22m[90m [39m[90mget current harvest returns harvest via current state[39m[90m [39m[33m→ Test code or tested code removed error handlers oth[39m[90m…[39m [90m4.36s[39m  
+  [33;1m![39;22m[90m [39m[90mdate fields are cast to date[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m           [39m [90m3.72s[39m  
+  [33;1m![39;22m[90m [39m[90mdecimal fields are cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m3.92s[39m  
+  [33;1m![39;22m[90m [39m[90mquantity is cast to integer[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m            [39m [90m3.71s[39m  
+  [33;1m![39;22m[90m [39m[90marchived is cast to boolean[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m            [39m [90m3.70s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\CrewMemberTest[39m
+  [33;1m![39;22m[90m [39m[90mis individual returns true when crew id is null[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m0.39s[39m  
+  [33;1m![39;22m[90m [39m[90mis individual returns false when has crew[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mscope individual filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for viticulturist filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mcrew member belongs to crew[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m            [39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mcrew member belongs to viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mcrew member belongs to assigned by[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m0.34s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\CrewTest[39m
+  [33;1m![39;22m[90m [39m[90mcrew belongs to viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m3.93s[39m  
+  [33;1m![39;22m[90m [39m[90mcrew belongs to winery[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                 [39m [90m4.20s[39m  
+  [33;1m![39;22m[90m [39m[90mcrew can have null winery[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m4.54s[39m  
+  [33;1m![39;22m[90m [39m[90mcrew has many members[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                  [39m [90m4.21s[39m  
+  [33;1m![39;22m[90m [39m[90mcrew has many activities[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m               [39m [90m4.24s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for viticulturist filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m4.67s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for winery filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m4.19s[39m  
+  [33;1m![39;22m[90m [39m[90mget members count attribute returns correct count[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m5.08s[39m  
+  [33;1m![39;22m[90m [39m[90mget activities count attribute returns correct count[39m[90m [39m[33m→ Test code or tested code removed error handlers othe[39m[90m…[39m [90m4.48s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\CulturalWorkTest[39m
+  [33;1m![39;22m[90m [39m[90mcultural work belongs to activity[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m4.32s[39m  
+  [33;1m![39;22m[90m [39m[90mhours worked is cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m4.70s[39m  
+  [33;1m![39;22m[90m [39m[90mcultural work can store all fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m4.19s[39m  
+  [33;1m![39;22m[90m [39m[90mcultural work can have nullable fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m4.80s[39m  
+  [33;1m![39;22m[90m [39m[90mpruning type stored correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m4.26s[39m  
+  [33;1m![39;22m[90m [39m[90mproductive buds per hectare cast to integer[39m[90m [39m[33m→ Test code or tested code removed error handlers other than it[39m[90m…[39m [90m5.60s[39m  
+  [33;1m![39;22m[90m [39m[90mresidue management stored correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m5.37s[39m  
+  [33;1m![39;22m[90m [39m[90mresidue management is nullable[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m         [39m [90m4.65s[39m  
+  [33;1m![39;22m[90m [39m[90mpruning fields nullable[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                [39m [90m4.74s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\DigitalSignatureTest[39m
+  [33;1m![39;22m[90m [39m[90mdigital signature belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m0.45s[39m  
+  [33;1m![39;22m[90m [39m[90msignature password is hashed automatically[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.30s[39m  
+  [33;1m![39;22m[90m [39m[90msignature password is hidden from serialization[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m0.39s[39m  
+  [33;1m![39;22m[90m [39m[90mverify password returns true for correct password[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m0.42s[39m  
+  [33;1m![39;22m[90m [39m[90mverify password returns false for incorrect password[39m[90m [39m[33m→ Test code or tested code removed error handlers othe[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mverify password returns false for empty password[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m0.37s[39m  
+  [33;1m![39;22m[90m [39m[90mfor user returns signature when exists[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mfor user returns null when not exists[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mcreate or update for user creates new signature[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mcreate or update for user updates existing signature[39m[90m [39m[33m→ Test code or tested code removed error handlers othe[39m[90m…[39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mcreate or update for user hashes password automatically[39m[90m [39m[33m→ Test code or tested code removed error handlers o[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mmultiple users can have different signatures[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mtimestamps are cast to datetime[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m0.32s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\EstimatedYieldTest[39m
+  [33;1m![39;22m[90m [39m[90mestimated yield belongs to plot planting[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its o[39m[90m…[39m [90m5.15s[39m  
+  [33;1m![39;22m[90m [39m[90mestimated yield belongs to campaign[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m4.13s[39m  
+  [33;1m![39;22m[90m [39m[90mestimated yield belongs to estimator[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m6.55s[39m  
+  [33;1m![39;22m[90m [39m[90mvariance percentage is calculated automatically[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m4.61s[39m  
+  [33;1m![39;22m[90m [39m[90mvariance percentage is negative when actual is less[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m3.91s[39m  
+  [33;1m![39;22m[90m [39m[90mvariance percentage is null when no actual yield[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m4.64s[39m  
+  [33;1m![39;22m[90m [39m[90mvariance percentage is null when estimated is zero[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m3.91s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for planting filters by planting[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m4.21s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for campaign filters by campaign[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m4.30s[39m  
+  [33;1m![39;22m[90m [39m[90mscope confirmed filters confirmed estimations[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m… [39m [90m3.95s[39m  
+  [33;1m![39;22m[90m [39m[90mscope draft filters draft estimations[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m4.24s[39m  
+  [33;1m![39;22m[90m [39m[90mis confirmed returns true when status is confirmed[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m3.91s[39m  
+  [33;1m![39;22m[90m [39m[90mis confirmed returns false when status is not confirmed[39m[90m [39m[33m→ Test code or tested code removed error handlers o[39m[90m…[39m [90m3.84s[39m  
+  [33;1m![39;22m[90m [39m[90mhas actual yield returns true when actual total yield exists[39m[90m [39m[33m→ Test code or tested code removed error handl[39m[90m…[39m [90m4.35s[39m  
+  [33;1m![39;22m[90m [39m[90mhas actual yield returns false when actual total yield is null[39m[90m [39m[33m→ Test code or tested code removed error han[39m[90m…[39m [90m3.90s[39m  
+  [33;1m![39;22m[90m [39m[90mget absolute variance returns absolute difference[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m4.12s[39m  
+  [33;1m![39;22m[90m [39m[90mget absolute variance returns absolute difference for negative variance[39m[90m [39m[33m→ Test code or tested code removed[39m[90m… [39m [90m4.04s[39m  
+  [33;1m![39;22m[90m [39m[90mget absolute variance returns null when no actual yield[39m[90m [39m[33m→ Test code or tested code removed error handlers o[39m[90m…[39m [90m3.84s[39m  
+  [33;1m![39;22m[90m [39m[90mget absolute variance returns null when no estimated yield[39m[90m [39m[33m→ Test code or tested code removed error handler[39m[90m…[39m [90m4.02s[39m  
+  [33;1m![39;22m[90m [39m[90mdecimal fields are cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m3.74s[39m  
+  [33;1m![39;22m[90m [39m[90mestimation date is cast to date[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m3.78s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\FertilizationPlanTest[39m
+  [33;1m![39;22m[90m [39m[90mstatus label returns borrador for draft[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m0.40s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus label returns activo for active[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus label returns archivado for archived[39m[90m [39m[33m→ Test code or tested code removed error handlers other than it[39m[90m…[39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus label returns raw value for unknown status[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus color returns zinc for draft[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus color returns green for active[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus color returns amber for archived[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m0.30s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus color returns zinc for unknown status[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mis draft returns true when status is draft[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.29s[39m  
+  [33;1m![39;22m[90m [39m[90mis draft returns false when status is active[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mis draft returns false when status is archived[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mstatuses constant contains all keys[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mstatus colors constant matches statuses keys[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mfertilization plan belongs to viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other than it[39m[90m…[39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mfertilization plan belongs to campaign[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m0.32s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\FertilizationTest[39m
+  [33;1m![39;22m[90m [39m[90mfertilization belongs to activity[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m3.85s[39m  
+  [33;1m![39;22m[90m [39m[90mquantity is cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m            [39m [90m3.87s[39m  
+  [33;1m![39;22m[90m [39m[90marea applied is cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m4.05s[39m  
+  [33;1m![39;22m[90m [39m[90mfertilization can store all fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m3.85s[39m  
+  [33;1m![39;22m[90m [39m[90mfertilization can have nullable fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m3.95s[39m  
+  [33;1m![39;22m[90m [39m[90mnpk uf fields stored with decimal3 precision[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m3.89s[39m  
+  [33;1m![39;22m[90m [39m[90mnpk uf fields are nullable[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m             [39m [90m3.96s[39m  
+  [33;1m![39;22m[90m [39m[90mburial date is cast to carbon date[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m4.18s[39m  
+  [33;1m![39;22m[90m [39m[90morganic pac fields stored correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m5.36s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\GrapeVarietyTest[39m
+  [33;1m![39;22m[90m [39m[90mvariety has many plantings[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m             [39m [90m5.14s[39m  
+  [33;1m![39;22m[90m [39m[90mscopes active and by color filter correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than it[39m[90m…[39m [90m7.39s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\HarvestByproductTest[39m
+  [33;1m![39;22m[90m [39m[90mbyproduct type label returns correct label[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.50s[39m  
+  [33;1m![39;22m[90m [39m[90mbyproduct type label returns label for every type[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m0.42s[39m  
+  [33;1m![39;22m[90m [39m[90mbyproduct type label returns raw value for unknown type[39m[90m [39m[33m→ Test code or tested code removed error handlers o[39m[90m…[39m [90m0.63s[39m  
+  [33;1m![39;22m[90m [39m[90mdestination type label returns correct label[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.64s[39m  
+  [33;1m![39;22m[90m [39m[90mdestination type label returns label for every type[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m0.44s[39m  
+  [33;1m![39;22m[90m [39m[90mdestination type label returns raw value for unknown type[39m[90m [39m[33m→ Test code or tested code removed error handlers[39m[90m…[39m [90m0.44s[39m  
+  [33;1m![39;22m[90m [39m[90mbyproduct types constant contains all expected keys[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mdestination types constant contains all expected keys[39m[90m [39m[33m→ Test code or tested code removed error handlers oth[39m[90m…[39m [90m0.37s[39m  
+  [33;1m![39;22m[90m [39m[90mharvest byproduct belongs to viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.67s[39m  
+  [33;1m![39;22m[90m [39m[90mharvest byproduct belongs to campaign[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m0.44s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\HarvestStockTest[39m
+  [33;1m![39;22m[90m [39m[90mharvest stock belongs to harvest[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m6.77s[39m  
+  [33;1m![39;22m[90m [39m[90mharvest stock belongs to container[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m10.33s[39m  
+  [33;1m![39;22m[90m [39m[90mharvest stock belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m5.91s[39m  
+  [33;1m![39;22m[90m [39m[90mharvest stock belongs to invoice item[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m4.95s[39m  
+  [33;1m![39;22m[90m [39m[90mscope of type filters by movement type[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m4.65s[39m  
+  [33;1m![39;22m[90m [39m[90mscope initial filters initial movements[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m5.73s[39m  
+  [33;1m![39;22m[90m [39m[90mscope sales filters sale movements[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m6.06s[39m  
+  [33;1m![39;22m[90m [39m[90mscope reservations filters reserve movements[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m5.69s[39m  
+  [33;1m![39;22m[90m [39m[90mscope adjustments filters adjustment movements[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m5.35s[39m  
+  [33;1m![39;22m[90m [39m[90mis inbound returns true for initial movement[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m4.69s[39m  
+  [33;1m![39;22m[90m [39m[90mis inbound returns true for positive adjustment[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m4.91s[39m  
+  [33;1m![39;22m[90m [39m[90mis inbound returns false for sale movement[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m4.97s[39m  
+  [33;1m![39;22m[90m [39m[90mis outbound returns true for sale movement[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m4.16s[39m  
+  [33;1m![39;22m[90m [39m[90mis outbound returns true for negative adjustment[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m4.30s[39m  
+  [33;1m![39;22m[90m [39m[90mis state change returns true for reserve movement[39m[90m [39m[33m→ Test code or tested code removed error handlers other t[39m[90m…[39m [90m4.18s[39m  
+  [33;1m![39;22m[90m [39m[90mget movement description returns correct descriptions[39m[90m [39m[33m→ Test code or tested code removed error handlers oth[39m[90m…[39m [90m4.10s[39m  
+  [33;1m![39;22m[90m [39m[90mquantity fields are cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m4.24s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\HarvestTest[39m
+  [33;1m![39;22m[90m [39m[90mharvest start date is cast to date[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m0.40s[39m  
+  [33;1m![39;22m[90m [39m[90mharvest end date nullable[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mtotal weight cast decimal3[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m             [39m [90m0.41s[39m  
+  [33;1m![39;22m[90m [39m[90mbrix degree cast decimal3[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mpotential alcohol cast decimal2[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90msanitary state cast decimal2[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m           [39m [90m0.57s[39m  
+  [33;1m![39;22m[90m [39m[90mdisqualified cast boolean[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m0.40s[39m  
+  [33;1m![39;22m[90m [39m[90mwas edited false when no edited at[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mwas edited true when edited at set[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mis cancelled false for active[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m0.37s[39m  
+  [33;1m![39;22m[90m [39m[90mis cancelled true for cancelled[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m0.50s[39m  
+  [33;1m![39;22m[90m [39m[90mis viticulturist record when activity id set[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.43s[39m  
+  [33;1m![39;22m[90m [39m[90mhas container false when no container[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m0.43s[39m  
+  [33;1m![39;22m[90m [39m[90mscope active filters cancelled[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m         [39m [90m0.44s[39m  
+  [33;1m![39;22m[90m [39m[90mtransport document number stored correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.43s[39m  
+  [33;1m![39;22m[90m [39m[90mdestination rega code stored correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mtrazabilidad fields nullable[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m           [39m [90m0.33s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\InvoiceAuditLogTest[39m
+  [33;1m![39;22m[90m [39m[90minvoice audit log belongs to invoice[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m0.43s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice audit log belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mlog static method creates log with auth user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.37s[39m  
+  [33;1m![39;22m[90m [39m[90mlog static method captures ip address[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m0.41s[39m  
+  [33;1m![39;22m[90m [39m[90mlog static method captures user agent[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m  [39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mchanges field is cast to array[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m         [39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for invoice filters by invoice[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mscope by user filters by user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m0.37s[39m  
+  [33;1m![39;22m[90m [39m[90mscope action filters by action[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m         [39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mlog can have empty changes[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m             [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mlog can have null changes[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m0.32s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\InvoiceGroupTest[39m
+  [33;1m![39;22m[90m [39m[90minvoice group belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m          [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice group has many invoices[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m0.38s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for user filters by user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m         [39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice group can have null description[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its ow[39m[90m…[39m [90m0.30s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice group can have empty description[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its o[39m[90m…[39m [90m0.30s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\InvoiceItemTest[39m
+  [33;1m![39;22m[90m [39m[90minvoice item belongs to invoice[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m4.06s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item belongs to harvest[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m3.98s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item belongs to tax[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m            [39m [90m3.74s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item calculates subtotal automatically[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m…[39m [90m4.04s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item calculates discount amount automatically[39m[90m [39m[33m→ Test code or tested code removed error handlers oth[39m[90m…[39m [90m3.74s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item calculates tax base and tax amount[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m3.68s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item calculates total automatically[39m[90m [39m[33m→ Test code or tested code removed error handlers other than it[39m[90m…[39m [90m3.98s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item calculates all values with discount and tax[39m[90m [39m[33m→ Test code or tested code removed error handlers[39m[90m… [39m [90m3.65s[39m  
+  [33;1m![39;22m[90m [39m[90mhas harvest returns true when has harvest[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m3.93s[39m  
+  [33;1m![39;22m[90m [39m[90mhas harvest returns false when no harvest[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m4.06s[39m  
+  [33;1m![39;22m[90m [39m[90mscope active filters active items[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m3.74s[39m  
+  [33;1m![39;22m[90m [39m[90mscope harvest filters harvest items[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m4.34s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice item rounds decimals correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m4.17s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\InvoiceTest[39m
+  [33;1m![39;22m[90m [39m[90minvoice belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                [39m [90m0.38s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice belongs to client[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m0.38s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice has many items[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                 [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mis paid returns true when payment status is paid[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mis paid returns false when payment status is not paid[39m[90m [39m[33m→ Test code or tested code removed error handlers oth[39m[90m…[39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mis overdue returns true when payment status is overdue[39m[90m [39m[33m→ Test code or tested code removed error handlers ot[39m[90m…[39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mis overdue returns false when paid[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m0.41s[39m  
+  [33;1m![39;22m[90m [39m[90mis overdue returns false when payment status is unpaid[39m[90m [39m[33m→ Test code or tested code removed error handlers ot[39m[90m…[39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90mis draft returns true when status is draft[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mis draft returns false when status is not draft[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for user filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m0.46s[39m  
+  [33;1m![39;22m[90m [39m[90mscope paid filters paid invoices[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m0.41s[39m  
+  [33;1m![39;22m[90m [39m[90mscope unpaid filters unpaid invoices[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m0.51s[39m  
+  [33;1m![39;22m[90m [39m[90mscope overdue filters overdue invoices[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m [39m [90m0.50s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice belongs to client address[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m0.55s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice belongs to invoice group[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m0.37s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice can have null client address[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice can have null invoice group[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice date fields are cast to date[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m   [39m [90m0.38s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice datetime fields are cast to datetime[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.38s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice amount fields are cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m0.36s[39m  
+  [33;1m![39;22m[90m [39m[90minvoice boolean fields are cast to boolean[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.34s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\InvoicingSettingTest[39m
+  [33;1m![39;22m[90m [39m[90minvoicing setting belongs to user[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m      [39m [90m0.39s[39m  
+  [33;1m![39;22m[90m [39m[90mscope for user filters correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m       [39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mgenerate invoice code returns formatted code[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.30s[39m  
+  [33;1m![39;22m[90m [39m[90mgenerate invoice code increments counter[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its o[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mgenerate invoice code replaces year variable[39m[90m [39m[33m→ Test code or tested code removed error handlers other than i[39m[90m…[39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mgenerate invoice code replaces month and day variables[39m[90m [39m[33m→ Test code or tested code removed error handlers ot[39m[90m…[39m [90m0.31s[39m  
+  [33;1m![39;22m[90m [39m[90mgenerate delivery note code returns formatted code[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m0.30s[39m  
+  [33;1m![39;22m[90m [39m[90mincrement invoice counter increments value[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m…[39m [90m0.32s[39m  
+  [33;1m![39;22m[90m [39m[90mincrement delivery note counter increments value[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mreset invoice counter resets to one[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mreset delivery note counter resets to one[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its[39m[90m… [39m [90m0.45s[39m  
+  [33;1m![39;22m[90m [39m[90mcheck year reset resets invoice counter when enabled and year changed[39m[90m [39m[33m→ Test code or tested code removed er[39m[90m…[39m [90m0.39s[39m  
+  [33;1m![39;22m[90m [39m[90mcheck year reset does not reset when disabled[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m… [39m [90m0.35s[39m  
+  [33;1m![39;22m[90m [39m[90mget invoice preview returns formatted preview[39m[90m [39m[33m→ Test code or tested code removed error handlers other than[39m[90m… [39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mget delivery note preview returns formatted preview[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mcreate default for user creates with default values[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m…[39m [90m0.33s[39m  
+  [33;1m![39;22m[90m [39m[90mget or create for user returns existing setting[39m[90m [39m[33m→ Test code or tested code removed error handlers other tha[39m[90m…[39m [90m0.34s[39m  
+  [33;1m![39;22m[90m [39m[90mget or create for user creates new when not exists[39m[90m [39m[33m→ Test code or tested code removed error handlers other[39m[90m… [39m [90m0.38s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\IrrigationTest[39m
+  [33;1m![39;22m[90m [39m[90mirrigation belongs to activity[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m         [39m [90m5.10s[39m  
+  [33;1m![39;22m[90m [39m[90mwater volume is cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m4.58s[39m  
+  [33;1m![39;22m[90m [39m[90msoil moisture fields are cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its o[39m[90m…[39m [90m4.36s[39m  
+  [33;1m![39;22m[90m [39m[90mirrigation can store all fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m        [39m [90m4.11s[39m  
+  [33;1m![39;22m[90m [39m[90mirrigation can have nullable fields[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m    [39m [90m4.01s[39m  
+  [33;1m![39;22m[90m [39m[90mpac fields stored correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m            [39m [90m4.19s[39m  
+  [33;1m![39;22m[90m [39m[90mflow rate cast to decimal[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m              [39m [90m4.08s[39m  
+  [33;1m![39;22m[90m [39m[90mpac fields nullable[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                    [39m [90m4.02s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\Models\MachineryTest[39m
+  [33;1m![39;22m[90m [39m[90mmachinery belongs to viticulturist[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m     [39m [90m4.32s[39m  
+  [33;1m![39;22m[90m [39m[90mscopes filter correctly[39m[90m [39m[33m→ Test code or tested code removed error handlers other than its own[39m[90m                [39m [90m4.14s[39m  
+  [33;1m![39;22m[90m [39m[90mactivities count attribute returns correct value[39m[90m [39m[33m→ Test code or tested code removed error handlers other th[39m[90m…[39m [90m6.88s[39m  
