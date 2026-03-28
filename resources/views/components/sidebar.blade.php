@@ -319,6 +319,26 @@
         </div>
         @endif
 
+        {{-- Winery: toggle Vista Sidebar / Vista Visual --}}
+        @if($user->role === 'winery')
+            @php $isVisual = request()->routeIs('winery.visual'); @endphp
+            <div class="w-8 border-t border-white/10 my-1 flex-shrink-0"></div>
+            <div class="flex w-full px-2 gap-1 mb-0.5 flex-shrink-0">
+                <a href="{{ route('winery.dashboard') }}" wire:navigate
+                   title="Vista Sidebar"
+                   class="{{ !$isVisual ? 'bg-sky-500/20 text-sky-300 ring-1 ring-inset ring-sky-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10' }}
+                          flex-1 h-7 rounded-lg text-[9px] font-bold transition-all leading-none flex items-center justify-center gap-0.5">
+                    <flux:icon icon="bars-3" class="w-3 h-3 shrink-0" />Nav
+                </a>
+                <a href="{{ route('winery.visual') }}" wire:navigate
+                   title="Vista Visual"
+                   class="{{ $isVisual ? 'bg-sky-500/20 text-sky-300 ring-1 ring-inset ring-sky-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10' }}
+                          flex-1 h-7 rounded-lg text-[9px] font-bold transition-all leading-none flex items-center justify-center gap-0.5">
+                    <flux:icon icon="squares-plus" class="w-3 h-3 shrink-0" />Map
+                </a>
+            </div>
+        @endif
+
         {{-- Rail bottom: Config + Soporte (viticulturist) --}}
         @if(!empty($menu['rail_bottom']))
             <div class="w-8 border-t border-white/10 mb-1"></div>

@@ -220,7 +220,8 @@
       "Bash(taskkill /F /IM php.exe)",
       "Bash(./vendor/bin/phpunit tests/Feature/Api/PlotApiTest.php)",
       "Bash(./vendor/bin/phpunit)",
-      "Bash(wmic process:*)"
+      "Bash(wmic process:*)",
+      "Bash(find /c/Users/jorge/Desktop/agro365 -maxdepth 2 -type f \\\\\\(-name package.json -o -name pubspec.yaml -o -name tsconfig.json -o -name *.toml \\\\\\))"
     ]
   }
 }
