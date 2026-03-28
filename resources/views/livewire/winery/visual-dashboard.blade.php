@@ -752,7 +752,7 @@
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
                     <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
                         <p class="text-sm font-bold text-zinc-800">Últimos controles</p>
-                        <a href="{{ roleRoute('fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
+                        <a href="{{ route('winery.fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
                     </div>
                     @if($recentControls->isEmpty())
                     <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">
@@ -811,14 +811,14 @@
                 </span>
                 Recibir uva
             </a>
-            <a href="{{ route('wine-transfers.create') }}" wire:navigate
+            <a href="{{ route('winery.wine-transfers.create') }}" wire:navigate
                class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-800 transition-colors">
                 <span class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                     <flux:icon icon="arrows-right-left" class="size-4 text-blue-600" />
                 </span>
                 Traslado de vino
             </a>
-            <a href="{{ route('wine-losses.create') }}" wire:navigate
+            <a href="{{ route('winery.wine-losses.create') }}" wire:navigate
                class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-orange-50 hover:text-orange-800 transition-colors">
                 <span class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
                     <flux:icon icon="minus-circle" class="size-4 text-orange-500" />
