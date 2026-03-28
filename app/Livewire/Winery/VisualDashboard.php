@@ -162,7 +162,7 @@ class VisualDashboard extends Component
         // ── Dashboard (tab resumen) ─────────────────────────────────────
         $currentYear = (int) date('Y');
 
-        $kgReceived = Harvest::where('user_id', $userId)
+        $kgReceived = Harvest::where('winery_id', $userId)
             ->whereYear('created_at', $currentYear)
             ->sum('total_weight');
 
