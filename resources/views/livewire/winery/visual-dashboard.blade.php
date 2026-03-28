@@ -1,22 +1,26 @@
 {{-- Vista Visual Winery: full-height, elimina padding del layout --}}
-<div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 flex flex-col bg-white" style="height: calc(100vh - 4rem);">
+<div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 flex flex-col bg-white relative" style="height: calc(100vh - 4rem);">
 
     {{-- ══ Top bar: tabs + stats + volver ══ --}}
     <div class="shrink-0 flex items-center gap-4 px-6 py-3 bg-white border-b border-zinc-200 z-20">
 
         {{-- Tabs --}}
         <div class="flex gap-1 bg-zinc-100 rounded-xl p-1 shrink-0">
+            <button wire:click="switchTab('dashboard')"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
+                       {{ $activeTab === 'dashboard' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-500 hover:text-zinc-700' }}">
+                <flux:icon icon="chart-bar" class="size-4" />
+                <span class="hidden sm:inline">Resumen</span>
+            </button>
             <button wire:click="switchTab('plots')"
-                class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
                        {{ $activeTab === 'plots' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-500 hover:text-zinc-700' }}">
                 <flux:icon icon="map" class="size-4" />
                 Parcelas
-                <span class="text-[10px] font-semibold {{ $activeTab === 'plots' ? 'text-zinc-400' : 'text-zinc-400' }}">
-                    {{ count($mapPlots) }}
-                </span>
+                <span class="text-[10px] font-semibold text-zinc-400">{{ count($mapPlots) }}</span>
             </button>
             <button wire:click="switchTab('containers')"
-                class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
                        {{ $activeTab === 'containers' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-500 hover:text-zinc-700' }}">
                 <flux:icon icon="beaker" class="size-4" />
                 Bodega
@@ -200,13 +204,13 @@
 
                 {{-- ── Vendimia ── --}}
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Vendimia</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2 px-1">Vendimia</p>
+                    <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+                       class="flex items-center justify-center gap-2 w-full px-3 py-2.5 mb-2 rounded-xl text-sm font-semibold bg-agro-600 text-white hover:bg-agro-700 transition-colors shadow-sm">
+                        <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
+                        Recibir uva
+                    </a>
                     <div class="space-y-0.5">
-                        <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-pink-50 hover:text-pink-700 transition-colors group">
-                            <flux:icon icon="archive-box-arrow-down" class="size-4 text-zinc-400 group-hover:text-pink-600 shrink-0" />
-                            Nueva recepción de uva
-                        </a>
                         <a href="{{ route('winery.grape-reception.index') }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="clipboard-document-list" class="size-4 text-zinc-400 shrink-0" />
@@ -313,12 +317,13 @@
                  wire:loading.class="opacity-50 pointer-events-none"
                  wire:target="containerSearch, containerTypeFilter">
                 @if($containers->count() > 0)
-                <div class="grid gap-2"
-                     style="grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));">
+                <div class="grid gap-3"
+                     style="grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));">
                     @foreach($containers as $container)
                         @php
                             $pct        = $container->getOccupancyPercentage();
-                            $fillColor  = $pct >= 90 ? '#ef4444' : ($pct >= 75 ? '#f59e0b' : ($pct > 0 ? '#22c55e' : 'transparent'));
+                            $fillColor  = $pct >= 90 ? '#ef4444' : ($pct >= 75 ? '#f59e0b' : ($pct > 0 ? '#4a7c59' : 'transparent'));
+                            $borderColor = $pct >= 90 ? '#ef4444' : ($pct >= 75 ? '#f59e0b' : ($pct > 0 ? '#4a7c59' : '#d4d4d8'));
                             $textColor  = $pct > 55 ? '#ffffff' : '#374151';
                             $isSelected = $selectedContainerId === $container->id;
                         @endphp
@@ -326,37 +331,40 @@
                             wire:click="selectContainer({{ $container->id }})"
                             wire:key="vis-container-{{ $container->id }}"
                             title="{{ $container->name }} — {{ round($pct) }}%"
-                            class="flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all duration-150 cursor-pointer group
+                            class="flex flex-col items-center gap-2 p-2.5 rounded-2xl transition-all duration-150 cursor-pointer group
                                    {{ $isSelected ? 'bg-agro-50 ring-2 ring-agro-400 shadow-md' : 'hover:bg-zinc-50 hover:shadow-sm' }}"
                         >
                             {{-- Depósito visual --}}
-                            <div class="relative rounded-lg overflow-hidden flex-shrink-0 transition-all"
-                                 style="width: 40px; height: 68px; background: #f4f4f5; border: 2px solid {{ $isSelected ? '#4ade80' : '#d4d4d8' }};">
+                            <div class="relative rounded-xl overflow-hidden flex-shrink-0"
+                                 style="width: 52px; height: 88px; background: #f4f4f5; border: 2px solid {{ $isSelected ? '#4ade80' : $borderColor }}; transition: border-color 0.3s;">
+                                {{-- Tapón superior --}}
+                                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-px"
+                                     style="width: 20px; height: 5px; background: {{ $isSelected ? '#4ade80' : $borderColor }}; border-radius: 3px 3px 0 0; transition: background 0.3s;"></div>
                                 {{-- Nivel de llenado --}}
                                 @if($pct > 0)
                                 <div class="absolute bottom-0 left-0 right-0"
-                                     style="height: {{ min($pct, 100) }}%; background-color: {{ $fillColor }}; opacity: 0.8; transition: height 0.7s ease-out;">
+                                     style="height: {{ min($pct, 100) }}%; background-color: {{ $fillColor }}; opacity: 0.75; transition: height 0.8s ease-out;">
                                 </div>
                                 @endif
                                 {{-- Líneas de escala --}}
-                                <div class="absolute inset-0 flex flex-col justify-around pointer-events-none opacity-20">
-                                    <div class="border-b border-zinc-500 mx-1"></div>
-                                    <div class="border-b border-zinc-500 mx-1"></div>
-                                    <div class="border-b border-zinc-500 mx-1"></div>
+                                <div class="absolute inset-x-1.5 inset-y-0 flex flex-col justify-evenly pointer-events-none">
+                                    <div class="border-b border-zinc-400/20"></div>
+                                    <div class="border-b border-zinc-400/20"></div>
+                                    <div class="border-b border-zinc-400/20"></div>
                                 </div>
                                 {{-- Porcentaje --}}
                                 <div class="absolute inset-0 flex items-center justify-center">
-                                    <span class="text-[8px] font-black leading-none select-none"
+                                    <span class="text-[9px] font-black leading-none select-none drop-shadow-sm"
                                           style="color: {{ $textColor }};">{{ round($pct) }}%</span>
                                 </div>
                             </div>
                             {{-- Nombre --}}
-                            <p class="text-[8px] font-semibold text-zinc-700 text-center leading-tight w-full truncate px-0.5">
+                            <p class="text-[9px] font-semibold text-zinc-700 text-center leading-tight w-full truncate">
                                 {{ $container->name }}
                             </p>
-                            @if($container->containerRoom)
-                            <p class="text-[7px] text-zinc-400 text-center w-full truncate">
-                                {{ $container->containerRoom->name }}
+                            @if($container->containerType)
+                            <p class="text-[8px] text-zinc-400 text-center w-full truncate -mt-1">
+                                {{ $container->containerType->name }}
                             </p>
                             @endif
                         </button>
@@ -607,6 +615,236 @@
     </div>
     @endif
 
+    {{-- ══════════════════════════════════════════════════════ --}}
+    {{--                   TAB: DASHBOARD                      --}}
+    {{-- ══════════════════════════════════════════════════════ --}}
+    @if ($activeTab === 'dashboard')
+    <div class="flex-1 overflow-y-auto">
+        <div class="max-w-5xl mx-auto p-6 space-y-6">
+
+            {{-- ── KPI cards ── --}}
+            <div class="grid grid-cols-3 gap-4">
+                {{-- Kg recibidos --}}
+                <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5">
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Uva recibida {{ $dashboardStats['campaign_year'] }}</p>
+                    <p class="text-3xl font-black text-zinc-900 leading-none">
+                        @if($dashboardStats['kg_received'] >= 1000)
+                            {{ number_format($dashboardStats['kg_received'] / 1000, 1) }}<span class="text-lg font-semibold text-zinc-400 ml-1">t</span>
+                        @else
+                            {{ number_format($dashboardStats['kg_received'], 0) }}<span class="text-lg font-semibold text-zinc-400 ml-1">kg</span>
+                        @endif
+                    </p>
+                    <div class="flex items-center gap-1.5 mt-3">
+                        <div class="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
+                            <flux:icon icon="archive-box-arrow-down" class="size-3.5 text-amber-600" />
+                        </div>
+                        <span class="text-xs text-zinc-400">Campaña activa</span>
+                    </div>
+                </div>
+
+                {{-- Vinos en elaboración --}}
+                <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5">
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">En elaboración</p>
+                    <p class="text-3xl font-black text-violet-700 leading-none">
+                        {{ $dashboardStats['wines_in_progress'] }}<span class="text-lg font-semibold text-violet-300 ml-1">vinos</span>
+                    </p>
+                    <div class="flex items-center gap-1.5 mt-3">
+                        <div class="w-6 h-6 bg-violet-100 rounded-lg flex items-center justify-center">
+                            <flux:icon icon="beaker" class="size-3.5 text-violet-600" />
+                        </div>
+                        <span class="text-xs text-zinc-400">
+                            <a href="{{ roleRoute('wines.index') }}" wire:navigate class="hover:text-violet-600 transition-colors">Ver todos los vinos</a>
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Fermentaciones activas --}}
+                <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5">
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Fermentaciones activas</p>
+                    <p class="text-3xl font-black leading-none {{ $dashboardStats['active_fermentations'] > 0 ? 'text-agro-700' : 'text-zinc-300' }}">
+                        {{ $dashboardStats['active_fermentations'] }}<span class="text-lg font-semibold {{ $dashboardStats['active_fermentations'] > 0 ? 'text-agro-400' : 'text-zinc-300' }} ml-1">activas</span>
+                    </p>
+                    <div class="flex items-center gap-1.5 mt-3">
+                        <div class="w-6 h-6 bg-agro-100 rounded-lg flex items-center justify-center">
+                            <flux:icon icon="arrow-trending-up" class="size-3.5 text-agro-600" />
+                        </div>
+                        <span class="text-xs text-zinc-400">Últimos 7 días · brix > 2</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ── Campaign hero card ── --}}
+            <div class="rounded-2xl p-6 text-white overflow-hidden relative"
+                 style="background: linear-gradient(135deg, #2d5a3d 0%, #4a7c59 60%, #6aaa7a 100%);">
+                <div class="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10" style="background: radial-gradient(circle, #fff 0%, transparent 70%); transform: translate(30%, -30%);"></div>
+                <div class="flex items-start justify-between relative z-10">
+                    <div>
+                        <p class="text-white/60 text-xs font-semibold uppercase tracking-widest mb-1">Campaña activa</p>
+                        <p class="text-4xl font-black">{{ $dashboardStats['campaign_year'] }}</p>
+                    </div>
+                    <span class="px-3 py-1 bg-white/15 rounded-full text-xs font-bold border border-white/20">EN CURSO</span>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mt-6 relative z-10">
+                    <div>
+                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">Depósitos</p>
+                        <p class="text-2xl font-black">{{ $dashboardStats['containers_total'] }}</p>
+                        @if($dashboardStats['containers_critical'] > 0)
+                        <p class="text-[10px] text-red-300 font-semibold mt-0.5">{{ $dashboardStats['containers_critical'] }} críticos</p>
+                        @endif
+                    </div>
+                    <div>
+                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">Vinos</p>
+                        <p class="text-2xl font-black">{{ $dashboardStats['wines_in_progress'] }}</p>
+                        <p class="text-[10px] text-white/50 font-semibold mt-0.5">en elaboración</p>
+                    </div>
+                    <div>
+                        <p class="text-white/50 text-[9px] uppercase tracking-widest font-bold mb-1">Ferment.</p>
+                        <p class="text-2xl font-black">{{ $dashboardStats['active_fermentations'] }}</p>
+                        <p class="text-[10px] text-white/50 font-semibold mt-0.5">activas</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ── Dos columnas: depósitos críticos + controles recientes ── --}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                {{-- Depósitos críticos --}}
+                <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                            <p class="text-sm font-bold text-zinc-800">Depósitos críticos</p>
+                            <span class="text-xs text-zinc-400">(≥ 85%)</span>
+                        </div>
+                        <a href="{{ roleRoute('containers.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
+                    </div>
+                    @if($criticalContainers->isEmpty())
+                    <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">
+                        <flux:icon icon="check-circle" class="size-8" />
+                        <p class="text-sm text-zinc-400">Sin depósitos críticos</p>
+                    </div>
+                    @else
+                    <div class="divide-y divide-zinc-50">
+                        @foreach($criticalContainers as $cc)
+                        @php $cpct = $cc->getOccupancyPercentage(); @endphp
+                        <button wire:click="openContainer({{ $cc->id }})"
+                                class="w-full flex items-center gap-3 px-5 py-3 hover:bg-zinc-50 transition-colors text-left group">
+                            {{-- Mini depósito --}}
+                            <div class="relative rounded-md overflow-hidden flex-shrink-0"
+                                 style="width: 18px; height: 30px; background: #f4f4f5; border: 1.5px solid {{ $cpct >= 90 ? '#ef4444' : '#f59e0b' }};">
+                                <div class="absolute bottom-0 left-0 right-0"
+                                     style="height: {{ min($cpct, 100) }}%; background: {{ $cpct >= 90 ? '#ef4444' : '#f59e0b' }}; opacity: 0.7;"></div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-zinc-800 truncate">{{ $cc->name }}</p>
+                                <p class="text-xs text-zinc-400 truncate">{{ $cc->containerType?->name }}</p>
+                            </div>
+                            <span class="text-sm font-black {{ $cpct >= 90 ? 'text-red-600' : 'text-amber-600' }} shrink-0">
+                                {{ round($cpct) }}%
+                            </span>
+                        </button>
+                        @endforeach
+                    </div>
+                    @endif
+                </div>
+
+                {{-- Últimos controles de fermentación --}}
+                <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
+                        <p class="text-sm font-bold text-zinc-800">Últimos controles</p>
+                        <a href="{{ roleRoute('fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
+                    </div>
+                    @if($recentControls->isEmpty())
+                    <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">
+                        <flux:icon icon="beaker" class="size-8" />
+                        <p class="text-sm text-zinc-400">Sin controles registrados</p>
+                    </div>
+                    @else
+                    <div class="divide-y divide-zinc-50">
+                        @foreach($recentControls as $ctrl)
+                        <div class="flex items-center gap-3 px-5 py-3">
+                            <div class="w-7 h-7 rounded-lg bg-agro-50 flex items-center justify-center shrink-0">
+                                <flux:icon icon="beaker" class="size-3.5 text-agro-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-zinc-800 truncate">{{ $ctrl->wine?->name ?? '—' }}</p>
+                                <p class="text-xs text-zinc-400 truncate">{{ $ctrl->container?->name }} · {{ $ctrl->control_date?->format('d/m H:i') }}</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                @if($ctrl->temperature !== null)
+                                <p class="text-xs font-bold text-zinc-700">{{ number_format($ctrl->temperature, 1) }}°</p>
+                                @endif
+                                @if($ctrl->brix_degree !== null)
+                                <p class="text-[10px] {{ (float)$ctrl->brix_degree > 2 ? 'text-agro-600 font-bold' : 'text-zinc-400' }}">
+                                    {{ number_format($ctrl->brix_degree, 1) }}°Bx
+                                </p>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ── FAB acciones rápidas (plots + containers) ── --}}
+    @if ($activeTab !== 'dashboard')
+    <div class="absolute bottom-6 right-6 z-30"
+         x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+        {{-- Menú desplegable --}}
+        <div x-show="open"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+             class="absolute bottom-14 right-0 w-56 bg-white rounded-2xl shadow-xl border border-zinc-100 py-2 origin-bottom-right">
+            <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-800 transition-colors">
+                <span class="w-7 h-7 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                    <flux:icon icon="archive-box-arrow-down" class="size-4 text-amber-600" />
+                </span>
+                Recibir uva
+            </a>
+            <a href="{{ route('wine-transfers.create') }}" wire:navigate
+               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-800 transition-colors">
+                <span class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                    <flux:icon icon="arrows-right-left" class="size-4 text-blue-600" />
+                </span>
+                Traslado de vino
+            </a>
+            <a href="{{ route('wine-losses.create') }}" wire:navigate
+               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-orange-50 hover:text-orange-800 transition-colors">
+                <span class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                    <flux:icon icon="minus-circle" class="size-4 text-orange-500" />
+                </span>
+                Registrar merma
+            </a>
+            <div class="my-1 border-t border-zinc-100"></div>
+            <a href="{{ roleRoute('containers.create') }}" wire:navigate
+               class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors">
+                <span class="w-7 h-7 bg-zinc-100 rounded-lg flex items-center justify-center shrink-0">
+                    <flux:icon icon="beaker" class="size-4 text-zinc-500" />
+                </span>
+                Nuevo contenedor
+            </a>
+        </div>
+        {{-- Botón FAB --}}
+        <button @click="open = !open"
+                class="flex items-center gap-2 pl-3 pr-4 py-3 rounded-2xl shadow-lg transition-all duration-200 font-semibold text-sm text-white
+                       {{ 'bg-agro-600 hover:bg-agro-700 hover:shadow-xl' }}"
+                :class="open ? 'bg-agro-700 shadow-xl' : ''">
+            <flux:icon icon="plus" class="size-5 transition-transform duration-200" x-bind:class="open ? 'rotate-45' : ''" />
+            Registrar
+        </button>
+    </div>
+    @endif
+
 </div>
 
 @script
@@ -633,17 +871,28 @@ Alpine.data('visualPlotsMap', (plots) => ({
         loadLeaflet(() => {
             if (this.map) this.map.remove();
 
-            this.map = L.map('visual-plots-map').setView([40.0, -3.5], 6);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                maxZoom: 18,
+            this.map = L.map('visual-plots-map', { zoomControl: false }).setView([40.0, -3.5], 6);
+
+            // Satellite (Esri World Imagery)
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
+                maxZoom: 19,
+            }).addTo(this.map);
+            // Labels overlay (carreteras, municipios, etc.)
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '',
+                maxZoom: 19,
+                opacity: 0.75,
             }).addTo(this.map);
 
+            // Zoom control bottom-left
+            L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
+
             const makeIcon = (selected) => L.divIcon({
-                html: `<div style="width:${selected ? 18 : 13}px;height:${selected ? 18 : 13}px;background:${selected ? '#2563eb' : '#16a34a'};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:all .2s;"></div>`,
+                html: `<div style="width:${selected ? 20 : 14}px;height:${selected ? 20 : 14}px;background:${selected ? '#f59e0b' : '#4ade80'};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.5);transition:all .2s;"></div>`,
                 className: '',
-                iconSize: selected ? [18, 18] : [13, 13],
-                iconAnchor: selected ? [9, 9] : [6, 6],
+                iconSize: selected ? [20, 20] : [14, 14],
+                iconAnchor: selected ? [10, 10] : [7, 7],
             });
 
             const bounds = [];

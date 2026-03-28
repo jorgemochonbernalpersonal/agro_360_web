@@ -6,7 +6,10 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
 use App\Models\Container;
 use App\Models\ContainerType;
+use App\Models\Harvest;
 use App\Models\Plot;
+use App\Models\Wine;
+use App\Models\WineFermentationControl;
 use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -42,6 +45,13 @@ class VisualDashboard extends Component
     public function selectContainer(int $id): void
     {
         $this->selectedContainerId = ($this->selectedContainerId === $id) ? null : $id;
+    }
+
+    public function openContainer(int $id): void
+    {
+        $this->activeTab           = 'containers';
+        $this->selectedContainerId = $id;
+        $this->savePreference('winery_visual_tab', 'containers');
     }
 
     public function emptyWine(int $containerId): void
@@ -149,13 +159,68 @@ class VisualDashboard extends Component
             'empty'    => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() == 0)->count(),
         ];
 
+        // ── Dashboard (tab resumen) ─────────────────────────────────────
+        $currentYear = (int) date('Y');
+
+        $kgReceived = Harvest::where('user_id', $userId)
+            ->whereYear('created_at', $currentYear)
+            ->sum('total_weight');
+
+        $winesInProgress = Wine::where('user_id', $userId)
+            ->where('status', 'in_progress')
+            ->count();
+
+        $activeFermentations = WineFermentationControl::whereHas(
+                'wine', fn($q) => $q->where('user_id', $userId)
+            )
+            ->where('control_date', '>=', now()->subDays(7))
+            ->where('brix_degree', '>', 2)
+            ->distinct('wine_id')
+            ->count('wine_id');
+
+        $criticalContainerIds = $allContainers
+            ->filter(fn($c) => $c->getOccupancyPercentage() >= 85)
+            ->sortByDesc(fn($c) => $c->getOccupancyPercentage())
+            ->take(8)
+            ->pluck('id');
+
+        $criticalContainers = $criticalContainerIds->isNotEmpty()
+            ? Container::where('user_id', $userId)
+                ->whereIn('id', $criticalContainerIds)
+                ->where('archived', false)
+                ->with(['containerType'])
+                ->get()
+                ->sortByDesc(fn($c) => $c->getOccupancyPercentage())
+                ->values()
+            : collect();
+
+        $recentControls = WineFermentationControl::whereHas(
+                'wine', fn($q) => $q->where('user_id', $userId)
+            )
+            ->with(['wine:id,name', 'container:id,name'])
+            ->orderByDesc('control_date')
+            ->take(8)
+            ->get();
+
+        $dashboardStats = [
+            'kg_received'          => (float) $kgReceived,
+            'wines_in_progress'    => $winesInProgress,
+            'active_fermentations' => $activeFermentations,
+            'campaign_year'        => $currentYear,
+            'containers_total'     => $containerStats['total'],
+            'containers_critical'  => $containerStats['critical'] + $containerStats['full'],
+        ];
+
         return view('livewire.winery.visual-dashboard', [
-            'mapPlots'          => $mapPlots,
-            'selectedPlot'      => $selectedPlot,
-            'containers'        => $containers,
-            'containerTypes'    => $containerTypes,
-            'selectedContainer' => $selectedContainer,
-            'containerStats'    => $containerStats,
+            'mapPlots'            => $mapPlots,
+            'selectedPlot'        => $selectedPlot,
+            'containers'          => $containers,
+            'containerTypes'      => $containerTypes,
+            'selectedContainer'   => $selectedContainer,
+            'containerStats'      => $containerStats,
+            'dashboardStats'      => $dashboardStats,
+            'criticalContainers'  => $criticalContainers,
+            'recentControls'      => $recentControls,
         ])->layout('layouts.app', ['title' => 'Vista Visual — Agro365']);
     }
 }
