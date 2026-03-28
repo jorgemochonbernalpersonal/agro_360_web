@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\LossResource;
+use App\Http\Resources\Api\TransferResource;
 use App\Models\Container;
 use App\Models\Wine;
 use App\Models\WineLoss;
@@ -12,6 +14,50 @@ use Illuminate\Http\Request;
 
 class WineProcessController extends Controller
 {
+    // ─── GET /winery/transfers ────────────────────────────────────────────────
+
+    public function indexTransfers(Request $request): JsonResponse
+    {
+        $user    = $request->user();
+        $perPage = min($request->integer('per_page', 20), 50);
+
+        $transfers = WineTransfer::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
+            ->with(['wine', 'fromContainer', 'toContainer'])
+            ->latest('transfer_date')
+            ->paginate($perPage);
+
+        return response()->json([
+            'data' => TransferResource::collection($transfers),
+            'meta' => [
+                'total'        => $transfers->total(),
+                'current_page' => $transfers->currentPage(),
+                'last_page'    => $transfers->lastPage(),
+            ],
+        ]);
+    }
+
+    // ─── GET /winery/losses ───────────────────────────────────────────────────
+
+    public function indexLosses(Request $request): JsonResponse
+    {
+        $user    = $request->user();
+        $perPage = min($request->integer('per_page', 20), 50);
+
+        $losses = WineLoss::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
+            ->with(['wine', 'container'])
+            ->latest('loss_date')
+            ->paginate($perPage);
+
+        return response()->json([
+            'data' => LossResource::collection($losses),
+            'meta' => [
+                'total'        => $losses->total(),
+                'current_page' => $losses->currentPage(),
+                'last_page'    => $losses->lastPage(),
+            ],
+        ]);
+    }
+
     // ─── POST /winery/transfers ───────────────────────────────────────────────
 
     public function storeTransfer(Request $request): JsonResponse

@@ -19,6 +19,8 @@ class Show extends Component
 
     public Container $container;
 
+    public bool   $fromVisual        = false;
+
     // Ajuste manual de litros
     public bool   $showAdjustModal  = false;
     public string $adjustWineId     = '';
@@ -27,7 +29,8 @@ class Show extends Component
     public function mount(Container $container): void
     {
         abort_if($container->user_id !== Auth::id(), 403);
-        $this->container = $container;
+        $this->container  = $container;
+        $this->fromVisual = request()->query('from') === 'visual';
     }
 
     public function emptyWine(): void

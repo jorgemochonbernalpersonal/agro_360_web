@@ -10,7 +10,7 @@
                     Editar
                 </flux:button>
             @endcan
-            @if(request()->query('from') === 'visual')
+            @if($fromVisual)
                 <flux:button href="{{ route('winery.visual') }}" variant="outline" icon="map">
                     Volver al Mapa
                 </flux:button>

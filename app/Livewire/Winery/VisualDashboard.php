@@ -26,6 +26,7 @@ class VisualDashboard extends Component
     public ?int   $selectedContainerId  = null;
     public string $containerSearch      = '';
     public string $containerTypeFilter  = '';
+    public string $containerSort        = 'name'; // name | pct_desc | pct_asc
 
     public function mount(): void
     {
@@ -240,7 +241,12 @@ class VisualDashboard extends Component
             $containersQuery->where('type_id', $this->containerTypeFilter);
         }
 
-        $containers     = $containersQuery->orderBy('name')->get();
+        $containers = $containersQuery->orderBy('name')->get();
+        if ($this->containerSort === 'pct_desc') {
+            $containers = $containers->sortByDesc(fn($c) => $c->getOccupancyPercentage())->values();
+        } elseif ($this->containerSort === 'pct_asc') {
+            $containers = $containers->sortBy(fn($c) => $c->getOccupancyPercentage())->values();
+        }
         $containerTypes = ContainerType::orderBy('name')->get();
 
         // Detalle del contenedor seleccionado
@@ -258,11 +264,18 @@ class VisualDashboard extends Component
 
         // Stats rápidas de contenedores
         $allContainers  = Container::where('user_id', $userId)->where('archived', false)->get(['id', 'capacity', 'used_capacity', 'wine_volume_liters']);
+        $totalCapacityKg = (float) $allContainers->sum('capacity');
+        $totalUsedKg     = (float) $allContainers->sum('used_capacity');
+        $totalWineLiters = (float) $allContainers->sum('wine_volume_liters');
         $containerStats = [
-            'total'    => $allContainers->count(),
-            'full'     => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 100)->count(),
-            'critical' => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 85 && $c->getOccupancyPercentage() < 100)->count(),
-            'empty'    => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() == 0)->count(),
+            'total'              => $allContainers->count(),
+            'full'               => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 100)->count(),
+            'critical'           => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 85 && $c->getOccupancyPercentage() < 100)->count(),
+            'empty'              => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() == 0)->count(),
+            'total_capacity_kg'  => $totalCapacityKg,
+            'total_used_kg'      => $totalUsedKg,
+            'total_wine_liters'  => $totalWineLiters,
+            'used_pct'           => $totalCapacityKg > 0 ? round($totalUsedKg / $totalCapacityKg * 100) : 0,
         ];
 
         // ── Dashboard (tab resumen) ─────────────────────────────────────

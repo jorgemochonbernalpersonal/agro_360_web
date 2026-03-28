@@ -21,6 +21,7 @@ class Show extends Component
 
     // Tab
     public string $currentTab = 'info';
+    public bool   $fromVisual  = false;
 
     // Entorno de parcela (por campaña activa)
     public ?int $env_id = null;
@@ -40,6 +41,8 @@ class Show extends Component
         if (!Auth::user()->can('view', $plot)) {
             abort(403);
         }
+
+        $this->fromVisual = request()->query('from') === 'visual';
 
         $this->plot = $plot->load([
             'viticulturist',

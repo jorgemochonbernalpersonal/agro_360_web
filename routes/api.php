@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\Winery\FermentationControlController;
 use App\Http\Controllers\Api\Winery\GrapeReceptionController;
 use App\Http\Controllers\Api\Winery\WineController;
 use App\Http\Controllers\Api\Winery\WineProcessController;
+use App\Http\Controllers\Api\Winery\InvoiceController;
+use App\Http\Controllers\Api\Winery\ClientController;
+use App\Http\Controllers\Api\Winery\WineAnalysisController;
 use App\Http\Controllers\Api\Viticulturist\CampaignController;
 use App\Http\Controllers\Api\Viticulturist\DashboardController as ViticulturistDashboard;
 use App\Http\Controllers\Api\Viticulturist\NotebookController;
@@ -63,8 +66,22 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/viticulturists',    [GrapeReceptionController::class, 'viticulturists']);
 
         // Trasvases y mermas
+        Route::get('/transfers',  [WineProcessController::class, 'indexTransfers']);
         Route::post('/transfers', [WineProcessController::class, 'storeTransfer'])->middleware('throttle:60,1');
+        Route::get('/losses',     [WineProcessController::class, 'indexLosses']);
         Route::post('/losses',    [WineProcessController::class, 'storeLoss'])->middleware('throttle:60,1');
+
+        // Facturas
+        Route::get('/invoices',      [InvoiceController::class, 'index']);
+        Route::get('/invoices/{id}', [InvoiceController::class, 'show']);
+
+        // Clientes
+        Route::get('/clients',      [ClientController::class, 'index']);
+        Route::get('/clients/{id}', [ClientController::class, 'show']);
+
+        // Análisis de vino
+        Route::get('/wine-analysis',      [WineAnalysisController::class, 'index']);
+        Route::get('/wine-analysis/{id}', [WineAnalysisController::class, 'show']);
 
         // Parcelas de los viticultores de la bodega
         Route::get('/plots/centroids',       [WineryPlotController::class, 'centroids']);

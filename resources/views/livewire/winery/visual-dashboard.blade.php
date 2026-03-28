@@ -134,8 +134,11 @@
                 <flux:icon icon="x-mark" class="size-3.5" />
                 Limpiar
             </button>
-            <span class="ml-auto text-xs text-zinc-400">
+            <span class="ml-auto text-xs text-zinc-400 whitespace-nowrap">
                 <span x-text="filteredCount"></span> parcelas
+                <template x-if="filteredArea > 0">
+                    <span>· <span x-text="filteredArea"></span> ha</span>
+                </template>
             </span>
         </div>
         @endif
@@ -151,6 +154,24 @@
                      class="w-full h-full">
                     <div id="visual-plots-map" class="w-full h-full"></div>
                 </div>
+                {{-- Toggle capa mapa: fuera de wire:ignore para que Alpine lo controle --}}
+                <button @click="toggleTile()"
+                        title="Cambiar capa del mapa"
+                        class="absolute top-3 right-3 z-[1000] flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg border transition-all
+                               bg-white/90 backdrop-blur-sm border-zinc-200 text-zinc-700 hover:bg-white hover:shadow-xl">
+                    <template x-if="tileMode === 'satellite'">
+                        <span class="flex items-center gap-1.5">
+                            <flux:icon icon="map" class="size-3.5 text-zinc-500" />
+                            Callejero
+                        </span>
+                    </template>
+                    <template x-if="tileMode === 'street'">
+                        <span class="flex items-center gap-1.5">
+                            <flux:icon icon="globe-europe-africa" class="size-3.5 text-agro-500" />
+                            Satélite
+                        </span>
+                    </template>
+                </button>
             @else
                 <div class="flex flex-col items-center justify-center h-full bg-zinc-50 gap-4">
                     <div class="w-16 h-16 bg-zinc-100 rounded-2xl flex items-center justify-center">
@@ -187,86 +208,100 @@
                 </button>
             </div>
 
-            <div class="flex-1 p-4 space-y-5">
+            <div class="flex-1 p-4 space-y-4">
 
-                {{-- KPIs --}}
-                <div class="grid grid-cols-2 gap-2">
-                    @if($selectedPlot->area)
-                    <div class="bg-agro-50 rounded-xl p-3">
-                        <p class="text-[9px] font-semibold text-agro-400 uppercase tracking-widest">Superficie</p>
-                        <p class="text-xl font-black text-agro-700 mt-0.5">
-                            {{ number_format($selectedPlot->area, 2) }}
-                            <span class="text-xs font-normal text-agro-400">ha</span>
-                        </p>
+                {{-- KPIs + viticulturist --}}
+                <div class="space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                        @if($selectedPlot->area)
+                        <div class="bg-agro-50 rounded-xl p-3">
+                            <p class="text-[9px] font-semibold text-agro-400 uppercase tracking-widest">Superficie</p>
+                            <p class="text-xl font-black text-agro-700 mt-0.5">
+                                {{ number_format($selectedPlot->area, 2) }}
+                                <span class="text-xs font-normal text-agro-400">ha</span>
+                            </p>
+                        </div>
+                        @endif
+                        @if($selectedPlot->sigpacCodes->isNotEmpty())
+                        <div class="bg-amber-50 rounded-xl p-3">
+                            <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest">SIGPAC</p>
+                            <p class="text-xl font-black text-amber-700 mt-0.5">
+                                {{ $selectedPlot->sigpacCodes->count() }}
+                                <span class="text-xs font-normal text-amber-400">rec.</span>
+                            </p>
+                        </div>
+                        @endif
                     </div>
-                    @endif
-                    @if($selectedPlot->sigpacCodes->isNotEmpty())
-                    <div class="bg-amber-50 rounded-xl p-3">
-                        <p class="text-[9px] font-semibold text-amber-400 uppercase tracking-widest">SIGPAC</p>
-                        <p class="text-xl font-black text-amber-700 mt-0.5">
-                            {{ $selectedPlot->sigpacCodes->count() }}
-                            <span class="text-xs font-normal text-amber-400">rec.</span>
-                        </p>
-                    </div>
+
+                    {{-- Chip viticulturist: enlaza a su ficha --}}
+                    @if($selectedPlot->viticulturist)
+                    <a href="{{ route('winery.viticulturists.show', $selectedPlot->viticulturist) }}" wire:navigate
+                       class="flex items-center gap-2.5 text-sm text-zinc-600 bg-zinc-50 hover:bg-zinc-100 rounded-xl px-3 py-2.5 transition-colors group">
+                        <div class="w-6 h-6 bg-zinc-200 group-hover:bg-zinc-300 rounded-full flex items-center justify-center shrink-0 transition-colors">
+                            <flux:icon icon="user" class="size-3 text-zinc-500" />
+                        </div>
+                        <span class="truncate flex-1">{{ $selectedPlot->viticulturist->name }}</span>
+                        <flux:icon icon="chevron-right" class="size-3.5 text-zinc-300 group-hover:text-zinc-500 shrink-0 transition-colors" />
+                    </a>
                     @endif
                 </div>
 
-                @if($selectedPlot->viticulturist)
-                <div class="flex items-center gap-2.5 text-sm text-zinc-600 bg-zinc-50 rounded-xl px-3 py-2.5">
-                    <flux:icon icon="user" class="size-4 text-zinc-400 shrink-0" />
-                    <span>{{ $selectedPlot->viticulturist->name }}</span>
+                {{-- ── Registrar actividad (solo productor) ── --}}
+                @if(auth()->user()->isProducer())
+                <div>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Registrar actividad</p>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <a href="{{ route('viticulturist.digital-notebook.treatment.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                           class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 transition-colors text-center">
+                            <flux:icon icon="shield-exclamation" class="size-4" />
+                            <span class="text-[10px] font-semibold leading-tight">Tratamiento</span>
+                        </a>
+                        <a href="{{ route('viticulturist.digital-notebook.irrigation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                           class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors text-center">
+                            <flux:icon icon="beaker" class="size-4" />
+                            <span class="text-[10px] font-semibold leading-tight">Riego</span>
+                        </a>
+                        <a href="{{ route('viticulturist.digital-notebook.cultural.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                           class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-green-50 hover:bg-green-100 text-green-700 transition-colors text-center">
+                            <flux:icon icon="wrench-screwdriver" class="size-4" />
+                            <span class="text-[10px] font-semibold leading-tight">Trab. campo</span>
+                        </a>
+                        <a href="{{ route('viticulturist.digital-notebook.observation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                           class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors text-center">
+                            <flux:icon icon="eye" class="size-4" />
+                            <span class="text-[10px] font-semibold leading-tight">Observación</span>
+                        </a>
+                    </div>
                 </div>
                 @endif
 
-                {{-- ── Parcela ── --}}
+                {{-- ── Esta parcela ── --}}
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Parcela</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Esta parcela</p>
                     <div class="space-y-0.5">
                         <a href="{{ route('winery.plots.show', $selectedPlot) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
                             <flux:icon icon="eye" class="size-4 text-zinc-400 group-hover:text-agro-600 shrink-0" />
-                            Ver parcela completa
+                            Ver ficha completa
                         </a>
                         <a href="{{ route('winery.plots.edit', $selectedPlot) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors group">
                             <flux:icon icon="pencil-square" class="size-4 text-zinc-400 group-hover:text-zinc-600 shrink-0" />
-                            Editar parcela
+                            Editar
                         </a>
-                        <a href="{{ route('plots.plantings.index') }}" wire:navigate
+                        <a href="{{ route('winery.plots.plantings.create', $selectedPlot) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="scissors" class="size-4 text-zinc-400 shrink-0" />
-                            Plantaciones
+                            Nueva plantación
                         </a>
-                        @if($selectedPlot->sigpacCodes->isNotEmpty())
-                        <a href="{{ route('sigpac.codes') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-amber-50 hover:text-amber-700 transition-colors group">
-                            <flux:icon icon="rectangle-group" class="size-4 text-zinc-400 group-hover:text-amber-600 shrink-0" />
-                            Códigos SIGPAC
-                        </a>
-                        @endif
                         @php $hasMap = $selectedPlot->multiplePlotSigpacs->filter(fn($m) => $m->plotGeometry !== null)->isNotEmpty(); @endphp
                         @if($hasMap)
                         <a href="{{ route('map', ['id' => $selectedPlot->id, 'return' => 'plots']) }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
-                            <flux:icon icon="map" class="size-4 text-zinc-400 group-hover:text-agro-600 shrink-0" />
-                            Ver mapa SIGPAC
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-amber-50 hover:text-amber-700 transition-colors group">
+                            <flux:icon icon="map" class="size-4 text-zinc-400 group-hover:text-amber-600 shrink-0" />
+                            Mapa SIGPAC detallado
                         </a>
                         @endif
-                        <a href="{{ route('plots.territory') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="globe-europe-africa" class="size-4 text-zinc-400 shrink-0" />
-                            Gestión Territorial
-                        </a>
-                        <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="globe-alt" class="size-4 text-zinc-400 shrink-0" />
-                            Teledetección
-                        </a>
-                        <a href="{{ route('winery.field-activities.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="pencil-square" class="size-4 text-zinc-400 shrink-0" />
-                            Actividades de Campo
-                        </a>
                     </div>
                 </div>
 
@@ -280,50 +315,39 @@
                         <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
                         Recibir uva
                     </a>
-                    <div class="space-y-0.5">
-                        <a href="{{ route('winery.grape-reception.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="clipboard-document-list" class="size-4 text-zinc-400 shrink-0" />
-                            Ver recepciones
-                        </a>
-                        <a href="{{ route('winery.harvest-quality.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="beaker" class="size-4 text-zinc-400 shrink-0" />
-                            Análisis de calidad
-                        </a>
-                        <a href="{{ route('winery.harvest-forecasts.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="clipboard-document-list" class="size-4 text-zinc-400 shrink-0" />
-                            Previsiones
-                        </a>
-                        <a href="{{ route('winery.vitic-estimates.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="calculator" class="size-4 text-zinc-400 shrink-0" />
-                            Aforos viticultores
-                        </a>
-                        <a href="{{ route('winery.harvest-summary.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="chart-bar" class="size-4 text-zinc-400 shrink-0" />
-                            Cuadro de mando
-                        </a>
-                    </div>
+                    @if($selectedPlot->viticulturist)
+                    <a href="{{ route('winery.grape-reception.index', ['viticulturist_id' => $selectedPlot->viticulturist->id]) }}" wire:navigate
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
+                        <flux:icon icon="clipboard-document-list" class="size-4 text-zinc-400 shrink-0" />
+                        Recepciones de {{ $selectedPlot->viticulturist->name }}
+                    </a>
+                    @else
+                    <a href="{{ route('winery.grape-reception.index') }}" wire:navigate
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
+                        <flux:icon icon="clipboard-document-list" class="size-4 text-zinc-400 shrink-0" />
+                        Ver recepciones
+                    </a>
+                    @endif
                 </div>
 
                 <div class="border-t border-zinc-100"></div>
 
-                {{-- ── Viticultor ── --}}
-                @if($selectedPlot->viticulturist)
+                {{-- ── Explorar ── --}}
                 <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Viticultor</p>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Explorar</p>
                     <div class="space-y-0.5">
-                        <a href="{{ route('winery.viticulturists.index') }}" wire:navigate
+                        <a href="{{ route('winery.field-activities.index') }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="user-group" class="size-4 text-zinc-400 shrink-0" />
-                            Mis Viticultores
+                            <flux:icon icon="pencil-square" class="size-4 text-zinc-400 shrink-0" />
+                            Actividades de campo
+                        </a>
+                        <a href="{{ route('remote-sensing.dashboard') }}" wire:navigate
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
+                            <flux:icon icon="globe-alt" class="size-4 text-zinc-400 shrink-0" />
+                            Teledetección
                         </a>
                     </div>
                 </div>
-                @endif
 
             </div>
         </div>
@@ -367,68 +391,141 @@
                         Limpiar
                     </button>
                 @endif
+                {{-- Ordenación --}}
+                <div class="flex items-center gap-0.5 bg-zinc-100 rounded-lg p-0.5 text-xs shrink-0">
+                    <button wire:click="$set('containerSort', 'name')"
+                            class="px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'name' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
+                        A–Z
+                    </button>
+                    <button wire:click="$set('containerSort', 'pct_desc')"
+                            title="Más llenos primero"
+                            class="px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_desc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
+                        ▼%
+                    </button>
+                    <button wire:click="$set('containerSort', 'pct_asc')"
+                            title="Más vacíos primero"
+                            class="px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_asc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
+                        ▲%
+                    </button>
+                </div>
                 <a href="{{ roleRoute('containers.create') }}" wire:navigate class="ml-auto">
                     <flux:button variant="primary" icon="plus" size="sm">Nuevo contenedor</flux:button>
                 </a>
             </div>
+
+            {{-- Barra de capacidad total bodega --}}
+            @if($containerStats['total'] > 0 && $containerStats['total_capacity_kg'] > 0)
+            <div class="shrink-0 px-6 py-3 border-b border-zinc-100 bg-zinc-50/60">
+                <div class="flex items-center justify-between mb-1.5 text-xs">
+                    <span class="font-semibold text-zinc-600">Capacidad total bodega</span>
+                    <span class="text-zinc-400">
+                        <span class="font-bold text-zinc-700">{{ number_format($containerStats['used_pct']) }}%</span>
+                        uva ·
+                        <span class="font-medium text-amber-600">{{ number_format($containerStats['total_used_kg'], 0) }} kg</span>
+                        uva +
+                        <span class="font-medium text-violet-600">{{ number_format($containerStats['total_wine_liters'], 0) }} L</span>
+                        vino /
+                        <span class="text-zinc-500">{{ number_format($containerStats['total_capacity_kg'], 0) }} kg</span>
+                    </span>
+                </div>
+                <div class="h-2.5 bg-zinc-200 rounded-full overflow-hidden flex">
+                    @php
+                        $uvaBarPct  = min($containerStats['used_pct'], 100);
+                        $wineBarPct = $containerStats['total_capacity_kg'] > 0
+                            ? min(round($containerStats['total_wine_liters'] / $containerStats['total_capacity_kg'] * 100), 100 - $uvaBarPct)
+                            : 0;
+                        $barColor   = $uvaBarPct >= 90 ? 'bg-red-500' : ($uvaBarPct >= 75 ? 'bg-amber-400' : 'bg-agro-500');
+                    @endphp
+                    <div class="{{ $barColor }} h-full transition-all duration-700 rounded-l-full"
+                         style="width: {{ $uvaBarPct }}%"></div>
+                    @if($wineBarPct > 0)
+                    <div class="bg-violet-400 h-full transition-all duration-700"
+                         style="width: {{ $wineBarPct }}%"></div>
+                    @endif
+                </div>
+                <div class="flex items-center gap-3 mt-1.5 text-[10px] text-zinc-400">
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full {{ $barColor }}"></span>Uva</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-400"></span>Vino</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-zinc-200"></span>Libre</span>
+                </div>
+            </div>
+            @endif
 
             {{-- Grid scrollable --}}
             <div class="flex-1 overflow-y-auto p-6"
                  wire:loading.class="opacity-50 pointer-events-none"
                  wire:target="containerSearch, containerTypeFilter">
                 @if($containers->count() > 0)
-                <div class="grid gap-3"
-                     style="grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));">
-                    @foreach($containers as $container)
-                        @php
-                            $pct        = $container->getOccupancyPercentage();
-                            $fillColor  = $pct >= 90 ? '#ef4444' : ($pct >= 75 ? '#f59e0b' : ($pct > 0 ? '#4a7c59' : 'transparent'));
-                            $borderColor = $pct >= 90 ? '#ef4444' : ($pct >= 75 ? '#f59e0b' : ($pct > 0 ? '#4a7c59' : '#d4d4d8'));
-                            $textColor  = $pct > 55 ? '#ffffff' : '#374151';
-                            $isSelected = $selectedContainerId === $container->id;
-                        @endphp
-                        <button
-                            wire:click="selectContainer({{ $container->id }})"
-                            wire:key="vis-container-{{ $container->id }}"
-                            title="{{ $container->name }} — {{ round($pct) }}%"
-                            class="flex flex-col items-center gap-2 p-2.5 rounded-2xl transition-all duration-150 cursor-pointer group
-                                   {{ $isSelected ? 'bg-agro-50 ring-2 ring-agro-400 shadow-md' : 'hover:bg-zinc-50 hover:shadow-sm' }}"
-                        >
-                            {{-- Depósito visual --}}
-                            <div class="relative rounded-xl overflow-hidden flex-shrink-0"
-                                 style="width: 52px; height: 88px; background: #f4f4f5; border: 2px solid {{ $isSelected ? '#4ade80' : $borderColor }}; transition: border-color 0.3s;">
-                                {{-- Tapón superior --}}
-                                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-px"
-                                     style="width: 20px; height: 5px; background: {{ $isSelected ? '#4ade80' : $borderColor }}; border-radius: 3px 3px 0 0; transition: background 0.3s;"></div>
-                                {{-- Nivel de llenado --}}
-                                @if($pct > 0)
-                                <div class="absolute bottom-0 left-0 right-0"
-                                     style="height: {{ min($pct, 100) }}%; background-color: {{ $fillColor }}; opacity: 0.75; transition: height 0.8s ease-out;">
-                                </div>
-                                @endif
-                                {{-- Líneas de escala --}}
-                                <div class="absolute inset-x-1.5 inset-y-0 flex flex-col justify-evenly pointer-events-none">
-                                    <div class="border-b border-zinc-400/20"></div>
-                                    <div class="border-b border-zinc-400/20"></div>
-                                    <div class="border-b border-zinc-400/20"></div>
-                                </div>
-                                {{-- Porcentaje --}}
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <span class="text-[9px] font-black leading-none select-none drop-shadow-sm"
-                                          style="color: {{ $textColor }};">{{ round($pct) }}%</span>
-                                </div>
-                            </div>
-                            {{-- Nombre --}}
-                            <p class="text-[9px] font-semibold text-zinc-700 text-center leading-tight w-full truncate">
-                                {{ $container->name }}
+                @php
+                    $grouped  = $containers->groupBy(fn($c) => $c->containerRoom?->name ?? '');
+                    $hasRooms = $grouped->keys()->filter(fn($k) => $k !== '')->isNotEmpty();
+                    // Ordenar grupos: salas con nombre primero (alfabético), sin sala al final
+                    $sortedGroups = $grouped->sortKeysUsing(fn($a, $b) =>
+                        ($a === '' ? 1 : 0) - ($b === '' ? 1 : 0) ?: strcmp($a, $b)
+                    );
+                @endphp
+                <div class="space-y-5">
+                @foreach($sortedGroups as $roomName => $roomContainers)
+                    @if($hasRooms)
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <flux:icon icon="{{ $roomName ? 'home-modern' : 'square-3-stack-3d' }}" class="size-3.5 {{ $roomName ? 'text-zinc-400' : 'text-zinc-300' }}" />
+                            <p class="text-[10px] font-bold {{ $roomName ? 'text-zinc-500' : 'text-zinc-300' }} uppercase tracking-widest">
+                                {{ $roomName ?: 'Sin sala' }}
                             </p>
-                            @if($container->containerType)
-                            <p class="text-[8px] text-zinc-400 text-center w-full truncate -mt-1">
-                                {{ $container->containerType->name }}
-                            </p>
-                            @endif
-                        </button>
-                    @endforeach
+                            <span class="text-[9px] text-zinc-300 font-medium">{{ $roomContainers->count() }}</span>
+                        </div>
+                    @endif
+                        <div class="grid gap-3"
+                             style="grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));">
+                            @foreach($roomContainers as $container)
+                                @php
+                                    $pct         = $container->getOccupancyPercentage();
+                                    $fillColor   = $pct >= 90 ? '#ef4444' : ($pct >= 75 ? '#f59e0b' : ($pct > 0 ? '#4a7c59' : 'transparent'));
+                                    $borderColor = $pct >= 90 ? '#ef4444' : ($pct >= 75 ? '#f59e0b' : ($pct > 0 ? '#4a7c59' : '#d4d4d8'));
+                                    $textColor   = $pct > 55 ? '#ffffff' : '#374151';
+                                    $isSelected  = $selectedContainerId === $container->id;
+                                @endphp
+                                <button
+                                    wire:click="selectContainer({{ $container->id }})"
+                                    wire:key="vis-container-{{ $container->id }}"
+                                    title="{{ $container->name }} — {{ round($pct) }}%"
+                                    class="flex flex-col items-center gap-2 p-2.5 rounded-2xl transition-all duration-150 cursor-pointer group
+                                           {{ $isSelected ? 'bg-agro-50 ring-2 ring-agro-400 shadow-md' : 'hover:bg-zinc-50 hover:shadow-sm' }}"
+                                >
+                                    <div class="relative rounded-xl overflow-hidden flex-shrink-0"
+                                         style="width: 52px; height: 88px; background: #f4f4f5; border: 2px solid {{ $isSelected ? '#4ade80' : $borderColor }}; transition: border-color 0.3s;">
+                                        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-px"
+                                             style="width: 20px; height: 5px; background: {{ $isSelected ? '#4ade80' : $borderColor }}; border-radius: 3px 3px 0 0; transition: background 0.3s;"></div>
+                                        @if($pct > 0)
+                                        <div class="absolute bottom-0 left-0 right-0"
+                                             style="height: {{ min($pct, 100) }}%; background-color: {{ $fillColor }}; opacity: 0.75; transition: height 0.8s ease-out;"></div>
+                                        @endif
+                                        <div class="absolute inset-x-1.5 inset-y-0 flex flex-col justify-evenly pointer-events-none">
+                                            <div class="border-b border-zinc-400/20"></div>
+                                            <div class="border-b border-zinc-400/20"></div>
+                                            <div class="border-b border-zinc-400/20"></div>
+                                        </div>
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <span class="text-[9px] font-black leading-none select-none drop-shadow-sm"
+                                                  style="color: {{ $textColor }};">{{ round($pct) }}%</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-[9px] font-semibold text-zinc-700 text-center leading-tight w-full truncate">
+                                        {{ $container->name }}
+                                    </p>
+                                    @if($container->containerType)
+                                    <p class="text-[8px] text-zinc-400 text-center w-full truncate -mt-1">
+                                        {{ $container->containerType->name }}
+                                    </p>
+                                    @endif
+                                </button>
+                            @endforeach
+                        </div>
+                    @if($hasRooms)
+                    </div>
+                    @endif
+                @endforeach
                 </div>
                 @else
                 <div class="flex flex-col items-center justify-center h-64 text-zinc-400 gap-3">
@@ -546,112 +643,34 @@
 
                 <div class="border-t border-zinc-100"></div>
 
-                {{-- ── Elaboración ── --}}
+                {{-- ── Elaboración (acciones contextuales) ── --}}
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Elaboración</p>
                     <div class="space-y-0.5">
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
+                        <a href="{{ route('winery.fermentation-controls.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group">
                             <flux:icon icon="beaker" class="size-4 text-zinc-400 group-hover:text-violet-600 shrink-0" />
-                            Controles de fermentación
+                            Nuevo control de fermentación
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
+                        <a href="{{ route('winery.wine-transfers.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group">
                             <flux:icon icon="arrows-right-left" class="size-4 text-zinc-400 group-hover:text-blue-600 shrink-0" />
-                            Traslados de vino
+                            Nuevo traslado de vino
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
+                        <a href="{{ route('winery.wine-analysis.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400 shrink-0" />
-                            Análisis de laboratorio
+                            Nuevo análisis de laboratorio
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
+                        <a href="{{ roleRoute('containers.maintenance.index', $selectedContainer) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="wrench-screwdriver" class="size-4 text-zinc-400 shrink-0" />
-                            Mantenimiento
+                            Mantenimientos
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
+                        <a href="{{ roleRoute('containers.additives.index', $selectedContainer) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="archive-box" class="size-4 text-zinc-400 shrink-0" />
                             Aditivos
-                        </a>
-                    </div>
-                </div>
-
-                <div class="border-t border-zinc-100"></div>
-
-                {{-- ── Bodega (global) ── --}}
-                <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Bodega</p>
-                    <div class="space-y-0.5">
-                        <a href="{{ roleRoute('containers.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="beaker" class="size-4 text-zinc-400 shrink-0" />
-                            Todos los contenedores
-                        </a>
-                        <a href="{{ roleRoute('containers.map') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="map" class="size-4 text-zinc-400 shrink-0" />
-                            Mapa de Bodega
-                        </a>
-                        <a href="{{ roleRoute('container-rooms.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="home-modern" class="size-4 text-zinc-400 shrink-0" />
-                            Salas de Bodega
-                        </a>
-                        <a href="{{ roleRoute('wines.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="arrows-right-left" class="size-4 text-zinc-400 shrink-0" />
-                            Vinos
-                        </a>
-                        <a href="{{ roleRoute('wines.timeline') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="queue-list" class="size-4 text-zinc-400 shrink-0" />
-                            Timeline de Vinos
-                        </a>
-                        <a href="{{ roleRoute('wine-analysis.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400 shrink-0" />
-                            Análisis de Laboratorio
-                        </a>
-                        <a href="{{ roleRoute('cellar-operations.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="calendar-days" class="size-4 text-zinc-400 shrink-0" />
-                            Operaciones de Bodega
-                        </a>
-                        <a href="{{ roleRoute('external-grape.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="archive-box" class="size-4 text-zinc-400 shrink-0" />
-                            Uva / Mosto externo
-                        </a>
-                    </div>
-                </div>
-
-                <div class="border-t border-zinc-100"></div>
-
-                {{-- ── Salida ── --}}
-                <div>
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Salida</p>
-                    <div class="space-y-0.5">
-                        <a href="{{ roleRoute('product-lots.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="archive-box" class="size-4 text-zinc-400 shrink-0" />
-                            Productos
-                        </a>
-                        <a href="{{ roleRoute('bottling.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="archive-box-arrow-down" class="size-4 text-zinc-400 shrink-0" />
-                            Embotellado y Etiquetado
-                        </a>
-                        <a href="{{ roleRoute('traceability.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="magnifying-glass-circle" class="size-4 text-zinc-400 shrink-0" />
-                            Trazabilidad
-                        </a>
-                        <a href="{{ roleRoute('subproducts.index') }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
-                            <flux:icon icon="archive-box-x-mark" class="size-4 text-zinc-400 shrink-0" />
-                            Subproductos
                         </a>
                     </div>
                 </div>
@@ -858,14 +877,15 @@
 <script>
 Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
     map: null,
-    markers: {},
+    markers: {},        // solo parcelas SIN polígono SIGPAC
     polygonLayers: {},
+    tileLayers: {},
+    tileMode: 'satellite',
     search: '',
     communityId: '',
     provinceId: '',
     municipalityId: '',
     filterOptions: filterOptions,
-    ZOOM_THRESHOLD: 14, // por encima de este zoom los marcadores se ocultan
 
     // Paleta de colores distinguibles sobre satélite
     PALETTE: [
@@ -908,6 +928,26 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
         return this.filteredPlots.length;
     },
 
+    get filteredArea() {
+        const sum = this.filteredPlots.reduce((acc, p) => acc + (parseFloat(p.area) || 0), 0);
+        return sum > 0 ? sum.toFixed(2) : 0;
+    },
+
+    toggleTile() {
+        if (!this.map) return;
+        if (this.tileMode === 'satellite') {
+            this.map.removeLayer(this.tileLayers.satellite);
+            this.map.removeLayer(this.tileLayers.labels);
+            this.map.addLayer(this.tileLayers.street);
+            this.tileMode = 'street';
+        } else {
+            this.map.removeLayer(this.tileLayers.street);
+            this.map.addLayer(this.tileLayers.satellite);
+            this.map.addLayer(this.tileLayers.labels);
+            this.tileMode = 'satellite';
+        }
+    },
+
     clearFilters() {
         this.search = '';
         this.communityId = '';
@@ -927,27 +967,28 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
         });
     },
 
-    // Sincroniza visibilidad de marcadores según zoom + filtros (sin mover el mapa)
-    updateZoom() {
-        if (!this.map) return;
-        const showMarkers = this.map.getZoom() < this.ZOOM_THRESHOLD;
-        const filteredIds = new Set(this.filteredPlots.map(p => p.id));
-        Object.entries(this.markers).forEach(([id, { marker }]) => {
-            const visible = filteredIds.has(parseInt(id)) && showMarkers;
-            if (visible && !this.map.hasLayer(marker)) marker.addTo(this.map);
-            else if (!visible && this.map.hasLayer(marker)) this.map.removeLayer(marker);
+    // Devuelve un L.LatLngBounds combinando polígonos visibles + marcadores fallback visibles
+    _visibleBounds(filteredIds) {
+        let bounds = null;
+        const ext = (b) => { bounds = bounds ? bounds.extend(b) : (b instanceof L.LatLngBounds ? b : L.latLngBounds([b])); };
+        Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
+            if (!filteredIds.has(parseInt(plotId))) return;
+            layers.forEach(l => ext(l.getBounds()));
         });
+        Object.entries(this.markers).forEach(([id, { marker }]) => {
+            if (!filteredIds.has(parseInt(id))) return;
+            ext(marker.getLatLng());
+        });
+        return bounds;
     },
 
-    // Aplica filtros: oculta/muestra marcadores + polígonos y hace fitBounds
+    // Aplica filtros: oculta/muestra polígonos + marcadores fallback y hace fitBounds
     updateMapData() {
         if (!this.map) return;
-        const filtered    = this.filteredPlots;
-        const filteredIds = new Set(filtered.map(p => p.id));
-        const showMarkers = this.map.getZoom() < this.ZOOM_THRESHOLD;
+        const filteredIds = new Set(this.filteredPlots.map(p => p.id));
 
         Object.entries(this.markers).forEach(([id, { marker }]) => {
-            const visible = filteredIds.has(parseInt(id)) && showMarkers;
+            const visible = filteredIds.has(parseInt(id));
             if (visible && !this.map.hasLayer(marker)) marker.addTo(this.map);
             else if (!visible && this.map.hasLayer(marker)) this.map.removeLayer(marker);
         });
@@ -960,8 +1001,9 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
             });
         });
 
-        if (filtered.length > 0) {
-            this.map.fitBounds(filtered.map(p => [p.lat, p.lng]), { padding: [50, 50], maxZoom: 13 });
+        const bounds = this._visibleBounds(filteredIds);
+        if (bounds && bounds.isValid()) {
+            this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 17 });
         }
     },
 
@@ -985,29 +1027,30 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
 
             this.map = L.map('visual-plots-map', { zoomControl: false }).setView([40.0, -3.5], 6);
 
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri', maxZoom: 19,
-            }).addTo(this.map);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-                attribution: '', maxZoom: 19, opacity: 0.75,
-            }).addTo(this.map);
+            this.tileLayers.satellite = L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                { attribution: 'Tiles &copy; Esri', maxZoom: 19 }
+            );
+            this.tileLayers.labels = L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+                { attribution: '', maxZoom: 19, opacity: 0.75 }
+            );
+            this.tileLayers.street = L.tileLayer(
+                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                { attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>', maxZoom: 19 }
+            );
+            // Modo inicial: satélite
+            this.tileLayers.satellite.addTo(this.map);
+            this.tileLayers.labels.addTo(this.map);
 
             L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
 
-            const bounds = [];
+            // Índice: qué parcelas tienen polígono SIGPAC
+            const plotsWithPolygons = new Set(allPolygons.map(p => p.plot_id));
 
-            // ── Marcadores (visibles sólo a zoom bajo) ──────────────────────
-            allPlots.forEach(plot => {
-                const color  = this.getPlotColor(plot.id);
-                const marker = L.marker([plot.lat, plot.lng], {
-                    icon: this.makeIcon(false, color),
-                    title: plot.name,
-                }).addTo(this.map);
-                marker.bindTooltip(plot.name, { permanent: false, direction: 'top', offset: [0, -8] });
-                marker.on('click', () => $wire.selectPlot(plot.id));
-                this.markers[plot.id] = { marker, color };
-                bounds.push([plot.lat, plot.lng]);
-            });
+            // Índice: nombre de parcela por id
+            const plotNames = {};
+            allPlots.forEach(p => { plotNames[p.id] = p.name; });
 
             // ── Polígonos SIGPAC (colores por parcela) ──────────────────────
             allPolygons.forEach(poly => {
@@ -1016,41 +1059,68 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
                 const layer = L.polygon(poly.coords, {
                     color,
                     fillColor: color,
-                    fillOpacity: 0.2,
+                    fillOpacity: 0.3,
                     weight: 2,
                     opacity: 0.9,
                 });
                 layer.addTo(this.map);
-                layer.bindTooltip(poly.sigpac_code, { permanent: false, direction: 'center' });
+                layer.bindTooltip(plotNames[poly.plot_id] || poly.sigpac_code, { permanent: false, direction: 'center' });
                 layer.on('click', () => $wire.selectPlot(poly.plot_id));
                 if (!this.polygonLayers[poly.plot_id]) this.polygonLayers[poly.plot_id] = [];
                 this.polygonLayers[poly.plot_id].push(layer);
             });
 
-            if (bounds.length > 0) {
-                this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
+            // ── Marcadores fallback solo para parcelas SIN polígono ─────────
+            allPlots.forEach(plot => {
+                if (plotsWithPolygons.has(plot.id)) return;
+                const color  = this.getPlotColor(plot.id);
+                const marker = L.marker([plot.lat, plot.lng], {
+                    icon: this.makeIcon(false, color),
+                    title: plot.name,
+                }).addTo(this.map);
+                marker.bindTooltip(plot.name, { permanent: false, direction: 'top', offset: [0, -8] });
+                marker.on('click', () => $wire.selectPlot(plot.id));
+                this.markers[plot.id] = { marker, color };
+            });
+
+            // fitBounds desde los propios polígonos (+ marcadores fallback)
+            const allIds = new Set(allPlots.map(p => p.id));
+            const initialBounds = this._visibleBounds(allIds);
+            if (initialBounds && initialBounds.isValid()) {
+                this.map.fitBounds(initialBounds, { padding: [50, 50], maxZoom: 17 });
             }
 
-            // ── Al cambiar zoom: ocultar/mostrar marcadores ─────────────────
-            this.map.on('zoomend', () => this.updateZoom());
-
-            // ── Al seleccionar parcela: resaltar marcador + polígonos ───────
+            // ── Al seleccionar parcela: resaltar + auto-zoom ────────────────
             $wire.$watch('selectedPlotId', (newId) => {
+                // Marcadores fallback
                 Object.entries(this.markers).forEach(([id, { marker, color }]) => {
                     const selected = parseInt(id) === newId;
                     marker.setIcon(this.makeIcon(selected, color));
-                    if (selected) marker.openTooltip();
+                    if (selected) {
+                        marker.openTooltip();
+                        this.map.setView(marker.getLatLng(), 14, { animate: true });
+                    }
                 });
+                // Polígonos + zoom al seleccionado
+                let selBounds = null;
                 Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
                     const selected  = parseInt(plotId) === newId;
                     const baseColor = this.getPlotColor(parseInt(plotId));
-                    layers.forEach(layer => layer.setStyle({
-                        color:       selected ? '#ffffff' : baseColor,
-                        fillColor:   baseColor,
-                        fillOpacity: selected ? 0.35 : 0.2,
-                        weight:      selected ? 3.5 : 2,
-                    }));
+                    layers.forEach(layer => {
+                        layer.setStyle({
+                            color:       selected ? '#ffffff' : baseColor,
+                            fillColor:   baseColor,
+                            fillOpacity: selected ? 0.5 : 0.3,
+                            weight:      selected ? 3.5 : 2,
+                        });
+                        if (selected) {
+                            selBounds = selBounds ? selBounds.extend(layer.getBounds()) : layer.getBounds();
+                        }
+                    });
                 });
+                if (selBounds && selBounds.isValid()) {
+                    this.map.fitBounds(selBounds, { padding: [60, 60], maxZoom: 17, animate: true });
+                }
             });
         });
     },
