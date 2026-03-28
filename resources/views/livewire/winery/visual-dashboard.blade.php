@@ -173,6 +173,7 @@
             <div class="flex-1 overflow-y-auto py-1.5">
                 <template x-for="plot in filteredPlots" :key="plot.id">
                     <button @click="$wire.selectPlot(plot.id)"
+                            :data-plot-id="plot.id"
                             class="w-full text-left flex items-center gap-2 px-3 py-2 transition-colors"
                             :class="$wire.selectedPlotId === plot.id
                                 ? 'bg-agro-50 text-agro-700'
@@ -436,6 +437,13 @@
                 </div>
 
                 <div class="border-t border-zinc-100"></div>
+
+                {{-- ── Cerrar (sticky bottom) ── --}}
+                <button wire:click="$set('selectedPlotId', null)"
+                        class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50 border border-zinc-100 transition-colors">
+                    <flux:icon icon="x-mark" class="size-4 shrink-0" />
+                    Cerrar panel
+                </button>
 
                 {{-- ── Explorar ── --}}
                 <div x-data="{ open: false }">
@@ -792,6 +800,13 @@
                     </div>
                 </div>
 
+                {{-- ── Cerrar (sticky bottom) ── --}}
+                <button wire:click="$set('selectedContainerId', null)"
+                        class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50 border border-zinc-100 transition-colors">
+                    <flux:icon icon="x-mark" class="size-4 shrink-0" />
+                    Cerrar panel
+                </button>
+
             </div>
         </div>
 
@@ -818,6 +833,30 @@
     <div class="flex-1 overflow-y-auto">
         <div class="max-w-5xl mx-auto p-6 space-y-6">
 
+            {{-- ── Acciones rápidas ── --}}
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
+                   class="flex items-center gap-2 px-4 py-2 bg-agro-600 hover:bg-agro-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
+                    <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
+                    Recibir uva
+                </a>
+                <a href="{{ route('winery.fermentation-controls.create') }}" wire:navigate
+                   class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
+                    <flux:icon icon="beaker" class="size-4 shrink-0 text-violet-500" />
+                    Nuevo control
+                </a>
+                <a href="{{ roleRoute('wines.create') }}" wire:navigate
+                   class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
+                    <flux:icon icon="plus" class="size-4 shrink-0 text-agro-500" />
+                    Nuevo vino
+                </a>
+                <a href="{{ roleRoute('containers.create') }}" wire:navigate
+                   class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
+                    <flux:icon icon="plus" class="size-4 shrink-0 text-zinc-400" />
+                    Nuevo contenedor
+                </a>
+            </div>
+
             {{-- ── KPI cards ── --}}
             <div class="grid grid-cols-3 gap-4">
                 {{-- Kg recibidos --}}
@@ -834,7 +873,7 @@
                         <div class="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="archive-box-arrow-down" class="size-3.5 text-amber-600" />
                         </div>
-                        <span class="text-xs text-zinc-400">Campaña activa</span>
+                        <a href="{{ route('winery.grape-reception.index') }}" wire:navigate class="text-xs text-zinc-400 hover:text-amber-600 transition-colors">Ver recepciones</a>
                     </div>
                 </div>
 
@@ -958,12 +997,20 @@
                     @else
                     <div class="divide-y divide-zinc-50">
                         @foreach($recentControls as $ctrl)
+                        @php $hasContainer = (bool) $ctrl->container_id; @endphp
+                        @if($hasContainer)
+                        <button wire:click="openContainer({{ $ctrl->container_id }})"
+                                class="w-full flex items-center gap-3 px-5 py-3 hover:bg-zinc-50 transition-colors text-left group">
+                        @else
                         <div class="flex items-center gap-3 px-5 py-3">
+                        @endif
                             <div class="w-7 h-7 rounded-lg bg-agro-50 flex items-center justify-center shrink-0">
                                 <flux:icon icon="beaker" class="size-3.5 text-agro-600" />
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-semibold text-zinc-800 truncate">{{ $ctrl->wine?->name ?? '—' }}</p>
+                                <p class="text-sm font-semibold text-zinc-800 truncate {{ $hasContainer ? 'group-hover:text-agro-700' : '' }}">
+                                    {{ $ctrl->wine?->name ?? '—' }}
+                                </p>
                                 <p class="text-xs text-zinc-400 truncate">{{ $ctrl->container?->name }} · {{ $ctrl->control_date?->format('d/m H:i') }}</p>
                             </div>
                             <div class="text-right shrink-0">
@@ -975,8 +1022,15 @@
                                     {{ number_format($ctrl->brix_degree, 1) }}°Bx
                                 </p>
                                 @endif
+                                @if($hasContainer)
+                                <flux:icon icon="chevron-right" class="size-3 text-zinc-200 group-hover:text-zinc-400 mt-0.5 ml-auto" />
+                                @endif
                             </div>
+                        @if($hasContainer)
+                        </button>
+                        @else
                         </div>
+                        @endif
                         @endforeach
                     </div>
                     @endif
@@ -1287,6 +1341,13 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
                 });
                 if (selBounds && selBounds.isValid()) {
                     this.map.fitBounds(selBounds, { padding: [60, 60], maxZoom: 17, animate: true });
+                }
+                // Scroll lista lateral hasta la parcela seleccionada
+                if (newId && this.showList) {
+                    this.$nextTick(() => {
+                        const btn = this.$el.querySelector(`[data-plot-id="${newId}"]`);
+                        btn?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                    });
                 }
             });
         });
