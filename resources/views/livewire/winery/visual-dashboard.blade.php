@@ -258,17 +258,6 @@
             </div>
         </div>
 
-        @else
-        {{-- Sin selección --}}
-        <div class="w-72 shrink-0 border-l border-zinc-100 bg-zinc-50/80 flex flex-col items-center justify-center gap-4 text-zinc-400 p-6">
-            <div class="w-14 h-14 bg-zinc-100 rounded-2xl flex items-center justify-center">
-                <flux:icon icon="cursor-arrow-rays" class="size-7 text-zinc-300" />
-            </div>
-            <div class="text-center">
-                <p class="text-sm font-semibold text-zinc-500">Selecciona una parcela</p>
-                <p class="text-xs mt-1 text-center leading-relaxed">Pulsa en un marcador del mapa para ver todas las acciones disponibles</p>
-            </div>
-        </div>
         @endif
 
     </div>
