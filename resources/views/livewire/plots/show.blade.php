@@ -10,9 +10,15 @@
                     Editar
                 </flux:button>
             @endcan
-            <flux:button href="{{ roleRoute('plots.index') }}" variant="outline" icon="arrow-left">
-                Volver
-            </flux:button>
+            @if(request()->query('from') === 'visual')
+                <flux:button href="{{ route('winery.visual') }}" variant="outline" icon="map">
+                    Volver al Mapa
+                </flux:button>
+            @else
+                <flux:button href="{{ roleRoute('plots.index') }}" variant="outline" icon="arrow-left">
+                    Volver
+                </flux:button>
+            @endif
         </x-slot:actions>
     </x-agro.page-header>
 

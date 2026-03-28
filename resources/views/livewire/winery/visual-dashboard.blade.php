@@ -58,12 +58,19 @@
             </div>
         @endif
 
-        {{-- Volver a vista sidebar --}}
-        <a href="{{ route('winery.dashboard') }}" wire:navigate
-           class="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors shrink-0">
-            <flux:icon icon="bars-3" class="size-4" />
-            <span class="hidden sm:inline">Vista Sidebar</span>
-        </a>
+        {{-- Modo actual + volver al sidebar --}}
+        <div class="ml-auto flex items-center gap-2 shrink-0">
+            <span class="hidden sm:flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
+                <flux:icon icon="map" class="size-3.5 text-agro-500" />
+                Vista Mapa
+            </span>
+            <a href="{{ route('winery.dashboard') }}" wire:navigate
+               title="Ir a Vista Sidebar"
+               class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors border border-zinc-200">
+                <flux:icon icon="bars-3" class="size-4 shrink-0" />
+                <span class="hidden sm:inline">Sidebar</span>
+            </a>
+        </div>
     </div>
 
     {{-- ══════════════════════════════════════════════════════ --}}
@@ -215,7 +222,7 @@
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Parcela</p>
                     <div class="space-y-0.5">
-                        <a href="{{ route('winery.plots.show', $selectedPlot) }}" wire:navigate
+                        <a href="{{ route('winery.plots.show', $selectedPlot) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
                             <flux:icon icon="eye" class="size-4 text-zinc-400 group-hover:text-agro-600 shrink-0" />
                             Ver parcela completa
@@ -510,7 +517,7 @@
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Acciones</p>
                     <div class="space-y-0.5">
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}" wire:navigate
+                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
                             <flux:icon icon="eye" class="size-4 text-zinc-400 group-hover:text-agro-600 shrink-0" />
                             Ver detalle completo
@@ -543,27 +550,27 @@
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Elaboración</p>
                     <div class="space-y-0.5">
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}" wire:navigate
+                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group">
                             <flux:icon icon="beaker" class="size-4 text-zinc-400 group-hover:text-violet-600 shrink-0" />
                             Controles de fermentación
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}" wire:navigate
+                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group">
                             <flux:icon icon="arrows-right-left" class="size-4 text-zinc-400 group-hover:text-blue-600 shrink-0" />
                             Traslados de vino
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}" wire:navigate
+                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400 shrink-0" />
                             Análisis de laboratorio
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}" wire:navigate
+                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="wrench-screwdriver" class="size-4 text-zinc-400 shrink-0" />
                             Mantenimiento
                         </a>
-                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}" wire:navigate
+                        <a href="{{ roleRoute('containers.show', $selectedContainer) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="archive-box" class="size-4 text-zinc-400 shrink-0" />
                             Aditivos
