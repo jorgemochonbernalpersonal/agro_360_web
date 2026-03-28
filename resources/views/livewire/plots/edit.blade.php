@@ -295,4 +295,39 @@
         <x-agro.form-actions :cancel-url="roleRoute('plots.index')" submit-label="Actualizar Parcela" />
     </form>
 </x-agro.form-card>
+
+{{-- Modal de confirmación: cambio de municipio con SIGPAC vinculado --}}
+@if($showSigpacWarning)
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                <flux:icon icon="exclamation-triangle" class="w-5 h-5 text-amber-600" />
+            </div>
+            <div class="flex-1">
+                <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                    Cambio de municipio con SIGPAC vinculado
+                </h3>
+                <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    Esta parcela tiene geometrías SIGPAC asociadas al municipio actual.
+                    Al cambiar de municipio, <strong>todos los vínculos SIGPAC se eliminarán</strong>
+                    y deberás asignar nuevos códigos para el nuevo municipio.
+                </p>
+                <p class="mt-2 text-sm font-medium text-amber-700 dark:text-amber-400">
+                    ¿Deseas continuar?
+                </p>
+            </div>
+        </div>
+        <div class="mt-6 flex justify-end gap-3">
+            <flux:button variant="ghost" wire:click="$set('showSigpacWarning', false)">
+                Cancelar
+            </flux:button>
+            <flux:button variant="danger" wire:click="confirmUpdate" wire:loading.attr="disabled">
+                <span wire:loading.remove wire:target="confirmUpdate">Sí, cambiar municipio</span>
+                <span wire:loading wire:target="confirmUpdate">Guardando...</span>
+            </flux:button>
+        </div>
+    </div>
+</div>
+@endif
 </div>

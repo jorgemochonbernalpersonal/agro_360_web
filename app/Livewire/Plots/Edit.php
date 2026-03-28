@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Plots;
 
+use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use App\Models\AutonomousCommunity;
 use App\Models\Orientation;
@@ -63,6 +64,11 @@ class Edit extends Component
     public $pac_eligible_area = '';
     public $non_eligible_area = '';
 
+    // SIGPAC municipality change warning
+    public bool $showSigpacWarning = false;
+    public int $originalMunicipalityId = 0;
+    public bool $hasSigpac = false;
+
     // Note: provinces/municipalities are NOT stored as public properties.
     // They are computed fresh in render() to avoid snapshot/morphdom conflicts.
 
@@ -106,6 +112,9 @@ class Edit extends Component
         $this->number_of_vines = $plot->number_of_vines ?? '';
         $this->pac_eligible_area = $plot->pac_eligible_area ?? '';
         $this->non_eligible_area = $plot->non_eligible_area ?? '';
+
+        $this->originalMunicipalityId = (int) $plot->municipality_id;
+        $this->hasSigpac = MultipartPlotSigpac::where('plot_id', $plot->id)->exists();
 
         // provinces/municipalities are computed in render() — no need to pre-populate here.
     }
@@ -174,6 +183,30 @@ class Edit extends Component
     public function update()
     {
         $this->validate();
+
+        // Si cambia el municipio y hay SIGPAC vinculado → pedir confirmación
+        if ($this->hasSigpac
+            && $this->canSelectLocation()
+            && (int) $this->municipality_id !== $this->originalMunicipalityId
+        ) {
+            $this->showSigpacWarning = true;
+            return;
+        }
+
+        $this->doUpdate();
+    }
+
+    public function confirmUpdate(): void
+    {
+        // El usuario confirmó — borrar vínculos SIGPAC y guardar
+        MultipartPlotSigpac::where('plot_id', $this->plot->id)->delete();
+        $this->hasSigpac = false;
+        $this->showSigpacWarning = false;
+        $this->doUpdate();
+    }
+
+    private function doUpdate()
+    {
 
         // El check de permisos debe estar FUERA del try-catch (igual que validate())
         // para que Livewire intercepte la ValidationException correctamente.
