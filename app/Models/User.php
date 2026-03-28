@@ -42,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'beta_access_granted',
         'compra_uva_externa',
         'organization_id',
+        'preferences',
     ];
 
     /**
@@ -73,6 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'beta_ends_at' => 'datetime',
             'beta_access_granted' => 'boolean',
             'compra_uva_externa' => 'boolean',
+            'preferences' => 'array',
         ];
     }
 
@@ -244,6 +246,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function campaigns()
     {
         return $this->hasMany(Campaign::class, 'viticulturist_id');
+    }
+
+    // ── Preferences ──────────────────────────────────────────────────────────
+
+    public function getPreference(string $key, mixed $default = null): mixed
+    {
+        return data_get($this->preferences ?? [], $key, $default);
+    }
+
+    public function setPreference(string $key, mixed $value): void
+    {
+        $prefs = $this->preferences ?? [];
+        data_set($prefs, $key, $value);
+        $this->update(['preferences' => $prefs]);
     }
 
     /**
