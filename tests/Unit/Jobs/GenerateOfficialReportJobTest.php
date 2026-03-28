@@ -5,7 +5,7 @@ namespace Tests\Unit\Jobs;
 use App\Jobs\GenerateOfficialReportJob;
 use App\Models\OfficialReport;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -19,7 +19,7 @@ use Tests\WithGeographyData;
  */
 class GenerateOfficialReportJobTest extends TestCase
 {
-    use DatabaseTransactions, WithGeographyData;
+    use RefreshDatabase, WithGeographyData;
 
     protected function setUp(): void
     {
