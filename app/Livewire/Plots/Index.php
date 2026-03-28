@@ -3,6 +3,7 @@
 namespace App\Livewire\Plots;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use App\Livewire\Concerns\WithUserPreferences;
 use App\Models\AutonomousCommunity;
 use App\Models\Municipality;
 use App\Models\Plot;
@@ -17,8 +18,9 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithUserPreferences;
 
+    public string $viewMode = 'list';  // 'list', 'map'
     public $currentTab = 'active';  // 'active', 'inactive'
     public $search = '';
     public $filterAutonomousCommunity = '';
@@ -33,6 +35,17 @@ class Index extends Component
         'filterProvince' => ['except' => ''],
         'filterMunicipality' => ['except' => ''],
     ];
+
+    public function mount(): void
+    {
+        $this->viewMode = $this->getPreference('plots_view_mode', 'list');
+    }
+
+    public function toggleViewMode(): void
+    {
+        $this->viewMode = $this->viewMode === 'list' ? 'map' : 'list';
+        $this->savePreference('plots_view_mode', $this->viewMode);
+    }
 
     public function switchTab($tab)
     {
@@ -145,6 +158,45 @@ class Index extends Component
             'with_sigpac' => (clone $baseQuery)->whereHas('sigpacCodes')->count(),
         ];
 
+        // Map data (all matching plots with municipality coordinates, not paginated)
+        $mapData = [];
+        if ($this->viewMode === 'map') {
+            $mapQuery = Plot::forUser(Auth::user())
+                ->with(['municipality:id,name,lat,lng'])
+                ->select(['id', 'name', 'active', 'municipality_id']);
+
+            if ($this->search) {
+                $mapQuery->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->search) . '%']);
+            }
+            if ($this->filterAutonomousCommunity) {
+                $mapQuery->where('autonomous_community_id', $this->filterAutonomousCommunity);
+            }
+            if ($this->filterProvince) {
+                $mapQuery->where('province_id', $this->filterProvince);
+            }
+            if ($this->filterMunicipality) {
+                $mapQuery->where('municipality_id', $this->filterMunicipality);
+            }
+            if ($this->currentTab === 'active') {
+                $mapQuery->where('active', true);
+            } elseif ($this->currentTab === 'inactive') {
+                $mapQuery->where('active', false);
+            }
+
+            $mapData = $mapQuery->get()
+                ->filter(fn($p) => $p->municipality?->lat && $p->municipality?->lng)
+                ->map(fn($p) => [
+                    'id'     => $p->id,
+                    'name'   => $p->name,
+                    'lat'    => (float) $p->municipality->lat,
+                    'lng'    => (float) $p->municipality->lng,
+                    'active' => $p->active,
+                    'url'    => route('plots.show', $p),
+                ])
+                ->values()
+                ->toArray();
+        }
+
         $firstPlotForMap = $this->filterMunicipality
             ? Plot::forUser(Auth::user())
                 ->where('municipality_id', $this->filterMunicipality)
@@ -157,13 +209,14 @@ class Index extends Component
             : null;
 
         return view('livewire.plots.index', [
-            'plots' => $plots,
-            'stats' => $stats,
+            'plots'              => $plots,
+            'stats'              => $stats,
             'autonomousCommunities' => $this->autonomousCommunities,
-            'provinces' => $this->provinces,
-            'municipalities' => $this->municipalities,
-            'firstPlotForMap' => $firstPlotForMap,
-            'auditPlot' => $auditPlot,
+            'provinces'          => $this->provinces,
+            'municipalities'     => $this->municipalities,
+            'firstPlotForMap'    => $firstPlotForMap,
+            'auditPlot'          => $auditPlot,
+            'mapData'            => $mapData,
         ])->layout('layouts.app', [
             'title' => 'Gestión de Parcelas - Agro365',
             'description' => 'Administra y visualiza todas tus parcelas agrícolas. Control total de viñedos con integración SIGPAC.',

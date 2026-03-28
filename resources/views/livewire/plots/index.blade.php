@@ -107,6 +107,24 @@
             @endif
         </button>
 
+        {{-- Toggle vista lista / mapa --}}
+        <div class="flex items-center gap-0.5 bg-zinc-100 rounded-xl p-0.5">
+            <button
+                wire:click="toggleViewMode"
+                title="Vista lista"
+                class="inline-flex items-center justify-center w-9 h-9 rounded-[10px] transition-colors {{ $viewMode === 'list' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}"
+            >
+                <flux:icon icon="squares-2x2" class="size-4" />
+            </button>
+            <button
+                wire:click="toggleViewMode"
+                title="Vista mapa"
+                class="inline-flex items-center justify-center w-9 h-9 rounded-[10px] transition-colors {{ $viewMode === 'map' ? 'bg-white shadow-sm text-agro-700' : 'text-zinc-400 hover:text-zinc-600' }}"
+            >
+                <flux:icon icon="map" class="size-4" />
+            </button>
+        </div>
+
         {{-- Separador --}}
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
@@ -215,9 +233,10 @@
     @endif
 
     {{-- Grid de Parcelas —— skeleton durante carga --}}
+    @if ($viewMode === 'list')
     <div
         wire:loading
-        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage"
+        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage, toggleViewMode"
     >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @for ($i = 0; $i < 8; $i++)
@@ -225,11 +244,49 @@
             @endfor
         </div>
     </div>
+    @endif
+
+    {{-- Mapa de Parcelas --}}
+    @if ($viewMode === 'map')
+        <div
+            wire:loading
+            wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, toggleViewMode"
+            class="flex items-center justify-center h-96 bg-zinc-50 rounded-xl border border-zinc-200"
+        >
+            <div class="flex flex-col items-center gap-3 text-zinc-400">
+                <flux:icon icon="map" class="size-10 animate-pulse" />
+                <span class="text-sm font-medium">Cargando mapa...</span>
+            </div>
+        </div>
+        <div
+            wire:loading.remove
+            wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, toggleViewMode"
+        >
+            @if (count($mapData) > 0)
+                <div
+                    wire:ignore
+                    x-data="plotsMap(@js($mapData))"
+                    x-init="init()"
+                    class="rounded-xl overflow-hidden border border-zinc-200 shadow-sm"
+                    style="height: 520px;"
+                >
+                    <div id="plots-leaflet-map" class="w-full h-full"></div>
+                </div>
+            @else
+                <x-agro.empty-state
+                    message="Sin coordenadas disponibles"
+                    description="Las parcelas no tienen coordenadas de municipio configuradas todavía"
+                    icon="map"
+                />
+            @endif
+        </div>
+    @endif
 
     {{-- Grid de Parcelas —— contenido real --}}
+    @if ($viewMode === 'list')
     <div
         wire:loading.remove
-        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage"
+        wire:target="switchTab, search, filterAutonomousCommunity, filterProvince, filterMunicipality, nextPage, previousPage, gotoPage, toggleViewMode"
     >
         @if ($plots->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -416,6 +473,7 @@
             </x-agro.empty-state>
         @endif
     </div>
+    @endif {{-- end viewMode === 'list' --}}
 
 
     {{-- Modal: Filtros --}}
@@ -508,3 +566,74 @@
     </x-agro.modal>
 
 </div>
+
+@script
+<script>
+Alpine.data('plotsMap', (plots) => ({
+    map: null,
+
+    init() {
+        const loadLeaflet = (callback) => {
+            if (window.L) { callback(); return; }
+            if (!document.getElementById('leaflet-css')) {
+                const link = document.createElement('link');
+                link.id = 'leaflet-css';
+                link.rel = 'stylesheet';
+                link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                document.head.appendChild(link);
+            }
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.onload = callback;
+            document.head.appendChild(script);
+        };
+
+        loadLeaflet(() => {
+            if (this.map) { this.map.remove(); }
+
+            this.map = L.map('plots-leaflet-map').setView([40.0, -3.5], 6);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19,
+            }).addTo(this.map);
+
+            const activeIcon = L.divIcon({
+                html: '<div style="width:12px;height:12px;background:#16a34a;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.4);"></div>',
+                className: '',
+                iconSize: [12, 12],
+                iconAnchor: [6, 6],
+            });
+            const inactiveIcon = L.divIcon({
+                html: '<div style="width:12px;height:12px;background:#94a3b8;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.4);"></div>',
+                className: '',
+                iconSize: [12, 12],
+                iconAnchor: [6, 6],
+            });
+
+            const bounds = [];
+            plots.forEach(plot => {
+                const marker = L.marker([plot.lat, plot.lng], {
+                    icon: plot.active ? activeIcon : inactiveIcon,
+                    title: plot.name,
+                }).addTo(this.map);
+
+                marker.bindPopup(
+                    `<div style="min-width:150px;">
+                        <p style="font-weight:700;margin:0 0 4px;">${plot.name}</p>
+                        <a href="${plot.url}" style="color:#16a34a;font-size:12px;text-decoration:none;">
+                            Ver parcela →
+                        </a>
+                    </div>`
+                );
+                bounds.push([plot.lat, plot.lng]);
+            });
+
+            if (bounds.length > 0) {
+                this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+            }
+        });
+    },
+}));
+</script>
+@endscript

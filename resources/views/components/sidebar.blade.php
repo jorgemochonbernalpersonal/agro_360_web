@@ -177,11 +177,14 @@
     }
 
     // Para producer: detectar en qué tab (vineyard/bodega) está el capítulo activo
-    $activeProducerTab = 'vineyard';
+    $activeProducerTab = null;  // null = no hay detección por ruta, usar localStorage
     if ($user->role === 'producer') {
         $bodegaKeys = array_column($producerWineryChapters, 'key');
+        $vineyardKeys = array_column($producerViticulturistChapters, 'key');
         if ($activeChapterKey && in_array($activeChapterKey, $bodegaKeys)) {
             $activeProducerTab = 'bodega';
+        } elseif ($activeChapterKey && in_array($activeChapterKey, $vineyardKeys)) {
+            $activeProducerTab = 'vineyard';
         }
     }
 
@@ -189,7 +192,22 @@
 @endphp
 
 <div
-    x-data="{ producerTab: '{{ $activeProducerTab }}', mobileOpen: false, mobileChapter: '{{ $activeChapterKey }}' }"
+    x-data="{
+        producerTab: (() => {
+            @if ($activeProducerTab !== null)
+            return '{{ $activeProducerTab }}';
+            @else
+            return localStorage.getItem('producer_sidebar_tab') || 'vineyard';
+            @endif
+        })(),
+        setProducerTab(tab) {
+            this.producerTab = tab;
+            localStorage.setItem('producer_sidebar_tab', tab);
+            $store.nav.close();
+        },
+        mobileOpen: false,
+        mobileChapter: '{{ $activeChapterKey }}'
+    }"
     @keydown.escape.window="$store.nav.close(); mobileOpen = false"
     @mobile-nav-toggle.window="mobileOpen = !mobileOpen"
 >
@@ -244,12 +262,12 @@
         {{-- Producer: tab switcher Viñedo / Bodega --}}
         <div class="flex w-full px-2 gap-1 mb-0.5 flex-shrink-0">
             <button type="button"
-                x-on:click="producerTab = 'vineyard'; $store.nav.close()"
+                x-on:click="setProducerTab('vineyard')"
                 :class="producerTab === 'vineyard' ? 'bg-green-500/20 text-green-400 ring-1 ring-inset ring-green-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10'"
                 class="flex-1 h-7 rounded-lg text-[10px] font-bold transition-all leading-none"
                 title="Viñedo">🌿</button>
             <button type="button"
-                x-on:click="producerTab = 'bodega'; $store.nav.close()"
+                x-on:click="setProducerTab('bodega')"
                 :class="producerTab === 'bodega' ? 'bg-red-500/20 text-red-400 ring-1 ring-inset ring-red-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/10'"
                 class="flex-1 h-7 rounded-lg text-[10px] font-bold transition-all leading-none"
                 title="Bodega">🏛</button>
@@ -502,11 +520,11 @@
             @if($user->role === 'producer')
             <div class="flex px-3 py-2 gap-2 border-b border-white/10 flex-shrink-0">
                 <button type="button"
-                    @click="producerTab = 'vineyard'; mobileChapter = null"
+                    @click="setProducerTab('vineyard'); mobileChapter = null"
                     :class="producerTab === 'vineyard' ? 'bg-green-500/20 text-green-400 ring-1 ring-inset ring-green-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/8'"
                     class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🌿 Viñedo</button>
                 <button type="button"
-                    @click="producerTab = 'bodega'; mobileChapter = null"
+                    @click="setProducerTab('bodega'); mobileChapter = null"
                     :class="producerTab === 'bodega' ? 'bg-red-500/20 text-red-400 ring-1 ring-inset ring-red-500/40' : 'text-white/40 hover:text-white/70 hover:bg-white/8'"
                     class="flex-1 py-1.5 rounded-lg text-xs font-bold transition">🏛 Bodega</button>
             </div>
