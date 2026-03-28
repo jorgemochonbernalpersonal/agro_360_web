@@ -37,7 +37,18 @@
         .highlight { color: #4a7c59; font-weight: 600; }
         .divider { border: none; border-top: 1px solid #f0fdf4; margin: 24px 0; }
         .hint { font-size: 13px; color: #9ca39c; }
+        .btn {
+            display: inline-block; margin-top: 20px;
+            background: #4a7c59; color: #fff;
+            padding: 14px 32px; border-radius: 12px;
+            font-size: 15px; font-weight: 600; text-decoration: none;
+            cursor: pointer; border: none; width: 100%;
+        }
+        .btn:hover { background: #3a6347; }
     </style>
+    <script>
+        setTimeout(function() { window.location = 'agro365://email-verified'; }, 1500);
+    </script>
 </head>
 <body>
     <div class="card">
@@ -55,7 +66,8 @@
 
         <hr class="divider">
 
-        <p class="hint">Vuelve a la aplicación y pulsa <strong>«Ya lo verifiqué»</strong> para continuar.</p>
+        <p class="hint">Abriendo la app automáticamente…</p>
+        <a href="agro365://email-verified" class="btn">Abrir Agro365</a>
     </div>
 </body>
 </html>

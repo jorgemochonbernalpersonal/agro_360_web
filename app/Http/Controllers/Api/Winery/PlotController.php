@@ -1,45 +1,34 @@
 <?php
 
-namespace App\Http\Controllers\Api\Viticulturist;
+namespace App\Http\Controllers\Api\Winery;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\PlotResource;
 use App\Models\Plot;
+use App\Models\WineryViticulturist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PlotController extends Controller
 {
-    // ─── GET /viticulturist/plots ─────────────────────────────────────────────
+    // ─── GET /winery/plots ────────────────────────────────────────────────────
 
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
+        abort_unless($user->hasWineryAccess(), 403);
 
-        $perPage = min((int) $request->query('per_page', 30), 100);
-        $search  = $request->query('search');
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id')
+            ->all();
 
-        $base = Plot::where('viticulturist_id', $user->id)
-            ->where('active', true);
-
-        if ($search) {
-            $base->where('name', 'like', '%' . $search . '%');
-        }
-
-        // Area stats over full filtered set (single aggregation query)
-        $areaStats = (clone $base)
-            ->selectRaw('SUM(area) as total_area, SUM(CASE WHEN is_organic = 1 THEN area ELSE 0 END) as organic_area')
-            ->first();
-
-        // Paginated data
-        $plots = (clone $base)
+        $plots = Plot::whereIn('viticulturist_id', $viticulturistIds)
+            ->where('active', true)
             ->with(['province', 'municipality', 'plantings.grapeVariety'])
             ->orderBy('name')
-            ->paginate($perPage);
+            ->get();
 
-        // Batch-fetch one centroid per plot (single query, no N+1)
         $centroids = $this->batchCentroids($plots->pluck('id')->all());
 
         $plots->each(function ($plot) use ($centroids) {
@@ -50,59 +39,27 @@ class PlotController extends Controller
         return response()->json([
             'data' => PlotResource::collection($plots),
             'meta' => [
-                'total'        => $plots->total(),
-                'per_page'     => $plots->perPage(),
-                'current_page' => $plots->currentPage(),
-                'last_page'    => $plots->lastPage(),
-                'total_area'   => round((float) $areaStats->total_area, 2),
-                'organic_area' => round((float) $areaStats->organic_area, 2),
+                'total'        => $plots->count(),
+                'total_area'   => round($plots->sum(fn ($p) => (float) $p->area), 2),
+                'organic_area' => round($plots->where('is_organic', true)->sum(fn ($p) => (float) $p->area), 2),
             ],
         ]);
     }
 
-    // ─── GET /viticulturist/plots/centroids ──────────────────────────────────
-
-    public function centroids(Request $request): JsonResponse
-    {
-        $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
-        $plots = Plot::where('viticulturist_id', $user->id)
-            ->where('active', true)
-            ->with('municipality:id,lat,lng')
-            ->orderBy('name')
-            ->get(['id', 'name', 'area', 'municipality_id']);
-
-        $centroids = $this->batchCentroids($plots->pluck('id')->all());
-
-        $result = $plots
-            ->filter(fn ($p) =>
-                isset($centroids[$p->id]) ||
-                ($p->municipality?->lat && $p->municipality?->lng)
-            )
-            ->map(fn ($p) => [
-                'plot_id'      => $p->id,
-                'plot_name'    => $p->name,
-                'area'         => (float) $p->area,
-                'has_geometry' => isset($centroids[$p->id]),
-                'centroid'     => $centroids[$p->id] ?? [
-                    'lat' => (float) $p->municipality->lat,
-                    'lng' => (float) $p->municipality->lng,
-                ],
-            ])->values();
-
-        return response()->json(['plots' => $result]);
-    }
-
-    // ─── GET /viticulturist/plots/geometries ─────────────────────────────────
+    // ─── GET /winery/plots/geometries ────────────────────────────────────────
 
     public function allGeometries(Request $request): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
+        abort_unless($user->hasWineryAccess(), 403);
 
-        $plots = Plot::where('viticulturist_id', $user->id)
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id')
+            ->all();
+
+        $plots = Plot::whereIn('viticulturist_id', $viticulturistIds)
             ->where('active', true)
+            ->with('viticulturist:id,name')
             ->orderBy('name')
             ->get(['id', 'name', 'area', 'viticulturist_id']);
 
@@ -146,25 +103,67 @@ class PlotController extends Controller
             ])->values();
 
             return [
-                'plot_id'      => $plot->id,
-                'plot_name'    => $plot->name,
-                'area'         => (float) $plot->area,
-                'has_geometry' => $geometries->isNotEmpty(),
-                'geometries'   => $geometries,
+                'plot_id'            => $plot->id,
+                'plot_name'          => $plot->name,
+                'viticulturist_name' => $plot->viticulturist?->name,
+                'area'               => (float) $plot->area,
+                'has_geometry'       => $geometries->isNotEmpty(),
+                'geometries'         => $geometries,
             ];
         })->filter(fn ($p) => $p['has_geometry'])->values();
 
         return response()->json(['plots' => $result]);
     }
 
-    // ─── GET /viticulturist/plots/{id} ────────────────────────────────────────
+    // ─── GET /winery/plots/centroids ─────────────────────────────────────────
+
+    public function centroids(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id')->all();
+
+        $plots = Plot::whereIn('viticulturist_id', $viticulturistIds)
+            ->where('active', true)
+            ->with(['viticulturist:id,name', 'municipality:id,lat,lng'])
+            ->orderBy('name')
+            ->get(['id', 'name', 'area', 'viticulturist_id', 'municipality_id']);
+
+        $centroids = $this->batchCentroids($plots->pluck('id')->all());
+
+        $result = $plots
+            ->filter(fn ($p) =>
+                isset($centroids[$p->id]) ||
+                ($p->municipality?->lat && $p->municipality?->lng)
+            )
+            ->map(fn ($p) => [
+                'plot_id'            => $p->id,
+                'plot_name'          => $p->name,
+                'viticulturist_name' => $p->viticulturist?->name,
+                'area'               => (float) $p->area,
+                'has_geometry'       => isset($centroids[$p->id]),
+                'centroid'           => $centroids[$p->id] ?? [
+                    'lat' => (float) $p->municipality->lat,
+                    'lng' => (float) $p->municipality->lng,
+                ],
+            ])->values();
+
+        return response()->json(['plots' => $result]);
+    }
+
+    // ─── GET /winery/plots/{id} ───────────────────────────────────────────────
 
     public function show(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
+        abort_unless($user->hasWineryAccess(), 403);
 
-        $plot = Plot::where('viticulturist_id', $user->id)
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id');
+
+        $plot = Plot::whereIn('viticulturist_id', $viticulturistIds)
             ->with(['province', 'municipality', 'plantings.grapeVariety'])
             ->findOrFail($id);
 
@@ -175,14 +174,17 @@ class PlotController extends Controller
         return response()->json(['data' => new PlotResource($plot)]);
     }
 
-    // ─── GET /viticulturist/plots/{id}/geometries ─────────────────────────────
+    // ─── GET /winery/plots/{id}/geometries ────────────────────────────────────
 
     public function geometries(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
+        abort_unless($user->hasWineryAccess(), 403);
 
-        $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($id);
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id');
+
+        Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
 
         $rows = DB::select(
             'SELECT sc.code,
@@ -209,34 +211,8 @@ class PlotController extends Controller
         ]);
     }
 
-    // ─── PUT /viticulturist/plots/{id} ────────────────────────────────────────
-
-    public function update(Request $request, int $id): JsonResponse
-    {
-        $user = $request->user();
-        abort_unless($user->hasViticulturistAccess(), 403);
-
-        $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($id);
-
-        $validated = $request->validate([
-            'name'             => 'sometimes|string|max:255',
-            'notes'            => 'nullable|string|max:2000',
-            'is_organic'       => 'sometimes|boolean',
-            'cultivation_type' => 'sometimes|string|max:100',
-        ]);
-
-        $plot->update($validated);
-        $plot->load(['province', 'municipality', 'plantings.grapeVariety']);
-
-        return response()->json(['data' => new PlotResource($plot)]);
-    }
-
     // ─── Helpers ──────────────────────────────────────────────────────────────
 
-    /**
-     * Fetch one representative centroid per plot in a single query.
-     * Returns [ plot_id => ['lat' => x, 'lng' => y] ]
-     */
     private function batchCentroids(array $plotIds): array
     {
         if (empty($plotIds)) {

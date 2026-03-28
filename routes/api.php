@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RemoteSensingController;
 use App\Http\Controllers\Api\Winery\ContainerController;
+use App\Http\Controllers\Api\Winery\PlotController as WineryPlotController;
 use App\Http\Controllers\Api\Winery\DashboardController as WineryDashboard;
 use App\Http\Controllers\Api\Winery\FermentationControlController;
 use App\Http\Controllers\Api\Winery\GrapeReceptionController;
@@ -64,6 +65,13 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Trasvases y mermas
         Route::post('/transfers', [WineProcessController::class, 'storeTransfer'])->middleware('throttle:60,1');
         Route::post('/losses',    [WineProcessController::class, 'storeLoss'])->middleware('throttle:60,1');
+
+        // Parcelas de los viticultores de la bodega
+        Route::get('/plots/centroids',       [WineryPlotController::class, 'centroids']);
+        Route::get('/plots/geometries',      [WineryPlotController::class, 'allGeometries']);
+        Route::get('/plots',                 [WineryPlotController::class, 'index']);
+        Route::get('/plots/{id}',            [WineryPlotController::class, 'show']);
+        Route::get('/plots/{id}/geometries', [WineryPlotController::class, 'geometries']);
     });
 
     // ── Viticulturist / Producer ───────────────────────────────────────────────
@@ -72,9 +80,12 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/dashboard', ViticulturistDashboard::class);
 
         // Parcelas
-        Route::get('/plots',      [PlotController::class, 'index']);
-        Route::get('/plots/{id}', [PlotController::class, 'show']);
-        Route::put('/plots/{id}', [PlotController::class, 'update'])->middleware('throttle:60,1');
+        Route::get('/plots/centroids',         [PlotController::class, 'centroids']);
+        Route::get('/plots/geometries',        [PlotController::class, 'allGeometries']);
+        Route::get('/plots',                   [PlotController::class, 'index']);
+        Route::get('/plots/{id}',              [PlotController::class, 'show']);
+        Route::get('/plots/{id}/geometries',   [PlotController::class, 'geometries']);
+        Route::put('/plots/{id}',              [PlotController::class, 'update'])->middleware('throttle:60,1');
 
         // Campañas
         Route::get('/campaigns',                 [CampaignController::class, 'index']);

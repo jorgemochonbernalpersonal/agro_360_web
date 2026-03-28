@@ -12,6 +12,8 @@ class Municipality extends Model
         'code',
         'name',
         'province_id',
+        'lat',
+        'lng',
     ];
 
     /**

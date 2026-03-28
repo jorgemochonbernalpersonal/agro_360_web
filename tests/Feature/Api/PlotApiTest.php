@@ -31,9 +31,47 @@ class PlotApiTest extends TestCase
             ->assertStatus(200)
             ->assertJsonStructure([
                 'data',
-                'meta' => ['total', 'total_area', 'organic_area'],
+                'meta' => ['total', 'per_page', 'current_page', 'last_page', 'total_area', 'organic_area'],
             ])
-            ->assertJsonPath('meta.total', 3);
+            ->assertJsonPath('meta.total', 3)
+            ->assertJsonPath('meta.current_page', 1);
+    }
+
+    public function test_index_paginates_results(): void
+    {
+        Plot::factory()->count(5)->forViticulturist($this->user)->create();
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->getJson('/api/v1/viticulturist/plots?per_page=2')
+            ->assertStatus(200);
+
+        $this->assertCount(2, $response->json('data'));
+        $this->assertEquals(5, $response->json('meta.total'));
+        $this->assertEquals(3, $response->json('meta.last_page'));
+    }
+
+    public function test_index_search_filters_by_name(): void
+    {
+        Plot::factory()->forViticulturist($this->user)->create(['name' => 'Finca Norte']);
+        Plot::factory()->forViticulturist($this->user)->create(['name' => 'Finca Sur']);
+        Plot::factory()->forViticulturist($this->user)->create(['name' => 'Parcela Este']);
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->getJson('/api/v1/viticulturist/plots?search=Finca')
+            ->assertStatus(200);
+
+        $this->assertEquals(2, $response->json('meta.total'));
+    }
+
+    public function test_index_per_page_capped_at_100(): void
+    {
+        Plot::factory()->count(3)->forViticulturist($this->user)->create();
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->getJson('/api/v1/viticulturist/plots?per_page=999')
+            ->assertStatus(200);
+
+        $this->assertLessThanOrEqual(100, $response->json('meta.per_page'));
     }
 
     public function test_index_only_returns_own_plots(): void

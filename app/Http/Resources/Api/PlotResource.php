@@ -32,7 +32,9 @@ class PlotResource extends JsonResource
                     'plantation_year' => $p->plantation_year,
                 ])
             ),
-            'updated_at' => $this->updated_at->toIso8601String(),
+            'has_geometry' => (bool) ($this->has_geometry ?? false),
+            'centroid'     => $this->centroid_data ?? null,
+            'updated_at'   => $this->updated_at->toIso8601String(),
         ];
     }
 }

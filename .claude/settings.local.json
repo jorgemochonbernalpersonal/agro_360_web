@@ -215,7 +215,11 @@
       "Bash(mysqldump --version)",
       "Bash(echo \"Migrate EXIT:$?\")",
       "Bash(taskkill:*)",
-      "Bash(php -r \"require_once ''''C:/Users/dispo/Desktop/personal/agro_360_web/vendor/autoload.php''''; echo ''''PHP syntax OK'''';\")"
+      "Bash(php -r \"require_once ''''C:/Users/dispo/Desktop/personal/agro_360_web/vendor/autoload.php''''; echo ''''PHP syntax OK'''';\")",
+      "Bash(xargs grep:*)",
+      "Bash(taskkill /F /IM php.exe)",
+      "Bash(./vendor/bin/phpunit tests/Feature/Api/PlotApiTest.php)",
+      "Bash(./vendor/bin/phpunit)"
     ]
   }
 }

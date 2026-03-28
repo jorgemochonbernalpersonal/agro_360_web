@@ -15,9 +15,11 @@ use App\Models\Plot;
 use App\Models\PlotPlanting;
 use App\Models\User;
 use App\Models\WineLoss;
+use App\Models\MultipartPlotSigpac;
 use App\Models\WineryViticulturist;
 use App\Models\PlotRemoteSensing;
 use App\Observers\AgriculturalActivityObserver;
+use App\Observers\MultipartPlotSigpacObserver;
 use App\Observers\UserObserver;
 use App\Observers\WineryViticulturistObserver;
 use App\Observers\PlotRemoteSensingObserver;
@@ -135,6 +137,7 @@ class AppServiceProvider extends ServiceProvider
         PlotRemoteSensing::observe(PlotRemoteSensingObserver::class);
         User::observe(UserObserver::class);
         WineryViticulturist::observe(WineryViticulturistObserver::class);
+        MultipartPlotSigpac::observe(MultipartPlotSigpacObserver::class);
     }
 
     private function registerEmailRedirect(): void
