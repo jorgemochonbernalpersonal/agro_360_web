@@ -217,7 +217,7 @@ class VisualDashboard extends Component
                     'municipality:id,name',
                     'province:id,name',
                     'viticulturist:id,name',
-                    'sigpacCodes:id,code,plot_id',
+                    'sigpacCodes:id,code',
                     'multiplePlotSigpacs.plotGeometry',
                 ])
                 ->find($this->selectedPlotId)

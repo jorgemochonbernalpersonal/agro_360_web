@@ -858,6 +858,18 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
     provinceId: '',
     municipalityId: '',
     filterOptions: filterOptions,
+    ZOOM_THRESHOLD: 14, // por encima de este zoom los marcadores se ocultan
+
+    // Paleta de colores distinguibles sobre satélite
+    PALETTE: [
+        '#ef4444','#f97316','#eab308','#22c55e',
+        '#06b6d4','#3b82f6','#8b5cf6','#ec4899',
+        '#14b8a6','#f59e0b','#84cc16','#6366f1',
+    ],
+
+    getPlotColor(plotId) {
+        return this.PALETTE[plotId % this.PALETTE.length];
+    },
 
     get availableProvinces() {
         if (!this.communityId) return this.filterOptions.provinces;
@@ -897,31 +909,42 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
         this.updateMapData();
     },
 
-    makeIcon(selected, source) {
-        const isSigpac = source === 'sigpac';
-        const color = selected ? '#f59e0b' : (isSigpac ? '#4ade80' : '#86efac');
-        const size  = selected ? 20 : 14;
+    makeIcon(selected, color) {
+        const size = selected ? 22 : 16;
+        const border = selected ? `3px solid #f59e0b` : `2.5px solid #fff`;
         return L.divIcon({
-            html: `<div style="width:${size}px;height:${size}px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.5);transition:all .2s;${isSigpac && !selected ? 'outline:2px solid rgba(74,222,128,0.4);outline-offset:2px;' : ''}"></div>`,
+            html: `<div style="width:${size}px;height:${size}px;background:${color};border:${border};border-radius:50%;box-shadow:0 2px 12px rgba(0,0,0,.6);transition:all .2s;"></div>`,
             className: '',
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2],
         });
     },
 
+    // Sincroniza visibilidad de marcadores según zoom + filtros (sin mover el mapa)
+    updateZoom() {
+        if (!this.map) return;
+        const showMarkers = this.map.getZoom() < this.ZOOM_THRESHOLD;
+        const filteredIds = new Set(this.filteredPlots.map(p => p.id));
+        Object.entries(this.markers).forEach(([id, { marker }]) => {
+            const visible = filteredIds.has(parseInt(id)) && showMarkers;
+            if (visible && !this.map.hasLayer(marker)) marker.addTo(this.map);
+            else if (!visible && this.map.hasLayer(marker)) this.map.removeLayer(marker);
+        });
+    },
+
+    // Aplica filtros: oculta/muestra marcadores + polígonos y hace fitBounds
     updateMapData() {
         if (!this.map) return;
-        const filtered   = this.filteredPlots;
+        const filtered    = this.filteredPlots;
         const filteredIds = new Set(filtered.map(p => p.id));
+        const showMarkers = this.map.getZoom() < this.ZOOM_THRESHOLD;
 
-        // Show/hide markers
         Object.entries(this.markers).forEach(([id, { marker }]) => {
-            const visible = filteredIds.has(parseInt(id));
+            const visible = filteredIds.has(parseInt(id)) && showMarkers;
             if (visible && !this.map.hasLayer(marker)) marker.addTo(this.map);
             else if (!visible && this.map.hasLayer(marker)) this.map.removeLayer(marker);
         });
 
-        // Show/hide polygon layers
         Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
             const visible = filteredIds.has(parseInt(plotId));
             layers.forEach(layer => {
@@ -930,7 +953,6 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
             });
         });
 
-        // Fit to visible plots
         if (filtered.length > 0) {
             this.map.fitBounds(filtered.map(p => [p.lat, p.lng]), { padding: [50, 50], maxZoom: 13 });
         }
@@ -957,8 +979,7 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
             this.map = L.map('visual-plots-map', { zoomControl: false }).setView([40.0, -3.5], 6);
 
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri',
-                maxZoom: 19,
+                attribution: 'Tiles &copy; Esri', maxZoom: 19,
             }).addTo(this.map);
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
                 attribution: '', maxZoom: 19, opacity: 0.75,
@@ -968,27 +989,29 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
 
             const bounds = [];
 
-            // Añadir marcadores
+            // ── Marcadores (visibles sólo a zoom bajo) ──────────────────────
             allPlots.forEach(plot => {
+                const color  = this.getPlotColor(plot.id);
                 const marker = L.marker([plot.lat, plot.lng], {
-                    icon: this.makeIcon(false, plot.source),
+                    icon: this.makeIcon(false, color),
                     title: plot.name,
                 }).addTo(this.map);
                 marker.bindTooltip(plot.name, { permanent: false, direction: 'top', offset: [0, -8] });
                 marker.on('click', () => $wire.selectPlot(plot.id));
-                this.markers[plot.id] = { marker, source: plot.source };
+                this.markers[plot.id] = { marker, color };
                 bounds.push([plot.lat, plot.lng]);
             });
 
-            // Añadir polígonos SIGPAC
+            // ── Polígonos SIGPAC (colores por parcela) ──────────────────────
             allPolygons.forEach(poly => {
                 if (!poly.coords || poly.coords.length < 3) return;
+                const color = this.getPlotColor(poly.plot_id);
                 const layer = L.polygon(poly.coords, {
-                    color: '#4ade80',
-                    fillColor: '#4ade80',
-                    fillOpacity: 0.15,
+                    color,
+                    fillColor: color,
+                    fillOpacity: 0.2,
                     weight: 2,
-                    opacity: 0.85,
+                    opacity: 0.9,
                 });
                 layer.addTo(this.map);
                 layer.bindTooltip(poly.sigpac_code, { permanent: false, direction: 'center' });
@@ -1001,20 +1024,24 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
                 this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
             }
 
-            // Actualizar estilo al seleccionar parcela
+            // ── Al cambiar zoom: ocultar/mostrar marcadores ─────────────────
+            this.map.on('zoomend', () => this.updateZoom());
+
+            // ── Al seleccionar parcela: resaltar marcador + polígonos ───────
             $wire.$watch('selectedPlotId', (newId) => {
-                Object.entries(this.markers).forEach(([id, { marker, source }]) => {
+                Object.entries(this.markers).forEach(([id, { marker, color }]) => {
                     const selected = parseInt(id) === newId;
-                    marker.setIcon(this.makeIcon(selected, source));
+                    marker.setIcon(this.makeIcon(selected, color));
                     if (selected) marker.openTooltip();
                 });
                 Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
-                    const selected = parseInt(plotId) === newId;
+                    const selected  = parseInt(plotId) === newId;
+                    const baseColor = this.getPlotColor(parseInt(plotId));
                     layers.forEach(layer => layer.setStyle({
-                        color:       selected ? '#f59e0b' : '#4ade80',
-                        fillColor:   selected ? '#f59e0b' : '#4ade80',
-                        fillOpacity: selected ? 0.30 : 0.15,
-                        weight:      selected ? 3 : 2,
+                        color:       selected ? '#ffffff' : baseColor,
+                        fillColor:   baseColor,
+                        fillOpacity: selected ? 0.35 : 0.2,
+                        weight:      selected ? 3.5 : 2,
                     }));
                 });
             });
