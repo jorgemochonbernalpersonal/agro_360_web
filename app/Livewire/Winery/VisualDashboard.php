@@ -76,7 +76,7 @@ class VisualDashboard extends Component
         // ── Parcelas (tab mapa) ─────────────────────────────────────────
         $mapPlots = Plot::forUser($user)
             ->where('active', true)
-            ->with(['municipality:id,name,lat,lng', 'province:id,name', 'viticulturist:id,name', 'sigpacCodes:id,plot_id'])
+            ->with(['municipality:id,name,lat,lng', 'province:id,name', 'viticulturist:id,name', 'sigpacCodes:id'])
             ->select(['id', 'name', 'area', 'active', 'municipality_id', 'province_id', 'viticulturist_id'])
             ->get()
             ->filter(fn($p) => $p->municipality?->lat && $p->municipality?->lng)
