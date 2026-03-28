@@ -1,3 +1,4 @@
+<div>
 <x-agro.page-header
     title="Aditivos — {{ $container->name }}"
     description="Registro de aditivos enológicos aplicados al contenido de este depósito."
@@ -51,3 +52,4 @@
     </x-agro.data-table>
     {{ $additives->links() }}
 </x-agro.card>
+</div>

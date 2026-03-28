@@ -319,7 +319,7 @@ Route::middleware(['role:producer', 'check.beta'])
 
         // ── Normativa bodega ──────────────────────────────────────────────
         Route::get('/silicie', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('silicie.index')
+            ->name('silicie.dashboard')
             ->defaults('module', 'SILICIE')
             ->defaults('icon', 'document-chart-bar');
 

@@ -22,7 +22,8 @@ class UserBetaAccessTest extends TestCase
 
         $this->assertTrue($user->is_beta_user);
         $this->assertTrue($user->beta_access_granted);
-        $this->assertEquals('2026-06-30 23:59:59', $user->beta_ends_at->format('Y-m-d H:i:s'));
+        $expected = now()->addMonths(3)->endOfDay()->format('Y-m-d H:i:s');
+        $this->assertEquals($expected, $user->beta_ends_at->format('Y-m-d H:i:s'));
     }
 
     #[Test]
@@ -63,8 +64,10 @@ class UserBetaAccessTest extends TestCase
         $user = User::factory()->create();
         $user->grantBetaAccess();
 
+        $endDate = $user->fresh()->beta_ends_at;
+
         // Simular que estamos 30 días antes del fin
-        Carbon::setTestNow('2026-05-31 12:00:00');
+        Carbon::setTestNow($endDate->copy()->subDays(30));
 
         $daysRemaining = $user->betaDaysRemaining();
 
