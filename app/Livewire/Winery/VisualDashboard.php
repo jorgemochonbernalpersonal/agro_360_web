@@ -644,6 +644,11 @@ class VisualDashboard extends Component
                 ->find($this->selectedPlotId)
             : null;
 
+        // Si el plot seleccionado no existe (datos obsoletos en el cliente), limpiar selección
+        if ($this->selectedPlotId && !$selectedPlot) {
+            $this->selectedPlotId = null;
+        }
+
         // ── Contenedores (tab bodega) ───────────────────────────────────
         $containersQuery = Container::where('user_id', $userId)
             ->where('archived', false)

@@ -1668,7 +1668,6 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
                 // Click: seleccionar parcela (sin propagar al fondo del mapa)
                 layer.on('click', (e) => {
                     L.DomEvent.stopPropagation(e);
-                    console.log('[VisualMap] click polygon plot_id=', poly.plot_id, 'wire=', typeof $wire);
                     $wire.selectPlot(poly.plot_id);
                 });
                 if (!this.polygonLayers[poly.plot_id]) this.polygonLayers[poly.plot_id] = [];
