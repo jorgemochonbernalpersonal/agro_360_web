@@ -313,6 +313,38 @@ class AuthController extends Controller
         return response()->json(['message' => 'Correo de verificación enviado.']);
     }
 
+    // ─── DELETE /account ─────────────────────────────────────────────────────
+
+    public function deleteAccount(Request $request): JsonResponse
+    {
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        $user = $request->user();
+
+        if (! Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'password' => ['La contraseña no es correcta.'],
+            ]);
+        }
+
+        SecurityLogger::logSecurityEvent('account_deleted', [
+            'user_id' => $user->id,
+            'email'   => $user->email,
+            'role'    => $user->role,
+        ]);
+
+        // Revocar todos los tokens antes de borrar (evita race conditions)
+        $user->tokens()->delete();
+
+        // Borrado en cascada: todas las tablas con FK user_id/winery_id/viticulturist_id
+        // tienen ON DELETE CASCADE en las migraciones.
+        $user->delete();
+
+        return response()->json(['message' => 'Cuenta eliminada correctamente.'], 200);
+    }
+
     // ─── POST /forgot-password ────────────────────────────────────────────────
 
     public function forgotPassword(Request $request): JsonResponse

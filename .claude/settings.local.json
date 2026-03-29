@@ -222,7 +222,10 @@
       "Bash(./vendor/bin/phpunit)",
       "Bash(wmic process:*)",
       "Bash(find /c/Users/jorge/Desktop/agro365 -maxdepth 2 -type f \\\\\\(-name package.json -o -name pubspec.yaml -o -name tsconfig.json -o -name *.toml \\\\\\))",
-      "Bash(npm audit:*)"
+      "Bash(npm audit:*)",
+      "Bash(grep -l \"->on.*users.*cascade\" /c/Users/jorge/Desktop/agro365/database/migrations/*.php)",
+      "Bash(while read:*)",
+      "Bash(do basename:*)"
     ]
   }
 }

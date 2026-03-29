@@ -24,7 +24,7 @@
             <span x-show="tab === 'dashboard'" class="absolute bottom-0 inset-x-0 h-0.5 bg-agro-500 rounded-t"></span>
             <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                  :class="tab === 'dashboard' ? 'bg-agro-100' : 'bg-zinc-100 group-hover:bg-zinc-200'">
-                <flux:icon icon="chart-bar" class="size-4" :class="tab === 'dashboard' ? 'text-agro-600' : 'text-zinc-400'" />
+                <span :class="tab === 'dashboard' ? 'text-agro-600' : 'text-zinc-400'"><flux:icon icon="chart-bar" class="size-4" /></span>
             </div>
             <div class="text-left hidden md:block">
                 <p class="text-sm font-semibold leading-tight" :class="tab === 'dashboard' ? 'text-agro-700' : 'text-zinc-600'">Resumen</p>
@@ -39,7 +39,7 @@
             <span x-show="tab === 'plots'" class="absolute bottom-0 inset-x-0 h-0.5 bg-blue-500 rounded-t"></span>
             <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                  :class="tab === 'plots' ? 'bg-blue-100' : 'bg-zinc-100 group-hover:bg-zinc-200'">
-                <flux:icon icon="map-pin" class="size-4" :class="tab === 'plots' ? 'text-blue-600' : 'text-zinc-400'" />
+                <span :class="tab === 'plots' ? 'text-blue-600' : 'text-zinc-400'"><flux:icon icon="map-pin" class="size-4" /></span>
             </div>
             <div class="text-left hidden md:block">
                 <p class="text-sm font-semibold leading-tight" :class="tab === 'plots' ? 'text-blue-700' : 'text-zinc-600'">Mapa de parcelas</p>
@@ -54,7 +54,7 @@
             <span x-show="tab === 'containers'" class="absolute bottom-0 inset-x-0 h-0.5 bg-violet-500 rounded-t"></span>
             <div class="relative w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                  :class="tab === 'containers' ? 'bg-violet-100' : 'bg-zinc-100 group-hover:bg-zinc-200'">
-                <flux:icon icon="beaker" class="size-4" :class="tab === 'containers' ? 'text-violet-600' : 'text-zinc-400'" />
+                <span :class="tab === 'containers' ? 'text-violet-600' : 'text-zinc-400'"><flux:icon icon="beaker" class="size-4" /></span>
                 @if($wineryAlert > 0)
                 <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{{ $wineryAlert }}</span>
                 @endif

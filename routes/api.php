@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('throttle:10,1');
     Route::post('/logout',          [AuthController::class, 'logout'])->middleware('throttle:10,1');
     Route::post('/logout-all',      [AuthController::class, 'logoutAll'])->middleware('throttle:10,1');
+    Route::delete('/account',       [AuthController::class, 'deleteAccount'])->middleware('throttle:5,1');
     Route::post('/refresh',         [AuthController::class, 'refresh'])->middleware('throttle:30,1');
     Route::post('/email/resend',    [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
 
