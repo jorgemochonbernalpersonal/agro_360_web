@@ -410,11 +410,11 @@
                 {{-- ── Vendimia ── --}}
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2 px-1">Vendimia</p>
-                    <a href="{{ route('winery.grape-reception.create') . ($selectedPlot->viticulturist ? '?viticulturist_id=' . $selectedPlot->viticulturist->id : '') }}" wire:navigate
-                       class="flex items-center justify-center gap-2 w-full px-3 py-2.5 mb-2 rounded-xl text-sm font-semibold bg-agro-600 text-white hover:bg-agro-700 transition-colors shadow-sm">
+                    <button wire:click="openModalGrapeReception({{ $selectedPlot->viticulturist?->id ?? 'null' }})"
+                            class="flex items-center justify-center gap-2 w-full px-3 py-2.5 mb-2 rounded-xl text-sm font-semibold bg-agro-600 text-white hover:bg-agro-700 transition-colors shadow-sm">
                         <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
                         Recibir uva
-                    </a>
+                    </button>
                     @if($selectedPlot->viticulturist)
                     <a href="{{ route('winery.grape-reception.index', ['viticulturist_id' => $selectedPlot->viticulturist->id]) }}" wire:navigate
                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
@@ -776,16 +776,16 @@
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Elaboración</p>
                     <div class="space-y-0.5">
-                        <a href="{{ route('winery.fermentation-controls.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group">
+                        <button wire:click="openModalFermentation({{ $selectedContainer->id }})"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group">
                             <flux:icon icon="beaker" class="size-4 text-zinc-400 group-hover:text-violet-600 shrink-0" />
                             Nuevo control de fermentación
-                        </a>
-                        <a href="{{ route('winery.wine-transfers.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group">
+                        </button>
+                        <button wire:click="openModalTransfer({{ $selectedContainer->id }})"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group">
                             <flux:icon icon="arrows-right-left" class="size-4 text-zinc-400 group-hover:text-blue-600 shrink-0" />
-                            Nuevo traslado de vino
-                        </a>
+                            Nuevo trasvase de vino
+                        </button>
                         <a href="{{ route('winery.wine-analysis.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400 shrink-0" />
@@ -838,26 +838,26 @@
 
             {{-- ── Acciones rápidas ── --}}
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('winery.grape-reception.create') }}" wire:navigate
-                   class="flex items-center gap-2 px-4 py-2 bg-agro-600 hover:bg-agro-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
+                <button wire:click="openModalGrapeReception()"
+                        class="flex items-center gap-2 px-4 py-2 bg-agro-600 hover:bg-agro-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
                     <flux:icon icon="archive-box-arrow-down" class="size-4 shrink-0" />
                     Recibir uva
-                </a>
-                <a href="{{ route('winery.fermentation-controls.create') }}" wire:navigate
-                   class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
+                </button>
+                <button wire:click="openModalFermentation()"
+                        class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
                     <flux:icon icon="beaker" class="size-4 shrink-0 text-violet-500" />
                     Nuevo control
-                </a>
-                <a href="{{ roleRoute('wines.create') }}" wire:navigate
-                   class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
+                </button>
+                <button wire:click="openModalWine()"
+                        class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
                     <flux:icon icon="plus" class="size-4 shrink-0 text-agro-500" />
                     Nuevo vino
-                </a>
-                <a href="{{ roleRoute('containers.create') }}" wire:navigate
-                   class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
+                </button>
+                <button wire:click="openModalContainer()"
+                        class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-zinc-50 text-zinc-700 text-sm font-medium rounded-xl border border-zinc-200 shadow-sm transition-colors">
                     <flux:icon icon="plus" class="size-4 shrink-0 text-zinc-400" />
                     Nuevo contenedor
-                </a>
+                </button>
             </div>
 
             {{-- ── KPI cards ── --}}
@@ -1043,6 +1043,376 @@
         </div>
     </div>
     </div>{{-- /x-show dashboard --}}
+
+    {{-- ══════════════════════════════════════════════════════ --}}
+    {{--          MODALES DE ACCIÓN RÁPIDA                     --}}
+    {{-- ══════════════════════════════════════════════════════ --}}
+
+    {{-- ── Modal: Recibir uva ─────────────────────────────── --}}
+    <flux:modal wire:model="modalGrapeReception" name="modal-grape-reception" class="w-full max-w-lg">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-agro-100 rounded-xl flex items-center justify-center shrink-0">
+                    <flux:icon icon="archive-box-arrow-down" class="size-5 text-agro-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-zinc-900">Recibir uva</h3>
+                    <p class="text-xs text-zinc-400">Registro rápido de recepción</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                {{-- Viticultor --}}
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Viticultor *</label>
+                    <select wire:model.live="gr_viticulturistId"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
+                        <option value="">Seleccionar viticultor...</option>
+                        @foreach($modalViticulturists as $v)
+                            <option value="{{ $v->id }}">{{ $v->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('gr_viticulturistId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Parcela --}}
+                @if($gr_viticulturistId && count($gr_availablePlots))
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Parcela *</label>
+                    <select wire:model.live="gr_plotId"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
+                        <option value="">Seleccionar parcela...</option>
+                        @foreach($gr_availablePlots as $p)
+                            <option value="{{ $p['id'] }}">{{ $p['name'] }}</option>
+                        @endforeach
+                    </select>
+                    @error('gr_plotId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                @endif
+
+                {{-- Plantación --}}
+                @if($gr_plotId && count($gr_availablePlantings))
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Variedad / Plantación *</label>
+                    <select wire:model="gr_plantingId"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
+                        <option value="">Seleccionar plantación...</option>
+                        @foreach($gr_availablePlantings as $p)
+                            <option value="{{ $p['id'] }}">{{ $p['label'] }}</option>
+                        @endforeach
+                    </select>
+                    @error('gr_plantingId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                @endif
+
+                <div class="grid grid-cols-2 gap-3">
+                    {{-- Fecha --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Fecha *</label>
+                        <input type="date" wire:model="gr_harvestDate"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
+                        @error('gr_harvestDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    {{-- Añada --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Añada *</label>
+                        <input type="number" wire:model="gr_vintageYear" min="2000" max="{{ now()->year + 1 }}"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    {{-- Kg recibidos --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Kg recibidos *</label>
+                        <input type="number" step="0.1" wire:model="gr_totalWeight" placeholder="0.0"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
+                        @error('gr_totalWeight') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    {{-- Depósito --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Depósito destino *</label>
+                        <select wire:model="gr_containerId"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
+                            <option value="">Depósito...</option>
+                            @foreach($modalContainersKg as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }} ({{ number_format($c->capacity - $c->used_capacity, 0) }} kg lib.)</option>
+                            @endforeach
+                        </select>
+                        @error('gr_containerId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="$set('modalGrapeReception', false)">Cancelar</flux:button>
+                <flux:button variant="primary" wire:click="saveGrapeReception()" wire:loading.attr="disabled">
+                    <span wire:loading.remove wire:target="saveGrapeReception">Registrar recepción</span>
+                    <span wire:loading wire:target="saveGrapeReception">Guardando...</span>
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- ── Modal: Control de fermentación ─────────────────── --}}
+    <flux:modal wire:model="modalFermentation" name="modal-fermentation" class="w-full max-w-md">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-violet-100 rounded-xl flex items-center justify-center shrink-0">
+                    <flux:icon icon="beaker" class="size-5 text-violet-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-zinc-900">Control de fermentación</h3>
+                    <p class="text-xs text-zinc-400">Registro rápido</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Vino *</label>
+                    <select wire:model="fc_wineId"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+                        <option value="">Seleccionar vino...</option>
+                        @foreach($modalWines as $w)
+                            <option value="{{ $w->id }}">{{ $w->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('fc_wineId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Contenedor *</label>
+                    <select wire:model="fc_containerId"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+                        <option value="">Seleccionar contenedor...</option>
+                        @foreach($modalContainersAll as $c)
+                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('fc_containerId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Fecha y hora *</label>
+                    <input type="datetime-local" wire:model="fc_controlDate"
+                           class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                    @error('fc_controlDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Temperatura (°C)</label>
+                        <input type="number" step="0.1" wire:model="fc_temperature" placeholder="—"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                        @error('fc_temperature') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Brix</label>
+                        <input type="number" step="0.1" wire:model="fc_brix" placeholder="—"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                        @error('fc_brix') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="$set('modalFermentation', false)">Cancelar</flux:button>
+                <flux:button variant="primary" wire:click="saveFermentationControl()" wire:loading.attr="disabled">
+                    <span wire:loading.remove wire:target="saveFermentationControl">Guardar control</span>
+                    <span wire:loading wire:target="saveFermentationControl">Guardando...</span>
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- ── Modal: Trasvase ─────────────────────────────────── --}}
+    <flux:modal wire:model="modalTransfer" name="modal-transfer" class="w-full max-w-md">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                    <flux:icon icon="arrows-right-left" class="size-5 text-blue-600" />
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-zinc-900">Nuevo trasvase</h3>
+                    <p class="text-xs text-zinc-400">Registro rápido</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Vino *</label>
+                    <select wire:model="tr_wineId"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Seleccionar vino...</option>
+                        @foreach($modalWines as $w)
+                            <option value="{{ $w->id }}">{{ $w->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('tr_wineId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Desde contenedor</label>
+                        <select wire:model="tr_fromContainerId"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">— Ninguno —</option>
+                            @foreach($modalContainersAll as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Hacia contenedor *</label>
+                        <select wire:model="tr_toContainerId"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Seleccionar...</option>
+                            @foreach($modalContainersAll as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('tr_toContainerId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Cantidad *</label>
+                        <input type="number" step="0.01" wire:model="tr_quantity" placeholder="0.0"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        @error('tr_quantity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Unidad *</label>
+                        <select wire:model="tr_unitId"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Unidad...</option>
+                            @foreach($modalUnits as $u)
+                                <option value="{{ $u->id }}">{{ $u->symbol }}</option>
+                            @endforeach
+                        </select>
+                        @error('tr_unitId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Tipo *</label>
+                        <select wire:model="tr_transferType"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            @foreach($transferTypes as $key => $label)
+                                <option value="{{ $key }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Fecha *</label>
+                        <input type="date" wire:model="tr_transferDate"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        @error('tr_transferDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="$set('modalTransfer', false)">Cancelar</flux:button>
+                <flux:button variant="primary" wire:click="saveTransfer()" wire:loading.attr="disabled">
+                    <span wire:loading.remove wire:target="saveTransfer">Guardar trasvase</span>
+                    <span wire:loading wire:target="saveTransfer">Guardando...</span>
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- ── Modal: Nuevo vino ───────────────────────────────── --}}
+    <flux:modal wire:model="modalWine" name="modal-wine" class="w-full max-w-sm">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-agro-100 rounded-xl flex items-center justify-center shrink-0">
+                    <flux:icon icon="beaker" class="size-5 text-agro-600" />
+                </div>
+                <h3 class="text-base font-bold text-zinc-900">Nuevo vino</h3>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Nombre *</label>
+                    <input type="text" wire:model="wine_name" placeholder="Nombre del vino..."
+                           class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500" />
+                    @error('wine_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Tipo *</label>
+                    <select wire:model="wine_type"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-agro-500">
+                        <option value="">Seleccionar tipo...</option>
+                        @foreach($wineTypes as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('wine_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="$set('modalWine', false)">Cancelar</flux:button>
+                <flux:button variant="primary" wire:click="saveWine()" wire:loading.attr="disabled">
+                    <span wire:loading.remove wire:target="saveWine">Crear vino</span>
+                    <span wire:loading wire:target="saveWine">Guardando...</span>
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- ── Modal: Nuevo contenedor ────────────────────────── --}}
+    <flux:modal wire:model="modalContainer" name="modal-container" class="w-full max-w-sm">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-violet-100 rounded-xl flex items-center justify-center shrink-0">
+                    <flux:icon icon="archive-box" class="size-5 text-violet-600" />
+                </div>
+                <h3 class="text-base font-bold text-zinc-900">Nuevo contenedor</h3>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Nombre *</label>
+                    <input type="text" wire:model="cont_name" placeholder="Ej: Depósito 101"
+                           class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                    @error('cont_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-600 mb-1">Tipo *</label>
+                    <select wire:model="cont_typeId"
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+                        <option value="">Seleccionar tipo...</option>
+                        @foreach($containerTypes as $t)
+                            <option value="{{ $t->id }}">{{ $t->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('cont_typeId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Capacidad *</label>
+                        <input type="number" step="1" wire:model="cont_capacity" placeholder="0"
+                               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                        @error('cont_capacity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-600 mb-1">Unidad *</label>
+                        <select wire:model="cont_unit"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <option value="litros">Litros</option>
+                            <option value="kg">Kg</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <flux:button variant="ghost" wire:click="$set('modalContainer', false)">Cancelar</flux:button>
+                <flux:button variant="primary" wire:click="saveContainer()" wire:loading.attr="disabled">
+                    <span wire:loading.remove wire:target="saveContainer">Crear contenedor</span>
+                    <span wire:loading wire:target="saveContainer">Guardando...</span>
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
 
 </div>{{-- /x-data tab --}}
 </div>{{-- /root --}}

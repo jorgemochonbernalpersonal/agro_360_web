@@ -6,16 +6,25 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserPreferences;
 use App\Models\AgriculturalActivity;
 use App\Models\AutonomousCommunity;
+use App\Models\Campaign;
 use App\Models\Container;
 use App\Models\ContainerType;
+use App\Models\GrapeReceptionBatch;
 use App\Models\Harvest;
 use App\Models\Municipality;
 use App\Models\Plot;
+use App\Models\PlotPlanting;
 use App\Models\Province;
+use App\Models\UnitOfMeasurement;
+use App\Models\User;
 use App\Models\Wine;
 use App\Models\WineFermentationControl;
+use App\Models\WineTransfer;
+use App\Models\WineryViticulturist;
 use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class VisualDashboard extends Component
@@ -27,16 +36,65 @@ class VisualDashboard extends Component
     public ?int   $selectedContainerId  = null;
     public string $containerSearch      = '';
     public string $containerTypeFilter  = '';
-    public string $containerSort        = 'name'; // name | pct_desc | pct_asc
-    public string $mapTileMode          = 'satellite'; // satellite | street
+    public string $containerSort        = 'name';
+    public string $mapTileMode          = 'satellite';
     public bool   $mapShowList          = false;
+
+    // ── Modal: Recibir uva ─────────────────────────────────────────────────────
+    public bool   $modalGrapeReception   = false;
+    public string $gr_viticulturistId    = '';
+    public string $gr_plotId             = '';
+    public string $gr_plantingId         = '';
+    public string $gr_containerId        = '';
+    public string $gr_harvestDate        = '';
+    public string $gr_totalWeight        = '';
+    public int    $gr_vintageYear        = 0;
+    public array  $gr_availablePlots     = [];
+    public array  $gr_availablePlantings = [];
+
+    // ── Modal: Control de fermentación ────────────────────────────────────────
+    public bool   $modalFermentation = false;
+    public string $fc_wineId         = '';
+    public string $fc_containerId    = '';
+    public string $fc_controlDate    = '';
+    public string $fc_temperature    = '';
+    public string $fc_brix           = '';
+
+    // ── Modal: Trasvase de vino ───────────────────────────────────────────────
+    public bool   $modalTransfer      = false;
+    public string $tr_wineId          = '';
+    public string $tr_fromContainerId = '';
+    public string $tr_toContainerId   = '';
+    public string $tr_quantity        = '';
+    public string $tr_unitId          = '';
+    public string $tr_transferType    = 'racking';
+    public string $tr_transferDate    = '';
+
+    // ── Modal: Nuevo vino ─────────────────────────────────────────────────────
+    public bool   $modalWine  = false;
+    public string $wine_name  = '';
+    public string $wine_type  = '';
+
+    // ── Modal: Nuevo contenedor ───────────────────────────────────────────────
+    public bool   $modalContainer = false;
+    public string $cont_name      = '';
+    public string $cont_typeId    = '';
+    public string $cont_capacity  = '';
+    public string $cont_unit      = 'litros';
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     public function mount(): void
     {
-        // Tab no se persiste: siempre arranca en mapa de parcelas.
-        $this->mapTileMode = $this->getPreference('winery_map_tile', 'satellite');
-        $this->mapShowList = (bool) $this->getPreference('winery_map_show_list', false);
+        $this->mapTileMode    = $this->getPreference('winery_map_tile', 'satellite');
+        $this->mapShowList    = (bool) $this->getPreference('winery_map_show_list', false);
+        $this->gr_vintageYear = now()->year;
+        $this->gr_harvestDate = now()->toDateString();
+        $this->fc_controlDate = now()->format('Y-m-d\TH:i');
+        $this->tr_transferDate = now()->toDateString();
     }
+
+    // ── Preferencias ──────────────────────────────────────────────────────────
 
     public function saveTileMode(string $mode): void
     {
@@ -49,6 +107,8 @@ class VisualDashboard extends Component
         $this->mapShowList = $show;
         $this->savePreference('winery_map_show_list', $show);
     }
+
+    // ── Navegación ────────────────────────────────────────────────────────────
 
     public function switchTab(string $tab): void
     {
@@ -74,6 +134,8 @@ class VisualDashboard extends Component
         $this->dispatch('set-active-tab', tab: 'containers');
     }
 
+    // ── Acciones contenedor ───────────────────────────────────────────────────
+
     public function emptyWine(int $containerId): void
     {
         $container = Container::where('user_id', Auth::id())->findOrFail($containerId);
@@ -98,6 +160,342 @@ class VisualDashboard extends Component
         $this->toastSuccess("Contenedor «{$container->name}» activado.");
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    //  QUICK-ACTION MODALS
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Modal: Recibir uva ────────────────────────────────────────────────────
+
+    public function openModalGrapeReception(?int $viticulturistId = null): void
+    {
+        $this->resetGrapeReceptionForm();
+        $this->gr_harvestDate = now()->toDateString();
+        $this->gr_vintageYear = now()->year;
+        if ($viticulturistId) {
+            $this->gr_viticulturistId = (string) $viticulturistId;
+            $this->updatedGrViticulturistId();
+        }
+        $this->modalGrapeReception = true;
+    }
+
+    public function updatedGrViticulturistId(): void
+    {
+        $this->gr_plotId             = '';
+        $this->gr_plantingId         = '';
+        $this->gr_availablePlots     = [];
+        $this->gr_availablePlantings = [];
+
+        if (!$this->gr_viticulturistId) return;
+
+        $userId   = Auth::id();
+        $isSelf   = Auth::user()->isProducer() && (int)$this->gr_viticulturistId === $userId;
+        $isLinked = $isSelf || WineryViticulturist::where('winery_id', $userId)
+            ->where('viticulturist_id', $this->gr_viticulturistId)
+            ->exists();
+
+        if (!$isLinked) { $this->gr_viticulturistId = ''; return; }
+
+        $this->gr_availablePlots = Plot::where('viticulturist_id', $this->gr_viticulturistId)
+            ->where('active', true)
+            ->whereHas('plantings', fn($q) => $q->where('status', 'active'))
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->toArray();
+    }
+
+    public function updatedGrPlotId(): void
+    {
+        $this->gr_plantingId         = '';
+        $this->gr_availablePlantings = [];
+
+        if (!$this->gr_plotId) return;
+
+        $this->gr_availablePlantings = PlotPlanting::where('plot_id', $this->gr_plotId)
+            ->where('status', 'active')
+            ->with('grapeVariety:id,name')
+            ->get()
+            ->map(fn($p) => [
+                'id'    => $p->id,
+                'label' => ($p->grapeVariety?->name ?? $p->name ?? 'Sin variedad')
+                    . ($p->area_planted ? ' — ' . number_format($p->area_planted, 2) . ' ha' : ''),
+            ])
+            ->toArray();
+
+        if (count($this->gr_availablePlantings) === 1) {
+            $this->gr_plantingId = (string) $this->gr_availablePlantings[0]['id'];
+        }
+    }
+
+    public function saveGrapeReception(): void
+    {
+        $this->validate([
+            'gr_viticulturistId' => ['required', 'exists:users,id'],
+            'gr_plotId'          => ['required', 'exists:plots,id'],
+            'gr_plantingId'      => ['required', 'exists:plot_plantings,id'],
+            'gr_harvestDate'     => ['required', 'date'],
+            'gr_totalWeight'     => ['required', 'numeric', 'min:0.01'],
+            'gr_vintageYear'     => ['required', 'integer', 'min:2000', 'max:' . (now()->year + 1)],
+            'gr_containerId'     => ['required', Rule::exists('containers', 'id')
+                ->where('user_id', Auth::id())->where('unit', 'kg')],
+        ], [
+            'gr_viticulturistId.required' => 'Selecciona un viticultor.',
+            'gr_plotId.required'          => 'Selecciona una parcela.',
+            'gr_plantingId.required'      => 'Selecciona una plantación.',
+            'gr_harvestDate.required'     => 'La fecha es obligatoria.',
+            'gr_totalWeight.required'     => 'El peso es obligatorio.',
+            'gr_totalWeight.min'          => 'El peso debe ser mayor que 0.',
+            'gr_containerId.required'     => 'Selecciona un depósito de destino.',
+        ]);
+
+        $userId    = Auth::id();
+        $isSelf    = Auth::user()->isProducer() && (int)$this->gr_viticulturistId === $userId;
+        $isLinked  = $isSelf || WineryViticulturist::where('winery_id', $userId)
+            ->where('viticulturist_id', $this->gr_viticulturistId)
+            ->exists();
+
+        if (!$isLinked) { $this->addError('gr_viticulturistId', 'Viticultor no vinculado.'); return; }
+
+        $plot      = Plot::where('viticulturist_id', $this->gr_viticulturistId)->find($this->gr_plotId);
+        $planting  = $plot ? PlotPlanting::where('plot_id', $plot->id)->find($this->gr_plantingId) : null;
+        $container = Container::where('user_id', $userId)->find((int) $this->gr_containerId);
+
+        if (!$plot || !$planting || !$container) {
+            $this->toastError('Datos no válidos. Revisa la selección.'); return;
+        }
+
+        $weight = (float) $this->gr_totalWeight;
+        if (!$container->hasAvailableCapacity($weight)) {
+            $this->addError('gr_containerId',
+                "Sin capacidad suficiente. Disponible: " . number_format($container->getAvailableCapacity(), 0) . " kg.");
+            return;
+        }
+
+        $campaign = Campaign::getOrCreateActiveForYear($userId, $this->gr_vintageYear);
+        if (!$campaign) { $this->toastError('No se pudo obtener la campaña.'); return; }
+
+        $existingBatch = GrapeReceptionBatch::where('winery_id', $userId)
+            ->where('plot_planting_id', $planting->id)
+            ->where('campaign_id', $campaign->id)
+            ->first();
+        if ($existingBatch && $existingBatch->status === 'closed') {
+            $this->toastError('El lote de esta plantación está cerrado.'); return;
+        }
+
+        try {
+            DB::transaction(function () use ($userId, $campaign, $planting, $container, $weight) {
+                $batch = GrapeReceptionBatch::firstOrCreate(
+                    ['winery_id' => $userId, 'plot_planting_id' => $planting->id, 'campaign_id' => $campaign->id],
+                    [
+                        'viticulturist_id'      => (int) $this->gr_viticulturistId,
+                        'vintage_year'          => $this->gr_vintageYear,
+                        'total_weight_kg'       => 0,
+                        'designation_of_origin' => $planting->designation_of_origin,
+                        'status'                => 'open',
+                    ]
+                );
+
+                Harvest::create([
+                    'winery_id'          => $userId,
+                    'batch_id'           => $batch->id,
+                    'plot_planting_id'   => $planting->id,
+                    'container_id'       => $container->id,
+                    'harvest_start_date' => $this->gr_harvestDate,
+                    'vintage'            => $this->gr_vintageYear,
+                    'total_weight'       => $weight,
+                    'destination_type'   => 'winery',
+                    'status'             => 'active',
+                    'disqualified'       => false,
+                ]);
+
+                $batch->increment('total_weight_kg', $weight);
+            });
+
+            $this->toastSuccess("Recepción de {$weight} kg registrada correctamente.");
+            $this->resetGrapeReceptionForm();
+            $this->modalGrapeReception = false;
+
+        } catch (\Exception $e) {
+            \Log::error('VisualDashboard::saveGrapeReception', ['error' => $e->getMessage()]);
+            $this->toastError('Error al guardar. Inténtalo de nuevo.');
+        }
+    }
+
+    private function resetGrapeReceptionForm(): void
+    {
+        $this->gr_viticulturistId    = '';
+        $this->gr_plotId             = '';
+        $this->gr_plantingId         = '';
+        $this->gr_containerId        = '';
+        $this->gr_totalWeight        = '';
+        $this->gr_availablePlots     = [];
+        $this->gr_availablePlantings = [];
+    }
+
+    // ── Modal: Control de fermentación ────────────────────────────────────────
+
+    public function openModalFermentation(?int $containerId = null, ?int $wineId = null): void
+    {
+        $this->fc_wineId      = $wineId ? (string) $wineId : '';
+        $this->fc_containerId = $containerId ? (string) $containerId : '';
+        $this->fc_controlDate = now()->format('Y-m-d\TH:i');
+        $this->fc_temperature = '';
+        $this->fc_brix        = '';
+        $this->modalFermentation = true;
+    }
+
+    public function saveFermentationControl(): void
+    {
+        $this->validate([
+            'fc_wineId'      => ['required', 'exists:wines,id'],
+            'fc_containerId' => ['required', 'exists:containers,id'],
+            'fc_controlDate' => ['required', 'date'],
+            'fc_temperature' => ['nullable', 'numeric', 'min:-20', 'max:60'],
+            'fc_brix'        => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ], [
+            'fc_wineId.required'      => 'Selecciona un vino.',
+            'fc_containerId.required' => 'Selecciona un contenedor.',
+            'fc_controlDate.required' => 'La fecha es obligatoria.',
+        ]);
+
+        WineFermentationControl::create([
+            'wine_id'      => $this->fc_wineId,
+            'container_id' => $this->fc_containerId,
+            'control_date' => $this->fc_controlDate,
+            'temperature'  => $this->fc_temperature !== '' ? $this->fc_temperature : null,
+            'brix_degree'  => $this->fc_brix !== '' ? $this->fc_brix : null,
+            'created_by'   => Auth::id(),
+        ]);
+
+        $this->toastSuccess('Control de fermentación registrado.');
+        $this->modalFermentation = false;
+    }
+
+    // ── Modal: Trasvase de vino ───────────────────────────────────────────────
+
+    public function openModalTransfer(?int $fromContainerId = null, ?int $wineId = null): void
+    {
+        $this->tr_wineId          = $wineId ? (string) $wineId : '';
+        $this->tr_fromContainerId = $fromContainerId ? (string) $fromContainerId : '';
+        $this->tr_toContainerId   = '';
+        $this->tr_quantity        = '';
+        $this->tr_unitId          = (string) (UnitOfMeasurement::where('symbol', 'L')->value('id') ?? '');
+        $this->tr_transferType    = 'racking';
+        $this->tr_transferDate    = now()->toDateString();
+        $this->modalTransfer = true;
+    }
+
+    public function saveTransfer(): void
+    {
+        $this->validate([
+            'tr_wineId'        => ['required', 'exists:wines,id'],
+            'tr_toContainerId' => ['required', 'exists:containers,id'],
+            'tr_quantity'      => ['required', 'numeric', 'min:0.001'],
+            'tr_unitId'        => ['required', 'exists:units_of_measurement,id'],
+            'tr_transferType'  => ['required', 'in:' . implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
+            'tr_transferDate'  => ['required', 'date'],
+        ], [
+            'tr_wineId.required'        => 'Selecciona un vino.',
+            'tr_toContainerId.required' => 'Selecciona contenedor destino.',
+            'tr_quantity.required'      => 'La cantidad es obligatoria.',
+            'tr_quantity.min'           => 'La cantidad debe ser mayor que 0.',
+        ]);
+
+        $dest = Container::where('user_id', Auth::id())->find($this->tr_toContainerId);
+        if ($dest && $dest->getAvailableCapacity() < (float) $this->tr_quantity) {
+            $this->addError('tr_quantity',
+                'Sin capacidad suficiente (' . number_format($dest->getAvailableCapacity(), 1) . ' L disponibles).');
+            return;
+        }
+
+        $transfer = WineTransfer::create([
+            'wine_id'                => $this->tr_wineId,
+            'from_container_id'      => $this->tr_fromContainerId ?: null,
+            'to_container_id'        => $this->tr_toContainerId,
+            'quantity'               => $this->tr_quantity,
+            'unit_of_measurement_id' => $this->tr_unitId,
+            'transfer_type'          => $this->tr_transferType,
+            'transfer_date'          => $this->tr_transferDate,
+            'created_by'             => Auth::id(),
+        ]);
+
+        app(WineContainerStockService::class)->recordTransfer($transfer);
+
+        $this->toastSuccess('Trasvase registrado correctamente.');
+        $this->modalTransfer = false;
+    }
+
+    // ── Modal: Nuevo vino ─────────────────────────────────────────────────────
+
+    public function openModalWine(): void
+    {
+        $this->wine_name = '';
+        $this->wine_type = '';
+        $this->modalWine = true;
+    }
+
+    public function saveWine(): void
+    {
+        $this->validate([
+            'wine_name' => ['required', 'string', 'max:200'],
+            'wine_type' => ['required', 'in:' . implode(',', array_keys(Wine::WINE_TYPES))],
+        ], [
+            'wine_name.required' => 'El nombre es obligatorio.',
+            'wine_type.required' => 'Selecciona el tipo de vino.',
+        ]);
+
+        Wine::create([
+            'user_id'   => Auth::id(),
+            'name'      => $this->wine_name,
+            'wine_type' => $this->wine_type,
+            'status'    => 'in_progress',
+        ]);
+
+        $this->toastSuccess("Vino «{$this->wine_name}» creado.");
+        $this->modalWine = false;
+    }
+
+    // ── Modal: Nuevo contenedor ───────────────────────────────────────────────
+
+    public function openModalContainer(): void
+    {
+        $this->cont_name     = '';
+        $this->cont_typeId   = '';
+        $this->cont_capacity = '';
+        $this->cont_unit     = 'litros';
+        $this->modalContainer = true;
+    }
+
+    public function saveContainer(): void
+    {
+        $this->validate([
+            'cont_name'     => ['required', 'string', 'max:100'],
+            'cont_typeId'   => ['required', 'exists:container_types,id'],
+            'cont_capacity' => ['required', 'numeric', 'min:1'],
+            'cont_unit'     => ['required', 'in:kg,litros'],
+        ], [
+            'cont_name.required'     => 'El nombre es obligatorio.',
+            'cont_typeId.required'   => 'Selecciona el tipo.',
+            'cont_capacity.required' => 'La capacidad es obligatoria.',
+            'cont_capacity.min'      => 'La capacidad debe ser al menos 1.',
+        ]);
+
+        Container::create([
+            'user_id'    => Auth::id(),
+            'name'       => $this->cont_name,
+            'type_id'    => $this->cont_typeId,
+            'capacity'   => $this->cont_capacity,
+            'unit'       => $this->cont_unit,
+            'archived'   => false,
+        ]);
+
+        $this->toastSuccess("Contenedor «{$this->cont_name}» creado.");
+        $this->modalContainer = false;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  RENDER
+    // ══════════════════════════════════════════════════════════════════════════
+
     public function render()
     {
         $userId = Auth::id();
@@ -110,7 +508,6 @@ class VisualDashboard extends Component
             ->select(['id', 'name', 'area', 'active', 'municipality_id', 'province_id', 'autonomous_community_id', 'viticulturist_id'])
             ->get();
 
-        // Parcelas sin municipio con coordenadas → fallback al centroide SIGPAC
         $needsFallback = $allPlots
             ->filter(fn($p) => !($p->municipality?->lat && $p->municipality?->lng))
             ->pluck('id')
@@ -119,9 +516,7 @@ class VisualDashboard extends Component
         $sigpacCentroids = [];
         if (!empty($needsFallback)) {
             $placeholders = implode(',', array_fill(0, count($needsFallback), '?'));
-            // Centroide de la unión de TODOS los polígonos SIGPAC del plot
-            // (un plot puede tener varios multipart_plot_sigpac, cada uno con su geometry)
-            $rows = \Illuminate\Support\Facades\DB::select(
+            $rows = DB::select(
                 "SELECT mps.plot_id,
                         ST_AsText(ST_Centroid(ST_Union(pg.coordinates))) AS centroid_wkt
                  FROM   multipart_plot_sigpac mps
@@ -152,7 +547,7 @@ class VisualDashboard extends Component
                     $lng    = $sigpacCentroids[$p->id]['lng'];
                     $source = 'sigpac';
                 } else {
-                    return null; // sin coordenadas de ningún tipo
+                    return null;
                 }
                 $primaryVariety = $p->plantings->first()?->grapeVariety;
                 return [
@@ -183,7 +578,7 @@ class VisualDashboard extends Component
         $mapPolygons = [];
         if (!empty($allPlotIds)) {
             $placeholders = implode(',', array_fill(0, count($allPlotIds), '?'));
-            $polyRows = \Illuminate\Support\Facades\DB::select(
+            $polyRows = DB::select(
                 "SELECT mps.plot_id, sc.code AS sigpac_code,
                         ST_AsText(pg.coordinates) AS wkt
                  FROM   multipart_plot_sigpac mps
@@ -205,7 +600,7 @@ class VisualDashboard extends Component
             }
         }
 
-        // ── Opciones de filtro (CCAA / Provincia / Municipio) ──────────────
+        // ── Opciones de filtro ─────────────────────────────────────────────
         $communityIds    = $allPlots->pluck('autonomous_community_id')->filter()->unique()->values()->all();
         $provinceIds     = $allPlots->pluck('province_id')->filter()->unique()->values()->all();
         $municipalityIds = $allPlots->pluck('municipality_id')->filter()->unique()->values()->all();
@@ -230,14 +625,12 @@ class VisualDashboard extends Component
                 ->values()->toArray();
         }
 
-        // Última actividad de la parcela seleccionada
         $selectedPlotLastActivity = $this->selectedPlotId
             ? AgriculturalActivity::where('plot_id', $this->selectedPlotId)
                 ->latest('activity_date')
                 ->first(['id', 'activity_type', 'activity_date'])
             : null;
 
-        // Detalle de la parcela seleccionada
         $selectedPlot = $this->selectedPlotId
             ? Plot::forUser($user)
                 ->with([
@@ -263,7 +656,6 @@ class VisualDashboard extends Component
                 ->orWhereRaw('LOWER(IFNULL(description, \'\')) LIKE ?', [$term])
             );
         }
-
         if ($this->containerTypeFilter) {
             $containersQuery->where('type_id', $this->containerTypeFilter);
         }
@@ -276,33 +668,25 @@ class VisualDashboard extends Component
         }
         $containerTypes = ContainerType::orderBy('name')->get();
 
-        // Detalle del contenedor seleccionado
         $selectedContainer = $this->selectedContainerId
             ? Container::where('user_id', $userId)
-                ->with([
-                    'containerType',
-                    'containerMaterial',
-                    'containerRoom',
-                    'currentState.wine',
-                    'currentState.harvest.batch.grapeVariety',
-                ])
+                ->with(['containerType', 'containerMaterial', 'containerRoom', 'currentState.wine', 'currentState.harvest.batch.grapeVariety'])
                 ->find($this->selectedContainerId)
             : null;
 
-        // Stats rápidas de contenedores
-        $allContainers  = Container::where('user_id', $userId)->where('archived', false)->get(['id', 'capacity', 'used_capacity', 'wine_volume_liters']);
+        $allContainers   = Container::where('user_id', $userId)->where('archived', false)->get(['id', 'capacity', 'used_capacity', 'wine_volume_liters']);
         $totalCapacityKg = (float) $allContainers->sum('capacity');
         $totalUsedKg     = (float) $allContainers->sum('used_capacity');
         $totalWineLiters = (float) $allContainers->sum('wine_volume_liters');
-        $containerStats = [
-            'total'              => $allContainers->count(),
-            'full'               => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 100)->count(),
-            'critical'           => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 85 && $c->getOccupancyPercentage() < 100)->count(),
-            'empty'              => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() == 0)->count(),
-            'total_capacity_kg'  => $totalCapacityKg,
-            'total_used_kg'      => $totalUsedKg,
-            'total_wine_liters'  => $totalWineLiters,
-            'used_pct'           => $totalCapacityKg > 0 ? round($totalUsedKg / $totalCapacityKg * 100) : 0,
+        $containerStats  = [
+            'total'             => $allContainers->count(),
+            'full'              => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 100)->count(),
+            'critical'          => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() >= 85 && $c->getOccupancyPercentage() < 100)->count(),
+            'empty'             => $allContainers->filter(fn($c) => $c->getOccupancyPercentage() == 0)->count(),
+            'total_capacity_kg' => $totalCapacityKg,
+            'total_used_kg'     => $totalUsedKg,
+            'total_wine_liters' => $totalWineLiters,
+            'used_pct'          => $totalCapacityKg > 0 ? round($totalUsedKg / $totalCapacityKg * 100) : 0,
         ];
 
         // ── Dashboard (tab resumen) ─────────────────────────────────────
@@ -357,19 +741,51 @@ class VisualDashboard extends Component
             'containers_critical'  => $containerStats['critical'] + $containerStats['full'],
         ];
 
+        // ── Datos para modales (solo cuando están abiertos) ────────────
+        $modalViticulturists = $this->modalGrapeReception
+            ? User::whereIn('id', WineryViticulturist::where('winery_id', $userId)->pluck('viticulturist_id'))
+                ->orderBy('name')->get(['id', 'name'])
+            : collect();
+
+        $modalContainersKg = $this->modalGrapeReception
+            ? Container::where('user_id', $userId)->where('unit', 'kg')->where('archived', false)
+                ->orderBy('name')->get(['id', 'name', 'capacity', 'used_capacity'])
+            : collect();
+
+        $modalWines = ($this->modalFermentation || $this->modalTransfer)
+            ? Wine::where('user_id', $userId)->orderBy('name')->get(['id', 'name', 'wine_type'])
+            : collect();
+
+        $modalContainersAll = ($this->modalFermentation || $this->modalTransfer)
+            ? Container::where('user_id', $userId)->where('archived', false)
+                ->orderBy('name')->get(['id', 'name', 'unit', 'capacity', 'used_capacity', 'wine_volume_liters'])
+            : collect();
+
+        $modalUnits = $this->modalTransfer
+            ? UnitOfMeasurement::orderBy('name')->get(['id', 'name', 'symbol'])
+            : collect();
+
         return view('livewire.winery.visual-dashboard', [
-            'mapPlots'                  => $mapPlots,
-            'selectedPlotLastActivity'  => $selectedPlotLastActivity,
-            'mapPolygons'         => $mapPolygons,
-            'filterOptions'       => $filterOptions,
-            'selectedPlot'        => $selectedPlot,
-            'containers'          => $containers,
-            'containerTypes'      => $containerTypes,
-            'selectedContainer'   => $selectedContainer,
-            'containerStats'      => $containerStats,
-            'dashboardStats'      => $dashboardStats,
-            'criticalContainers'  => $criticalContainers,
-            'recentControls'      => $recentControls,
+            'mapPlots'                 => $mapPlots,
+            'selectedPlotLastActivity' => $selectedPlotLastActivity,
+            'mapPolygons'              => $mapPolygons,
+            'filterOptions'            => $filterOptions,
+            'selectedPlot'             => $selectedPlot,
+            'containers'               => $containers,
+            'containerTypes'           => $containerTypes,
+            'selectedContainer'        => $selectedContainer,
+            'containerStats'           => $containerStats,
+            'dashboardStats'           => $dashboardStats,
+            'criticalContainers'       => $criticalContainers,
+            'recentControls'           => $recentControls,
+            // Modal data
+            'modalViticulturists'      => $modalViticulturists,
+            'modalContainersKg'        => $modalContainersKg,
+            'modalWines'               => $modalWines,
+            'modalContainersAll'       => $modalContainersAll,
+            'modalUnits'               => $modalUnits,
+            'wineTypes'                => Wine::WINE_TYPES,
+            'transferTypes'            => WineTransfer::TRANSFER_TYPES,
         ])->layout('layouts.app', ['title' => 'Vista Visual — Agro365']);
     }
 
@@ -382,7 +798,7 @@ class VisualDashboard extends Component
         foreach (explode(',', $m[1]) as $coord) {
             $parts = explode(' ', trim($coord));
             if (count($parts) >= 2) {
-                $points[] = [(float) $parts[1], (float) $parts[0]]; // [lat, lng] for Leaflet
+                $points[] = [(float) $parts[1], (float) $parts[0]];
             }
         }
         return $points;
