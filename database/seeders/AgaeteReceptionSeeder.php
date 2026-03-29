@@ -80,6 +80,20 @@ class AgaeteReceptionSeeder extends Seeder
 
         $this->command->info(sprintf('Procesando %d vendimias del viticultor.', count($vitHarvests)));
 
+        // ── 0b. Contenedores disponibles para recepciones (Depósito/Tanque/Tina) ─
+        $receptionContainers = DB::table('containers')
+            ->where('user_id', self::WINERY_USER_ID)
+            ->whereIn('type_id', [2, 3, 4])
+            ->where('archived', false)
+            ->orderBy('capacity', 'desc')
+            ->get(['id', 'capacity', 'used_capacity'])
+            ->toArray();
+
+        $containerAvailable = [];
+        foreach ($receptionContainers as $c) {
+            $containerAvailable[$c->id] = (float) $c->capacity - (float) $c->used_capacity;
+        }
+
         // ── 1. Campaigns ───────────────────────────────────────────────────────
         // Una por viticultor × añada. La más reciente (2026) queda activa.
         $campaignRows = [];
@@ -241,13 +255,16 @@ class AgaeteReceptionSeeder extends Seeder
             $isDisputed = (mt_rand(1, 100) <= 10);
             $status     = $isDisputed ? 'disputed' : 'matched';
 
+            // Asignar contenedor de bodega para esta recepción
+            $assignedContainerId = $this->pickContainer($containerAvailable, $receivedKg);
+
             // ── 5a. Harvest winery-side ──
             $wineryHarvestId = DB::table('harvests')->insertGetId([
                 'activity_id'         => null,
                 'winery_id'           => self::WINERY_USER_ID,
                 'batch_id'            => $batchId,
                 'plot_planting_id'    => $h->plot_planting_id,
-                'container_id'        => null,
+                'container_id'        => $assignedContainerId,
                 'harvest_start_date'  => $h->harvest_start_date,
                 'harvest_time'        => $h->harvest_time,
                 'harvest_end_date'    => null,
@@ -325,6 +342,23 @@ class AgaeteReceptionSeeder extends Seeder
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function pickContainer(array &$available, float $weightKg): ?int
+    {
+        $candidates = array_filter($available, fn($cap) => $cap >= $weightKg);
+
+        if (empty($candidates)) {
+            arsort($available);
+            $id = array_key_first($available);
+            if (empty($available) || $available[$id] <= 0) return null;
+        } else {
+            arsort($candidates);
+            $id = array_key_first($candidates);
+        }
+
+        $available[$id] -= $weightKg;
+        return $id;
+    }
 
     private function randomPlate(): string
     {
