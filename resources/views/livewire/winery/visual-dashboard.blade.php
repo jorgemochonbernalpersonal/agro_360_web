@@ -83,7 +83,8 @@
     <div x-show="tab === 'plots'" style="{{ $activeTab !== 'plots' ? 'display:none' : '' }}"
          class="flex flex-1 overflow-hidden"
          @keydown.escape.window="tab === 'plots' && $wire.set('selectedPlotId', null)">
-    <div x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }}, {{ $selectedPlotId ?? 'null' }})"
+    <div wire:ignore
+         x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }}, {{ $selectedPlotId ?? 'null' }})"
          class="flex flex-col flex-1 overflow-hidden">
 
         {{-- Barra de filtros --}}
