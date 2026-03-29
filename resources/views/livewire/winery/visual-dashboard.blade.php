@@ -1,7 +1,5 @@
 {{-- Vista Visual Winery: full-height, elimina padding del layout --}}
 <style>
-.plot-map-label { background:rgba(0,0,0,.65); border:none!important; border-radius:5px; color:#fff; font-size:10px; font-weight:700; padding:3px 7px; text-align:center; white-space:nowrap; box-shadow:0 1px 6px rgba(0,0,0,.4); pointer-events:none; }
-.plot-map-label::before { display:none; }
 </style>
 <div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 bg-white relative" style="height: calc(100vh - 4rem);">
 <div x-data="{ tab: @js($activeTab) }" @set-active-tab.window="tab = $event.detail.tab" class="flex flex-col h-full overflow-hidden">
@@ -1287,9 +1285,6 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
                     opacity: 0.9,
                 });
                 layer.addTo(this.map);
-                layer.bindTooltip(area ? `${name} · ${area} ha` : name, {
-                    permanent: false, direction: 'center', sticky: false,
-                });
                 // Hover: iluminar polígono
                 layer.on('mouseover', function() {
                     const isSelected = $wire.get('selectedPlotId') === poly.plot_id;
@@ -1309,35 +1304,6 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
                 this.polygonLayers[poly.plot_id].push(layer);
             });
 
-            // ── Etiquetas permanentes dentro del polígono (zoom ≥ 14) ──────
-            const _toggleLabels = () => {
-                const show = this.map.getZoom() >= 14;
-                Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
-                    const name = plotNames[plotId] || '';
-                    const area = plotArea[plotId];
-                    layers.forEach((layer, idx) => {
-                        if (show) {
-                            if (!layer._permLabel) {
-                                const lbl = L.tooltip({
-                                    permanent: true, direction: 'center',
-                                    className: 'plot-map-label', interactive: false,
-                                }).setContent(area ? `${name}<br><span style="opacity:.7;font-weight:400">${area} ha</span>` : name);
-                                layer.bindTooltip(lbl);
-                                layer._permLabel = true;
-                            }
-                        } else {
-                            if (layer._permLabel) {
-                                layer.bindTooltip(
-                                    area ? `${name} · ${area} ha` : name,
-                                    { permanent: false, direction: 'center', sticky: false }
-                                );
-                                layer._permLabel = false;
-                            }
-                        }
-                    });
-                });
-            };
-            this.map.on('zoomend', _toggleLabels);
 
             // fitBounds desde los propios polígonos (+ marcadores fallback)
             const allIds = new Set(allPlots.map(p => p.id));
