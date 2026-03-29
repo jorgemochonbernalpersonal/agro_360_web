@@ -72,7 +72,8 @@ class VisualDashboard extends Component
     {
         $this->activeTab           = 'containers';
         $this->selectedContainerId = $id;
-        $this->savePreference('winery_visual_tab', 'containers');
+        // No guardamos preferencia aquí: openContainer es una acción de navegación
+        // puntual, no una selección explícita de tab por parte del usuario.
     }
 
     public function emptyWine(int $containerId): void
