@@ -33,7 +33,7 @@ class VisualDashboard extends Component
 
     public function mount(): void
     {
-        $this->activeTab   = $this->getPreference('winery_visual_tab', 'plots');
+        // Tab no se persiste: siempre arranca en mapa de parcelas.
         $this->mapTileMode = $this->getPreference('winery_map_tile', 'satellite');
         $this->mapShowList = (bool) $this->getPreference('winery_map_show_list', false);
     }
@@ -55,7 +55,6 @@ class VisualDashboard extends Component
         $this->activeTab           = $tab;
         $this->selectedPlotId      = null;
         $this->selectedContainerId = null;
-        $this->savePreference('winery_visual_tab', $tab);
     }
 
     public function selectPlot(int $id): void
