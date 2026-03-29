@@ -30,11 +30,16 @@ class PlotPlantingPolicy
     }
 
     /**
-     * Called as: can('create', [PlotPlanting::class, $plot])
-     * Creating a planting requires the same rights as updating the parent plot.
+     * Called as: can('create', [PlotPlanting::class, $plot])  — checks if user can update the specific plot.
+     * Called as: can('create', PlotPlanting::class)           — general check (no specific plot), used in listing views.
      */
-    public function create(User $user, Plot $plot): bool
+    public function create(User $user, ?Plot $plot = null): bool
     {
+        if ($plot === null) {
+            // General check (no specific plot): same roles that can view any planting.
+            return in_array($user->role, ['admin', 'supervisor', 'winery', 'viticulturist', 'producer']);
+        }
+
         return $user->can('update', $plot);
     }
 
