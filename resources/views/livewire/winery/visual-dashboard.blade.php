@@ -3,8 +3,8 @@
 .plot-map-label { background:rgba(0,0,0,.65); border:none!important; border-radius:5px; color:#fff; font-size:10px; font-weight:700; padding:3px 7px; text-align:center; white-space:nowrap; box-shadow:0 1px 6px rgba(0,0,0,.4); pointer-events:none; }
 .plot-map-label::before { display:none; }
 </style>
-<div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 flex flex-col bg-white relative" style="height: calc(100vh - 4rem);"
-     x-data="{ tab: $wire.entangle('activeTab') }">
+<div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 bg-white relative" style="height: calc(100vh - 4rem);">
+<div x-data="{ tab: $wire.entangle('activeTab') }" class="flex flex-col h-full overflow-hidden">
 
     {{-- ══ Top bar: tabs descriptivos + volver ══ --}}
     @php
@@ -1044,8 +1044,8 @@
     </div>
     </div>{{-- /x-show dashboard --}}
 
-
-</div>
+</div>{{-- /x-data tab --}}
+</div>{{-- /root --}}
 
 @script
 <script>
