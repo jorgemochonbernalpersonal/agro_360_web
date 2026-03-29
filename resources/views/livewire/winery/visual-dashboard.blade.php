@@ -85,7 +85,7 @@
     <div x-show="tab === 'plots'" style="{{ $activeTab !== 'plots' ? 'display:none' : '' }}"
          class="flex flex-col flex-1 overflow-hidden"
          @keydown.escape.window="tab === 'plots' && $wire.set('selectedPlotId', null)">
-    <div x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }})"
+    <div x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }}, {{ $selectedPlotId ?? 'null' }})"
          class="flex flex-col flex-1 overflow-hidden">
 
         {{-- Barra de filtros --}}
@@ -178,7 +178,7 @@
                     <button @click="$wire.selectPlot(plot.id)"
                             :data-plot-id="plot.id"
                             class="w-full text-left flex items-center gap-2 px-3 py-2 transition-colors"
-                            :class="$wire.selectedPlotId === plot.id
+                            :class="selectedPlotId === plot.id
                                 ? 'bg-agro-50 text-agro-700'
                                 : 'text-zinc-700 hover:bg-zinc-50'">
                         <span class="w-2.5 h-2.5 rounded-sm shrink-0 ring-1 ring-black/10"
@@ -1051,9 +1051,10 @@
 
 @script
 <script>
-Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTileMode = 'satellite', initialShowList = false) => ({
+Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTileMode = 'satellite', initialShowList = false, initialSelectedPlotId = null) => ({
     map: null,
     polygonLayers: {},
+    selectedPlotId: initialSelectedPlotId,
     _plotsActivatedHandler: null,
     _fullscreenHandler: null,
 
@@ -1358,6 +1359,7 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
 
             // ── Al seleccionar parcela: resaltar + auto-zoom ────────────────
             $wire.$watch('selectedPlotId', (newId) => {
+                this.selectedPlotId = newId;
                 // Polígonos + zoom al seleccionado
                 let selBounds = null;
                 Object.entries(this.polygonLayers).forEach(([plotId, layers]) => {
