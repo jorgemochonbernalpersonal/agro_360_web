@@ -200,18 +200,6 @@
                     <div id="visual-plots-map" class="w-full h-full"></div>
                 </div>
 
-                {{-- Leyenda de variedades --}}
-                <div x-show="legendItems.length > 0" x-cloak
-                     class="absolute bottom-10 left-3 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-zinc-200 px-3 py-2.5 max-w-[160px]">
-                    <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Variedades</p>
-                    <template x-for="item in legendItems" :key="item.name">
-                        <div class="flex items-center gap-1.5 mb-1 last:mb-0">
-                            <span class="w-3 h-3 rounded-sm shrink-0 ring-1 ring-black/10"
-                                  :style="`background:${item.color}`"></span>
-                            <span class="text-[10px] text-zinc-700 leading-tight" x-text="item.name"></span>
-                        </div>
-                    </template>
-                </div>
 
                 {{-- Botones flotantes top-right (fullscreen + tile toggle) --}}
                 <div class="absolute top-3 right-3 z-[1000] flex items-center gap-1.5">
@@ -482,6 +470,17 @@
             </div>
         </div>
 
+        @else
+        {{-- Sin selección --}}
+        <div class="w-72 shrink-0 border-l border-zinc-100 bg-zinc-50/80 flex flex-col items-center justify-center gap-4 text-zinc-400 p-6">
+            <div class="w-14 h-14 bg-zinc-100 rounded-2xl flex items-center justify-center">
+                <flux:icon icon="map-pin" class="size-7 text-zinc-300" />
+            </div>
+            <div class="text-center">
+                <p class="text-sm font-semibold text-zinc-500">Selecciona una parcela</p>
+                <p class="text-xs mt-1 leading-relaxed">Pulsa en un polígono del mapa para ver todas las opciones disponibles</p>
+            </div>
+        </div>
         @endif
 
         </div>{{-- /Mapa + panel detalle --}}
@@ -1084,7 +1083,6 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
     tileMode: initialTileMode,
     showList: initialShowList,
     isFullscreen: false,
-    legendItems: [],
     _plotColorMap: {},
     search: '',
     communityId: '',
@@ -1273,16 +1271,6 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
                 this._plotColorMap[p.id] = this.PALETTE[varietyColorIdx[key]];
             });
 
-            // ── Leyenda de variedades ───────────────────────────────────────
-            const seenVarieties = new Set();
-            const newLegend = [];
-            allPlots.forEach(p => {
-                if (p.variety_id && !seenVarieties.has(p.variety_id)) {
-                    seenVarieties.add(p.variety_id);
-                    newLegend.push({ name: p.variety_name, color: this._plotColorMap[p.id] });
-                }
-            });
-            this.legendItems = newLegend;
 
             // ── Polígonos SIGPAC (colores por variedad) ─────────────────────
             allPolygons.forEach(poly => {
