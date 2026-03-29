@@ -12,7 +12,7 @@
             : number_format($dashboardStats['kg_received'],0).'kg';
         $totalHa    = collect($mapPlots)->sum(fn($p) => (float)($p['area'] ?? 0));
         $haFmt      = $totalHa > 0 ? number_format($totalHa,1).' ha' : count($mapPlots).' parc.';
-        $bodegaAlert = $containerStats['full'] + $containerStats['critical'];
+        $wineryAlert = $containerStats['full'] + $containerStats['critical'];
     @endphp
     <div class="shrink-0 flex items-stretch bg-white border-b border-zinc-200">
 
@@ -60,15 +60,15 @@
             <div class="relative w-8 h-8 rounded-xl flex items-center justify-center shrink-0
                         {{ $activeTab === 'containers' ? 'bg-violet-100' : 'bg-zinc-100 group-hover:bg-zinc-200' }}">
                 <flux:icon icon="beaker" class="size-4 {{ $activeTab === 'containers' ? 'text-violet-600' : 'text-zinc-400' }}" />
-                @if($bodegaAlert > 0)
-                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{{ $bodegaAlert }}</span>
+                @if($wineryAlert > 0)
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{{ $wineryAlert }}</span>
                 @endif
             </div>
             <div class="text-left hidden md:block">
                 <p class="text-sm font-semibold leading-tight {{ $activeTab === 'containers' ? 'text-violet-700' : 'text-zinc-600' }}">Bodega</p>
                 <p class="text-[10px] leading-tight mt-0.5 text-zinc-400">
                     {{ $containerStats['total'] }} depósitos ·
-                    @if($bodegaAlert > 0)<span class="text-red-400 font-semibold">{{ $bodegaAlert }} alertas</span>@else{{ $containerStats['used_pct'] }}% ocupado@endif
+                    @if($wineryAlert > 0)<span class="text-red-400 font-semibold">{{ $wineryAlert }} alertas</span>@else{{ $containerStats['used_pct'] }}% ocupado @endif
                 </p>
             </div>
         </button>

@@ -41,7 +41,7 @@ class ContentController extends Controller
         // Funcionalidades específicas
         'gestion-vendimia' => 'content.gestion-vendimia',
         'registro-fitosanitarios' => 'content.registro-fitosanitarios',
-        'subvenciones-pac-2024' => 'content.subvenciones-pac-2024',
+        'subvenciones-pac' => 'content.subvenciones-pac-2024',
         'control-plagas-viñedo' => 'content.control-plagas-viñedo',
         'facturacion-agricola' => 'content.facturacion-agricola',
 

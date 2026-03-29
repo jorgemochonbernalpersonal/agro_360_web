@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/faqs') }}">
     <meta property="og:title" content="Preguntas Frecuentes - Agro365">
     <meta property="og:description" content="Todo lo que necesitas saber sobre Agro365, el software profesional de gestión agrícola">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Preguntas Frecuentes - Agro365">
@@ -34,7 +34,7 @@
     <meta name="twitter:url" content="{{ url('/faqs') }}">
     <meta name="twitter:title" content="Preguntas Frecuentes - Agro365">
     <meta name="twitter:description" content="Todo lo que necesitas saber sobre Agro365, el software profesional de gestión agrícola">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">

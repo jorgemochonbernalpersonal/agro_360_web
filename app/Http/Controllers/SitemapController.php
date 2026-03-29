@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 
 class SitemapController extends Controller
 {
@@ -15,8 +16,8 @@ class SitemapController extends Controller
 
     public function index(): Response
     {
-        $urls = $this->sitemapService->getUrls();
-        
+        $urls = Cache::remember('sitemap.urls', now()->addHours(24), fn () => $this->sitemapService->getUrls());
+
         return response()
             ->view('sitemap', ['urls' => $urls])
             ->header('Content-Type', 'text/xml');

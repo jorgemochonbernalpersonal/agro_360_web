@@ -58,7 +58,7 @@ class SeoHelper
             '/cuaderno-digital-viticultores' => 'Cuaderno de campo digital para viticultores obligatorio desde 2027. Gestión de tratamientos, SIGPAC, cumplimiento normativo y informes oficiales. Prueba gratis.',
             '/gestion-vendimia' => 'Gestión de vendimia digital para viticultores. Control de cosechas, contenedores, rendimientos y trazabilidad completa. Software profesional para bodegas.',
             '/registro-fitosanitarios' => 'Registro de productos fitosanitarios para viticultores. Gestión completa de tratamientos, dosis, plazos de seguridad y cumplimiento normativo.',
-            '/subvenciones-pac-2024' => 'Subvenciones PAC 2024: guía completa para viticultores. Requisitos, plazos y cómo cumplir con Agro365. Software de gestión agrícola profesional.',
+            '/subvenciones-pac' => 'Subvenciones PAC: guía completa para viticultores. Requisitos, plazos y cómo cumplir con Agro365. Software de gestión agrícola profesional.',
             '/control-plagas-viñedo' => 'Control de plagas en viñedo: gestión digital de tratamientos fitosanitarios, calendario de aplicaciones y cumplimiento normativo. Software para viticultores.',
             '/facturacion-agricola' => 'Facturación agrícola integrada para viticultores. Gestión de clientes, facturas, albaranes y control de stock. Software completo de gestión agrícola.',
             '/quienes-somos' => 'Conoce más sobre Agro365, la plataforma de gestión agrícola profesional para viticultores y bodegas en España. Software de cuaderno digital y SIGPAC.',

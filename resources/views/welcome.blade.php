@@ -20,6 +20,7 @@
     
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url('/') }}">
+    <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
     
     <!-- Hreflang for Spain -->
     <link rel="alternate" hreflang="es" href="{{ url('/') }}">
@@ -41,20 +42,20 @@
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:title" content="Agro365 | Cuaderno de Campo Digital Obligatorio 2027">
     <meta property="og:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. Cuaderno digital obligatorio 2027, gestión SIGPAC y trazabilidad completa.">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Agro365 - Software de Gestión Agrícola para Viñedos">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="Agro365">
     <meta property="article:author" content="Agro365">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/') }}">
     <meta name="twitter:title" content="Agro365 | Cuaderno de Campo Digital Obligatorio 2027">
     <meta name="twitter:description" content="La plataforma que conecta viticultores, bodegas y Denominaciones de Origen. Viticultor básico gratis, completo desde 9€/mes.">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/dashboard-preview.png') }}">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">

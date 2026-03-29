@@ -10,7 +10,7 @@
     <link rel="canonical" href="{{ url('/blog/novedades-pac-2025') }}">
     <meta property="og:title" content="Novedades PAC 2025 - Blog Agro365">
     <meta property="og:type" content="article">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image" content="{{ asset('images/dashboard-preview.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
@@ -114,11 +114,15 @@
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
-        "@@type": "Article",
+        "@@type": "BlogPosting",
         "headline": "Novedades PAC 2025: Lo que Necesitas Saber",
+        "description": "Las principales novedades de la PAC 2025: cuaderno digital obligatorio, condicionalidad reforzada, eco-esquemas y nuevos requisitos para viticultores.",
+        "image": "{{ asset('images/dashboard-preview.png') }}",
+        "url": "{{ url('/blog/novedades-pac-2025') }}",
         "datePublished": "2024-12-29",
-        "author": {"@@type": "Organization", "name": "Agro365"},
-        "publisher": {"@@type": "Organization", "name": "Agro365"}
+        "dateModified": "2024-12-29",
+        "author": {"@@type": "Organization", "name": "Agro365", "url": "{{ url('/') }}"},
+        "publisher": {"@@type": "Organization", "name": "Agro365", "logo": {"@@type": "ImageObject", "url": "{{ asset('images/logo.png') }}"}}
     }
     </script>
 </body>

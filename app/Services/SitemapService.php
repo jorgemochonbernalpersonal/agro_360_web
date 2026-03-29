@@ -2,389 +2,145 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContentController;
+
 class SitemapService
 {
     /**
-     * ✅ OPTIMIZACIÓN SEO: Asegurar URLs absolutas correctas
-     * Usa config('app.url') para garantizar dominio correcto en producción
+     * Prioridad y changefreq por slug de contenido.
+     * Cualquier slug que no aparezca aquí hereda los defaults: 0.7 / monthly.
+     * Este mapa es la única fuente de verdad SEO; los slugs vienen de ContentController.
      */
+    private const CONTENT_PRIORITIES = [
+        // Pricing
+        'precios'                        => ['0.9', 'monthly'],
+
+        // Comerciales principales
+        'software-gestion-agricola'      => ['0.9', 'weekly'],
+        'software-viticultura'           => ['0.9', 'weekly'],
+        'software-bodegas'               => ['0.9', 'weekly'],
+        'cuaderno-digital'               => ['0.9', 'weekly'],
+        'trazabilidad-agricola'          => ['0.9', 'weekly'],
+        'software-para-viticultores'     => ['0.9', 'weekly'],
+        'cuaderno-digital-viticultores'  => ['0.9', 'weekly'],
+        'facturacion-agricola'           => ['0.9', 'weekly'],
+        'ndvi-viñedo-teledeteccion'      => ['0.9', 'weekly'],
+
+        // Por sector
+        'viticultores'                   => ['0.9', 'weekly'],
+        'bodegas'                        => ['0.9', 'weekly'],
+        'cooperativas'                   => ['0.9', 'weekly'],
+        'ingenieros-agronomos'           => ['0.9', 'weekly'],
+
+        // Informativas clave
+        'que-es-sigpac'                  => ['0.9', 'weekly'],
+        'cuaderno-campo-digital-2027'    => ['0.8', 'monthly'],
+        'normativa-pac'                  => ['0.8', 'monthly'],
+        'digitalizar-viñedo'             => ['0.8', 'monthly'],
+        'gestion-vendimia'               => ['0.8', 'monthly'],
+        'registro-fitosanitarios'        => ['0.8', 'monthly'],
+        'subvenciones-pac'               => ['0.8', 'monthly'],
+        'control-plagas-viñedo'          => ['0.8', 'monthly'],
+        'app-agricultura'                => ['0.8', 'monthly'],
+
+        // DOs principales
+        'software-viticultores-rioja'        => ['0.8', 'monthly'],
+        'software-viticultores-ribera-duero' => ['0.8', 'monthly'],
+        'software-viticultores-rueda'        => ['0.8', 'monthly'],
+        'software-viticultores-penedes'      => ['0.8', 'monthly'],
+        'software-viticultores-la-mancha'    => ['0.8', 'monthly'],
+        'software-viticultores-priorat'      => ['0.8', 'monthly'],
+        'software-viticultores-rias-baixas'  => ['0.8', 'monthly'],
+        'software-viticultores-toro'         => ['0.8', 'monthly'],
+        'software-viticultores-jumilla'      => ['0.8', 'monthly'],
+
+        // Default implícito para todo lo demás: ['0.7', 'monthly']
+    ];
+
     private function getAbsoluteUrl(string $path): string
     {
         $baseUrl = rtrim(config('app.url'), '/');
-        $path = ltrim($path, '/');
+        $path    = ltrim($path, '/');
         return $baseUrl . '/' . $path;
+    }
+
+    private function priority(string $slug): array
+    {
+        return self::CONTENT_PRIORITIES[$slug] ?? ['0.7', 'monthly'];
     }
 
     public function getUrls(): array
     {
-        // ✅ SEO: Prioridades ajustadas para arquitectura "Product & Solutions"
-        return [
-            // Landing page
-            [
-                'loc' => $this->getAbsoluteUrl(''),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '1.0',
-                'images' => [
-                    [
-                        'loc' => $this->getAbsoluteUrl('images/logo.png'),
-                        'caption' => 'Logo de Agro365, software profesional para viñedos y bodegas',
-                        'title' => 'Agro365 - Software de Gestión Agrícola',
-                    ],
-                    [
-                        'loc' => $this->getAbsoluteUrl('images/dashboard-preview.png'),
-                        'caption' => 'Vista del dashboard de gestión agrícola con SIGPAC y cuaderno digital',
-                        'title' => 'Dashboard de Agro365',
-                    ],
+        $urls = [];
+
+        // ── Landing page ────────────────────────────────────────────────────
+        $urls[] = [
+            'loc'        => $this->getAbsoluteUrl(''),
+            'lastmod'    => now()->toIso8601String(),
+            'changefreq' => 'weekly',
+            'priority'   => '1.0',
+            'images'     => [
+                [
+                    'loc'     => $this->getAbsoluteUrl('images/logo.png'),
+                    'caption' => 'Logo de Agro365, software profesional para viñedos y bodegas',
+                    'title'   => 'Agro365 - Software de Gestión Agrícola',
+                ],
+                [
+                    'loc'     => $this->getAbsoluteUrl('images/dashboard-preview.png'),
+                    'caption' => 'Vista del dashboard de gestión agrícola con SIGPAC y cuaderno digital',
+                    'title'   => 'Dashboard de Agro365',
                 ],
             ],
-            
-            // FAQs
-            [
-                'loc' => $this->getAbsoluteUrl('faqs'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.9',
-            ],
-
-            // Página de precios
-            [
-                'loc' => $this->getAbsoluteUrl('precios'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.9',
-            ],
-            
-            // Páginas comerciales clave (alta prioridad SEO - según análisis profesional)
-            [
-                'loc' => $this->getAbsoluteUrl('software-gestion-agricola'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultura'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-bodegas'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('cuaderno-digital'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('trazabilidad-agricola'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            
-            // Páginas por sector (alta prioridad SEO)
-            [
-                'loc' => $this->getAbsoluteUrl('viticultores'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('bodegas'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('cooperativas'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('ingenieros-agronomos'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            
-            // Páginas de contenido SEO
-            [
-                'loc' => $this->getAbsoluteUrl('que-es-sigpac'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('cuaderno-campo-digital-2027'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('normativa-pac'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('digitalizar-viñedo'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('comparativa-software-agricola'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-para-viticultores'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('app-agricultura'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('cuaderno-digital-viticultores'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            // Nuevas páginas SEO - Diciembre 2024
-            [
-                'loc' => $this->getAbsoluteUrl('gestion-vendimia'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('registro-fitosanitarios'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('subvenciones-pac-2024'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('control-plagas-viñedo'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('facturacion-agricola'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            // Páginas SEO - Media prioridad y contenido específico
-            [
-                'loc' => $this->getAbsoluteUrl('gestion-cuadrillas-agricolas'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('maquinaria-agricola-registro'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('plantaciones-viñedo-variedades'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('rendimientos-cosecha-viñedo'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('informes-oficiales-agricultura'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('ndvi-viñedo-teledeteccion'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('calendario-viticola'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('trazabilidad-vino-origen'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('firma-digital-agricultura'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('gestion-campañas-agricolas'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
-            
-            // Páginas regionales por DO
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-rioja'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-ribera-duero'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-rueda'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-penedes'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-la-mancha'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            
-            // Blog
-            [
-                'loc' => $this->getAbsoluteUrl('blog'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.7',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('blog/novedades-pac-2025'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.6',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('blog/errores-cuaderno-campo'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.6',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('blog/calendario-viticola-2025'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.6',
-            ],
-            
-            // Páginas regionales por DO (segunda tanda)
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-priorat'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-rias-baixas'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-toro'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('software-viticultores-jumilla'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'monthly',
-                'priority' => '0.8',
-            ],
-
-            // Páginas regionales por DO — vista dinámica compartida
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-jerez'),            'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-cava'),             'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-valdepenas'),       'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-navarra'),          'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-somontano'),        'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-utiel-requena'),    'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-yecla'),            'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-bullas'),           'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-monterrei'),        'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-bierzo'),           'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-ribeiro'),          'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-cigales'),          'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-calatayud'),        'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-campo-de-borja'),   'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-carinena'),         'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-malaga'),           'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-montilla-moriles'), 'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-terra-alta'),       'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $this->getAbsoluteUrl('software-viticultores-costers-del-segre'),'lastmod' => now()->toIso8601String(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-
-            // Páginas legales
-            [
-                'loc' => $this->getAbsoluteUrl('privacidad'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'yearly',
-                'priority' => '0.3',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('terminos'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'yearly',
-                'priority' => '0.3',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('cookies'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'yearly',
-                'priority' => '0.3',
-            ],
-            [
-                'loc' => $this->getAbsoluteUrl('aviso-legal'),
-                'lastmod' => now()->toIso8601String(),
-                'changefreq' => 'yearly',
-                'priority' => '0.3',
-            ],
         ];
+
+        // ── FAQs (ruta propia, no pasa por ContentController) ───────────────
+        $urls[] = [
+            'loc'        => $this->getAbsoluteUrl('faqs'),
+            'lastmod'    => now()->toIso8601String(),
+            'changefreq' => 'monthly',
+            'priority'   => '0.9',
+        ];
+
+        // ── Páginas de contenido — generadas automáticamente ────────────────
+        foreach (ContentController::getAllSlugs() as $slug) {
+            [$priority, $changefreq] = $this->priority($slug);
+            $urls[] = [
+                'loc'        => $this->getAbsoluteUrl($slug),
+                'lastmod'    => now()->toIso8601String(),
+                'changefreq' => $changefreq,
+                'priority'   => $priority,
+            ];
+        }
+
+        // ── Blog índice ──────────────────────────────────────────────────────
+        $urls[] = [
+            'loc'        => $this->getAbsoluteUrl('blog'),
+            'lastmod'    => now()->toIso8601String(),
+            'changefreq' => 'weekly',
+            'priority'   => '0.7',
+        ];
+
+        // ── Posts de blog — generados automáticamente ───────────────────────
+        foreach (BlogController::getAllSlugs() as $slug) {
+            $urls[] = [
+                'loc'        => $this->getAbsoluteUrl("blog/{$slug}"),
+                'lastmod'    => now()->toIso8601String(),
+                'changefreq' => 'monthly',
+                'priority'   => '0.6',
+            ];
+        }
+
+        // ── Páginas legales ──────────────────────────────────────────────────
+        foreach (['privacidad', 'terminos', 'cookies', 'aviso-legal'] as $slug) {
+            $urls[] = [
+                'loc'        => $this->getAbsoluteUrl($slug),
+                'lastmod'    => now()->toIso8601String(),
+                'changefreq' => 'yearly',
+                'priority'   => '0.3',
+            ];
+        }
+
+        return $urls;
     }
 }

@@ -14,7 +14,10 @@ Route::get('/faqs', function () {
 // Páginas públicas de contenido SEO
 Route::permanentRedirect('/servicios', '/software-gestion-agricola');
 Route::permanentRedirect('/noticias', '/blog');
-Route::permanentRedirect('/contacto', '/faqs'); // Redirigir contacto a FAQs por ahora
+Route::permanentRedirect('/contacto', '/faqs');
+Route::permanentRedirect('/quienes-somos', '/');
+Route::permanentRedirect('/tutoriales', '/blog');
+Route::permanentRedirect('/subvenciones-pac-2024', '/subvenciones-pac');
 
 // ✅ REFACTOR: Rutas de contenido SEO dinámicas
 // Todas las páginas de contenido ahora pasan por ContentController
