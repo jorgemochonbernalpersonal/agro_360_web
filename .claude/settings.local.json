@@ -225,7 +225,8 @@
       "Bash(npm audit:*)",
       "Bash(grep -l \"->on.*users.*cascade\" /c/Users/jorge/Desktop/agro365/database/migrations/*.php)",
       "Bash(while read:*)",
-      "Bash(do basename:*)"
+      "Bash(do basename:*)",
+      "Read(//c/tmp/**)"
     ]
   }
 }
