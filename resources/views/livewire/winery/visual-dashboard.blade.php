@@ -3,7 +3,8 @@
 .plot-map-label { background:rgba(0,0,0,.65); border:none!important; border-radius:5px; color:#fff; font-size:10px; font-weight:700; padding:3px 7px; text-align:center; white-space:nowrap; box-shadow:0 1px 6px rgba(0,0,0,.4); pointer-events:none; }
 .plot-map-label::before { display:none; }
 </style>
-<div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 flex flex-col bg-white relative" style="height: calc(100vh - 4rem);">
+<div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 flex flex-col bg-white relative" style="height: calc(100vh - 4rem);"
+     x-data="{ tab: $wire.entangle('activeTab') }">
 
     {{-- ══ Top bar: tabs descriptivos + volver ══ --}}
     @php
@@ -17,55 +18,49 @@
     <div class="shrink-0 flex items-stretch bg-white border-b border-zinc-200">
 
         {{-- Tab: Resumen --}}
-        <button wire:click="switchTab('dashboard')"
-                class="group flex items-center gap-3 px-5 py-3.5 transition-colors relative
-                       {{ $activeTab === 'dashboard' ? 'bg-agro-50' : 'hover:bg-zinc-50' }}">
-            @if($activeTab === 'dashboard')
-            <span class="absolute bottom-0 inset-x-0 h-0.5 bg-agro-500 rounded-t"></span>
-            @endif
-            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0
-                        {{ $activeTab === 'dashboard' ? 'bg-agro-100' : 'bg-zinc-100 group-hover:bg-zinc-200' }}">
-                <flux:icon icon="chart-bar" class="size-4 {{ $activeTab === 'dashboard' ? 'text-agro-600' : 'text-zinc-400' }}" />
+        <button @click="tab = 'dashboard'"
+                :class="tab === 'dashboard' ? 'bg-agro-50' : 'hover:bg-zinc-50'"
+                class="group flex items-center gap-3 px-5 py-3.5 transition-colors relative">
+            <span x-show="tab === 'dashboard'" class="absolute bottom-0 inset-x-0 h-0.5 bg-agro-500 rounded-t"></span>
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                 :class="tab === 'dashboard' ? 'bg-agro-100' : 'bg-zinc-100 group-hover:bg-zinc-200'">
+                <flux:icon icon="chart-bar" class="size-4" :class="tab === 'dashboard' ? 'text-agro-600' : 'text-zinc-400'" />
             </div>
             <div class="text-left hidden md:block">
-                <p class="text-sm font-semibold leading-tight {{ $activeTab === 'dashboard' ? 'text-agro-700' : 'text-zinc-600' }}">Resumen</p>
+                <p class="text-sm font-semibold leading-tight" :class="tab === 'dashboard' ? 'text-agro-700' : 'text-zinc-600'">Resumen</p>
                 <p class="text-[10px] leading-tight mt-0.5 text-zinc-400">{{ $kgFmt }} · {{ $dashboardStats['campaign_year'] }}</p>
             </div>
         </button>
 
         {{-- Tab: Mapa de parcelas --}}
-        <button wire:click="switchTab('plots')"
-                class="group flex items-center gap-3 px-5 py-3.5 transition-colors relative
-                       {{ $activeTab === 'plots' ? 'bg-blue-50' : 'hover:bg-zinc-50' }}">
-            @if($activeTab === 'plots')
-            <span class="absolute bottom-0 inset-x-0 h-0.5 bg-blue-500 rounded-t"></span>
-            @endif
-            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0
-                        {{ $activeTab === 'plots' ? 'bg-blue-100' : 'bg-zinc-100 group-hover:bg-zinc-200' }}">
-                <flux:icon icon="map-pin" class="size-4 {{ $activeTab === 'plots' ? 'text-blue-600' : 'text-zinc-400' }}" />
+        <button @click="tab = 'plots'"
+                :class="tab === 'plots' ? 'bg-blue-50' : 'hover:bg-zinc-50'"
+                class="group flex items-center gap-3 px-5 py-3.5 transition-colors relative">
+            <span x-show="tab === 'plots'" class="absolute bottom-0 inset-x-0 h-0.5 bg-blue-500 rounded-t"></span>
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                 :class="tab === 'plots' ? 'bg-blue-100' : 'bg-zinc-100 group-hover:bg-zinc-200'">
+                <flux:icon icon="map-pin" class="size-4" :class="tab === 'plots' ? 'text-blue-600' : 'text-zinc-400'" />
             </div>
             <div class="text-left hidden md:block">
-                <p class="text-sm font-semibold leading-tight {{ $activeTab === 'plots' ? 'text-blue-700' : 'text-zinc-600' }}">Mapa de parcelas</p>
+                <p class="text-sm font-semibold leading-tight" :class="tab === 'plots' ? 'text-blue-700' : 'text-zinc-600'">Mapa de parcelas</p>
                 <p class="text-[10px] leading-tight mt-0.5 text-zinc-400">{{ count($mapPlots) }} parcelas · {{ $haFmt }}</p>
             </div>
         </button>
 
         {{-- Tab: Bodega --}}
-        <button wire:click="switchTab('containers')"
-                class="group flex items-center gap-3 px-5 py-3.5 transition-colors relative
-                       {{ $activeTab === 'containers' ? 'bg-violet-50' : 'hover:bg-zinc-50' }}">
-            @if($activeTab === 'containers')
-            <span class="absolute bottom-0 inset-x-0 h-0.5 bg-violet-500 rounded-t"></span>
-            @endif
-            <div class="relative w-8 h-8 rounded-xl flex items-center justify-center shrink-0
-                        {{ $activeTab === 'containers' ? 'bg-violet-100' : 'bg-zinc-100 group-hover:bg-zinc-200' }}">
-                <flux:icon icon="beaker" class="size-4 {{ $activeTab === 'containers' ? 'text-violet-600' : 'text-zinc-400' }}" />
+        <button @click="tab = 'containers'"
+                :class="tab === 'containers' ? 'bg-violet-50' : 'hover:bg-zinc-50'"
+                class="group flex items-center gap-3 px-5 py-3.5 transition-colors relative">
+            <span x-show="tab === 'containers'" class="absolute bottom-0 inset-x-0 h-0.5 bg-violet-500 rounded-t"></span>
+            <div class="relative w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                 :class="tab === 'containers' ? 'bg-violet-100' : 'bg-zinc-100 group-hover:bg-zinc-200'">
+                <flux:icon icon="beaker" class="size-4" :class="tab === 'containers' ? 'text-violet-600' : 'text-zinc-400'" />
                 @if($wineryAlert > 0)
                 <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">{{ $wineryAlert }}</span>
                 @endif
             </div>
             <div class="text-left hidden md:block">
-                <p class="text-sm font-semibold leading-tight {{ $activeTab === 'containers' ? 'text-violet-700' : 'text-zinc-600' }}">Bodega</p>
+                <p class="text-sm font-semibold leading-tight" :class="tab === 'containers' ? 'text-violet-700' : 'text-zinc-600'">Bodega</p>
                 <p class="text-[10px] leading-tight mt-0.5 text-zinc-400">
                     {{ $containerStats['total'] }} depósitos ·
                     @if($wineryAlert > 0)<span class="text-red-400 font-semibold">{{ $wineryAlert }} alertas</span>@else{{ $containerStats['used_pct'] }}% ocupado @endif
@@ -87,8 +82,8 @@
     {{-- ══════════════════════════════════════════════════════ --}}
     {{--                   TAB: PARCELAS                       --}}
     {{-- ══════════════════════════════════════════════════════ --}}
-    @if ($activeTab === 'plots')
-    <div class="flex flex-col flex-1 overflow-hidden"
+    <div x-show="tab === 'plots'" style="{{ $activeTab !== 'plots' ? 'display:none' : '' }}"
+         class="flex flex-col flex-1 overflow-hidden"
          x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }})"
          @keydown.escape.window="$wire.set('selectedPlotId', null)">
 
@@ -489,14 +484,13 @@
         @endif
 
         </div>{{-- /Mapa + panel detalle --}}
-    </div>{{-- /x-data plots --}}
-    @endif
+    </div>{{-- /x-data plots / x-show plots --}}
 
     {{-- ══════════════════════════════════════════════════════ --}}
     {{--                  TAB: BODEGA/CONTENEDORES             --}}
     {{-- ══════════════════════════════════════════════════════ --}}
-    @if ($activeTab === 'containers')
-    <div class="flex flex-1 overflow-hidden">
+    <div x-show="tab === 'containers'" style="{{ $activeTab !== 'containers' ? 'display:none' : '' }}"
+         class="flex flex-1 overflow-hidden">
 
         {{-- Grid de contenedores --}}
         <div class="flex-1 flex flex-col overflow-hidden">
@@ -833,14 +827,13 @@
         </div>
         @endif
 
-    </div>
-    @endif
+    </div>{{-- /x-show containers --}}
 
     {{-- ══════════════════════════════════════════════════════ --}}
     {{--                   TAB: DASHBOARD                      --}}
     {{-- ══════════════════════════════════════════════════════ --}}
-    @if ($activeTab === 'dashboard')
-    <div class="flex-1 overflow-y-auto">
+    <div x-show="tab === 'dashboard'" style="{{ $activeTab !== 'dashboard' ? 'display:none' : '' }}"
+         class="flex-1 overflow-y-auto">
         <div class="max-w-5xl mx-auto p-6 space-y-6">
 
             {{-- ── Acciones rápidas ── --}}
@@ -1049,7 +1042,7 @@
             </div>
         </div>
     </div>
-    @endif
+    </div>{{-- /x-show dashboard --}}
 
 
 </div>
@@ -1059,6 +1052,16 @@
 Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTileMode = 'satellite', initialShowList = false) => ({
     map: null,
     polygonLayers: {},
+
+    // Cuando el tab de parcelas se activa estando el mapa ya inicializado (x-show),
+    // necesitamos que Leaflet recalcule el tamaño del contenedor.
+    init() {
+        this.$watch(() => $wire.activeTab, (val) => {
+            if (val === 'plots' && this.map) {
+                this.$nextTick(() => this.map.invalidateSize());
+            }
+        });
+    },
     tileLayers: {},
     tileMode: initialTileMode,
     showList: initialShowList,
