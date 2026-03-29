@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PushController;
 use App\Http\Controllers\Api\RemoteSensingController;
 use App\Http\Controllers\Api\Winery\ContainerController;
+use App\Http\Controllers\Api\Winery\TraceabilityController;
 use App\Http\Controllers\Api\Winery\PlotController as WineryPlotController;
 use App\Http\Controllers\Api\Winery\DashboardController as WineryDashboard;
 use App\Http\Controllers\Api\Winery\FermentationControlController;
@@ -33,6 +35,10 @@ Route::post('/claim-account',   [AuthController::class, 'claimAccount'])->middle
 Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
     // ── Auth ──────────────────────────────────────────────────────────────────
+    // ── Push notifications ────────────────────────────────────────────────────
+    Route::post('/push/register',   [PushController::class, 'register'])->middleware('throttle:30,1');
+    Route::delete('/push/token',    [PushController::class, 'unregister'])->middleware('throttle:30,1');
+
     Route::get('/me',               [AuthController::class, 'me'])->middleware('throttle:60,1');
     Route::put('/me',               [AuthController::class, 'updateMe'])->middleware('throttle:30,1');
     Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('throttle:10,1');
@@ -92,6 +98,10 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Análisis de vino
         Route::get('/wine-analysis',      [WineAnalysisController::class, 'index'])->middleware('throttle:60,1');
         Route::get('/wine-analysis/{id}', [WineAnalysisController::class, 'show'])->middleware('throttle:60,1');
+
+        // Trazabilidad uva → vino
+        Route::get('/grape-receptions/{id}/traceability', [TraceabilityController::class, 'receptionWines'])->middleware('throttle:60,1');
+        Route::get('/wines/{id}/traceability',            [TraceabilityController::class, 'wineReceptions'])->middleware('throttle:60,1');
 
         // Parcelas de los viticultores de la bodega
         Route::get('/plots/centroids',            [WineryPlotController::class, 'centroids'])->middleware('throttle:30,1');

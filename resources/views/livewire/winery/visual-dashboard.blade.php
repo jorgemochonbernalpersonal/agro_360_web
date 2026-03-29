@@ -249,7 +249,7 @@
 
         {{-- Panel derecho: detalle parcela --}}
         @if ($selectedPlot)
-        <div class="w-80 shrink-0 border-l border-zinc-200 bg-white overflow-y-auto flex flex-col shadow-lg">
+        <div wire:key="plot-panel-{{ $selectedPlot->id }}" class="w-80 shrink-0 border-l border-zinc-200 bg-white overflow-y-auto flex flex-col shadow-lg">
 
             {{-- Header --}}
             <div class="sticky top-0 bg-white border-b border-zinc-100 px-4 py-3 flex items-start justify-between z-10">
@@ -473,7 +473,7 @@
 
         @else
         {{-- Sin selección --}}
-        <div class="w-72 shrink-0 border-l border-zinc-100 bg-zinc-50/80 flex flex-col items-center justify-center gap-4 text-zinc-400 p-6">
+        <div wire:key="plot-panel-empty" class="w-72 shrink-0 border-l border-zinc-100 bg-zinc-50/80 flex flex-col items-center justify-center gap-4 text-zinc-400 p-6">
             <div class="w-14 h-14 bg-zinc-100 rounded-2xl flex items-center justify-center">
                 <flux:icon icon="map-pin" class="size-7 text-zinc-300" />
             </div>

@@ -22,9 +22,15 @@ class GrapeReceptionController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $harvests = Harvest::where('winery_id', $user->id)
-            ->with(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container'])
-            ->orderByDesc('harvest_start_date')
+        $query = Harvest::where('winery_id', $user->id)
+            ->with(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container']);
+
+        if ($request->filled('viticulturist_id')) {
+            $viticulturistId = (int) $request->input('viticulturist_id');
+            $query->whereHas('batch', fn ($q) => $q->where('viticulturist_id', $viticulturistId));
+        }
+
+        $harvests = $query->orderByDesc('harvest_start_date')
             ->paginate($request->integer('per_page', 20));
 
         return response()->json([
