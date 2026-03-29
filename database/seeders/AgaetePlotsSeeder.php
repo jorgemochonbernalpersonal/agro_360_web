@@ -196,25 +196,29 @@ class AgaetePlotsSeeder extends Seeder
         $geomIds = DB::table('multipart_plot_sigpac')
             ->whereIn('plot_id', $plotIds)->pluck('plot_geometry_id');
 
-        // Borrar actividades agrícolas antes de las parcelas (FK RESTRICT)
-        // harvests.activity_id es nullable con onDelete('set null') → no hace falta borrar harvests
-        $activityIds = DB::table('agricultural_activities')
-            ->whereIn('plot_id', $plotIds)->pluck('id');
-        if ($activityIds->isNotEmpty()) {
-            // plot_plantings también tiene FK hacia plots; borrar plantaciones primero
-            $plantingIds = DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->pluck('id');
-            if ($plantingIds->isNotEmpty()) {
-                // harvests → plot_planting_id tiene onDelete('set null'), se queda null automáticamente
-                DB::table('plot_plantings')->whereIn('id', $plantingIds)->delete();
-            }
-            DB::table('agricultural_activities')->whereIn('id', $activityIds)->delete();
+        // 1. Campañas de estos viticultores (FK RESTRICT → users)
+        //    Al borrar campaigns, se cascadea: estimated_yields, winery_yield_forecasts,
+        //    grape_reception_batches (y sus harvests quedan con batch_id = null)
+        DB::table('campaigns')->whereIn('viticulturist_id', $vitIds)->delete();
+
+        // 2. Plantaciones (FK → plots RESTRICT) y sus actividades
+        $plantingIds = DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->pluck('id');
+        if ($plantingIds->isNotEmpty()) {
+            DB::table('plot_plantings')->whereIn('id', $plantingIds)->delete();
         }
 
+        // 3. Actividades agrícolas (FK → plots RESTRICT)
+        //    harvests.activity_id tiene onDelete('set null') → quedan con activity_id=null
+        DB::table('agricultural_activities')->whereIn('plot_id', $plotIds)->delete();
+
+        // 4. Parcelas y sus tablas relacionadas
         DB::table('multipart_plot_sigpac')->whereIn('plot_id', $plotIds)->delete();
         DB::table('plot_sigpac_code')->whereIn('plot_id', $plotIds)->delete();
         DB::table('plots')->whereIn('id', $plotIds)->delete();
         DB::table('sigpac_code')->whereIn('id', $sigpacIds)->delete();
         DB::table('plot_geometry')->whereIn('id', $geomIds)->delete();
+
+        // 5. Relaciones de bodega y usuarios
         DB::table('winery_viticulturist')->whereIn('viticulturist_id', $vitIds)->delete();
         DB::table('users')->whereIn('id', $vitIds)->delete();
 
