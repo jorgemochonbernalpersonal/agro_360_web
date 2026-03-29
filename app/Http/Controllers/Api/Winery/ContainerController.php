@@ -17,31 +17,48 @@ class ContainerController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
-        $query = Container::where('user_id', $user->id)
-            ->where('archived', false)
-            ->with(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
+        $request->validate([
+            'room_id'  => 'nullable|integer|min:1',
+            'status'   => 'nullable|string|in:empty,full,critical',
+            'per_page' => 'nullable|integer|min:1|max:100',
+        ]);
 
-        // Filters
+        $base = Container::where('user_id', $user->id)
+            ->where('archived', false);
+
         if ($request->filled('room_id')) {
-            $query->where('container_room_id', $request->room_id);
+            $base->where('container_room_id', (int) $request->room_id);
         }
         if ($request->filled('status')) {
             match ($request->status) {
-                'empty'    => $query->scopes(['empty']),
-                'full'     => $query->scopes(['full']),
-                'critical' => $query->whereRaw('(used_capacity / NULLIF(capacity, 0)) >= 0.85'),
+                'empty'    => $base->scopes(['empty']),
+                'full'     => $base->scopes(['full']),
+                'critical' => $base->whereRaw('(used_capacity / NULLIF(capacity, 0)) >= 0.85'),
                 default    => null,
             };
         }
 
-        $containers = $query->orderBy('name')->get();
+        // Capacity totals over full filtered set (single aggregation query)
+        $totals = (clone $base)
+            ->selectRaw('COUNT(*) as total, SUM(capacity) as total_capacity, SUM(used_capacity) as total_used')
+            ->first();
+
+        $perPage = min((int) $request->query('per_page', 9), 100);
+
+        $containers = (clone $base)
+            ->with(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine'])
+            ->orderBy('name')
+            ->paginate($perPage);
 
         return response()->json([
             'data' => ContainerResource::collection($containers),
             'meta' => [
-                'total'          => $containers->count(),
-                'total_capacity' => $containers->sum(fn ($c) => (float) $c->capacity),
-                'total_used'     => $containers->sum(fn ($c) => (float) $c->used_capacity),
+                'total'          => (int) $totals->total,
+                'per_page'       => $containers->perPage(),
+                'current_page'   => $containers->currentPage(),
+                'last_page'      => $containers->lastPage(),
+                'total_capacity' => round((float) $totals->total_capacity, 2),
+                'total_used'     => round((float) $totals->total_used, 2),
             ],
         ]);
     }
@@ -58,6 +75,34 @@ class ContainerController extends Controller
             ->findOrFail($id);
 
         return response()->json(['data' => new ContainerResource($container)]);
+    }
+
+    // ─── POST /winery/containers ─────────────────────────────────────────────
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $validated = $request->validate([
+            'name'               => 'required|string|max:255',
+            'capacity'           => 'required|numeric|min:0.1',
+            'type_id'            => 'nullable|integer|exists:container_types,id',
+            'material_id'        => 'nullable|integer|exists:container_materials,id',
+            'container_room_id'  => 'nullable|integer|exists:container_rooms,id',
+            'serial_number'      => 'nullable|string|max:100',
+            'notes'              => 'nullable|string|max:1000',
+        ]);
+
+        $container = Container::create(array_merge($validated, [
+            'user_id'       => $user->id,
+            'used_capacity' => 0,
+            'archived'      => false,
+        ]));
+
+        $container->load(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
+
+        return response()->json(['data' => new ContainerResource($container)], 201);
     }
 
     // ─── PUT /winery/containers/{id} ──────────────────────────────────────────
@@ -80,5 +125,18 @@ class ContainerController extends Controller
         $container->load(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine']);
 
         return response()->json(['data' => new ContainerResource($container)]);
+    }
+
+    // ─── DELETE /winery/containers/{id} — archive ─────────────────────────────
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $container = Container::where('user_id', $user->id)->findOrFail($id);
+        $container->update(['archived' => true]);
+
+        return response()->json(['message' => 'Depósito archivado correctamente.']);
     }
 }

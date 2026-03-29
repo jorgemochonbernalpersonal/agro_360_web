@@ -37,6 +37,13 @@ class NotebookController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
+        $request->validate([
+            'type'        => 'nullable|string|in:phytosanitary,fertilization,irrigation,cultural,observation,harvest,pruning,phenology,post_harvest',
+            'plot_id'     => 'nullable|integer|min:1',
+            'campaign_id' => 'nullable|integer|min:1',
+            'per_page'    => 'nullable|integer|min:1|max:100',
+        ]);
+
         $query = AgriculturalActivity::forViticulturist($user->id)
             ->with(['plot', 'campaign']);
 
@@ -44,14 +51,14 @@ class NotebookController extends Controller
             $query->ofType($request->type);
         }
         if ($request->filled('plot_id')) {
-            $query->forPlot($request->plot_id);
+            $query->forPlot((int) $request->plot_id);
         }
         if ($request->filled('campaign_id')) {
-            $query->forCampaign($request->campaign_id);
+            $query->forCampaign((int) $request->campaign_id);
         }
 
         $activities = $query->orderByDesc('activity_date')
-            ->paginate($request->integer('per_page', 30));
+            ->paginate($request->integer('per_page', 15));
 
         return response()->json([
             'data' => ActivityResource::collection($activities->items()),
@@ -198,7 +205,7 @@ class NotebookController extends Controller
     {
         return match ($type) {
             'phytosanitary' => [
-                'product_id'              => 'required|integer|exists:phytosanitary_products,id',
+                'product_id'              => ['required', 'integer', \Illuminate\Validation\Rule::exists('phytosanitary_products', 'id')->where(fn ($q) => $q->where(fn ($q2) => $q2->whereNull('user_id')->orWhere('user_id', request()->user()?->id)))],
                 'pest_id'                 => 'nullable|integer|exists:pests,id',
                 'dose_per_hectare'        => 'nullable|numeric|min:0',
                 'total_dose'              => 'nullable|numeric|min:0',

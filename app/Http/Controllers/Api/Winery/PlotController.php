@@ -20,15 +20,37 @@ class PlotController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
+        $request->validate([
+            'per_page'       => 'nullable|integer|min:1|max:100',
+            'viticulturist'  => 'nullable|integer|min:1',
+            'search'         => 'nullable|string|max:100',
+        ]);
+
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->pluck('viticulturist_id')
             ->all();
 
-        $plots = Plot::whereIn('viticulturist_id', $viticulturistIds)
-            ->where('active', true)
+        $base = Plot::whereIn('viticulturist_id', $viticulturistIds)
+            ->where('active', true);
+
+        if ($request->filled('viticulturist')) {
+            $base->where('viticulturist_id', (int) $request->viticulturist);
+        }
+        if ($request->filled('search')) {
+            $base->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Area stats over full filtered set (single aggregation query)
+        $areaStats = (clone $base)
+            ->selectRaw('SUM(area) as total_area, SUM(CASE WHEN is_organic = 1 THEN area ELSE 0 END) as organic_area')
+            ->first();
+
+        $perPage = min((int) $request->query('per_page', 12), 100);
+
+        $plots = (clone $base)
             ->with(['province', 'municipality', 'plantings.grapeVariety'])
             ->orderBy('name')
-            ->get();
+            ->paginate($perPage);
 
         $centroids = $this->batchCentroids($plots->pluck('id')->all());
 
@@ -40,9 +62,12 @@ class PlotController extends Controller
         return response()->json([
             'data' => PlotResource::collection($plots),
             'meta' => [
-                'total'        => $plots->count(),
-                'total_area'   => round($plots->sum(fn ($p) => (float) $p->area), 2),
-                'organic_area' => round($plots->where('is_organic', true)->sum(fn ($p) => (float) $p->area), 2),
+                'total'        => $plots->total(),
+                'per_page'     => $plots->perPage(),
+                'current_page' => $plots->currentPage(),
+                'last_page'    => $plots->lastPage(),
+                'total_area'   => round((float) $areaStats->total_area, 2),
+                'organic_area' => round((float) $areaStats->organic_area, 2),
             ],
         ]);
     }

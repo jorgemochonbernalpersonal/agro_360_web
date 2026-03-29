@@ -29,7 +29,14 @@ class BotDefense
         'mysql/',
         'phpmyadmin/',
         'cgi-bin/',
-        '.well-known/security.txt',
+    ];
+
+    /**
+     * Paths under .well-known that must remain publicly accessible.
+     */
+    protected array $allowedWellKnown = [
+        '.well-known/assetlinks.json',  // Android App Links (Play Store)
+        '.well-known/apple-app-site-association', // iOS Universal Links (futuro)
     ];
 
     /**
@@ -40,6 +47,13 @@ class BotDefense
     public function handle(Request $request, Closure $next): Response
     {
         $path = $request->path();
+
+        // Allow critical well-known paths before bot detection
+        foreach ($this->allowedWellKnown as $allowed) {
+            if (str_contains($path, $allowed)) {
+                return $next($request);
+            }
+        }
 
         foreach ($this->maliciousPaths as $maliciousPath) {
             if (str_contains($path, $maliciousPath)) {

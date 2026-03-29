@@ -44,7 +44,7 @@ class FermentationControlController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'          => 'required|integer',
+            'wine_id'          => 'required|integer|exists:wines,id',
             'container_id'     => 'nullable|integer',
             'control_date'     => 'required|date',
             'temperature'      => 'nullable|numeric|between:-10,60',
@@ -71,5 +71,21 @@ class FermentationControlController extends Controller
         $control->load(['wine', 'container']);
 
         return response()->json(['data' => new FermentationControlResource($control)], 201);
+    }
+
+    // ─── DELETE /winery/fermentation-controls/{id} ────────────────────────────
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $control = WineFermentationControl::whereHas(
+            'wine', fn ($q) => $q->where('user_id', $user->id)
+        )->findOrFail($id);
+
+        $control->delete();
+
+        return response()->json(['message' => 'Control eliminado correctamente.']);
     }
 }

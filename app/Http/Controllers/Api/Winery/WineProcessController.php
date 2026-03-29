@@ -66,9 +66,9 @@ class WineProcessController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'           => 'required|integer',
-            'from_container_id' => 'required|integer',
-            'to_container_id'   => 'required|integer|different:from_container_id',
+            'wine_id'           => 'required|integer|exists:wines,id',
+            'from_container_id' => 'required|integer|exists:containers,id',
+            'to_container_id'   => 'required|integer|exists:containers,id|different:from_container_id',
             'quantity'          => 'required|numeric|min:0.001',
             'transfer_type'     => 'required|string|in:racking,blending,top_up,other',
             'transfer_date'     => 'required|date',
@@ -84,8 +84,10 @@ class WineProcessController extends Controller
             'created_by' => $user->id,
         ]);
 
+        $transfer->load(['wine', 'fromContainer', 'toContainer']);
+
         return response()->json([
-            'data'    => $transfer,
+            'data'    => new TransferResource($transfer),
             'message' => 'Trasvase registrado correctamente.',
         ], 201);
     }
@@ -98,8 +100,8 @@ class WineProcessController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'wine_id'              => 'required|integer',
-            'container_id'         => 'required|integer',
+            'wine_id'              => 'required|integer|exists:wines,id',
+            'container_id'         => 'required|integer|exists:containers,id',
             'loss_type'            => 'required|string|in:evaporation,filtration,sampling,spillage,other',
             'loss_authorization'   => 'required|string|in:authorized,processing,extraordinary,quality',
             'quantity'             => 'required|numeric|min:0.001',
@@ -116,9 +118,43 @@ class WineProcessController extends Controller
             'created_by' => $user->id,
         ]);
 
+        $loss->load(['wine', 'container']);
+
         return response()->json([
-            'data'    => $loss,
+            'data'    => new LossResource($loss),
             'message' => 'Merma registrada correctamente.',
         ], 201);
+    }
+
+    // ─── DELETE /winery/transfers/{id} ────────────────────────────────────────
+
+    public function destroyTransfer(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $transfer = WineTransfer::whereHas(
+            'wine', fn ($q) => $q->where('user_id', $user->id)
+        )->findOrFail($id);
+
+        $transfer->delete();
+
+        return response()->json(['message' => 'Trasvase eliminado correctamente.']);
+    }
+
+    // ─── DELETE /winery/losses/{id} ───────────────────────────────────────────
+
+    public function destroyLoss(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $loss = WineLoss::whereHas(
+            'wine', fn ($q) => $q->where('user_id', $user->id)
+        )->findOrFail($id);
+
+        $loss->delete();
+
+        return response()->json(['message' => 'Merma eliminada correctamente.']);
     }
 }

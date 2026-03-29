@@ -104,6 +104,26 @@ class GrapeReceptionController extends Controller
         return response()->json(['data' => new HarvestResource($harvest)], 201);
     }
 
+    // ─── DELETE /winery/grape-receptions/{id} ────────────────────────────────
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $harvest = Harvest::where('winery_id', $user->id)->findOrFail($id);
+
+        DB::transaction(function () use ($harvest) {
+            $batch = $harvest->batch;
+            $harvest->delete();
+            if ($batch) {
+                $batch->recalculateTotal();
+            }
+        });
+
+        return response()->json(['message' => 'Recepción eliminada correctamente.']);
+    }
+
     // ─── GET /winery/viticulturists ────────────────────────────────────────────
 
     public function viticulturists(Request $request): JsonResponse
