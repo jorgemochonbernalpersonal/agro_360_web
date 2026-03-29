@@ -4,7 +4,7 @@
 .plot-map-label::before { display:none; }
 </style>
 <div class="-mx-4 lg:-mx-8 -my-4 lg:-my-8 bg-white relative" style="height: calc(100vh - 4rem);">
-<div x-data="{ tab: $wire.entangle('activeTab') }" class="flex flex-col h-full overflow-hidden">
+<div x-data="{ tab: @js($activeTab) }" @set-active-tab.window="tab = $event.detail.tab" class="flex flex-col h-full overflow-hidden">
 
     {{-- ══ Top bar: tabs descriptivos + volver ══ --}}
     @php
@@ -33,7 +33,7 @@
         </button>
 
         {{-- Tab: Mapa de parcelas --}}
-        <button @click="tab = 'plots'"
+        <button @click="tab = 'plots'; $dispatch('plots-activated')"
                 :class="tab === 'plots' ? 'bg-blue-50' : 'hover:bg-zinc-50'"
                 class="group flex items-center gap-3 px-5 py-3.5 transition-colors relative">
             <span x-show="tab === 'plots'" class="absolute bottom-0 inset-x-0 h-0.5 bg-blue-500 rounded-t"></span>
@@ -84,8 +84,9 @@
     {{-- ══════════════════════════════════════════════════════ --}}
     <div x-show="tab === 'plots'" style="{{ $activeTab !== 'plots' ? 'display:none' : '' }}"
          class="flex flex-col flex-1 overflow-hidden"
-         x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }})"
-         @keydown.escape.window="$wire.set('selectedPlotId', null)">
+         @keydown.escape.window="tab === 'plots' && $wire.set('selectedPlotId', null)">
+    <div x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }})"
+         class="flex flex-col flex-1 overflow-hidden">
 
         {{-- Barra de filtros --}}
         @if(count($mapPlots) > 0)
@@ -484,7 +485,8 @@
         @endif
 
         </div>{{-- /Mapa + panel detalle --}}
-    </div>{{-- /x-data plots / x-show plots --}}
+    </div>{{-- /visualPlotsMap x-data --}}
+</div>{{-- /x-show plots --}}
 
     {{-- ══════════════════════════════════════════════════════ --}}
     {{--                  TAB: BODEGA/CONTENEDORES             --}}
@@ -1052,16 +1054,31 @@
 Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTileMode = 'satellite', initialShowList = false) => ({
     map: null,
     polygonLayers: {},
+    _plotsActivatedHandler: null,
+    _fullscreenHandler: null,
 
-    // Cuando el tab de parcelas se activa estando el mapa ya inicializado (x-show),
-    // necesitamos que Leaflet recalcule el tamaño del contenedor.
+    // Registra listeners con referencias para poder limpiarlos en destroy().
     init() {
-        this.$watch(() => $wire.activeTab, (val) => {
-            if (val === 'plots' && this.map) {
-                this.$nextTick(() => this.map.invalidateSize());
-            }
-        });
+        this._plotsActivatedHandler = () => {
+            this.$nextTick(() => { if (this.map) this.map.invalidateSize(); });
+        };
+        window.addEventListener('plots-activated', this._plotsActivatedHandler);
     },
+
+    // Limpia listeners y mapa al desmontar el componente (wire:navigate, etc.).
+    destroy() {
+        if (this._plotsActivatedHandler) {
+            window.removeEventListener('plots-activated', this._plotsActivatedHandler);
+        }
+        if (this._fullscreenHandler) {
+            document.removeEventListener('fullscreenchange', this._fullscreenHandler);
+        }
+        if (this.map) {
+            this.map.remove();
+            this.map = null;
+        }
+    },
+
     tileLayers: {},
     tileMode: initialTileMode,
     showList: initialShowList,
@@ -1227,10 +1244,11 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTile
             L.control.scale({ position: 'bottomright', imperial: false }).addTo(this.map);
 
             // ── Escuchar fullscreen ────────────────────────────────────────
-            document.addEventListener('fullscreenchange', () => {
+            this._fullscreenHandler = () => {
                 this.isFullscreen = !!document.fullscreenElement;
                 setTimeout(() => this.map?.invalidateSize(), 100);
-            });
+            };
+            document.addEventListener('fullscreenchange', this._fullscreenHandler);
 
             // ── Click en fondo del mapa → cierra panel ─────────────────────
             this.map.on('click', () => $wire.set('selectedPlotId', null));
