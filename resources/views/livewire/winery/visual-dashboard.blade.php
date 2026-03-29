@@ -89,7 +89,7 @@
     {{-- ══════════════════════════════════════════════════════ --}}
     @if ($activeTab === 'plots')
     <div class="flex flex-col flex-1 overflow-hidden"
-         x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions))"
+         x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }})"
          @keydown.escape.window="$wire.set('selectedPlotId', null)">
 
         {{-- Barra de filtros --}}
@@ -147,7 +147,7 @@
                 Limpiar
             </button>
             {{-- Toggle lista lateral --}}
-            <button @click="showList = !showList"
+            <button @click="showList = !showList; $wire.saveShowList(showList)"
                     title="Mostrar lista de parcelas"
                     class="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border text-xs font-medium transition-all"
                     :class="showList ? 'bg-agro-50 border-agro-300 text-agro-700' : 'bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-700 hover:bg-zinc-100'">
@@ -173,7 +173,7 @@
                 <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                     <span x-text="filteredCount"></span> parcelas
                 </p>
-                <button @click="showList = false" class="text-zinc-300 hover:text-zinc-500 transition-colors">
+                <button @click="showList = false; $wire.saveShowList(false)" class="text-zinc-300 hover:text-zinc-500 transition-colors">
                     <flux:icon icon="x-mark" class="size-3.5" />
                 </button>
             </div>
@@ -230,19 +230,21 @@
                         </template>
                     </button>
                     <button @click="toggleTile()"
-                            title="Cambiar capa del mapa"
+                            :title="tileMode === 'satellite' ? 'Cambiar a callejero' : 'Cambiar a satélite'"
                             class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg border transition-all
                                    bg-white/90 backdrop-blur-sm border-zinc-200 text-zinc-700 hover:bg-white hover:shadow-xl">
                         <template x-if="tileMode === 'satellite'">
                             <span class="flex items-center gap-1.5">
-                                <flux:icon icon="map" class="size-3.5 text-zinc-500" />
-                                Callejero
+                                <flux:icon icon="globe-europe-africa" class="size-3.5 text-agro-500" />
+                                <span>Satélite</span>
+                                <flux:icon icon="arrows-right-left" class="size-3 text-zinc-400" />
                             </span>
                         </template>
                         <template x-if="tileMode === 'street'">
                             <span class="flex items-center gap-1.5">
-                                <flux:icon icon="globe-europe-africa" class="size-3.5 text-agro-500" />
-                                Satélite
+                                <flux:icon icon="map" class="size-3.5 text-zinc-500" />
+                                <span>Callejero</span>
+                                <flux:icon icon="arrows-right-left" class="size-3 text-zinc-400" />
                             </span>
                         </template>
                     </button>
@@ -526,18 +528,19 @@
                 {{-- Ordenación --}}
                 <div class="flex items-center gap-0.5 bg-zinc-100 rounded-lg p-0.5 text-xs shrink-0">
                     <button wire:click="$set('containerSort', 'name')"
+                            title="Ordenar A–Z"
                             class="px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'name' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
                         A–Z
                     </button>
                     <button wire:click="$set('containerSort', 'pct_desc')"
                             title="Más llenos primero"
-                            class="px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_desc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
-                        ▼%
+                            class="flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_desc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
+                        <flux:icon icon="arrow-down" class="size-3" />%
                     </button>
                     <button wire:click="$set('containerSort', 'pct_asc')"
                             title="Más vacíos primero"
-                            class="px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_asc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
-                        ▲%
+                            class="flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all {{ $containerSort === 'pct_asc' ? 'bg-white shadow-sm text-zinc-800' : 'text-zinc-400 hover:text-zinc-600' }}">
+                        <flux:icon icon="arrow-up" class="size-3" />%
                     </button>
                 </div>
                 <a href="{{ roleRoute('containers.create') }}" wire:navigate class="ml-auto">
@@ -1053,12 +1056,12 @@
 
 @script
 <script>
-Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
+Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions, initialTileMode = 'satellite', initialShowList = false) => ({
     map: null,
     polygonLayers: {},
     tileLayers: {},
-    tileMode: 'satellite',
-    showList: false,
+    tileMode: initialTileMode,
+    showList: initialShowList,
     isFullscreen: false,
     legendItems: [],
     _plotColorMap: {},
@@ -1136,6 +1139,7 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
             this.map.addLayer(this.tileLayers.labels);
             this.tileMode = 'satellite';
         }
+        $wire.saveTileMode(this.tileMode);
     },
 
     clearFilters() {
@@ -1208,9 +1212,13 @@ Alpine.data('visualPlotsMap', (allPlots, allPolygons, filterOptions) => ({
                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 { attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>', maxZoom: 19 }
             );
-            // Modo inicial: satélite
-            this.tileLayers.satellite.addTo(this.map);
-            this.tileLayers.labels.addTo(this.map);
+            // Capa inicial según preferencia guardada
+            if (this.tileMode === 'street') {
+                this.tileLayers.street.addTo(this.map);
+            } else {
+                this.tileLayers.satellite.addTo(this.map);
+                this.tileLayers.labels.addTo(this.map);
+            }
 
             L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
             L.control.scale({ position: 'bottomright', imperial: false }).addTo(this.map);

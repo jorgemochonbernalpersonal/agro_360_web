@@ -28,10 +28,26 @@ class VisualDashboard extends Component
     public string $containerSearch      = '';
     public string $containerTypeFilter  = '';
     public string $containerSort        = 'name'; // name | pct_desc | pct_asc
+    public string $mapTileMode          = 'satellite'; // satellite | street
+    public bool   $mapShowList          = false;
 
     public function mount(): void
     {
-        $this->activeTab = $this->getPreference('winery_visual_tab', 'plots');
+        $this->activeTab   = $this->getPreference('winery_visual_tab', 'plots');
+        $this->mapTileMode = $this->getPreference('winery_map_tile', 'satellite');
+        $this->mapShowList = (bool) $this->getPreference('winery_map_show_list', false);
+    }
+
+    public function saveTileMode(string $mode): void
+    {
+        $this->mapTileMode = $mode;
+        $this->savePreference('winery_map_tile', $mode);
+    }
+
+    public function saveShowList(bool $show): void
+    {
+        $this->mapShowList = $show;
+        $this->savePreference('winery_map_show_list', $show);
     }
 
     public function switchTab(string $tab): void
