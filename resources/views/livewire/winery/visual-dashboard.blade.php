@@ -83,7 +83,7 @@
     {{--                   TAB: PARCELAS                       --}}
     {{-- ══════════════════════════════════════════════════════ --}}
     <div x-show="tab === 'plots'" style="{{ $activeTab !== 'plots' ? 'display:none' : '' }}"
-         class="flex flex-col flex-1 overflow-hidden"
+         class="flex flex-1 overflow-hidden"
          @keydown.escape.window="tab === 'plots' && $wire.set('selectedPlotId', null)">
     <div x-data="visualPlotsMap(@js($mapPlots), @js($mapPolygons), @js($filterOptions), '{{ $mapTileMode }}', {{ $mapShowList ? 'true' : 'false' }}, {{ $selectedPlotId ?? 'null' }})"
          class="flex flex-col flex-1 overflow-hidden">
@@ -159,7 +159,7 @@
         </div>
         @endif
 
-        {{-- Mapa + panel detalle --}}
+        {{-- Mapa + lista --}}
         <div class="flex flex-1 overflow-hidden">
 
         {{-- Lista lateral colapsable --}}
@@ -245,6 +245,9 @@
                 </div>
             @endif
         </div>
+
+        </div>{{-- /Mapa + lista --}}
+    </div>{{-- /visualPlotsMap x-data --}}
 
         {{-- Panel derecho: detalle parcela --}}
         @if ($selectedPlot)
@@ -483,8 +486,6 @@
         </div>
         @endif
 
-        </div>{{-- /Mapa + panel detalle --}}
-    </div>{{-- /visualPlotsMap x-data --}}
 </div>{{-- /x-show plots --}}
 
     {{-- ══════════════════════════════════════════════════════ --}}
