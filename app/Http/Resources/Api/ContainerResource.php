@@ -33,6 +33,7 @@ class ContainerResource extends JsonResource
                 'id'   => $this->containerRoom->id,
                 'name' => $this->containerRoom->name,
             ]),
+            'notes'            => $this->notes,
             'current_wines'    => $this->whenLoaded('currentStates', fn () =>
                 $this->currentStates->map(fn ($s) => [
                     'wine_id'   => $s->wine_id,
