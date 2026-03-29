@@ -196,6 +196,20 @@ class AgaetePlotsSeeder extends Seeder
         $geomIds = DB::table('multipart_plot_sigpac')
             ->whereIn('plot_id', $plotIds)->pluck('plot_geometry_id');
 
+        // Borrar actividades agrícolas antes de las parcelas (FK RESTRICT)
+        // harvests.activity_id es nullable con onDelete('set null') → no hace falta borrar harvests
+        $activityIds = DB::table('agricultural_activities')
+            ->whereIn('plot_id', $plotIds)->pluck('id');
+        if ($activityIds->isNotEmpty()) {
+            // plot_plantings también tiene FK hacia plots; borrar plantaciones primero
+            $plantingIds = DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->pluck('id');
+            if ($plantingIds->isNotEmpty()) {
+                // harvests → plot_planting_id tiene onDelete('set null'), se queda null automáticamente
+                DB::table('plot_plantings')->whereIn('id', $plantingIds)->delete();
+            }
+            DB::table('agricultural_activities')->whereIn('id', $activityIds)->delete();
+        }
+
         DB::table('multipart_plot_sigpac')->whereIn('plot_id', $plotIds)->delete();
         DB::table('plot_sigpac_code')->whereIn('plot_id', $plotIds)->delete();
         DB::table('plots')->whereIn('id', $plotIds)->delete();
