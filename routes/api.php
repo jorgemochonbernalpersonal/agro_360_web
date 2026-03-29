@@ -76,6 +76,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Recepción de uva
         Route::get('/grape-receptions',         [GrapeReceptionController::class, 'index'])->middleware('throttle:60,1');
         Route::post('/grape-receptions',        [GrapeReceptionController::class, 'store'])->middleware('throttle:60,1');
+        Route::put('/grape-receptions/{id}',    [GrapeReceptionController::class, 'update'])->middleware('throttle:60,1');
         Route::delete('/grape-receptions/{id}', [GrapeReceptionController::class, 'destroy'])->middleware('throttle:60,1');
         Route::get('/viticulturists',           [GrapeReceptionController::class, 'viticulturists'])->middleware('throttle:60,1');
 
@@ -97,6 +98,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
         // Análisis de vino
         Route::get('/wine-analysis',      [WineAnalysisController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/wine-analysis',     [WineAnalysisController::class, 'store'])->middleware('throttle:60,1');
         Route::get('/wine-analysis/{id}', [WineAnalysisController::class, 'show'])->middleware('throttle:60,1');
 
         // Trazabilidad uva → vino

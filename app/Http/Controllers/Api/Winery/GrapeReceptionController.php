@@ -110,6 +110,39 @@ class GrapeReceptionController extends Controller
         return response()->json(['data' => new HarvestResource($harvest)], 201);
     }
 
+    // ─── PUT /winery/grape-receptions/{id} ───────────────────────────────────
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $harvest = Harvest::where('winery_id', $user->id)->findOrFail($id);
+
+        $validated = $request->validate([
+            'total_weight'       => 'sometimes|numeric|min:0.1',
+            'harvest_start_date' => 'sometimes|date',
+            'container_id'       => 'nullable|integer',
+            'baume_degree'       => 'nullable|numeric|between:0,25',
+            'brix_degree'        => 'nullable|numeric|between:0,40',
+            'ph_level'           => 'nullable|numeric|between:2,5',
+            'acidity_level'      => 'nullable|numeric|between:0,20',
+            'price_per_kg'       => 'nullable|numeric|min:0',
+            'notes'              => 'nullable|string|max:1000',
+        ]);
+
+        DB::transaction(function () use ($harvest, $validated) {
+            $harvest->update($validated);
+            if ($harvest->batch) {
+                $harvest->batch->recalculateTotal();
+            }
+        });
+
+        $harvest->load(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container']);
+
+        return response()->json(['data' => new HarvestResource($harvest)]);
+    }
+
     // ─── DELETE /winery/grape-receptions/{id} ────────────────────────────────
 
     public function destroy(Request $request, int $id): JsonResponse
