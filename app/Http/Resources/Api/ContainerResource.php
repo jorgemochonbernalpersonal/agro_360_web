@@ -35,11 +35,14 @@ class ContainerResource extends JsonResource
             ]),
             'notes'            => $this->notes,
             'current_wines'    => $this->whenLoaded('currentStates', fn () =>
-                $this->currentStates->map(fn ($s) => [
-                    'wine_id'   => $s->wine_id,
-                    'wine_name' => $s->wine?->name,
-                    'volume'    => (float) $s->volume_liters,
-                ])
+                $this->currentStates
+                    ->filter(fn ($s) => $s->wine_id !== null)
+                    ->map(fn ($s) => [
+                        'wine_id'   => $s->wine_id,
+                        'wine_name' => $s->wine?->name,
+                        'volume'    => (float) $s->volume_liters,
+                    ])
+                    ->values()
             ),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];

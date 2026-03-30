@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Winery\PlotController as WineryPlotController;
 use App\Http\Controllers\Api\Winery\DashboardController as WineryDashboard;
 use App\Http\Controllers\Api\Winery\FermentationControlController;
 use App\Http\Controllers\Api\Winery\GrapeReceptionController;
+use App\Http\Controllers\Api\Winery\ViticulturistController;
 use App\Http\Controllers\Api\Winery\WineController;
 use App\Http\Controllers\Api\Winery\WineProcessController;
 use App\Http\Controllers\Api\Winery\InvoiceController;
@@ -78,7 +79,15 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::post('/grape-receptions',        [GrapeReceptionController::class, 'store'])->middleware('throttle:60,1');
         Route::put('/grape-receptions/{id}',    [GrapeReceptionController::class, 'update'])->middleware('throttle:60,1');
         Route::delete('/grape-receptions/{id}', [GrapeReceptionController::class, 'destroy'])->middleware('throttle:60,1');
-        Route::get('/viticulturists',           [GrapeReceptionController::class, 'viticulturists'])->middleware('throttle:60,1');
+        // Viticultores
+        Route::get('/viticulturists',                [ViticulturistController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/viticulturists',               [ViticulturistController::class, 'store'])->middleware('throttle:30,1');
+        Route::get('/viticulturists/search',         [ViticulturistController::class, 'search'])->middleware('throttle:30,1');
+        Route::post('/viticulturists/link',          [ViticulturistController::class, 'link'])->middleware('throttle:30,1');
+        Route::get('/viticulturists/{id}',           [ViticulturistController::class, 'show'])->middleware('throttle:60,1');
+        Route::put('/viticulturists/{id}',           [ViticulturistController::class, 'update'])->middleware('throttle:30,1');
+        Route::post('/viticulturists/{id}/invite',   [ViticulturistController::class, 'invite'])->middleware('throttle:5,1');
+        Route::delete('/viticulturists/{id}/invite', [ViticulturistController::class, 'revokeInvite'])->middleware('throttle:10,1');
 
         // Trasvases y mermas
         Route::get('/transfers',         [WineProcessController::class, 'indexTransfers'])->middleware('throttle:60,1');

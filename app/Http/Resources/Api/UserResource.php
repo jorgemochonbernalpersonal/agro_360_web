@@ -17,14 +17,14 @@ class UserResource extends JsonResource
             'password_must_reset' => (bool) $this->password_must_reset,
             'email_verified_at'   => $this->email_verified_at?->toIso8601String(),
             'beta_expired'        => (bool) ($this->betaExpired() && !$this->hasBasicFreeAccess()),
-            'profile'             => $this->whenLoaded('profile', fn () => [
+            'profile'             => $this->whenLoaded('profile', fn () => $this->profile ? [
                 'phone'       => $this->profile->phone,
                 'address'     => $this->profile->address,
                 'city'        => $this->profile->city,
                 'postal_code' => $this->profile->postal_code,
                 'country'     => $this->profile->country,
                 'province_id' => $this->profile->province_id,
-            ]),
+            ] : null),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }
