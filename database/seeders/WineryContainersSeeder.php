@@ -88,11 +88,10 @@ class WineryContainersSeeder extends Seeder
             })->delete();
         DB::table('container_maintenances')->whereIn('container_id', $containerIds)->delete();
         DB::table('container_histories')->whereIn('container_id', $containerIds)->delete();
-        DB::table('wine_bottlings')->whereIn('container_id', $containerIds)->delete();
         DB::table('wine_transfers')
             ->where(function ($q) use ($containerIds) {
-                $q->whereIn('source_container_id', $containerIds)
-                  ->orWhereIn('destination_container_id', $containerIds);
+                $q->whereIn('from_container_id', $containerIds)
+                  ->orWhereIn('to_container_id', $containerIds);
             })->delete();
 
         $deleted = DB::table('containers')
