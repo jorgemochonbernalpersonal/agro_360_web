@@ -43,6 +43,20 @@ class GrapeReceptionController extends Controller
         ]);
     }
 
+    // ─── GET /winery/grape-receptions/{id} ───────────────────────────────────
+
+    public function show(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $harvest = Harvest::where('winery_id', $user->id)
+            ->with(['batch.viticulturist', 'plotPlanting.grapeVariety', 'container'])
+            ->findOrFail($id);
+
+        return response()->json(['data' => new HarvestResource($harvest)]);
+    }
+
     // ─── POST /winery/grape-receptions ───────────────────────────────────────
 
     public function store(Request $request): JsonResponse

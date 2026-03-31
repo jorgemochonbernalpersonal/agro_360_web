@@ -53,4 +53,72 @@ class ClientController extends Controller
 
         return response()->json(['data' => new ClientResource($client)]);
     }
+
+    // ─── POST /winery/clients ─────────────────────────────────────────────────
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $validated = $request->validate([
+            'client_type'         => 'required|string|in:individual,company',
+            'first_name'          => 'nullable|string|max:100',
+            'last_name'           => 'nullable|string|max:100',
+            'company_name'        => 'nullable|string|max:255',
+            'email'               => 'nullable|email|max:255',
+            'phone'               => 'nullable|string|max:20',
+            'particular_document' => 'nullable|string|max:20',
+            'company_document'    => 'nullable|string|max:20',
+            'payment_method'      => 'nullable|string|in:transfer,cash,card,check,sepa',
+            'default_discount'    => 'nullable|numeric|min:0|max:100',
+            'active'              => 'nullable|boolean',
+            'notes'               => 'nullable|string|max:1000',
+        ]);
+
+        $client = Client::create(array_merge($validated, ['user_id' => $user->id]));
+
+        return response()->json(['data' => new ClientResource($client)], 201);
+    }
+
+    // ─── PUT /winery/clients/{id} ─────────────────────────────────────────────
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $user   = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $client = Client::where('user_id', $user->id)->findOrFail($id);
+
+        $validated = $request->validate([
+            'first_name'          => 'nullable|string|max:100',
+            'last_name'           => 'nullable|string|max:100',
+            'company_name'        => 'nullable|string|max:255',
+            'email'               => 'nullable|email|max:255',
+            'phone'               => 'nullable|string|max:20',
+            'particular_document' => 'nullable|string|max:20',
+            'company_document'    => 'nullable|string|max:20',
+            'payment_method'      => 'nullable|string|in:transfer,cash,card,check,sepa',
+            'default_discount'    => 'nullable|numeric|min:0|max:100',
+            'active'              => 'nullable|boolean',
+            'notes'               => 'nullable|string|max:1000',
+        ]);
+
+        $client->update($validated);
+
+        return response()->json(['data' => new ClientResource($client)]);
+    }
+
+    // ─── DELETE /winery/clients/{id} ──────────────────────────────────────────
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $user   = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $client = Client::where('user_id', $user->id)->findOrFail($id);
+        $client->delete();
+
+        return response()->json(['message' => 'Cliente eliminado correctamente.']);
+    }
 }

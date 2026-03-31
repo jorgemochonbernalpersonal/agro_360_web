@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\FermentationControlResource;
 use App\Http\Resources\Api\WineResource;
 use App\Models\Wine;
+use App\Models\WineAnalysis;
+use App\Models\WineBottling;
 use App\Models\WineFermentationControl;
+use App\Models\WineTastingNote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -171,6 +174,103 @@ class WineController extends Controller
                 'total'        => $controls->total(),
                 'current_page' => $controls->currentPage(),
                 'last_page'    => $controls->lastPage(),
+            ],
+        ]);
+    }
+
+    // ─── GET /winery/wines/{id}/technical-sheet ───────────────────────────────
+
+    public function technicalSheet(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $wine = Wine::forUser($user->id)
+            ->with(['oenologist'])
+            ->findOrFail($id);
+
+        // Latest analysis
+        $latestAnalysis = WineAnalysis::forUser($user->id)
+            ->forWine($wine->id)
+            ->orderByDesc('analysis_date')
+            ->first();
+
+        // Latest tasting note
+        $latestTasting = WineTastingNote::forUser($user->id)
+            ->where('wine_id', $wine->id)
+            ->orderByDesc('evaluation_date')
+            ->first();
+
+        // Bottling summary
+        $bottlingSummary = WineBottling::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
+            ->where('wine_id', $wine->id)
+            ->selectRaw('SUM(quantity_bottled) as total_bottles, MAX(bottling_date) as last_bottling_date')
+            ->first();
+
+        return response()->json([
+            'data' => [
+                'wine' => [
+                    'id'                  => $wine->id,
+                    'name'                => $wine->name,
+                    'internal_code'       => $wine->internal_code,
+                    'vintage'             => $wine->vintage,
+                    'wine_type'           => $wine->wine_type,
+                    'wine_type_label'     => Wine::WINE_TYPES[$wine->wine_type] ?? $wine->wine_type,
+                    'aging_type'          => $wine->aging_type,
+                    'aging_type_label'    => Wine::AGING_TYPES[$wine->aging_type] ?? $wine->aging_type,
+                    'category'            => $wine->category,
+                    'category_label'      => Wine::CATEGORIES[$wine->category] ?? $wine->category,
+                    'variety'             => $wine->variety,
+                    'volume_liters'       => $wine->volume_liters !== null ? (float) $wine->volume_liters : null,
+                    'initial_quantity_kg' => $wine->initial_quantity_kg !== null ? (float) $wine->initial_quantity_kg : null,
+                    'is_must'             => $wine->is_must,
+                    'is_organic'          => $wine->is_organic,
+                    'status'              => $wine->status,
+                    'status_label'        => Wine::STATUSES[$wine->status] ?? $wine->status,
+                    'trace_token'         => $wine->trace_token,
+                    'notes'               => $wine->notes,
+                    'oenologist'          => $wine->oenologist ? [
+                        'id'   => $wine->oenologist->id,
+                        'name' => trim(($wine->oenologist->name ?? '') . ' ' . ($wine->oenologist->surname ?? '')),
+                    ] : null,
+                ],
+                'analysis' => $latestAnalysis ? [
+                    'analysis_date'      => $latestAnalysis->analysis_date?->toDateString(),
+                    'analysis_type'      => $latestAnalysis->analysis_type,
+                    'laboratory'         => $latestAnalysis->laboratory_name ?? $latestAnalysis->laboratory,
+                    'alcoholic_strength' => $latestAnalysis->alcoholic_strength !== null ? (float) $latestAnalysis->alcoholic_strength : null,
+                    'total_acidity'      => $latestAnalysis->total_acidity !== null ? (float) $latestAnalysis->total_acidity : null,
+                    'volatile_acidity'   => $latestAnalysis->volatile_acidity !== null ? (float) $latestAnalysis->volatile_acidity : null,
+                    'residual_sugar'     => $latestAnalysis->residual_sugar !== null ? (float) $latestAnalysis->residual_sugar : null,
+                    'free_so2'           => $latestAnalysis->free_so2 !== null ? (float) $latestAnalysis->free_so2 : null,
+                    'total_so2'          => $latestAnalysis->total_so2 !== null ? (float) $latestAnalysis->total_so2 : null,
+                    'ph'                 => $latestAnalysis->ph !== null ? (float) $latestAnalysis->ph : null,
+                    'density'            => $latestAnalysis->density !== null ? (float) $latestAnalysis->density : null,
+                    'color_intensity'    => $latestAnalysis->color_intensity !== null ? (float) $latestAnalysis->color_intensity : null,
+                    'result'             => $latestAnalysis->result,
+                    'result_label'       => $latestAnalysis->result_label,
+                ] : null,
+                'tasting' => $latestTasting ? [
+                    'evaluation_date'     => $latestTasting->evaluation_date?->toDateString(),
+                    'evaluator'           => $latestTasting->evaluator_display,
+                    'visual_color'        => $latestTasting->visual_color,
+                    'visual_clarity'      => $latestTasting->visual_clarity,
+                    'visual_intensity'    => $latestTasting->visual_intensity,
+                    'aroma_intensity'     => $latestTasting->aroma_intensity,
+                    'aroma_descriptors'   => $latestTasting->aroma_descriptors,
+                    'palate_acidity'      => $latestTasting->palate_acidity,
+                    'palate_tannins'      => $latestTasting->palate_tannins,
+                    'palate_body'         => $latestTasting->palate_body,
+                    'palate_finish'       => $latestTasting->palate_finish,
+                    'overall_score'       => $latestTasting->overall_score !== null ? (float) $latestTasting->overall_score : null,
+                    'overall_conclusion'  => $latestTasting->overall_conclusion,
+                ] : null,
+                'bottling' => [
+                    'total_bottles'     => (int) ($bottlingSummary->total_bottles ?? 0),
+                    'last_bottling_date'=> $bottlingSummary->last_bottling_date
+                        ? \Carbon\Carbon::parse($bottlingSummary->last_bottling_date)->toDateString()
+                        : null,
+                ],
             ],
         ]);
     }

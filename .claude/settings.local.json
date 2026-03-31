@@ -228,7 +228,12 @@
       "Bash(do basename:*)",
       "Read(//c/tmp/**)",
       "Bash(C:/Users/jorge/Desktop/agro365/database/migrations/2026_03_11_102326_add_traceability_to_harvest_deliveries_table.php C:/Users/jorge/Desktop/agro365/database/migrations/2026_03_11_103824_add_quality_fields_to_harvest_deliveries_table.php C:/Users/jorge/Desktop/agro365/database/migrations/2026_03_11_134437_add_matching_fields_to_harvest_deliveries_table.php C:/Users/jorge/Desktop/agro365/database/migrations/2026_03_11_135456_add_dispute_fields_to_harvest_deliveries_table.php C:/Users/jorge/Desktop/agro365/database/migrations/2026_03_11_200000_add_dispute_resolution_to_harvest_deliveries_table.php)",
-      "Bash(xargs -I{} basename {})"
+      "Bash(xargs -I{} basename {})",
+      "Bash(do php:*)",
+      "Bash(sort -k6,7 -r)",
+      "Bash(xargs -0 grep -l \"Módulo\\\\|table\\\\|report\")",
+      "Bash(grep -r table\\\\\\(C:UsersjorgeDesktopagro365/app/Console/Commands --include=*.php)",
+      "Bash(2)"
     ]
   }
 }

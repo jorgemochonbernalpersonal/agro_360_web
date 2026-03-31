@@ -126,6 +126,60 @@ class WineProcessController extends Controller
         ], 201);
     }
 
+    // ─── PUT /winery/transfers/{id} ──────────────────────────────────────────
+
+    public function updateTransfer(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $transfer = WineTransfer::whereHas(
+            'wine', fn ($q) => $q->where('user_id', $user->id)
+        )->findOrFail($id);
+
+        $validated = $request->validate([
+            'from_container_id' => 'sometimes|integer|exists:containers,id',
+            'to_container_id'   => 'sometimes|integer|exists:containers,id|different:from_container_id',
+            'quantity'          => 'sometimes|numeric|min:0.001',
+            'transfer_type'     => 'sometimes|string|in:racking,blending,top_up,other',
+            'transfer_date'     => 'sometimes|date',
+            'oenologist_id'     => 'sometimes|nullable|integer|exists:oenologists,id',
+            'notes'             => 'sometimes|nullable|string|max:1000',
+        ]);
+
+        $transfer->update($validated);
+        $transfer->load(['wine', 'fromContainer', 'toContainer']);
+
+        return response()->json(['data' => new TransferResource($transfer)]);
+    }
+
+    // ─── PUT /winery/losses/{id} ──────────────────────────────────────────────
+
+    public function updateLoss(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $loss = WineLoss::whereHas(
+            'wine', fn ($q) => $q->where('user_id', $user->id)
+        )->findOrFail($id);
+
+        $validated = $request->validate([
+            'container_id'         => 'sometimes|integer|exists:containers,id',
+            'loss_type'            => 'sometimes|string|in:evaporation,filtration,sampling,spillage,other',
+            'loss_authorization'   => 'sometimes|string|in:authorized,processing,extraordinary,quality',
+            'quantity'             => 'sometimes|numeric|min:0.001',
+            'loss_date'            => 'sometimes|date',
+            'regulatory_reference' => 'sometimes|nullable|string|max:255',
+            'notes'                => 'sometimes|nullable|string|max:1000',
+        ]);
+
+        $loss->update($validated);
+        $loss->load(['wine', 'container']);
+
+        return response()->json(['data' => new LossResource($loss)]);
+    }
+
     // ─── DELETE /winery/transfers/{id} ────────────────────────────────────────
 
     public function destroyTransfer(Request $request, int $id): JsonResponse
