@@ -82,7 +82,7 @@ class WineryWineAnalysisSeeder extends Seeder
                     'wine_id'               => $wine->id,
                     'container_id'          => $containerIds[$cidx % count($containerIds)],
                     'analysis_date'         => $analysiDate,
-                    'analysis_type'         => $isExternal ? 'external' : 'own',
+                    'analysis_type'         => $isExternal ? 'complete' : 'standard',
                     'laboratory_name'       => $lab,
                     'laboratory'            => $lab,
                     'sample_reference'      => $isExternal ? 'REF-' . $wine->id . '-' . ($i + 1) . '-' . $wine->vintage : null,
