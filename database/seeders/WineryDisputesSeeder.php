@@ -77,7 +77,7 @@ class WineryDisputesSeeder extends Seeder
                 'dispute_note'   => 'Viticultor alega 966 kg, báscula registró 900 kg. Se revisó calibración.',
                 'days_ago_submit'=> 45,
                 'resolution'     => 'Calibración de báscula verificada. Se acepta el peso registrado por bodega (900 kg). Viticultor conforme.',
-                'resolved_at'    => now()->subDays(40)->toIso8601String(),
+                'resolved_at'    => now()->subDays(40)->toDateTimeString(),
             ],
         ];
 
@@ -103,7 +103,7 @@ class WineryDisputesSeeder extends Seeder
                 'status'                  => $disp['status'],
                 'discrepancy_kg'          => $discrepancyKg,
                 'dispute_note'            => $disp['dispute_note'],
-                'dispute_submitted_at'    => now()->subDays($disp['days_ago_submit'])->toIso8601String(),
+                'dispute_submitted_at'    => now()->subDays($disp['days_ago_submit'])->toDateTimeString(),
                 'dispute_resolution_note' => $disp['resolution'],
                 'dispute_resolved_at'     => $disp['resolved_at'],
                 'created_at'              => $now,
