@@ -46,22 +46,40 @@ class WineryGrapeReceptionsSeeder extends Seeder
             ['weight' => 1800.0, 'days' => 45, 'baume' => 12.7, 'brix' => 23.1, 'ph' => 3.40, 'acidity' => 6.0, 'price' => 0.88, 'notes' => 'Tintilla — en proceso de elaboración rosado.'],
         ];
 
+        // Pre-cargar una plot_planting_id por viticultor (requerida, NOT NULL)
+        $plotPlantingByVitic = [];
+        foreach ($viticulturistIds as $vid) {
+            $ppId = DB::table('plot_plantings')
+                ->whereIn('plot_id', DB::table('plots')->where('user_id', $vid)->pluck('id'))
+                ->value('id');
+            if ($ppId) {
+                $plotPlantingByVitic[$vid] = $ppId;
+            }
+        }
+
         foreach ($receptions as $i => $rec) {
             $vitId      = $viticulturistIds[$i % count($viticulturistIds)];
             $containerId = !empty($containers) ? $containers[$i % count($containers)] : null;
+
+            // Si el viticultor no tiene parcelas no podemos crear el batch
+            if (!isset($plotPlantingByVitic[$vitId])) {
+                $this->command->warn("  ⚠️  Viticultor {$vitId} sin parcelas. Saltando recepción.");
+                continue;
+            }
 
             // Crear o reutilizar batch para este viticultor en la añada actual
             $batchKey = $vitId . '_' . $vintageYear;
             if (!isset($batches[$batchKey])) {
                 $batchId = DB::table('grape_reception_batches')->insertGetId([
-                    'winery_id'        => self::WINERY_USER_ID,
-                    'viticulturist_id' => $vitId,
-                    'vintage_year'     => $vintageYear,
-                    'total_weight_kg'  => 0,
-                    'status'           => 'open',
-                    'notes'            => null,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
+                    'winery_id'         => self::WINERY_USER_ID,
+                    'viticulturist_id'  => $vitId,
+                    'plot_planting_id'  => $plotPlantingByVitic[$vitId],
+                    'vintage_year'      => $vintageYear,
+                    'total_weight_kg'   => 0,
+                    'status'            => 'open',
+                    'notes'             => null,
+                    'created_at'        => $now,
+                    'updated_at'        => $now,
                 ]);
                 $batches[$batchKey] = $batchId;
             }
