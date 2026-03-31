@@ -70,7 +70,7 @@ class WineryTastingNotesSeeder extends Seeder
             $tannins = in_array($wine->wine_type, ['red']) ? ['low', 'medium_minus', 'medium', 'medium_plus', 'high'][$noteIdx % 5] : null;
             $acidity = ['medium_minus', 'medium', 'medium_plus'][$noteIdx % 3];
             $body    = match ($wine->wine_type) {
-                'red'       => ['medium', 'medium_plus', 'full'][$noteIdx % 3],
+                'red'       => ['medium', 'full', 'full'][$noteIdx % 3],
                 'white'     => ['light', 'medium'][$noteIdx % 2],
                 'sparkling' => 'light',
                 'sweet'     => 'full',
