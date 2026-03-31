@@ -50,7 +50,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
         $plotPlantingByVitic = [];
         foreach ($viticulturistIds as $vid) {
             $ppId = DB::table('plot_plantings')
-                ->whereIn('plot_id', DB::table('plots')->where('user_id', $vid)->pluck('id'))
+                ->whereIn('plot_id', DB::table('plots')->where('viticulturist_id', $vid)->pluck('id'))
                 ->value('id');
             if ($ppId) {
                 $plotPlantingByVitic[$vid] = $ppId;
