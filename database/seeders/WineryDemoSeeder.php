@@ -8,36 +8,42 @@ use Illuminate\Support\Facades\DB;
 /**
  * Seeder maestro para demo completa del rol Winery (user_id = 1).
  *
- * Prerequisitos (ejecutar una vez con DatabaseSeeder si no están):
- *   - UnitSeeder (units table)
- *   - WineryContainersSeeder (100 depósitos/barricas)
- *   - AgaetePlotsSeeder → AgaeteHarvestsSeeder → AgaeteReceptionSeeder
+ * Autónomo — incluye contenedores y todos los módulos.
+ * Requisito único: usuario con id=1 y role=winery debe existir.
  *
  * Uso:
  *   php artisan db:seed --class=WineryDemoSeeder
  *
- * O para producción desde cero:
- *   php artisan db:seed --class=WineryDemoSeeder
- *
  * Orden de ejecución (respeta dependencias):
- *   1. units_of_measurement (auto-seed si vacío)
- *   2. Enólogos
- *   3. Clientes
- *   4. Proveedores
- *   5. Suministros de bodega
- *   6. Vinos (core: 20 vinos de añadas 2022-2025)
- *   7. Controles de fermentación
- *   8. Traslados de vino
- *   9. Mermas de vino
- *  10. Análisis de vino
- *  11. Mantenimientos de contenedores
- *  12. Embotellamientos
- *  13. Lotes de etiquetas
- *  14. Etiquetados
- *  15. Lotes de producto (wine_lots)
- *  16. Notas de cata
- *  17. Subproductos
- *  18. Cumplimiento regulatorio (eco-certs, registros sanitarios, autorizaciones)
+ *   0.  units_of_measurement  (auto-seed si vacío)
+ *   1.  Contenedores          (WineryContainersSeeder — limpia y recrea)
+ *   2.  Salas de bodega       (WineryRoomsSeeder)
+ *   3.  Enólogos
+ *   4.  Clientes
+ *   5.  Proveedores
+ *   6.  Suministros de bodega
+ *   7.  Vinos (20 referencias)
+ *   8.  Controles de fermentación
+ *   9.  Traslados de vino
+ *  10.  Mermas de vino
+ *  11.  Análisis de vino
+ *  12.  Recepciones de uva    (necesita viticultores vinculados)
+ *  13.  Disputas              (depende de recepciones)
+ *  14.  Mantenimientos de contenedores
+ *  15.  Embotellamientos
+ *  16.  Lotes de etiquetas
+ *  17.  Etiquetados
+ *  18.  Lotes de producto
+ *  19.  Operaciones de bodega
+ *  20.  Compras uva/mosto externo
+ *  21.  Facturas de venta
+ *  22.  Liquidaciones de uva  (necesita viticultores vinculados)
+ *  23.  Notas de cata
+ *  24.  Subproductos
+ *  25.  Previsiones de rendimiento (necesita viticultores vinculados)
+ *  26.  Cumplimiento regulatorio
+ *  27.  Documentos de bodega
+ *  28.  Alertas
  */
 class WineryDemoSeeder extends Seeder
 {
@@ -60,36 +66,62 @@ class WineryDemoSeeder extends Seeder
         }
         $this->command->info("✅ Usuario: {$user->email} (role: {$user->role})");
 
-        // Paso 0: Asegurar que units_of_measurement tiene datos
+        // Paso 0: Asegurar units_of_measurement
         $this->ensureUnitsOfMeasurement();
 
-        // Paso 1-4: Personas y proveedores
+        // Paso 1: Contenedores (autónomo — limpia y recrea)
+        $this->runStep('Contenedores (100 depósitos/barricas)', WineryContainersSeeder::class);
+
+        // Paso 2: Salas de bodega
+        $this->runStep('Salas de bodega', WineryRoomsSeeder::class);
+
+        // Paso 3-6: Personas y proveedores
         $this->runStep('Enólogos',           WineryOenologistsSeeder::class);
         $this->runStep('Clientes',           WineryClientsSeeder::class);
         $this->runStep('Proveedores',        WinerySuppliersSeeder::class);
         $this->runStep('Suministros bodega', WinerySuppliesSeeder::class);
 
-        // Paso 5: Core — Vinos
+        // Paso 7: Core — Vinos
         $this->runStep('Vinos (20 referencias)', WineryWinesSeeder::class);
 
-        // Paso 6-10: Operaciones de bodega (dependen de vinos + contenedores)
-        $this->ensureContainersExist();
-        $this->runStep('Controles de fermentación', WineryFermentationControlsSeeder::class);
-        $this->runStep('Traslados de vino',          WineryWineTransfersSeeder::class);
-        $this->runStep('Mermas de vino',             WineryWineLossesSeeder::class);
-        $this->runStep('Análisis fisicoquímicos',    WineryWineAnalysisSeeder::class);
-        $this->runStep('Mantenimientos contenedores',WineryContainerMaintenancesSeeder::class);
+        // Paso 8-11: Operaciones de vinificación
+        $this->runStep('Controles de fermentación',  WineryFermentationControlsSeeder::class);
+        $this->runStep('Traslados de vino',           WineryWineTransfersSeeder::class);
+        $this->runStep('Mermas de vino',              WineryWineLossesSeeder::class);
+        $this->runStep('Análisis fisicoquímicos',     WineryWineAnalysisSeeder::class);
 
-        // Paso 11-15: Embotellado y comercialización
-        $this->runStep('Embotellamientos',           WineryBottlingSeeder::class);
-        $this->runStep('Lotes de etiquetas',         WineryLabelBatchesSeeder::class);
-        $this->runStep('Etiquetados',                WineryLabelingSeeder::class);
-        $this->runStep('Lotes de producto',          WineryProductLotsSeeder::class);
+        // Paso 12: Recepciones de uva (depende de viticultores vinculados)
+        $this->runStep('Recepciones de uva',         WineryGrapeReceptionsSeeder::class);
 
-        // Paso 16-18: Calidad y cumplimiento
+        // Paso 13: Disputas (depende de recepciones)
+        $this->runStep('Disputas en recepciones',    WineryDisputesSeeder::class);
+
+        // Paso 14: Mantenimiento contenedores
+        $this->runStep('Mantenimientos contenedores', WineryContainerMaintenancesSeeder::class);
+
+        // Paso 15-18: Embotellado y comercialización
+        $this->runStep('Embotellamientos',            WineryBottlingSeeder::class);
+        $this->runStep('Lotes de etiquetas',          WineryLabelBatchesSeeder::class);
+        $this->runStep('Etiquetados',                 WineryLabelingSeeder::class);
+        $this->runStep('Lotes de producto',           WineryProductLotsSeeder::class);
+
+        // Paso 19-20: Operaciones y compras externas
+        $this->runStep('Operaciones de bodega',       WineryCellarOperationsSeeder::class);
+        $this->runStep('Compras uva/mosto externo',   WineryExternalPurchasesSeeder::class);
+
+        // Paso 21-22: Facturación
+        $this->runStep('Facturas de venta',           WineryInvoicesSeeder::class);
+        $this->runStep('Liquidaciones de uva',        WineryGrapeInvoicesSeeder::class);
+
+        // Paso 23-25: Calidad y previsiones
         $this->runStep('Notas de cata',              WineryTastingNotesSeeder::class);
         $this->runStep('Subproductos',               WinerySubproductsSeeder::class);
+        $this->runStep('Previsiones de rendimiento', WineryYieldForecastsSeeder::class);
+
+        // Paso 26-28: Cumplimiento y documentación
         $this->runStep('Cumplimiento regulatorio',   WineryComplianceSeeder::class);
+        $this->runStep('Documentos de bodega',       WineryDocumentsSeeder::class);
+        $this->runStep('Alertas',                    WineryAlertsSeeder::class);
 
         $this->command->info('');
         $this->command->info('🍷 ══════════════════════════════════════════════');
@@ -127,53 +159,64 @@ class WineryDemoSeeder extends Seeder
         $this->command->info('  ✅ units_of_measurement: 5 registros creados');
     }
 
-    private function ensureContainersExist(): void
-    {
-        $count = DB::table('containers')->where('user_id', self::WINERY_USER_ID)->count();
-        if ($count === 0) {
-            $this->command->warn('  ⚠️  No hay contenedores para user_id=1. Ejecuta WineryContainersSeeder primero.');
-            $this->command->warn('     Los seeders de operaciones de bodega pueden quedar incompletos.');
-        } else {
-            $this->command->info("  ✅ Contenedores disponibles: {$count}");
-        }
-    }
-
     private function printSummary(): void
     {
         $userId = self::WINERY_USER_ID;
 
         $stats = [
-            'Enólogos'                  => DB::table('oenologists')->where('user_id', $userId)->count(),
-            'Clientes'                  => DB::table('clients')->where('user_id', $userId)->count(),
-            'Proveedores'               => DB::table('suppliers')->where('user_id', $userId)->count(),
-            'Suministros de bodega'     => DB::table('winery_supplies')->where('user_id', $userId)->count(),
-            'Vinos'                     => DB::table('wines')->where('user_id', $userId)->count(),
-            'Controles fermentación'    => DB::table('wine_fermentation_controls')
+            // Infraestructura
+            'Contenedores'               => DB::table('containers')->where('user_id', $userId)->count(),
+            'Salas de bodega'            => DB::table('container_rooms')->where('user_id', $userId)->count(),
+            // Personas
+            'Enólogos'                   => DB::table('oenologists')->where('user_id', $userId)->count(),
+            'Clientes'                   => DB::table('clients')->where('user_id', $userId)->count(),
+            'Proveedores'                => DB::table('suppliers')->where('user_id', $userId)->count(),
+            'Suministros de bodega'      => DB::table('winery_supplies')->where('user_id', $userId)->count(),
+            // Vinos y operaciones
+            'Vinos'                      => DB::table('wines')->where('user_id', $userId)->count(),
+            'Controles fermentación'     => DB::table('wine_fermentation_controls')
                                             ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
                                             ->count(),
-            'Traslados'                 => DB::table('wine_transfers')
+            'Traslados'                  => DB::table('wine_transfers')
                                             ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
                                             ->count(),
-            'Mermas'                    => DB::table('wine_losses')
+            'Mermas'                     => DB::table('wine_losses')
                                             ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
                                             ->count(),
-            'Análisis'                  => DB::table('wine_analyses')->where('user_id', $userId)->count(),
-            'Mantenimientos contenedor' => DB::table('container_maintenances')
+            'Análisis'                   => DB::table('wine_analyses')->where('user_id', $userId)->count(),
+            'Recepciones de uva'         => DB::table('harvests')->where('winery_id', $userId)->whereNull('activity_id')->count(),
+            'Disputas'                   => DB::table('harvest_deliveries')
+                                            ->whereIn('harvest_id', DB::table('harvests')->where('winery_id', $userId)->pluck('id'))
+                                            ->count(),
+            'Mantenimientos contenedor'  => DB::table('container_maintenances')
                                             ->whereIn('container_id', DB::table('containers')->where('user_id', $userId)->pluck('id'))
                                             ->count(),
-            'Embotellamientos'          => DB::table('wine_bottlings')->where('user_id', $userId)->count(),
-            'Lotes de etiquetas'        => DB::table('label_batches')->where('user_id', $userId)->count(),
-            'Etiquetados'               => DB::table('wine_labelings')->where('user_id', $userId)->count(),
-            'Lotes de producto'         => DB::table('wine_lots')->where('user_id', $userId)->count(),
-            'Notas de cata'             => DB::table('wine_tasting_notes')->where('user_id', $userId)->count(),
-            'Subproductos'              => DB::table('wine_subproducts')->where('user_id', $userId)->count(),
-            'Ecocertificaciones'        => DB::table('eco_certifications')->where('user_id', $userId)->count(),
-            'Registros sanitarios'      => DB::table('sanitary_registrations')->where('user_id', $userId)->count(),
-            'Autorizaciones embotellado'=> DB::table('bottling_authorizations')->where('user_id', $userId)->count(),
+            // Comercialización
+            'Embotellamientos'           => DB::table('wine_bottlings')->where('user_id', $userId)->count(),
+            'Lotes de etiquetas'         => DB::table('label_batches')->where('user_id', $userId)->count(),
+            'Etiquetados'                => DB::table('wine_labelings')->where('user_id', $userId)->count(),
+            'Lotes de producto'          => DB::table('wine_lots')->where('user_id', $userId)->count(),
+            // Operaciones y compras
+            'Operaciones de bodega'      => DB::table('cellar_operations')->where('user_id', $userId)->count(),
+            'Compras uva externa'        => DB::table('external_grape_purchases')->where('user_id', $userId)->count(),
+            // Facturación
+            'Facturas de venta'          => DB::table('invoices')->where('user_id', $userId)->whereNull('invoice_type')->count(),
+            'Liquidaciones uva'          => DB::table('invoices')->where('user_id', $userId)->where('invoice_type', 'grape_purchase')->count(),
+            // Calidad
+            'Notas de cata'              => DB::table('wine_tasting_notes')->where('user_id', $userId)->count(),
+            'Subproductos'               => DB::table('wine_subproducts')->where('user_id', $userId)->count(),
+            'Previsiones rendimiento'    => DB::table('winery_yield_forecasts')->where('winery_id', $userId)->count(),
+            // Cumplimiento y docs
+            'Ecocertificaciones'         => DB::table('eco_certifications')->where('user_id', $userId)->count(),
+            'Registros sanitarios'       => DB::table('sanitary_registrations')->where('user_id', $userId)->count(),
+            'Autorizaciones embotellado' => DB::table('bottling_authorizations')->where('user_id', $userId)->count(),
+            'Documentos de bodega'       => DB::table('winery_documents')->where('user_id', $userId)->count(),
+            'Alertas'                    => DB::table('winery_alerts')->where('user_id', $userId)->count(),
         ];
 
         foreach ($stats as $label => $count) {
-            $this->command->info("    {$label}: {$count}");
+            $icon = $count > 0 ? '  ✅' : '  ⚠️ ';
+            $this->command->info("{$icon} {$label}: {$count}");
         }
     }
 }
