@@ -40,20 +40,21 @@ class WineryContainersSeeder extends Seeder
                 $serial   = strtoupper(substr($prefix, 0, 3)) . '-' . str_pad($counter, 4, '0', STR_PAD_LEFT);
 
                 $rows[] = [
-                    'user_id'        => self::WINERY_USER_ID,
-                    'name'           => "$prefix " . str_pad($counter, 3, '0', STR_PAD_LEFT),
-                    'description'    => $desc,
-                    'capacity'       => $capacity,
-                    'unit'           => $unit,
-                    'used_capacity'  => 0.00,
-                    'quantity'       => 1,
-                    'serial_number'  => $serial,
-                    'type_id'        => $typeId,
-                    'material_id'    => $materialId,
-                    'purchase_date'  => $this->randomPurchaseDate(),
-                    'archived'       => false,
-                    'created_at'     => $now,
-                    'updated_at'     => $now,
+                    'user_id'             => self::WINERY_USER_ID,
+                    'name'                => "$prefix " . str_pad($counter, 3, '0', STR_PAD_LEFT),
+                    'description'         => $desc,
+                    'capacity'            => $capacity,
+                    'unit'                => $unit,
+                    'used_capacity'       => 0.000,
+                    'wine_volume_liters'  => 0.000,
+                    'quantity'            => 1,
+                    'serial_number'       => $serial,
+                    'type_id'             => $typeId,
+                    'material_id'         => $materialId,
+                    'purchase_date'       => $this->randomPurchaseDate(),
+                    'archived'            => false,
+                    'created_at'          => $now,
+                    'updated_at'          => $now,
                 ];
 
                 $counter++;

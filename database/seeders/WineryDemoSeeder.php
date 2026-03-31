@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\DB;
  *  26.  Cumplimiento regulatorio
  *  27.  Documentos de bodega
  *  28.  Alertas
+ *  29.  Recálculo stock contenedores (WineryRecalculateContainerStockSeeder)
  */
 class WineryDemoSeeder extends Seeder
 {
@@ -123,6 +124,9 @@ class WineryDemoSeeder extends Seeder
         $this->runStep('Documentos de bodega',       WineryDocumentsSeeder::class);
         $this->runStep('Alertas',                    WineryAlertsSeeder::class);
 
+        // Paso 29: Recalcular stock de contenedores a partir de operaciones reales
+        $this->runStep('Stock contenedores (recálculo)', WineryRecalculateContainerStockSeeder::class);
+
         $this->command->info('');
         $this->command->info('🍷 ══════════════════════════════════════════════');
         $this->command->info('✅  Demo winery completada. Resumen:');
@@ -200,7 +204,7 @@ class WineryDemoSeeder extends Seeder
             'Operaciones de bodega'      => DB::table('cellar_operations')->where('user_id', $userId)->count(),
             'Compras uva externa'        => DB::table('external_grape_purchases')->where('user_id', $userId)->count(),
             // Facturación
-            'Facturas de venta'          => DB::table('invoices')->where('user_id', $userId)->whereNull('invoice_type')->count(),
+            'Facturas de venta'          => DB::table('invoices')->where('user_id', $userId)->where('invoice_type', 'wine_sale')->count(),
             'Liquidaciones uva'          => DB::table('invoices')->where('user_id', $userId)->where('invoice_type', 'grape_purchase')->count(),
             // Calidad
             'Notas de cata'              => DB::table('wine_tasting_notes')->where('user_id', $userId)->count(),

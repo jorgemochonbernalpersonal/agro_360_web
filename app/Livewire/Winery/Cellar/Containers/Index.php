@@ -123,15 +123,14 @@ class Index extends AbstractIndex
             $query->where('material_id', $this->materialFilter);
         }
 
-        match ($this->occupancyFilter) {
-            'empty'  => $query->empty(),
-            'full'   => $query->full(),
-            'in_use' => $query->where(function ($q) {
-                $q->whereRaw('(used_capacity + wine_volume_liters) > 0')
+        if ($this->occupancyFilter === 'empty') {
+            $query->empty();
+        } elseif ($this->occupancyFilter === 'full') {
+            $query->full();
+        } elseif ($this->occupancyFilter === 'in_use') {
+            $query->whereRaw('(used_capacity + wine_volume_liters) > 0')
                   ->whereRaw('(used_capacity + wine_volume_liters) < capacity');
-            }),
-            default  => null,
-        };
+        }
 
         if ($this->currentTab === 'archived') {
             $query->where('archived', true);
