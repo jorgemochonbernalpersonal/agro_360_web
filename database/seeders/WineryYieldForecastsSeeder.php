@@ -35,8 +35,8 @@ class WineryYieldForecastsSeeder extends Seeder
         // Intentar obtener plot_plantings de esos viticultores
         $plotPlantings = DB::table('plot_plantings')
             ->join('plots', 'plot_plantings.plot_id', '=', 'plots.id')
-            ->whereIn('plots.user_id', $viticulturistIds)
-            ->select('plot_plantings.id', 'plots.user_id as viticulturist_id')
+            ->whereIn('plots.viticulturist_id', $viticulturistIds)
+            ->select('plot_plantings.id', 'plots.viticulturist_id')
             ->get();
 
         if ($plotPlantings->isEmpty() || $campaigns->isEmpty()) {
