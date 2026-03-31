@@ -1,48 +1,137 @@
 <div class="space-y-6 animate-fade-in">
+
     <x-agro.page-header
         title="Contenedores de Bodega"
         description="Gestiona tus depósitos, barricas y otros contenedores"
-    >
-        <x-slot:actions>
-            <flux:button href="{{ roleRoute('containers.create') }}" variant="primary" icon="plus">
-                Nuevo Contenedor
-            </flux:button>
-        </x-slot:actions>
-    </x-agro.page-header>
+    />
 
     {{-- Tabs Activos / Inactivos --}}
     <x-agro.tabs
         :tabs="[
-            'active'   => ['label' => 'Activos',    'count' => $stats['active']],
-            'archived' => ['label' => 'Inactivos',  'count' => $stats['archived']],
+            'active'   => ['label' => 'Activos',   'count' => $stats['active']],
+            'archived' => ['label' => 'Inactivos', 'count' => $stats['archived']],
         ]"
         :active="$currentTab"
         wireMethod="switchTab"
     />
 
-    <x-agro.filter-bar>
-        <x-agro.filter-input
-            wire:model.live.debounce.300ms="search"
-            placeholder="Buscar contenedor..."
-        />
-        <flux:select wire:model.live="typeFilter" size="sm" class="w-40">
-            <flux:select.option value="">Todos los tipos</flux:select.option>
-            @foreach($types as $type)
-                <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
-            @endforeach
-        </flux:select>
-        @if($search || $typeFilter)
-            <flux:button wire:click="clearFilters" variant="ghost" size="sm" icon="x-mark">
-                Limpiar
-            </flux:button>
-        @endif
-    </x-agro.filter-bar>
+    {{-- Toolbar --}}
+    @php
+        $filterCount =
+            (int) !empty($typeFilter) +
+            (int) !empty($occupancyFilter) +
+            (int) !empty($roomFilter) +
+            (int) !empty($materialFilter);
 
+        $occupancyLabels = ['empty' => 'Vacíos', 'in_use' => 'En uso', 'full' => 'Llenos'];
+    @endphp
+
+    <div class="flex items-center gap-3">
+
+        {{-- Search --}}
+        <div class="flex-1 relative">
+            <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400" />
+            </div>
+            <input
+                wire:model.live.debounce.300ms="search"
+                type="text"
+                placeholder="Buscar contenedor..."
+                class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition"
+            />
+        </div>
+
+        {{-- Botón Filtros --}}
+        <button
+            x-on:click="$dispatch('open-modal', 'container-filters')"
+            class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors"
+        >
+            <flux:icon icon="adjustments-horizontal" class="size-4 text-zinc-500" />
+            Filtros
+            @if($filterCount > 0)
+                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-agro-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                    {{ $filterCount }}
+                </span>
+            @endif
+        </button>
+
+        <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
+
+        <flux:button href="{{ roleRoute('containers.create') }}" variant="primary" icon="plus">
+            Nuevo
+        </flux:button>
+
+    </div>
+
+    {{-- Chips de filtros activos --}}
+    @if($search || $filterCount > 0)
+        <div class="flex flex-wrap items-center gap-2">
+
+            @if($search)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="magnifying-glass" class="size-3" />
+                    "{{ $search }}"
+                    <button wire:click="$set('search', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+
+            @if($typeFilter)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="cube" class="size-3" />
+                    {{ $types->firstWhere('id', $typeFilter)?->name ?? '' }}
+                    <button wire:click="$set('typeFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+
+            @if($occupancyFilter)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="chart-bar" class="size-3" />
+                    {{ $occupancyLabels[$occupancyFilter] ?? '' }}
+                    <button wire:click="$set('occupancyFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+
+            @if($roomFilter)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="building-office" class="size-3" />
+                    {{ $rooms->firstWhere('id', $roomFilter)?->name ?? '' }}
+                    <button wire:click="$set('roomFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+
+            @if($materialFilter)
+                <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-agro-50 text-agro-700 text-xs font-medium rounded-full border border-agro-200">
+                    <flux:icon icon="beaker" class="size-3" />
+                    {{ $materials->firstWhere('id', $materialFilter)?->name ?? '' }}
+                    <button wire:click="$set('materialFilter', '')" class="ml-0.5 p-0.5 rounded-full hover:bg-agro-200 transition-colors">
+                        <flux:icon icon="x-mark" class="size-3" />
+                    </button>
+                </span>
+            @endif
+
+            <button
+                wire:click="clearFilters"
+                class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+            >
+                Limpiar todo
+            </button>
+        </div>
+    @endif
+
+    {{-- Grid --}}
     @if($containers->count() > 0)
         <div
             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             wire:loading.class="opacity-60 pointer-events-none"
-            wire:target="switchTab, search, typeFilter, clearFilters"
+            wire:target="switchTab, search, typeFilter, occupancyFilter, roomFilter, materialFilter, clearFilters"
         >
             @foreach($containers as $container)
                 @php
@@ -166,7 +255,7 @@
                                 </button>
                             @else
                                 <button wire:click="archive({{ $container->id }})"
-                                wire:loading.attr="disabled"
+                                    wire:loading.attr="disabled"
                                     wire:confirm="¿Desactivar este contenedor?"
                                     title="Desactivar"
                                     class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-colors">
@@ -175,7 +264,7 @@
                             @endif
                             @if($container->harvests_count === 0)
                                 <button wire:click="delete({{ $container->id }})"
-                                wire:loading.attr="disabled"
+                                    wire:loading.attr="disabled"
                                     wire:confirm="¿Eliminar este contenedor permanentemente?"
                                     title="Eliminar"
                                     class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors">
@@ -195,9 +284,9 @@
         <x-agro.empty-state
             icon="cube"
             title="{{ $currentTab === 'active' ? 'No hay contenedores activos' : 'No hay contenedores inactivos' }}"
-            description="{{ $search || $typeFilter ? 'Ningún contenedor coincide con los filtros aplicados.' : ($currentTab === 'active' ? 'Crea tu primer contenedor para empezar a asignar recepciones de uva.' : '') }}"
+            description="{{ ($search || $filterCount > 0) ? 'Ningún contenedor coincide con los filtros aplicados.' : ($currentTab === 'active' ? 'Crea tu primer contenedor para empezar a asignar recepciones de uva.' : '') }}"
         >
-            @if($search || $typeFilter)
+            @if($search || $filterCount > 0)
                 <x-slot:action>
                     <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
                 </x-slot:action>
@@ -210,4 +299,84 @@
             @endif
         </x-agro.empty-state>
     @endif
+
+    {{-- Modal: Filtros --}}
+    <x-agro.modal name="container-filters" maxWidth="sm">
+        <div class="px-6 py-4 border-b border-zinc-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-agro-100 rounded-lg flex items-center justify-center">
+                        <flux:icon icon="adjustments-horizontal" class="size-4 text-agro-600" />
+                    </div>
+                    <h3 class="text-base font-semibold text-zinc-900">Filtros</h3>
+                </div>
+                <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="ghost" size="sm" icon="x-mark" />
+            </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-5">
+
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Tipo de contenedor</label>
+                <flux:select wire:model.live="typeFilter">
+                    <option value="">Todos los tipos</option>
+                    @foreach($types as $type)
+                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                    @endforeach
+                </flux:select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Ocupación</label>
+                <flux:select wire:model.live="occupancyFilter">
+                    <option value="">Cualquier estado</option>
+                    <option value="empty">Vacíos</option>
+                    <option value="in_use">En uso</option>
+                    <option value="full">Llenos</option>
+                </flux:select>
+            </div>
+
+            @if($rooms->isNotEmpty())
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Sala de bodega</label>
+                    <flux:select wire:model.live="roomFilter">
+                        <option value="">Todas las salas</option>
+                        @foreach($rooms as $room)
+                            <option value="{{ $room->id }}">{{ $room->name }}</option>
+                        @endforeach
+                    </flux:select>
+                </div>
+            @endif
+
+            @if($materials->isNotEmpty())
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1.5">Material</label>
+                    <flux:select wire:model.live="materialFilter">
+                        <option value="">Todos los materiales</option>
+                        @foreach($materials as $material)
+                            <option value="{{ $material->id }}">{{ $material->name }}</option>
+                        @endforeach
+                    </flux:select>
+                </div>
+            @endif
+
+        </div>
+
+        <div class="px-6 py-4 border-t border-zinc-200 flex items-center justify-between">
+            @if($filterCount > 0)
+                <button
+                    wire:click="clearFilters"
+                    class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
+                >
+                    Limpiar filtros
+                </button>
+            @else
+                <span></span>
+            @endif
+            <flux:button x-on:click="$dispatch('close-modal', 'container-filters')" variant="primary">
+                Aplicar
+            </flux:button>
+        </div>
+    </x-agro.modal>
+
 </div>

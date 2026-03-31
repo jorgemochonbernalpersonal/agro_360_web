@@ -4,24 +4,35 @@ namespace App\Livewire\Winery\Cellar\Containers;
 
 use App\Livewire\Winery\AbstractIndex;
 use App\Models\Container;
+use App\Models\ContainerMaterial;
+use App\Models\ContainerRoom;
 use App\Models\ContainerType;
 use App\Services\WineContainerStockService;
 use Illuminate\Database\Eloquent\Builder;
 
 class Index extends AbstractIndex
 {
-    public string $currentTab = 'active';
-    public string $search     = '';
-    public string $typeFilter = '';
+    public string $currentTab       = 'active';
+    public string $search           = '';
+    public string $typeFilter       = '';
+    public string $occupancyFilter  = '';
+    public string $roomFilter       = '';
+    public string $materialFilter   = '';
 
     protected $queryString = [
-        'currentTab' => ['as' => 'tab', 'except' => 'active'],
-        'search'     => ['except' => ''],
-        'typeFilter' => ['except' => ''],
+        'currentTab'      => ['as' => 'tab',      'except' => 'active'],
+        'search'          => ['except' => ''],
+        'typeFilter'      => ['except' => ''],
+        'occupancyFilter' => ['except' => ''],
+        'roomFilter'      => ['except' => ''],
+        'materialFilter'  => ['except' => ''],
     ];
 
-    public function updatingSearch(): void     { $this->resetPage(); }
-    public function updatingTypeFilter(): void { $this->resetPage(); }
+    public function updatingSearch(): void          { $this->resetPage(); }
+    public function updatingTypeFilter(): void      { $this->resetPage(); }
+    public function updatingOccupancyFilter(): void { $this->resetPage(); }
+    public function updatingRoomFilter(): void      { $this->resetPage(); }
+    public function updatingMaterialFilter(): void  { $this->resetPage(); }
 
     public function switchTab(string $tab): void
     {
@@ -31,7 +42,13 @@ class Index extends AbstractIndex
 
     protected function filterDefaults(): array
     {
-        return ['search' => '', 'typeFilter' => ''];
+        return [
+            'search'          => '',
+            'typeFilter'      => '',
+            'occupancyFilter' => '',
+            'roomFilter'      => '',
+            'materialFilter'  => '',
+        ];
     }
 
     public function archive(int $containerId): void
@@ -81,7 +98,7 @@ class Index extends AbstractIndex
     {
         return Container::where('user_id', $this->wineryId())
             ->withCount('harvests')
-            ->with('containerType');
+            ->with(['containerType', 'containerMaterial', 'containerRoom']);
     }
 
     protected function applyFilters(Builder $query): void
@@ -97,6 +114,24 @@ class Index extends AbstractIndex
         if ($this->typeFilter) {
             $query->where('type_id', $this->typeFilter);
         }
+
+        if ($this->roomFilter) {
+            $query->where('container_room_id', $this->roomFilter);
+        }
+
+        if ($this->materialFilter) {
+            $query->where('material_id', $this->materialFilter);
+        }
+
+        match ($this->occupancyFilter) {
+            'empty'  => $query->empty(),
+            'full'   => $query->full(),
+            'in_use' => $query->where(function ($q) {
+                $q->whereRaw('(used_capacity + wine_volume_liters) > 0')
+                  ->whereRaw('(used_capacity + wine_volume_liters) < capacity');
+            }),
+            default  => null,
+        };
 
         if ($this->currentTab === 'archived') {
             $query->where('archived', true);
@@ -119,6 +154,8 @@ class Index extends AbstractIndex
         $wineryId  = $this->wineryId();
         $types     = ContainerType::orderBy('name')->get();
         $typesById = $types->keyBy('id');
+        $rooms     = ContainerRoom::where('user_id', $wineryId)->orderBy('name')->get();
+        $materials = ContainerMaterial::orderBy('name')->get();
 
         $base = Container::where('user_id', $wineryId);
         $stats = [
@@ -130,6 +167,8 @@ class Index extends AbstractIndex
             'containers' => $entries,
             'types'      => $types,
             'typesById'  => $typesById,
+            'rooms'      => $rooms,
+            'materials'  => $materials,
             'stats'      => $stats,
         ];
     }
