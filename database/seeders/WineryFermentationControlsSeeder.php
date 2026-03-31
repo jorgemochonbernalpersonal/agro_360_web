@@ -23,7 +23,7 @@ class WineryFermentationControlsSeeder extends Seeder
         $wines = DB::table('wines')
             ->where('user_id', self::WINERY_USER_ID)
             ->whereIn('status', ['in_progress', 'aged'])
-            ->get(['id', 'wine_type', 'vintage'])
+            ->get(['id', 'wine_type', 'vintage', 'status'])
             ->toArray();
 
         if (empty($wines)) {
