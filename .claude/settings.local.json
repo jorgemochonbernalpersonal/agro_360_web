@@ -235,7 +235,8 @@
       "Bash(grep -r table\\\\\\(C:UsersjorgeDesktopagro365/app/Console/Commands --include=*.php)",
       "Bash(2)",
       "Bash(plot_plant)",
-      "Bash(grape_vari \")"
+      "Bash(grape_vari \")",
+      "Bash(find C:UsersjorgeDesktopagro365 -type f \\\\\\(-name *.kt -o -name *.tsx -o -name *.jsx -o -name *Screen* \\\\\\))"
     ]
   }
 }

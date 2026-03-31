@@ -75,9 +75,9 @@ class HarvestSummaryController extends Controller
 
         // ── Viticultores vinculados vs activos ────────────────────────────────
         $linkedCount = WineryViticulturist::where('winery_id', $user->id)->count();
-        $activeCount = Harvest::where('winery_id', $user->id)
-            ->where('status', 'active')
-            ->whereYear('harvest_start_date', $year)
+        $activeCount = Harvest::where('harvests.winery_id', $user->id)
+            ->where('harvests.status', 'active')
+            ->whereYear('harvests.harvest_start_date', $year)
             ->join('grape_reception_batches as b', 'harvests.batch_id', '=', 'b.id')
             ->distinct()
             ->count('b.viticulturist_id');

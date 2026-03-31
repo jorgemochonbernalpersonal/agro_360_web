@@ -237,6 +237,41 @@ class PlotController extends Controller
         ]);
     }
 
+    // ─── GET /winery/plots/{id}/plantings ──────────────────────────────────────
+
+    public function plantings(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasWineryAccess(), 403);
+
+        $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
+            ->pluck('viticulturist_id');
+
+        $plot = Plot::whereIn('viticulturist_id', $viticulturistIds)->findOrFail($id);
+
+        $plantings = $plot->plantings()
+            ->with(['grapeVariety', 'trainingSystem'])
+            ->where('active', true)
+            ->orderBy('planting_year', 'desc')
+            ->get()
+            ->map(fn ($p) => [
+                'id'              => $p->id,
+                'name'            => $p->name,
+                'grape_variety'   => $p->grapeVariety?->name,
+                'planted_area'    => (float) $p->planted_area,
+                'planting_year'   => $p->planting_year,
+                'vine_count'      => $p->vine_count,
+                'row_spacing'     => $p->row_spacing ? (float) $p->row_spacing : null,
+                'vine_spacing'    => $p->vine_spacing ? (float) $p->vine_spacing : null,
+                'rootstock'       => $p->rootstock,
+                'training_system' => $p->trainingSystem?->name,
+                'status'          => $p->status,
+                'irrigated'       => (bool) $p->irrigated,
+            ]);
+
+        return response()->json(['data' => $plantings]);
+    }
+
     // ─── GET /winery/plots/{id}/harvest-quality ───────────────────────────────
 
     public function harvestQuality(Request $request, int $id): JsonResponse

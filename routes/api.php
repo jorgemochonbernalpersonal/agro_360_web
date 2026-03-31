@@ -365,6 +365,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/plots/{id}/geometries',      [WineryPlotController::class, 'geometries'])->middleware('throttle:30,1');
         Route::get('/plots/{id}/harvest-quality', [WineryPlotController::class, 'harvestQuality'])->middleware('throttle:60,1');
         Route::get('/plots/{id}/notebook',        [WineryPlotController::class, 'notebook'])->middleware('throttle:60,1');
+        Route::get('/plots/{id}/plantings',       [WineryPlotController::class, 'plantings'])->middleware('throttle:60,1');
 
         // Fichas técnicas de vino (datos agregados)
         Route::get('/wines/{id}/technical-sheet', [WineController::class, 'technicalSheet'])->middleware('throttle:60,1');
@@ -480,6 +481,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/plots',                 [PlotController::class, 'index'])->middleware('throttle:60,1');
         Route::get('/plots/{id}',            [PlotController::class, 'show'])->middleware('throttle:60,1');
         Route::get('/plots/{id}/geometries', [PlotController::class, 'geometries'])->middleware('throttle:30,1');
+        Route::get('/plots/{id}/plantings',  [PlotController::class, 'plantings'])->middleware('throttle:60,1');
         Route::put('/plots/{id}',            [PlotController::class, 'update'])->middleware('throttle:60,1');
 
         // Campañas
