@@ -46,8 +46,9 @@ class WineryGrapeReceptionsSeeder extends Seeder
             ['weight' => 1800.0, 'days' => 45, 'baume' => 12.7, 'brix' => 23.1, 'ph' => 3.40, 'acidity' => 6.0, 'price' => 0.88, 'notes' => 'Tintilla — en proceso de elaboración rosado.'],
         ];
 
-        // Pre-cargar una plot_planting_id por viticultor (requerida, NOT NULL)
+        // Pre-cargar plot_planting_id y campaign_id por viticultor (requeridos, NOT NULL)
         $plotPlantingByVitic = [];
+        $campaignByVitic     = [];
         foreach ($viticulturistIds as $vid) {
             $ppId = DB::table('plot_plantings')
                 ->whereIn('plot_id', DB::table('plots')->where('viticulturist_id', $vid)->pluck('id'))
@@ -55,15 +56,23 @@ class WineryGrapeReceptionsSeeder extends Seeder
             if ($ppId) {
                 $plotPlantingByVitic[$vid] = $ppId;
             }
+
+            $campId = DB::table('campaigns')
+                ->where('viticulturist_id', $vid)
+                ->orderByDesc('year')
+                ->value('id');
+            if ($campId) {
+                $campaignByVitic[$vid] = $campId;
+            }
         }
 
         foreach ($receptions as $i => $rec) {
             $vitId      = $viticulturistIds[$i % count($viticulturistIds)];
             $containerId = !empty($containers) ? $containers[$i % count($containers)] : null;
 
-            // Si el viticultor no tiene parcelas no podemos crear el batch
-            if (!isset($plotPlantingByVitic[$vitId])) {
-                $this->command->warn("  ⚠️  Viticultor {$vitId} sin parcelas. Saltando recepción.");
+            // Si el viticultor no tiene parcelas o campaña no podemos crear el batch
+            if (!isset($plotPlantingByVitic[$vitId]) || !isset($campaignByVitic[$vitId])) {
+                $this->command->warn("  ⚠️  Viticultor {$vitId} sin parcelas/campaña. Saltando recepción.");
                 continue;
             }
 
@@ -74,6 +83,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
                     'winery_id'         => self::WINERY_USER_ID,
                     'viticulturist_id'  => $vitId,
                     'plot_planting_id'  => $plotPlantingByVitic[$vitId],
+                    'campaign_id'       => $campaignByVitic[$vitId],
                     'vintage_year'      => $vintageYear,
                     'total_weight_kg'   => 0,
                     'status'            => 'open',
