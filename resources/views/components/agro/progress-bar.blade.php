@@ -23,7 +23,7 @@
                 <span>{{ $label }}</span>
             @endif
             @if($percentage !== null)
-                <span class="font-semibold">{{ number_format($percentage, 0) }}%</span>
+                <span class="font-semibold {{ $percentage >= 100 ? 'text-red-600' : '' }}">{{ number_format($percentage, 0) }}%</span>
             @endif
         </div>
     @endif

@@ -233,7 +233,9 @@
       "Bash(sort -k6,7 -r)",
       "Bash(xargs -0 grep -l \"Módulo\\\\|table\\\\|report\")",
       "Bash(grep -r table\\\\\\(C:UsersjorgeDesktopagro365/app/Console/Commands --include=*.php)",
-      "Bash(2)"
+      "Bash(2)",
+      "Bash(plot_plant)",
+      "Bash(grape_vari \")"
     ]
   }
 }

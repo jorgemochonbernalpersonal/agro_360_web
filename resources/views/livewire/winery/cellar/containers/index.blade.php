@@ -174,15 +174,11 @@
 
                     <div class="flex-1 space-y-4">
                         {{-- Barra de ocupación --}}
-                        <div>
-                            <div class="flex justify-between text-xs text-zinc-500 mb-1">
-                                <span>Ocupación</span>
-                                <span class="{{ $pct >= 100 ? 'text-red-600 font-semibold' : 'text-zinc-700' }}">
-                                    {{ number_format($pct, 0) }}%
-                                </span>
-                            </div>
-                            <x-agro.progress-bar :percent="$pct" />
-                        </div>
+                        <x-agro.progress-bar
+                            :percentage="$pct"
+                            label="Ocupación"
+                            :showValues="false"
+                        />
 
                         {{-- Kg cosecha / vino / capacidad --}}
                         <div class="grid grid-cols-3 gap-2">
