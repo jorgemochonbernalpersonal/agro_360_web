@@ -154,6 +154,7 @@ class WineryInvoicesSeeder extends Seeder
                 'client_id'       => $clientId,
                 'invoice_number'  => $inv['invoice_number'],
                 'invoice_date'    => $inv['invoice_date'],
+                'invoice_type'    => 'wine_sale',
                 'status'          => $inv['status'],
                 'payment_status'  => $inv['payment_status'],
                 'payment_type'    => $inv['payment_type'],
@@ -208,7 +209,7 @@ class WineryInvoicesSeeder extends Seeder
     {
         $invoiceIds = DB::table('invoices')
             ->where('user_id', self::WINERY_USER_ID)
-            ->whereNull('invoice_type')
+            ->where('invoice_type', 'wine_sale')
             ->pluck('id');
 
         if ($invoiceIds->isNotEmpty()) {
