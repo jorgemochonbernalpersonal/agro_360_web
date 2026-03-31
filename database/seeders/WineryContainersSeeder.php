@@ -81,7 +81,11 @@ class WineryContainersSeeder extends Seeder
         // Borrar registros dependientes en orden correcto para respetar FKs
         DB::table('wine_fermentation_controls')->whereIn('container_id', $containerIds)->delete();
         DB::table('wine_analyses')->whereIn('container_id', $containerIds)->delete();
-        DB::table('cellar_operations')->whereIn('container_id', $containerIds)->delete();
+        DB::table('cellar_operations')
+            ->where(function ($q) use ($containerIds) {
+                $q->whereIn('source_container_id', $containerIds)
+                  ->orWhereIn('target_container_id', $containerIds);
+            })->delete();
         DB::table('container_maintenances')->whereIn('container_id', $containerIds)->delete();
         DB::table('container_histories')->whereIn('container_id', $containerIds)->delete();
         DB::table('wine_bottlings')->whereIn('container_id', $containerIds)->delete();
