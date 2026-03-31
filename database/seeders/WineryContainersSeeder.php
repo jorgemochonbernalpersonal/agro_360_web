@@ -67,10 +67,32 @@ class WineryContainersSeeder extends Seeder
 
     private function cleanup(): void
     {
-        $deleted = DB::table('containers')
+        // Obtener IDs de los contenedores del seeder antes de borrar
+        $containerIds = DB::table('containers')
             ->where('user_id', self::WINERY_USER_ID)
             ->where('archived', false)
             ->whereRaw("name REGEXP '^(Depósito|Tanque|Barrica|Tina|Ánfora) [0-9]'")
+            ->pluck('id');
+
+        if ($containerIds->isEmpty()) {
+            return;
+        }
+
+        // Borrar registros dependientes en orden correcto para respetar FKs
+        DB::table('wine_fermentation_controls')->whereIn('container_id', $containerIds)->delete();
+        DB::table('wine_analyses')->whereIn('container_id', $containerIds)->delete();
+        DB::table('cellar_operations')->whereIn('container_id', $containerIds)->delete();
+        DB::table('container_maintenances')->whereIn('container_id', $containerIds)->delete();
+        DB::table('container_histories')->whereIn('container_id', $containerIds)->delete();
+        DB::table('wine_bottlings')->whereIn('container_id', $containerIds)->delete();
+        DB::table('wine_transfers')
+            ->where(function ($q) use ($containerIds) {
+                $q->whereIn('source_container_id', $containerIds)
+                  ->orWhereIn('destination_container_id', $containerIds);
+            })->delete();
+
+        $deleted = DB::table('containers')
+            ->whereIn('id', $containerIds)
             ->delete();
 
         if ($deleted > 0) {
