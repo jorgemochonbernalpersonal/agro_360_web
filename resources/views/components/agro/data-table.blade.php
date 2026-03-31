@@ -1,26 +1,30 @@
-﻿@props(['headers', 'emptyMessage' => 'No hay registros', 'emptyDescription' => null, 'emptyIcon' => null])
+﻿@props(['headers' => [], 'emptyMessage' => 'No hay registros', 'emptyDescription' => null, 'emptyIcon' => null])
 
 <x-agro.card :padding="false">
     @if(isset($slot) && $slot->isNotEmpty())
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-zinc-200">
                 <thead class="bg-zinc-50">
-                    <tr>
-                        @foreach($headers as $header)
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">
-                                @if(is_array($header))
-                                    <div class="flex items-center gap-2">
-                                        @if(isset($header['icon']))
-                                            {!! $header['icon'] !!}
-                                        @endif
-                                        {{ $header['label'] }}
-                                    </div>
-                                @else
-                                    {{ $header }}
-                                @endif
-                            </th>
-                        @endforeach
-                    </tr>
+                    @if(isset($head) && $head->isNotEmpty())
+                        <tr>{{ $head }}</tr>
+                    @elseif(!empty($headers))
+                        <tr>
+                            @foreach($headers as $header)
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">
+                                    @if(is_array($header))
+                                        <div class="flex items-center gap-2">
+                                            @if(isset($header['icon']))
+                                                {!! $header['icon'] !!}
+                                            @endif
+                                            {{ $header['label'] }}
+                                        </div>
+                                    @else
+                                        {{ $header }}
+                                    @endif
+                                </th>
+                            @endforeach
+                        </tr>
+                    @endif
                 </thead>
                 <tbody class="bg-white divide-y divide-zinc-100">
                     {{ $slot }}
