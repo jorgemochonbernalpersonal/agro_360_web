@@ -23,7 +23,7 @@ class WineryProductLotsSeeder extends Seeder
         $wines = DB::table('wines')
             ->where('user_id', self::WINERY_USER_ID)
             ->whereIn('status', ['bottled', 'sold', 'aged'])
-            ->get(['id', 'name', 'wine_type', 'vintage', 'internal_code', 'is_organic'])
+            ->get(['id', 'name', 'wine_type', 'vintage', 'internal_code', 'is_organic', 'status'])
             ->toArray();
 
         if (empty($wines)) {
