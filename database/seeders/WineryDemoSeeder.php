@@ -188,6 +188,7 @@ class WineryDemoSeeder extends Seeder
                                             ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
                                             ->count(),
             'Análisis'                   => DB::table('wine_analyses')->where('user_id', $userId)->count(),
+            'Campañas bodega'            => DB::table('campaigns')->where('viticulturist_id', $userId)->count(),
             'Recepciones de uva'         => DB::table('harvests')->where('winery_id', $userId)->whereNull('activity_id')->count(),
             'Disputas'                   => DB::table('harvest_deliveries')
                                             ->whereIn('harvest_id', DB::table('harvests')->where('winery_id', $userId)->pluck('id'))
@@ -210,6 +211,9 @@ class WineryDemoSeeder extends Seeder
             'Notas de cata'              => DB::table('wine_tasting_notes')->where('user_id', $userId)->count(),
             'Subproductos'               => DB::table('wine_subproducts')->where('user_id', $userId)->count(),
             'Previsiones rendimiento'    => DB::table('winery_yield_forecasts')->where('winery_id', $userId)->count(),
+            'Aforos viticultor'          => DB::table('estimated_yields')->whereIn('estimated_by',
+                                            DB::table('winery_viticulturist')->where('winery_id', $userId)->pluck('viticulturist_id')
+                                           )->count(),
             // Cumplimiento y docs
             'Ecocertificaciones'         => DB::table('eco_certifications')->where('user_id', $userId)->count(),
             'Registros sanitarios'       => DB::table('sanitary_registrations')->where('user_id', $userId)->count(),

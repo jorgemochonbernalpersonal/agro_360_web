@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Hash;
 /**
  * Genera recepciones de uva para la bodega (user_id=1).
  *
- * Auto-suficiente: si no hay viticultores vinculados crea 4 demo viticulturists
+ * Auto-suficiente: si no hay viticultores vinculados crea 6 demo viticulturists
  * con sus parcelas, plantaciones y campañas (2023-2025).
  *
- * Produce ~56 recepciones distribuidas en 3 vendimias.
+ * Produce ~95 recepciones distribuidas en 3 vendimias.
+ *
+ * También crea campañas para el usuario bodega (id=1) para que
+ * los filtros de harvest-quality y harvest-summary funcionen.
  */
 class WineryGrapeReceptionsSeeder extends Seeder
 {
@@ -52,6 +55,22 @@ class WineryGrapeReceptionsSeeder extends Seeder
             'plots'     => [
                 ['name' => 'Parcela Agaete Norte','area' => 1.200, 'varieties' => ['Malvasía Volcánica', 'Gual']],
                 ['name' => 'Finca Barranco Hondo','area' => 0.750, 'varieties' => ['Listán Blanco']],
+            ],
+        ],
+        [
+            'name'      => 'Antonio Medina Santana',
+            'email'     => 'antonio.medina@viticultor.agro365.demo',
+            'plots'     => [
+                ['name' => 'Viña Los Berrazales',  'area' => 2.100, 'varieties' => ['Listán Negro', 'Malvasía Volcánica']],
+                ['name' => 'Parcela La Aldea Alta', 'area' => 1.450, 'varieties' => ['Negramoll']],
+            ],
+        ],
+        [
+            'name'      => 'Laura Déniz Rodríguez',
+            'email'     => 'laura.deniz@viticultor.agro365.demo',
+            'plots'     => [
+                ['name' => 'Finca Tamadaba',      'area' => 1.900, 'varieties' => ['Vijariego Negro', 'Marmajuelo']],
+                ['name' => 'Parcela Cruz de Tejeda','area' => 1.050, 'varieties' => ['Gual']],
             ],
         ],
     ];
@@ -118,6 +137,9 @@ class WineryGrapeReceptionsSeeder extends Seeder
             return;
         }
 
+        // ── Ensure winery-level campaigns (needed for harvest-quality/summary filters) ──
+        $wineryCampaigns = $this->ensureWineryCampaigns($now);
+
         // ── Create batches and harvests ───────────────────────────────────────────
         $containers   = DB::table('containers')
             ->where('user_id', self::WINERY_USER_ID)
@@ -134,7 +156,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
             $plantings  = $vitData['plantings'];  // [{id, variety_name, variety_params, area}]
 
             foreach ([2023, 2024, 2025] as $vintage) {
-                $campaignId = $vitData['campaigns'][$vintage] ?? null;
+                $campaignId = $wineryCampaigns[$vintage] ?? null;
                 if (!$campaignId) {
                     continue;
                 }
@@ -154,7 +176,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
                     ]);
                     $totalBatches++;
 
-                    // Generate 1-3 harvest entries per batch
+                    // Generate 2-3 harvest entries per batch
                     $numReceptions = $this->receptionsForVintage($vintage);
 
                     for ($r = 0; $r < $numReceptions; $r++) {
@@ -169,7 +191,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
 
                         $containerId = !empty($containers) ? $containers[$cidx % count($containers)] : null;
 
-                        $harvestId = DB::table('harvests')->insertGetId([
+                        DB::table('harvests')->insertGetId([
                             'winery_id'              => self::WINERY_USER_ID,
                             'batch_id'               => $batchId,
                             'plot_planting_id'       => $planting['id'],
@@ -213,7 +235,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
             }
         }
 
-        $this->command->info("✅ Recepciones de uva: {$totalHarvests} recepciones en {$totalBatches} lotes (4 viticultores, vendimias 2023-2025)");
+        $this->command->info("✅ Recepciones de uva: {$totalHarvests} recepciones en {$totalBatches} lotes (6 viticultores, vendimias 2023-2025)");
     }
 
     // ── Setup helpers ─────────────────────────────────────────────────────────────
@@ -237,6 +259,36 @@ class WineryGrapeReceptionsSeeder extends Seeder
             $ids[$name] = $id;
         }
         return $ids;
+    }
+
+    /**
+     * Crea campañas para el usuario bodega (id=1).
+     * Esto permite que Campaign::forViticulturist(Auth::id()) devuelva registros
+     * y los filtros de harvest-quality / harvest-summary funcionen correctamente.
+     */
+    private function ensureWineryCampaigns(\Carbon\Carbon $now): array
+    {
+        $campaigns = [];
+        foreach ([2023 => false, 2024 => false, 2025 => true] as $year => $active) {
+            $campId = DB::table('campaigns')
+                ->where('viticulturist_id', self::WINERY_USER_ID)
+                ->where('year', $year)
+                ->value('id');
+            if (!$campId) {
+                $campId = DB::table('campaigns')->insertGetId([
+                    'name'              => "Vendimia {$year}",
+                    'year'              => $year,
+                    'viticulturist_id'  => self::WINERY_USER_ID,
+                    'start_date'        => "{$year}-08-01",
+                    'end_date'          => "{$year}-11-30",
+                    'active'            => $active,
+                    'created_at'        => $now,
+                    'updated_at'        => $now,
+                ]);
+            }
+            $campaigns[$year] = $campId;
+        }
+        return $campaigns;
     }
 
     private function ensureViticulturists(
@@ -283,7 +335,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
                 ]);
             }
 
-            // Campaigns: 2023 (inactive), 2024 (inactive), 2025 (active)
+            // Campaigns per viticulturist: 2023 (inactive), 2024 (inactive), 2025 (active)
             $campaigns = [];
             foreach ([2023 => false, 2024 => false, 2025 => true] as $year => $active) {
                 $campId = DB::table('campaigns')
@@ -341,11 +393,16 @@ class WineryGrapeReceptionsSeeder extends Seeder
                         ->value('id');
 
                     if (!$plantingId) {
+                        $plantingYear = mt_rand(2005, 2018);
+                        // harvest_limit_kg = area × rendimiento regulado DO (~7000-8500 kg/ha)
+                        $harvestLimitKg = round($areaPerVariety * mt_rand(7000, 8500));
+
                         $plantingId = DB::table('plot_plantings')->insertGetId([
                             'plot_id'           => $plotId,
                             'grape_variety_id'  => $varietyId,
                             'area_planted'      => $areaPerVariety,
-                            'planting_year'     => mt_rand(2005, 2018),
+                            'planting_year'     => $plantingYear,
+                            'harvest_limit_kg'  => $harvestLimitKg,
                             'status'            => 'active',
                             'irrigated'         => false,
                             'created_at'        => $now,
@@ -380,7 +437,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
         return match ($vintage) {
             2023 => 2,   // campaign closed — 2 receptions (early/late harvest)
             2024 => 2,   // excellent year, 2 batches per planting
-            2025 => 1,   // current vintage, first reception
+            2025 => 2,   // current vintage, 2 receptions already
         };
     }
 
@@ -453,7 +510,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
         $qualityNote = match ($vintage) {
             2023 => 'Vendimia 2023 con condiciones climáticas normales.',
             2024 => 'Excelente campaña 2024. Maduración óptima con veranos secos.',
-            2025 => 'Vendimia 2025 en curso. Primeras recepciones de la campaña.',
+            2025 => 'Vendimia 2025 en curso. Recepciones de la campaña.',
         };
 
         $healthNote = $health === 'sano'
@@ -481,6 +538,11 @@ class WineryGrapeReceptionsSeeder extends Seeder
         // Batches
         DB::table('grape_reception_batches')
             ->where('winery_id', self::WINERY_USER_ID)
+            ->delete();
+
+        // Winery campaigns
+        DB::table('campaigns')
+            ->where('viticulturist_id', self::WINERY_USER_ID)
             ->delete();
 
         // Demo viticulturist infrastructure
