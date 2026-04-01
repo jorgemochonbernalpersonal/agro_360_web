@@ -393,7 +393,7 @@ class WinerySilicieDataSeeder extends Seeder
                     'unit_price'  => $item['price'],
                     'unit'        => 'botella',
                     'subtotal'    => round($item['qty'] * $item['price'], 2),
-                    'sort_order'  => $idx + 1,
+
                     'created_at'  => $now,
                     'updated_at'  => $now,
                 ]);
