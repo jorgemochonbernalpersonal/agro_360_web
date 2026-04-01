@@ -463,15 +463,16 @@ class WinerySilicieDataSeeder extends Seeder
                 if ($year === 2026 && $month > 3) $month = mt_rand(1, 3);
 
                 DB::table('wine_losses')->insert([
-                    'wine_id'            => $wine->id,
-                    'container_id'       => !empty($containers) ? $containers[mt_rand(0, count($containers) - 1)] : null,
-                    'loss_type'          => $lossTypes[$i % count($lossTypes)],
-                    'loss_authorization' => $lossAuths[$i % count($lossAuths)],
-                    'quantity'           => round(mt_rand(15, 120), 2),
-                    'loss_date'          => sprintf('%04d-%02d-%02d', $year, $month, mt_rand(1, 28)),
-                    'notes'              => "Merma registrada — control periódico {$year}.",
-                    'created_at'         => $now,
-                    'updated_at'         => $now,
+                    'wine_id'                => $wine->id,
+                    'container_id'           => !empty($containers) ? $containers[mt_rand(0, count($containers) - 1)] : null,
+                    'loss_type'              => $lossTypes[$i % count($lossTypes)],
+                    'loss_authorization'     => $lossAuths[$i % count($lossAuths)],
+                    'quantity'               => round(mt_rand(15, 120), 2),
+                    'unit_of_measurement_id' => $unitLiters,
+                    'loss_date'              => sprintf('%04d-%02d-%02d', $year, $month, mt_rand(1, 28)),
+                    'notes'                  => "Merma registrada — control periódico {$year}.",
+                    'created_at'             => $now,
+                    'updated_at'             => $now,
                 ]);
                 $totalLosses++;
             }
