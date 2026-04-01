@@ -123,6 +123,9 @@ class WineryDemoSeeder extends Seeder
         $this->runStep('Subproductos',               WinerySubproductsSeeder::class);
         $this->runStep('Previsiones de rendimiento', WineryYieldForecastsSeeder::class);
 
+        // Paso 25b: Ciclo de vida completo de parcela demo (plot_id=1521)
+        $this->runStep('Ciclo de vida parcela 1521', WineryPlotLifecycleSeeder::class);
+
         // Paso 26-28: Cumplimiento y documentación
         $this->runStep('Cumplimiento regulatorio',   WineryComplianceSeeder::class);
         $this->runStep('Documentos de bodega',       WineryDocumentsSeeder::class);
