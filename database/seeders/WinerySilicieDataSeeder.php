@@ -381,7 +381,6 @@ class WinerySilicieDataSeeder extends Seeder
                 'due_date'       => \Carbon\Carbon::parse($inv['date'])->addDays(30)->toDateString(),
                 'total_amount'   => $inv['total'],
                 'status'         => 'paid',
-                'notes'          => "Factura generada por seeder SILICIE.",
                 'created_at'     => $now,
                 'updated_at'     => $now,
             ]);
@@ -536,11 +535,19 @@ class WinerySilicieDataSeeder extends Seeder
 
         DB::table('wine_stock_snapshots')->where('user_id', self::WINERY_USER_ID)->delete();
 
-        // Facturas suplementarias (las que creó este seeder)
-        DB::table('invoices')
+        // Facturas suplementarias (las que creó este seeder: FAC-2023-xxx y FAC-2024-xxx)
+        $seederInvoiceIds = DB::table('invoices')
             ->where('user_id', self::WINERY_USER_ID)
-            ->where('notes', 'LIKE', '%seeder SILICIE%')
-            ->delete();
+            ->where(function ($q) {
+                $q->where('invoice_number', 'LIKE', 'FAC-2023-%')
+                  ->orWhere('invoice_number', 'LIKE', 'FAC-2024-%');
+            })
+            ->pluck('id');
+
+        if ($seederInvoiceIds->isNotEmpty()) {
+            DB::table('invoice_items')->whereIn('invoice_id', $seederInvoiceIds)->delete();
+            DB::table('invoices')->whereIn('id', $seederInvoiceIds)->delete();
+        }
 
         // Compras externas 2026
         DB::table('external_grapes')
