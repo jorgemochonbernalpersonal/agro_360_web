@@ -48,8 +48,8 @@ class EconomicSummaryController extends Controller
             ->where('invoices.invoice_type', '!=', 'grape_purchase')
             ->whereYear('invoices.invoice_date', $year)
             ->join('invoice_items', 'invoices.id', '=', 'invoice_items.invoice_id')
-            ->join('product_lots', 'invoice_items.product_lot_id', '=', 'product_lots.id')
-            ->join('wines', 'product_lots.wine_id', '=', 'wines.id')
+            ->join('wine_lots', 'invoice_items.wine_lot_id', '=', 'wine_lots.id')
+            ->join('wines', 'wine_lots.wine_id', '=', 'wines.id')
             ->selectRaw('
                 wines.wine_type,
                 SUM(invoice_items.unit_price * invoice_items.quantity) as amount,
