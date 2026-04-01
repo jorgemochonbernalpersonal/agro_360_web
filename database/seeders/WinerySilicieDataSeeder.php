@@ -117,11 +117,7 @@ class WinerySilicieDataSeeder extends Seeder
             ->pluck('id')
             ->toArray();
 
-        // ── Obtener enólogos ─────────────────────────────────────────────────
-        $oenologists = DB::table('oenologists')
-            ->where('user_id', self::WINERY_USER_ID)
-            ->pluck('id')
-            ->toArray();
+        // (created_by references users table, not oenologists)
 
         // ── Obtener unidad de medida (litros) ────────────────────────────────
         $unitLiters = DB::table('units_of_measurement')
@@ -186,7 +182,7 @@ class WinerySilicieDataSeeder extends Seeder
                     'quantity'               => $quantity,
                     'unit_of_measurement_id' => $unitLiters,
                     'observations'           => $note,
-                    'created_by'             => !empty($oenologists) ? $oenologists[$cidx % count($oenologists)] : self::WINERY_USER_ID,
+                    'created_by'             => self::WINERY_USER_ID,
                     'created_at'             => $now,
                     'updated_at'             => $now,
                 ]);
@@ -209,7 +205,7 @@ class WinerySilicieDataSeeder extends Seeder
                     'quantity'               => $volume > 0 ? round($volume * 0.98, 3) : null,
                     'unit_of_measurement_id' => $unitLiters,
                     'observations'           => $notes[$cidx % count($notes)],
-                    'created_by'             => !empty($oenologists) ? $oenologists[0] : self::WINERY_USER_ID,
+                    'created_by'             => self::WINERY_USER_ID,
                     'created_at'             => $now,
                     'updated_at'             => $now,
                 ]);
