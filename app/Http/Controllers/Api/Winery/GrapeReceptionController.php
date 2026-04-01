@@ -68,7 +68,7 @@ class GrapeReceptionController extends Controller
             'viticulturist_id'     => 'required|integer|exists:users,id',
             'total_weight'         => 'required|numeric|min:0.1',
             'harvest_start_date'   => 'required|date',
-            'container_id'         => 'nullable|integer',
+            'container_id'         => 'nullable|integer|exists:containers,id',
             'baume_degree'         => 'nullable|numeric|between:0,25',
             'brix_degree'          => 'nullable|numeric|between:0,40',
             'ph_level'             => 'nullable|numeric|between:2,5',

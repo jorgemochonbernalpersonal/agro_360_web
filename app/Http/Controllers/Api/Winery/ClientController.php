@@ -63,9 +63,9 @@ class ClientController extends Controller
 
         $validated = $request->validate([
             'client_type'         => 'required|string|in:individual,company',
-            'first_name'          => 'nullable|string|max:100',
-            'last_name'           => 'nullable|string|max:100',
-            'company_name'        => 'nullable|string|max:255',
+            'first_name'          => 'required_if:client_type,individual|nullable|string|max:100',
+            'last_name'           => 'required_if:client_type,individual|nullable|string|max:100',
+            'company_name'        => 'required_if:client_type,company|nullable|string|max:255',
             'email'               => 'nullable|email|max:255',
             'phone'               => 'nullable|string|max:20',
             'particular_document' => 'nullable|string|max:20',

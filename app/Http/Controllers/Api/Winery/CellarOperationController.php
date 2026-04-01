@@ -68,9 +68,9 @@ class CellarOperationController extends Controller
         $validated = $request->validate([
             'operation_type'      => 'required|string|in:' . implode(',', array_keys(CellarOperation::OPERATION_TYPES)),
             'operation_date'      => 'required|date',
-            'source_container_id' => 'nullable|integer|exists:containers,id',
-            'target_container_id' => 'nullable|integer|exists:containers,id',
-            'volume_liters'       => 'nullable|numeric|min:0',
+            'source_container_id' => 'required_without:target_container_id|nullable|integer|exists:containers,id',
+            'target_container_id' => 'required_without:source_container_id|nullable|integer|exists:containers,id',
+            'volume_liters'       => 'required|numeric|min:0.001',
             'responsible_person'  => 'nullable|string|max:150',
             'status'              => 'nullable|string|in:' . implode(',', array_keys(CellarOperation::STATUSES)),
             'notes'               => 'nullable|string|max:1000',

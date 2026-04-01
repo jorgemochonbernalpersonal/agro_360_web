@@ -64,8 +64,8 @@ class InvoiceController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'client_id'      => 'nullable|integer',
-            'invoice_number' => 'nullable|string|max:50',
+            'client_id'      => 'required|integer|exists:clients,id',
+            'invoice_number' => 'required|string|max:50',
             'invoice_date'   => 'required|date',
             'invoice_type'   => 'nullable|string|in:standard,corrective,receipt',
             'status'         => 'nullable|string|in:draft,sent,paid,cancelled',
