@@ -37,10 +37,10 @@ class EconomicSummaryController extends Controller
             ->limit(10)
             ->get()
             ->map(fn ($r) => [
-                'client_id'     => $r->id,
-                'client_name'   => trim($r->client_name),
-                'total_amount'  => (float) $r->total_amount,
-                'invoice_count' => (int) $r->invoice_count,
+                'client_id'   => $r->id,
+                'client_name' => trim($r->client_name),
+                'amount'      => (float) $r->total_amount,
+                'count'       => (int) $r->invoice_count,
             ]);
 
         // ── Ventas por tipo de vino ───────────────────────────────────────────
@@ -93,7 +93,7 @@ class EconomicSummaryController extends Controller
         $totalRevenue  = (float) ($salesTotal->total ?? 0);
         $totalGrapeCost= (float) ($grapeCost->total ?? 0);
         $grossMargin   = $totalRevenue - $totalGrapeCost;
-        $grossMarginPct= $totalRevenue > 0 ? round(($grossMargin / $totalRevenue) * 100, 1) : null;
+        $grossMarginPct= $totalRevenue > 0 ? round(($grossMargin / $totalRevenue) * 100, 1) : 0.0;
 
         // ── Ventas por trimestre ──────────────────────────────────────────────
         $salesByQuarter = Invoice::where('user_id', $userId)
@@ -103,8 +103,11 @@ class EconomicSummaryController extends Controller
             ->groupBy('quarter')
             ->orderBy('quarter')
             ->get()
-            ->keyBy('quarter')
-            ->map(fn ($r) => ['amount' => (float) $r->amount, 'count' => (int) $r->count]);
+            ->map(fn ($r) => [
+                'quarter' => "Q{$r->quarter}",
+                'amount'  => (float) $r->amount,
+                'count'   => (int) $r->count,
+            ])->values();
 
         return response()->json([
             'year' => $year,
