@@ -123,6 +123,9 @@ class WineryDemoSeeder extends Seeder
         $this->runStep('Subproductos',               WinerySubproductsSeeder::class);
         $this->runStep('Previsiones de rendimiento', WineryYieldForecastsSeeder::class);
 
+        // Paso 25c: Datos SILICIE/INFOVI (procesos elaboración + snapshots stock)
+        $this->runStep('SILICIE/INFOVI (elaboración + snapshots)', WinerySilicieDataSeeder::class);
+
         // Paso 25b: Ciclo de vida completo de parcela demo (plot_id=1521)
         $this->runStep('Ciclo de vida parcela 1521', WineryPlotLifecycleSeeder::class);
 
@@ -221,6 +224,10 @@ class WineryDemoSeeder extends Seeder
             // Calidad
             'Notas de cata'              => DB::table('wine_tasting_notes')->where('user_id', $userId)->count(),
             'Subproductos'               => DB::table('wine_subproducts')->where('user_id', $userId)->count(),
+            'Procesos elaboración'       => DB::table('wine_process_details')
+                                            ->whereIn('wine_id', DB::table('wines')->where('user_id', $userId)->pluck('id'))
+                                            ->count(),
+            'Snapshots stock'            => DB::table('wine_stock_snapshots')->where('user_id', $userId)->count(),
             'Previsiones rendimiento'    => DB::table('winery_yield_forecasts')->where('winery_id', $userId)->count(),
             'Aforos viticultor'          => DB::table('estimated_yields')->whereIn('estimated_by',
                                             DB::table('winery_viticulturist')->where('winery_id', $userId)->pluck('viticulturist_id')
