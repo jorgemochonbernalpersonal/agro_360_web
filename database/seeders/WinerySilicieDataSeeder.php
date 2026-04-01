@@ -435,7 +435,7 @@ class WinerySilicieDataSeeder extends Seeder
                 'vintage_year'     => 2026,
                 'protection_level' => $ep['protection'],
                 'entry_date'       => $ep['date'],
-                'status'           => 'processed',
+                'status'           => 'available',
                 'created_at'       => $now,
                 'updated_at'       => $now,
             ]);
