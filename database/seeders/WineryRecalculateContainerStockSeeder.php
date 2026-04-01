@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\DB;
  * wine_volume_liters = MAX(0, transfers_in - transfers_out - losses)
  * used_capacity      = SUM(harvests.total_weight)
  *
+ * Also populates container_current_states to link containers → wines
+ * (needed by SILICIE "Litros en bodega" and Existencias tab).
+ *
  * Values are clamped to [0, container.capacity] to ensure data integrity.
  */
 class WineryRecalculateContainerStockSeeder extends Seeder
@@ -107,6 +110,11 @@ class WineryRecalculateContainerStockSeeder extends Seeder
             }
         }
 
+        // ── Populate container_current_states (wine ↔ container link) ────────
+        // This is needed by SILICIE dashboard (litrosBodega, Existencias tab)
+        // and takeSnapshot() for INFOVI balance.
+        $this->populateContainerCurrentStates($containerIds);
+
         $this->command->info(
             sprintf(
                 '✅ Stock recalculado: %d contenedores actualizados, %d con stock > 0, %.0f L totales de vino',
@@ -114,6 +122,75 @@ class WineryRecalculateContainerStockSeeder extends Seeder
                 $nonZero,
                 $wineTotal
             )
+        );
+    }
+
+    /**
+     * Create container_current_states records by finding the last wine
+     * transferred INTO each container (via wine_transfers).
+     */
+    private function populateContainerCurrentStates(array $containerIds): void
+    {
+        // Clean existing states for winery containers
+        DB::table('container_current_states')
+            ->whereIn('container_id', $containerIds)
+            ->delete();
+
+        // For each container, find the most recent transfer IN with its wine_id
+        // and the net quantity currently in the container
+        $latestTransfers = DB::table('wine_transfers as wt')
+            ->whereIn('wt.to_container_id', $containerIds)
+            ->whereNotNull('wt.wine_id')
+            ->select([
+                'wt.to_container_id as container_id',
+                'wt.wine_id',
+                'wt.transfer_date',
+            ])
+            ->orderByDesc('wt.transfer_date')
+            ->get()
+            ->unique('container_id'); // Keep only the latest per container
+
+        if ($latestTransfers->isEmpty()) return;
+
+        $now     = now();
+        $rows    = [];
+        $created = 0;
+
+        foreach ($latestTransfers as $transfer) {
+            $containerId = $transfer->container_id;
+
+            // Get the current wine_volume_liters from the container (already calculated above)
+            $container = DB::table('containers')
+                ->where('id', $containerId)
+                ->first(['wine_volume_liters']);
+
+            $qty = (float) ($container->wine_volume_liters ?? 0);
+            if ($qty <= 0) continue;
+
+            $rows[] = [
+                'container_id'     => $containerId,
+                'wine_id'          => $transfer->wine_id,
+                'current_quantity' => $qty,
+                'available_qty'    => $qty,
+                'reserved_qty'     => 0,
+                'sold_qty'         => 0,
+                'last_movement_at' => $transfer->transfer_date,
+                'last_movement_by' => self::WINERY_USER_ID,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ];
+            $created++;
+        }
+
+        if (!empty($rows)) {
+            foreach (array_chunk($rows, 50) as $chunk) {
+                DB::table('container_current_states')->insert($chunk);
+            }
+        }
+
+        $totalLiters = array_sum(array_column($rows, 'current_quantity'));
+        $this->command->info(
+            sprintf('  ↳ container_current_states: %d registros, %.0f L vinculados a vinos', $created, $totalLiters)
         );
     }
 }
