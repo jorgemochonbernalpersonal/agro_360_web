@@ -378,7 +378,6 @@ class WinerySilicieDataSeeder extends Seeder
                 'invoice_type'   => 'wine_sale',
                 'invoice_number' => $inv['num'],
                 'invoice_date'   => $inv['date'],
-                'due_date'       => \Carbon\Carbon::parse($inv['date'])->addDays(30)->toDateString(),
                 'total_amount'   => $inv['total'],
                 'status'         => 'paid',
                 'created_at'     => $now,
