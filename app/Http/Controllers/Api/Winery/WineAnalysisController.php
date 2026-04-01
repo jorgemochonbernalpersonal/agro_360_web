@@ -15,7 +15,7 @@ class WineAnalysisController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user    = $request->user();
-        $perPage = min($request->integer('per_page', 20), 50);
+        $perPage = $this->resolvePerPage($request, 20, 50);
 
         $query = WineAnalysis::where('user_id', $user->id)
             ->with(['wine', 'container'])

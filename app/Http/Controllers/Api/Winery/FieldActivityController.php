@@ -56,7 +56,7 @@ class FieldActivityController extends Controller
             $query->whereDate('activity_date', '<=', $request->input('to'));
         }
 
-        $perPage     = min($request->integer('per_page', 20), 100);
+        $perPage     = $this->resolvePerPage($request, 20, 100);
         $activities  = $query->paginate($perPage);
 
         return response()->json([

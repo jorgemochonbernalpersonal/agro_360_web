@@ -47,7 +47,7 @@ class WineController extends Controller
             ")
             ->first();
 
-        $perPage = min((int) $request->query('per_page', 12), 100);
+        $perPage = $this->resolvePerPage($request, 12, 100);
 
         $wines = (clone $base)
             ->with(['fermentationControls' => fn ($q) => $q->latest('control_date')->take(1)])

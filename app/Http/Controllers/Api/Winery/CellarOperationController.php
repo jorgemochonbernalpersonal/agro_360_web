@@ -32,7 +32,7 @@ class CellarOperationController extends Controller
             });
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         return response()->json([

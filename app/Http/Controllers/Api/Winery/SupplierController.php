@@ -28,7 +28,7 @@ class SupplierController extends Controller
             $query->active();
         }
 
-        $perPage   = min($request->integer('per_page', 50), 100);
+        $perPage   = $this->resolvePerPage($request, 50, 100);
         $suppliers = $query->orderBy('name')->paginate($perPage);
 
         return response()->json([

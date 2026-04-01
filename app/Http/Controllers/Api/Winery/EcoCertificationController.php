@@ -24,7 +24,7 @@ class EcoCertificationController extends Controller
             $query->where('certification_type', $request->input('type'));
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         return response()->json([

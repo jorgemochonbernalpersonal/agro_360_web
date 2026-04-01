@@ -39,7 +39,7 @@ class ProductLotController extends Controller
             $query->active();
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $lots    = $query->orderByDesc('created_at')->paginate($perPage);
 
         return response()->json([

@@ -20,7 +20,7 @@ class ContainerController extends Controller
         $request->validate([
             'room_id'  => 'nullable|integer|min:1',
             'status'   => 'nullable|string|in:empty,full,critical',
-            'per_page' => 'nullable|integer|min:1|max:100',
+            'per_page' => 'nullable|string|max:10',
         ]);
 
         $base = Container::where('user_id', $user->id)
@@ -43,7 +43,9 @@ class ContainerController extends Controller
             ->selectRaw('COUNT(*) as total, SUM(capacity) as total_capacity, SUM(used_capacity) as total_used')
             ->first();
 
-        $perPage = min((int) $request->query('per_page', 9), 100);
+        $perPageRaw = $request->query('per_page', '30');
+        $all        = $perPageRaw === 'all';
+        $perPage    = $all ? (int) $totals->total ?: 1000 : min((int) $perPageRaw, 500);
 
         $containers = (clone $base)
             ->with(['containerType', 'containerMaterial', 'containerRoom', 'currentStates.wine'])
@@ -57,6 +59,7 @@ class ContainerController extends Controller
                 'per_page'       => $containers->perPage(),
                 'current_page'   => $containers->currentPage(),
                 'last_page'      => $containers->lastPage(),
+                'has_more'       => $containers->hasMorePages(),
                 'total_capacity' => round((float) $totals->total_capacity, 2),
                 'total_used'     => round((float) $totals->total_used, 2),
             ],

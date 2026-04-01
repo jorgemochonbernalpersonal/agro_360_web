@@ -19,7 +19,7 @@ class WineProcessController extends Controller
     public function indexTransfers(Request $request): JsonResponse
     {
         $user    = $request->user();
-        $perPage = min($request->integer('per_page', 20), 50);
+        $perPage = $this->resolvePerPage($request, 20, 50);
 
         $transfers = WineTransfer::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
             ->with(['wine', 'fromContainer', 'toContainer'])
@@ -41,7 +41,7 @@ class WineProcessController extends Controller
     public function indexLosses(Request $request): JsonResponse
     {
         $user    = $request->user();
-        $perPage = min($request->integer('per_page', 20), 50);
+        $perPage = $this->resolvePerPage($request, 20, 50);
 
         $losses = WineLoss::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
             ->with(['wine', 'container'])

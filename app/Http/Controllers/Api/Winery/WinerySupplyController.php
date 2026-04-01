@@ -32,7 +32,7 @@ class WinerySupplyController extends Controller
             $query->whereRaw('min_stock_alert IS NOT NULL AND current_stock <= min_stock_alert');
         }
 
-        $perPage   = min($request->integer('per_page', 50), 100);
+        $perPage   = $this->resolvePerPage($request, 50, 100);
         $supplies  = $query->orderBy('name')->paginate($perPage);
 
         $lowStockCount = WinerySupply::forUser($user->id)->active()

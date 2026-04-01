@@ -45,7 +45,7 @@ class PlotController extends Controller
             ->selectRaw('SUM(area) as total_area, SUM(CASE WHEN is_organic = 1 THEN area ELSE 0 END) as organic_area')
             ->first();
 
-        $perPage = min((int) $request->query('per_page', 12), 100);
+        $perPage = $this->resolvePerPage($request, 12, 100);
 
         $plots = (clone $base)
             ->with(['province', 'municipality', 'plantings.grapeVariety'])

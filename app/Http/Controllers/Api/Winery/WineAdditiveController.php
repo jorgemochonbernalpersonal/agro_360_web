@@ -30,7 +30,7 @@ class WineAdditiveController extends Controller
             $query->where('wine_id', $request->integer('wine_id'));
         }
 
-        $perPage   = min($request->integer('per_page', 20), 100);
+        $perPage   = $this->resolvePerPage($request, 20, 100);
         $additives = $query->paginate($perPage);
 
         return response()->json([
@@ -63,7 +63,7 @@ class WineAdditiveController extends Controller
 
         Container::where('user_id', $user->id)->findOrFail($containerId);
 
-        $perPage   = min($request->integer('per_page', 20), 100);
+        $perPage   = $this->resolvePerPage($request, 20, 100);
         $additives = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))
             ->whereHas('wine', function ($q) use ($containerId) {
                 $q->whereHas('containers', fn ($cq) => $cq->where('containers.id', $containerId));

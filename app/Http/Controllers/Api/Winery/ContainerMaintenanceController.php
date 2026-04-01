@@ -42,7 +42,7 @@ class ContainerMaintenanceController extends Controller
             $query->where('maintenance_type', $request->type);
         }
 
-        $perPage      = min($request->integer('per_page', 20), 100);
+        $perPage      = $this->resolvePerPage($request, 20, 100);
         $maintenances = $query->orderByDesc('scheduled_date')->paginate($perPage);
 
         // Status counts

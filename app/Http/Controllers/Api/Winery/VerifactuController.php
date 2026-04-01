@@ -24,7 +24,7 @@ class VerifactuController extends Controller
             $query->byStatus($request->input('status'));
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         // Count pending invoices not yet in VeriFactu

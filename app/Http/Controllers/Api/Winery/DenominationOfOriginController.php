@@ -28,7 +28,7 @@ class DenominationOfOriginController extends Controller
             $query->where('vintage', $request->integer('vintage'));
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         return response()->json([
@@ -71,7 +71,7 @@ class DenominationOfOriginController extends Controller
             $query->where('vintage', $request->integer('vintage'));
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         return response()->json([
@@ -113,7 +113,7 @@ class DenominationOfOriginController extends Controller
             $query->where('result', $request->input('result'));
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         return response()->json([
@@ -142,7 +142,7 @@ class DenominationOfOriginController extends Controller
             $query->ofType($request->input('type'));
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         return response()->json([

@@ -28,7 +28,7 @@ class WineryAlertController extends Controller
             $query->unread();
         }
 
-        $perPage = min($request->integer('per_page', 30), 100);
+        $perPage = $this->resolvePerPage($request, 30, 100);
         $items   = $query->paginate($perPage);
 
         $unreadCount = WineryAlert::forUser($user->id)->active()->unread()->count();

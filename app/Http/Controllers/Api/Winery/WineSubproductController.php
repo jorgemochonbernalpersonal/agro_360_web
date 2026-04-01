@@ -26,7 +26,7 @@ class WineSubproductController extends Controller
             $query->where('type', $request->type);
         }
 
-        $perPage      = min($request->integer('per_page', 20), 100);
+        $perPage      = $this->resolvePerPage($request, 20, 100);
         $subproducts  = $query->paginate($perPage);
 
         return response()->json([

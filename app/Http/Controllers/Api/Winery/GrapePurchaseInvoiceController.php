@@ -45,7 +45,7 @@ class GrapePurchaseInvoiceController extends Controller
             $query->where('payment_status', $request->payment_status);
         }
 
-        $perPage  = min($request->integer('per_page', 20), 100);
+        $perPage  = $this->resolvePerPage($request, 20, 100);
         $invoices = $query->paginate($perPage);
 
         // Aggregates

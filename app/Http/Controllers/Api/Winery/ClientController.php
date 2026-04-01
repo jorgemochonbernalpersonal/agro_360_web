@@ -15,7 +15,7 @@ class ClientController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user    = $request->user();
-        $perPage = min($request->integer('per_page', 20), 50);
+        $perPage = $this->resolvePerPage($request, 20, 50);
 
         $query = Client::where('user_id', $user->id)->latest();
 

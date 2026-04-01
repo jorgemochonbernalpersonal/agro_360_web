@@ -26,7 +26,7 @@ class BottlingAuthorizationController extends Controller
             $query->where('wine_id', $request->integer('wine_id'));
         }
 
-        $perPage = min($request->integer('per_page', 20), 100);
+        $perPage = $this->resolvePerPage($request, 20, 100);
         $items   = $query->paginate($perPage);
 
         return response()->json([

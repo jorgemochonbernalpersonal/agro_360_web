@@ -39,7 +39,7 @@ class ContainerHistoryController extends Controller
             $query->whereDate('start_date', '<=', $request->input('to'));
         }
 
-        $perPage = min($request->integer('per_page', 30), 100);
+        $perPage = $this->resolvePerPage($request, 30, 100);
         $history = $query->paginate($perPage);
 
         return response()->json([
