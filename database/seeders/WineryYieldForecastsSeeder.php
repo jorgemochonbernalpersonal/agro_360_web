@@ -161,7 +161,7 @@ class WineryYieldForecastsSeeder extends Seeder
                         'estimated_yield_per_hectare' => $yieldPerHa,
                         'estimated_total_yield'     => max(50, $viticEstimate),
                         'estimation_date'           => now()->subDays($daysAgo + mt_rand(5, 30))->toDateString(),
-                        'estimation_method'         => ['field_sampling', 'historical_average', 'visual_estimate'][mt_rand(0, 2)],
+                        'estimation_method'         => ['visual', 'sampling', 'historical', 'satellite', 'other'][mt_rand(0, 4)],
                         'estimation_round'          => $vintage < 2025 ? 4 : mt_rand(2, 3),
                         'status'                    => $vintage < 2025 ? 'confirmed' : ($idx % 5 === 0 ? 'draft' : 'confirmed'),
                         'active'                    => true,

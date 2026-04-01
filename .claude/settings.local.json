@@ -236,7 +236,8 @@
       "Bash(2)",
       "Bash(plot_plant)",
       "Bash(grape_vari \")",
-      "Bash(find C:UsersjorgeDesktopagro365 -type f \\\\\\(-name *.kt -o -name *.tsx -o -name *.jsx -o -name *Screen* \\\\\\))"
+      "Bash(find C:UsersjorgeDesktopagro365 -type f \\\\\\(-name *.kt -o -name *.tsx -o -name *.jsx -o -name *Screen* \\\\\\))",
+      "Bash(git status:*)"
     ]
   }
 }
