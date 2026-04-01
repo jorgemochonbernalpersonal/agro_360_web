@@ -21,10 +21,10 @@ class EconomicSummaryController extends Controller
         $year   = $request->integer('year', now()->year);
 
         // ── Ventas por cliente (top 10) ───────────────────────────────────────
-        $salesByClient = Invoice::where('user_id', $userId)
-            ->where('invoice_type', '!=', 'grape_purchase')
-            ->whereYear('invoice_date', $year)
-            ->whereNotNull('client_id')
+        $salesByClient = Invoice::where('invoices.user_id', $userId)
+            ->where('invoices.invoice_type', '!=', 'grape_purchase')
+            ->whereYear('invoices.invoice_date', $year)
+            ->whereNotNull('invoices.client_id')
             ->join('clients', 'invoices.client_id', '=', 'clients.id')
             ->selectRaw('
                 clients.id,
