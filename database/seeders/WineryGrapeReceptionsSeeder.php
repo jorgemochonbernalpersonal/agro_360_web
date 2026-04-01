@@ -330,9 +330,17 @@ class WineryGrapeReceptionsSeeder extends Seeder
                     'viticulturist_id'   => $userId,
                     'assigned_by'        => self::WINERY_USER_ID,
                     'source'             => 'own',
+                    'cuaderno_access'    => true,
+                    'cuaderno_granted_at'=> $now,
                     'created_at'         => $now,
                     'updated_at'         => $now,
                 ]);
+            } else {
+                // Ensure cuaderno_access is enabled for field-activities page
+                DB::table('winery_viticulturist')
+                    ->where('winery_id', self::WINERY_USER_ID)
+                    ->where('viticulturist_id', $userId)
+                    ->update(['cuaderno_access' => true, 'cuaderno_granted_at' => $now]);
             }
 
             // Campaigns per viticulturist: 2023 (inactive), 2024 (inactive), 2025 (active)

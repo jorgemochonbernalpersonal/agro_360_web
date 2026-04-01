@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\DB;
  *  10.  Mermas de vino
  *  11.  Análisis de vino
  *  12.  Recepciones de uva    (necesita viticultores vinculados)
+ *  12b. Actividades de campo  (necesita viticultores + plots + campañas)
  *  13.  Disputas              (depende de recepciones)
  *  14.  Mantenimientos de contenedores
  *  15.  Embotellamientos
@@ -93,6 +94,9 @@ class WineryDemoSeeder extends Seeder
 
         // Paso 12: Recepciones de uva (depende de viticultores vinculados)
         $this->runStep('Recepciones de uva',         WineryGrapeReceptionsSeeder::class);
+
+        // Paso 12b: Actividades de campo (depende de viticultores + plots + campañas)
+        $this->runStep('Actividades de campo',       WineryFieldActivitiesSeeder::class);
 
         // Paso 13: Disputas (depende de recepciones)
         $this->runStep('Disputas en recepciones',    WineryDisputesSeeder::class);
@@ -189,6 +193,10 @@ class WineryDemoSeeder extends Seeder
                                             ->count(),
             'Análisis'                   => DB::table('wine_analyses')->where('user_id', $userId)->count(),
             'Campañas bodega'            => DB::table('campaigns')->where('viticulturist_id', $userId)->count(),
+            'Actividades de campo'       => DB::table('agricultural_activities')
+                                            ->whereIn('viticulturist_id',
+                                                DB::table('winery_viticulturist')->where('winery_id', $userId)->pluck('viticulturist_id')
+                                            )->count(),
             'Recepciones de uva'         => DB::table('harvests')->where('winery_id', $userId)->whereNull('activity_id')->count(),
             'Disputas'                   => DB::table('harvest_deliveries')
                                             ->whereIn('harvest_id', DB::table('harvests')->where('winery_id', $userId)->pluck('id'))
