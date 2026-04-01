@@ -388,6 +388,7 @@ class WinerySilicieDataSeeder extends Seeder
             foreach ($inv['items'] as $idx => $item) {
                 DB::table('invoice_items')->insert([
                     'invoice_id'  => $invoiceId,
+                    'name'        => $item['name'],
                     'description' => $item['name'],
                     'quantity'    => $item['qty'],
                     'unit_price'  => $item['price'],
