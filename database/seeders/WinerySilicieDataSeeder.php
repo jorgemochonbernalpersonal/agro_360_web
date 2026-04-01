@@ -415,13 +415,13 @@ class WinerySilicieDataSeeder extends Seeder
             ->toArray();
 
         $externalPurchases2026 = [
-            ['type' => 'grape', 'supplier' => 'Cooperativa Vinícola del Norte',   'kg' => 8500,  'variety' => 'Listán Negro',      'protection' => 'DO',  'date' => '2026-09-05'],
-            ['type' => 'grape', 'supplier' => 'Bodegas Hermanos Pérez',           'kg' => 5200,  'variety' => 'Negramoll',          'protection' => 'DO',  'date' => '2026-09-12'],
-            ['type' => 'grape', 'supplier' => 'Finca El Tablero S.L.',            'kg' => 6800,  'variety' => 'Listán Blanco',      'protection' => 'IGP', 'date' => '2026-09-18'],
-            ['type' => 'grape', 'supplier' => 'Viñedos del Barranco',             'kg' => 3200,  'variety' => 'Malvasía Volcánica', 'protection' => 'DO',  'date' => '2026-09-25'],
+            ['type' => 'grapes', 'supplier' => 'Cooperativa Vinícola del Norte',   'kg' => 8500,  'variety' => 'Listán Negro',      'protection' => 'DO',  'date' => '2026-09-05'],
+            ['type' => 'grapes', 'supplier' => 'Bodegas Hermanos Pérez',           'kg' => 5200,  'variety' => 'Negramoll',          'protection' => 'DO',  'date' => '2026-09-12'],
+            ['type' => 'grapes', 'supplier' => 'Finca El Tablero S.L.',            'kg' => 6800,  'variety' => 'Listán Blanco',      'protection' => 'IGP', 'date' => '2026-09-18'],
+            ['type' => 'grapes', 'supplier' => 'Viñedos del Barranco',             'kg' => 3200,  'variety' => 'Malvasía Volcánica', 'protection' => 'DO',  'date' => '2026-09-25'],
             ['type' => 'must',  'supplier' => 'Mostos Canarios S.A.',             'kg' => 4500,  'variety' => 'Listán Blanco',      'protection' => 'VdM', 'date' => '2026-10-02'],
-            ['type' => 'grape', 'supplier' => 'Cooperativa Vinícola del Norte',   'kg' => 7100,  'variety' => 'Listán Negro',      'protection' => 'DO',  'date' => '2026-10-08'],
-            ['type' => 'grape', 'supplier' => 'Finca La Aldea Viticultores',      'kg' => 4000,  'variety' => 'Negramoll',          'protection' => 'IGP', 'date' => '2026-10-15'],
+            ['type' => 'grapes', 'supplier' => 'Cooperativa Vinícola del Norte',   'kg' => 7100,  'variety' => 'Listán Negro',      'protection' => 'DO',  'date' => '2026-10-08'],
+            ['type' => 'grapes', 'supplier' => 'Finca La Aldea Viticultores',      'kg' => 4000,  'variety' => 'Negramoll',          'protection' => 'IGP', 'date' => '2026-10-15'],
             ['type' => 'must',  'supplier' => 'Mostos Canarios S.A.',             'kg' => 3000,  'variety' => 'Listán Negro',      'protection' => 'VdM', 'date' => '2026-10-20'],
         ];
 
