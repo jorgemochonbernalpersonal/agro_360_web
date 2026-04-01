@@ -501,6 +501,7 @@ class WinerySilicieDataSeeder extends Seeder
 
                     DB::table('wine_subproducts')->insert([
                         'user_id'          => self::WINERY_USER_ID,
+                        'created_by'       => self::WINERY_USER_ID,
                         'wine_id'          => $wine->id,
                         'type'             => $spType,
                         'destination'      => $destinations[($spIdx + $i) % count($destinations)],
