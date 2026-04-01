@@ -17,7 +17,11 @@ class WinerySupplyController extends Controller
         $request->validate([
             'supply_type' => 'nullable|string|in:' . implode(',', array_keys(WinerySupply::SUPPLY_TYPES)),
             'low_stock'   => 'nullable|boolean',
-            'per_page'    => 'nullable|integer|min:1|max:100',
+            'per_page'    => ['nullable', function ($attr, $val, $fail) {
+                if ($val !== 'all' && (!is_numeric($val) || (int) $val < 1 || (int) $val > 100)) {
+                    $fail('per_page debe ser un entero entre 1 y 100, o "all".');
+                }
+            }],
         ]);
 
         $query = WinerySupply::forUser($user->id)->with('unitOfMeasurement');
