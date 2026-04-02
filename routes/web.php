@@ -68,6 +68,7 @@ Route::get('/privacidad', fn() => view('legal.privacy'))->name('privacy');
 Route::get('/terminos', fn() => view('legal.terms'))->name('terms');
 Route::get('/cookies', fn() => view('legal.cookies'))->name('cookies');
 Route::get('/aviso-legal', fn() => view('legal.aviso-legal'))->name('aviso-legal');
+Route::get('/eliminacion-cuenta', fn() => view('legal.account-deletion'))->name('account-deletion');
 
 // Sitemap dinámico
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
