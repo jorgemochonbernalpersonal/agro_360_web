@@ -99,15 +99,15 @@
 
     </div>
 
-    {{-- KPIs segunda fila: vinos activos y fermentaciones --}}
-    <div class="grid grid-cols-2 gap-4">
+    {{-- KPIs segunda fila: vinos, fermentaciones, contenedores --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
         <x-agro.card class="flex items-center gap-4">
             <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
                 <flux:icon icon="arrows-right-left" class="size-5 text-red-600" />
             </div>
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Bodega · Vinos activos</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Vinos activos</p>
                 <p class="text-2xl font-bold text-zinc-900 leading-none">{{ $activeWines }}</p>
                 <p class="text-xs text-zinc-400 mt-0.5">en elaboración</p>
             </div>
@@ -125,25 +125,78 @@
                 </div>
             @endif
             <div>
-                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Bodega · Fermentando</p>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Fermentando</p>
                 <p class="text-2xl font-bold {{ $activeFermentations > 0 ? 'text-orange-600' : 'text-zinc-900' }} leading-none">{{ $activeFermentations }}</p>
                 <p class="text-xs text-zinc-400 mt-0.5">vinos fermentando</p>
             </div>
         </x-agro.card>
 
-        <a href="{{ route('producer.fermentation-controls.index') }}" wire:navigate
-            class="col-span-2 flex items-center gap-3 p-4 bg-orange-50 border border-orange-200 rounded-2xl hover:shadow-md hover:border-orange-300 transition-all group">
-            <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors shrink-0">
-                <flux:icon icon="fire" class="size-5 text-orange-600" />
+        {{-- Contenedores: uso --}}
+        <x-agro.card class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-cyan-50 flex items-center justify-center shrink-0">
+                <flux:icon icon="cube" class="size-5 text-cyan-600" />
             </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-zinc-900">Controles de Fermentación</p>
-                <p class="text-xs text-zinc-500">Ver histórico y registrar nuevo control</p>
+            <div class="flex-1">
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Contenedores</p>
+                <p class="text-2xl font-bold text-zinc-900 leading-none">{{ number_format($containerUsage['pct'], 0) }}%</p>
+                <div class="w-full bg-zinc-200 rounded-full h-1.5 mt-1.5">
+                    <div class="h-1.5 rounded-full {{ $containerUsage['pct'] > 90 ? 'bg-red-500' : ($containerUsage['pct'] > 70 ? 'bg-amber-500' : 'bg-cyan-500') }}"
+                         style="width: {{ $containerUsage['pct'] }}%"></div>
+                </div>
             </div>
-            <flux:icon icon="arrow-right" class="size-4 text-orange-400 shrink-0" />
-        </a>
+        </x-agro.card>
+
+        {{-- Alertas de rendimiento --}}
+        <x-agro.card class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl {{ ($alertsExceeded + $alertsAtRisk) > 0 ? 'bg-red-50' : 'bg-green-50' }} flex items-center justify-center shrink-0">
+                <flux:icon icon="exclamation-triangle" class="size-5 {{ ($alertsExceeded + $alertsAtRisk) > 0 ? 'text-red-500' : 'text-green-500' }}" />
+            </div>
+            <div>
+                <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">Alertas rend.</p>
+                @if($alertsExceeded > 0 || $alertsAtRisk > 0)
+                    <div class="flex items-center gap-2">
+                        @if($alertsExceeded > 0)
+                            <span class="text-sm font-bold text-red-600">{{ $alertsExceeded }} superado{{ $alertsExceeded > 1 ? 's' : '' }}</span>
+                        @endif
+                        @if($alertsAtRisk > 0)
+                            <span class="text-sm font-bold text-amber-600">{{ $alertsAtRisk }} en riesgo</span>
+                        @endif
+                    </div>
+                @else
+                    <p class="text-sm font-bold text-green-600">Todo OK</p>
+                @endif
+            </div>
+        </x-agro.card>
 
     </div>
+
+    {{-- Alertas activas --}}
+    @if($maintenanceOverdue > 0)
+        <a href="{{ route('producer.containers.index') }}" wire:navigate
+           class="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl hover:shadow-md hover:border-red-300 transition-all">
+            <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                <flux:icon icon="wrench-screwdriver" class="size-5 text-red-600" />
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-red-800">{{ $maintenanceOverdue }} mantenimiento{{ $maintenanceOverdue > 1 ? 's' : '' }} vencido{{ $maintenanceOverdue > 1 ? 's' : '' }}</p>
+                <p class="text-xs text-red-600">Hay contenedores con mantenimiento programado pendiente</p>
+            </div>
+            <flux:icon icon="arrow-right" class="size-4 text-red-400 shrink-0" />
+        </a>
+    @endif
+
+    {{-- CTA fermentación --}}
+    <a href="{{ route('producer.fermentation-controls.index') }}" wire:navigate
+        class="flex items-center gap-3 p-4 bg-orange-50 border border-orange-200 rounded-2xl hover:shadow-md hover:border-orange-300 transition-all group">
+        <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors shrink-0">
+            <flux:icon icon="fire" class="size-5 text-orange-600" />
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-zinc-900">Controles de Fermentación</p>
+            <p class="text-xs text-zinc-500">Ver histórico y registrar nuevo control</p>
+        </div>
+        <flux:icon icon="arrow-right" class="size-4 text-orange-400 shrink-0" />
+    </a>
 
     {{-- Contenido principal --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -295,6 +348,98 @@
                                 <p class="text-xs text-zinc-400">{{ $r->harvest_start_date?->format('d/m') }}</p>
                             </div>
                         </a>
+                    @endforeach
+                </div>
+            @endif
+        </x-agro.card>
+
+    </div>
+
+    {{-- Fila extra: trasvases + viticultores --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {{-- Trasvases recientes --}}
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
+                            <flux:icon icon="arrows-right-left" class="size-4 text-violet-600" />
+                        </div>
+                        <span class="font-semibold text-zinc-900">Trasvases recientes</span>
+                        <flux:badge color="violet" size="sm">Bodega</flux:badge>
+                    </div>
+                    <a href="{{ route('producer.wine-transfers.index') }}" wire:navigate
+                        class="text-xs text-agro-600 hover:underline font-medium">Ver todos</a>
+                </div>
+            </x-slot:header>
+
+            @if($recentTransfers->isEmpty())
+                <div class="py-6 text-center">
+                    <flux:icon icon="arrows-right-left" class="size-10 text-zinc-200 mx-auto mb-2" />
+                    <p class="text-sm text-zinc-400">No hay trasvases registrados</p>
+                </div>
+            @else
+                <div class="space-y-1">
+                    @foreach($recentTransfers as $t)
+                        <div class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-50 transition-colors">
+                            <div class="w-9 h-9 rounded-lg bg-violet-50 flex items-center justify-center shrink-0">
+                                <flux:icon icon="arrows-right-left" class="size-4 text-violet-600" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-zinc-900 truncate">{{ $t->wine?->name ?? '—' }}</p>
+                                <p class="text-xs text-zinc-400 truncate">
+                                    {{ $t->fromContainer?->name ?? '—' }} → {{ $t->toContainer?->name ?? '—' }}
+                                </p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <p class="text-sm font-bold text-violet-600">{{ number_format($t->volume_liters, 0) }} L</p>
+                                <p class="text-xs text-zinc-400">{{ $t->transfer_date?->format('d/m') }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </x-agro.card>
+
+        {{-- Viticultores vinculados --}}
+        <x-agro.card>
+            <x-slot:header>
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <flux:icon icon="user-group" class="size-4 text-blue-600" />
+                        </div>
+                        <span class="font-semibold text-zinc-900">Viticultores vinculados</span>
+                        <flux:badge color="blue" size="sm">{{ $linkedViticulturists }}</flux:badge>
+                        @if($pendingViticulturists > 0)
+                            <flux:badge color="amber" size="sm">{{ $pendingViticulturists }} pend.</flux:badge>
+                        @endif
+                    </div>
+                    @if(Auth::user()->compra_uva_externa)
+                        <a href="{{ route('producer.viticulturists.index') }}" wire:navigate
+                            class="text-xs text-agro-600 hover:underline font-medium">Gestionar</a>
+                    @endif
+                </div>
+            </x-slot:header>
+
+            @if($recentViticulturists->isEmpty())
+                <div class="py-6 text-center">
+                    <flux:icon icon="user-group" class="size-10 text-zinc-200 mx-auto mb-2" />
+                    <p class="text-sm text-zinc-400">No hay viticultores vinculados</p>
+                </div>
+            @else
+                <div class="space-y-1">
+                    @foreach($recentViticulturists as $wv)
+                        <div class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-50 transition-colors">
+                            <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0 text-sm font-bold text-blue-600">
+                                {{ strtoupper(substr($wv->viticulturist?->name ?? '?', 0, 1)) }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-zinc-900 truncate">{{ $wv->viticulturist?->name ?? '—' }}</p>
+                                <p class="text-xs text-zinc-400 truncate">{{ $wv->viticulturist?->email ?? '—' }}</p>
+                            </div>
+                        </div>
                     @endforeach
                 </div>
             @endif

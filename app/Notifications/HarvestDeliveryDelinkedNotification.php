@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\HarvestDelivery;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +12,7 @@ use Illuminate\Support\HtmlString;
 
 class HarvestDeliveryDelinkedNotification extends Notification
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     public function __construct(
         protected HarvestDelivery $delivery,
@@ -19,9 +20,14 @@ class HarvestDeliveryDelinkedNotification extends Notification
         protected float $newKg
     ) {}
 
+    public function notificationCategory(): string
+    {
+        return 'harvest_delivery';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     public function toMail(object $notifiable): MailMessage

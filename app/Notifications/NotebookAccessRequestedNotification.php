@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,15 +11,20 @@ use Illuminate\Notifications\Notification;
 
 class NotebookAccessRequestedNotification extends Notification
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     public function __construct(
         protected User $winery,
     ) {}
 
+    public function notificationCategory(): string
+    {
+        return 'notebook_access';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     public function toMail(object $notifiable): MailMessage

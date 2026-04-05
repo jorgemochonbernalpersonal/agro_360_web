@@ -67,3 +67,18 @@ Schedule::command('agro:notebook-access-reminders')
     ->weeklyOn(1, '09:00')
     ->withoutOverlapping();
 
+// 🛰️ Alertas de NDVI bajo umbral (diario a las 9 AM, tras actualización de datos)
+Schedule::command('alerts:check')
+    ->dailyAt('09:00')
+    ->withoutOverlapping();
+
+// 🧪 Alertas de plazos de seguridad fitosanitarios (diario a las 8:15 AM)
+Schedule::command('treatments:send-withdrawal-alerts')
+    ->dailyAt('08:15')
+    ->withoutOverlapping();
+
+// 📬 Digest diario de notificaciones (8:00 AM para usuarios con modo digest)
+Schedule::command('notifications:send-digest')
+    ->dailyAt('08:00')
+    ->withoutOverlapping();
+

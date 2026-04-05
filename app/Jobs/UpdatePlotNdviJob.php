@@ -3,8 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Plot;
-use App\Models\PlotRemoteSensing;
-use App\Notifications\NdviAlertNotification;
 use App\Services\RemoteSensing\NasaEarthdataService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -56,9 +54,7 @@ class UpdatePlotNdviJob implements ShouldQueue
                     'ndvi' => $data->ndvi_mean,
                     'health_status' => $data->health_status,
                 ]);
-
-                // Verificar si hay alerta (NDVI bajo)
-                $this->checkForAlerts($data);
+                // Alert is handled by PlotRemoteSensingObserver::saved()
             } else {
                 Log::warning('No NDVI data returned', ['plot_id' => $this->plot->id]);
             }
@@ -71,70 +67,6 @@ class UpdatePlotNdviJob implements ShouldQueue
 
             throw $e; // Re-lanzar para que el job reintente
         }
-    }
-
-    /**
-     * Verificar si se debe generar una alerta
-     */
-    private function checkForAlerts(PlotRemoteSensing $data): void
-    {
-        // Si el estado es "poor" o "critical", generar alerta
-        if (in_array($data->health_status, ['poor', 'critical'])) {
-            // Obtener el dato anterior para comparar
-            $previousData = PlotRemoteSensing::where('plot_id', $this->plot->id)
-                ->where('id', '<', $data->id)
-                ->orderBy('image_date', 'desc')
-                ->first();
-
-            // Si empeoró significativamente, crear notificación
-            if ($previousData && $data->ndvi_mean < $previousData->ndvi_mean - 0.1) {
-                $this->createAlert($data, $previousData);
-            }
-        }
-    }
-
-    /**
-     * Crear notificación de alerta
-     */
-    private function createAlert(PlotRemoteSensing $current, PlotRemoteSensing $previous): void
-    {
-        $viticulturist = $this->plot->viticulturist;
-        
-        if (!$viticulturist) {
-            return;
-        }
-
-        // Calcular el cambio porcentual
-        $change = (($current->ndvi_mean - $previous->ndvi_mean) / $previous->ndvi_mean) * 100;
-
-        // Crear notificación
-        $viticulturist->notifications()->create([
-            'type' => 'App\\Notifications\\NdviAlertNotification',
-            'data' => [
-                'title' => '⚠️ Alerta NDVI - ' . $this->plot->name,
-                'message' => sprintf(
-                    'El NDVI de "%s" ha bajado un %.1f%% (de %.2f a %.2f). Estado: %s',
-                    $this->plot->name,
-                    abs($change),
-                    $previous->ndvi_mean,
-                    $current->ndvi_mean,
-                    $current->health_text
-                ),
-                'plot_id' => $this->plot->id,
-                'plot_name' => $this->plot->name,
-                'ndvi_current' => $current->ndvi_mean,
-                'ndvi_previous' => $previous->ndvi_mean,
-                'change_percent' => $change,
-                'health_status' => $current->health_status,
-                'url' => route('plots.show', $this->plot),
-            ],
-        ]);
-
-        Log::info('NDVI alert created', [
-            'plot_id' => $this->plot->id,
-            'user_id' => $viticulturist->id,
-            'change' => $change,
-        ]);
     }
 
     /**

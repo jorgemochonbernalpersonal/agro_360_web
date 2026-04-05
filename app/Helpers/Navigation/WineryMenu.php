@@ -2,6 +2,7 @@
 
 namespace App\Helpers\Navigation;
 
+use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Cache;
 
 class WineryMenu
@@ -14,17 +15,33 @@ class WineryMenu
             ['icon' => 'home', 'label' => 'Dashboard', 'route' => 'winery.dashboard', 'active' => request()->routeIs('winery.dashboard')],
         ];
 
-        $menu['harvest'] = [
-            ['icon' => 'clipboard-document-list', 'label' => 'Campañas de Vendimia', 'route' => 'winery.campaigns.index',        'active' => request()->routeIs('winery.campaigns*')],
-            ['icon' => 'user-group',              'label' => 'Mis Viticultores',      'route' => 'winery.viticulturists.index',   'active' => request()->routeIs('winery.viticulturists*')],
-            ['divider' => true],
-            ['icon' => 'chart-bar',               'label' => 'Cuadro de Mando',       'route' => 'winery.harvest-summary.index',  'active' => request()->routeIs('winery.harvest-summary*')],
-            ['icon' => 'calculator',              'label' => 'Aforos viticultores',   'route' => 'winery.vitic-estimates.index',  'active' => request()->routeIs('winery.vitic-estimates*')],
-            ['icon' => 'clipboard-document-list', 'label' => 'Previsiones',           'route' => 'winery.harvest-forecasts.index','active' => request()->routeIs('winery.harvest-forecasts*')],
-            ['icon' => 'archive-box-arrow-down',  'label' => 'Recepciones',           'route' => 'winery.grape-reception.index',  'active' => request()->routeIs('winery.grape-reception*')],
-            ['icon' => 'exclamation-triangle',    'label' => 'Disputas',              'route' => 'winery.grape-reception.disputes','active' => request()->routeIs('winery.grape-reception.disputes')],
-            ['icon' => 'beaker',                  'label' => 'Análisis de Calidad',   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
-        ];
+        $hasViticulturists = Cache::remember(
+            "winery:{$user->id}:has_viticulturists",
+            60,
+            fn () => WineryViticulturist::where('winery_id', $user->id)->exists()
+        );
+
+        if ($hasViticulturists) {
+            $menu['harvest'] = [
+                ['icon' => 'clipboard-document-list', 'label' => 'Campañas de Vendimia', 'route' => 'winery.campaigns.index',        'active' => request()->routeIs('winery.campaigns*')],
+                ['icon' => 'user-group',              'label' => 'Mis Viticultores',      'route' => 'winery.viticulturists.index',   'active' => request()->routeIs('winery.viticulturists*')],
+                ['divider' => true],
+                ['icon' => 'chart-bar',               'label' => 'Cuadro de Mando',       'route' => 'winery.harvest-summary.index',  'active' => request()->routeIs('winery.harvest-summary*')],
+                ['icon' => 'calculator',              'label' => 'Aforos viticultores',   'route' => 'winery.vitic-estimates.index',  'active' => request()->routeIs('winery.vitic-estimates*')],
+                ['icon' => 'clipboard-document-list', 'label' => 'Previsiones',           'route' => 'winery.harvest-forecasts.index','active' => request()->routeIs('winery.harvest-forecasts*')],
+                ['icon' => 'archive-box-arrow-down',  'label' => 'Recepciones',           'route' => 'winery.grape-reception.index',  'active' => request()->routeIs('winery.grape-reception*')],
+                ['icon' => 'exclamation-triangle',    'label' => 'Disputas',              'route' => 'winery.grape-reception.disputes','active' => request()->routeIs('winery.grape-reception.disputes')],
+                ['icon' => 'beaker',                  'label' => 'Análisis de Calidad',   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
+            ];
+        } else {
+            $menu['harvest'] = [
+                ['icon' => 'clipboard-document-list', 'label' => 'Campañas de Vendimia', 'route' => 'winery.campaigns.index',        'active' => request()->routeIs('winery.campaigns*')],
+                ['icon' => 'user-group',              'label' => 'Mis Viticultores',      'route' => 'winery.viticulturists.index',   'active' => request()->routeIs('winery.viticulturists*')],
+                ['divider' => true],
+                ['icon' => 'archive-box-arrow-down',  'label' => 'Recepciones',           'route' => 'winery.grape-reception.index',  'active' => request()->routeIs('winery.grape-reception*')],
+                ['icon' => 'beaker',                  'label' => 'Análisis de Calidad',   'route' => 'winery.harvest-quality.index',  'active' => request()->routeIs('winery.harvest-quality*')],
+            ];
+        }
 
         $menu['cellar_elab']     = self::cellarElab('winery');
         $menu['cellar_salida']   = self::cellarSalida('winery');
@@ -64,8 +81,9 @@ class WineryMenu
         ];
 
         $menu['system'] = [
-            ['icon' => 'cog-6-tooth', 'label' => 'Configuración',    'route' => 'winery.settings',     'active' => request()->routeIs('winery.settings')],
-            ['icon' => 'bell-alert',  'label' => 'Centro de Alertas','route' => 'winery.alerts.index',  'active' => request()->routeIs('winery.alerts*'), 'new' => true],
+            ['icon' => 'cog-6-tooth', 'label' => 'Configuración',      'route' => 'winery.settings',            'active' => request()->routeIs('winery.settings')],
+            ['icon' => 'megaphone',   'label' => 'Avisos a Viticultores','route' => 'winery.announcements.index','active' => request()->routeIs('winery.announcements*'), 'new' => true],
+            ['icon' => 'bell-alert',  'label' => 'Centro de Alertas',   'route' => 'winery.alerts.index',       'active' => request()->routeIs('winery.alerts*'), 'new' => true],
         ];
 
         return $menu;

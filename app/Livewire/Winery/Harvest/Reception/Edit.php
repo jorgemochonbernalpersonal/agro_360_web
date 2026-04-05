@@ -279,6 +279,19 @@ class Edit extends Component
                 if ($oldWeight !== $weight && $this->harvest->batch_id) {
                     $this->harvest->batch?->recalculateTotal();
                 }
+
+                // Feedback de calidad al viticultor (si se añadieron/actualizaron datos de calidad)
+                $qualityChanged = $this->harvest->wasChanged(['baume_degree', 'potential_alcohol', 'acidity_level', 'ph_level']);
+                $hasQuality = $this->baume_degree || $this->potential_alcohol || $this->acidity_level || $this->ph_level;
+                if ($qualityChanged && $hasQuality && $this->harvest->batch?->viticulturist_id) {
+                    $viticulturist = \App\Models\User::find($this->harvest->batch->viticulturist_id);
+                    if ($viticulturist?->can_login) {
+                        $viticulturist->notify(new \App\Notifications\QualityFeedbackNotification(
+                            $this->harvest->load('plotPlanting.grapeVariety', 'plotPlanting.plot'),
+                            Auth::user()->name,
+                        ));
+                    }
+                }
             });
 
             $this->toastSuccess('Recepción actualizada correctamente.');

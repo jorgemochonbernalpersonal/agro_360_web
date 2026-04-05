@@ -256,6 +256,9 @@ Route::middleware(['role:winery,producer'])
             ->defaults('module', 'Meteorología')
             ->defaults('icon', 'cloud');
 
+        // ── Avisos a Viticultores ────────────────────────────────────
+        Route::get('/announcements', \App\Livewire\Winery\Announcements\Index::class)->name('announcements.index');
+
         // ── Centro de Alertas ─────────────────────────────────────────
         Route::get('/alerts', \App\Livewire\Winery\Alerts\Dashboard::class)->name('alerts.index');
 

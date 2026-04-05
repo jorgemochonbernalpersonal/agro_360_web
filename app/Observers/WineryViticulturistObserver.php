@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\User;
 use App\Models\ViticultoristAssignment;
 use App\Models\WineryViticulturist;
+use Illuminate\Support\Facades\Cache;
 
 class WineryViticulturistObserver
 {
@@ -13,6 +14,10 @@ class WineryViticulturistObserver
      */
     public function created(WineryViticulturist $rel): void
     {
+        if ($rel->winery_id) {
+            Cache::forget("winery:{$rel->winery_id}:has_viticulturists");
+        }
+
         $orgId = $this->resolveOrganizationId($rel);
 
         if ($orgId === null) {
@@ -88,6 +93,10 @@ class WineryViticulturistObserver
      */
     public function deleted(WineryViticulturist $rel): void
     {
+        if ($rel->winery_id) {
+            Cache::forget("winery:{$rel->winery_id}:has_viticulturists");
+        }
+
         $orgId = $this->resolveOrganizationId($rel);
 
         if ($orgId === null) {

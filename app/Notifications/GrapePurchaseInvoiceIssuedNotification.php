@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Invoice;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,15 +12,20 @@ use Illuminate\Support\HtmlString;
 
 class GrapePurchaseInvoiceIssuedNotification extends Notification
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     public function __construct(
         protected Invoice $invoice
     ) {}
 
+    public function notificationCategory(): string
+    {
+        return 'invoice';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -15,6 +15,7 @@ class Index extends AbstractIndex
 {
     public string $search       = '';
     public string $sourceFilter = '';
+    public string $statusFilter = '';
 
     // ── D.O. pool modal ───────────────────────────────────────────────────────
     public bool   $showDOModal = false;
@@ -23,21 +24,23 @@ class Index extends AbstractIndex
     protected $queryString = [
         'search'       => ['except' => ''],
         'sourceFilter' => ['except' => ''],
+        'statusFilter' => ['except' => ''],
     ];
 
     public function updatingSearch(): void       { $this->resetPage(); }
     public function updatingSourceFilter(): void { $this->resetPage(); }
+    public function updatingStatusFilter(): void { $this->resetPage(); }
 
     protected function filterDefaults(): array
     {
-        return ['search' => '', 'sourceFilter' => ''];
+        return ['search' => '', 'sourceFilter' => '', 'statusFilter' => ''];
     }
 
     protected function baseQuery(): Builder
     {
         return WineryViticulturist::where('winery_id', $this->wineryId())
             ->with(['viticulturist' => fn($q) => $q->withCount('plots')->select([
-                'id', 'name', 'email', 'can_login',
+                'id', 'name', 'email', 'can_login', 'email_verified_at',
                 'invitation_token', 'invitation_sent_at', 'invitation_expires_at',
             ])]);
     }
@@ -54,6 +57,12 @@ class Index extends AbstractIndex
 
         if ($this->sourceFilter) {
             $query->where('source', $this->sourceFilter);
+        }
+
+        if ($this->statusFilter === 'active') {
+            $query->whereHas('viticulturist', fn($q) => $q->where('can_login', true));
+        } elseif ($this->statusFilter === 'pending') {
+            $query->whereHas('viticulturist', fn($q) => $q->where('can_login', false));
         }
     }
 
@@ -113,6 +122,23 @@ class Index extends AbstractIndex
         $this->toastSuccess('Viticultor desasignado.');
     }
 
+    public function unlinkViticulturist(int $viticulturistId): void
+    {
+        $relation = WineryViticulturist::where('winery_id', $this->wineryId())
+            ->where('viticulturist_id', $viticulturistId)
+            ->where('source', WineryViticulturist::SOURCE_OWN)
+            ->firstOrFail();
+
+        // Revocar acceso al cuaderno si estaba concedido
+        if ($relation->cuaderno_access) {
+            $relation->revokeNotebookAccess();
+        }
+
+        $relation->delete();
+
+        $this->toastSuccess('Viticultor desvinculado correctamente.');
+    }
+
     // ── Export ────────────────────────────────────────────────────────────────
 
     public function export()
@@ -133,6 +159,8 @@ class Index extends AbstractIndex
 
         $stats = [
             'total'         => (clone $base)->count(),
+            'active'        => (clone $base)->whereHas('viticulturist', fn($q) => $q->where('can_login', true))->count(),
+            'pending'       => (clone $base)->whereHas('viticulturist', fn($q) => $q->where('can_login', false))->count(),
             'own'           => (clone $base)->where('source', 'own')->count(),
             'supervisor'    => (clone $base)->where('source', 'supervisor')->count(),
             'with_cuaderno' => (clone $base)->where('cuaderno_access', true)->count(),

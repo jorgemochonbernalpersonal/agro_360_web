@@ -40,14 +40,19 @@ trait HasBetaAccess
     }
 
     /**
-     * Activar acceso beta (hasta 30/06/2026).
+     * Activar acceso beta.
      * Si el usuario es una bodega, cascada beta a sus viticultores vinculados.
+     *
+     * @param  \Carbon\Carbon|null  $endsAt  Fecha fin heredada (para cascada desde bodega).
+     *                                        Si null, usa now()+3 meses.
      */
-    public function grantBetaAccess(): void
+    public function grantBetaAccess(?\Carbon\Carbon $endsAt = null): void
     {
+        $betaEndsAt = $endsAt ?? now()->addMonths(3)->endOfDay();
+
         $this->update([
             'is_beta_user'        => true,
-            'beta_ends_at'        => now()->addMonths(3)->endOfDay(),
+            'beta_ends_at'        => $betaEndsAt,
             'beta_access_granted' => true,
         ]);
 
@@ -61,7 +66,7 @@ trait HasBetaAccess
                     ->where('is_beta_user', false)
                     ->update([
                         'is_beta_user'        => true,
-                        'beta_ends_at'        => \Carbon\Carbon::parse('2026-06-30 23:59:59'),
+                        'beta_ends_at'        => $betaEndsAt,
                         'beta_access_granted' => true,
                     ]);
             }
@@ -87,9 +92,18 @@ trait HasBetaAccess
     }
 
     /**
-     * Viticultor vinculado a una bodega → acceso básico gratis permanente
+     * Viticultor → acceso básico gratis permanente.
+     * Vinculado a bodega o independiente: cuaderno, parcelas, SIGPAC, fenología, etc.
      */
     public function hasBasicFreeAccess(): bool
+    {
+        return $this->hasViticulturistAccess();
+    }
+
+    /**
+     * Viticultor vinculado a una bodega (usado para determinar pricing).
+     */
+    public function isWineryLinkedViticulturist(): bool
     {
         return $this->isViticulturist() && $this->hasWinery();
     }

@@ -64,18 +64,7 @@ class ProcessSatelliteImageJob implements ShouldQueue
                 'cloud_coverage' => $indices['cloud_coverage'],
             ]);
 
-            // Verificar si hay alertas de NDVI
-            if ($this->plot->ndvi_alert_threshold 
-                && $indices['ndvi'] < $this->plot->ndvi_alert_threshold
-                && $this->plot->alert_email_enabled) {
-                
-                // TODO: Enviar notificación de alerta NDVI
-                Log::warning('NDVI below threshold', [
-                    'plot_id' => $this->plot->id,
-                    'current_ndvi' => $indices['ndvi'],
-                    'threshold' => $this->plot->ndvi_alert_threshold,
-                ]);
-            }
+            // NDVI alert is handled by PlotRemoteSensingObserver::saved()
 
             Log::info('Satellite image processed successfully', [
                 'plot_id' => $this->plot->id,

@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\PhytosanitaryTreatment;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -12,7 +13,7 @@ use Illuminate\Notifications\Notification;
 
 class WithdrawalPeriodEnding extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     /**
      * Create a new notification instance.
@@ -28,9 +29,14 @@ class WithdrawalPeriodEnding extends Notification implements ShouldQueue
      *
      * @return array<int, string>
      */
+    public function notificationCategory(): string
+    {
+        return 'withdrawal_period';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     /**

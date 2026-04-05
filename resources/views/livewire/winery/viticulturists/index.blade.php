@@ -28,11 +28,18 @@
         >
             <div class="grid grid-cols-2 gap-4">
                 <x-agro.stat-card
-                    label="Total viticultores"
-                    :value="$stats['total']"
-                    description="'Vinculados a tu bodega'"
-                    icon="users"
-                    color="agro"
+                    label="Activos"
+                    :value="$stats['active']"
+                    description="'Con acceso al portal'"
+                    icon="check-circle"
+                    color="green"
+                />
+                <x-agro.stat-card
+                    label="Pendientes"
+                    :value="$stats['pending']"
+                    description="'Sin activar o invitar'"
+                    icon="clock"
+                    color="amber"
                 />
                 <x-agro.stat-card
                     label="Propios"
@@ -40,13 +47,6 @@
                     description="'Creados por tu bodega'"
                     icon="user-plus"
                     color="blue"
-                />
-                <x-agro.stat-card
-                    label="Asignados por D.O."
-                    :value="$stats['supervisor']"
-                    description="'Procedentes de la DO'"
-                    icon="building-library"
-                    color="purple"
                 />
                 <x-agro.stat-card
                     label="Con cuaderno"
@@ -70,6 +70,14 @@
             <input wire:model.live.debounce.300ms="search" type="text" placeholder="Buscar por nombre o email..."
                 class="w-full pl-9 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm placeholder:text-zinc-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition" />
         </div>
+
+        {{-- Filtro estado --}}
+        <select wire:model.live="statusFilter"
+            class="text-sm border border-zinc-200 rounded-xl px-3 py-2.5 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-agro-500 focus:border-transparent transition">
+            <option value="">Todos los estados</option>
+            <option value="active">Activos</option>
+            <option value="pending">Pendientes</option>
+        </select>
 
         {{-- Filtro origen --}}
         <select wire:model.live="sourceFilter"
@@ -192,6 +200,14 @@
                             </div>
                             @if ($v->can_login)
                                 <div class="flex items-center justify-between">
+                                    <span class="text-zinc-500">Email</span>
+                                    @if($v->email_verified_at)
+                                        <flux:badge color="green" icon="check-circle" size="sm">Verificado</flux:badge>
+                                    @else
+                                        <flux:badge color="amber" icon="exclamation-triangle" size="sm">Sin verificar</flux:badge>
+                                    @endif
+                                </div>
+                                <div class="flex items-center justify-between">
                                     <span class="text-zinc-500">Cuaderno</span>
                                     @if($relation->cuaderno_access)
                                         <flux:badge color="green" icon="book-open" size="sm">Acceso</flux:badge>
@@ -242,6 +258,14 @@
                                                 <flux:icon icon="paper-airplane" class="size-4" />
                                             </a>
                                         @endif
+                                        <button
+                                            wire:click="unlinkViticulturist({{ $v->id }})"
+                                            wire:confirm="¿Desvincular a {{ $v->name }} de tu bodega? Se revocará el acceso al cuaderno."
+                                            class="{{ $btnDanger }}"
+                                            title="Desvincular"
+                                        >
+                                            <flux:icon icon="link-slash" class="size-4" />
+                                        </button>
                                     @elseif ($relation->source === 'supervisor')
                                         <button
                                             wire:click="unassignFromDO({{ $v->id }})"

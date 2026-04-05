@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Payment;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,7 @@ use Illuminate\Notifications\Notification;
 
 class PaymentConfirmation extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     /**
      * Create a new notification instance.
@@ -25,9 +26,14 @@ class PaymentConfirmation extends Notification implements ShouldQueue
      *
      * @return array<int, string>
      */
+    public function notificationCategory(): string
+    {
+        return 'payment';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     /**

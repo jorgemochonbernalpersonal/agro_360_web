@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ActivityCreated;
+use App\Notifications\WithdrawalPeriodEnding;
 use Illuminate\Support\Facades\Log;
 
 class CheckWithdrawalPeriodAlerts
@@ -42,6 +43,10 @@ class CheckWithdrawalPeriodAlerts
             'safe_date' => $safeDate->toDateString(),
         ]);
 
-        // TODO: Enviar notificación al usuario si está próximo a vencerse
+        $daysRemaining = (int) now()->diffInDays($safeDate, false);
+
+        if ($daysRemaining >= 0 && $daysRemaining <= $product->withdrawal_period_days) {
+            $activity->user->notify(new WithdrawalPeriodEnding($treatment, $safeDate, $daysRemaining));
+        }
     }
 }

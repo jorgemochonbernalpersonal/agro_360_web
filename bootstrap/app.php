@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__ . '/../routes/api.php',
         apiPrefix: 'api/v1',
         commands: __DIR__ . '/../routes/console.php',
+        channels: __DIR__ . '/../routes/channels.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -36,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'require.password.change' => \App\Http\Middleware\RequirePasswordChange::class,
             'password.changed' => \App\Http\Middleware\EnsurePasswordIsChanged::class,
             'check.beta'       => \App\Http\Middleware\CheckBetaAccess::class,
+            'api.check.beta'   => \App\Http\Middleware\ApiBetaCheck::class,
             'require.complete' => \App\Http\Middleware\RequireCompleteAccess::class,
         ]);
     })

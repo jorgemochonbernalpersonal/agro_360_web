@@ -40,6 +40,7 @@ class CleanupUnverifiedUsers extends Command
         $this->info("Buscando usuarios no verificados creados antes de: {$cutoffDate->format('Y-m-d H:i:s')}");
 
         $unverifiedUsers = User::whereNull('email_verified_at')
+            ->where('can_login', true)  // Excluir ghosts (creados por bodegas con can_login=false)
             ->where('created_at', '<=', $cutoffDate)
             ->get();
 

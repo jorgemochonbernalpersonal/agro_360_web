@@ -60,10 +60,10 @@ class Create extends AbstractCreate
             'notes'            => $this->notes ?: null,
         ]);
 
-        // Inherit beta from winery if active
+        // Inherit beta from winery if active (same end date)
         $winery = User::find($this->wineryId());
         if ($winery?->isBetaUser() && !$winery->betaExpired() && !$user->is_beta_user) {
-            $user->grantBetaAccess();
+            $user->grantBetaAccess($winery->beta_ends_at);
         }
     }
 

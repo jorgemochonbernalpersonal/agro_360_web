@@ -2,12 +2,19 @@
 
 namespace App\Livewire\Beta;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Expired extends Component
 {
     public function render()
     {
-        return view('livewire.beta.expired')->layout('layouts.app');
+        $user = Auth::user();
+
+        return view('livewire.beta.expired', [
+            'monthlyPrice'  => $user->viticulturistMonthlyPrice(),
+            'yearlyPrice'   => $user->viticulturistYearlyPrice(),
+            'isWineryLinked' => $user->hasWinery(),
+        ])->layout('layouts.app');
     }
 }

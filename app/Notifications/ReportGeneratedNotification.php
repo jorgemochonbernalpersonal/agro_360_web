@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\OfficialReport;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,7 @@ use Illuminate\Notifications\Notification;
 
 class ReportGeneratedNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     public function __construct(
         public OfficialReport $report
@@ -20,9 +21,14 @@ class ReportGeneratedNotification extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      */
+    public function notificationCategory(): string
+    {
+        return 'report';
+    }
+
     public function via($notifiable): array
     {
-        return ['database'];
+        return $this->filterChannelsByPreferences($notifiable, ['database']);
     }
 
     /**

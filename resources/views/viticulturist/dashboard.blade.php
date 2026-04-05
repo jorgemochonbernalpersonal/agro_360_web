@@ -66,6 +66,9 @@
         @livewire('viticulturist.onboarding-welcome')
         @livewire('viticulturist.onboarding-checklist')
 
+        {{-- Avisos de bodegas --}}
+        @livewire('viticulturist.announcements-banner')
+
         {{-- Header --}}
         <x-page-header
             :icon="$dashboardIcon"

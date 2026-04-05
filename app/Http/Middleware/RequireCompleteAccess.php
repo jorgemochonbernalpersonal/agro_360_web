@@ -25,10 +25,12 @@ class RequireCompleteAccess
             return $next($request);
         }
 
-        // Viticultor vinculado a bodega en plan básico → redirigir a upgrade
+        // Viticultor en plan básico gratuito → redirigir a upgrade
         if ($user->hasBasicFreeAccess()) {
+            $price = number_format($user->viticulturistMonthlyPrice(), 0);
+
             return redirect()->route('subscription.manage')
-                ->with('info', 'Esta funcionalidad requiere el plan Completo (9€/mes). Actualiza tu plan para acceder.');
+                ->with('info', "Esta funcionalidad requiere el plan Completo ({$price}€/mes). Actualiza tu plan para acceder.");
         }
 
         // Sin acceso en absoluto → página de precios

@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -14,11 +15,13 @@ class ClaimAccount extends Component
     public string $email    = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public bool   $shareCuaderno = true;
 
     // Estado
     public bool   $tokenValid   = false;
     public bool   $activated    = false;
     public ?User  $pendingUser  = null;
+    public ?string $wineryName  = null;
 
     public function mount(string $token): void
     {
@@ -41,6 +44,13 @@ class ClaimAccount extends Component
         if ($user->email && !str_starts_with($user->email, 'viticultores.')) {
             $this->email = $user->email;
         }
+
+        // Obtener nombre de la bodega que invitó para mostrar en el checkbox
+        $wineryRelation = WineryViticulturist::where('viticulturist_id', $user->id)
+            ->whereNotNull('winery_id')
+            ->with('winery:id,name')
+            ->first();
+        $this->wineryName = $wineryRelation?->winery?->name;
     }
 
     protected function rules(): array
@@ -86,6 +96,16 @@ class ClaimAccount extends Component
             'invitation_expires_at'  => null,
             'invitation_sent_at'     => null,
         ]);
+
+        // Auto-aprobar acceso al cuaderno si el viticultor aceptó
+        if ($this->shareCuaderno) {
+            WineryViticulturist::where('viticulturist_id', $this->pendingUser->id)
+                ->whereNotNull('winery_id')
+                ->update([
+                    'cuaderno_access'     => true,
+                    'cuaderno_granted_at' => now(),
+                ]);
+        }
 
         // Login automático con modelo fresco de BD (garantiza email_verified_at cargado)
         Auth::login($this->pendingUser->fresh());

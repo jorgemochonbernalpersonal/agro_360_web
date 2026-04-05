@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Database\QueryException;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -197,15 +198,27 @@ class Register extends Component
             $password = Hash::make($this->password);
         }
 
-        $user = User::create([
-            'name'                => $this->name,
-            'email'               => $this->email,
-            'password'            => $password,
-            'role'                => $this->role,
-            'dni'                 => $normalizedDni ?? null,
-            'password_must_reset' => $isViticulturistCreatingViticulturist,
-            'can_login'           => true,
-        ]);
+        try {
+            $user = User::create([
+                'name'                => $this->name,
+                'email'               => $this->email,
+                'password'            => $password,
+                'role'                => $this->role,
+                'dni'                 => $normalizedDni ?? null,
+                'password_must_reset' => $isViticulturistCreatingViticulturist,
+                'can_login'           => true,
+            ]);
+        } catch (QueryException $e) {
+            if (str_contains($e->getMessage(), 'users_email_unique')) {
+                $this->addError('email', 'Este email ya está registrado.');
+                return;
+            }
+            if (str_contains($e->getMessage(), 'users_dni_unique')) {
+                $this->addError('dni', 'Este DNI ya está registrado en el sistema.');
+                return;
+            }
+            throw $e;
+        }
 
         // Crear relaciones automáticas si está autenticado
         if (Auth::check()) {

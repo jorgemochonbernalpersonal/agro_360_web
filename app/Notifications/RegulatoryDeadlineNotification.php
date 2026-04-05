@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\RespectsPreferences;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -9,7 +10,7 @@ use Illuminate\Notifications\Notification;
 
 class RegulatoryDeadlineNotification extends Notification
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     public function __construct(
         public readonly string $deadlineLabel,
@@ -19,9 +20,14 @@ class RegulatoryDeadlineNotification extends Notification
         public readonly string $deadlineType,  // 'monthly' | 'semi_annual'
     ) {}
 
+    public function notificationCategory(): string
+    {
+        return 'regulatory';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -67,6 +67,22 @@
                     <flux:input wire:model="password_confirmation" type="password" viewable autocomplete="new-password" />
                 </flux:field>
 
+                @if($wineryName)
+                    <div class="p-4 bg-agro-50 rounded-xl border border-agro-200">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" wire:model="shareCuaderno"
+                                class="mt-0.5 rounded border-zinc-300 text-agro-600 focus:ring-agro-500" />
+                            <div>
+                                <p class="text-sm font-medium text-agro-900">Compartir mi cuaderno de campo con {{ $wineryName }}</p>
+                                <p class="text-xs text-agro-700 mt-0.5">
+                                    La bodega podrá ver tus tratamientos, riegos y labores culturales.
+                                    Puedes revocar este acceso en cualquier momento desde Configuración.
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                @endif
+
                 <flux:button
                     wire:click="activate"
                     wire:loading.attr="disabled"

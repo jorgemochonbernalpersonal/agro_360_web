@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\SupportTicket;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +12,7 @@ use Illuminate\Support\HtmlString;
 
 class SupportTicketCreatedNotification extends Notification
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     public function __construct(
         protected SupportTicket $ticket
@@ -22,9 +23,14 @@ class SupportTicketCreatedNotification extends Notification
      *
      * @return array<int, string>
      */
+    public function notificationCategory(): string
+    {
+        return 'support';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     /**

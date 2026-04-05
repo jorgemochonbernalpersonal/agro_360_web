@@ -290,6 +290,16 @@ class AuthController extends Controller
         $currentToken = $user->currentAccessToken();
         $device       = $currentToken->name;
 
+        // Beta expirada sin acceso básico gratuito → bloquear refresh
+        if ($user->betaExpired() && !$user->hasBasicFreeAccess()) {
+            $currentToken->delete();
+
+            return response()->json([
+                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'beta_expired' => true,
+            ], 403);
+        }
+
         $currentToken->delete();
 
         $token = $user->createToken($device, ['*'], now()->addDays(30))->plainTextToken;

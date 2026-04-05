@@ -391,24 +391,8 @@
                         </flux:field>
                     </x-agro.card>
 
-                    <x-agro.card>
-                        <x-slot:header>
-                            <div class="flex items-center gap-3">
-                                <flux:icon icon="bell" class="size-5 text-amber-600" />
-                                <div>
-                                    <p class="font-bold text-zinc-900">Notificaciones</p>
-                                    <p class="text-sm text-zinc-500">Alertas por email relacionadas con el cuaderno</p>
-                                </div>
-                            </div>
-                        </x-slot:header>
-
-                        <div class="space-y-3">
-                            <flux:checkbox wire:model="notify_harvest_alerts"
-                                label="Alertas de vendimia (inicio campaña, límites de rendimiento, etc.)" />
-                            <flux:checkbox wire:model="notify_activity_alerts"
-                                label="Alertas de actividades (próximas labores, periodos de carencia, etc.)" />
-                        </div>
-                    </x-agro.card>
+                    {{-- Notification Preferences (granular) --}}
+                    <livewire:notification-preferences />
 
                     <div class="flex justify-end">
                         <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="saveFieldbook">

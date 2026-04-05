@@ -33,13 +33,16 @@
 
             <div class="border-t pt-6">
                 <div class="text-center mb-6">
-                    <p class="text-sm text-zinc-600 mb-2">Precio especial para usuarios beta:</p>
+                    <p class="text-sm text-zinc-600 mb-2">Plan Completo desde:</p>
                     <div class="flex items-baseline justify-center gap-2">
-                        <span class="text-zinc-400 line-through">12€</span>
-                        <span class="text-4xl font-bold text-agro-700">9€</span>
+                        <span class="text-4xl font-bold text-agro-700">{{ number_format($monthlyPrice, 0) }}€</span>
                         <span class="text-zinc-600">/mes</span>
                     </div>
-                    <p class="text-xs text-green-600 font-semibold mt-1">25% descuento de por vida</p>
+                    @if($isWineryLinked)
+                        <p class="text-xs text-green-600 font-semibold mt-1">Precio especial por estar vinculado a bodega</p>
+                    @else
+                        <p class="text-xs text-zinc-500 mt-1">o {{ number_format($yearlyPrice, 0) }}€/año</p>
+                    @endif
                 </div>
 
                 <a href="{{ route('subscription.manage') }}" class="block w-full py-3 px-4 bg-agro-600 text-white text-center rounded-lg font-semibold shadow-lg hover:bg-agro-700 transition">

@@ -6,6 +6,7 @@ use App\Models\Plot;
 use App\Services\RemoteSensing\NasaEarthdataService;
 use App\Notifications\RemoteSensingAlertNotification;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class CheckRemoteSensingAlerts extends Command
@@ -45,19 +46,22 @@ class CheckRemoteSensingAlerts extends Command
                 $data = $service->getLatestData($plot);
                 
                 if ($data && $data->ndvi_mean < $plot->ndvi_alert_threshold) {
-                    
-                    // Logic to avoid spamming alerts every minute
-                    // Check if we sent an alert today directly via notification history?
-                    // For simplicity in this iteration, we trust the scheduler runs once daily.
-                    // Or we could check the last notification date, but let's keep it simple first.
-                    
+                    $cacheKey = "ndvi_alert_sent_{$plot->id}";
+
+                    if (Cache::has($cacheKey)) {
+                        $this->line("Skipped plot {$plot->name} — alert already sent in last 24h");
+                        continue;
+                    }
+
                     if ($plot->viticulturist) {
+                        Cache::put($cacheKey, true, now()->addHours(24));
+
                         $plot->viticulturist->notify(new RemoteSensingAlertNotification(
-                            $plot, 
-                            $data->ndvi_mean, 
+                            $plot,
+                            $data->ndvi_mean,
                             $plot->ndvi_alert_threshold
                         ));
-                        
+
                         $this->info("Alert sent for plot: {$plot->name} (NDVI: {$data->ndvi_mean} < {$plot->ndvi_alert_threshold})");
                         $alertsSent++;
                     }

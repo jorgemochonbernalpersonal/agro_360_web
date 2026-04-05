@@ -6,6 +6,7 @@ use App\DataTransferObjects\ReportGenerationData;
 use App\Events\OfficialReportGenerated;
 use App\Models\OfficialReport;
 use App\Models\User;
+use App\Notifications\ReportFailedNotification;
 use App\Services\OfficialReportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -96,6 +97,13 @@ class GenerateReportJob implements ShouldQueue
             'error' => $exception->getMessage(),
         ]);
 
-        // TODO: Notificar al usuario del fallo
+        $report = OfficialReport::where('user_id', $this->user->id)
+            ->where('report_type', $this->reportData->type)
+            ->latest()
+            ->first();
+
+        if ($report) {
+            $this->user->notify(new ReportFailedNotification($report, $exception->getMessage()));
+        }
     }
 }

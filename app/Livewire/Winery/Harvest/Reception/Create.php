@@ -434,6 +434,19 @@ class Create extends Component
 
                 // 3. Acumular en el batch
                 $batch->increment('total_weight_kg', $weight);
+
+                // 4. Feedback de calidad al viticultor (si tiene datos de calidad)
+                $hasQuality = $this->baume_degree || $this->potential_alcohol || $this->acidity_level || $this->ph_level;
+                if ($hasQuality && $batch->viticulturist_id) {
+                    $viticulturist = \App\Models\User::find($batch->viticulturist_id);
+                    $harvest = \App\Models\Harvest::where('batch_id', $batch->id)->latest()->first();
+                    if ($viticulturist?->can_login && $harvest) {
+                        $viticulturist->notify(new \App\Notifications\QualityFeedbackNotification(
+                            $harvest->load('plotPlanting.grapeVariety', 'plotPlanting.plot'),
+                            Auth::user()->name,
+                        ));
+                    }
+                }
             });
 
             $this->toastSuccess('Recepción registrada. Puedes continuar con el mismo viticultor.');

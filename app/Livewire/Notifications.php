@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Services\DashboardAlertsService;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Notifications\DatabaseNotification;
 
@@ -13,13 +14,13 @@ class Notifications extends Component
     public $unreadCount = 0;
     public $showDropdown = false;
 
-    protected $listeners = ['notificationReceived' => 'loadNotifications'];
-
     public function mount()
     {
         $this->loadNotifications();
         $this->loadDashboardAlerts();
     }
+
+    protected $listeners = ['notificationReceived' => 'loadNotifications'];
 
     public function loadNotifications()
     {
@@ -28,9 +29,9 @@ class Notifications extends Component
             ->latest()
             ->take(10)
             ->get();
-        
+
         $this->unreadCount = auth()->user()->unreadNotifications()->count();
-        
+
         // Add dashboard alerts count
         $this->unreadCount += count($this->dashboardAlerts);
     }
@@ -44,7 +45,7 @@ class Notifications extends Component
     public function markAsRead($notificationId)
     {
         $notification = DatabaseNotification::find($notificationId);
-        
+
         if ($notification && $notification->notifiable_id === auth()->id()) {
             $notification->markAsRead();
             $this->loadNotifications();
@@ -60,7 +61,7 @@ class Notifications extends Component
     public function deleteNotification($notificationId)
     {
         $notification = DatabaseNotification::find($notificationId);
-        
+
         if ($notification && $notification->notifiable_id === auth()->id()) {
             $notification->delete();
             $this->loadNotifications();
@@ -70,6 +71,35 @@ class Notifications extends Component
     public function toggleDropdown()
     {
         $this->showDropdown = !$this->showDropdown;
+    }
+
+    /**
+     * Guess notification icon based on notification type or data keys.
+     */
+    public function guessIcon(array $data): string
+    {
+        if (isset($data['plot_id']) || isset($data['ndvi'])) return '📉';
+        if (isset($data['treatment_id']) || isset($data['safe_date'])) return '🧪';
+        if (isset($data['payment_id'])) return '💳';
+        if (isset($data['export_type'])) return '📦';
+        if (isset($data['report_id']) && isset($data['error_message'])) return '❌';
+        if (isset($data['report_id'])) return '📄';
+        if (isset($data['delivery_id']) || str_contains($data['message'] ?? '', 'entrega')) return '🍇';
+        if (isset($data['days_remaining'])) return '📅';
+
+        return '🔔';
+    }
+
+    /**
+     * Guess icon color class based on notification data.
+     */
+    public function guessIconColor(array $data): string
+    {
+        if (isset($data['error_message'])) return 'text-red-500';
+        if (isset($data['ndvi']) || isset($data['alert_type'])) return 'text-amber-500';
+        if (isset($data['payment_id'])) return 'text-green-500';
+
+        return '';
     }
 
     public function render()

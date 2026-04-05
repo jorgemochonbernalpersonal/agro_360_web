@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +12,7 @@ use Illuminate\Support\HtmlString;
 
 class ContainerMaintenanceAlertNotification extends Notification
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     /**
      * @param Collection $overdue   Mantenimientos vencidos (scheduled_date < hoy, status = scheduled)
@@ -22,9 +23,14 @@ class ContainerMaintenanceAlertNotification extends Notification
         protected Collection $upcoming,
     ) {}
 
+    public function notificationCategory(): string
+    {
+        return 'container_maintenance';
+    }
+
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $this->filterChannelsByPreferences($notifiable, ['mail', 'database']);
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -471,7 +471,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     });
 
     // ── Viticulturist / Producer ───────────────────────────────────────────────
-    Route::prefix('viticulturist')->middleware('api.role:viticulturist,producer')->group(function () {
+    Route::prefix('viticulturist')->middleware(['api.role:viticulturist,producer', 'api.check.beta'])->group(function () {
 
         Route::get('/dashboard', ViticulturistDashboard::class)->middleware('throttle:60,1');
 

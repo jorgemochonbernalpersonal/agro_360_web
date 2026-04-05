@@ -64,6 +64,9 @@
             <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Viticultores</p>
                 <p class="text-2xl font-bold text-zinc-700 leading-none">{{ $viticulturistCount }}</p>
+                @if($pendingViticulturistCount > 0)
+                    <p class="text-xs text-amber-600 mt-0.5">{{ $pendingViticulturistCount }} pendiente{{ $pendingViticulturistCount > 1 ? 's' : '' }}</p>
+                @endif
             </div>
             <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
                 <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Lotes de vino</p>

@@ -689,4 +689,30 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/create', \App\Livewire\Viticulturist\Support\CreateTicket::class)->name('create');
         });
 
+        // ══════════════════════════════════════════════════════════════════
+        // RUTAS ADICIONALES — heredadas de viticulturist + winery
+        // ══════════════════════════════════════════════════════════════════
+
+        // ── Calendario de actividades (viticulturist) ────────────────────
+        Route::get('/calendar', \App\Livewire\Viticulturist\Calendar::class)->name('calendar');
+
+        // ── Entrada rápida de actividades (viticulturist) ────────────────
+        Route::get('/quick-entry', \App\Livewire\Viticulturist\QuickEntry::class)->name('quick-entry');
+
+        // ── Página completa de notificaciones (viticulturist) ────────────
+        Route::get('/notifications', \App\Livewire\Viticulturist\Notifications\Index::class)->name('notifications.index');
+
+        // ── Dashboard visual bodega (winery) ─────────────────────────────
+        Route::get('/visual', \App\Livewire\Winery\VisualDashboard::class)->name('visual');
+
+        // ── Campañas bodega (winery — CRUD completo) ─────────────────────
+        Route::prefix('winery-campaigns')->name('winery-campaigns.')->group(function () {
+            Route::get('/', \App\Livewire\Winery\Harvest\Campaigns\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Winery\Harvest\Campaigns\Create::class)->name('create');
+            Route::get('/{campaign}/edit', \App\Livewire\Winery\Harvest\Campaigns\Edit::class)->name('edit');
+        });
+
+        // ── Inventario (redirect a winery-supplies) ──────────────────────
+        Route::get('/inventory', fn() => redirect()->route('producer.winery-supplies.index'))->name('inventory.index');
+
     });

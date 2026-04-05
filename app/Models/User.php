@@ -43,6 +43,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'compra_uva_externa',
         'organization_id',
         'preferences',
+        'notification_preferences',
     ];
 
     /**
@@ -75,6 +76,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'beta_access_granted' => 'boolean',
             'compra_uva_externa' => 'boolean',
             'preferences' => 'array',
+            'notification_preferences' => 'array',
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Plot;
+use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,7 @@ use Illuminate\Notifications\Notification;
 
 class RemoteSensingAlertNotification extends Notification
 {
-    use Queueable;
+    use Queueable, RespectsPreferences;
 
     private Plot $plot;
     private float $currentNdvi;
@@ -32,15 +33,20 @@ class RemoteSensingAlertNotification extends Notification
      *
      * @return array<int, string>
      */
+    public function notificationCategory(): string
+    {
+        return 'remote_sensing';
+    }
+
     public function via(object $notifiable): array
     {
         $channels = ['database'];
-        
+
         if ($this->plot->alert_email_enabled) {
             $channels[] = 'mail';
         }
-        
-        return $channels;
+
+        return $this->filterChannelsByPreferences($notifiable, $channels);
     }
 
     /**

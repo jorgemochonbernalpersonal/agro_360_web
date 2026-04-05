@@ -102,10 +102,10 @@ class Invite extends Component
             ]);
         }
 
-        // Inherit beta from winery if active
+        // Inherit beta from winery if active (same end date)
         $winery = Auth::user();
         if ($winery->isBetaUser() && !$winery->betaExpired() && !$user->is_beta_user) {
-            $user->grantBetaAccess();
+            $user->grantBetaAccess($winery->beta_ends_at);
         }
 
         $this->toastSuccess("{$user->name} ha sido vinculado a tu bodega.");

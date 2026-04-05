@@ -25,8 +25,13 @@ class Dashboard extends Component
         $activeCampaign = Campaign::forViticulturist($wineryId)->where('active', true)->first();
         $vintageYear    = $activeCampaign?->year ?? now()->year;
 
-        // Viticultores vinculados
-        $viticulturistCount = WineryViticulturist::where('winery_id', $wineryId)->count();
+        // Viticultores vinculados (solo activos con acceso)
+        $viticulturistCount = WineryViticulturist::where('winery_id', $wineryId)
+            ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
+            ->count();
+        $pendingViticulturistCount = WineryViticulturist::where('winery_id', $wineryId)
+            ->whereHas('viticulturist', fn($q) => $q->where('can_login', false))
+            ->count();
         if (Auth::user()->isProducer()) {
             $viticulturistCount += 1; // producer counts as their own linked viticulturist
         }
@@ -132,7 +137,8 @@ class Dashboard extends Component
         return view('livewire.winery.dashboard', [
             'activeCampaign'       => $activeCampaign,
             'vintageYear'          => $vintageYear,
-            'viticulturistCount'   => $viticulturistCount,
+            'viticulturistCount'        => $viticulturistCount,
+            'pendingViticulturistCount' => $pendingViticulturistCount,
             'totalKgCampaign'      => $totalKgCampaign,
             'openBatchCount'       => $openBatchCount,
             'closedBatchCount'     => $closedBatchCount,

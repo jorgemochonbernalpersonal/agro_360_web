@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\PhytosanitaryTreatment;
 use App\Notifications\WithdrawalPeriodEnding;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class SendWithdrawalPeriodAlertsCommand extends Command
 {
@@ -54,15 +55,23 @@ class SendWithdrawalPeriodAlertsCommand extends Command
 
             // Notificar si está dentro del rango de alerta
             if ($daysRemaining > 0 && $daysRemaining <= $alertDays) {
+                $cacheKey = "withdrawal_alert_{$treatment->id}_{$daysRemaining}";
+
+                if (Cache::has($cacheKey)) {
+                    continue;
+                }
+
                 try {
                     $user = $activity->plot->viticulturist;
-                    
+
                     if ($user) {
+                        Cache::put($cacheKey, true, now()->addHours(24));
+
                         $user->notify(
                             new WithdrawalPeriodEnding($treatment, $safeDate, $daysRemaining)
                         );
                         $notifiedCount++;
-                        
+
                         $this->line("📧 Notified {$user->name} about treatment on {$activity->plot->name} ({$daysRemaining} days remaining)");
                     }
                 } catch (\Exception $e) {

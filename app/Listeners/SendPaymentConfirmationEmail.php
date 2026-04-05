@@ -3,8 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\PaymentCompleted;
+use App\Notifications\PaymentConfirmation;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class SendPaymentConfirmationEmail
 {
@@ -22,7 +22,6 @@ class SendPaymentConfirmationEmail
             'amount' => $payment->amount,
         ]);
 
-        // TODO: Implementar envío de email
-        // Mail::to($user->email)->send(new PaymentConfirmation($payment));
+        $user->notify(new PaymentConfirmation($payment));
     }
 }

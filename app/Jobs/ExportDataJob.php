@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\User;
+use App\Notifications\ExportReadyNotification;
 use App\Services\Reports\ReportExporter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -68,7 +69,7 @@ class ExportDataJob implements ShouldQueue
                 'records' => count($data),
             ]);
 
-            // TODO: Notificar al usuario que la exportación está lista para descargar
+            $this->user->notify(new ExportReadyNotification($filename, $this->exportType, $this->format));
         } catch (\Exception $e) {
             Log::error('Failed to export data', [
                 'user_id' => $this->user->id,
