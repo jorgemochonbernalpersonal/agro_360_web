@@ -6,7 +6,7 @@
         :description="$invoice->invoice_number ? 'Factura ' . $invoice->invoice_number : 'Borrador — pendiente de facturar'"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.invoices.index') }}" variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.invoices.index') }}" variant="outline" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -531,7 +531,7 @@
                     <flux:button
                         type="button"
                         variant="outline"
-                        href="{{ route('viticulturist.invoices.index') }}"
+                        href="{{ roleRoute('viticulturist.invoices.index') }}"
                         wire:navigate
                         icon="arrow-left"
                     >

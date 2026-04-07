@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Exportación CUE"
     :description="'Exportación ' . $cueExport->campaign_year . ' — ' . $cueExport->exploitation->exploitation_name"
-    :back-url="route('viticulturist.cue-exports.index')"
+    :back-url="roleRoute('viticulturist.cue-exports.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos de la Exportación">
@@ -51,7 +51,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.cue-exports.index')"
+            :cancel-url="roleRoute('viticulturist.cue-exports.index')"
             submit-label="Actualizar Exportación"
         />
     </form>

@@ -4,7 +4,7 @@
         description="Reporta bugs, solicita mejoras o haz preguntas"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.support.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.support.create') }}" variant="primary" icon="plus">
                 Nuevo Ticket
             </flux:button>
         </x-slot:actions>
@@ -115,7 +115,7 @@
             </x-slot>
         @else
             <x-slot name="emptyAction">
-                <flux:button href="{{ route('viticulturist.support.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.support.create') }}" variant="primary" icon="plus">
                     Crear mi primer ticket
                 </flux:button>
             </x-slot>

@@ -3,7 +3,7 @@
     description="Anota una entrega manual a cooperativa, almacenista u otro comprador"
     icon="truck"
     icon-color="from-blue-500 to-blue-700"
-    :back-url="route('viticulturist.harvests.index')"
+    :back-url="roleRoute('viticulturist.harvests.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -268,7 +268,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.harvests.index')"
+            :cancel-url="roleRoute('viticulturist.harvests.index')"
             submit-label="Registrar entrega"
         />
     </form>

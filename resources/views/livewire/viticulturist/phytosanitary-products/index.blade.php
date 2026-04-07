@@ -50,7 +50,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('viticulturist.phytosanitary-products.create') }}" variant="primary" icon="plus" data-cy="create-product-button">
+        <flux:button href="{{ roleRoute('viticulturist.phytosanitary-products.create') }}" variant="primary" icon="plus" data-cy="create-product-button">
             Nuevo Producto
         </flux:button>
 
@@ -146,7 +146,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ route('viticulturist.phytosanitary-products.edit', $product) }}" class="{{ $btnBase }}" title="Editar" data-cy="edit-product-button">
+                            <a href="{{ roleRoute('viticulturist.phytosanitary-products.edit', $product) }}" class="{{ $btnBase }}" title="Editar" data-cy="edit-product-button">
                                 <flux:icon icon="pencil-square" class="size-4" />
                             </a>
                             <button

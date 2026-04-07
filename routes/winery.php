@@ -53,6 +53,13 @@ Route::middleware(['role:winery,producer'])
         // ── Actividades de campo (solo lectura) ───────────────────────
         Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');
 
+        // ── Entorno de parcelas ──────────────────────────────────────
+        Route::prefix('plot-environments')->name('plot-environments.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PlotEnvironments\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PlotEnvironments\Create::class)->name('create');
+            Route::get('/{plotEnvironment}/edit', \App\Livewire\Viticulturist\PlotEnvironments\Edit::class)->name('edit');
+        });
+
         // ── Previsiones de vendimia (aforo bodega) ───────────────────
         Route::get('/harvest-forecasts', \App\Livewire\Winery\Harvest\Forecasts\Index::class)->name('harvest-forecasts.index');
         Route::get('/harvest-forecasts/create', \App\Livewire\Winery\Harvest\Forecasts\Create::class)->name('harvest-forecasts.create');
@@ -125,10 +132,11 @@ Route::middleware(['role:winery,producer'])
         Route::get('/oenologists/{oenologist}/edit', \App\Livewire\Winery\Oenologists\Edit::class)->name('oenologists.edit');
 
         // ── Clientes ──────────────────────────────────────────────────
-        Route::get('/clients', \App\Livewire\Winery\Clients\Index::class)->name('clients.index');
-        Route::get('/clients/insights', \App\Livewire\Winery\Clients\Insights::class)->name('clients.insights');
-        Route::get('/clients/create', \App\Livewire\Winery\Clients\Create::class)->name('clients.create');
-        Route::get('/clients/{client}/edit', \App\Livewire\Winery\Clients\Edit::class)->name('clients.edit');
+        Route::get('/clients', \App\Livewire\Clients\Index::class)->name('clients.index');
+        Route::get('/clients/insights', \App\Livewire\Clients\Insights::class)->name('clients.insights');
+        Route::get('/clients/create', \App\Livewire\Clients\Create::class)->name('clients.create');
+        Route::get('/clients/{client}', \App\Livewire\Clients\Show::class)->name('clients.show');
+        Route::get('/clients/{client}/edit', \App\Livewire\Clients\Edit::class)->name('clients.edit');
 
         // ── Facturación: venta de productos ──────────────────────────
         Route::get('/invoices/products', \App\Livewire\Winery\Billing\ProductSale\Index::class)->name('invoices.products.index');

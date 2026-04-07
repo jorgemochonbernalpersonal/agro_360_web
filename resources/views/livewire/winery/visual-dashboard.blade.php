@@ -68,7 +68,7 @@
 
         {{-- Separador + Volver --}}
         <div class="ml-auto flex items-center px-4 border-l border-zinc-100">
-            <a href="{{ route('winery.dashboard') }}" wire:navigate
+            <a href="{{ roleRoute('dashboard') }}" wire:navigate
                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors border border-zinc-200 whitespace-nowrap">
                 <flux:icon icon="bars-3" class="size-3.5 shrink-0" />
                 Vista Sidebar
@@ -336,7 +336,7 @@
 
                     {{-- Chip viticulturist: enlaza a su ficha --}}
                     @if($selectedPlot->viticulturist)
-                    <a href="{{ route('winery.viticulturists.show', $selectedPlot->viticulturist) }}" wire:navigate
+                    <a href="{{ roleRoute('viticulturists.show', $selectedPlot->viticulturist) }}" wire:navigate
                        class="flex items-center gap-2.5 text-sm text-zinc-600 bg-zinc-50 hover:bg-zinc-100 rounded-xl px-3 py-2.5 transition-colors group">
                         <div class="w-6 h-6 bg-zinc-200 group-hover:bg-zinc-300 rounded-full flex items-center justify-center shrink-0 transition-colors">
                             <flux:icon icon="user" class="size-3 text-zinc-500" />
@@ -352,22 +352,22 @@
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Registrar actividad</p>
                     <div class="grid grid-cols-2 gap-1.5">
-                        <a href="{{ route('viticulturist.digital-notebook.treatment.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                        <a href="{{ roleRoute('digital-notebook.treatment.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 transition-colors text-center">
                             <flux:icon icon="shield-exclamation" class="size-4" />
                             <span class="text-[10px] font-semibold leading-tight">Tratamiento</span>
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.irrigation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                        <a href="{{ roleRoute('digital-notebook.irrigation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors text-center">
                             <flux:icon icon="beaker" class="size-4" />
                             <span class="text-[10px] font-semibold leading-tight">Riego</span>
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.cultural.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                        <a href="{{ roleRoute('digital-notebook.cultural.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-green-50 hover:bg-green-100 text-green-700 transition-colors text-center">
                             <flux:icon icon="wrench-screwdriver" class="size-4" />
                             <span class="text-[10px] font-semibold leading-tight">Trab. campo</span>
                         </a>
-                        <a href="{{ route('viticulturist.digital-notebook.observation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
+                        <a href="{{ roleRoute('digital-notebook.observation.create', ['plot_id' => $selectedPlot->id]) }}" wire:navigate
                            class="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors text-center">
                             <flux:icon icon="eye" class="size-4" />
                             <span class="text-[10px] font-semibold leading-tight">Observación</span>
@@ -380,17 +380,17 @@
                 <div>
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 px-1">Esta parcela</p>
                     <div class="space-y-0.5">
-                        <a href="{{ route('winery.plots.show', $selectedPlot) }}?from=visual" wire:navigate
+                        <a href="{{ roleRoute('plots.show', $selectedPlot) }}?from=visual" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-agro-50 hover:text-agro-700 transition-colors group">
                             <flux:icon icon="eye" class="size-4 text-zinc-400 group-hover:text-agro-600 shrink-0" />
                             Ver ficha completa
                         </a>
-                        <a href="{{ route('winery.plots.edit', $selectedPlot) }}" wire:navigate
+                        <a href="{{ roleRoute('plots.edit', $selectedPlot) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors group">
                             <flux:icon icon="pencil-square" class="size-4 text-zinc-400 group-hover:text-zinc-600 shrink-0" />
                             Editar
                         </a>
-                        <a href="{{ route('winery.plots.plantings.create', $selectedPlot) }}" wire:navigate
+                        <a href="{{ roleRoute('plots.plantings.create', $selectedPlot) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="scissors" class="size-4 text-zinc-400 shrink-0" />
                             Nueva plantación
@@ -417,13 +417,13 @@
                         Recibir uva
                     </button>
                     @if($selectedPlot->viticulturist)
-                    <a href="{{ route('winery.grape-reception.index', ['viticulturist_id' => $selectedPlot->viticulturist->id]) }}" wire:navigate
+                    <a href="{{ roleRoute('grape-reception.index', ['viticulturist_id' => $selectedPlot->viticulturist->id]) }}" wire:navigate
                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                         <flux:icon icon="clipboard-document-list" class="size-4 text-zinc-400 shrink-0" />
                         Recepciones de {{ $selectedPlot->viticulturist->name }}
                     </a>
                     @else
-                    <a href="{{ route('winery.grape-reception.index') }}" wire:navigate
+                    <a href="{{ roleRoute('grape-reception.index') }}" wire:navigate
                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                         <flux:icon icon="clipboard-document-list" class="size-4 text-zinc-400 shrink-0" />
                         Ver recepciones
@@ -456,7 +456,7 @@
                          x-transition:leave-end="opacity-0"
                          style="display:none;"
                          class="space-y-0.5">
-                        <a href="{{ route('winery.field-activities.index') . '?plot_id=' . $selectedPlot->id }}" wire:navigate
+                        <a href="{{ roleRoute('field-activities.index') . '?plot_id=' . $selectedPlot->id }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="pencil-square" class="size-4 text-zinc-400 shrink-0" />
                             Actividades de esta parcela
@@ -787,7 +787,7 @@
                             <flux:icon icon="arrows-right-left" class="size-4 text-zinc-400 group-hover:text-blue-600 shrink-0" />
                             Nuevo trasvase de vino
                         </button>
-                        <a href="{{ route('winery.wine-analysis.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
+                        <a href="{{ roleRoute('wine-analysis.create', ['container_id' => $selectedContainer->id]) }}" wire:navigate
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-700 hover:bg-zinc-50 transition-colors group">
                             <flux:icon icon="magnifying-glass" class="size-4 text-zinc-400 shrink-0" />
                             Nuevo análisis de laboratorio
@@ -877,7 +877,7 @@
                         <div class="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
                             <flux:icon icon="archive-box-arrow-down" class="size-3.5 text-amber-600" />
                         </div>
-                        <a href="{{ route('winery.grape-reception.index') }}" wire:navigate class="text-xs text-zinc-400 hover:text-amber-600 transition-colors">Ver recepciones</a>
+                        <a href="{{ roleRoute('grape-reception.index') }}" wire:navigate class="text-xs text-zinc-400 hover:text-amber-600 transition-colors">Ver recepciones</a>
                     </div>
                 </div>
 
@@ -991,7 +991,7 @@
                 <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
                     <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
                         <p class="text-sm font-bold text-zinc-800">Últimos controles</p>
-                        <a href="{{ route('winery.fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
+                        <a href="{{ roleRoute('fermentation-controls.index') }}" wire:navigate class="text-xs text-agro-600 hover:text-agro-800 font-medium transition-colors">Ver todos</a>
                     </div>
                     @if($recentControls->isEmpty())
                     <div class="flex flex-col items-center justify-center py-10 text-zinc-300 gap-2">

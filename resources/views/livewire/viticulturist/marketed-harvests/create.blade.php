@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Entrega de Cosecha"
     description="Registra una entrega de uva a bodega, cooperativa o venta directa"
-    :back-url="route('viticulturist.marketed-harvests.index')"
+    :back-url="roleRoute('viticulturist.marketed-harvests.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -104,7 +104,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.marketed-harvests.index')"
+            :cancel-url="roleRoute('viticulturist.marketed-harvests.index')"
             submit-label="Registrar Entrega"
         />
     </form>

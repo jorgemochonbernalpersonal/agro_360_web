@@ -51,7 +51,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess("Registro sanitario «{$this->registration_number}» creado correctamente.");
-        $this->redirect(route('winery.sanitary-registrations.index'), navigate: true);
+        $this->redirect(roleRoute('sanitary-registrations.index'), navigate: true);
     }
 
     public function render()

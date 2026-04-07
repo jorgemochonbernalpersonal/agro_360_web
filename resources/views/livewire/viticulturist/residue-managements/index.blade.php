@@ -7,7 +7,7 @@
         icon="trash"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.residue-managements.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.residue-managements.create') }}" variant="primary" icon="plus">
                 Nueva Gestión
             </flux:button>
         </x-slot:actions>
@@ -71,7 +71,7 @@
                 @if($filterCampaign || $filterPractice)
                     <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
                 @else
-                    <flux:button href="{{ route('viticulturist.residue-managements.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.residue-managements.create') }}" variant="primary" icon="plus">
                         Nueva Gestión
                     </flux:button>
                 @endif
@@ -123,7 +123,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.residue-managements.edit', $entry) }}"
+                            <a href="{{ roleRoute('viticulturist.residue-managements.edit', $entry) }}"
                                title="Editar"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="pencil-square" class="size-4" />

@@ -7,7 +7,7 @@
         icon="truck"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.marketed-harvests.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.marketed-harvests.create') }}" variant="primary" icon="plus">
                 Nueva Entrega
             </flux:button>
         </x-slot:actions>
@@ -71,7 +71,7 @@
                 @if($filterCampaign || $filterDestination)
                     <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
                 @else
-                    <flux:button href="{{ route('viticulturist.marketed-harvests.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.marketed-harvests.create') }}" variant="primary" icon="plus">
                         Nueva Entrega
                     </flux:button>
                 @endif
@@ -136,7 +136,7 @@
                         {{-- Factura --}}
                         @if($entry->destination_type === 'third_party')
                             @if($entry->invoice_id)
-                                <a href="{{ route('viticulturist.invoices.show', $entry->invoice_id) }}"
+                                <a href="{{ roleRoute('viticulturist.invoices.show', $entry->invoice_id) }}"
                                    class="flex items-center gap-2 text-xs text-agro-600 hover:text-agro-700">
                                     <flux:icon icon="document-check" class="size-3.5 shrink-0" />
                                     <span>Ver factura</span>
@@ -155,7 +155,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.marketed-harvests.edit', $entry) }}"
+                            <a href="{{ roleRoute('viticulturist.marketed-harvests.edit', $entry) }}"
                                title="Editar"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="pencil-square" class="size-4" />

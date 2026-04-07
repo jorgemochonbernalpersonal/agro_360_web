@@ -2,7 +2,7 @@
 <x-agro.form-card
     title="Editar Observación Fenológica"
     description="Modifica el estadio fenológico registrado."
-    :back-url="route('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id])"
+    :back-url="roleRoute('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id])"
 >
     <form wire:submit.prevent="update" class="space-y-8">
         <x-agro.form-section title="Datos del Registro">
@@ -89,7 +89,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :cancel-url="route('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id])" submit-label="Actualizar Observación" />
+        <x-agro.form-actions :cancel-url="roleRoute('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id])" submit-label="Actualizar Observación" />
     </form>
 </x-agro.form-card>
 </div>

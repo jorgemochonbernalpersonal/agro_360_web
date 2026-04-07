@@ -19,11 +19,11 @@
     >
         <x-slot:actions>
             @can('update', $machinery)
-                <flux:button href="{{ route('viticulturist.machinery.edit', $machinery) }}" variant="primary">
+                <flux:button href="{{ roleRoute('viticulturist.machinery.edit', $machinery) }}" variant="primary">
                     Editar
                 </flux:button>
             @endcan
-            <flux:button href="{{ route('viticulturist.machinery.index') }}" variant="outline">
+            <flux:button href="{{ roleRoute('viticulturist.machinery.index') }}" variant="outline">
                 Volver
             </flux:button>
         </x-slot:actions>

@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Tratamiento Fitosanitario"
     description="Modifica los datos del tratamiento fitosanitario registrado"
-    :back-url="route('viticulturist.digital-notebook.treatment.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.treatment.index')"
 >
     <form wire:submit="update" class="space-y-8" data-cy="treatment-form">
 
@@ -97,7 +97,7 @@
                     </div>
                 </div>
                 <div class="md:w-auto shrink-0">
-                    <flux:button href="{{ route('viticulturist.phytosanitary-products.create') }}" variant="ghost" icon="plus">Nuevo producto</flux:button>
+                    <flux:button href="{{ roleRoute('viticulturist.phytosanitary-products.create') }}" variant="ghost" icon="plus">Nuevo producto</flux:button>
                 </div>
             </div>
 
@@ -233,7 +233,7 @@
                         @else
                             <p class="mt-1 text-xs text-zinc-500">
                                 Selecciona un aplicador registrado o introduce el número ROPO manualmente.
-                                <a href="{{ route('viticulturist.field-applicators.index') }}" class="text-agro-600 hover:underline">Gestionar aplicadores →</a>
+                                <a href="{{ roleRoute('viticulturist.field-applicators.index') }}" class="text-agro-600 hover:underline">Gestionar aplicadores →</a>
                             </p>
                         @endif
                     </div>
@@ -455,7 +455,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.treatment.index')"
+            :cancel-url="roleRoute('viticulturist.digital-notebook.treatment.index')"
             submit-label="Actualizar Tratamiento"
         />
 

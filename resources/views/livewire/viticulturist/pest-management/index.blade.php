@@ -13,7 +13,7 @@
                 <ul class="list-disc list-inside space-y-0.5 mt-1">
                     @foreach($pestsInRisk as $riskPest)
                         <li>
-                            <a href="{{ route('viticulturist.pest-management.show', $riskPest) }}" class="font-medium hover:underline">
+                            <a href="{{ roleRoute('viticulturist.pest-management.show', $riskPest) }}" class="font-medium hover:underline">
                                 {{ $riskPest->name }}
                             </a>
                         </li>
@@ -149,7 +149,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('viticulturist.pest-management.show', $pest) }}"
+                            <a href="{{ roleRoute('viticulturist.pest-management.show', $pest) }}"
                                class="inline-flex items-center gap-1.5 text-xs font-medium text-agro-600 hover:text-agro-700 transition-colors">
                                 Ver detalles
                                 <flux:icon icon="arrow-right" class="size-3.5" />

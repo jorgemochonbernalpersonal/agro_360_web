@@ -73,7 +73,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Análisis de laboratorio creado correctamente.');
-        $this->redirect(route('winery.wine-analysis.index'), navigate: true);
+        $this->redirect(roleRoute('wine-analysis.index'), navigate: true);
     }
 
     public function render()

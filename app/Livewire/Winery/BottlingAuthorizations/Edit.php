@@ -77,7 +77,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Autorización de embotellado actualizada correctamente.');
-        $this->redirect(route('winery.bottling-authorizations.index'), navigate: true);
+        $this->redirect(roleRoute('bottling-authorizations.index'), navigate: true);
     }
 
     public function render()

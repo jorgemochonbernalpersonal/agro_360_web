@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Gestión de Residuos"
     :description="'Modifica el registro del ' . $residueManagement->date->format('d/m/Y')"
-    :back-url="route('viticulturist.residue-managements.index')"
+    :back-url="roleRoute('viticulturist.residue-managements.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -109,7 +109,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.residue-managements.index')"
+            :cancel-url="roleRoute('viticulturist.residue-managements.index')"
             submit-label="Actualizar Gestión"
         />
     </form>

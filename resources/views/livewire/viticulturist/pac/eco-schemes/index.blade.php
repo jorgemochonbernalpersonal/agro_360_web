@@ -25,7 +25,7 @@
             <flux:callout.heading>No hay declaración PAC para {{ $year }}</flux:callout.heading>
             <flux:callout.text>
                 Crea una declaración PAC para poder verificar los eco-regímenes.
-                <a href="{{ route('viticulturist.pac.declarations.create') }}" wire:navigate class="underline ml-1">Crear declaración →</a>
+                <a href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate class="underline ml-1">Crear declaración →</a>
             </flux:callout.text>
         </flux:callout>
     @endif

@@ -7,7 +7,7 @@
         icon="beaker"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
                 Registrar Subproducto
             </flux:button>
         </x-slot:actions>
@@ -149,7 +149,7 @@
             >
                 @if(!$search && !$filterCampaign && !$filterByproductType && $currentTab === 'active')
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('viticulturist.harvest-byproducts.create') }}" variant="primary" icon="plus">
                             Registrar Subproducto
                         </flux:button>
                     </x-slot:action>
@@ -227,7 +227,7 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
                                 @if($currentTab === 'active')
-                                    <a href="{{ route('viticulturist.harvest-byproducts.edit', $entry) }}"
+                                    <a href="{{ roleRoute('viticulturist.harvest-byproducts.edit', $entry) }}"
                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                                        title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />

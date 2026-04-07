@@ -18,7 +18,7 @@
         description="Crea una nueva campaña vitícola"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left" data-cy="back-button">
+            <flux:button href="{{ roleRoute('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left" data-cy="back-button">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -122,7 +122,7 @@
             </x-agro.form-section>
 
             <!-- Botones -->
-            <x-agro.form-actions cancelUrl="{{ route('viticulturist.campaign.index') }}" submitLabel="Crear Campaña" />
+            <x-agro.form-actions cancelUrl="{{ roleRoute('viticulturist.campaign.index') }}" submitLabel="Crear Campaña" />
         </form>
     </x-agro.card>
 </div>

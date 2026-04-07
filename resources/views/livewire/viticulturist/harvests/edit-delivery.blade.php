@@ -3,7 +3,7 @@
     description="Modifica los datos de esta entrega manual"
     icon="truck"
     icon-color="from-blue-500 to-blue-700"
-    :back-url="route('viticulturist.harvests.index')"
+    :back-url="roleRoute('viticulturist.harvests.index')"
 >
     @if($delivery->harvest_id)
         @if($delivery->isResolved())
@@ -304,7 +304,7 @@
             </flux:button>
 
             <div class="flex items-center gap-3">
-                <flux:button href="{{ route('viticulturist.harvests.index') }}" variant="outline">
+                <flux:button href="{{ roleRoute('viticulturist.harvests.index') }}" variant="outline">
                     Cancelar
                 </flux:button>
                 <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed">

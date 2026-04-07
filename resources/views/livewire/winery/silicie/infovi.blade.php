@@ -7,7 +7,7 @@
     >
         <x-slot:actions>
             <flux:button
-                :href="route('winery.silicie.dashboard')"
+                :href="roleRoute('silicie.dashboard')"
                 variant="ghost"
                 icon="arrow-left"
                 size="sm"
@@ -86,7 +86,7 @@
                 </div>
             @endforeach
             <a
-                href="{{ route('winery.settings', ['tab' => 'infovi']) }}"
+                href="{{ roleRoute('settings', ['tab' => 'infovi']) }}"
                 class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-200 bg-white text-zinc-500 text-sm hover:bg-zinc-50 transition"
             >
                 <flux:icon icon="cog-6-tooth" class="size-4" />
@@ -129,7 +129,7 @@
         </div>
         <div class="flex-1"></div>
         <a
-            href="{{ route('winery.silicie.infovi.pdf', ['campaign' => $campaign]) }}"
+            href="{{ roleRoute('silicie.infovi.pdf', ['campaign' => $campaign]) }}"
             target="_blank"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-600 text-sm font-medium hover:bg-zinc-50 transition-colors shadow-sm"
             title="Exportar cuadros INFOVI en PDF"

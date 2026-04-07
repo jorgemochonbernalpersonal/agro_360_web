@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Autorización Comercial"
     :description="'Modifica la autorización ' . ($commercialAuthorization->authorization_code ?? $commercialAuthorization->authorization_type)"
-    :back-url="route('viticulturist.commercial-authorizations.index')"
+    :back-url="roleRoute('viticulturist.commercial-authorizations.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos de la Autorización">
@@ -74,7 +74,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.commercial-authorizations.index')"
+            :cancel-url="roleRoute('viticulturist.commercial-authorizations.index')"
             submit-label="Actualizar Autorización"
         />
     </form>

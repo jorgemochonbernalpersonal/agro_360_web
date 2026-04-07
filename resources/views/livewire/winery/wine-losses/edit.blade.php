@@ -97,7 +97,7 @@
 
         <x-agro.form-actions
             submit-label="Guardar cambios"
-            cancel-href="{{ route('winery.wine-losses.index') }}"
+            cancel-href="{{ roleRoute('wine-losses.index') }}"
             wire:submit="save"
         />
     </x-agro.form-card>

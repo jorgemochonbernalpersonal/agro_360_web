@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nuevo Asesor Técnico"
     description="Registra un asesor técnico de la explotación"
-    :back-url="route('viticulturist.advisory-memberships.index')"
+    :back-url="roleRoute('viticulturist.advisory-memberships.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Asesor">
@@ -62,7 +62,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.advisory-memberships.index')"
+            :cancel-url="roleRoute('viticulturist.advisory-memberships.index')"
             submit-label="Registrar Asesor"
         />
     </form>

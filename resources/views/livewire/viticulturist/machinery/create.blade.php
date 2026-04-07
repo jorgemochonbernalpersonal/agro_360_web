@@ -1,7 +1,7 @@
 ﻿<x-agro.form-card
     title="Nueva Maquinaria"
     description="Registra una nueva maquinaria o equipo agricola"
-    :back-url="route('viticulturist.machinery.index')"
+    :back-url="roleRoute('viticulturist.machinery.index')"
 >
     <form wire:submit="save" class="space-y-8" enctype="multipart/form-data" data-cy="machinery-create-form">
         <x-agro.form-section title="Informacion Basica">
@@ -269,7 +269,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.machinery.index')"
+            :cancel-url="roleRoute('viticulturist.machinery.index')"
             submit-label="Crear Maquinaria"
         />
     </form>

@@ -3,7 +3,7 @@
     description="Modifica la información de la cosecha (vendimia)"
     icon="archive-box-arrow-down"
     icon-color="from-agro-500 to-agro-700"
-    :back-url="route('viticulturist.digital-notebook.harvest.show', $harvest->id)"
+    :back-url="roleRoute('viticulturist.digital-notebook.harvest.show', $harvest->id)"
 >
     @if($harvest->wasEdited())
         <flux:callout variant="warning" icon="pencil-square" class="mb-6">
@@ -140,7 +140,7 @@
                     @if($availableContainers->isEmpty())
                         <flux:description class="text-amber-600">
                             No hay contenedores disponibles.
-                            <a href="{{ route('viticulturist.containers.create') }}" class="text-blue-600 hover:underline">Crea uno primero</a>
+                            <a href="{{ roleRoute('viticulturist.containers.create') }}" class="text-blue-600 hover:underline">Crea uno primero</a>
                         </flux:description>
                     @else
                         <flux:description>Solo se muestran contenedores disponibles (sin asignar a otra cosecha) y el contenedor actual</flux:description>
@@ -201,7 +201,7 @@
                                 <span class="text-blue-700 font-medium">Recibido por bodega esta añada:</span>
                                 <span class="text-blue-800 font-bold ml-1">{{ number_format($wineryReceivedKg, 0) }} kg</span>
                             </div>
-                            <a href="{{ route('viticulturist.harvests.index') }}" wire:navigate class="ml-auto text-xs text-blue-600 hover:underline">Ver detalle →</a>
+                            <a href="{{ roleRoute('viticulturist.harvests.index') }}" wire:navigate class="ml-auto text-xs text-blue-600 hover:underline">Ver detalle →</a>
                         </div>
                     @endif
 
@@ -635,7 +635,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions 
-            :cancel-url="route('viticulturist.digital-notebook.harvest.show', $harvest->id)"
+            :cancel-url="roleRoute('viticulturist.digital-notebook.harvest.show', $harvest->id)"
             submit-label="Actualizar Cosecha"
         />
     </form>

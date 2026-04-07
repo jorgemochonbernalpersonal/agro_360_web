@@ -4,7 +4,7 @@
         :description="$container->serial_number ? 'SN: ' . $container->serial_number : 'Contenedor de bodega'"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.containers.edit', $container->id) }}" variant="primary" icon="pencil-square">
+            <flux:button href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}" variant="primary" icon="pencil-square">
                 Editar
             </flux:button>
         </x-slot:actions>
@@ -79,7 +79,7 @@
                                 </div>
                                 <x-agro.action-button
                                     variant="view"
-                                    href="{{ route('viticulturist.digital-notebook.harvest.show', $harvest->id) }}"
+                                    href="{{ roleRoute('viticulturist.digital-notebook.harvest.show', $harvest->id) }}"
                                 />
                             </div>
                         @endforeach
@@ -133,7 +133,7 @@
                 <h3 class="font-bold text-zinc-900 mb-4">Acciones Rapidas</h3>
                 <div class="space-y-2">
                     <flux:button
-                        href="{{ route('viticulturist.digital-notebook.harvest.create', ['container_id' => $container->id]) }}"
+                        href="{{ roleRoute('viticulturist.digital-notebook.harvest.create', ['container_id' => $container->id]) }}"
                         variant="primary"
                         icon="plus"
                         class="w-full justify-center"
@@ -141,7 +141,7 @@
                         Nueva Vendimia
                     </flux:button>
                     <flux:button
-                        href="{{ route('viticulturist.containers.edit', $container->id) }}"
+                        href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}"
                         variant="ghost"
                         icon="pencil-square"
                         class="w-full justify-center"

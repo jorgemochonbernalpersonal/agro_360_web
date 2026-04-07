@@ -1,7 +1,7 @@
 ﻿<x-agro.form-card
     title="Nueva Cuadrilla"
     description="Crea un nuevo equipo de trabajo"
-    :back-url="route('viticulturist.personal.index')"
+    :back-url="roleRoute('viticulturist.personal.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="crew-form">
         <x-agro.form-section title="Informacion Basica">
@@ -57,7 +57,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.personal.index')"
+            :cancel-url="roleRoute('viticulturist.personal.index')"
             submit-label="Crear Cuadrilla"
         />
     </form>

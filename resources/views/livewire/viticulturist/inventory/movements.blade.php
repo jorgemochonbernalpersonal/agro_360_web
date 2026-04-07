@@ -5,7 +5,7 @@
         :description="'Movimientos de stock para: ' . $stock->product->name"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -77,7 +77,7 @@
                 <x-agro.table-cell class="text-zinc-900 font-medium text-sm">{{ number_format($movement->quantity_after, 3) }}</x-agro.table-cell>
                 <x-agro.table-cell class="text-sm">
                     @if($movement->treatment)
-                        <a href="{{ route('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline">Ver tratamiento</a>
+                        <a href="{{ roleRoute('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline">Ver tratamiento</a>
                         @if($movement->treatment->activity->plot)
                             <div class="text-xs text-zinc-400 mt-0.5">{{ $movement->treatment->activity->plot->name }}</div>
                         @endif

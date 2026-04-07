@@ -58,7 +58,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess("Autorización «{$this->authorization_number}» creada correctamente.");
-        $this->redirect(route('winery.bottling-authorizations.index'), navigate: true);
+        $this->redirect(roleRoute('bottling-authorizations.index'), navigate: true);
     }
 
     public function render()

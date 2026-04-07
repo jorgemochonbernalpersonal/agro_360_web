@@ -2,7 +2,7 @@
 <x-agro.form-card
     title="Editar Póliza de Seguro"
     description="Modifica los datos de la póliza de seguro."
-    :back-url="route('viticulturist.agri-insurance.index')"
+    :back-url="roleRoute('viticulturist.agri-insurance.index')"
 >
     <form wire:submit.prevent="update" class="space-y-8">
         <x-agro.form-section title="Datos de la Póliza">
@@ -99,7 +99,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :cancel-url="route('viticulturist.agri-insurance.index')" submit-label="Actualizar Póliza" />
+        <x-agro.form-actions :cancel-url="roleRoute('viticulturist.agri-insurance.index')" submit-label="Actualizar Póliza" />
     </form>
 </x-agro.form-card>
 </div>

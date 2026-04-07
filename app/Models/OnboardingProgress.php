@@ -70,6 +70,21 @@ class OnboardingProgress extends Model
         self::STEP_SUPERVISOR_ADD_VITICULTURIST, // 3. Añadir primer viticultor
     ];
 
+    // Producer onboarding steps (campo + bodega combinados)
+    public const STEP_PRODUCER_FISCAL    = 'winery_fiscal_data';       // Reutiliza winery step
+    public const STEP_PRODUCER_PLOT      = 'create_plot';              // Reutiliza viticulturist step
+    public const STEP_PRODUCER_CONTAINER = 'winery_add_containers';    // Reutiliza winery step
+    public const STEP_PRODUCER_ACTIVITY  = 'register_activity';        // Reutiliza viticulturist step
+    public const STEP_PRODUCER_RECEPTION = 'winery_first_harvest';     // Reutiliza winery step
+
+    public const PRODUCER_STEPS = [
+        self::STEP_PRODUCER_FISCAL,     // 1. Datos fiscales
+        self::STEP_PRODUCER_PLOT,       // 2. Primera parcela (campo)
+        self::STEP_PRODUCER_CONTAINER,  // 3. Primer contenedor (bodega)
+        self::STEP_PRODUCER_ACTIVITY,   // 4. Primera actividad de campo
+        self::STEP_PRODUCER_RECEPTION,  // 5. Primera recepción (bodega)
+    ];
+
     /**
      * Usuario propietario del progreso
      */

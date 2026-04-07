@@ -2,7 +2,7 @@
 <x-agro.form-card
     title="Editar Servicio Subcontratado"
     description="Modifica los datos del servicio subcontratado."
-    :back-url="route('viticulturist.subcontracting.index')"
+    :back-url="roleRoute('viticulturist.subcontracting.index')"
 >
     <form wire:submit.prevent="update" class="space-y-8">
         <x-agro.form-section title="Datos del Servicio">
@@ -101,7 +101,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :cancel-url="route('viticulturist.subcontracting.index')" submit-label="Actualizar Servicio" />
+        <x-agro.form-actions :cancel-url="roleRoute('viticulturist.subcontracting.index')" submit-label="Actualizar Servicio" />
     </form>
 </x-agro.form-card>
 </div>

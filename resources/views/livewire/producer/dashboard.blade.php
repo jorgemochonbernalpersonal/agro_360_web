@@ -1,5 +1,8 @@
 <div class="space-y-6 animate-fade-in">
 
+    {{-- Onboarding --}}
+    @livewire('producer.onboarding-checklist')
+
     {{-- Header --}}
     <div class="flex items-start justify-between">
         <div>

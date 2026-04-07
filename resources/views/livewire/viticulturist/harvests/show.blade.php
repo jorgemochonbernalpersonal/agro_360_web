@@ -3,7 +3,7 @@
     <x-agro.page-header
         :title="($planting->grapeVariety?->name ?? $planting->name) . ' · ' . $vintageYear"
         :description="'Parcela: ' . ($planting->plot?->name ?? '—') . ' · ' . number_format($planting->area_planted, 2) . ' ha'"
-        :back="route('viticulturist.harvests.index')"
+        :back="roleRoute('viticulturist.harvests.index')"
     />
 
     {{-- Resumen global --}}
@@ -176,7 +176,7 @@
                     <p class="text-xs text-zinc-400">Lo que tú has registrado como entregado</p>
                 </div>
                 <flux:button
-                    href="{{ route('viticulturist.harvests.delivery.create', ['planting' => $planting->id, 'vintage' => $vintageYear]) }}"
+                    href="{{ roleRoute('viticulturist.harvests.delivery.create', ['planting' => $planting->id, 'vintage' => $vintageYear]) }}"
                     variant="ghost" size="sm" icon="plus" class="ml-auto">
                     Nueva entrega
                 </flux:button>
@@ -224,13 +224,13 @@
                             @else
                                 <flux:badge color="{{ $badgeConfig['color'] }}" size="sm">{{ $badgeConfig['label'] }}</flux:badge>
                             @endif
-                            <a href="{{ route('viticulturist.harvests.delivery.albaran', $delivery) }}"
+                            <a href="{{ roleRoute('viticulturist.harvests.delivery.albaran', $delivery) }}"
                                target="_blank"
                                class="p-1.5 rounded-lg text-zinc-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
                                title="Descargar albarán PDF">
                                 <flux:icon icon="document-arrow-down" class="size-4" />
                             </a>
-                            <a href="{{ route('viticulturist.harvests.delivery.edit', $delivery) }}"
+                            <a href="{{ roleRoute('viticulturist.harvests.delivery.edit', $delivery) }}"
                                class="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                                title="Editar">
                                 <flux:icon icon="pencil-square" class="size-4" />
@@ -312,7 +312,7 @@
             <div class="py-6 text-center">
                 <p class="text-sm text-zinc-400 mb-3">Aún no has declarado ninguna entrega para esta plantación.</p>
                 <flux:button
-                    href="{{ route('viticulturist.harvests.delivery.create', ['planting' => $planting->id, 'vintage' => $vintageYear]) }}"
+                    href="{{ roleRoute('viticulturist.harvests.delivery.create', ['planting' => $planting->id, 'vintage' => $vintageYear]) }}"
                     variant="outline" icon="plus" size="sm">
                     Registrar primera entrega
                 </flux:button>

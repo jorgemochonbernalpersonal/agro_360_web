@@ -7,7 +7,7 @@
         icon="wrench-screwdriver"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.field-equipment.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.field-equipment.create') }}" variant="primary" icon="plus">
                 Añadir Equipo
             </flux:button>
         </x-slot:actions>
@@ -53,7 +53,7 @@
             description="Registra los equipos de aplicación que utilizas en tu explotación."
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.field-equipment.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.field-equipment.create') }}" variant="primary" icon="plus">
                     Añadir Equipo
                 </flux:button>
             </x-slot:action>
@@ -120,7 +120,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.field-equipment.edit', $item) }}"
+                            <a href="{{ roleRoute('viticulturist.field-equipment.edit', $item) }}"
                                title="Editar"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="pencil-square" class="size-4" />

@@ -93,11 +93,11 @@
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-            <flux:button href="{{ route('viticulturist.invoices.harvest.index') }}" variant="outline" icon="archive-box">
+            <flux:button href="{{ roleRoute('viticulturist.invoices.harvest.index') }}" variant="outline" icon="archive-box">
                 Por Cosecha
             </flux:button>
 
-            <flux:button href="{{ route('viticulturist.invoices.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.invoices.create') }}" variant="primary" icon="plus">
                 Nueva Factura
             </flux:button>
 
@@ -271,14 +271,14 @@
                         <div class="flex items-center justify-end gap-1 flex-wrap">
 
                                 {{-- Ver --}}
-                                <a href="{{ route('viticulturist.invoices.show', $invoice->id) }}"
+                                <a href="{{ roleRoute('viticulturist.invoices.show', $invoice->id) }}"
                                    class="{{ $btnBase }}" title="Ver factura">
                                     <flux:icon icon="eye" class="size-4" />
                                 </a>
 
                                 {{-- Editar (no canceladas ni entregadas) --}}
                                 @if($invoice->isEditable())
-                                    <a href="{{ route('viticulturist.invoices.edit', $invoice->id) }}"
+                                    <a href="{{ roleRoute('viticulturist.invoices.edit', $invoice->id) }}"
                                        class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
@@ -286,7 +286,7 @@
 
                                 {{-- PDF Albarán --}}
                                 @if($invoice->delivery_note_code)
-                                    <a href="{{ route('viticulturist.invoices.delivery-note-pdf', $invoice->id) }}"
+                                    <a href="{{ roleRoute('viticulturist.invoices.delivery-note-pdf', $invoice->id) }}"
                                        class="{{ $btnBase }}" title="Descargar albarán PDF" target="_blank">
                                         <flux:icon icon="document-arrow-down" class="size-4" />
                                     </a>
@@ -294,7 +294,7 @@
 
                                 {{-- PDF Factura --}}
                                 @if($invoice->invoice_number)
-                                    <a href="{{ route('viticulturist.invoices.pdf', $invoice->id) }}"
+                                    <a href="{{ roleRoute('viticulturist.invoices.pdf', $invoice->id) }}"
                                        class="{{ $btnBase }}" title="Descargar factura PDF" target="_blank">
                                         <flux:icon icon="document-text" class="size-4" />
                                     </a>
@@ -378,7 +378,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.invoices.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.invoices.create') }}" variant="primary" icon="plus">
                         Nueva Factura
                     </flux:button>
                 </x-slot:action>

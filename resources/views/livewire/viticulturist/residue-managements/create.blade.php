@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nueva Gestión de Residuos"
     description="Registra la gestión de podas, orujos y subproductos vitícolas"
-    :back-url="route('viticulturist.residue-managements.index')"
+    :back-url="roleRoute('viticulturist.residue-managements.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -109,7 +109,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.residue-managements.index')"
+            :cancel-url="roleRoute('viticulturist.residue-managements.index')"
             submit-label="Registrar Gestión"
         />
     </form>

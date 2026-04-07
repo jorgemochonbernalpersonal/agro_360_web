@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nueva Exportación CUE"
     description="Crea un borrador de exportación al sistema CUE del MAPA"
-    :back-url="route('viticulturist.cue-exports.index')"
+    :back-url="roleRoute('viticulturist.cue-exports.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos de la Exportación">
@@ -51,7 +51,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.cue-exports.index')"
+            :cancel-url="roleRoute('viticulturist.cue-exports.index')"
             submit-label="Crear Exportación"
         />
     </form>

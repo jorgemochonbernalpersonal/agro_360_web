@@ -65,7 +65,7 @@
                 icon="document-text"
                 color="purple"
             />
-            <a href="{{ route('viticulturist.clients.index') }}" wire:navigate>
+            <a href="{{ roleRoute('viticulturist.clients.index') }}" wire:navigate>
                 <x-agro.card class="h-full hover:border-agro-300 hover:shadow-sm transition-all cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
@@ -114,7 +114,7 @@
             <x-slot:header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-bold text-zinc-900">Top 10 Clientes</h3>
-                    <a href="{{ route('viticulturist.clients.index') }}" wire:navigate class="text-sm font-medium text-agro-700 hover:text-agro-900">
+                    <a href="{{ roleRoute('viticulturist.clients.index') }}" wire:navigate class="text-sm font-medium text-agro-700 hover:text-agro-900">
                         Ver todos →
                     </a>
                 </div>

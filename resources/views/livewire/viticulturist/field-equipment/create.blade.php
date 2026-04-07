@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nuevo Equipo ITB/ITEA"
     description="Registra un equipo de aplicación de tratamientos"
-    :back-url="route('viticulturist.field-equipment.index')"
+    :back-url="roleRoute('viticulturist.field-equipment.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Equipo">
@@ -69,7 +69,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.field-equipment.index')"
+            :cancel-url="roleRoute('viticulturist.field-equipment.index')"
             submit-label="Registrar Equipo"
         />
     </form>

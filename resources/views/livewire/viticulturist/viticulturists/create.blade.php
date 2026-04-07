@@ -18,7 +18,7 @@
         description="Crea un nuevo viticultor para gestionar en tus cuadrillas y parcelas"
     >
         <x-slot:actions>
-            <a href="{{ route('viticulturist.personal.index', ['viewMode' => 'personal']) }}">
+            <a href="{{ roleRoute('viticulturist.personal.index', ['viewMode' => 'personal']) }}">
                 <flux:button variant="outline" icon="arrow-left">
                     Volver
                 </flux:button>
@@ -78,7 +78,7 @@
             </flux:callout>
 
             <x-agro.form-actions
-                :cancel-url="route('viticulturist.personal.index', ['viewMode' => 'personal'])"
+                :cancel-url="roleRoute('viticulturist.personal.index', ['viewMode' => 'personal'])"
                 submit-label="Crear Viticultor"
             />
         </form>

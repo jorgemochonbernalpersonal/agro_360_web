@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Tratamiento Post-Vendimia"
     description="Modifica los datos del tratamiento post-vendimia"
-    :back-url="route('viticulturist.digital-notebook.post-harvest.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.post-harvest.index')"
 >
     <form wire:submit="update" class="space-y-8">
         <x-agro.form-section title="Información Básica">
@@ -179,7 +179,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.post-harvest.index')"
+            :cancel-url="roleRoute('viticulturist.digital-notebook.post-harvest.index')"
             submit-label="Actualizar Tratamiento"
             submit-method="update"
         />

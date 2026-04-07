@@ -53,7 +53,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess("Insumo «{$this->name}» creado correctamente.");
-        $this->redirect(route('winery.winery-supplies.index'), navigate: true);
+        $this->redirect(roleRoute('winery-supplies.index'), navigate: true);
     }
 
     public function render()

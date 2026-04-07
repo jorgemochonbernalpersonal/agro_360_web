@@ -281,14 +281,32 @@ if (!function_exists('roleRoute')) {
     {
         $user = auth()->user();
 
+        // Strip existing role prefix if present (allows roleRoute('winery.X') and roleRoute('X'))
+        $cleanSuffix = preg_replace('/^(winery|viticulturist|producer)\./', '', $suffix);
+
         if ($user?->isProducer()) {
-            return route("producer.{$suffix}", $parameters);
+            $producerRoute = "producer.{$cleanSuffix}";
+            if (\Illuminate\Support\Facades\Route::has($producerRoute)) {
+                return route($producerRoute, $parameters);
+            }
+            // Fallback: try winery, then viticulturist, then original
         }
 
         if ($user?->hasWineryAccess()) {
-            return route("winery.{$suffix}", $parameters);
+            $wineryRoute = "winery.{$cleanSuffix}";
+            if (\Illuminate\Support\Facades\Route::has($wineryRoute)) {
+                return route($wineryRoute, $parameters);
+            }
         }
 
+        if ($user?->hasViticulturistAccess()) {
+            $vitRoute = "viticulturist.{$cleanSuffix}";
+            if (\Illuminate\Support\Facades\Route::has($vitRoute)) {
+                return route($vitRoute, $parameters);
+            }
+        }
+
+        // Last resort: try the suffix as-is (shared routes like plots.*, sigpac.*)
         return route($suffix, $parameters);
     }
 }

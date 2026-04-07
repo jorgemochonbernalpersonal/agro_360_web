@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Riego"
     description="Registra un nuevo riego en el cuaderno digital"
-    :back-url="route('viticulturist.digital-notebook.irrigation.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.irrigation.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="irrigation-form">
         <x-agro.form-section title="Información Básica">
@@ -326,7 +326,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.irrigation.index')"
+            :cancel-url="roleRoute('viticulturist.digital-notebook.irrigation.index')"
             submit-label="Registrar Riego"
         />
     </form>

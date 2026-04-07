@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Entorno de Parcela"
     :description="'Modifica la ficha de entorno de ' . ($plotEnvironment->plot->name ?? 'parcela')"
-    :back-url="route('viticulturist.plot-environments.index')"
+    :back-url="roleRoute('viticulturist.plot-environments.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -102,7 +102,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.plot-environments.index')"
+            :cancel-url="roleRoute('viticulturist.plot-environments.index')"
             submit-label="Actualizar Entorno"
         />
     </form>

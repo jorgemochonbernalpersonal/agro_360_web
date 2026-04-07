@@ -4,7 +4,7 @@
         description="Crea una nueva factura de venta"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.invoices.index') }}" variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.invoices.index') }}" variant="outline" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -436,7 +436,7 @@
                 </div>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('viticulturist.invoices.index')" submit-label="Crear Albarán" />
+            <x-agro.form-actions :cancel-url="roleRoute('viticulturist.invoices.index')" submit-label="Crear Albarán" />
         </form>
     </x-agro.card>
 </div>

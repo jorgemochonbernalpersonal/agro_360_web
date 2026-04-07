@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nueva Concesión de Riego"
     description="Registra una concesión o derecho de agua para riego en tu explotación"
-    :back-url="route('viticulturist.water-concessions.index')"
+    :back-url="roleRoute('viticulturist.water-concessions.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -97,7 +97,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.water-concessions.index')"
+            :cancel-url="roleRoute('viticulturist.water-concessions.index')"
             submit-label="Registrar Concesión"
         />
     </form>

@@ -5,7 +5,7 @@
         icon="arrow-up-tray"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.cue-exports.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.cue-exports.create') }}" variant="primary" icon="plus">
                 Nueva Exportación
             </flux:button>
         </x-slot:actions>
@@ -23,7 +23,7 @@
             description="Antes de crear una exportación CUE, debes registrar al menos una explotación agraria en el módulo Explotación SIEX/REA."
         >
             <x-slot:action>
-                <flux:button variant="primary" :href="route('viticulturist.exploitations.index')" wire:navigate>
+                <flux:button variant="primary" :href="roleRoute('viticulturist.exploitations.index')" wire:navigate>
                     Ir a Explotaciones
                 </flux:button>
             </x-slot:action>
@@ -35,7 +35,7 @@
             description="Crea tu primera exportación CUE para registrar el historial de envíos al MAPA."
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.cue-exports.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.cue-exports.create') }}" variant="primary" icon="plus">
                     Nueva Exportación
                 </flux:button>
             </x-slot:action>
@@ -94,7 +94,7 @@
                                 <td class="py-3 px-4 text-right">
                                     <div class="flex items-center justify-end gap-1">
                                         @if($export->status === 'draft')
-                                            <a href="{{ route('viticulturist.cue-exports.edit', $export) }}"
+                                            <a href="{{ roleRoute('viticulturist.cue-exports.edit', $export) }}"
                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                                                title="Editar">
                                                 <flux:icon icon="pencil-square" class="size-4" />

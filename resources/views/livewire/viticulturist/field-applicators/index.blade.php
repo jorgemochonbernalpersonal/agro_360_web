@@ -7,7 +7,7 @@
         icon="user-group"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.field-applicators.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.field-applicators.create') }}" variant="primary" icon="plus">
                 Añadir Aplicador
             </flux:button>
         </x-slot:actions>
@@ -53,7 +53,7 @@
             description="Añade los aplicadores que realizan tratamientos fitosanitarios en tu explotación."
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.field-applicators.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.field-applicators.create') }}" variant="primary" icon="plus">
                     Añadir Aplicador
                 </flux:button>
             </x-slot:action>
@@ -116,7 +116,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.field-applicators.edit', $applicator) }}"
+                            <a href="{{ roleRoute('viticulturist.field-applicators.edit', $applicator) }}"
                                title="Editar"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="pencil-square" class="size-4" />

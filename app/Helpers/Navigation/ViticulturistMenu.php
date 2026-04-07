@@ -24,6 +24,7 @@ class ViticulturistMenu
             ['icon' => 'check-badge',             'label' => 'Firma y Cierre',        'route' => 'viticulturist.campaign-sign.index',        'active' => request()->routeIs('viticulturist.campaign-sign.*')],
             ['divider' => true],
             ['icon' => 'chart-bar-square',        'label' => 'Rendimientos Estimados',   'route' => 'viticulturist.digital-notebook.estimated-yields.index', 'active' => request()->routeIs('viticulturist.digital-notebook.estimated-yields.*')],
+            ['icon' => 'megaphone',                'label' => 'Avisos de Bodegas',        'route' => 'viticulturist.announcements',          'active' => request()->routeIs('viticulturist.announcements')],
             ['icon' => 'chat-bubble-left-right',  'label' => 'Comunicación con Bodega',  'route' => 'viticulturist.bodega-messages.index',  'active' => request()->routeIs('viticulturist.bodega-messages*')],
             ['icon' => 'lock-closed',             'label' => 'Acceso Bodegas al Cuaderno','route' => 'viticulturist.winery-access.index',   'active' => request()->routeIs('viticulturist.winery-access*'),
              'badge' => Cache::remember("nav_badge_notebook_access_{$user->id}", 120, fn() =>
@@ -38,10 +39,12 @@ class ViticulturistMenu
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'plots.index',                           'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',                 'active' => request()->routeIs('plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                          'active' => request()->routeIs('sigpac.*')],
-            ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',              'active' => request()->routeIs('remote-sensing.*')],
             ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial', 'route' => 'plots.territory',                       'active' => request()->routeIs('plots.territory')],
+            ['divider' => true],
+            ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',              'active' => request()->routeIs('remote-sensing.*')],
             ['icon' => 'cloud',               'label' => 'Meteorología',        'route' => 'viticulturist.meteorology.index',       'active' => request()->routeIs('viticulturist.meteorology*')],
             ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas', 'route' => 'viticulturist.plot-environments.index', 'active' => request()->routeIs('viticulturist.plot-environments.*')],
+            ['divider' => true],
             ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'viticulturist.field-activities.index',  'active' => request()->routeIs('viticulturist.field-activities*')],
         ];
 

@@ -103,7 +103,7 @@ class Edit extends Component
         app(WineContainerStockService::class)->updateTransfer($this->transfer, $this->oldData);
 
         $this->toastSuccess('Trasvase actualizado.');
-        $this->redirect(route('winery.wine-transfers.index'), navigate: true);
+        $this->redirect(roleRoute('wine-transfers.index'), navigate: true);
     }
 
     public function render()

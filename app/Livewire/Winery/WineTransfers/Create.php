@@ -75,7 +75,7 @@ class Create extends Component
         app(WineContainerStockService::class)->recordTransfer($transfer);
 
         $this->toastSuccess('Trasvase registrado correctamente.');
-        $this->redirect(route('winery.wine-transfers.index'), navigate: true);
+        $this->redirect(roleRoute('wine-transfers.index'), navigate: true);
     }
 
     public function render()

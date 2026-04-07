@@ -6,7 +6,7 @@
         description="Registro de mermas, filtraciones y pérdidas de vino elaborado"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('winery.wine-losses.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('wine-losses.create') }}" variant="primary" icon="plus">
                 Nueva Merma
             </flux:button>
         </x-slot:actions>
@@ -183,7 +183,7 @@
 
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ route('winery.wine-losses.edit', $loss) }}"
+                                <a href="{{ roleRoute('wine-losses.edit', $loss) }}"
                                    title="Editar merma"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="pencil-square" class="size-4" />
@@ -219,7 +219,7 @@
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button href="{{ route('winery.wine-losses.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('wine-losses.create') }}" variant="primary" icon="plus">
                             Nueva Merma
                         </flux:button>
                     </x-slot:action>

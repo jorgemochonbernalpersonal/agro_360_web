@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Análisis de Residuos"
     :description="'Modifica el análisis del ' . $residueAnalysis->analysis_date->format('d/m/Y')"
-    :back-url="route('viticulturist.residue-analyses.index')"
+    :back-url="roleRoute('viticulturist.residue-analyses.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -81,7 +81,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.residue-analyses.index')"
+            :cancel-url="roleRoute('viticulturist.residue-analyses.index')"
             submit-label="Actualizar Análisis"
         />
     </form>

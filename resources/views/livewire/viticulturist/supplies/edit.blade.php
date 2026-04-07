@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Edit Supply"
     description="Update the details of this supply"
-    :back-url="route('viticulturist.almacen.index', ['tab' => 'insumos'])"
+    :back-url="roleRoute('viticulturist.almacen.index', ['tab' => 'insumos'])"
 >
     <form wire:submit="save" class="space-y-6">
 
@@ -90,7 +90,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.almacen.index', ['tab' => 'insumos'])"
+            :cancel-url="roleRoute('viticulturist.almacen.index', ['tab' => 'insumos'])"
             submit-label="Save Changes"
         />
     </form>

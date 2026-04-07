@@ -58,7 +58,7 @@
                                 </flux:button>
                                 @if($wine->trace_token)
                                     <flux:button size="sm" variant="ghost" icon="arrow-down-tray"
-                                        href="{{ route('winery.wines.traceability-pdf', $wine) }}"
+                                        href="{{ roleRoute('wines.traceability-pdf', $wine) }}"
                                         target="_blank">
                                         PDF
                                     </flux:button>

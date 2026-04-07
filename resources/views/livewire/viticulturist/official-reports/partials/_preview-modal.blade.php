@@ -24,7 +24,7 @@
                         <span class="font-semibold">Código:</span> <code class="bg-white px-2 py-1 rounded">{{ $reportToPreview->verification_code }}</code>
                     </div>
                     <a 
-                        href="{{ route('viticulturist.official-reports.download', $reportToPreview) }}"
+                        href="{{ roleRoute('viticulturist.official-reports.download', $reportToPreview) }}"
                         class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
                     >
                         ⬇️ Descargar PDF
@@ -33,7 +33,7 @@
 
                 <div class="h-[calc(90vh-180px)] rounded-lg overflow-hidden border-2 border-zinc-200">
                     <iframe 
-                        src="{{ route('viticulturist.official-reports.preview', $reportToPreview) }}" 
+                        src="{{ roleRoute('viticulturist.official-reports.preview', $reportToPreview) }}" 
                         class="w-full h-full"
                         frameborder="0"
                     ></iframe>

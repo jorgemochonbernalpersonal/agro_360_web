@@ -3,7 +3,7 @@
     description="Registra una estimaci�n de rendimiento para una plantaci�n y campa�a"
     icon="chart-bar"
     icon-color="from-agro-500 to-agro-700"
-    :back-url="route('viticulturist.digital-notebook.estimated-yields.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.estimated-yields.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="create-estimated-yield-form">
         
@@ -230,7 +230,7 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Guardar Estimaci�n" />
+        <x-agro.form-actions :back-url="roleRoute('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Guardar Estimaci�n" />
     </form>
 </x-agro.form-card>
 

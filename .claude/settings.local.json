@@ -239,7 +239,8 @@
       "Bash(find C:UsersjorgeDesktopagro365 -type f \\\\\\(-name *.kt -o -name *.tsx -o -name *.jsx -o -name *Screen* \\\\\\))",
       "Bash(git status:*)",
       "Bash(xargs -I {} basename {} .kt)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(xargs -I {} php -l {})"
     ]
   }
 }

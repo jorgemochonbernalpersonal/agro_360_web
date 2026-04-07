@@ -107,7 +107,7 @@
 
             {{-- Nueva Maquinaria --}}
             @can('create', \App\Models\Machinery::class)
-                <flux:button href="{{ route('viticulturist.machinery.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.machinery.create') }}" variant="primary" icon="plus">
                     Nueva
                 </flux:button>
             @endcan
@@ -217,12 +217,12 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
                                 @can('view', $item)
-                                    <a href="{{ route('viticulturist.machinery.show', $item) }}" class="{{ $btnBase }}" title="Ver maquinaria">
+                                    <a href="{{ roleRoute('viticulturist.machinery.show', $item) }}" class="{{ $btnBase }}" title="Ver maquinaria">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
                                 @endcan
                                 @can('update', $item)
-                                    <a href="{{ route('viticulturist.machinery.edit', $item) }}" class="{{ $btnBase }}" title="Editar">
+                                    <a href="{{ roleRoute('viticulturist.machinery.edit', $item) }}" class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
                                 @endcan
@@ -282,7 +282,7 @@
             @else
                 @can('create', \App\Models\Machinery::class)
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.machinery.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('viticulturist.machinery.create') }}" variant="primary" icon="plus">
                             Nueva Maquinaria
                         </flux:button>
                     </x-slot:action>

@@ -104,7 +104,7 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
                             @if($entry->file_path)
-                                <a href="{{ route('viticulturist.campaign-documents.download', $entry) }}"
+                                <a href="{{ roleRoute('viticulturist.campaign-documents.download', $entry) }}"
                                    title="Descargar"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="arrow-down-tray" class="size-4" />

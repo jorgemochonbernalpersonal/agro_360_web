@@ -5,7 +5,7 @@
         icon="shield-check"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.commercial-authorizations.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.commercial-authorizations.create') }}" variant="primary" icon="plus">
                 Nueva Autorización
             </flux:button>
         </x-slot:actions>
@@ -90,7 +90,7 @@
                 description="Registra tus inscripciones en Denominaciones de Origen, certificaciones ecológicas y derechos de plantación."
             >
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.commercial-authorizations.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.commercial-authorizations.create') }}" variant="primary" icon="plus">
                         Nueva Autorización
                     </flux:button>
                 </x-slot:action>
@@ -128,7 +128,7 @@
                         </x-agro.table-cell>
                         <x-agro.table-cell align="right">
                             <div class="flex items-center justify-end gap-1">
-                                <a href="{{ route('viticulturist.commercial-authorizations.edit', $entry) }}"
+                                <a href="{{ roleRoute('viticulturist.commercial-authorizations.edit', $entry) }}"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                                    title="Editar">
                                     <flux:icon icon="pencil-square" class="size-4" />

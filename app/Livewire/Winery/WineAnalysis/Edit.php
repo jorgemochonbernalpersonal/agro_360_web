@@ -112,7 +112,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Análisis actualizado correctamente.');
-        $this->redirect(route('winery.wine-analysis.index'), navigate: true);
+        $this->redirect(roleRoute('wine-analysis.index'), navigate: true);
     }
 
     public function render()

@@ -1,7 +1,7 @@
 ﻿<x-agro.form-card
     title="Editar Maquinaria"
     :description="'Modifica los datos de ' . $machinery->name"
-    :back-url="route('viticulturist.machinery.index')"
+    :back-url="roleRoute('viticulturist.machinery.index')"
 >
     <form wire:submit="save" class="space-y-8" enctype="multipart/form-data" data-cy="machinery-edit-form">
         <x-agro.form-section title="Informacion Basica">
@@ -277,7 +277,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.machinery.index')"
+            :cancel-url="roleRoute('viticulturist.machinery.index')"
             submit-label="Actualizar Maquinaria"
         />
     </form>

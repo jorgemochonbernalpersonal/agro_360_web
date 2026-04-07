@@ -2,7 +2,7 @@
     <x-agro.form-card
         :title="'Editar Declaración PAC ' . $declaration->year"
         description="Solo se pueden editar declaraciones en borrador"
-        :back-url="route('viticulturist.pac.declarations.show', $declaration)"
+        :back-url="roleRoute('viticulturist.pac.declarations.show', $declaration)"
     >
         <form wire:submit.prevent="save('draft')" class="space-y-8">
 
@@ -107,7 +107,7 @@
             @endif
 
             <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" href="{{ route('viticulturist.pac.declarations.show', $declaration) }}" wire:navigate>
+                <flux:button variant="ghost" href="{{ roleRoute('viticulturist.pac.declarations.show', $declaration) }}" wire:navigate>
                     Cancelar
                 </flux:button>
                 <div class="flex gap-3">

@@ -14,11 +14,11 @@
                 @endcan
             @endif
             @can('update', $campaign)
-                <flux:button href="{{ route('viticulturist.campaign.edit', $campaign) }}" variant="outline" icon="pencil-square" data-cy="edit-campaign-button">
+                <flux:button href="{{ roleRoute('viticulturist.campaign.edit', $campaign) }}" variant="outline" icon="pencil-square" data-cy="edit-campaign-button">
                     Editar
                 </flux:button>
             @endcan
-            <flux:button href="{{ route('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left" data-cy="back-button">
+            <flux:button href="{{ roleRoute('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left" data-cy="back-button">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -89,7 +89,7 @@
             </x-slot:header>
             <div class="space-y-3">
                 <flux:button
-                    href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
+                    href="{{ roleRoute('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
                     variant="primary"
                     class="w-full justify-center"
                     data-cy="view-activities-button"
@@ -99,7 +99,7 @@
                 @can('create', \App\Models\AgriculturalActivity::class)
                     <div class="grid grid-cols-2 gap-2">
                         <flux:button
-                            href="{{ route('viticulturist.digital-notebook.treatment.create') }}"
+                            href="{{ roleRoute('viticulturist.digital-notebook.treatment.create') }}"
                             variant="danger"
                             size="sm"
                             data-cy="create-treatment-button"
@@ -107,7 +107,7 @@
                             + Tratamiento
                         </flux:button>
                         <flux:button
-                            href="{{ route('viticulturist.digital-notebook.fertilization.create') }}"
+                            href="{{ roleRoute('viticulturist.digital-notebook.fertilization.create') }}"
                             variant="primary"
                             size="sm"
                             data-cy="create-fertilization-button"
@@ -132,7 +132,7 @@
                         <span class="font-semibold text-zinc-900 text-sm">Últimas Actividades</span>
                     </div>
                     <flux:button
-                        href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
+                        href="{{ roleRoute('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
                         variant="ghost"
                         size="sm"
                         data-cy="view-all-activities-link"
@@ -173,7 +173,7 @@
                         </div>
                         @can('view', $activity)
                             <flux:button
-                                href="{{ route('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
+                                href="{{ roleRoute('viticulturist.digital-notebook', ['selectedCampaign' => $campaign->id]) }}"
                                 variant="ghost"
                                 size="xs"
                             >
@@ -194,7 +194,7 @@
             <x-slot name="action">
                 @can('create', \App\Models\AgriculturalActivity::class)
                     <flux:button
-                        href="{{ route('viticulturist.digital-notebook.treatment.create') }}"
+                        href="{{ roleRoute('viticulturist.digital-notebook.treatment.create') }}"
                         variant="primary"
                         icon="plus"
                         data-cy="register-first-activity-button"

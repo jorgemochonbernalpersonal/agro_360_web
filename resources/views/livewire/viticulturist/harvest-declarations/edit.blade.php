@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Declaración de Vendimia"
     description="Modifica los datos de la declaración oficial de cosecha"
-    :back-url="route('viticulturist.harvest-declarations.index')"
+    :back-url="roleRoute('viticulturist.harvest-declarations.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -139,7 +139,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.harvest-declarations.index')"
+            :cancel-url="roleRoute('viticulturist.harvest-declarations.index')"
             submit-label="Guardar Cambios"
         />
     </form>

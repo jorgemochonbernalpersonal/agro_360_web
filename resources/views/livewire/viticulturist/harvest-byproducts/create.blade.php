@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Subproducto de Vendimia"
     description="Documenta la salida de subproductos (orujos, raspones, lías) conforme al Reglamento UE 2018/273"
-    :back-url="route('viticulturist.harvest-byproducts.index')"
+    :back-url="roleRoute('viticulturist.harvest-byproducts.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -79,7 +79,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.harvest-byproducts.index')"
+            :cancel-url="roleRoute('viticulturist.harvest-byproducts.index')"
             submit-label="Registrar Subproducto"
         />
     </form>

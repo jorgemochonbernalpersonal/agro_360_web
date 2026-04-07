@@ -52,7 +52,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess("Proveedor «{$this->name}» creado correctamente.");
-        $this->redirect(route('winery.suppliers.index'), navigate: true);
+        $this->redirect(roleRoute('suppliers.index'), navigate: true);
     }
 
     public function render()

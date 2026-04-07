@@ -280,10 +280,12 @@ class Edit extends Component
                     $this->harvest->batch?->recalculateTotal();
                 }
 
-                // Feedback de calidad al viticultor (si se añadieron/actualizaron datos de calidad)
+                // Feedback de calidad al viticultor (si se añadieron/actualizaron datos y no es el propio usuario)
                 $qualityChanged = $this->harvest->wasChanged(['baume_degree', 'potential_alcohol', 'acidity_level', 'ph_level']);
                 $hasQuality = $this->baume_degree || $this->potential_alcohol || $this->acidity_level || $this->ph_level;
-                if ($qualityChanged && $hasQuality && $this->harvest->batch?->viticulturist_id) {
+                $isExternalViticulturist = $this->harvest->batch?->viticulturist_id
+                    && $this->harvest->batch->viticulturist_id !== Auth::id();
+                if ($qualityChanged && $hasQuality && $isExternalViticulturist) {
                     $viticulturist = \App\Models\User::find($this->harvest->batch->viticulturist_id);
                     if ($viticulturist?->can_login) {
                         $viticulturist->notify(new \App\Notifications\QualityFeedbackNotification(

@@ -1,7 +1,7 @@
 <div class="container mx-auto px-4 py-6">
     {{-- Breadcrumb --}}
     <nav class="mb-6">
-        <a href="{{ route('viticulturist.pest-management.index') }}" class="text-blue-600 hover:underline">← Volver al catálogo</a>
+        <a href="{{ roleRoute('viticulturist.pest-management.index') }}" class="text-blue-600 hover:underline">← Volver al catálogo</a>
     </nav>
 
     {{-- Header --}}
@@ -145,11 +145,11 @@
             <div class="bg-white rounded-lg shadow p-4">
                 <h3 class="font-semibold text-zinc-900 mb-3">⚡ Acciones Rápidas</h3>
                 <div class="space-y-2">
-                    <a href="{{ route('viticulturist.digital-notebook.observation.create', ['pest_id' => $pest->id]) }}" 
+                    <a href="{{ roleRoute('viticulturist.digital-notebook.observation.create', ['pest_id' => $pest->id]) }}" 
                        class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg transition-colors">
                         📝 Registrar Observación
                     </a>
-                    <a href="{{ route('viticulturist.digital-notebook.treatment.create', ['pest_id' => $pest->id]) }}" 
+                    <a href="{{ roleRoute('viticulturist.digital-notebook.treatment.create', ['pest_id' => $pest->id]) }}" 
                        class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded-lg transition-colors">
                         💉 Registrar Tratamiento
                     </a>

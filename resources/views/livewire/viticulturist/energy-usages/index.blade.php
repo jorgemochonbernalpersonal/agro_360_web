@@ -7,7 +7,7 @@
         icon="bolt"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
                 Registrar Consumo
             </flux:button>
         </x-slot:actions>
@@ -96,7 +96,7 @@
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.energy-usages.create') }}" variant="primary" icon="plus">
                         Registrar Consumo
                     </flux:button>
                 </x-slot:action>
@@ -156,7 +156,7 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
                             @if($currentTab === 'active')
-                                <a href="{{ route('viticulturist.energy-usages.edit', $entry) }}"
+                                <a href="{{ roleRoute('viticulturist.energy-usages.edit', $entry) }}"
                                    title="Editar"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="pencil-square" class="size-4" />

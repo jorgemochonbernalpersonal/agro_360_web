@@ -49,7 +49,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess("Documento «{$this->title}» creado correctamente.");
-        $this->redirect(route('winery.documents.index'), navigate: true);
+        $this->redirect(roleRoute('documents.index'), navigate: true);
     }
 
     public function render()

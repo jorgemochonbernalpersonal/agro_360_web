@@ -159,7 +159,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <a href="{{ route('viticulturist.harvests.export-pdf', ['vintage' => $vintageYear]) }}"
+        <a href="{{ roleRoute('viticulturist.harvests.export-pdf', ['vintage' => $vintageYear]) }}"
            target="_blank"
            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-700 hover:bg-zinc-50 shadow-sm transition-colors">
             <flux:icon icon="arrow-down-tray" class="size-4 text-zinc-500" />
@@ -168,7 +168,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('viticulturist.digital-notebook.harvest.create') }}" variant="primary" icon="plus">
             Añadir al cuaderno
         </flux:button>
 
@@ -381,13 +381,13 @@
                                     @if(!$delivery->disqualified)
                                         <span class="text-xs font-bold text-blue-700 shrink-0">{{ number_format($delivery->delivered_kg, 0) }} kg</span>
                                     @endif
-                                    <a href="{{ route('viticulturist.harvests.delivery.albaran', $delivery) }}"
+                                    <a href="{{ roleRoute('viticulturist.harvests.delivery.albaran', $delivery) }}"
                                        target="_blank"
                                        class="ml-1 p-1 rounded hover:bg-violet-100 text-zinc-400 hover:text-violet-600 transition-colors"
                                        title="Descargar albarán PDF">
                                         <flux:icon icon="document-arrow-down" class="size-3.5" />
                                     </a>
-                                    <a href="{{ route('viticulturist.harvests.delivery.edit', $delivery) }}"
+                                    <a href="{{ roleRoute('viticulturist.harvests.delivery.edit', $delivery) }}"
                                        class="p-1 rounded hover:bg-zinc-200 text-zinc-400 hover:text-zinc-700 transition-colors"
                                        title="Editar entrega">
                                         <flux:icon icon="pencil-square" class="size-3.5" />
@@ -397,7 +397,7 @@
 
                             {{-- Añadir otra entrega --}}
                             @if($row['planting_id'])
-                                <a href="{{ route('viticulturist.harvests.delivery.create', array_filter(['planting' => $row['planting_id'], 'vintage' => $vintageYear])) }}"
+                                <a href="{{ roleRoute('viticulturist.harvests.delivery.create', array_filter(['planting' => $row['planting_id'], 'vintage' => $vintageYear])) }}"
                                    class="flex items-center justify-center gap-1.5 w-full px-3 py-1.5 border border-dashed border-zinc-200 rounded-lg text-zinc-400 hover:border-agro-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
                                     <flux:icon icon="plus" class="size-3 shrink-0" />
                                     <span class="text-[10px] font-medium">Añadir otra entrega</span>
@@ -434,7 +434,7 @@
                             @endif
                         </div>
                     @else
-                        <a href="{{ route('viticulturist.harvests.delivery.create', array_filter(['planting' => $row['planting_id'], 'vintage' => $vintageYear])) }}"
+                        <a href="{{ roleRoute('viticulturist.harvests.delivery.create', array_filter(['planting' => $row['planting_id'], 'vintage' => $vintageYear])) }}"
                            class="flex items-center justify-center gap-2 w-full px-3 py-2.5 border border-dashed border-zinc-300 rounded-lg text-zinc-400 hover:border-agro-400 hover:text-agro-600 hover:bg-agro-50 transition-colors">
                             <flux:icon icon="truck" class="size-3.5 shrink-0" />
                             <span class="text-xs font-medium">Registrar entrega</span>
@@ -453,13 +453,13 @@
                             </span>
                             <div class="flex items-center gap-1">
                                 @if($row['planting_id'])
-                                    <a href="{{ route('viticulturist.harvests.show', ['planting' => $row['planting_id'], 'vintage' => $vintageYear]) }}"
+                                    <a href="{{ roleRoute('viticulturist.harvests.show', ['planting' => $row['planting_id'], 'vintage' => $vintageYear]) }}"
                                        wire:navigate
                                        class="{{ $btnBase }}" title="Ver detalle">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
                                 @endif
-                                <a href="{{ route('viticulturist.digital-notebook.harvest.create') }}" class="{{ $btnBase }}" title="Nuevo registro en el cuaderno">
+                                <a href="{{ roleRoute('viticulturist.digital-notebook.harvest.create') }}" class="{{ $btnBase }}" title="Nuevo registro en el cuaderno">
                                     <flux:icon icon="document-plus" class="size-4" />
                                 </a>
                             </div>
@@ -485,7 +485,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.digital-notebook.harvest.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.digital-notebook.harvest.create') }}" variant="primary" icon="plus">
                         Añadir al cuaderno
                     </flux:button>
                 </x-slot:action>

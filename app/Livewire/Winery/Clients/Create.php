@@ -199,7 +199,7 @@ class Create extends Component
             });
 
             $this->toastSuccess('Cliente creado correctamente.');
-            return $this->redirect(route('winery.clients.index'), navigate: true);
+            return $this->redirect(roleRoute('clients.index'), navigate: true);
 
         } catch (\Exception $e) {
             $this->toastError('Error al crear el cliente: ' . $e->getMessage());

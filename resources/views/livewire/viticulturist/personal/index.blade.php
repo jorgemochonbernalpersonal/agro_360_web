@@ -8,7 +8,7 @@
     >
         <x-slot:actions>
             @can('create', \App\Models\Crew::class)
-                <flux:button href="{{ route('viticulturist.personal.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.personal.create') }}" variant="primary" icon="plus">
                     Nueva Cuadrilla
                 </flux:button>
             @endcan
@@ -75,7 +75,7 @@
                     <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
                 @else
                     @can('create', \App\Models\Crew::class)
-                        <flux:button href="{{ route('viticulturist.personal.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('viticulturist.personal.create') }}" variant="primary" icon="plus">
                             Crear Primera Cuadrilla
                         </flux:button>
                     @endcan
@@ -129,13 +129,13 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.personal.show', $crew) }}#miembros"
+                            <a href="{{ roleRoute('viticulturist.personal.show', $crew) }}#miembros"
                                title="Ver cuadrilla"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="eye" class="size-4" />
                             </a>
                             @can('update', $crew)
-                                <a href="{{ route('viticulturist.personal.edit', $crew) }}"
+                                <a href="{{ roleRoute('viticulturist.personal.edit', $crew) }}"
                                    title="Editar"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="pencil-square" class="size-4" />

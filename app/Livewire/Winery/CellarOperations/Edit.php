@@ -68,7 +68,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Operación actualizada correctamente.');
-        $this->redirect(route('winery.cellar-operations.index'), navigate: true);
+        $this->redirect(roleRoute('cellar-operations.index'), navigate: true);
     }
 
     public function render()

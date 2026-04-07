@@ -160,7 +160,7 @@
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         @can('create', \App\Models\Campaign::class)
-            <flux:button href="{{ route('viticulturist.campaign.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.campaign.create') }}" variant="primary" icon="plus">
                 Nueva Campaña
             </flux:button>
         @endcan
@@ -259,12 +259,12 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
                                 @can('view', $campaign)
-                                    <a href="{{ route('viticulturist.campaign.show', $campaign) }}" class="{{ $btnBase }}" title="Ver campaña">
+                                    <a href="{{ roleRoute('viticulturist.campaign.show', $campaign) }}" class="{{ $btnBase }}" title="Ver campaña">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
                                 @endcan
                                 @can('update', $campaign)
-                                    <a href="{{ route('viticulturist.campaign.edit', $campaign) }}" class="{{ $btnBase }}" title="Editar">
+                                    <a href="{{ roleRoute('viticulturist.campaign.edit', $campaign) }}" class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
                                 @endcan
@@ -319,7 +319,7 @@
             @elseif($currentTab === 'active')
                 <x-slot:action>
                     @can('create', \App\Models\Campaign::class)
-                        <flux:button href="{{ route('viticulturist.campaign.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('viticulturist.campaign.create') }}" variant="primary" icon="plus">
                             Nueva Campaña
                         </flux:button>
                     @endcan

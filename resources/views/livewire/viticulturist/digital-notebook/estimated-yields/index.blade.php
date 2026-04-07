@@ -45,7 +45,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('viticulturist.digital-notebook.estimated-yields.create') }}" variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('viticulturist.digital-notebook.estimated-yields.create') }}" variant="primary" icon="plus">
             Nueva Estimación
         </flux:button>
 
@@ -170,7 +170,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ route('viticulturist.digital-notebook.estimated-yields.edit', $yield->id) }}" class="{{ $btnBase }}" title="Editar">
+                            <a href="{{ roleRoute('viticulturist.digital-notebook.estimated-yields.edit', $yield->id) }}" class="{{ $btnBase }}" title="Editar">
                                 <flux:icon icon="pencil-square" class="size-4" />
                             </a>
                             <button

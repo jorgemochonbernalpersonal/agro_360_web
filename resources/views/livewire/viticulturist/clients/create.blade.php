@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Nuevo Cliente"
         description="Crea un nuevo cliente"
-        :back-url="route('viticulturist.clients.index')"
+        :back-url="roleRoute('viticulturist.clients.index')"
     >
         <form wire:submit="save" class="space-y-8" data-cy="client-create-form">
             <x-agro.form-section title="Tipo de Cliente">
@@ -260,7 +260,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('viticulturist.clients.index')" submit-label="Crear Cliente" />
+            <x-agro.form-actions :cancel-url="roleRoute('viticulturist.clients.index')" submit-label="Crear Cliente" />
         </form>
     </x-agro.form-card>
 </div>

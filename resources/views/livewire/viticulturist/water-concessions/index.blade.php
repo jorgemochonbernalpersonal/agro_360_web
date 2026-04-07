@@ -7,7 +7,7 @@
         icon="beaker"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.water-concessions.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.water-concessions.create') }}" variant="primary" icon="plus">
                 Nueva Concesión
             </flux:button>
         </x-slot:actions>
@@ -160,7 +160,7 @@
                         </x-slot:action>
                     @elseif($currentTab === 'active')
                         <x-slot:action>
-                            <flux:button href="{{ route('viticulturist.water-concessions.create') }}" variant="primary" icon="plus">
+                            <flux:button href="{{ roleRoute('viticulturist.water-concessions.create') }}" variant="primary" icon="plus">
                                 Nueva Concesión
                             </flux:button>
                         </x-slot:action>
@@ -257,7 +257,7 @@
                             <x-slot:footer>
                                 <div class="flex items-center justify-end gap-0.5">
                                     @if($currentTab === 'active')
-                                        <a href="{{ route('viticulturist.water-concessions.edit', $entry) }}"
+                                        <a href="{{ roleRoute('viticulturist.water-concessions.edit', $entry) }}"
                                            title="Editar"
                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                             <flux:icon icon="pencil-square" class="size-4" />

@@ -117,7 +117,7 @@
                                 <p class="text-sm font-semibold text-yellow-800">No tienes contraseña de firma configurada</p>
                                 <p class="text-sm text-yellow-700 mt-1">
                                     Debes crear una contraseña de firma digital en 
-                                    <a href="{{ route('viticulturist.settings', ['tab' => 'signature']) }}" 
+                                    <a href="{{ roleRoute('viticulturist.settings', ['tab' => 'signature']) }}" 
                                        wire:navigate
                                        class="underline font-semibold hover:text-yellow-900">
                                         Configuración → Firma Digital
@@ -140,7 +140,7 @@
                             <h4 class="text-base font-bold text-purple-900 mb-1">⚠️ IMPORTANTE: Usa tu Contraseña de Firma Digital</h4>
                             <p class="text-sm text-purple-800 leading-relaxed">
                                 Esta <strong class="underline">NO es tu contraseña de login</strong>. Es la contraseña específica que creaste en 
-                                <a href="{{ route('viticulturist.settings', ['tab' => 'signature']) }}" 
+                                <a href="{{ roleRoute('viticulturist.settings', ['tab' => 'signature']) }}" 
                                    wire:navigate
                                    target="_blank"
                                    class="inline-flex items-center gap-1 text-purple-700 hover:text-purple-900 font-bold underline decoration-2">

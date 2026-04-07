@@ -63,7 +63,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
 
                 {{-- Tratamientos fitosanitarios --}}
-                <a href="{{ route('viticulturist.digital-notebook.treatment.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.treatment.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-red-200 hover:bg-red-50 transition-all">
                     <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-200 transition-colors">
                         <flux:icon icon="shield-exclamation" class="size-5 text-red-600" />
@@ -76,7 +76,7 @@
                 </a>
 
                 {{-- Fertilización --}}
-                <a href="{{ route('viticulturist.digital-notebook.fertilization.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.fertilization.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-blue-200 hover:bg-blue-50 transition-all">
                     <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-colors">
                         <flux:icon icon="beaker" class="size-5 text-blue-600" />
@@ -89,7 +89,7 @@
                 </a>
 
                 {{-- Riego --}}
-                <a href="{{ route('viticulturist.digital-notebook.irrigation.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.irrigation.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-cyan-200 hover:bg-cyan-50 transition-all">
                     <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-cyan-200 transition-colors">
                         <flux:icon icon="cloud" class="size-5 text-cyan-600" />
@@ -102,7 +102,7 @@
                 </a>
 
                 {{-- Labores culturales --}}
-                <a href="{{ route('viticulturist.digital-notebook.cultural.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.cultural.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-amber-200 hover:bg-amber-50 transition-all">
                     <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-amber-200 transition-colors">
                         <flux:icon icon="wrench-screwdriver" class="size-5 text-amber-600" />
@@ -115,7 +115,7 @@
                 </a>
 
                 {{-- Observaciones --}}
-                <a href="{{ route('viticulturist.digital-notebook.observation.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.observation.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-zinc-300 hover:bg-zinc-50 transition-all">
                     <div class="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-zinc-200 transition-colors">
                         <flux:icon icon="eye" class="size-5 text-zinc-600" />
@@ -128,7 +128,7 @@
                 </a>
 
                 {{-- Cosecha --}}
-                <a href="{{ route('viticulturist.digital-notebook.harvest.create') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.harvest.create') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-purple-200 hover:bg-purple-50 transition-all">
                     <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-purple-200 transition-colors">
                         <flux:icon icon="scissors" class="size-5 text-purple-600" />
@@ -141,7 +141,7 @@
                 </a>
 
                 {{-- Podas --}}
-                <a href="{{ route('viticulturist.digital-notebook.pruning.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.pruning.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-lime-200 hover:bg-lime-50 transition-all">
                     <div class="w-10 h-10 bg-lime-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-lime-200 transition-colors">
                         <flux:icon icon="scissors" class="size-5 text-lime-600" />
@@ -154,7 +154,7 @@
                 </a>
 
                 {{-- Post-vendimia --}}
-                <a href="{{ route('viticulturist.digital-notebook.post-harvest.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.post-harvest.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all">
                     <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-indigo-200 transition-colors">
                         <flux:icon icon="beaker" class="size-5 text-indigo-600" />
@@ -167,7 +167,7 @@
                 </a>
 
                 {{-- Rendimientos estimados --}}
-                <a href="{{ route('viticulturist.digital-notebook.estimated-yields.index') }}" wire:navigate
+                <a href="{{ roleRoute('viticulturist.digital-notebook.estimated-yields.index') }}" wire:navigate
                    class="group flex items-center gap-4 p-4 rounded-xl border border-zinc-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
                     <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-emerald-200 transition-colors">
                         <flux:icon icon="chart-bar" class="size-5 text-emerald-600" />
@@ -189,7 +189,7 @@
             description="No se encontró ninguna campaña activa. Crea una para empezar a registrar actividades."
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.campaign.index') }}" wire:navigate variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.campaign.index') }}" wire:navigate variant="primary" icon="plus">
                     Gestionar campañas
                 </flux:button>
             </x-slot:action>

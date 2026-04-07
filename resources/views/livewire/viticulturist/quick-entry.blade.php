@@ -119,7 +119,7 @@
 
     {{-- Enlace al cuaderno completo --}}
     <div class="text-center">
-        <a href="{{ route('viticulturist.digital-notebook') }}" wire:navigate
+        <a href="{{ roleRoute('viticulturist.digital-notebook') }}" wire:navigate
             class="text-xs text-zinc-400 hover:text-agro-600 transition-colors">
             Ir al cuaderno de campo completo →
         </a>

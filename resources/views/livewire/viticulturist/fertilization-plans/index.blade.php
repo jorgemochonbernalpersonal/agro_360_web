@@ -6,7 +6,7 @@
         icon="funnel"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.fertilization-plans.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.fertilization-plans.create') }}" variant="primary" icon="plus">
                 Nuevo Plan
             </flux:button>
         </x-slot:actions>
@@ -260,7 +260,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.fertilization-plans.edit', $plan) }}"
+                            <a href="{{ roleRoute('viticulturist.fertilization-plans.edit', $plan) }}"
                                title="Editar"
                                class="{{ $btnBase }}">
                                 <flux:icon icon="pencil-square" class="size-4" />
@@ -323,7 +323,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.fertilization-plans.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.fertilization-plans.create') }}" variant="primary" icon="plus">
                         Crear primer plan
                     </flux:button>
                 </x-slot:action>

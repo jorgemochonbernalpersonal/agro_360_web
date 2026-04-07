@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Nueva Declaración PAC"
         description="Solicitud Única anual de superficies agrarias"
-        :back-url="route('viticulturist.pac.declarations.index')"
+        :back-url="roleRoute('viticulturist.pac.declarations.index')"
     >
         <form wire:submit.prevent="save('draft')" class="space-y-8">
 
@@ -139,7 +139,7 @@
 
             {{-- Acciones --}}
             <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
-                <flux:button variant="ghost" href="{{ route('viticulturist.pac.declarations.index') }}" wire:navigate>
+                <flux:button variant="ghost" href="{{ roleRoute('viticulturist.pac.declarations.index') }}" wire:navigate>
                     Cancelar
                 </flux:button>
                 <div class="flex gap-3">

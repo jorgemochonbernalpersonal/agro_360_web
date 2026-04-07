@@ -18,7 +18,7 @@
         description="Crea un nuevo viticultor para gestionar en tus cuadrillas"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.personal.index') }}" variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" variant="outline" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -96,7 +96,7 @@
 
             <!-- Botones -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-zinc-200">
-                <flux:button href="{{ route('viticulturist.personal.index') }}" variant="outline">Cancelar</flux:button>
+                <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" variant="outline">Cancelar</flux:button>
                 <flux:button type="submit" variant="primary">Crear Viticultor</flux:button>
             </div>
         </form>

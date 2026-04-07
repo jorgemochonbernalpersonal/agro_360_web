@@ -54,6 +54,9 @@ class Settings extends Component
     public $notify_harvest_alerts = true;
     public $notify_activity_alerts = true;
 
+    // === GENERAL TAB ===
+    public bool $compra_uva_externa = false;
+
     // === SIGNATURE TAB ===
     public $signaturePassword = '';
     public $signaturePassword_confirmation = '';
@@ -64,11 +67,26 @@ class Settings extends Component
 
     public function mount(): void
     {
+        $this->compra_uva_externa = (bool) Auth::user()->compra_uva_externa;
         $this->loadTaxes();
         $this->loadInvoicing();
         $this->loadFiscal();
         $this->loadFieldbook();
         $this->loadDigitalSignature();
+    }
+
+    public function toggleCompraUvaExterna(): void
+    {
+        $user = Auth::user();
+        $user->update(['compra_uva_externa' => $this->compra_uva_externa]);
+
+        // Invalidar cache del menú para que refleje el cambio
+        \Illuminate\Support\Facades\Cache::forget("winery:{$user->id}:has_viticulturists");
+
+        $this->toastSuccess($this->compra_uva_externa
+            ? 'Compra de uva externa activada. Ya puedes gestionar viticultores.'
+            : 'Compra de uva externa desactivada.'
+        );
     }
 
     public function switchTab($tab): void

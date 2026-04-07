@@ -7,10 +7,53 @@
     <x-agro.card :padding="false">
         <div class="px-6 py-5">
             <x-agro.tabs
-                :tabs="['taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'fiscal' => 'Datos Fiscales', 'fieldbook' => 'Cuaderno de Campo', 'signature' => 'Firma Digital']"
+                :tabs="['general' => 'General', 'taxes' => 'Impuestos', 'invoicing' => 'Numeración', 'fiscal' => 'Datos Fiscales', 'fieldbook' => 'Cuaderno de Campo', 'signature' => 'Firma Digital']"
                 :active="$currentTab"
                 wireMethod="switchTab"
             />
+
+            {{-- GENERAL TAB --}}
+            @if($currentTab === 'general')
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-zinc-900 mb-2">Configuración General</h3>
+                        <p class="text-sm text-zinc-600">Opciones generales de tu cuenta de productor</p>
+                    </div>
+
+                    <div class="p-5 border border-zinc-200 rounded-xl space-y-4">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h4 class="font-semibold text-zinc-900">Compra de uva externa</h4>
+                                <p class="text-sm text-zinc-500 mt-1">
+                                    Activa esta opción si compras uva a viticultores externos ademas de producir la tuya propia.
+                                    Esto habilita la gestion de viticultores, aforos, disputas y avisos.
+                                </p>
+                            </div>
+                            <div class="shrink-0 ml-4">
+                                <button
+                                    wire:click="toggleCompraUvaExterna"
+                                    type="button"
+                                    class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2 {{ $compra_uva_externa ? 'bg-agro-600' : 'bg-zinc-200' }}"
+                                    role="switch"
+                                    aria-checked="{{ $compra_uva_externa ? 'true' : 'false' }}"
+                                >
+                                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $compra_uva_externa ? 'translate-x-5' : 'translate-x-0' }}"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        @if($compra_uva_externa)
+                            <div class="flex items-center gap-2 p-3 bg-agro-50 rounded-lg">
+                                <flux:icon icon="check-circle" class="size-5 text-agro-600 shrink-0" />
+                                <p class="text-sm text-agro-800">
+                                    Modulos activos: Mis Viticultores, Aforos, Disputas, Avisos a Viticultores.
+                                    Accede desde el menu lateral.
+                                </p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
 
             {{-- TAXES TAB --}}
             @if($currentTab === 'taxes')

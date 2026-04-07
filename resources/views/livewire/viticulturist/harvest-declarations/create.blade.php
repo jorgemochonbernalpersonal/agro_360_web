@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nueva Declaración de Vendimia"
     description="Declaración oficial de cosecha ante el organismo competente (CCAA / Denominación de Origen)"
-    :back-url="route('viticulturist.harvest-declarations.index')"
+    :back-url="roleRoute('viticulturist.harvest-declarations.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -113,7 +113,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.harvest-declarations.index')"
+            :cancel-url="roleRoute('viticulturist.harvest-declarations.index')"
             submit-label="Guardar como Borrador"
         />
     </form>

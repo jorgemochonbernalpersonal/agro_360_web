@@ -101,7 +101,7 @@ class Edit extends Component
         app(WineContainerStockService::class)->updateLoss($this->loss, $this->oldLossData);
 
         $this->toastSuccess('Merma actualizada.');
-        $this->redirect(route('winery.wine-losses.index'), navigate: true);
+        $this->redirect(roleRoute('wine-losses.index'), navigate: true);
     }
 
     public function render()

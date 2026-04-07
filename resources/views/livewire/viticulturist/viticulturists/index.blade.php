@@ -6,7 +6,7 @@
         icon="users"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary" icon="plus" wire:navigate>
+            <flux:button href="{{ roleRoute('viticulturist.viticulturists.create') }}" variant="primary" icon="plus" wire:navigate>
                 Nuevo Viticultor
             </flux:button>
         </x-slot:actions>
@@ -50,7 +50,7 @@
                 </x-slot:action>
             @else
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary" icon="plus" wire:navigate>
+                    <flux:button href="{{ roleRoute('viticulturist.viticulturists.create') }}" variant="primary" icon="plus" wire:navigate>
                         Nuevo Viticultor
                     </flux:button>
                 </x-slot:action>

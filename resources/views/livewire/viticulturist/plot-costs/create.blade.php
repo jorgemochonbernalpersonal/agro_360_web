@@ -2,7 +2,7 @@
 <x-agro.form-card
     title="Registrar Coste"
     description="Añade un nuevo coste asociado a una parcela o campaña."
-    :back-url="route('viticulturist.plot-costs.index')"
+    :back-url="roleRoute('viticulturist.plot-costs.index')"
 >
     <form wire:submit.prevent="save" class="space-y-8">
         <x-agro.form-section title="Datos del Coste">
@@ -81,7 +81,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :cancel-url="route('viticulturist.plot-costs.index')" submit-label="Registrar Coste" />
+        <x-agro.form-actions :cancel-url="roleRoute('viticulturist.plot-costs.index')" submit-label="Registrar Coste" />
     </form>
 </x-agro.form-card>
 </div>

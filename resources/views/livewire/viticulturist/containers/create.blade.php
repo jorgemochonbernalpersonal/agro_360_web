@@ -2,7 +2,7 @@
 <x-agro.form-card
     title="Nuevo Contenedor"
     description="Registra un nuevo contenedor para tu bodega"
-    :back-url="route('viticulturist.containers.index')"
+    :back-url="roleRoute('viticulturist.containers.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Informacion Basica">
@@ -151,7 +151,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.containers.index')"
+            :cancel-url="roleRoute('viticulturist.containers.index')"
             submit-label="Crear Contenedor"
         />
     </form>

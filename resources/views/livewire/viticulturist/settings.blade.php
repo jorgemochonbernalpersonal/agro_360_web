@@ -666,7 +666,7 @@
                                 <strong>Tip:</strong> La contraseña de firma digital es diferente a tu contraseña de usuario.
                                 Puedes cambiarla cuando quieras sin afectar tu acceso a la plataforma.
                                 Para ver tus estadísticas y actividad reciente de firmas,
-                                visita la sección de <a href="{{ route('viticulturist.official-reports.index') }}" class="underline font-semibold">Informes Oficiales</a>.
+                                visita la sección de <a href="{{ roleRoute('viticulturist.official-reports.index') }}" class="underline font-semibold">Informes Oficiales</a>.
                             </p>
                         </flux:callout.text>
                     </flux:callout>

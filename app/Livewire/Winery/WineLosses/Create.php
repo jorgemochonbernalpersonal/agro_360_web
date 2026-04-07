@@ -109,7 +109,7 @@ class Create extends Component
         app(WineContainerStockService::class)->recordLoss($loss);
 
         $this->toastSuccess('Merma registrada correctamente.');
-        $this->redirect(route('winery.wine-losses.index'), navigate: true);
+        $this->redirect(roleRoute('wine-losses.index'), navigate: true);
     }
 
     public function render()

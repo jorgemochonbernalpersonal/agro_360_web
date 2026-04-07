@@ -1,7 +1,7 @@
 ﻿<x-agro.form-card
     title="Editar Cuadrilla"
     description="Modifica la informacion de la cuadrilla"
-    :back-url="route('viticulturist.personal.show', $crew)"
+    :back-url="roleRoute('viticulturist.personal.show', $crew)"
 >
     <form wire:submit="save" class="space-y-8" data-cy="crew-form">
         <x-agro.form-section title="Informacion Basica">
@@ -55,7 +55,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.personal.show', $crew)"
+            :cancel-url="roleRoute('viticulturist.personal.show', $crew)"
             submit-label="Guardar Cambios"
         />
     </form>

@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Stock"
     description="Añade productos fitosanitarios a tu inventario"
-    :back-url="route('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])"
+    :back-url="roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Producto" color="green">
@@ -102,6 +102,6 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])" submit-label="Guardar Stock" />
+        <x-agro.form-actions :back-url="roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])" submit-label="Guardar Stock" />
     </form>
 </x-agro.form-card>

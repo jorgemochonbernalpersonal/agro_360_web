@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nuevo Plan de Fertilización"
     description="Crea un plan de fertilización y gestión de nitrógenos para la campaña"
-    :back-url="route('viticulturist.fertilization-plans.index')"
+    :back-url="roleRoute('viticulturist.fertilization-plans.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -200,7 +200,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.fertilization-plans.index')"
+            :cancel-url="roleRoute('viticulturist.fertilization-plans.index')"
             submit-label="Crear Plan"
         />
 

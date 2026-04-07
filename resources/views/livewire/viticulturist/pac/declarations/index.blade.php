@@ -6,7 +6,7 @@
     >
         <x-slot:actions>
             <flux:button variant="primary" icon="plus"
-                href="{{ route('viticulturist.pac.declarations.create') }}" wire:navigate>
+                href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
                 Nueva declaración
             </flux:button>
         </x-slot:actions>
@@ -51,7 +51,7 @@
             description="Crea tu primera Solicitud Única para declarar tus superficies ante el organismo pagador."
         >
             <flux:button variant="primary" icon="plus"
-                href="{{ route('viticulturist.pac.declarations.create') }}" wire:navigate>
+                href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
                 Nueva declaración
             </flux:button>
         </x-agro.empty-state>
@@ -84,11 +84,11 @@
                         <x-agro.table-cell align="right">
                             <div class="flex items-center justify-end gap-1">
                                 <flux:button size="sm" variant="ghost" icon="eye"
-                                    href="{{ route('viticulturist.pac.declarations.show', $declaration) }}"
+                                    href="{{ roleRoute('viticulturist.pac.declarations.show', $declaration) }}"
                                     wire:navigate />
                                 @if($declaration->isDraft())
                                     <flux:button size="sm" variant="ghost" icon="pencil"
-                                        href="{{ route('viticulturist.pac.declarations.edit', $declaration) }}"
+                                        href="{{ roleRoute('viticulturist.pac.declarations.edit', $declaration) }}"
                                         wire:navigate />
                                     <flux:button size="sm" variant="ghost" icon="paper-airplane"
                                         wire:click="submit({{ $declaration->id }})"

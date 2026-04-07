@@ -66,7 +66,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Proveedor actualizado correctamente.');
-        $this->redirect(route('winery.suppliers.index'), navigate: true);
+        $this->redirect(roleRoute('suppliers.index'), navigate: true);
     }
 
     public function render()

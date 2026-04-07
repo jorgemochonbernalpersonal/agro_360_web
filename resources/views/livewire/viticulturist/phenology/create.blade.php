@@ -2,7 +2,7 @@
 <x-agro.form-card
     title="Nueva Observación Fenológica"
     description="Registra un estadio fenológico para una plantación. Si ya existe un registro para ese estadio/plantación/campaña, se actualizará."
-    :back-url="$plantingLocked ? route('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id]) : route('plots.plantings.index')"
+    :back-url="$plantingLocked ? roleRoute('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id]) : route('plots.plantings.index')"
 >
     <form wire:submit.prevent="save" class="space-y-8">
         <x-agro.form-section title="Datos del Registro">
@@ -98,7 +98,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :cancel-url="$plantingLocked ? route('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id]) : route('plots.plantings.index')" submit-label="Guardar Observación" />
+        <x-agro.form-actions :cancel-url="$plantingLocked ? roleRoute('viticulturist.phenology.index', ['filter_planting_id' => $plot_planting_id]) : route('plots.plantings.index')" submit-label="Guardar Observación" />
     </form>
 </x-agro.form-card>
 </div>

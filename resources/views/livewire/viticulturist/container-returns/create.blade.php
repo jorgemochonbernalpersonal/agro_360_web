@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Entrega de Envases"
     description="Documenta la entrega de envases vacíos de fitosanitarios en punto de recogida autorizado (SIGFITO / FIELD)"
-    :back-url="route('viticulturist.container-returns.index')"
+    :back-url="roleRoute('viticulturist.container-returns.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -120,7 +120,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.container-returns.index')"
+            :cancel-url="roleRoute('viticulturist.container-returns.index')"
             submit-label="Registrar Entrega"
         />
     </form>

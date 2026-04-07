@@ -2,7 +2,7 @@
 <x-agro.form-card
     title="Añadir Póliza de Seguro"
     description="Registra una nueva póliza de seguro agrario para tu explotación."
-    :back-url="route('viticulturist.agri-insurance.index')"
+    :back-url="roleRoute('viticulturist.agri-insurance.index')"
 >
     <form wire:submit.prevent="save" class="space-y-8">
         <x-agro.form-section title="Datos de la Póliza">
@@ -100,7 +100,7 @@
             </div>
         </x-agro.form-section>
 
-        <x-agro.form-actions :cancel-url="route('viticulturist.agri-insurance.index')" submit-label="Guardar Póliza" />
+        <x-agro.form-actions :cancel-url="roleRoute('viticulturist.agri-insurance.index')" submit-label="Guardar Póliza" />
     </form>
 </x-agro.form-card>
 </div>

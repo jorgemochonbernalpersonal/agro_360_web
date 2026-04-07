@@ -18,7 +18,7 @@
         :description="'Modifica los datos de la campaña ' . $campaign->name"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.campaign.index') }}" variant="outline" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -122,7 +122,7 @@
             </x-agro.form-section>
 
             <!-- Botones -->
-            <x-agro.form-actions cancelUrl="{{ route('viticulturist.campaign.index') }}" submitLabel="Guardar Cambios" />
+            <x-agro.form-actions cancelUrl="{{ roleRoute('viticulturist.campaign.index') }}" submitLabel="Guardar Cambios" />
         </form>
     </x-agro.card>
 </div>

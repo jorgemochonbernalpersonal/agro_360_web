@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Consumo Energético"
     :description="'Modifica el registro del ' . $energyUsage->date->format('d/m/Y')"
-    :back-url="route('viticulturist.energy-usages.index')"
+    :back-url="roleRoute('viticulturist.energy-usages.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -107,7 +107,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.energy-usages.index')"
+            :cancel-url="roleRoute('viticulturist.energy-usages.index')"
             submit-label="Actualizar Consumo"
         />
     </form>

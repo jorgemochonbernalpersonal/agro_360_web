@@ -3,12 +3,12 @@
     <x-agro.page-header
         :title="'Declaración PAC ' . $declaration->year"
         :description="'Solicitud Única — ' . $declaration->statusLabel()"
-        :back-url="route('viticulturist.pac.declarations.index')"
+        :back-url="roleRoute('viticulturist.pac.declarations.index')"
     >
         <x-slot:actions>
             @if($declaration->isDraft())
                 <flux:button variant="ghost" icon="pencil"
-                    href="{{ route('viticulturist.pac.declarations.edit', $declaration) }}" wire:navigate>
+                    href="{{ roleRoute('viticulturist.pac.declarations.edit', $declaration) }}" wire:navigate>
                     Editar
                 </flux:button>
                 <flux:button variant="primary" icon="paper-airplane"
@@ -17,7 +17,7 @@
                     Presentar declaración
                 </flux:button>
             @endif
-            <a href="{{ route('viticulturist.pac.declarations.pdf', $declaration) }}" target="_blank">
+            <a href="{{ roleRoute('viticulturist.pac.declarations.pdf', $declaration) }}" target="_blank">
                 <flux:button variant="ghost" icon="document-arrow-down">PDF</flux:button>
             </a>
         </x-slot:actions>

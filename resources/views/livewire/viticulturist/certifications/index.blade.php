@@ -7,7 +7,7 @@
         icon="shield-check"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.certifications.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.certifications.create') }}" variant="primary" icon="plus">
                 Nueva Certificación
             </flux:button>
         </x-slot:actions>
@@ -111,7 +111,7 @@
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
         {{-- Nueva Certificación --}}
-        <flux:button href="{{ route('viticulturist.certifications.create') }}" variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('viticulturist.certifications.create') }}" variant="primary" icon="plus">
             Nueva
         </flux:button>
 
@@ -164,7 +164,7 @@
             >
                 @if ($currentTab === 'active')
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.certifications.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('viticulturist.certifications.create') }}" variant="primary" icon="plus">
                             Nueva Certificación
                         </flux:button>
                     </x-slot:action>
@@ -274,7 +274,7 @@
                         {{-- Footer acciones --}}
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
-                                <a href="{{ route('viticulturist.certifications.edit', $entry) }}"
+                                <a href="{{ roleRoute('viticulturist.certifications.edit', $entry) }}"
                                    title="Editar"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                     <flux:icon icon="pencil-square" class="size-4" />

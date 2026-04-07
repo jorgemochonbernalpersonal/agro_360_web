@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header title="Facturación de Vendimia" description="Facturas emitidas por la venta de tu cosecha">
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.invoices.harvest-sale.create') }}" wire:navigate variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.invoices.harvest-sale.create') }}" wire:navigate variant="primary" icon="plus">
                 Nueva Factura
             </flux:button>
         </x-slot:actions>
@@ -107,13 +107,13 @@
                                     $btnDanger  = 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors';
                                 @endphp
 
-                                <a href="{{ route('viticulturist.invoices.harvest-sale.pdf', $invoice->id) }}"
+                                <a href="{{ roleRoute('viticulturist.invoices.harvest-sale.pdf', $invoice->id) }}"
                                     target="_blank" title="Descargar Factura"
                                     class="{{ $btnBase }}">
                                     <flux:icon icon="document-text" class="size-4" />
                                 </a>
 
-                                <a href="{{ route('viticulturist.invoices.harvest-sale.delivery-note-pdf', $invoice->id) }}"
+                                <a href="{{ roleRoute('viticulturist.invoices.harvest-sale.delivery-note-pdf', $invoice->id) }}"
                                     target="_blank" title="Descargar Albarán"
                                     class="{{ $btnBase }}">
                                     <flux:icon icon="document-arrow-down" class="size-4" />
@@ -138,7 +138,7 @@
                             {{-- Grupo derecho: gestionar --}}
                             <div class="flex items-center gap-0.5">
                                 @if ($invoice->status !== 'cancelled' && $invoice->payment_status !== 'paid')
-                                    <a href="{{ route('viticulturist.invoices.harvest-sale.edit', $invoice->id) }}"
+                                    <a href="{{ roleRoute('viticulturist.invoices.harvest-sale.edit', $invoice->id) }}"
                                         wire:navigate title="Editar"
                                         class="{{ $btnBase }}">
                                         <flux:icon icon="pencil" class="size-4" />
@@ -191,7 +191,7 @@
             description="Crea tu primera factura para cobrar por la uva entregada"
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.invoices.harvest-sale.create') }}" wire:navigate variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.invoices.harvest-sale.create') }}" wire:navigate variant="primary" icon="plus">
                     Nueva Factura
                 </flux:button>
             </x-slot:action>

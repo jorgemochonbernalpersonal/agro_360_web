@@ -66,7 +66,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Certificación actualizada correctamente.');
-        $this->redirect(route('winery.eco-certifications.index'), navigate: true);
+        $this->redirect(roleRoute('eco-certifications.index'), navigate: true);
     }
 
     public function render()

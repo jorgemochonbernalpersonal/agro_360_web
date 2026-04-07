@@ -7,7 +7,7 @@
         icon="user-plus"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
                 Registrar Servicio
             </flux:button>
         </x-slot:actions>
@@ -118,7 +118,7 @@
                 @if($filterCount > 0)
                     <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
                 @else
-                    <flux:button href="{{ route('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.subcontracting.create') }}" variant="primary" icon="plus">
                         Registrar primer servicio
                     </flux:button>
                 @endif
@@ -179,7 +179,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.subcontracting.edit', $record->id) }}"
+                            <a href="{{ roleRoute('viticulturist.subcontracting.edit', $record->id) }}"
                                title="Editar"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="pencil-square" class="size-4" />

@@ -7,7 +7,7 @@
         icon="map"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.plot-environments.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.plot-environments.create') }}" variant="primary" icon="plus">
                 Nueva Ficha
             </flux:button>
         </x-slot:actions>
@@ -69,7 +69,7 @@
                 @if($filterCampaign)
                     <flux:button wire:click="clearFilters" variant="outline" icon="x-mark">Limpiar filtro</flux:button>
                 @else
-                    <flux:button href="{{ route('viticulturist.plot-environments.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.plot-environments.create') }}" variant="primary" icon="plus">
                         Nueva Ficha
                     </flux:button>
                 @endif
@@ -135,7 +135,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.plot-environments.edit', $entry) }}"
+                            <a href="{{ roleRoute('viticulturist.plot-environments.edit', $entry) }}"
                                title="Editar"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="pencil-square" class="size-4" />

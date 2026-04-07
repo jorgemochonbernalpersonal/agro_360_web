@@ -435,9 +435,10 @@ class Create extends Component
                 // 3. Acumular en el batch
                 $batch->increment('total_weight_kg', $weight);
 
-                // 4. Feedback de calidad al viticultor (si tiene datos de calidad)
+                // 4. Feedback de calidad al viticultor (si tiene datos de calidad y no es el propio usuario)
                 $hasQuality = $this->baume_degree || $this->potential_alcohol || $this->acidity_level || $this->ph_level;
-                if ($hasQuality && $batch->viticulturist_id) {
+                $isExternalViticulturist = $batch->viticulturist_id && $batch->viticulturist_id !== $wineryId;
+                if ($hasQuality && $isExternalViticulturist) {
                     $viticulturist = \App\Models\User::find($batch->viticulturist_id);
                     $harvest = \App\Models\Harvest::where('batch_id', $batch->id)->latest()->first();
                     if ($viticulturist?->can_login && $harvest) {

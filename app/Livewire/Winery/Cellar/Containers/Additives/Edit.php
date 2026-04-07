@@ -66,7 +66,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Aditivo actualizado correctamente.');
-        $this->redirect(route('winery.containers.additives.index', $this->container), navigate: true);
+        $this->redirect(roleRoute('containers.additives.index', $this->container), navigate: true);
     }
 
     public function render()

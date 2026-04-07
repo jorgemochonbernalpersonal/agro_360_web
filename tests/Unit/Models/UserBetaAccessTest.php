@@ -45,11 +45,14 @@ class UserBetaAccessTest extends TestCase
     #[Test]
     public function beta_user_is_blocked_after_expiration()
     {
-        $user = User::factory()->create();
+        // Fijar fecha base para que beta expire el 2026-06-01 + 3 meses = 2026-09-01
+        Carbon::setTestNow('2026-06-01 12:00:00');
+
+        $user = User::factory()->create(['role' => 'winery']); // winery no tiene free access
         $user->grantBetaAccess();
 
-        // Simular que estamos después del 30/06/2026
-        Carbon::setTestNow('2026-07-01 00:00:01');
+        // Avanzar después de la expiración (3 meses + 1 día)
+        Carbon::setTestNow('2026-09-02 00:00:01');
 
         $this->assertTrue($user->isBetaUser());
         $this->assertTrue($user->betaExpired());
@@ -80,11 +83,13 @@ class UserBetaAccessTest extends TestCase
     #[Test]
     public function user_with_active_subscription_has_access_even_after_beta_expires()
     {
-        $user = User::factory()->create();
+        Carbon::setTestNow('2026-03-01 12:00:00');
+
+        $user = User::factory()->create(['role' => 'winery']);
         $user->grantBetaAccess();
 
-        // Simular que beta expiró
-        Carbon::setTestNow('2026-07-01 00:00:01');
+        // Avanzar después de la expiración (3 meses + 1 día)
+        Carbon::setTestNow('2026-06-02 00:00:01');
 
         // Crear suscripción activa que expira DESPUÉS de la fecha mockeada
         Subscription::create([

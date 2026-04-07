@@ -5,7 +5,7 @@
         description="Resumen de superficies admisibles, declaraciones y eco-regímenes de tu explotación."
     >
         <x-slot:actions>
-            <flux:button variant="primary" icon="plus" href="{{ route('viticulturist.pac.declarations.create') }}" wire:navigate>
+            <flux:button variant="primary" icon="plus" href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
                 Nueva declaración
             </flux:button>
         </x-slot:actions>
@@ -92,7 +92,7 @@
                     @endif
                     <div class="pt-2">
                         <flux:button size="sm" variant="ghost" icon="eye"
-                            href="{{ route('viticulturist.pac.declarations.show', $currentDeclaration) }}"
+                            href="{{ roleRoute('viticulturist.pac.declarations.show', $currentDeclaration) }}"
                             wire:navigate class="w-full">
                             Ver declaración
                         </flux:button>
@@ -103,7 +103,7 @@
                     <flux:icon icon="document-plus" class="size-10 text-zinc-300 mx-auto mb-2" />
                     <p class="text-sm text-zinc-500 mb-3">No hay declaración para {{ $currentYear }}</p>
                     <flux:button size="sm" variant="primary" icon="plus"
-                        href="{{ route('viticulturist.pac.declarations.create') }}" wire:navigate>
+                        href="{{ roleRoute('viticulturist.pac.declarations.create') }}" wire:navigate>
                         Crear declaración
                     </flux:button>
                 </div>
@@ -123,7 +123,7 @@
             @else
                 <div class="space-y-2 py-1">
                     @foreach($declarations as $decl)
-                        <a href="{{ route('viticulturist.pac.declarations.show', $decl) }}"
+                        <a href="{{ roleRoute('viticulturist.pac.declarations.show', $decl) }}"
                            wire:navigate
                            class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-zinc-50 transition-colors">
                             <div class="flex items-center gap-2">
@@ -135,7 +135,7 @@
                     @endforeach
                 </div>
                 <div class="mt-2 pt-2 border-t border-zinc-100">
-                    <flux:button size="sm" variant="ghost" href="{{ route('viticulturist.pac.declarations.index') }}" wire:navigate class="w-full">
+                    <flux:button size="sm" variant="ghost" href="{{ roleRoute('viticulturist.pac.declarations.index') }}" wire:navigate class="w-full">
                         Ver todas
                     </flux:button>
                 </div>
@@ -150,7 +150,7 @@
             <flux:callout.text>
                 {{ $plotsWithoutPac->pluck('name')->join(', ') }}.
                 Edita cada parcela para añadir su superficie admisible PAC antes de crear la declaración.
-                <a href="{{ route('viticulturist.pac.surfaces.index') }}" wire:navigate class="underline ml-1">Ver superficies →</a>
+                <a href="{{ roleRoute('viticulturist.pac.surfaces.index') }}" wire:navigate class="underline ml-1">Ver superficies →</a>
             </flux:callout.text>
         </flux:callout>
     @endif

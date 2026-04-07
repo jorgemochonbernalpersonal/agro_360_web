@@ -6,11 +6,11 @@
     >
         <x-slot:actions>
             @can('update', $crew)
-                <flux:button href="{{ route('viticulturist.personal.edit', $crew) }}" data-cy="edit-crew-button" variant="primary">
+                <flux:button href="{{ roleRoute('viticulturist.personal.edit', $crew) }}" data-cy="edit-crew-button" variant="primary">
                     Editar
                 </flux:button>
             @endcan
-            <flux:button href="{{ route('viticulturist.personal.index') }}" data-cy="back-button" variant="outline">
+            <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" data-cy="back-button" variant="outline">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -83,7 +83,7 @@
             </x-slot:header>
             <p class="text-xs text-zinc-500 mb-4">
                 Para anadir nuevos miembros, usa la pantalla de
-                <a href="{{ route('viticulturist.personal.index', ['viewMode' => 'personal']) }}" class="text-agro-700 underline">
+                <a href="{{ roleRoute('viticulturist.personal.index', ['viewMode' => 'personal']) }}" class="text-agro-700 underline">
                     Equipos y Personal
                 </a>.
             </p>

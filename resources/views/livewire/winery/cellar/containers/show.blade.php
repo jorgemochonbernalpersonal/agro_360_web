@@ -29,7 +29,7 @@
                 Aditivos
             </flux:button>
             @if($fromVisual)
-                <flux:button href="{{ route('winery.visual') }}" variant="outline" icon="map">
+                <flux:button href="{{ roleRoute('visual') }}" variant="outline" icon="map">
                     Volver al Mapa
                 </flux:button>
             @else

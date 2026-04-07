@@ -92,7 +92,7 @@
                             <x-slot:footer>
                                 <div class="flex items-center justify-end">
                                     <flux:button
-                                        href="{{ route('viticulturist.invoices.create', ['harvest_id' => $harvest->id]) }}"
+                                        href="{{ roleRoute('viticulturist.invoices.create', ['harvest_id' => $harvest->id]) }}"
                                         variant="primary"
                                         size="sm"
                                         icon="document-text"

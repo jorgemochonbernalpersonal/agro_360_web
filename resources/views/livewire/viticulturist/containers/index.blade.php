@@ -47,7 +47,7 @@
 
             <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-            <flux:button href="{{ route('viticulturist.containers.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
                 Nuevo
             </flux:button>
 
@@ -160,10 +160,10 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <a href="{{ route('viticulturist.containers.show', $container->id) }}" class="{{ $btnBase }}" title="Ver contenedor">
+                                <a href="{{ roleRoute('viticulturist.containers.show', $container->id) }}" class="{{ $btnBase }}" title="Ver contenedor">
                                     <flux:icon icon="eye" class="size-4" />
                                 </a>
-                                <a href="{{ route('viticulturist.containers.edit', $container->id) }}" class="{{ $btnBase }}" title="Editar">
+                                <a href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}" class="{{ $btnBase }}" title="Editar">
                                     <flux:icon icon="pencil-square" class="size-4" />
                                 </a>
                             </div>
@@ -210,7 +210,7 @@
                 </x-slot:action>
             @elseif($currentTab === 'active')
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.containers.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
                         Nuevo Contenedor
                     </flux:button>
                 </x-slot:action>

@@ -106,6 +106,7 @@ Route::middleware(['auth', 'password.changed', 'require.password.change', 'verif
     })->name('logs');
     
     require __DIR__ . '/plots.php';
+    require __DIR__ . '/clients.php';
     require __DIR__ . '/map.php';
     require __DIR__ . '/sigpac.php';
     // require __DIR__ . '/config.php'; // Eliminado - no es útil

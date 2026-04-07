@@ -5,7 +5,7 @@
         description="Actualiza los datos del viticultor"
     >
         <x-slot:actions>
-            <a href="{{ route('viticulturist.personal.index', ['viewMode' => 'personal']) }}">
+            <a href="{{ roleRoute('viticulturist.personal.index', ['viewMode' => 'personal']) }}">
                 <flux:button variant="outline" icon="arrow-left">
                     Volver
                 </flux:button>
@@ -32,7 +32,7 @@
             </x-agro.form-section>
 
             <x-agro.form-actions
-                :cancel-url="route('viticulturist.personal.index', ['viewMode' => 'personal'])"
+                :cancel-url="roleRoute('viticulturist.personal.index', ['viewMode' => 'personal'])"
                 submit-label="Guardar cambios"
             />
         </form>

@@ -4,7 +4,7 @@
         description="Registra consumo de stock sin tratamiento asociado"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Cancelar
             </flux:button>
         </x-slot:actions>
@@ -92,7 +92,7 @@
             @endif
 
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100">
-                <flux:button href="{{ route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost">Cancelar</flux:button>
+                <flux:button href="{{ roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost">Cancelar</flux:button>
                 <flux:button
                     type="submit"
                     variant="primary"

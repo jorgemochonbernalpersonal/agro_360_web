@@ -91,19 +91,20 @@ Route::middleware(['role:producer', 'check.beta'])
 
         // ── Clientes viticultor (uva) ─────────────────────────────────────
         Route::prefix('clients')->name('clients.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\Clients\Index::class)->name('index');
-            Route::get('/insights', \App\Livewire\Winery\Clients\Insights::class)->name('insights');
-            Route::get('/create', \App\Livewire\Viticulturist\Clients\Create::class)->name('create');
-            Route::get('/{client}', \App\Livewire\Viticulturist\Clients\Show::class)->name('show');
-            Route::get('/{client}/edit', \App\Livewire\Viticulturist\Clients\Edit::class)->name('edit');
+            Route::get('/', \App\Livewire\Clients\Index::class)->name('index');
+            Route::get('/insights', \App\Livewire\Clients\Insights::class)->name('insights');
+            Route::get('/create', \App\Livewire\Clients\Create::class)->name('create');
+            Route::get('/{client}', \App\Livewire\Clients\Show::class)->name('show');
+            Route::get('/{client}/edit', \App\Livewire\Clients\Edit::class)->name('edit');
         });
 
         // ── Clientes bodega (vino) ────────────────────────────────────────
         Route::prefix('winery-clients')->name('winery-clients.')->group(function () {
-            Route::get('/', \App\Livewire\Winery\Clients\Index::class)->name('index');
-            Route::get('/insights', \App\Livewire\Winery\Clients\Insights::class)->name('insights');
-            Route::get('/create', \App\Livewire\Winery\Clients\Create::class)->name('create');
-            Route::get('/{client}/edit', \App\Livewire\Winery\Clients\Edit::class)->name('edit');
+            Route::get('/', \App\Livewire\Clients\Index::class)->name('index');
+            Route::get('/insights', \App\Livewire\Clients\Insights::class)->name('insights');
+            Route::get('/create', \App\Livewire\Clients\Create::class)->name('create');
+            Route::get('/{client}', \App\Livewire\Clients\Show::class)->name('show');
+            Route::get('/{client}/edit', \App\Livewire\Clients\Edit::class)->name('edit');
         });
 
         // ── Facturas — sub-rutas específicas ANTES del wildcard {invoice} ─
@@ -385,6 +386,8 @@ Route::middleware(['role:producer', 'check.beta'])
             Route::get('/viticulturists/{viticulturist}/edit', \App\Livewire\Winery\Viticulturists\Edit::class)->name('viticulturists.edit');
 
             Route::get('/vitic-estimates', \App\Livewire\Winery\Harvest\ViticulturistEstimates\Index::class)->name('vitic-estimates.index');
+
+            Route::get('/announcements', \App\Livewire\Winery\Announcements\Index::class)->name('announcements.index');
         });
 
 

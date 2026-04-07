@@ -7,7 +7,7 @@
         icon="archive-box-x-mark"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
+            <flux:button href="{{ roleRoute('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
                 Registrar Entrega
             </flux:button>
         </x-slot:actions>
@@ -149,7 +149,7 @@
             >
                 @if(!$search && !$filterCampaign && !$filterCollectionSystem && $currentTab === 'active')
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('viticulturist.container-returns.create') }}" variant="primary" icon="plus">
                             Registrar Entrega
                         </flux:button>
                     </x-slot:action>
@@ -224,7 +224,7 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-end gap-0.5">
                                 @if($currentTab === 'active')
-                                    <a href="{{ route('viticulturist.container-returns.edit', $entry) }}"
+                                    <a href="{{ roleRoute('viticulturist.container-returns.edit', $entry) }}"
                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                                        title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />

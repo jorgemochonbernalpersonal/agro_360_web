@@ -3,6 +3,7 @@
 namespace App\Livewire\Shared;
 
 use App\Livewire\Concerns\WithToastNotifications;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -30,7 +31,26 @@ abstract class AbstractCreate extends Component
         $this->performCreate();
         $this->toastSuccess($this->successMessage());
 
-        return redirect()->route($this->indexRoute());
+        return redirect()->route($this->resolveIndexRoute());
+    }
+
+    /**
+     * Resolve the index route respecting the producer role prefix.
+     * Winery components return 'winery.foo.index' — if the user is a producer
+     * and a matching 'producer.foo.index' route exists, redirect there instead.
+     */
+    protected function resolveIndexRoute(): string
+    {
+        $route = $this->indexRoute();
+
+        if (Auth::user()?->isProducer() && str_starts_with($route, 'winery.')) {
+            $producerRoute = Str::replaceFirst('winery.', 'producer.', $route);
+            if (\Illuminate\Support\Facades\Route::has($producerRoute)) {
+                return $producerRoute;
+            }
+        }
+
+        return $route;
     }
 
     public function render(): View

@@ -268,7 +268,7 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Cliente actualizado correctamente.');
-            return $this->redirect(route('winery.clients.index'), navigate: true);
+            return $this->redirect(roleRoute('clients.index'), navigate: true);
 
         } catch (\Exception $e) {
             $this->toastError('Error al actualizar el cliente: ' . $e->getMessage());

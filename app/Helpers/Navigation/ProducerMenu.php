@@ -34,18 +34,23 @@ class ProducerMenu
         $menu['registros_oficiales'] = ViticulturistMenu::registrosOficiales('producer');
 
         // ── Bodega: Vendimia ──────────────────────────────────────────────────
-        $menu['harvest'] = [
+        $harvestItems = [
             ['icon' => 'chart-bar',               'label' => 'Cuadro de Mando',    'route' => 'producer.harvest-summary.index',    'active' => request()->routeIs('producer.harvest-summary*')],
             ['icon' => 'eye',                     'label' => 'Panel Visual',       'route' => 'producer.visual',                   'active' => request()->routeIs('producer.visual')],
             ['icon' => 'clipboard-document-list', 'label' => 'Campañas Bodega',   'route' => 'producer.winery-campaigns.index',   'active' => request()->routeIs('producer.winery-campaigns*')],
             ['icon' => 'clipboard-document-list', 'label' => 'Previsiones',        'route' => 'producer.harvest-forecasts.index',  'active' => request()->routeIs('producer.harvest-forecasts*')],
             ['icon' => 'archive-box-arrow-down',  'label' => 'Recepciones',        'route' => 'producer.grape-reception.index',    'active' => request()->routeIs('producer.grape-reception*') && !request()->routeIs('producer.grape-reception.disputes')],
             ['icon' => 'beaker',                  'label' => 'Análisis de Calidad','route' => 'producer.harvest-quality.index',    'active' => request()->routeIs('producer.harvest-quality*')],
-            ['divider' => true],
-            ['icon' => 'user-group',              'label' => 'Mis Viticultores',   'route' => 'producer.viticulturists.index',     'active' => request()->routeIs('producer.viticulturists*')],
-            ['icon' => 'calculator',              'label' => 'Aforos Viticultores','route' => 'producer.vitic-estimates.index',    'active' => request()->routeIs('producer.vitic-estimates*')],
-            ['icon' => 'exclamation-triangle',    'label' => 'Disputas',           'route' => 'producer.grape-reception.disputes', 'active' => request()->routeIs('producer.grape-reception.disputes')],
         ];
+
+        if ($user->compra_uva_externa) {
+            $harvestItems[] = ['divider' => true];
+            $harvestItems[] = ['icon' => 'user-group',           'label' => 'Mis Viticultores',    'route' => 'producer.viticulturists.index',     'active' => request()->routeIs('producer.viticulturists*')];
+            $harvestItems[] = ['icon' => 'calculator',           'label' => 'Aforos Viticultores', 'route' => 'producer.vitic-estimates.index',    'active' => request()->routeIs('producer.vitic-estimates*')];
+            $harvestItems[] = ['icon' => 'exclamation-triangle', 'label' => 'Disputas',            'route' => 'producer.grape-reception.disputes', 'active' => request()->routeIs('producer.grape-reception.disputes')];
+        }
+
+        $menu['harvest'] = $harvestItems;
 
         // ── Bodega: Elaboración ───────────────────────────────────────────────
         $menu['cellar_elab'] = WineryMenu::cellarElab('producer', operacionesAfterSalas: true);
@@ -67,10 +72,12 @@ class ProducerMenu
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',            'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                     'active' => request()->routeIs('sigpac.*')],
-            ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',         'active' => request()->routeIs('remote-sensing.*')],
             ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial', 'route' => 'plots.territory',                  'active' => request()->routeIs('plots.territory')],
+            ['divider' => true],
+            ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',         'active' => request()->routeIs('remote-sensing.*')],
             ['icon' => 'cloud',               'label' => 'Meteorología',        'route' => 'producer.meteorology.index',       'active' => request()->routeIs('producer.meteorology*'), 'new' => true],
             ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas', 'route' => 'producer.plot-environments.index', 'active' => request()->routeIs('producer.plot-environments.*')],
+            ['divider' => true],
             ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'producer.field-activities.index',  'active' => request()->routeIs('producer.field-activities*')],
         ];
 
@@ -128,11 +135,15 @@ class ProducerMenu
         ];
 
         // ── Rail bottom ───────────────────────────────────────────────────────
-        $menu['rail_bottom'] = [
-            ['icon' => 'cog-6-tooth',         'label' => 'Configuración', 'route' => 'producer.settings',      'active' => request()->routeIs('producer.settings')],
-            ['icon' => 'question-mark-circle','label' => 'Soporte',       'route' => 'producer.support.index',  'active' => request()->routeIs('producer.support.*'),
-             'badge' => Cache::remember("nav_badge_support_{$user->id}", 120, fn() => $user->supportTickets()->open()->count())],
+        $railBottom = [
+            ['icon' => 'cog-6-tooth', 'label' => 'Configuración', 'route' => 'producer.settings', 'active' => request()->routeIs('producer.settings')],
         ];
+        if ($user->compra_uva_externa) {
+            $railBottom[] = ['icon' => 'megaphone', 'label' => 'Avisos a Viticultores', 'route' => 'producer.announcements.index', 'active' => request()->routeIs('producer.announcements*'), 'new' => true];
+        }
+        $railBottom[] = ['icon' => 'question-mark-circle', 'label' => 'Soporte', 'route' => 'producer.support.index', 'active' => request()->routeIs('producer.support.*'),
+            'badge' => Cache::remember("nav_badge_support_{$user->id}", 120, fn () => $user->supportTickets()->open()->count())];
+        $menu['rail_bottom'] = $railBottom;
 
         return $menu;
     }

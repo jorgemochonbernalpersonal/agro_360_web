@@ -25,14 +25,14 @@
                 @endif
             @endif
             <flux:button
-                :href="route('viticulturist.digital-notebook.harvest.edit', $harvest->id)"
+                :href="roleRoute('viticulturist.digital-notebook.harvest.edit', $harvest->id)"
                 variant="primary"
                 icon="pencil-square"
             >
                 Editar
             </flux:button>
             <flux:button
-                :href="route('viticulturist.digital-notebook')"
+                :href="roleRoute('viticulturist.digital-notebook')"
                 variant="ghost"
                 icon="arrow-left"
             >
@@ -206,7 +206,7 @@
                     <div class="flex items-center justify-between">
                         <flux:heading size="sm">Contenedor</flux:heading>
                         <flux:button
-                            :href="route('viticulturist.containers.create') . '?harvest_id=' . $harvest->id"
+                            :href="roleRoute('viticulturist.containers.create') . '?harvest_id=' . $harvest->id"
                             variant="ghost"
                             size="sm"
                             icon="plus"
@@ -272,7 +272,7 @@
                             </div>
 
                             <flux:button
-                                :href="route('viticulturist.containers.edit', $container)"
+                                :href="roleRoute('viticulturist.containers.edit', $container)"
                                 variant="ghost"
                                 size="sm"
                                 icon="pencil-square"
@@ -296,7 +296,7 @@
                     >
                         <x-slot:action>
                             <flux:button
-                                :href="route('viticulturist.containers.create') . '?harvest_id=' . $harvest->id"
+                                :href="roleRoute('viticulturist.containers.create') . '?harvest_id=' . $harvest->id"
                                 variant="primary"
                                 icon="plus"
                             >

@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Entrega de Cosecha"
     :description="'Modifica el registro del ' . $marketedHarvest->delivery_date->format('d/m/Y')"
-    :back-url="route('viticulturist.marketed-harvests.index')"
+    :back-url="roleRoute('viticulturist.marketed-harvests.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -104,7 +104,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.marketed-harvests.index')"
+            :cancel-url="roleRoute('viticulturist.marketed-harvests.index')"
             submit-label="Actualizar Entrega"
         />
     </form>

@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Aplicador ROPO"
     :description="'Modifica los datos de ' . $fieldApplicator->name"
-    :back-url="route('viticulturist.field-applicators.index')"
+    :back-url="roleRoute('viticulturist.field-applicators.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Aplicador">
@@ -65,7 +65,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.field-applicators.index')"
+            :cancel-url="roleRoute('viticulturist.field-applicators.index')"
             submit-label="Actualizar Aplicador"
         />
     </form>

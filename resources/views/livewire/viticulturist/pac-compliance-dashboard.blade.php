@@ -110,7 +110,7 @@
                     @endforeach
                 </div>
                 <div class="mt-2">
-                    <a href="{{ route('viticulturist.phytosanitary-products.index') }}" class="text-sm text-amber-700 underline hover:text-amber-900">
+                    <a href="{{ roleRoute('viticulturist.phytosanitary-products.index') }}" class="text-sm text-amber-700 underline hover:text-amber-900">
                         Ver todos los productos →
                     </a>
                 </div>
@@ -319,7 +319,7 @@
             @if($activitiesWithErrors > 10)
                 <p class="text-sm text-zinc-500 mt-4 text-center">
                     Mostrando 10 de {{ $activitiesWithErrors }} errores.
-                    <a href="{{ route('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline font-medium">Ver todas las actividades</a>
+                    <a href="{{ roleRoute('viticulturist.digital-notebook') }}" class="text-agro-600 hover:underline font-medium">Ver todas las actividades</a>
                 </p>
             @endif
         </x-agro.card>

@@ -53,12 +53,12 @@
 
             @if($viewMode === 'crews')
                 @can('create', \App\Models\Crew::class)
-                    <flux:button href="{{ route('viticulturist.personal.create') }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.personal.create') }}" variant="primary" icon="plus">
                         Nuevo Equipo
                     </flux:button>
                 @endcan
             @else
-                <flux:button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary" icon="user-plus">
+                <flux:button href="{{ roleRoute('viticulturist.viticulturists.create') }}" variant="primary" icon="user-plus">
                     Nuevo Viticultor
                 </flux:button>
             @endif
@@ -280,7 +280,7 @@
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.viticulturists.create') }}" variant="primary" icon="user-plus">
+                        <flux:button href="{{ roleRoute('viticulturist.viticulturists.create') }}" variant="primary" icon="user-plus">
                             Nuevo Viticultor
                         </flux:button>
                     </x-slot:action>
@@ -342,11 +342,11 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ route('viticulturist.personal.show', $crew) }}#miembros" class="{{ $btnBase }}" title="Ver equipo">
+                                    <a href="{{ roleRoute('viticulturist.personal.show', $crew) }}#miembros" class="{{ $btnBase }}" title="Ver equipo">
                                         <flux:icon icon="eye" class="size-4" />
                                     </a>
                                     @can('update', $crew)
-                                        <a href="{{ route('viticulturist.personal.edit', $crew) }}" class="{{ $btnBase }}" title="Editar">
+                                        <a href="{{ roleRoute('viticulturist.personal.edit', $crew) }}" class="{{ $btnBase }}" title="Editar">
                                             <flux:icon icon="pencil-square" class="size-4" />
                                         </a>
                                     @endcan
@@ -387,7 +387,7 @@
                 @else
                     <x-slot:action>
                         @can('create', \App\Models\Crew::class)
-                            <flux:button href="{{ route('viticulturist.personal.create') }}" variant="primary" icon="plus">
+                            <flux:button href="{{ roleRoute('viticulturist.personal.create') }}" variant="primary" icon="plus">
                                 Nuevo Equipo
                             </flux:button>
                         @endcan

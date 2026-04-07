@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Certificación"
     :description="'Modifica los datos de ' . $certification->certifying_body"
-    :back-url="route('viticulturist.certifications.index')"
+    :back-url="roleRoute('viticulturist.certifications.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -87,7 +87,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.certifications.index')"
+            :cancel-url="roleRoute('viticulturist.certifications.index')"
             submit-label="Guardar Cambios"
         />
     </form>

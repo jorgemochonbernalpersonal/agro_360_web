@@ -42,7 +42,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Sala de bodega creada correctamente.');
-        $this->redirect(route('winery.container-rooms.index'), navigate: true);
+        $this->redirect(roleRoute('container-rooms.index'), navigate: true);
     }
 
     public function render()

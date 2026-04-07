@@ -55,7 +55,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Sala actualizada correctamente.');
-        $this->redirect(route('winery.container-rooms.index'), navigate: true);
+        $this->redirect(roleRoute('container-rooms.index'), navigate: true);
     }
 
     public function render()

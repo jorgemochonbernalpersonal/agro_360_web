@@ -64,7 +64,7 @@ class Create extends Component
         ]);
 
         $this->toastSuccess('Control de fermentación registrado.');
-        $this->redirect(route('winery.fermentation-controls.index'), navigate: true);
+        $this->redirect(roleRoute('fermentation-controls.index'), navigate: true);
     }
 
     public function render()

@@ -1,7 +1,7 @@
 ﻿<x-agro.form-card
     title="Editar Producto Fitosanitario"
     description="Modifica los datos de {{ $product->name }}"
-    :back-url="route('viticulturist.phytosanitary-products.index')"
+    :back-url="roleRoute('viticulturist.phytosanitary-products.index')"
 >
     <form wire:submit="save" class="space-y-8" data-cy="product-form">
         {{-- Alerta PAC --}}
@@ -174,7 +174,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.phytosanitary-products.index')"
+            :cancel-url="roleRoute('viticulturist.phytosanitary-products.index')"
             submit-label="Actualizar Producto"
         />
     </form>

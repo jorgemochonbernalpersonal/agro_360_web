@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Registrar Tratamiento Post-Vendimia"
     description="Tratamientos aplicados después de la cosecha (cobre, azufre, sellado de heridas...)"
-    :back-url="route('viticulturist.digital-notebook.post-harvest.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.post-harvest.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Información Básica">
@@ -182,7 +182,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.post-harvest.index')"
+            :cancel-url="roleRoute('viticulturist.digital-notebook.post-harvest.index')"
             submit-label="Registrar Tratamiento"
         />
     </form>

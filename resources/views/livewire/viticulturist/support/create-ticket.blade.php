@@ -1,7 +1,7 @@
 ﻿<x-agro.form-card
     title="Nuevo Ticket de Soporte"
     description="Cuéntanos qué necesitas y te ayudaremos lo antes posible"
-    :back-url="route('viticulturist.support.index')"
+    :back-url="roleRoute('viticulturist.support.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Tipo y Prioridad">
@@ -235,7 +235,7 @@
         </flux:callout>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.support.index')"
+            :cancel-url="roleRoute('viticulturist.support.index')"
             submit-label="Enviar Ticket"
         />
     </form>

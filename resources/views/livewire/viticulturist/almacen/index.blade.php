@@ -75,11 +75,11 @@
 
                 <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-                <flux:button href="{{ route('viticulturist.almacen.stock.analytics') }}" variant="outline" icon="chart-bar">
+                <flux:button href="{{ roleRoute('viticulturist.almacen.stock.analytics') }}" variant="outline" icon="chart-bar">
                     Analíticas
                 </flux:button>
 
-                <flux:button href="{{ route('viticulturist.almacen.stock.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.almacen.stock.create') }}" variant="primary" icon="plus">
                     Registrar
                 </flux:button>
             </div>
@@ -204,13 +204,13 @@
                                     <flux:icon icon="archive-box-arrow-down" class="size-4" />
                                 </button>
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ route('viticulturist.almacen.stock.edit', $stock->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <a href="{{ roleRoute('viticulturist.almacen.stock.edit', $stock->id) }}" class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
-                                    <a href="{{ route('viticulturist.almacen.stock.consume', $stock->id) }}" class="{{ $btnBase }}" title="Consumir">
+                                    <a href="{{ roleRoute('viticulturist.almacen.stock.consume', $stock->id) }}" class="{{ $btnBase }}" title="Consumir">
                                         <flux:icon icon="minus-circle" class="size-4" />
                                     </a>
-                                    <a href="{{ route('viticulturist.almacen.stock.movements', $stock->id) }}" class="{{ $btnBase }}" title="Movimientos">
+                                    <a href="{{ roleRoute('viticulturist.almacen.stock.movements', $stock->id) }}" class="{{ $btnBase }}" title="Movimientos">
                                         <flux:icon icon="document-text" class="size-4" />
                                     </a>
                                 </div>
@@ -236,7 +236,7 @@
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.almacen.stock.create') }}" variant="primary" icon="plus">Registrar Stock</flux:button>
+                        <flux:button href="{{ roleRoute('viticulturist.almacen.stock.create') }}" variant="primary" icon="plus">Registrar Stock</flux:button>
                     </x-slot:action>
                 @endif
             </x-agro.empty-state>
@@ -332,7 +332,7 @@
 
                 <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-                <flux:button href="{{ route('viticulturist.almacen.supplies.create') }}" variant="primary" icon="plus">Nuevo Insumo</flux:button>
+                <flux:button href="{{ roleRoute('viticulturist.almacen.supplies.create') }}" variant="primary" icon="plus">Nuevo Insumo</flux:button>
             </div>
 
             {{-- Active filter chips --}}
@@ -380,7 +380,7 @@
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.almacen.supplies.create') }}" variant="primary" icon="plus">Nuevo Insumo</flux:button>
+                        <flux:button href="{{ roleRoute('viticulturist.almacen.supplies.create') }}" variant="primary" icon="plus">Nuevo Insumo</flux:button>
                     </x-slot:action>
                 @endif
             </x-agro.empty-state>
@@ -460,7 +460,7 @@
                                 <button wire:click="openPurchase({{ $supply->id }})" class="{{ $btnBase }}" title="Registrar compra">
                                     <flux:icon icon="shopping-cart" class="size-4" />
                                 </button>
-                                <a href="{{ route('viticulturist.almacen.supplies.edit', $supply) }}" class="{{ $btnBase }}" title="Editar">
+                                <a href="{{ roleRoute('viticulturist.almacen.supplies.edit', $supply) }}" class="{{ $btnBase }}" title="Editar">
                                     <flux:icon icon="pencil-square" class="size-4" />
                                 </a>
                                 <button
@@ -512,7 +512,7 @@
                     />
                 </div>
                 <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
-                <flux:button href="{{ route('viticulturist.almacen.warehouses.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.almacen.warehouses.create') }}" variant="primary" icon="plus">
                     Nuevo
                 </flux:button>
             </div>
@@ -585,7 +585,7 @@
                         <x-slot:footer>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ route('viticulturist.almacen.warehouses.edit', $warehouse->id) }}" class="{{ $btnBase }}" title="Editar">
+                                    <a href="{{ roleRoute('viticulturist.almacen.warehouses.edit', $warehouse->id) }}" class="{{ $btnBase }}" title="Editar">
                                         <flux:icon icon="pencil-square" class="size-4" />
                                     </a>
                                 </div>
@@ -641,7 +641,7 @@
                     </x-slot:action>
                 @else
                     <x-slot:action>
-                        <flux:button href="{{ route('viticulturist.almacen.warehouses.create') }}" variant="primary" icon="plus">
+                        <flux:button href="{{ roleRoute('viticulturist.almacen.warehouses.create') }}" variant="primary" icon="plus">
                             Nuevo Almacén
                         </flux:button>
                     </x-slot:action>

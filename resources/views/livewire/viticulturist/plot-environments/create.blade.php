@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Nueva Ficha de Entorno de Parcela"
     description="Registra las condiciones ambientales y zonas protegidas de la parcela"
-    :back-url="route('viticulturist.plot-environments.index')"
+    :back-url="roleRoute('viticulturist.plot-environments.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -102,7 +102,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.plot-environments.index')"
+            :cancel-url="roleRoute('viticulturist.plot-environments.index')"
             submit-label="Registrar Entorno"
         />
     </form>

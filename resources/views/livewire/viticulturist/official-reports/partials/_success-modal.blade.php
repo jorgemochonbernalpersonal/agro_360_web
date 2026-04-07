@@ -47,7 +47,7 @@
                             Ver Lista
                         </button>
                         <a 
-                            href="{{ route('viticulturist.official-reports.download', $generatedReport) }}"
+                            href="{{ roleRoute('viticulturist.official-reports.download', $generatedReport) }}"
                             class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-center"
                         >
                             Descargar PDF

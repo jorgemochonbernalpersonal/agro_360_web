@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Concesión"
     description="Modifica los datos de la concesión de riego"
-    :back-url="route('viticulturist.water-concessions.index')"
+    :back-url="roleRoute('viticulturist.water-concessions.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -97,7 +97,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.water-concessions.index')"
+            :cancel-url="roleRoute('viticulturist.water-concessions.index')"
             submit-label="Guardar Cambios"
         />
     </form>

@@ -79,7 +79,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Control actualizado.');
-        $this->redirect(route('winery.fermentation-controls.index'), navigate: true);
+        $this->redirect(roleRoute('fermentation-controls.index'), navigate: true);
     }
 
     public function render()

@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Editar Cliente"
         description="Modifica los datos del cliente"
-        :back-url="route('viticulturist.clients.show', $client->id)"
+        :back-url="roleRoute('viticulturist.clients.show', $client->id)"
     >
         <form wire:submit="update" class="space-y-8" data-cy="client-edit-form">
             <x-agro.form-section title="Tipo de Cliente">
@@ -260,7 +260,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('viticulturist.clients.show', $client->id)" submit-label="Actualizar Cliente" />
+            <x-agro.form-actions :cancel-url="roleRoute('viticulturist.clients.show', $client->id)" submit-label="Actualizar Cliente" />
         </form>
     </x-agro.form-card>
 </div>

@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Plan de Fertilización"
     description="Modifica el plan de fertilización del año {{ $plan->plan_year }}"
-    :back-url="route('viticulturist.fertilization-plans.index')"
+    :back-url="roleRoute('viticulturist.fertilization-plans.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -210,7 +210,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.fertilization-plans.index')"
+            :cancel-url="roleRoute('viticulturist.fertilization-plans.index')"
             submit-label="Guardar Cambios"
         />
 

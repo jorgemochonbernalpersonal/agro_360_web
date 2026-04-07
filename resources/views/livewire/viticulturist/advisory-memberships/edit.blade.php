@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Asesor Técnico"
     :description="'Modifica los datos de ' . $advisoryMembership->advisor_name"
-    :back-url="route('viticulturist.advisory-memberships.index')"
+    :back-url="roleRoute('viticulturist.advisory-memberships.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Asesor">
@@ -62,7 +62,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.advisory-memberships.index')"
+            :cancel-url="roleRoute('viticulturist.advisory-memberships.index')"
             submit-label="Actualizar Asesor"
         />
     </form>

@@ -7,7 +7,7 @@
     >
         @unless($filter_planting_id)
             <x-slot:actions>
-                <flux:button href="{{ route('viticulturist.phenology.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.phenology.create') }}" variant="primary" icon="plus">
                     Registrar Estadio
                 </flux:button>
             </x-slot:actions>
@@ -54,7 +54,7 @@
         >
             @if($filter_planting_id)
                 <x-slot:action>
-                    <flux:button href="{{ route('viticulturist.phenology.create', ['planting_id' => $filter_planting_id]) }}" variant="primary" icon="plus">
+                    <flux:button href="{{ roleRoute('viticulturist.phenology.create', ['planting_id' => $filter_planting_id]) }}" variant="primary" icon="plus">
                         Registrar primer estadio
                     </flux:button>
                 </x-slot:action>
@@ -128,7 +128,7 @@
 
                     <x-slot:footer>
                         <div class="flex items-center justify-end gap-0.5">
-                            <a href="{{ route('viticulturist.phenology.edit', $obs->id) }}"
+                            <a href="{{ roleRoute('viticulturist.phenology.edit', $obs->id) }}"
                                title="Editar"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors">
                                 <flux:icon icon="pencil-square" class="size-4" />

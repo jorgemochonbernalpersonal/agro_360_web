@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Entrega de Envases"
     description="Modifica los datos del registro de entrega de envases fitosanitarios"
-    :back-url="route('viticulturist.container-returns.index')"
+    :back-url="roleRoute('viticulturist.container-returns.index')"
 >
     <form wire:submit="save" class="space-y-8">
 
@@ -118,7 +118,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.container-returns.index')"
+            :cancel-url="roleRoute('viticulturist.container-returns.index')"
             submit-label="Guardar Cambios"
         />
     </form>

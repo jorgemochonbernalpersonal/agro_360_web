@@ -62,7 +62,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Documento actualizado correctamente.');
-        $this->redirect(route('winery.documents.index'), navigate: true);
+        $this->redirect(roleRoute('documents.index'), navigate: true);
     }
 
     public function render()

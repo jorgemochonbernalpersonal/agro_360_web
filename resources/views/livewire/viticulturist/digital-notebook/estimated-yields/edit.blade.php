@@ -31,7 +31,7 @@
     description="Modifica la estimación de rendimiento"
     :icon="$icon"
     icon-color="from-agro-500 to-agro-700"
-    :back-url="route('viticulturist.digital-notebook.estimated-yields.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.estimated-yields.index')"
 >
     <form wire:submit="update" class="space-y-8" data-cy="edit-estimated-yield-form">
         
@@ -236,7 +236,7 @@
             </flux:field>
         </x-agro.form-section>
 
-        <x-agro.form-actions :back-url="route('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Actualizar Estimación" />
+        <x-agro.form-actions :back-url="roleRoute('viticulturist.digital-notebook.estimated-yields.index')" submit-label="Actualizar Estimación" />
     </form>
 </x-agro.form-card>
 </div>

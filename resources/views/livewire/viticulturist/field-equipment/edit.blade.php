@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Equipo ITB/ITEA"
     :description="'Modifica los datos de ' . $fieldEquipment->name"
-    :back-url="route('viticulturist.field-equipment.index')"
+    :back-url="roleRoute('viticulturist.field-equipment.index')"
 >
     <form wire:submit="save" class="space-y-8">
         <x-agro.form-section title="Datos del Equipo">
@@ -69,7 +69,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.field-equipment.index')"
+            :cancel-url="roleRoute('viticulturist.field-equipment.index')"
             submit-label="Actualizar Equipo"
         />
     </form>

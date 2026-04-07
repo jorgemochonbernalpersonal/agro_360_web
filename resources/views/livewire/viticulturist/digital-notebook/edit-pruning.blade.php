@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Poda"
     description="Modifica los datos de la operación de poda"
-    :back-url="route('viticulturist.digital-notebook.pruning.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.pruning.index')"
 >
     <form wire:submit="update" class="space-y-8">
         <x-agro.form-section title="Información Básica">
@@ -177,7 +177,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.pruning.index')"
+            :cancel-url="roleRoute('viticulturist.digital-notebook.pruning.index')"
             submit-label="Actualizar Poda"
             submit-method="update"
         />

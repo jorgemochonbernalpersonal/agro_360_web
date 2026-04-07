@@ -82,7 +82,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('viticulturist.containers.create') }}" variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
             Nuevo Contenedor
         </flux:button>
 
@@ -172,7 +172,7 @@
                     </x-agro.table-cell>
                     <x-agro.table-cell align="right">
                         <div class="flex items-center justify-end gap-1">
-                            <x-agro.action-button variant="edit" href="{{ route('viticulturist.containers.edit', $container->id) }}" />
+                            <x-agro.action-button variant="edit" href="{{ roleRoute('viticulturist.containers.edit', $container->id) }}" />
                             <x-agro.action-button
                                 :variant="$container->archived ? 'activate' : 'deactivate'"
                                 wireClick="toggleActive({{ $container->id }})"
@@ -184,7 +184,7 @@
             <x-slot name="pagination">{{ $containers->links() }}</x-slot>
         @else
             <x-slot name="emptyAction">
-                <flux:button href="{{ route('viticulturist.containers.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.containers.create') }}" variant="primary" icon="plus">
                     Nuevo Contenedor
                 </flux:button>
             </x-slot>

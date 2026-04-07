@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="Editar Observación"
     description="Modifica los datos de la observación"
-    :back-url="route('viticulturist.digital-notebook.observation.index')"
+    :back-url="roleRoute('viticulturist.digital-notebook.observation.index')"
 >
     <form wire:submit="update" class="space-y-8" data-cy="observation-form">
         <x-agro.form-section title="Información Básica">
@@ -221,7 +221,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="route('viticulturist.digital-notebook.observation.index')"
+            :cancel-url="roleRoute('viticulturist.digital-notebook.observation.index')"
             submit-label="Registrar Observación"
         />
     </form>

@@ -37,7 +37,7 @@
 
         <div class="w-px h-8 bg-zinc-200 shrink-0"></div>
 
-        <flux:button href="{{ route('viticulturist.official-reports.create') }}" wire:navigate variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('viticulturist.official-reports.create') }}" wire:navigate variant="primary" icon="plus">
             Generar Informe
         </flux:button>
 
@@ -154,7 +154,7 @@
                                             class="absolute right-0 bottom-10 w-36 rounded-xl shadow-xl bg-white ring-1 ring-black/5 z-50 py-1"
                                             style="display: none;"
                                         >
-                                            <a href="{{ route('viticulturist.official-reports.download', $report) }}" class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-agro-50 rounded-lg mx-1">
+                                            <a href="{{ roleRoute('viticulturist.official-reports.download', $report) }}" class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-agro-50 rounded-lg mx-1">
                                                 <flux:icon icon="document" class="size-4 text-red-500" /> PDF
                                             </a>
                                             @if($report->csv_path)

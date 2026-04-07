@@ -1,3 +1,4 @@
+<div>
 @if($announcements->isNotEmpty())
     <div class="space-y-2">
         @foreach($announcements as $a)
@@ -19,9 +20,10 @@
             </div>
         @endforeach
         @if($announcements->count() >= 3)
-            <a href="{{ route('viticulturist.announcements') }}" wire:navigate class="text-xs text-agro-600 hover:underline font-medium">
+            <a href="{{ roleRoute('viticulturist.announcements') }}" wire:navigate class="text-xs text-agro-600 hover:underline font-medium">
                 Ver todos los avisos →
             </a>
         @endif
     </div>
 @endif
+</div>

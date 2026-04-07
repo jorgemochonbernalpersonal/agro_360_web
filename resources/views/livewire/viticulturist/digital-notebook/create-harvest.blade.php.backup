@@ -7,7 +7,7 @@
     description="Registra una nueva cosecha (vendimia) en el cuaderno digital"
     :icon="$icon"
     icon-color="from-purple-600 to-purple-700"
-    :back-url="route('viticulturist.digital-notebook')"
+    :back-url="roleRoute('viticulturist.digital-notebook')"
 >
     <form wire:submit="save" class="space-y-8">
         
@@ -155,7 +155,7 @@
                 @if($availableContainers->isEmpty())
                     <p class="mt-2 text-sm text-amber-600">
                         No hay contenedores disponibles. 
-                        <a href="{{ route('viticulturist.digital-notebook.containers.create') }}" class="text-blue-600 hover:underline">
+                        <a href="{{ roleRoute('viticulturist.digital-notebook.containers.create') }}" class="text-blue-600 hover:underline">
                             Crea uno primero
                         </a>
                     </p>
@@ -717,7 +717,7 @@
         </x-form-section>
 
         <x-form-actions 
-            :cancel-url="route('viticulturist.digital-notebook')"
+            :cancel-url="roleRoute('viticulturist.digital-notebook')"
             submit-label="Registrar Cosecha"
         />
     </form>

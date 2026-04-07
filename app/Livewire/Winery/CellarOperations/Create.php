@@ -58,7 +58,7 @@ class Create extends Component
 
         $typeLabel = CellarOperation::OPERATION_TYPES[$this->operation_type] ?? $this->operation_type;
         $this->toastSuccess("Operación «{$typeLabel}» creada correctamente.");
-        $this->redirect(route('winery.cellar-operations.index'), navigate: true);
+        $this->redirect(roleRoute('cellar-operations.index'), navigate: true);
     }
 
     public function render()

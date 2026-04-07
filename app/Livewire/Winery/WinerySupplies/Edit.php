@@ -67,7 +67,7 @@ class Edit extends Component
         ]);
 
         $this->toastSuccess('Insumo actualizado correctamente.');
-        $this->redirect(route('winery.winery-supplies.index'), navigate: true);
+        $this->redirect(roleRoute('winery-supplies.index'), navigate: true);
     }
 
     public function render()

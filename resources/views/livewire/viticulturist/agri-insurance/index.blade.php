@@ -6,7 +6,7 @@
     icon="shield-exclamation"
 >
     <x-slot:actions>
-        <flux:button href="{{ route('viticulturist.agri-insurance.create') }}" variant="primary" icon="plus">
+        <flux:button href="{{ roleRoute('viticulturist.agri-insurance.create') }}" variant="primary" icon="plus">
             Añadir Póliza
         </flux:button>
     </x-slot:actions>
@@ -86,7 +86,7 @@
             description="Registra las pólizas de seguro de tu explotación: pedrisco, heladas, multirriesgo y más."
         >
             <x-slot:action>
-                <flux:button href="{{ route('viticulturist.agri-insurance.create') }}" variant="primary" icon="plus">
+                <flux:button href="{{ roleRoute('viticulturist.agri-insurance.create') }}" variant="primary" icon="plus">
                     Añadir primera póliza
                 </flux:button>
             </x-slot:action>
@@ -142,7 +142,7 @@
 
                     <x-agro.table-cell align="right">
                         <div class="flex items-center justify-end gap-2">
-                            <flux:button href="{{ route('viticulturist.agri-insurance.edit', $insurance->id) }}" size="sm" variant="ghost" icon="pencil">Editar</flux:button>
+                            <flux:button href="{{ roleRoute('viticulturist.agri-insurance.edit', $insurance->id) }}" size="sm" variant="ghost" icon="pencil">Editar</flux:button>
                             <flux:button wire:click="delete({{ $insurance->id }})" wire:confirm="¿Eliminar esta póliza?" size="sm" variant="ghost" icon="trash">Eliminar</flux:button>
                         </div>
                     </x-agro.table-cell>

@@ -5,7 +5,7 @@
         description="Gestiona trabajadores que no pertenecen a ninguna cuadrilla"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.personal.index') }}" variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.personal.index') }}" variant="outline" icon="arrow-left">
                 Cuadrillas
             </flux:button>
         </x-slot:actions>

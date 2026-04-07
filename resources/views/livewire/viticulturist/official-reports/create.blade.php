@@ -5,7 +5,7 @@
         description="Crea informes firmados electrónicamente para administración y certificaciones"
     >
         <x-slot:actions>
-            <flux:button href="{{ route('viticulturist.official-reports.index') }}" wire:navigate variant="outline" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.official-reports.index') }}" wire:navigate variant="outline" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>
@@ -178,7 +178,7 @@
             <flux:callout variant="info" class="mb-6">
                 <flux:callout.text>
                     <strong>Firma Digital:</strong> Se te pedirá tu contraseña de firma digital al confirmar la generación del informe.
-                    Si no la tienes configurada, créala en <a href="{{ route('viticulturist.settings', ['tab' => 'signature']) }}" class="underline font-semibold">Configuración - Firma Digital</a>.
+                    Si no la tienes configurada, créala en <a href="{{ roleRoute('viticulturist.settings', ['tab' => 'signature']) }}" class="underline font-semibold">Configuración - Firma Digital</a>.
                 </flux:callout.text>
             </flux:callout>
 

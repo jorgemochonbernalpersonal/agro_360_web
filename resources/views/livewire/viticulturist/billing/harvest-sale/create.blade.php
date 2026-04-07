@@ -2,7 +2,7 @@
     <x-agro.form-card
         title="Nueva Factura de Vendimia"
         description="Emite una factura por la uva cosechada"
-        :back-url="route('viticulturist.invoices.harvest-sale.index')">
+        :back-url="roleRoute('viticulturist.invoices.harvest-sale.index')">
 
         <form wire:submit.prevent="save" class="space-y-8">
 
@@ -211,7 +211,7 @@
                 </flux:field>
             </x-agro.form-section>
 
-            <x-agro.form-actions :cancel-url="route('viticulturist.invoices.harvest-sale.index')" submit-label="Crear Factura" />
+            <x-agro.form-actions :cancel-url="roleRoute('viticulturist.invoices.harvest-sale.index')" submit-label="Crear Factura" />
         </form>
     </x-agro.form-card>
 </div>
