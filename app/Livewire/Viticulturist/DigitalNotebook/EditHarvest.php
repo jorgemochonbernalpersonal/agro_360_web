@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 class EditHarvest extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
 
     public $harvest;
     public $harvest_id;
@@ -131,7 +131,7 @@ class EditHarvest extends Component
 
         if ($activity->isLocked()) {
             $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            $this->redirect(route('viticulturist.harvests.index'), navigate: true);
+            $this->viticulturistRoleRedirect('harvests.index', navigate: true);
             return;
         }
 
@@ -637,7 +637,7 @@ class EditHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha actualizada correctamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.harvest.show', $this->harvest->id), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.harvest.show', $this->harvest->id), navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar cosecha', [
                 'error' => $e->getMessage(),

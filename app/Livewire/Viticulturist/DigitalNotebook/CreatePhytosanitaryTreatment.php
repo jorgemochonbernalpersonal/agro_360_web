@@ -15,13 +15,14 @@ use App\Models\FieldApplicator;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreatePhytosanitaryTreatment extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
 
     public $plot_id              = '';
     public $plot_planting_id     = '';
@@ -78,8 +79,7 @@ class CreatePhytosanitaryTreatment extends Component
 
         if (!$campaign) {
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            $this->redirect(route('viticulturist.campaign.create'), navigate: true);
-            return;
+            return $this->viticulturistRoleRedirect('campaign.create');
         }
 
         $this->campaign_id = $campaign->id;
@@ -275,7 +275,7 @@ class CreatePhytosanitaryTreatment extends Component
             });
 
             $this->toastSuccess('Tratamiento fitosanitario registrado correctamente.');
-            $this->redirect(route('viticulturist.digital-notebook.treatment.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.treatment.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar tratamiento fitosanitario', [
                 'error'   => $e->getMessage(),

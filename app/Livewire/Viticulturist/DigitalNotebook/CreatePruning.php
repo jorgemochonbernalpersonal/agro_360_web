@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 #[Layout('layouts.app', ['title' => 'Registrar Poda - Agro365'])]
 class CreatePruning extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
 
     public $plot_id = '';
     public $plot_planting_id = '';
@@ -51,7 +52,7 @@ class CreatePruning extends Component
         $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
         if (!$campaign) {
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
         }
         $this->campaign_id = $campaign->id;
     }
@@ -159,7 +160,7 @@ class CreatePruning extends Component
             });
 
             $this->toastSuccess('Poda registrada correctamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.pruning.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.pruning.index', navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar poda', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError('Error al registrar la poda. Por favor, intenta de nuevo.');

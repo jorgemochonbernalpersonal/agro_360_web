@@ -24,7 +24,7 @@ use Livewire\Attributes\Layout;
 #[Layout('layouts.app')]
 class CreateHarvest extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
 
     // Básico
     public $plot_id = '';
@@ -112,7 +112,7 @@ class CreateHarvest extends Component
         
         if (!$campaign) {
             $this->toastError('No se pudo obtener la campaña activa.');
-            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -568,7 +568,7 @@ class CreateHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha registrada correctamente.');
-            return $this->redirect(route('viticulturist.harvests.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('harvests.index', navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar cosecha', [
                 'error' => $e->getMessage(),

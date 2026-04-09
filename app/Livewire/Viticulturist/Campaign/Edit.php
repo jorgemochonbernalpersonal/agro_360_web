@@ -89,11 +89,13 @@ class Edit extends Component
             $justActivated = $this->active && !$wasActive;
             if ($justActivated) {
                 session()->flash('campaign_activated', "Campaña {$this->campaign->year} activada. Ya puedes registrar actividades.");
-                return $this->redirect(route('viticulturist.digital-notebook'), navigate: true);
+                $route = $user->isProducer() ? route('producer.digital-notebook.estimated-yields.index') : route('viticulturist.digital-notebook');
+                return $this->redirect($route, navigate: true);
             }
 
             $this->toastSuccess('Campaña actualizada correctamente.');
-            return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
+            $route = $user->isProducer() ? route('producer.campaign.index') : route('viticulturist.campaign.index');
+            return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar campaña', [
                 'error' => $e->getMessage(),

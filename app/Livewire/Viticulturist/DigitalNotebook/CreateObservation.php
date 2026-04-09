@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class CreateObservation extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
     public $plot_id = '';
     public $plot_planting_id = '';
     public $availablePlantings = [];
@@ -70,7 +71,7 @@ class CreateObservation extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -212,7 +213,7 @@ class CreateObservation extends Component
             });
 
             $this->toastSuccess('Observación registrada correctamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.observation.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.observation.index', navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar observación', [
                 'error' => $e->getMessage(),

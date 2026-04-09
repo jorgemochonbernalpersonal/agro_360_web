@@ -80,11 +80,13 @@ class Create extends Component
 
             if ($this->active) {
                 session()->flash('campaign_activated', "Campaña {$this->year} activada. Ya puedes registrar actividades.");
-                return $this->redirect(route('viticulturist.digital-notebook'), navigate: true);
+                $route = $user->isProducer() ? route('producer.digital-notebook.estimated-yields.index') : route('viticulturist.digital-notebook');
+                return $this->redirect($route, navigate: true);
             }
 
             $this->toastSuccess('Campaña creada correctamente. Actívala cuando quieras empezar a registrar actividades.');
-            return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
+            $route = $user->isProducer() ? route('producer.campaign.index') : route('viticulturist.campaign.index');
+            return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al crear campaña', [
                 'error' => $e->getMessage(),

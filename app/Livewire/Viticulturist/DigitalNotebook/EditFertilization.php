@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 class EditFertilization extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
     
     public AgriculturalActivity $activity;
     public Fertilization $fertilization;
@@ -58,7 +58,7 @@ class EditFertilization extends Component
         
         if ($this->activity->activity_type !== 'fertilization') {
             $this->toastError('Esta actividad no es una fertilización.');
-            return $this->redirect(route('viticulturist.digital-notebook.fertilization.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -67,7 +67,7 @@ class EditFertilization extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError('🔒 No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return $this->redirect(route('viticulturist.digital-notebook.fertilization.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
         }
         
         $this->fertilization = $this->activity->fertilization;
@@ -265,7 +265,7 @@ class EditFertilization extends Component
             });
 
             $this->toastSuccess('Fertilización actualizada correctamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.fertilization.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar fertilización', [
                 'error' => $e->getMessage(),

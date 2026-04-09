@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 #[Layout('layouts.app')]
 class CreateFertilization extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
     public $plot_id = '';
     public $plot_planting_id = '';
     public $availablePlantings = [];
@@ -64,7 +64,7 @@ class CreateFertilization extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -233,7 +233,7 @@ class CreateFertilization extends Component
             });
 
             $this->toastSuccess('Fertilización registrada correctamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.fertilization.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar fertilización', [
                 'error' => $e->getMessage(),

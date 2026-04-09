@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class EditPostHarvest extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
 
     public AgriculturalActivity $activity;
     public PostHarvestTreatment $postHarvestTreatment;
@@ -52,7 +52,7 @@ class EditPostHarvest extends Component
 
         if ($this->activity->activity_type !== 'post_harvest') {
             $this->toastError('Esta actividad no es un tratamiento post-vendimia.');
-            return $this->redirect(route('viticulturist.digital-notebook.post-harvest.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index', navigate: true);
         }
 
         if (!Auth::user()->can('update', $this->activity)) {
@@ -61,7 +61,7 @@ class EditPostHarvest extends Component
 
         if ($this->activity->isLocked()) {
             $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return $this->redirect(route('viticulturist.digital-notebook.post-harvest.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index', navigate: true);
         }
 
         $this->postHarvestTreatment = $this->activity->postHarvestTreatment;
@@ -203,7 +203,7 @@ class EditPostHarvest extends Component
             });
 
             $this->toastSuccess('Tratamiento post-vendimia actualizado correctamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.post-harvest.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index', navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => $user->id, 'activity_id' => $this->activity->id]);
             $this->toastError('Error al actualizar el tratamiento. Por favor, intenta de nuevo.');

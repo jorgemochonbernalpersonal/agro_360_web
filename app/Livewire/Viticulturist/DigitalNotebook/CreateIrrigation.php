@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 #[Layout('layouts.app')]
 class CreateIrrigation extends Component
 {
-    use WithViticulturistValidation, WithToastNotifications, WithUserFilters;
+    use WithViticulturistValidation, WithToastNotifications, WithUserFilters, WithRoleAwareRedirect;
     public $plot_id = '';
     public $plot_planting_id = '';
     public $availablePlantings = [];
@@ -66,7 +67,7 @@ class CreateIrrigation extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->redirect(route('viticulturist.campaign.create'), navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
         }
         
         $this->campaign_id = $campaign->id;
@@ -221,7 +222,7 @@ class CreateIrrigation extends Component
             });
 
             $this->toastSuccess('Riego registrado correctamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.irrigation.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index', navigate: true);
         } catch (\Exception $e) {
             \Log::error('Error al registrar riego', [
                 'error' => $e->getMessage(),

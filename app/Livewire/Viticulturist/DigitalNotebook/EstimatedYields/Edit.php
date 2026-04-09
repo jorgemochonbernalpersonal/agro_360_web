@@ -276,7 +276,10 @@ class Edit extends Component
             });
 
             $this->toastSuccess('Rendimiento estimado actualizado exitosamente.');
-            return $this->redirect(route('viticulturist.digital-notebook.estimated-yields.index'), navigate: true);
+            $route = Auth::user()->isProducer()
+                ? route('producer.digital-notebook.estimated-yields.index')
+                : route('viticulturist.digital-notebook.estimated-yields.index');
+            return $this->redirect($route, navigate: true);
         } catch (\Exception $e) {
             $this->toastError($e instanceof RuntimeException ? $e->getMessage() : 'Error al actualizar el rendimiento estimado. Inténtalo de nuevo.');
         }
