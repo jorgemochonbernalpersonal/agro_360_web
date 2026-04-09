@@ -11,6 +11,7 @@ use App\Models\Campaign;
 use App\Models\Crew;
 use App\Models\Machinery;
 use App\Models\CrewMember;
+use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
@@ -134,10 +135,20 @@ class CreatePostHarvest extends Component
                     $crewMemberId = $crewMember->id;
                 }
 
+                // Obtener relación con bodega si es viticultor invitado
+                $wineryViticulturistId = null;
+                if ($user->isViticulturist()) {
+                    $wineryRelation = WineryViticulturist::where('viticulturist_id', $user->id)
+                        ->whereNotNull('winery_id')
+                        ->first();
+                    $wineryViticulturistId = $wineryRelation?->id;
+                }
+
                 $activity = AgriculturalActivity::create([
                     'plot_id'            => $this->plot_id,
                     'plot_planting_id'   => $this->plot_planting_id ?: null,
                     'viticulturist_id'   => $user->id,
+                    'winery_viticulturist_id' => $wineryViticulturistId,  // ← Vincular a bodega
                     'campaign_id'        => $this->campaign_id,
                     'activity_type'      => 'post_harvest',
                     'phenological_stage' => $this->phenological_stage,

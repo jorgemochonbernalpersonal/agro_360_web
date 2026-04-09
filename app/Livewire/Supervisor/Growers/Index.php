@@ -151,10 +151,11 @@ class Index extends Component
             return;
         }
 
-        $token = Str::random(64);
+        $plainToken = Str::random(64);
+        $hashedToken = Hash::make($plainToken);
 
         $updates = [
-            'invitation_token'      => $token,
+            'invitation_token'      => $hashedToken,
             'invitation_sent_at'    => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];
@@ -165,7 +166,7 @@ class Index extends Component
 
         $grower->update($updates);
 
-        $grower->notify(new ViticulturistInvitationNotification(Auth::user(), $token));
+        $grower->notify(new ViticulturistInvitationNotification(Auth::user(), $plainToken));
 
         $this->closeInviteModal();
         $this->toastSuccess("Invitación enviada a {$this->inviteEmail}.");

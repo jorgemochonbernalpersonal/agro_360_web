@@ -15,6 +15,7 @@ class Campaign extends Model
         'name',
         'year',
         'viticulturist_id',
+        'winery_viticulturist_id',  // ← FK a winery_viticulturist
         'start_date',
         'end_date',
         'active',
@@ -48,6 +49,14 @@ class Campaign extends Model
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
+    }
+
+    /**
+     * Relación con bodega (si fue creado por viticultor invitado)
+     */
+    public function wineryRelation(): BelongsTo
+    {
+        return $this->belongsTo(WineryViticulturist::class, 'winery_viticulturist_id');
     }
 
     /**

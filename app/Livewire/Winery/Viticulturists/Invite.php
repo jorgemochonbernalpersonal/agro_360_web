@@ -68,12 +68,24 @@ class Invite extends Component
     {
         $wineryId = Auth::id();
 
+        // Verificar si ya está vinculado a ESTA bodega
         $alreadyLinked = WineryViticulturist::where('winery_id', $wineryId)
             ->where('viticulturist_id', $userId)
             ->exists();
 
         if ($alreadyLinked) {
             $this->toastError('Este viticultor ya está vinculado a tu bodega.');
+            $this->confirmingId = null;
+            return null;
+        }
+
+        // Bloquear: viticultor no puede ser ghost de múltiples bodegas
+        $alreadyLinkedOtherWinery = WineryViticulturist::where('viticulturist_id', $userId)
+            ->where('winery_id', '!=', $wineryId)
+            ->exists();
+
+        if ($alreadyLinkedOtherWinery) {
+            $this->toastError('Este viticultor ya está vinculado a otra bodega.');
             $this->confirmingId = null;
             return null;
         }

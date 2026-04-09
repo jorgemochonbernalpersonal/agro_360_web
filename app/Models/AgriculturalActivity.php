@@ -30,6 +30,7 @@ class AgriculturalActivity extends Model
         'plot_id',
         'plot_planting_id',
         'viticulturist_id',
+        'winery_viticulturist_id',  // ← FK a winery_viticulturist
         'campaign_id',
         'activity_type',
         'phenological_stage',  // Estadio fenológico
@@ -74,6 +75,14 @@ class AgriculturalActivity extends Model
     public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticulturist_id');
+    }
+
+    /**
+     * Relación con bodega (si fue creado por viticultor invitado)
+     */
+    public function wineryRelation(): BelongsTo
+    {
+        return $this->belongsTo(WineryViticulturist::class, 'winery_viticulturist_id');
     }
 
     /**

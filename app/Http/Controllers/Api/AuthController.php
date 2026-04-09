@@ -167,11 +167,15 @@ class AuthController extends Controller
             'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
         ]);
 
-        $user = User::where('invitation_token', $validated['token'])
-            ->where('can_login', false)
-            ->first();
+        // Búsqueda: obtener usuarios ghost con invitación pendiente
+        $candidates = User::where('can_login', false)
+            ->where('invitation_expires_at', '>', now())
+            ->get();
 
-        if (! $user || ($user->invitation_expires_at && $user->invitation_expires_at->isPast())) {
+        // Verificación segura: validar token contra hash usando Hash::check()
+        $user = $candidates->first(fn($u) => Hash::check($validated['token'], $u->invitation_token));
+
+        if (! $user) {
             return response()->json(['message' => 'El token de invitación no es válido o ha expirado.'], 422);
         }
 

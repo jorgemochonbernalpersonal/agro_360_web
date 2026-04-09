@@ -7,6 +7,7 @@ use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Database\Eloquent\Collection;
 
 class ClaimAccount extends Component
 {
@@ -27,11 +28,15 @@ class ClaimAccount extends Component
     {
         $this->token = $token;
 
-        $user = User::where('invitation_token', $token)
-            ->where('can_login', false)
-            ->first();
+        // Búsqueda: obtener usuarios ghost con invitación pendiente
+        $candidates = User::where('can_login', false)
+            ->where('invitation_expires_at', '>', now())
+            ->get();
 
-        if (!$user || ($user->invitation_expires_at && $user->invitation_expires_at->isPast())) {
+        // Verificación segura: validar token contra hash usando Hash::check()
+        $user = $candidates->first(fn($u) => Hash::check($token, $u->invitation_token));
+
+        if (!$user) {
             $this->tokenValid = false;
             return;
         }
@@ -45,12 +50,19 @@ class ClaimAccount extends Component
             $this->email = $user->email;
         }
 
-        // Obtener nombre de la bodega que invitó para mostrar en el checkbox
+        // Obtener nombre de la bodega que invitó (solo 1 posible por viticultor)
         $wineryRelation = WineryViticulturist::where('viticulturist_id', $user->id)
             ->whereNotNull('winery_id')
             ->with('winery:id,name')
             ->first();
-        $this->wineryName = $wineryRelation?->winery?->name;
+
+        if (!$wineryRelation) {
+            // Ghost sin bodega vinculada (caso edge)
+            $this->tokenValid = false;
+            return;
+        }
+
+        $this->wineryName = $wineryRelation->winery->name;
     }
 
     protected function rules(): array

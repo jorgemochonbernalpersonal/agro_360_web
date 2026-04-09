@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
+use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -62,10 +63,20 @@ class Create extends Component
 
         try {
             DB::transaction(function () use ($user) {
+                // Obtener relación con bodega si es viticultor invitado
+                $wineryViticulturistId = null;
+                if ($user->isViticulturist()) {
+                    $wineryRelation = WineryViticulturist::where('viticulturist_id', $user->id)
+                        ->whereNotNull('winery_id')
+                        ->first();
+                    $wineryViticulturistId = $wineryRelation?->id;
+                }
+
                 $campaign = Campaign::create([
                     'name' => $this->name,
                     'year' => $this->year,
                     'viticulturist_id' => $user->id,
+                    'winery_viticulturist_id' => $wineryViticulturistId,  // ← Vincular a bodega
                     'start_date' => $this->start_date ?: null,
                     'end_date' => $this->end_date ?: null,
                     'description' => $this->description,

@@ -10,6 +10,7 @@ use App\Notifications\NotebookAccessRequestedNotification;
 use App\Notifications\ViticulturistInvitationNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -72,10 +73,11 @@ class Show extends Component
             return;
         }
 
-        $token = Str::random(64);
+        $plainToken = Str::random(64);
+        $hashedToken = Hash::make($plainToken);
 
         $updates = [
-            'invitation_token'      => $token,
+            'invitation_token'      => $hashedToken,
             'invitation_sent_at'    => now(),
             'invitation_expires_at' => now()->addDays(7),
         ];
@@ -87,7 +89,7 @@ class Show extends Component
         $this->viticulturist->update($updates);
         $this->viticulturist->refresh();
 
-        $this->viticulturist->notify(new ViticulturistInvitationNotification(Auth::user(), $token));
+        $this->viticulturist->notify(new ViticulturistInvitationNotification(Auth::user(), $plainToken));
 
         $this->showEmailField = false;
         $this->toastSuccess("Invitación enviada a {$this->inviteEmail}.");
