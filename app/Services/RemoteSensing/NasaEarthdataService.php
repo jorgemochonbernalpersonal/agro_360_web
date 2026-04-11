@@ -156,8 +156,10 @@ class NasaEarthdataService implements RemoteSensingProviderInterface
             }
 
             // ORNL DAAC MODIS Subset API (synchronous, no auth required)
-            // Endpoint: /MOD13Q1/subset?latitude=&longitude=&startDate=A{YYYYDOY}&endDate=A{YYYYDOY}
-            $startJulian = 'A' . now()->subDays(16)->format('Y') . str_pad(now()->subDays(16)->dayOfYear, 3, '0', STR_PAD_LEFT);
+            // MOD13Q1 is a 16-day composite with 2-3 week publication lag,
+            // so we look back 35 days to ensure the latest composite is included.
+            $startDate   = now()->subDays(35);
+            $startJulian = 'A' . $startDate->format('Y') . str_pad($startDate->dayOfYear, 3, '0', STR_PAD_LEFT);
             $endJulian   = 'A' . now()->format('Y') . str_pad(now()->dayOfYear, 3, '0', STR_PAD_LEFT);
 
             $response = Http::timeout(30)

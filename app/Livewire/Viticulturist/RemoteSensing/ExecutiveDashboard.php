@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Viticulturist\RemoteSensing;
 
+use App\Jobs\UpdatePlotSentinel2Job;
+use App\Models\MultipartPlotSigpac;
 use App\Models\Plot;
 use App\Models\PlotAlertPreference;
 use App\Models\PlotRemoteSensing;
-use App\Services\RemoteSensing\NasaEarthdataService;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Cache;
@@ -235,7 +236,8 @@ class ExecutiveDashboard extends Component
                     'nutrition' => $this->calculateNutritionSummary($latestData),
                     'alerts' => $this->calculateAlerts($latestData),
                     'last_update' => $latestData->image_date->diffForHumans(),
-                    'satellite' => $latestData->satellite ?? 'MODIS',
+                    'satellite' => $latestData->image_source ?? 'MODIS',
+                    'is_estimated' => str_contains($latestData->image_source ?? '', 'Estimado') || str_contains($latestData->image_source ?? '', 'Mock'),
                 ];
             });
 
@@ -268,25 +270,32 @@ class ExecutiveDashboard extends Component
             $plot = Plot::find($this->selectedPlotId);
             if (!$plot) return;
 
-            $service = app(NasaEarthdataService::class);
-            $service->clearCache($plot);
-            $result = $service->getLatestData($plot, true);
+            // Dispatch Sentinel-2 jobs for each sigpac parcel with geometry.
+            // Falls back to a single plot-level job if no sigpac geometries exist.
+            $sigpacs = MultipartPlotSigpac::where('plot_id', $plot->id)
+                ->whereNotNull('plot_geometry_id')
+                ->pluck('id');
 
-            if (!$result) {
-                // Leer última línea del log para mostrar causa real
-                $logFile = storage_path('logs/laravel-' . now()->format('Y-m-d') . '.log');
-                $this->generateError = 'La API de NASA no devolvió datos. Revisa los logs del servidor para más detalles.';
-                logger()->warning('generateData: getLatestData returned null', [
-                    'plot_id' => $this->selectedPlotId,
-                ]);
-                return;
+            if ($sigpacs->isNotEmpty()) {
+                foreach ($sigpacs as $sigpacId) {
+                    UpdatePlotSentinel2Job::dispatch($plot, $sigpacId)
+                        ->onQueue('remote-sensing');
+                }
+            } else {
+                UpdatePlotSentinel2Job::dispatch($plot)
+                    ->onQueue('remote-sensing');
             }
 
             Cache::forget("executive_dashboard_summary_{$this->selectedPlotId}");
-            $this->loadSummary();
+
+            $this->dispatch('notify', [
+                'type'    => 'success',
+                'message' => 'Actualización Sentinel-2 en proceso. Los datos estarán disponibles en unos momentos.',
+            ]);
+
         } catch (\Exception $e) {
-            $this->generateError = 'Error: ' . $e->getMessage();
-            logger()->error('generateData failed', [
+            $this->generateError = 'Error al encolar la actualización: ' . $e->getMessage();
+            logger()->error('generateData (Sentinel-2 dispatch) failed', [
                 'plot_id' => $this->selectedPlotId,
                 'error'   => $e->getMessage(),
             ]);
@@ -607,6 +616,7 @@ class ExecutiveDashboard extends Component
             'alerts' => ['total' => 0, 'critical' => 0, 'warnings' => 0, 'list' => [], 'color' => 'gray', 'icon' => '❓'],
             'last_update' => 'Nunca',
             'satellite' => 'N/A',
+            'is_estimated' => false,
         ];
     }
 

@@ -51,7 +51,13 @@
                     Última actualización: {{ $summary['last_update'] }}
                 </span>
                 <span class="hidden md:inline">•</span>
-                <span>{{ $summary['satellite'] }}</span>
+                @if(!empty($summary['is_estimated']))
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">
+                        ⚠️ Datos estimados — sin cobertura satelital reciente
+                    </span>
+                @else
+                    <span>{{ $summary['satellite'] }}</span>
+                @endif
                 @if($selectedPlot->area)
                     <span class="hidden md:inline">•</span>
                     <span>{{ number_format($selectedPlot->area, 2) }} ha</span>
@@ -523,7 +529,7 @@
                 <x-agro.empty-state
                     icon="signal"
                     title="Sin datos de teledetección"
-                    description="La parcela &quot;{{ $selectedPlot->name }}&quot; aún no tiene datos satelitales">
+                    description="La parcela &quot;{{ $selectedPlot->name }}&quot; aún no tiene datos satelitales. Solicita una actualización desde Sentinel-2 (10m resolución).">
                     <x-slot:action>
                         <button wire:click="generateData"
                                 wire:loading.attr="disabled"
@@ -536,8 +542,9 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                             </svg>
-                            Generar datos ahora
+                            🛰️ Solicitar datos Sentinel-2
                         </button>
+                        <p class="mt-2 text-xs text-zinc-500">Los datos estarán disponibles en 1-2 minutos. Recarga la página para verlos.</p>
                         @if($generateError)
                             <p class="mt-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
                                 {{ $generateError }}

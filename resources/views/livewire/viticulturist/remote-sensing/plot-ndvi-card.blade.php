@@ -107,6 +107,20 @@
                 <div class="mt-2 flex items-center gap-2 text-xs text-zinc-600">
                     <span>☁️ {{ $latestData->cloud_coverage ?? 0 }}% nubes</span>
                 </div>
+                @php $isEstimated = str_contains($latestData->image_source ?? '', 'Estimado') || str_contains($latestData->image_source ?? '', 'Mock'); @endphp
+                @if($isEstimated)
+                    <div class="mt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">
+                            ⚠️ Datos estimados
+                        </span>
+                    </div>
+                @else
+                    <div class="mt-2">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200">
+                            🛰️ Satélite real
+                        </span>
+                    </div>
+                @endif
             </div>
         </div>
         
