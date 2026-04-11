@@ -79,6 +79,10 @@ class PlotController extends Controller
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
 
+        $request->validate([
+            'bbox' => ['nullable', 'string', 'regex:/^-?\d{1,3}(\.\d+)?,-?\d{1,3}(\.\d+)?,-?\d{1,3}(\.\d+)?,-?\d{1,3}(\.\d+)?$/'],
+        ]);
+
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
             ->pluck('viticulturist_id')
             ->all();
@@ -87,6 +91,7 @@ class PlotController extends Controller
             ->where('active', true)
             ->with('viticulturist:id,name')
             ->orderBy('name')
+            ->limit(500) // Cap: evitar DoS de memoria con bodegas muy grandes
             ->get(['id', 'name', 'area', 'viticulturist_id']);
 
         $plotIds = $plots->pluck('id')->all();
@@ -111,9 +116,13 @@ class PlotController extends Controller
             $parts = array_map('floatval', explode(',', $request->query('bbox')));
             if (count($parts) === 4) {
                 [$south, $west, $north, $east] = $parts;
-                $bboxWkt = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
-                $sql    .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
-                $params[] = $bboxWkt;
+                // Validar rangos geográficos: lat [-90,90], lng [-180,180]
+                if ($south >= -90 && $north <= 90 && $south < $north &&
+                    $west >= -180 && $east <= 180 && $west < $east) {
+                    $bboxWkt  = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
+                    $sql     .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
+                    $params[] = $bboxWkt;
+                }
             }
         }
 

@@ -46,7 +46,6 @@ class AuthController extends Controller
 
         SecurityLogger::logSecurityEvent('register_success', [
             'user_id' => $user->id,
-            'email'   => $user->email,
             'role'    => $user->role,
         ]);
 
@@ -345,7 +344,6 @@ class AuthController extends Controller
 
         SecurityLogger::logSecurityEvent('account_deleted', [
             'user_id' => $user->id,
-            'email'   => $user->email,
             'role'    => $user->role,
         ]);
 

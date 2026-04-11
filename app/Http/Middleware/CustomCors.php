@@ -15,41 +15,57 @@ class CustomCors
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Manejar preflight request
+        $origin        = $request->header('Origin');
+        $allowedOrigin = $origin ? $this->resolveAllowedOrigin($origin) : null;
+
+        // Preflight OPTIONS — responder sin pasar al siguiente middleware
         if ($request->isMethod('OPTIONS')) {
-            return response('', 200)
-                ->header('Access-Control-Allow-Origin', $this->getAllowedOrigin($request))
-                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept')
-                ->header('Access-Control-Allow-Credentials', 'true')
-                ->header('Access-Control-Max-Age', '86400');
+            $response = response('', 204);
+            if ($allowedOrigin) {
+                $this->addCorsHeaders($response, $allowedOrigin);
+                $response->headers->set('Access-Control-Max-Age', '86400');
+            }
+            return $response;
         }
 
         $response = $next($request);
 
-        return $response
-            ->header('Access-Control-Allow-Origin', $this->getAllowedOrigin($request))
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept')
-            ->header('Access-Control-Allow-Credentials', 'true');
+        if ($allowedOrigin) {
+            $this->addCorsHeaders($response, $allowedOrigin);
+        }
+
+        return $response;
     }
 
     /**
-     * Get allowed origin based on request
+     * Resuelve el origen permitido. Devuelve null si el origen no está en la whitelist.
+     * Nunca devuelve '*' como fallback implícito.
      */
-    protected function getAllowedOrigin(Request $request): string
+    protected function resolveAllowedOrigin(string $origin): ?string
     {
-        $origin = $request->header('Origin');
-        $allowedOrigins = config('cors.allowed_origins', ['*']);
+        $allowedOrigins = config('cors.allowed_origins', []);
+
+        if (empty($allowedOrigins)) {
+            return null; // Sin whitelist configurada → denegar todo cross-origin
+        }
 
         if ($allowedOrigins === ['*']) {
-            return '*';
+            return '*'; // Wildcard explícito en config (solo dev)
         }
 
-        if (in_array($origin, $allowedOrigins)) {
-            return $origin;
-        }
+        return in_array($origin, $allowedOrigins, true) ? $origin : null;
+    }
 
-        return $allowedOrigins[0] ?? '*';
+    private function addCorsHeaders(Response $response, string $allowedOrigin): void
+    {
+        $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+
+        // Vary: Origin para que CDNs/proxies no cacheen la respuesta de un origen para otro
+        if ($allowedOrigin !== '*') {
+            $response->headers->set('Vary', 'Origin');
+        }
     }
 }
