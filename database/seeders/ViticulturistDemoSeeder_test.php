@@ -115,6 +115,12 @@ class ViticulturistDemoSeeder_test extends Seeder
             $this->createEstimatedYields($plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
+        // ── 11. Contenedores (crítico para vendimias y facturación) ──────────
+        $containerIds = [];
+        $this->step('Contenedores (8 bins + tinas + depósitos)', function () use ($now, &$containerIds) {
+            $containerIds = $this->createContainers($now);
+        });
+
         $this->command->info('');
         $this->command->info('✅ ViticulturistDemoSeeder completado.');
         $this->command->info('   Viticultor: viticultor@agaete.es / Password1234!');
@@ -199,6 +205,11 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // Productos fitosanitarios propios
         DB::table('phytosanitary_products')
+            ->where('user_id', $vitId)
+            ->delete();
+
+        // Contenedores del viticultor
+        DB::table('containers')
             ->where('user_id', $vitId)
             ->delete();
     }
@@ -1669,5 +1680,153 @@ class ViticulturistDemoSeeder_test extends Seeder
                 $insert($plantingId, $campaign2026Id, $event, $date, $confidence);
             }
         }
+    }
+
+    // ─── 11. Contenedores ────────────────────────────────────────────────────
+    // type_id:     1=Barrica, 2=Depósito, 3=Tanque, 4=Tina, 5=Ánfora
+    // material_id: 1=Roble Francés, 4=Acero Inoxidable, 5=Hormigón, 7=Fibra de Vidrio
+    // unit_of_measurement_id: 3=Kilogramos (uva/mosto), 1=Litros (vino)
+
+    private function createContainers($now): array
+    {
+        $vitId = self::VIT_USER_ID;
+
+        $containers = [
+            // ── Bins de vendimia (fibra de vidrio, ligeros, apilables) ──────
+            [
+                'name'                   => 'Bin Vendimia BV-01',
+                'description'            => 'Bin de recogida de uva — parcela Norte',
+                'capacity'               => 500.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 4, // Tina
+                'material_id'            => 7, // Fibra de Vidrio
+                'unit_of_measurement_id' => 3, // Kilogramos
+                'serial_number'          => 'BV-AGT-001',
+                'purchase_date'          => '2022-08-01',
+                'archived'               => false,
+            ],
+            [
+                'name'                   => 'Bin Vendimia BV-02',
+                'description'            => 'Bin de recogida de uva — parcela Centro',
+                'capacity'               => 500.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 4,
+                'material_id'            => 7,
+                'unit_of_measurement_id' => 3,
+                'serial_number'          => 'BV-AGT-002',
+                'purchase_date'          => '2022-08-01',
+                'archived'               => false,
+            ],
+            [
+                'name'                   => 'Bin Vendimia BV-03',
+                'description'            => 'Bin de recogida de uva — parcela Sur',
+                'capacity'               => 500.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 4,
+                'material_id'            => 7,
+                'unit_of_measurement_id' => 3,
+                'serial_number'          => 'BV-AGT-003',
+                'purchase_date'          => '2022-08-01',
+                'archived'               => false,
+            ],
+
+            // ── Tinas de recepción (hormigón, para almacenamiento corto) ────
+            [
+                'name'                   => 'Tina Recepción TR-01',
+                'description'            => 'Tina de hormigón para recepción y almacenamiento temporal de uva',
+                'capacity'               => 2000.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 4, // Tina
+                'material_id'            => 5, // Hormigón
+                'unit_of_measurement_id' => 3,
+                'serial_number'          => 'TR-AGT-001',
+                'purchase_date'          => '2020-03-15',
+                'next_maintenance_date'  => '2026-09-01 00:00:00',
+                'archived'               => false,
+            ],
+            [
+                'name'                   => 'Tina Recepción TR-02',
+                'description'            => 'Tina de hormigón para recepción y almacenamiento temporal de uva',
+                'capacity'               => 2000.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 4,
+                'material_id'            => 5,
+                'unit_of_measurement_id' => 3,
+                'serial_number'          => 'TR-AGT-002',
+                'purchase_date'          => '2020-03-15',
+                'next_maintenance_date'  => '2026-09-01 00:00:00',
+                'archived'               => false,
+            ],
+
+            // ── Depósitos isotérmicos (acero inox, para mosto frío) ──────────
+            [
+                'name'                   => 'Depósito Isotérmico DI-01',
+                'description'            => 'Depósito de acero inoxidable con camisa de frío para mosto',
+                'capacity'               => 5000.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 2, // Depósito
+                'material_id'            => 4, // Acero Inoxidable
+                'unit_of_measurement_id' => 3,
+                'serial_number'          => 'DI-AGT-001',
+                'purchase_date'          => '2021-06-10',
+                'next_maintenance_date'  => '2026-12-01 00:00:00',
+                'archived'               => false,
+            ],
+            [
+                'name'                   => 'Depósito Isotérmico DI-02',
+                'description'            => 'Depósito de acero inoxidable con camisa de frío para mosto',
+                'capacity'               => 5000.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 2,
+                'material_id'            => 4,
+                'unit_of_measurement_id' => 3,
+                'serial_number'          => 'DI-AGT-002',
+                'purchase_date'          => '2021-06-10',
+                'next_maintenance_date'  => '2026-12-01 00:00:00',
+                'archived'               => false,
+            ],
+
+            // ── Depósito de mosto (acero inox, en desuso — archivado) ────────
+            [
+                'name'                   => 'Depósito Mosto DM-01',
+                'description'            => 'Depósito antiguo de mosto — fuera de servicio',
+                'capacity'               => 1000.00,
+                'used_capacity'          => 0.00,
+                'quantity'               => 1,
+                'type_id'                => 3, // Tanque
+                'material_id'            => 4,
+                'unit_of_measurement_id' => 3,
+                'serial_number'          => 'DM-AGT-001',
+                'purchase_date'          => '2015-04-20',
+                'archived'               => true,
+            ],
+        ];
+
+        $ids = [];
+        foreach ($containers as $container) {
+            $ids[] = DB::table('containers')->insertGetId(array_merge($container, [
+                'user_id'    => $vitId,
+                'supplier_id' => null,
+                'container_room_id' => null,
+                'photos'     => null,
+                'thumbnail_img' => null,
+                'oak_type'   => null,
+                'toast_type' => null,
+                'x_position' => null,
+                'y_position' => null,
+                'next_maintenance_date' => $container['next_maintenance_date'] ?? null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]));
+        }
+
+        return $ids;
     }
 }
