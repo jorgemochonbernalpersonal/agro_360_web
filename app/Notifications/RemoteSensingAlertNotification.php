@@ -17,15 +17,14 @@ class RemoteSensingAlertNotification extends Notification
     private Plot $plot;
     private float $currentNdvi;
     private float $threshold;
+    private bool  $emailEnabled;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct(Plot $plot, float $currentNdvi, float $threshold)
+    public function __construct(Plot $plot, float $currentNdvi, float $threshold, bool $emailEnabled = false)
     {
-        $this->plot = $plot;
-        $this->currentNdvi = $currentNdvi;
-        $this->threshold = $threshold;
+        $this->plot         = $plot;
+        $this->currentNdvi  = $currentNdvi;
+        $this->threshold    = $threshold;
+        $this->emailEnabled = $emailEnabled;
     }
 
     /**
@@ -42,7 +41,7 @@ class RemoteSensingAlertNotification extends Notification
     {
         $channels = ['database'];
 
-        if ($this->plot->alert_email_enabled) {
+        if ($this->emailEnabled) {
             $channels[] = 'mail';
         }
 

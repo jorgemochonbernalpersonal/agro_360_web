@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\PlotAlertPreference;
 use App\Models\PlotRemoteSensing;
 use App\Notifications\RemoteSensingAlertNotification;
 use Illuminate\Support\Facades\Cache;
@@ -9,8 +10,9 @@ use Illuminate\Support\Facades\Cache;
 class PlotRemoteSensingObserver
 {
     /**
-     * Fire NDVI alert after any save (create or update).
-     * Includes a 24-hour cooldown per plot to avoid notification spam.
+     * After any save, notify every user who has a personal alert preference
+     * for this plot and whose threshold is breached.
+     * Cooldown: one notification per (plot, user) every 24 hours.
      */
     public function saved(PlotRemoteSensing $record): void
     {
@@ -20,28 +22,36 @@ class PlotRemoteSensingObserver
             return;
         }
 
-        $plot = $record->plot()->with('viticulturist')->first();
+        $plot = $record->plot()->first();
 
-        if (!$plot || !$plot->viticulturist) {
+        if (!$plot) {
             return;
         }
 
-        $threshold = (float) ($plot->ndvi_alert_threshold ?? 0.30);
+        $preferences = PlotAlertPreference::where('plot_id', $plot->id)
+            ->with('user')
+            ->get();
 
-        if ((float) $ndvi >= $threshold) {
-            return; // NDVI is fine — no alert needed
+        foreach ($preferences as $pref) {
+            if (!$pref->user) {
+                continue;
+            }
+
+            if ((float) $ndvi >= $pref->ndvi_threshold) {
+                continue; // NDVI above this user's threshold — no alert
+            }
+
+            // Cooldown: one alert per (plot, user) per 24 hours
+            $cacheKey = "ndvi_alert_sent_{$plot->id}_{$pref->user_id}";
+            if (Cache::has($cacheKey)) {
+                continue;
+            }
+
+            Cache::put($cacheKey, true, now()->addHours(24));
+
+            $pref->user->notify(
+                new RemoteSensingAlertNotification($plot, (float) $ndvi, $pref->ndvi_threshold, $pref->email_enabled)
+            );
         }
-
-        // Cooldown: send at most one alert per plot per 24 hours
-        $cacheKey = "ndvi_alert_sent_{$plot->id}";
-        if (Cache::has($cacheKey)) {
-            return;
-        }
-
-        Cache::put($cacheKey, true, now()->addHours(24));
-
-        $plot->viticulturist->notify(
-            new RemoteSensingAlertNotification($plot, (float) $ndvi, $threshold)
-        );
     }
 }

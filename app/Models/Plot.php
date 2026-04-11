@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Builders\PlotQueryBuilder;
+use App\Models\PlotAlertPreference;
 use App\Models\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -248,6 +249,11 @@ class Plot extends Model
     public function remoteSensingData(): HasMany
     {
         return $this->hasMany(PlotRemoteSensing::class);
+    }
+
+    public function alertPreferences(): HasMany
+    {
+        return $this->hasMany(PlotAlertPreference::class);
     }
 
     /**

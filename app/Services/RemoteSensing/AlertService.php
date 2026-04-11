@@ -3,6 +3,7 @@
 namespace App\Services\RemoteSensing;
 
 use App\Models\Plot;
+use App\Models\PlotAlertPreference;
 use App\Models\PlotRemoteSensing;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
@@ -16,19 +17,20 @@ class AlertService
     private const DEFAULT_TEMP_THRESHOLD = 40;
 
     /**
-     * Check alerts for a user's plots
+     * Check alerts for a user across all their accessible plots,
+     * using that user's own per-plot preferences as thresholds.
      */
     public function checkAlertsForUser(User $user): array
     {
         $alerts = [];
 
-        $plots = $user->plots()->with(['latestRemoteSensing'])->get();
+        $plots = Plot::forUser($user)->with(['latestRemoteSensing'])->get();
 
         foreach ($plots as $plot) {
-            $plotAlerts = $this->checkPlotAlerts($plot);
+            $plotAlerts = $this->checkPlotAlerts($plot, $user);
             if (!empty($plotAlerts)) {
                 $alerts[$plot->id] = [
-                    'plot' => $plot,
+                    'plot'   => $plot,
                     'alerts' => $plotAlerts,
                 ];
             }
@@ -38,9 +40,9 @@ class AlertService
     }
 
     /**
-     * Check alerts for a specific plot
+     * Check alerts for a specific plot against a specific user's preferences.
      */
-    public function checkPlotAlerts(Plot $plot): array
+    public function checkPlotAlerts(Plot $plot, User $user): array
     {
         $alerts = [];
         
@@ -52,8 +54,8 @@ class AlertService
             return $alerts;
         }
 
-        // Get thresholds (from plot settings or defaults)
-        $thresholds = $this->getPlotThresholds($plot);
+        // Get this user's personal thresholds for the plot (or defaults if not configured)
+        $thresholds = $this->getPlotThresholds($plot, $user);
 
         // Check NDVI
         if ($latestData->ndvi_mean !== null && $latestData->ndvi_mean < $thresholds['ndvi']) {
@@ -120,14 +122,16 @@ class AlertService
     }
 
     /**
-     * Get thresholds for a plot
+     * Get thresholds for a plot from this user's personal preferences.
      */
-    private function getPlotThresholds(Plot $plot): array
+    private function getPlotThresholds(Plot $plot, User $user): array
     {
-        // In future, this can read from plot-specific settings
-        // For now, use defaults
+        $pref = PlotAlertPreference::where('plot_id', $plot->id)
+            ->where('user_id', $user->id)
+            ->first();
+
         return [
-            'ndvi' => $plot->ndvi_alert_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
+            'ndvi' => $pref?->ndvi_threshold ?? self::DEFAULT_NDVI_THRESHOLD,
             'ndwi' => self::DEFAULT_NDWI_THRESHOLD,
             'temp' => self::DEFAULT_TEMP_THRESHOLD,
         ];

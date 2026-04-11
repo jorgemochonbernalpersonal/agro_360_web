@@ -3,6 +3,7 @@
 namespace App\Livewire\Viticulturist\RemoteSensing;
 
 use App\Models\Plot;
+use App\Models\PlotAlertPreference;
 use App\Models\PlotRemoteSensing;
 use App\Services\RemoteSensing\NasaEarthdataService;
 use Livewire\Component;
@@ -46,7 +47,7 @@ class ExecutiveDashboard extends Component
         // Cargar plots con geometría para el usuario
         $this->plots = Plot::forUser(auth()->user())
             ->whereHas('plotGeometries')
-            ->select('id', 'name', 'area', 'viticulturist_id', 'ndvi_alert_threshold', 'alert_email_enabled')
+            ->select('id', 'name', 'area', 'viticulturist_id')
             ->orderBy('name')
             ->get();
 
@@ -175,7 +176,8 @@ class ExecutiveDashboard extends Component
     }
 
     /**
-     * Save NDVI alert threshold and email toggle for the selected plot.
+     * Save NDVI alert threshold and email toggle for the authenticated user + selected plot.
+     * Each user (viticulturist, winery, supervisor) keeps their own independent preferences.
      */
     public function saveAlertSettings(): void
     {
@@ -183,26 +185,14 @@ class ExecutiveDashboard extends Component
             'ndviThreshold' => ['required', 'numeric', 'min:0', 'max:1'],
         ]);
 
-        $plot = Plot::find($this->selectedPlotId);
-        if (!$plot) {
+        if (!$this->selectedPlotId) {
             return;
         }
 
-        $this->authorize('update', $plot);
-
-        $plot->update([
-            'ndvi_alert_threshold' => $this->ndviThreshold,
-            'alert_email_enabled'  => $this->alertEmailEnabled,
-        ]);
-
-        // Refresh the in-memory plots list so mapData stays consistent
-        $this->plots = $this->plots->map(function (Plot $p) use ($plot) {
-            if ($p->id === $plot->id) {
-                $p->ndvi_alert_threshold = $plot->ndvi_alert_threshold;
-                $p->alert_email_enabled  = $plot->alert_email_enabled;
-            }
-            return $p;
-        });
+        PlotAlertPreference::updateOrCreate(
+            ['plot_id' => $this->selectedPlotId, 'user_id' => auth()->id()],
+            ['ndvi_threshold' => $this->ndviThreshold, 'email_enabled' => $this->alertEmailEnabled]
+        );
 
         $this->dispatch('notify', message: 'Configuración de alertas guardada.');
     }
@@ -212,17 +202,18 @@ class ExecutiveDashboard extends Component
         $this->loading = true;
 
         try {
-            $this->selectedPlot = Plot::select('id', 'name', 'area', 'viticulturist_id', 'ndvi_alert_threshold', 'alert_email_enabled')
+            $this->selectedPlot = Plot::select('id', 'name', 'area', 'viticulturist_id')
                 ->find($this->selectedPlotId);
-            
+
             if (!$this->selectedPlot) {
                 $this->summary = [];
                 return;
             }
 
-            // Sync alert settings with the selected plot
-            $this->ndviThreshold    = (float) ($this->selectedPlot->ndvi_alert_threshold ?? 0.30);
-            $this->alertEmailEnabled = (bool) $this->selectedPlot->alert_email_enabled;
+            // Load this user's own alert preferences for the selected plot
+            $pref = PlotAlertPreference::forUser($this->selectedPlotId, auth()->id());
+            $this->ndviThreshold     = $pref->ndvi_threshold;
+            $this->alertEmailEnabled = $pref->email_enabled;
 
             // Usar caché de 5 minutos para el resumen
             $cacheKey = "executive_dashboard_summary_{$this->selectedPlotId}";

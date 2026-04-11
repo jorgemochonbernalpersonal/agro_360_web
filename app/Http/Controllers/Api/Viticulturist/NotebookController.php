@@ -72,13 +72,13 @@ class NotebookController extends Controller
 
     // ─── GET /viticulturist/notebook/{id} ─────────────────────────────────────
 
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int|string $id): JsonResponse
     {
         $user     = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
         $activity = AgriculturalActivity::forViticulturist($user->id)
-            ->findOrFail($id);
+            ->findOrFail((int) $id);
 
         $this->loadDetails($activity);
 
@@ -129,12 +129,12 @@ class NotebookController extends Controller
 
     // ─── PUT /viticulturist/notebook/{id} ─────────────────────────────────────
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int|string $id): JsonResponse
     {
         $user     = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
-        $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail($id);
+        $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail((int) $id);
 
         if ($activity->is_locked) {
             return response()->json(['message' => 'Esta actividad está bloqueada y no puede editarse.'], 422);
@@ -158,12 +158,12 @@ class NotebookController extends Controller
 
     // ─── DELETE /viticulturist/notebook/{id} ──────────────────────────────────
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(Request $request, int|string $id): JsonResponse
     {
         $user     = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
-        $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail($id);
+        $activity = AgriculturalActivity::forViticulturist($user->id)->findOrFail((int) $id);
 
         if ($activity->is_locked) {
             return response()->json(['message' => 'Esta actividad está bloqueada y no puede eliminarse.'], 422);
