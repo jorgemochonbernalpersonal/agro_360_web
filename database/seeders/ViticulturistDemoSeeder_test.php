@@ -117,7 +117,7 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // ── 11. Contenedores (crítico para vendimias y facturación) ──────────
         $containerIds = [];
-        $this->step('Contenedores (8 bins + tinas + depósitos)', function () use ($now, &$containerIds) {
+        $this->step('Contenedores (50: bins + tinas + depósitos + tanques)', function () use ($now, &$containerIds) {
             $containerIds = $this->createContainers($now);
         });
 
@@ -1692,121 +1692,63 @@ class ViticulturistDemoSeeder_test extends Seeder
         $vitId = self::VIT_USER_ID;
 
         $containers = [
-            // ── Bins de vendimia (fibra de vidrio, ligeros, apilables) ──────
-            [
-                'name'                   => 'Bin Vendimia BV-01',
-                'description'            => 'Bin de recogida de uva — parcela Norte',
-                'capacity'               => 500.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 4, // Tina
-                'material_id'            => 7, // Fibra de Vidrio
-                'unit_of_measurement_id' => 3, // Kilogramos
-                'serial_number'          => 'BV-AGT-001',
-                'purchase_date'          => '2022-08-01',
-                'archived'               => false,
-            ],
-            [
-                'name'                   => 'Bin Vendimia BV-02',
-                'description'            => 'Bin de recogida de uva — parcela Centro',
-                'capacity'               => 500.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 4,
-                'material_id'            => 7,
-                'unit_of_measurement_id' => 3,
-                'serial_number'          => 'BV-AGT-002',
-                'purchase_date'          => '2022-08-01',
-                'archived'               => false,
-            ],
-            [
-                'name'                   => 'Bin Vendimia BV-03',
-                'description'            => 'Bin de recogida de uva — parcela Sur',
-                'capacity'               => 500.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 4,
-                'material_id'            => 7,
-                'unit_of_measurement_id' => 3,
-                'serial_number'          => 'BV-AGT-003',
-                'purchase_date'          => '2022-08-01',
-                'archived'               => false,
-            ],
+            // ── Bins de vendimia — fibra de vidrio, 500 kg (BV-01…20) ──────
+            ['name' => 'Bin Vendimia BV-01', 'description' => 'Bin recogida uva — parcela Lomo Grande',   'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-001', 'purchase_date' => '2022-08-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-02', 'description' => 'Bin recogida uva — parcela Lomo Grande',   'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-002', 'purchase_date' => '2022-08-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-03', 'description' => 'Bin recogida uva — parcela Lomo Grande',   'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-003', 'purchase_date' => '2022-08-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-04', 'description' => 'Bin recogida uva — parcela Barranco Seco', 'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-004', 'purchase_date' => '2022-08-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-05', 'description' => 'Bin recogida uva — parcela Barranco Seco', 'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-005', 'purchase_date' => '2022-08-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-06', 'description' => 'Bin recogida uva — parcela El Risco',      'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-006', 'purchase_date' => '2023-07-15', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-07', 'description' => 'Bin recogida uva — parcela El Risco',      'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-007', 'purchase_date' => '2023-07-15', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-08', 'description' => 'Bin recogida uva — parcela El Risco',      'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-008', 'purchase_date' => '2023-07-15', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-09', 'description' => 'Bin recogida uva — parcela Las Nieves',    'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-009', 'purchase_date' => '2023-07-15', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-10', 'description' => 'Bin recogida uva — parcela Las Nieves',    'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-010', 'purchase_date' => '2023-07-15', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-11', 'description' => 'Bin recogida uva — polivalente',           'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-011', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-12', 'description' => 'Bin recogida uva — polivalente',           'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-012', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-13', 'description' => 'Bin recogida uva — polivalente',           'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-013', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-14', 'description' => 'Bin recogida uva — polivalente',           'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-014', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-15', 'description' => 'Bin recogida uva — polivalente',           'capacity' => 500.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-015', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-16', 'description' => 'Bin recogida uva — reserva campaña',       'capacity' => 300.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-016', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-17', 'description' => 'Bin recogida uva — reserva campaña',       'capacity' => 300.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-017', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-18', 'description' => 'Bin recogida uva — reserva campaña',       'capacity' => 300.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-018', 'purchase_date' => '2024-06-01', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-19', 'description' => 'Bin antiguo — aún operativo',              'capacity' => 400.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-019', 'purchase_date' => '2019-08-10', 'archived' => false],
+            ['name' => 'Bin Vendimia BV-20', 'description' => 'Bin antiguo — fuera de servicio',          'capacity' => 400.00, 'type_id' => 4, 'material_id' => 7, 'serial_number' => 'BV-AGT-020', 'purchase_date' => '2019-08-10', 'archived' => true],
 
-            // ── Tinas de recepción (hormigón, para almacenamiento corto) ────
-            [
-                'name'                   => 'Tina Recepción TR-01',
-                'description'            => 'Tina de hormigón para recepción y almacenamiento temporal de uva',
-                'capacity'               => 2000.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 4, // Tina
-                'material_id'            => 5, // Hormigón
-                'unit_of_measurement_id' => 3,
-                'serial_number'          => 'TR-AGT-001',
-                'purchase_date'          => '2020-03-15',
-                'next_maintenance_date'  => '2026-09-01 00:00:00',
-                'archived'               => false,
-            ],
-            [
-                'name'                   => 'Tina Recepción TR-02',
-                'description'            => 'Tina de hormigón para recepción y almacenamiento temporal de uva',
-                'capacity'               => 2000.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 4,
-                'material_id'            => 5,
-                'unit_of_measurement_id' => 3,
-                'serial_number'          => 'TR-AGT-002',
-                'purchase_date'          => '2020-03-15',
-                'next_maintenance_date'  => '2026-09-01 00:00:00',
-                'archived'               => false,
-            ],
+            // ── Tinas de recepción — hormigón (TR-01…10) ─────────────────────
+            ['name' => 'Tina Recepción TR-01', 'description' => 'Tina hormigón — recepción Listán Negro',    'capacity' => 2000.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-001', 'purchase_date' => '2018-04-10', 'next_maintenance_date' => '2026-09-01 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-02', 'description' => 'Tina hormigón — recepción Listán Blanco',   'capacity' => 2000.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-002', 'purchase_date' => '2018-04-10', 'next_maintenance_date' => '2026-09-01 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-03', 'description' => 'Tina hormigón — recepción Negramoll',       'capacity' => 1500.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-003', 'purchase_date' => '2019-03-20', 'next_maintenance_date' => '2026-09-01 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-04', 'description' => 'Tina hormigón — recepción Moscatel',        'capacity' => 1500.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-004', 'purchase_date' => '2019-03-20', 'next_maintenance_date' => '2026-09-01 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-05', 'description' => 'Tina hormigón — recepción Tintilla',        'capacity' => 1000.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-005', 'purchase_date' => '2020-05-05', 'next_maintenance_date' => '2026-09-15 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-06', 'description' => 'Tina hormigón — polivalente mezcla',        'capacity' => 1000.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-006', 'purchase_date' => '2020-05-05', 'next_maintenance_date' => '2026-09-15 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-07', 'description' => 'Tina hormigón — uva ecológica',             'capacity' => 800.00,  'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-007', 'purchase_date' => '2021-04-18', 'next_maintenance_date' => '2026-10-01 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-08', 'description' => 'Tina hormigón — uva ecológica',             'capacity' => 800.00,  'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-008', 'purchase_date' => '2021-04-18', 'next_maintenance_date' => '2026-10-01 00:00:00', 'archived' => false],
+            ['name' => 'Tina Recepción TR-09', 'description' => 'Tina antigua — uso esporádico',             'capacity' => 1200.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-009', 'purchase_date' => '2015-06-01', 'archived' => false],
+            ['name' => 'Tina Recepción TR-10', 'description' => 'Tina antigua — fuera de servicio',          'capacity' => 1200.00, 'type_id' => 4, 'material_id' => 5, 'serial_number' => 'TR-AGT-010', 'purchase_date' => '2015-06-01', 'archived' => true],
 
-            // ── Depósitos isotérmicos (acero inox, para mosto frío) ──────────
-            [
-                'name'                   => 'Depósito Isotérmico DI-01',
-                'description'            => 'Depósito de acero inoxidable con camisa de frío para mosto',
-                'capacity'               => 5000.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 2, // Depósito
-                'material_id'            => 4, // Acero Inoxidable
-                'unit_of_measurement_id' => 3,
-                'serial_number'          => 'DI-AGT-001',
-                'purchase_date'          => '2021-06-10',
-                'next_maintenance_date'  => '2026-12-01 00:00:00',
-                'archived'               => false,
-            ],
-            [
-                'name'                   => 'Depósito Isotérmico DI-02',
-                'description'            => 'Depósito de acero inoxidable con camisa de frío para mosto',
-                'capacity'               => 5000.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 2,
-                'material_id'            => 4,
-                'unit_of_measurement_id' => 3,
-                'serial_number'          => 'DI-AGT-002',
-                'purchase_date'          => '2021-06-10',
-                'next_maintenance_date'  => '2026-12-01 00:00:00',
-                'archived'               => false,
-            ],
+            // ── Depósitos isotérmicos — acero inox (DI-01…10) ────────────────
+            ['name' => 'Depósito Isotérmico DI-01', 'description' => 'Depósito inox con camisa frío — mosto Listán Negro',   'capacity' => 5000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-001', 'purchase_date' => '2020-06-10', 'next_maintenance_date' => '2026-12-01 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-02', 'description' => 'Depósito inox con camisa frío — mosto Listán Blanco',  'capacity' => 5000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-002', 'purchase_date' => '2020-06-10', 'next_maintenance_date' => '2026-12-01 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-03', 'description' => 'Depósito inox — almacenamiento temporal mosto',        'capacity' => 3000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-003', 'purchase_date' => '2021-05-20', 'next_maintenance_date' => '2026-12-01 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-04', 'description' => 'Depósito inox — almacenamiento temporal mosto',        'capacity' => 3000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-004', 'purchase_date' => '2021-05-20', 'next_maintenance_date' => '2026-12-01 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-05', 'description' => 'Depósito inox — variedades minoritarias',              'capacity' => 2000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-005', 'purchase_date' => '2022-04-15', 'next_maintenance_date' => '2027-01-15 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-06', 'description' => 'Depósito inox — variedades minoritarias',              'capacity' => 2000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-006', 'purchase_date' => '2022-04-15', 'next_maintenance_date' => '2027-01-15 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-07', 'description' => 'Depósito inox — uva ecológica certificada',            'capacity' => 1500.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-007', 'purchase_date' => '2023-03-10', 'next_maintenance_date' => '2027-03-10 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-08', 'description' => 'Depósito inox — uva ecológica certificada',            'capacity' => 1500.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-008', 'purchase_date' => '2023-03-10', 'next_maintenance_date' => '2027-03-10 00:00:00', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-09', 'description' => 'Depósito inox — uso general campaña tardía',           'capacity' => 1000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-009', 'purchase_date' => '2023-03-10', 'archived' => false],
+            ['name' => 'Depósito Isotérmico DI-10', 'description' => 'Depósito antiguo — fuera de servicio',                 'capacity' => 1000.00, 'type_id' => 2, 'material_id' => 4, 'serial_number' => 'DI-AGT-010', 'purchase_date' => '2014-08-01', 'archived' => true],
 
-            // ── Depósito de mosto (acero inox, en desuso — archivado) ────────
-            [
-                'name'                   => 'Depósito Mosto DM-01',
-                'description'            => 'Depósito antiguo de mosto — fuera de servicio',
-                'capacity'               => 1000.00,
-                'used_capacity'          => 0.00,
-                'quantity'               => 1,
-                'type_id'                => 3, // Tanque
-                'material_id'            => 4,
-                'unit_of_measurement_id' => 3,
-                'serial_number'          => 'DM-AGT-001',
-                'purchase_date'          => '2015-04-20',
-                'archived'               => true,
-            ],
+            // ── Tanques de fermentación — acero inox (TF-01…10) ───────────────
+            ['name' => 'Tanque Fermentación TF-01', 'description' => 'Tanque inox fermentación controlada — tinto',       'capacity' => 4000.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-001', 'purchase_date' => '2019-07-01', 'next_maintenance_date' => '2026-11-01 00:00:00', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-02', 'description' => 'Tanque inox fermentación controlada — tinto',       'capacity' => 4000.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-002', 'purchase_date' => '2019-07-01', 'next_maintenance_date' => '2026-11-01 00:00:00', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-03', 'description' => 'Tanque inox fermentación controlada — blanco',      'capacity' => 3000.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-003', 'purchase_date' => '2020-07-15', 'next_maintenance_date' => '2026-11-15 00:00:00', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-04', 'description' => 'Tanque inox fermentación controlada — blanco',      'capacity' => 3000.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-004', 'purchase_date' => '2020-07-15', 'next_maintenance_date' => '2026-11-15 00:00:00', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-05', 'description' => 'Tanque inox fermentación — Moscatel',               'capacity' => 2000.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-005', 'purchase_date' => '2021-06-20', 'next_maintenance_date' => '2026-12-20 00:00:00', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-06', 'description' => 'Tanque inox fermentación — variedades locales',     'capacity' => 2000.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-006', 'purchase_date' => '2021-06-20', 'next_maintenance_date' => '2026-12-20 00:00:00', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-07', 'description' => 'Tanque inox polivalente — campaña extra',           'capacity' => 1500.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-007', 'purchase_date' => '2022-05-10', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-08', 'description' => 'Tanque inox polivalente — campaña extra',           'capacity' => 1500.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-008', 'purchase_date' => '2022-05-10', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-09', 'description' => 'Tanque inox pequeño — ensayos y parcelas nuevas',   'capacity' =>  800.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-009', 'purchase_date' => '2023-04-01', 'archived' => false],
+            ['name' => 'Tanque Fermentación TF-10', 'description' => 'Tanque antiguo — fuera de servicio',                'capacity' => 1000.00, 'type_id' => 3, 'material_id' => 4, 'serial_number' => 'TF-AGT-010', 'purchase_date' => '2013-05-01', 'archived' => true],
         ];
 
         $ids = [];
