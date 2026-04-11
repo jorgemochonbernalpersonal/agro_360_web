@@ -2611,9 +2611,9 @@ class ViticulturistDemoSeeder_test extends Seeder
         if ($activityIds->isNotEmpty()) {
             $harvestRows = DB::table('harvests')
                 ->whereIn('activity_id', $activityIds)
-                ->orderBy('date')
+                ->orderBy('harvest_start_date')
                 ->limit(10)
-                ->get(['id', 'date', 'quantity_kg', 'campaign_id']);
+                ->get(['id', 'harvest_start_date', 'total_weight', 'campaign_id']);
 
             $destinations = [
                 ['own_winery', 'Bodega Agaete Artesana SL', '14.00', 'REGA-GC-0421'],
@@ -2623,17 +2623,17 @@ class ViticulturistDemoSeeder_test extends Seeder
 
             foreach ($harvestRows as $i => $harvest) {
                 $dest = $destinations[$i % 3];
-                $qty  = min((float)$harvest->quantity_kg, 2000.0);
+                $qty  = min((float)$harvest->total_weight, 2000.0);
                 DB::table('marketed_harvests')->insert([
                     'harvest_id'          => $harvest->id,
                     'campaign_id'         => $harvest->campaign_id,
                     'viticulturist_id'    => $vitId,
-                    'delivery_date'       => $harvest->date,
+                    'delivery_date'       => $harvest->harvest_start_date,
                     'quantity_kg'         => $qty,
                     'destination_type'    => $dest[0],
                     'buyer_name'          => $dest[1],
                     'buyer_rega_code'     => $dest[3],
-                    'transport_document'  => 'TRANS-' . date('Y', strtotime($harvest->date)) . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
+                    'transport_document'  => 'TRANS-' . date('Y', strtotime($harvest->harvest_start_date)) . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
                     'vehicle_plate'       => '4521-GCN',
                     'price_per_kg'        => $dest[2],
                     'total_value'         => round($qty * (float)$dest[2], 2),
@@ -2984,7 +2984,7 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // Obtener harvests del viticultor para vincular items
         $actIds = DB::table('agricultural_activities')->where('viticulturist_id', $vitId)->pluck('id');
-        $harvests = DB::table('harvests')->whereIn('activity_id', $actIds)->orderBy('date')->get(['id', 'quantity_kg', 'date']);
+        $harvests = DB::table('harvests')->whereIn('activity_id', $actIds)->orderBy('harvest_start_date')->get(['id', 'total_weight', 'harvest_start_date', 'campaign_id']);
 
         // ── Facturas Venta Cosecha (6) — user_id = viticulturist ──────────────
         $harvestSales = [
