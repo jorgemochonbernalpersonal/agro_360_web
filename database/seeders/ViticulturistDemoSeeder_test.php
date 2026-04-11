@@ -81,8 +81,9 @@ class ViticulturistDemoSeeder_test extends Seeder
         // ── 6. Campañas ────────────────────────────────────────────────────────
         $campaign2024Id = 0;
         $campaign2025Id = 0;
-        $this->step('Campañas (2024 cerrada + 2025 activa)', function () use ($now, $wvId, &$campaign2024Id, &$campaign2025Id) {
-            [$campaign2024Id, $campaign2025Id] = $this->createCampaigns($wvId, $now);
+        $campaign2026Id = 0;
+        $this->step('Campañas (2024 cerrada + 2025 cerrada + 2026 activa)', function () use ($now, $wvId, &$campaign2024Id, &$campaign2025Id, &$campaign2026Id) {
+            [$campaign2024Id, $campaign2025Id, $campaign2026Id] = $this->createCampaigns($wvId, $now);
         });
 
         // ── 7. Actividades de campo ────────────────────────────────────────────
@@ -94,9 +95,13 @@ class ViticulturistDemoSeeder_test extends Seeder
             $this->createActivities2025($plotIds, $plantingIds, $productIds, $wvId, $campaign2025Id, $now);
         });
 
+        $this->step('Actividades 2026 (~20)', function () use ($now, $plotIds, $plantingIds, $productIds, $wvId, $campaign2026Id) {
+            $this->createActivities2026($plotIds, $plantingIds, $productIds, $wvId, $campaign2026Id, $now);
+        });
+
         // ── 8. Fenología ───────────────────────────────────────────────────────
-        $this->step('Observaciones fenológicas (14)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id) {
-            $this->createPhenology($plantingIds, $campaign2024Id, $campaign2025Id, $now);
+        $this->step('Observaciones fenológicas', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+            $this->createPhenology($plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
         // ── 9. Plagas y enfermedades ──────────────────────────────────────────
@@ -106,8 +111,8 @@ class ViticulturistDemoSeeder_test extends Seeder
         });
 
         // ── 10. Rendimientos estimados ────────────────────────────────────────
-        $this->step('Rendimientos estimados (14)', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id) {
-            $this->createEstimatedYields($plantingIds, $campaign2024Id, $campaign2025Id, $now);
+        $this->step('Rendimientos estimados', function () use ($now, $plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id) {
+            $this->createEstimatedYields($plantingIds, $campaign2024Id, $campaign2025Id, $campaign2026Id, $now);
         });
 
         $this->command->info('');
@@ -569,15 +574,27 @@ class ViticulturistDemoSeeder_test extends Seeder
         ]));
 
         $id2025 = DB::table('campaigns')->insertGetId(array_merge($base, [
-            'name'       => 'Campaña 2025',
-            'year'       => 2025,
-            'start_date' => '2025-01-01',
-            'end_date'   => '2025-12-31',
-            'active'     => true,
-            'description' => 'Campaña activa. Evolución favorable del viñedo.',
+            'name'        => 'Campaña 2025',
+            'year'        => 2025,
+            'start_date'  => '2025-01-01',
+            'end_date'    => '2025-12-31',
+            'active'      => false,
+            'description' => 'Campaña 2025 cerrada. Vendimia exitosa.',
+            'final_validation_signed'  => true,
+            'final_validation_date'    => '2025-11-28 10:00:00',
+            'final_validation_user_id' => self::VIT_USER_ID,
         ]));
 
-        return [$id2024, $id2025];
+        $id2026 = DB::table('campaigns')->insertGetId(array_merge($base, [
+            'name'        => 'Campaña 2026',
+            'year'        => 2026,
+            'start_date'  => '2026-01-01',
+            'end_date'    => '2026-12-31',
+            'active'      => true,
+            'description' => 'Campaña activa. Poda completada. Inicio de brotación.',
+        ]));
+
+        return [$id2024, $id2025, $id2026];
     }
 
     // ─── 7a. Actividades 2024 ─────────────────────────────────────────────────
@@ -1088,6 +1105,187 @@ class ViticulturistDemoSeeder_test extends Seeder
         }
     }
 
+    // ─── 7c. Actividades 2026 ─────────────────────────────────────────────────
+
+    private function createActivities2026(
+        array $plotIds, array $plantingIds, array $productIds,
+        int $wvId, int $campaignId, $now
+    ): void {
+        [$mildiuId, $oidioId, $mixtoId, $insectId, $cobreId] = $productIds;
+
+        $act = fn(array $data) => DB::table('agricultural_activities')->insertGetId(array_merge([
+            'viticulturist_id'        => self::VIT_USER_ID,
+            'winery_viticulturist_id' => $wvId,
+            'campaign_id'             => $campaignId,
+            'is_locked'               => false,
+            'created_at'              => $now,
+            'updated_at'              => $now,
+        ], $data));
+
+        // ── Podas (Enero 2026) ─────────────────────────────────────────────────
+        $pruningDates = ['2026-01-06', '2026-01-08', '2026-01-13', '2026-01-15', '2026-01-20'];
+        $pruningTypes = ['vaso', 'guyot', 'vaso', 'guyot', 'vaso'];
+
+        foreach ($plotIds as $i => $plotId) {
+            $aId = $act([
+                'plot_id'            => $plotId,
+                'activity_type'      => 'pruning',
+                'phenological_stage' => 'reposo_invernal',
+                'activity_date'      => $pruningDates[$i],
+                'weather_conditions' => 'soleado',
+                'temperature'        => 13.0 + $i,
+                'notes'              => 'Poda 2026. Ajuste de carga según estado sanitario.',
+            ]);
+            DB::table('cultural_works')->insert([
+                'activity_id'                 => $aId,
+                'work_type'                   => 'poda',
+                'pruning_type'                => $pruningTypes[$i],
+                'productive_buds_per_hectare' => 46000 + ($i * 2000),
+                'hours_worked'                => 6.0 + ($i * 0.5),
+                'workers_count'               => 2,
+                'description'                 => 'Poda invernal 2026. Intensidad ajustada al vigor de cada parcela.',
+                'created_at'                  => $now,
+                'updated_at'                  => $now,
+            ]);
+        }
+
+        // ── Sellado de heridas post-poda (Feb 2026) ────────────────────────────
+        foreach ([$plotIds[0], $plotIds[2], $plotIds[4]] as $i => $plotId) {
+            $aId = $act([
+                'plot_id'            => $plotId,
+                'activity_type'      => 'post_harvest',
+                'phenological_stage' => 'reposo_invernal',
+                'activity_date'      => '2026-02-0' . ($i + 3),
+                'temperature'        => 15.0,
+                'notes'              => 'Sellado de heridas de poda con pasta cicatrizante Vintec.',
+            ]);
+            DB::table('post_harvest_treatments')->insert([
+                'activity_id'            => $aId,
+                'product_id'             => null,
+                'application_type'       => 'wound_sealing',
+                'treated_area_ha'        => round(0.65 + $i * 0.2, 2),
+                'reentry_interval_hours' => 0,
+                'notes'                  => 'Aplicación inmediata tras poda para prevenir Eutipiosis.',
+                'created_at'             => $now,
+                'updated_at'             => $now,
+            ]);
+        }
+
+        // ── Tratamientos preventivos inicio temporada (Feb–Mar 2026) ──────────
+        $treatments2026 = [
+            [0, '2026-02-20', 4, 'mildiu',  'pulverización',    'lloro',   14.0, 2.5],
+            [2, '2026-02-22', 4, 'mildiu',  'pulverización',    'lloro',   15.0, 2.5],
+            [1, '2026-03-10', 0, 'mildiu',  'pulverización',    'brotacion', 17.0, 3.0],
+            [3, '2026-03-12', 0, 'mildiu',  'pulverización',    'brotacion', 18.0, 3.0],
+            [0, '2026-03-25', 1, 'oídio',   'aplicación foliar','brotacion', 19.0, 0.4],
+            [4, '2026-03-27', 1, 'oídio',   'aplicación foliar','brotacion', 20.0, 0.4],
+        ];
+
+        foreach ($treatments2026 as [$pIdx, $date, $prodIdx, $pest, $method, $stage, $temp, $dose]) {
+            $aId = $act([
+                'plot_id'            => $plotIds[$pIdx],
+                'plot_planting_id'   => $plantingIds[$pIdx * 2],
+                'activity_type'      => 'phytosanitary',
+                'phenological_stage' => $stage,
+                'activity_date'      => $date,
+                'weather_conditions' => 'soleado',
+                'temperature'        => $temp,
+                'notes'              => "Tratamiento preventivo {$pest}.",
+            ]);
+            DB::table('phytosanitary_treatments')->insert([
+                'activity_id'        => $aId,
+                'product_id'         => $productIds[$prodIdx],
+                'dose_per_hectare'   => $dose,
+                'area_treated'       => 0.85,
+                'application_method' => $method,
+                'target_pest'        => $pest,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ]);
+        }
+
+        // ── Abonado de fondo primavera (Mar 2026) ──────────────────────────────
+        $fertilizations2026 = [
+            [0, '2026-03-18', 'orgánico', 'Compost de orujo 2025',     2200.0, 'en cobertura', 'brotacion'],
+            [1, '2026-03-20', 'orgánico', 'Compost de orujo 2025',     2000.0, 'en cobertura', 'brotacion'],
+            [4, '2026-03-22', 'orgánico', 'Vermicompost ecológico',    2500.0, 'en cobertura', 'brotacion'],
+        ];
+
+        foreach ($fertilizations2026 as [$pIdx, $date, $type, $name, $qty, $method, $stage]) {
+            $aId = $act([
+                'plot_id'            => $plotIds[$pIdx],
+                'activity_type'      => 'fertilization',
+                'phenological_stage' => $stage,
+                'activity_date'      => $date,
+                'temperature'        => 17.0,
+                'notes'              => "Abonado de fondo: {$name}.",
+            ]);
+            DB::table('fertilizations')->insert([
+                'activity_id'        => $aId,
+                'fertilizer_type'    => $type,
+                'fertilizer_name'    => $name,
+                'quantity'           => $qty,
+                'application_method' => $method,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ]);
+        }
+
+        // ── Riegos de inicio de temporada (Abr 2026) ───────────────────────────
+        $irrigations2026 = [
+            [1, '2026-04-05', 2000.0, 80,  false, 'brotacion'],
+            [3, '2026-04-07', 1800.0, 72,  false, 'brotacion'],
+        ];
+
+        foreach ($irrigations2026 as [$pIdx, $date, $vol, $dur, $fertiIrr, $stage]) {
+            $aId = $act([
+                'plot_id'            => $plotIds[$pIdx],
+                'activity_type'      => 'irrigation',
+                'phenological_stage' => $stage,
+                'activity_date'      => $date,
+                'temperature'        => 20.0,
+                'notes'              => 'Primer riego de la temporada 2026.',
+            ]);
+            DB::table('irrigations')->insert([
+                'activity_id'       => $aId,
+                'water_volume'      => $vol,
+                'water_volume_unit' => 'L',
+                'irrigation_method' => 'goteo',
+                'duration_minutes'  => $dur,
+                'is_fertirrigation' => $fertiIrr,
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ]);
+        }
+
+        // ── Observaciones de brotación (Mar–Abr 2026) ──────────────────────────
+        $observations2026 = [
+            [0, '2026-03-28', 'fenología', 'Brotación homogénea. 88% de yemas activas.',      null,   'brotacion'],
+            [1, '2026-03-30', 'fenología', 'Brotación uniforme. Vigor alto en espaldera.',    null,   'brotacion'],
+            [2, '2026-04-02', 'general',   'Estado sanitario óptimo. Sin síntomas de plagas.', null,  'brotacion'],
+            [4, '2026-04-05', 'fenología', 'Brotación excelente en parcela ecológica.',        null,   'brotacion'],
+        ];
+
+        foreach ($observations2026 as [$pIdx, $date, $type, $desc, $severity, $stage]) {
+            $aId = $act([
+                'plot_id'            => $plotIds[$pIdx],
+                'activity_type'      => 'observation',
+                'phenological_stage' => $stage,
+                'activity_date'      => $date,
+                'temperature'        => 19.0,
+                'notes'              => $desc,
+            ]);
+            DB::table('observations')->insert([
+                'activity_id'      => $aId,
+                'observation_type' => $type,
+                'description'      => $desc,
+                'severity'         => $severity,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        }
+    }
+
     // ─── 9. Plagas y enfermedades ─────────────────────────────────────────────
 
     private function createPests(array $productIds, $now): array
@@ -1246,11 +1444,12 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     // ─── 10. Rendimientos estimados ───────────────────────────────────────────
 
-    private function createEstimatedYields(array $plantingIds, int $campaign2024Id, int $campaign2025Id, $now): void
+    private function createEstimatedYields(array $plantingIds, int $campaign2024Id, int $campaign2025Id, int $campaign2026Id, $now): void
     {
         // Usamos los plantingIds principales (uno por parcela: índices 0,2,4,6,8)
         // Campaña 2024: estimación pre-envero (ronda 1) + pre-vendimia (ronda 3) con datos reales
-        // Campaña 2025: solo pre-envero (ronda 1, campaña en curso)
+        // Campaña 2025: ronda 1 + ronda 3 con datos reales (campaña cerrada)
+        // Campaña 2026: solo ronda 1 (campaña activa, inicio de temporada)
 
         // --- 2024 ronda 1: estimación pre-envero (Julio 2024) ---
         $estimates2024r1 = [
@@ -1360,7 +1559,46 @@ class ViticulturistDemoSeeder_test extends Seeder
                 'actual_yield_per_hectare'    => null,
                 'actual_total_yield'          => null,
                 'variance_percentage'         => null,
-                'notes'                       => 'Estimación pre-envero 2025. Campaña en curso con perspectivas favorables.',
+                'notes'                       => 'Estimación pre-envero 2025. Campaña cerrada.',
+                'created_at'                  => $now,
+                'updated_at'                  => $now,
+            ]);
+        }
+
+        // --- 2026 ronda 1: primera estimación de temporada (Abr 2026) ---
+        $estimates2026r1 = [
+            // [planting_idx, est_yield_ha, est_total, bunches_plant, bunch_g, plants, pct, health_pct]
+            [0, 5000.0, 3000.0, 11.5, 270.0, 20, 20.0, 94.0],
+            [2, 5500.0, 4400.0, 12.5, 300.0, 20, 18.0, 92.0],
+            [4, 5200.0, 2080.0, 10.5, 275.0, 15, 18.0, 96.0],
+            [6, 7000.0, 3220.0, 13.5, 325.0, 20, 20.0, 95.0],
+            [8, 6000.0, 3300.0, 12.0, 295.0, 20, 18.0, 93.0],
+        ];
+
+        foreach ($estimates2026r1 as [$pIdx, $estHa, $estTotal, $bunchesPlant, $bunchG, $plants, $samplingPct, $healthPct]) {
+            DB::table('estimated_yields')->insertOrIgnore([
+                'plot_planting_id'            => $plantingIds[$pIdx],
+                'campaign_id'                 => $campaign2026Id,
+                'estimated_by'                => self::VIT_USER_ID,
+                'estimated_yield_per_hectare' => $estHa,
+                'estimated_total_yield'       => $estTotal,
+                'estimation_date'             => '2026-04-10',
+                'estimation_method'           => 'visual',
+                'estimation_round'            => 1,
+                'status'                      => 'draft',
+                'active'                      => true,
+                'bunches_per_plant'           => $bunchesPlant,
+                'bunch_weight_grams'          => $bunchG,
+                'total_plants_sampled'        => $plants,
+                'sampling_area_pct'           => $samplingPct,
+                'health_percentage'           => $healthPct,
+                'health_status'               => 'sano',
+                'potential_alcohol'           => round($estHa * 0.0027, 1),
+                'vintage'                     => 2026,
+                'actual_yield_per_hectare'    => null,
+                'actual_total_yield'          => null,
+                'variance_percentage'         => null,
+                'notes'                       => 'Primera estimación 2026. Brotación reciente, estimación preliminar visual.',
                 'created_at'                  => $now,
                 'updated_at'                  => $now,
             ]);
@@ -1369,12 +1607,27 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     // ─── 8. Fenología ─────────────────────────────────────────────────────────
 
-    private function createPhenology(array $plantingIds, int $campaign2024Id, int $campaign2025Id, $now): void
+    private function createPhenology(array $plantingIds, int $campaign2024Id, int $campaign2025Id, int $campaign2026Id, $now): void
     {
-        // Usamos los 5 primeros plantingIds (uno por parcela, plantación principal)
         $mainPlantings = [$plantingIds[0], $plantingIds[2], $plantingIds[4], $plantingIds[6], $plantingIds[8]];
 
-        // Campaña 2024 — eventos completos (vendimia realizada)
+        $insert = function (int $plantingId, int $campaignId, string $event, string $date, int $confidence) use ($now) {
+            DB::table('phenology_observations')->insertOrIgnore([
+                'plot_planting_id' => $plantingId,
+                'campaign_id'      => $campaignId,
+                'viticulturist_id' => self::VIT_USER_ID,
+                'event'            => $event,
+                'obs_date'         => $date,
+                'source'           => 'manual',
+                'confidence'       => $confidence,
+                'active'           => true,
+                'notes'            => null,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        };
+
+        // ── 2024: ciclo completo ──────────────────────────────────────────────
         $events2024 = [
             ['budbreak',    '2024-03-10', 85],
             ['shoot_growth','2024-04-05', 95],
@@ -1384,47 +1637,36 @@ class ViticulturistDemoSeeder_test extends Seeder
             ['pre_harvest', '2024-09-01', 95],
             ['harvest',     '2024-09-10', 100],
         ];
-
-        foreach ($mainPlantings as $i => $plantingId) {
+        foreach ($mainPlantings as $plantingId) {
             foreach ($events2024 as [$event, $date, $confidence]) {
-                DB::table('phenology_observations')->insertOrIgnore([
-                    'plot_planting_id'    => $plantingId,
-                    'campaign_id'         => $campaign2024Id,
-                    'viticulturist_id'    => self::VIT_USER_ID,
-                    'event'               => $event,
-                    'obs_date'            => $date,
-                    'source'              => 'manual',
-                    'confidence'          => $confidence,
-                    'active'              => true,
-                    'notes'               => null,
-                    'created_at'          => $now,
-                    'updated_at'          => $now,
-                ]);
+                $insert($plantingId, $campaign2024Id, $event, $date, $confidence);
             }
         }
 
-        // Campaña 2025 — solo primeros eventos (campaña en curso)
+        // ── 2025: ciclo completo (campaña cerrada) ────────────────────────────
         $events2025 = [
             ['budbreak',    '2025-03-12', 90],
             ['shoot_growth','2025-04-08', 92],
-            ['flowering',   '2025-05-25', 88],
+            ['flowering',   '2025-05-22', 90],
+            ['fruit_set',   '2025-06-12', 88],
+            ['veraison',    '2025-07-28', 93],
+            ['pre_harvest', '2025-09-03', 96],
+            ['harvest',     '2025-09-12', 100],
         ];
-
-        foreach (array_slice($mainPlantings, 0, 3) as $plantingId) {
+        foreach ($mainPlantings as $plantingId) {
             foreach ($events2025 as [$event, $date, $confidence]) {
-                DB::table('phenology_observations')->insertOrIgnore([
-                    'plot_planting_id' => $plantingId,
-                    'campaign_id'      => $campaign2025Id,
-                    'viticulturist_id' => self::VIT_USER_ID,
-                    'event'            => $event,
-                    'obs_date'         => $date,
-                    'source'           => 'manual',
-                    'confidence'       => $confidence,
-                    'active'           => true,
-                    'notes'            => null,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
-                ]);
+                $insert($plantingId, $campaign2025Id, $event, $date, $confidence);
+            }
+        }
+
+        // ── 2026: inicio de temporada (brotación reciente) ────────────────────
+        $events2026 = [
+            ['budbreak',    '2026-03-15', 88],
+            ['shoot_growth','2026-04-08', 85],
+        ];
+        foreach (array_slice($mainPlantings, 0, 4) as $plantingId) {
+            foreach ($events2026 as [$event, $date, $confidence]) {
+                $insert($plantingId, $campaign2026Id, $event, $date, $confidence);
             }
         }
     }
