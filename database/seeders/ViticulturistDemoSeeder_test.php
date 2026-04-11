@@ -1812,18 +1812,18 @@ class ViticulturistDemoSeeder_test extends Seeder
         $ids = [];
         foreach ($containers as $container) {
             $ids[] = DB::table('containers')->insertGetId(array_merge($container, [
-                'user_id'    => $vitId,
-                'supplier_id' => null,
-                'container_room_id' => null,
-                'photos'     => null,
-                'thumbnail_img' => null,
-                'oak_type'   => null,
-                'toast_type' => null,
-                'x_position' => null,
-                'y_position' => null,
+                'user_id'              => $vitId,
+                'supplier_name'        => null,
+                'container_room_id'    => null,
+                'photos'               => null,
+                'thumbnail_img'        => null,
+                'oak_type'             => null,
+                'toast_type'           => null,
+                'x_position'           => null,
+                'y_position'           => null,
                 'next_maintenance_date' => $container['next_maintenance_date'] ?? null,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'created_at'           => $now,
+                'updated_at'           => $now,
             ]));
         }
 
