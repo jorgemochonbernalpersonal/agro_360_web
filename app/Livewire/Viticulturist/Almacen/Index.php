@@ -328,7 +328,7 @@ class Index extends Component
         $viewData['campaigns']   = Campaign::forViticulturist($user->id)->orderByDesc('year')->get();
         $viewData['units']       = Unit::active()->orderBy('category')->orderBy('name')->get();
 
-        return view('livewire.viticulturist.almacen.index', $viewData)
+        return view('livewire.viticulturist.warehouse.index', $viewData)
             ->layout('layouts.app', ['title' => 'Almacén de Insumos - Agro365']);
     }
 }

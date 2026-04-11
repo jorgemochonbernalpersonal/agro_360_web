@@ -5,7 +5,7 @@
         description="Estadísticas y proyecciones de consumo de productos fitosanitarios"
     >
         <x-slot:actions>
-            <flux:button href="{{ roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Volver al Inventario
             </flux:button>
         </x-slot:actions>

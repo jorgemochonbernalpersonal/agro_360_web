@@ -119,7 +119,7 @@ class EditStock extends Component
         }
 
         $this->toastSuccess('Stock actualizado correctamente');
-        return $this->redirect(route('viticulturist.almacen.index', ['tab' => 'fitosanitarios']), navigate: true);
+        return $this->redirect(route('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']), navigate: true);
     }
 
     public function render()

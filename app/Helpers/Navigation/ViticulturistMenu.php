@@ -30,7 +30,7 @@ class ViticulturistMenu
         // ── Relación con Bodega ───────────────────────────────────────────────
         $menu['bodega_rel'] = [
             ['icon' => 'megaphone',              'label' => 'Avisos de Bodegas',          'route' => 'viticulturist.announcements',          'active' => request()->routeIs('viticulturist.announcements')],
-            ['icon' => 'chat-bubble-left-right', 'label' => 'Comunicación con Bodega',    'route' => 'viticulturist.bodega-messages.index',  'active' => request()->routeIs('viticulturist.bodega-messages*')],
+            ['icon' => 'chat-bubble-left-right', 'label' => 'Comunicación con Bodega',    'route' => 'viticulturist.winery-messages.index',  'active' => request()->routeIs('viticulturist.winery-messages*')],
             ['icon' => 'lock-closed',            'label' => 'Acceso Bodegas al Cuaderno', 'route' => 'viticulturist.winery-access.index',   'active' => request()->routeIs('viticulturist.winery-access*'),
              'badge' => Cache::remember("nav_badge_notebook_access_{$user->id}", 120, fn() =>
                 NotebookAccessRequest::where('viticulturist_id', $user->id)->where('status', NotebookAccessRequest::STATUS_PENDING)->count()
@@ -149,7 +149,7 @@ class ViticulturistMenu
         }
 
         return array_merge($items, [
-            ['icon' => 'building-storefront', 'label' => 'Almacén de Insumos',       'route' => "{$prefix}.almacen.index",                'active' => request()->routeIs("{$prefix}.almacen.*")],
+            ['icon' => 'building-storefront', 'label' => 'Almacén de Insumos',       'route' => "{$prefix}.warehouse.index",               'active' => request()->routeIs("{$prefix}.warehouse.*")],
             ['icon' => 'beaker',              'label' => 'Productos Fitosanitarios', 'route' => "{$prefix}.phytosanitary-products.index", 'active' => request()->routeIs("{$prefix}.phytosanitary-products.*")],
             ['icon' => 'user-plus',           'label' => 'Subcontratación',          'route' => "{$prefix}.subcontracting.index",         'active' => request()->routeIs("{$prefix}.subcontracting*")],
         ]);

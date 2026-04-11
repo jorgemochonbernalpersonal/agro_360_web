@@ -78,11 +78,11 @@ class WineryMenu
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                   'active' => request()->routeIs('sigpac.*')],
             ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial', 'route' => 'plots.territory',                'active' => request()->routeIs('plots.territory')],
             ['divider' => true],
+            ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'winery.field-activities.index',  'active' => request()->routeIs('winery.field-activities*')],
+            ['divider' => true],
             ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',       'active' => request()->routeIs('remote-sensing.*')],
             ['icon' => 'cloud',               'label' => 'Meteorología',        'route' => 'winery.meteorology.index',       'active' => request()->routeIs('winery.meteorology*'), 'wip' => true, 'new' => true],
             ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas', 'route' => 'winery.plot-environments.index', 'active' => request()->routeIs('winery.plot-environments*')],
-            ['divider' => true],
-            ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'winery.field-activities.index',  'active' => request()->routeIs('winery.field-activities*')],
         ];
 
         $menu['billing'] = [

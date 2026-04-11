@@ -114,26 +114,6 @@ class ProducerMenu
             ['icon' => 'sparkles',                'label' => 'Enoturismo',          'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true, 'new' => true],
         ];
 
-        // ── Negocio unificado (usado por capítulo Negocio del rail) ───────────
-        $menu['billing_all'] = [
-            ['icon' => 'calculator',              'label' => 'Facturas',               'route' => 'producer.invoices.index',               'active' => request()->routeIs('producer.invoices.*') && !request()->routeIs('producer.invoices.products.*') && !request()->routeIs('producer.invoices.grape-purchase.*') && !request()->routeIs('producer.invoices.mixed.*')],
-            ['icon' => 'document-arrow-up',       'label' => 'Albaranes Mixtos',       'route' => 'producer.invoices.mixed.index',         'active' => request()->routeIs('producer.invoices.mixed.*')],
-            ['icon' => 'arrow-down-tray',         'label' => 'Compra de Uva',          'route' => 'producer.invoices.grape-purchase.index', 'active' => request()->routeIs('producer.invoices.grape-purchase*')],
-            ['icon' => 'arrow-up-tray',           'label' => 'Venta de Productos',     'route' => 'producer.invoices.products.index',       'active' => request()->routeIs('producer.invoices.products*')],
-            ['icon' => 'document-check',          'label' => 'VeriFactu',              'route' => 'producer.verifactu.index',               'active' => request()->routeIs('producer.verifactu*'), 'new' => true],
-            ['divider' => true],
-            ['icon' => 'chart-bar-square',        'label' => 'Resumen Económico',      'route' => 'producer.financial-summary.index',       'active' => request()->routeIs('producer.financial-summary*'), 'new' => true],
-            ['icon' => 'presentation-chart-bar',  'label' => 'Estadísticas Viñedo',    'route' => 'producer.financial-stats.index',         'active' => request()->routeIs('producer.financial-stats.index')],
-            ['icon' => 'presentation-chart-line', 'label' => 'Estadísticas Bodega',    'route' => 'producer.financial-stats-winery',        'active' => request()->routeIs('producer.financial-stats-winery'), 'new' => true],
-            ['icon' => 'shopping-cart',           'label' => 'Cosecha Comercializada', 'route' => 'producer.marketed-harvests.index',       'active' => request()->routeIs('producer.marketed-harvests.*')],
-            ['icon' => 'table-cells',             'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',              'active' => request()->routeIs('producer.plot-costs*'), 'new' => true],
-            ['divider' => true],
-            ['icon' => 'users',                   'label' => 'Clientes Viñedo',        'route' => 'producer.clients.index',                 'active' => request()->routeIs('producer.clients.*')],
-            ['icon' => 'user-group',              'label' => 'Clientes Bodega',        'route' => 'producer.winery-clients.index',          'active' => request()->routeIs('producer.winery-clients*'), 'new' => true],
-            ['icon' => 'globe-alt',               'label' => 'Exportación',            'route' => 'producer.exports.index',                 'active' => request()->routeIs('producer.exports*'), 'wip' => true, 'new' => true],
-            ['icon' => 'sparkles',                'label' => 'Enoturismo',             'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true, 'new' => true],
-        ];
-
         // ── Denominación de Origen (solo si tiene supervisor) ────────────────
         $hasSupervisor = Cache::remember(
             "winery:{$user->id}:has_supervisor",

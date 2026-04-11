@@ -1,7 +1,7 @@
 <x-agro.form-card
     title="New Supply"
     description="Register a new supply in your warehouse"
-    :back-url="roleRoute('viticulturist.almacen.index', ['tab' => 'insumos'])"
+    :back-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'insumos'])"
 >
     <form wire:submit="save" class="space-y-6">
 
@@ -90,7 +90,7 @@
         </x-agro.form-section>
 
         <x-agro.form-actions
-            :cancel-url="roleRoute('viticulturist.almacen.index', ['tab' => 'insumos'])"
+            :cancel-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'insumos'])"
             submit-label="Add Supply"
         />
     </form>

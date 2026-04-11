@@ -39,15 +39,16 @@
         'do_estadisticas'  => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
         'do_admin'         => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
         // winery
-        'vendimia'      => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
-        'bodega_elab'   => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino
-        'bodega_salida' => ['accent' => '#d97706', 'bg' => 'rgba(217,119,6,0.12)',   'border' => 'rgba(217,119,6,0.5)'],    // ámbar/marrón
-        'territorio'    => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
+        'vendimia'  => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
+        'bodega'    => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino (elab+salida unificado)
+        'territorio'=> ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
     ];
+    $chapterColors['normativa_w'] = $chapterColors['normativa'];
+    $chapterColors['negocio_w']   = $chapterColors['negocio'];
 
     $viticulturistChapters = [
         ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
-        ['key' => 'bodega_rel','icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['bodega_rel', 'denomination']],
+        ['key' => 'bodega_rel','icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['bodega_rel', 'denomination'], 'section_labels' => ['bodega_rel' => 'Comunicación', 'denomination' => 'Denominación']],
         ['key' => 'cuaderno',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
         ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['registros_oficiales']],
         ['key' => 'finca',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['finca']],
@@ -58,13 +59,12 @@
     ];
 
     $wineryChapters = [
-        ['key' => 'vendimia',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',          'sections' => ['harvest']],
-        ['key' => 'bodega_elab',   'icon' => 'beaker',                 'label' => 'Bodega — Elab.',    'sections' => ['cellar_elab']],
-        ['key' => 'bodega_salida', 'icon' => 'cube',                   'label' => 'Bodega — Salida',   'sections' => ['cellar_salida']],
-        ['key' => 'territorio',    'icon' => 'map',                    'label' => 'Parcelas',          'sections' => ['territory']],
-        ['key' => 'normativa',     'icon' => 'shield-check',           'label' => 'Normativa',         'sections' => ['winery_normativa']],
-        ['key' => 'negocio',       'icon' => 'calculator',             'label' => 'Negocio',           'sections' => ['billing']],
-        ['key' => 'sistema',       'icon' => 'cog-6-tooth',            'label' => 'Sistema',           'sections' => ['resources', 'system']],
+        ['key' => 'vendimia',  'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia', 'sections' => ['harvest']],
+        ['key' => 'bodega',    'icon' => 'beaker',                  'label' => 'Bodega',   'sections' => ['cellar_elab', 'cellar_salida'], 'section_labels' => ['cellar_elab' => 'Elaboración', 'cellar_salida' => 'Salida']],
+        ['key' => 'territorio','icon' => 'map',                     'label' => 'Parcelas', 'sections' => ['territory']],
+        ['key' => 'normativa', 'icon' => 'shield-check',            'label' => 'Normativa','sections' => ['winery_normativa']],
+        ['key' => 'negocio',   'icon' => 'calculator',              'label' => 'Negocio',  'sections' => ['billing']],
+        ['key' => 'sistema',   'icon' => 'cog-6-tooth',             'label' => 'Sistema',  'sections' => ['resources', 'system']],
     ];
 
     // ── Producer: capítulos viñedo (incluye Parcelas y Negocio Viñedo) ────────
@@ -81,14 +81,11 @@
 
     // ── Producer: capítulos bodega (incluye Negocio Bodega) ──────────────────
     $producerWineryChapters = [
-        ['key' => 'vendimia',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',          'sections' => ['harvest']],
-        ['key' => 'bodega_elab',   'icon' => 'beaker',                 'label' => 'Bodega — Elab.',    'sections' => ['cellar_elab']],
-        ['key' => 'bodega_salida', 'icon' => 'cube',                   'label' => 'Bodega — Salida',   'sections' => ['cellar_salida']],
-        ['key' => 'normativa_w',   'icon' => 'shield-check',           'label' => 'Normativa Bodega',  'sections' => ['winery_normativa']],
-        ['key' => 'negocio_w',     'icon' => 'calculator',             'label' => 'Negocio Bodega',    'sections' => ['winery_billing']],
+        ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',        'sections' => ['harvest']],
+        ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',          'sections' => ['cellar_elab', 'cellar_salida'], 'section_labels' => ['cellar_elab' => 'Elaboración', 'cellar_salida' => 'Salida']],
+        ['key' => 'normativa_w','icon' => 'shield-check',            'label' => 'Normativa Bodega','sections' => ['winery_normativa']],
+        ['key' => 'negocio_w',  'icon' => 'calculator',              'label' => 'Negocio Bodega',  'sections' => ['winery_billing']],
     ];
-    $chapterColors['normativa_w'] = $chapterColors['normativa'];
-    $chapterColors['negocio_w']   = $chapterColors['negocio'];
 
     $doChapters = [
         [
@@ -426,6 +423,8 @@
                                     <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $item['badge'] }}</span>
                                 @elseif(isset($item['wip']) && $item['wip'])
                                     <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full whitespace-nowrap">Pronto</span>
+                                @elseif(isset($item['new']) && $item['new'])
+                                    <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full whitespace-nowrap">Nuevo</span>
                                 @elseif($item['active'] ?? false)
                                     <div class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background: {{ $color['accent'] }};"></div>
                                 @endif
@@ -608,6 +607,8 @@
                                             <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">{{ $item['badge'] }}</span>
                                         @elseif(isset($item['wip']) && $item['wip'])
                                             <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-600 rounded-full">Pronto</span>
+                                        @elseif(isset($item['new']) && $item['new'])
+                                            <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-600 rounded-full">Nuevo</span>
                                         @endif
                                     </a>
                                 @endif

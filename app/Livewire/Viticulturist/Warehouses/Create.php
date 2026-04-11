@@ -45,7 +45,7 @@ class Create extends Component
 
         $this->toastSuccess('Almacén creado correctamente.');
 
-        return $this->redirect(route('viticulturist.almacen.index', ['tab' => 'almacenes']), navigate: true);
+        return $this->redirect(route('viticulturist.warehouse.index', ['tab' => 'almacenes']), navigate: true);
     }
 
     public function render()

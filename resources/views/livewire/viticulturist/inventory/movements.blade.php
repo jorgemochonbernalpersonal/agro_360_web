@@ -5,7 +5,7 @@
         :description="'Movimientos de stock para: ' . $stock->product->name"
     >
         <x-slot:actions>
-            <flux:button href="{{ roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Volver
             </flux:button>
         </x-slot:actions>

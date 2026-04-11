@@ -1,7 +1,7 @@
 <div class="space-y-6 animate-fade-in">
     <x-agro.page-header title="Editar Stock" description="Modifica los datos del registro de stock">
         <x-slot:actions>
-            <flux:button href="{{ roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
+            <flux:button href="{{ roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios']) }}" variant="ghost" icon="arrow-left">
                 Cancelar
             </flux:button>
         </x-slot:actions>
@@ -95,7 +95,7 @@
                 <flux:error name="notes" />
             </flux:field>
 
-            <x-agro.form-actions :back-url="roleRoute('viticulturist.almacen.index', ['tab' => 'fitosanitarios'])" submit-label="Guardar Cambios" />
+            <x-agro.form-actions :back-url="roleRoute('viticulturist.warehouse.index', ['tab' => 'fitosanitarios'])" submit-label="Guardar Cambios" />
         </form>
     </x-agro.form-card>
 </div>
