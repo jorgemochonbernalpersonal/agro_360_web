@@ -47,7 +47,7 @@ use Illuminate\Support\Facades\DB;
  *  28.  Alertas
  *  29.  Recálculo stock contenedores (WineryRecalculateContainerStockSeeder)
  */
-class WineryDemoSeeder extends Seeder
+class WineryDemoSeeder_test extends Seeder
 {
     private const WINERY_USER_ID = 1;
 
