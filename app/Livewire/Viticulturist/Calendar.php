@@ -388,6 +388,9 @@ class Calendar extends Component
             'irrigation'    => 'bg-cyan-100 text-cyan-700 border-cyan-300',
             'cultural'      => 'bg-yellow-100 text-yellow-700 border-yellow-300',
             'observation'   => 'bg-zinc-100 text-zinc-700 border-zinc-300',
+            'pruning'       => 'bg-lime-100 text-lime-700 border-lime-300',
+            'harvest'       => 'bg-amber-100 text-amber-700 border-amber-300',
+            'post_harvest'  => 'bg-purple-100 text-purple-700 border-purple-300',
             default         => 'bg-zinc-100 text-zinc-700 border-zinc-300',
         };
     }
@@ -400,6 +403,9 @@ class Calendar extends Component
             'irrigation'    => 'Riego',
             'cultural'      => 'Labor',
             'observation'   => 'Observación',
+            'pruning'       => 'Poda',
+            'harvest'       => 'Vendimia',
+            'post_harvest'  => 'Post-vendimia',
             default         => 'Actividad',
         };
     }
@@ -478,6 +484,9 @@ class Calendar extends Component
             'irrigation'    => (clone $baseQuery)->ofType('irrigation')->count(),
             'cultural'      => (clone $baseQuery)->ofType('cultural')->count(),
             'observation'   => (clone $baseQuery)->ofType('observation')->count(),
+            'pruning'       => (clone $baseQuery)->ofType('pruning')->count(),
+            'harvest'       => (clone $baseQuery)->ofType('harvest')->count(),
+            'post_harvest'  => (clone $baseQuery)->ofType('post_harvest')->count(),
         ];
 
         $monthName = ucfirst(Carbon::create($this->currentYear, $this->currentMonth, 1)->locale('es')->monthName);

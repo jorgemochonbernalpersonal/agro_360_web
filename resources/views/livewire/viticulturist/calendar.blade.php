@@ -35,31 +35,26 @@
 
     {{-- Estadísticas del Mes --}}
     <x-agro.card>
-        <div class="grid grid-cols-3 md:grid-cols-6 gap-4 text-center">
-            <div>
+        <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 text-center">
+            <div class="col-span-3 sm:col-span-5 lg:col-span-1 flex lg:flex-col items-center justify-center gap-2 lg:gap-0 bg-zinc-100 rounded-lg px-3 py-2">
                 <div class="text-2xl font-bold text-zinc-900">{{ $stats['total'] }}</div>
-                <div class="text-xs text-zinc-500">Total</div>
+                <div class="text-xs text-zinc-500 font-medium">Total</div>
             </div>
-            <div>
-                <div class="text-2xl font-bold text-red-600">{{ $stats['phytosanitary'] }}</div>
-                <div class="text-xs text-zinc-500">Tratamientos</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-blue-600">{{ $stats['fertilization'] }}</div>
-                <div class="text-xs text-zinc-500">Fertilizaciones</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-cyan-600">{{ $stats['irrigation'] }}</div>
-                <div class="text-xs text-zinc-500">Riegos</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-yellow-600">{{ $stats['cultural'] }}</div>
-                <div class="text-xs text-zinc-500">Labores</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-zinc-600">{{ $stats['observation'] }}</div>
-                <div class="text-xs text-zinc-500">Observaciones</div>
-            </div>
+            @foreach([
+                ['phytosanitary', 'Tratamientos',    'text-red-600',    'bg-red-50'],
+                ['fertilization', 'Fertilizaciones', 'text-blue-600',   'bg-blue-50'],
+                ['irrigation',    'Riegos',           'text-cyan-600',   'bg-cyan-50'],
+                ['cultural',      'Labores',          'text-yellow-600', 'bg-yellow-50'],
+                ['observation',   'Observaciones',    'text-zinc-600',   'bg-zinc-50'],
+                ['pruning',       'Podas',            'text-lime-700',   'bg-lime-50'],
+                ['harvest',       'Vendimias',        'text-amber-700',  'bg-amber-50'],
+                ['post_harvest',  'Post-vendimia',    'text-purple-600', 'bg-purple-50'],
+            ] as [$key, $label, $textColor, $bgColor])
+                <div class="flex lg:flex-col items-center justify-center gap-2 lg:gap-0 {{ $bgColor }} rounded-lg px-2 py-2">
+                    <div class="text-2xl font-bold {{ $textColor }}">{{ $stats[$key] }}</div>
+                    <div class="text-xs text-zinc-500 font-medium leading-tight">{{ $label }}</div>
+                </div>
+            @endforeach
         </div>
     </x-agro.card>
 
@@ -72,6 +67,9 @@
             <option value="irrigation">Riegos</option>
             <option value="cultural">Labores Culturales</option>
             <option value="observation">Observaciones</option>
+            <option value="pruning">Podas</option>
+            <option value="harvest">Vendimias</option>
+            <option value="post_harvest">Post-vendimia</option>
         </x-agro.filter-select>
     </x-agro.filter-bar>
 
@@ -158,11 +156,14 @@
                 <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Actividades de campo</p>
             </div>
             @foreach([
-                ['bg-red-100 border-red-300',    'Tratamientos'],
+                ['bg-red-100 border-red-300',     'Tratamientos'],
                 ['bg-blue-100 border-blue-300',   'Fertilizaciones'],
                 ['bg-cyan-100 border-cyan-300',   'Riegos'],
                 ['bg-yellow-100 border-yellow-300','Labores'],
                 ['bg-zinc-100 border-zinc-300',   'Observaciones'],
+                ['bg-lime-100 border-lime-300',   'Podas'],
+                ['bg-amber-100 border-amber-300', 'Vendimias'],
+                ['bg-purple-100 border-purple-300','Post-vendimia'],
             ] as [$cls, $lbl])
                 <div class="flex items-center gap-2">
                     <div class="w-4 h-4 rounded border {{ $cls }}"></div>
