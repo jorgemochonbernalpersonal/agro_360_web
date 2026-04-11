@@ -35,43 +35,69 @@
 
     {{-- Estadísticas del Mes --}}
     <x-agro.card>
-        <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 text-center">
-            <div class="col-span-3 sm:col-span-5 lg:col-span-1 flex lg:flex-col items-center justify-center gap-2 lg:gap-0 bg-zinc-100 rounded-lg px-3 py-2">
-                <div class="text-2xl font-bold text-zinc-900">{{ $stats['total'] }}</div>
-                <div class="text-xs text-zinc-500 font-medium">Total</div>
+        <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
+            {{-- Total --}}
+            <div class="col-span-3 sm:col-span-5 lg:col-span-1 flex lg:flex-col items-center lg:justify-center gap-3 lg:gap-1 bg-zinc-100 rounded-xl px-4 py-3">
+                <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-zinc-200">
+                    <flux:icon icon="calendar-days" class="size-5 text-zinc-600" />
+                </div>
+                <div class="lg:text-center">
+                    <div class="text-2xl font-bold text-zinc-900 leading-none">{{ $stats['total'] }}</div>
+                    <div class="text-xs text-zinc-500 mt-0.5">Total</div>
+                </div>
             </div>
+
             @foreach([
-                ['phytosanitary', 'Tratamientos',    'text-red-600',    'bg-red-50'],
-                ['fertilization', 'Fertilizaciones', 'text-blue-600',   'bg-blue-50'],
-                ['irrigation',    'Riegos',           'text-cyan-600',   'bg-cyan-50'],
-                ['cultural',      'Labores',          'text-yellow-600', 'bg-yellow-50'],
-                ['observation',   'Observaciones',    'text-zinc-600',   'bg-zinc-50'],
-                ['pruning',       'Podas',            'text-lime-700',   'bg-lime-50'],
-                ['harvest',       'Vendimias',        'text-amber-700',  'bg-amber-50'],
-                ['post_harvest',  'Post-vendimia',    'text-purple-600', 'bg-purple-50'],
-            ] as [$key, $label, $textColor, $bgColor])
-                <div class="flex lg:flex-col items-center justify-center gap-2 lg:gap-0 {{ $bgColor }} rounded-lg px-2 py-2">
-                    <div class="text-2xl font-bold {{ $textColor }}">{{ $stats[$key] }}</div>
-                    <div class="text-xs text-zinc-500 font-medium leading-tight">{{ $label }}</div>
+                ['phytosanitary', 'Tratamientos',    'text-red-600',    'bg-red-50',     'bg-red-100',    'beaker'],
+                ['fertilization', 'Fertilizaciones', 'text-blue-600',   'bg-blue-50',    'bg-blue-100',   'sparkles'],
+                ['irrigation',    'Riegos',           'text-cyan-600',   'bg-cyan-50',    'bg-cyan-100',   'cloud'],
+                ['cultural',      'Labores',          'text-yellow-700', 'bg-yellow-50',  'bg-yellow-100', 'wrench-screwdriver'],
+                ['observation',   'Observaciones',    'text-zinc-600',   'bg-zinc-50',    'bg-zinc-200',   'eye'],
+                ['pruning',       'Podas',            'text-lime-700',   'bg-lime-50',    'bg-lime-100',   'scissors'],
+                ['harvest',       'Vendimias',        'text-amber-700',  'bg-amber-50',   'bg-amber-100',  'sun'],
+                ['post_harvest',  'Post-vendimia',    'text-purple-600', 'bg-purple-50',  'bg-purple-100', 'check-badge'],
+            ] as [$key, $label, $textColor, $bgCard, $bgIcon, $icon])
+                <div class="flex lg:flex-col items-center lg:justify-center gap-3 lg:gap-1 {{ $bgCard }} rounded-xl px-3 py-3">
+                    <div class="flex items-center justify-center w-9 h-9 rounded-lg {{ $bgIcon }} flex-shrink-0">
+                        <flux:icon icon="{{ $icon }}" class="size-5 {{ $textColor }}" />
+                    </div>
+                    <div class="lg:text-center">
+                        <div class="text-2xl font-bold {{ $textColor }} leading-none">{{ $stats[$key] }}</div>
+                        <div class="text-xs text-zinc-500 mt-0.5 leading-tight">{{ $label }}</div>
+                    </div>
                 </div>
             @endforeach
         </div>
     </x-agro.card>
 
-    {{-- Filtros --}}
-    <x-agro.filter-bar>
-        <x-agro.filter-select wire:model.live="activityType">
-            <option value="">Todas las actividades</option>
-            <option value="phytosanitary">Tratamientos Fitosanitarios</option>
-            <option value="fertilization">Fertilizaciones</option>
-            <option value="irrigation">Riegos</option>
-            <option value="cultural">Labores Culturales</option>
-            <option value="observation">Observaciones</option>
-            <option value="pruning">Podas</option>
-            <option value="harvest">Vendimias</option>
-            <option value="post_harvest">Post-vendimia</option>
-        </x-agro.filter-select>
-    </x-agro.filter-bar>
+    {{-- Filtros rápidos --}}
+    <div class="flex flex-wrap gap-2">
+        <button
+            wire:click="$set('activityType', '')"
+            class="px-3 py-1.5 rounded-full text-sm font-medium border transition-all
+                {{ $activityType === '' ? 'bg-zinc-800 text-white border-zinc-800' : 'bg-white text-zinc-600 border-zinc-300 hover:border-zinc-400' }}"
+        >
+            Todas
+        </button>
+        @foreach([
+            ['phytosanitary', 'Tratamientos',    'border-red-300 text-red-700 bg-red-50',        'bg-red-600 text-white border-red-600'],
+            ['fertilization', 'Fertilizaciones', 'border-blue-300 text-blue-700 bg-blue-50',     'bg-blue-600 text-white border-blue-600'],
+            ['irrigation',    'Riegos',           'border-cyan-300 text-cyan-700 bg-cyan-50',     'bg-cyan-600 text-white border-cyan-600'],
+            ['cultural',      'Labores',          'border-yellow-300 text-yellow-700 bg-yellow-50','bg-yellow-500 text-white border-yellow-500'],
+            ['observation',   'Observaciones',    'border-zinc-300 text-zinc-600 bg-zinc-50',     'bg-zinc-600 text-white border-zinc-600'],
+            ['pruning',       'Podas',            'border-lime-300 text-lime-700 bg-lime-50',     'bg-lime-600 text-white border-lime-600'],
+            ['harvest',       'Vendimias',        'border-amber-300 text-amber-700 bg-amber-50',  'bg-amber-500 text-white border-amber-500'],
+            ['post_harvest',  'Post-vendimia',    'border-purple-300 text-purple-700 bg-purple-50','bg-purple-600 text-white border-purple-600'],
+        ] as [$value, $label, $inactiveClass, $activeClass])
+            <button
+                wire:click="$set('activityType', '{{ $value }}')"
+                class="px-3 py-1.5 rounded-full text-sm font-medium border transition-all
+                    {{ $activityType === $value ? $activeClass : $inactiveClass . ' hover:opacity-80' }}"
+            >
+                {{ $label }}
+            </button>
+        @endforeach
+    </div>
 
     {{-- Calendario --}}
     <x-agro.card>
@@ -83,6 +109,33 @@
                 <flux:button wire:click="nextMonth" variant="ghost" icon="chevron-right" title="Mes siguiente" />
             </div>
             <flux:button wire:click="goToToday" variant="primary">Hoy</flux:button>
+        </div>
+
+        {{-- Leyenda inline --}}
+        <div class="flex flex-wrap gap-x-4 gap-y-1.5 mb-5 pb-4 border-b border-zinc-100">
+            @foreach([
+                ['bg-red-100 border-red-300',      'text-red-700',    'Tratamientos'],
+                ['bg-blue-100 border-blue-300',    'text-blue-700',   'Fertilizaciones'],
+                ['bg-cyan-100 border-cyan-300',    'text-cyan-700',   'Riegos'],
+                ['bg-yellow-100 border-yellow-300','text-yellow-700', 'Labores'],
+                ['bg-zinc-100 border-zinc-300',    'text-zinc-600',   'Observaciones'],
+                ['bg-lime-100 border-lime-300',    'text-lime-700',   'Podas'],
+                ['bg-amber-100 border-amber-300',  'text-amber-700',  'Vendimias'],
+                ['bg-purple-100 border-purple-300','text-purple-700', 'Post-vendimia'],
+            ] as [$bg, $text, $lbl])
+                <div class="flex items-center gap-1.5">
+                    <div class="w-3 h-3 rounded border {{ $bg }} flex-shrink-0"></div>
+                    <span class="text-xs text-zinc-500">{{ $lbl }}</span>
+                </div>
+            @endforeach
+            <div class="flex items-center gap-1.5 ml-2 pl-2 border-l border-zinc-200">
+                <div class="w-3 h-3 rounded border border-orange-400 bg-orange-50 flex-shrink-0"></div>
+                <span class="text-xs text-zinc-500">Alertas</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <div class="w-3 h-3 rounded border border-green-400 bg-green-50 flex-shrink-0"></div>
+                <span class="text-xs text-zinc-500">Hitos campaña</span>
+            </div>
         </div>
 
         {{-- Días de la semana --}}
@@ -124,8 +177,11 @@
                     {{-- Actividades (hasta 2) --}}
                     <div class="space-y-0.5">
                         @foreach($day['activities']->take(2) as $activity)
-                            <div class="text-xs px-1.5 py-0.5 rounded border {{ $this->getActivityTypeColor($activity->activity_type) }} truncate">
-                                {{ $this->getActivityTypeLabel($activity->activity_type) }}
+                            <div class="text-xs px-1.5 py-0.5 rounded border {{ $this->getActivityTypeColor($activity->activity_type) }} leading-tight">
+                                <div class="font-semibold truncate">{{ $this->getActivityTypeLabel($activity->activity_type) }}</div>
+                                @if($activity->plot)
+                                    <div class="truncate opacity-70">{{ $activity->plot->name }}</div>
+                                @endif
                             </div>
                         @endforeach
 
@@ -142,51 +198,6 @@
                             <div class="text-xs text-zinc-500 font-semibold text-center">+{{ $total - $shown }} más</div>
                         @endif
                     </div>
-                </div>
-            @endforeach
-        </div>
-    </x-agro.card>
-
-    {{-- Leyenda --}}
-    <x-agro.card>
-        <h3 class="text-sm font-semibold text-zinc-700 mb-4">Leyenda</h3>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {{-- Actividades --}}
-            <div class="col-span-2 md:col-span-5">
-                <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Actividades de campo</p>
-            </div>
-            @foreach([
-                ['bg-red-100 border-red-300',     'Tratamientos'],
-                ['bg-blue-100 border-blue-300',   'Fertilizaciones'],
-                ['bg-cyan-100 border-cyan-300',   'Riegos'],
-                ['bg-yellow-100 border-yellow-300','Labores'],
-                ['bg-zinc-100 border-zinc-300',   'Observaciones'],
-                ['bg-lime-100 border-lime-300',   'Podas'],
-                ['bg-amber-100 border-amber-300', 'Vendimias'],
-                ['bg-purple-100 border-purple-300','Post-vendimia'],
-            ] as [$cls, $lbl])
-                <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 rounded border {{ $cls }}"></div>
-                    <span class="text-xs text-zinc-700">{{ $lbl }}</span>
-                </div>
-            @endforeach
-
-            {{-- Alertas y eventos --}}
-            <div class="col-span-2 md:col-span-5 mt-3">
-                <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Alertas y eventos</p>
-            </div>
-            @foreach([
-                ['bg-red-100 border-red-400',       'Vencido (ROPO/ITB/Autor.)'],
-                ['bg-orange-100 border-orange-400', 'Vence pronto'],
-                ['bg-purple-100 border-purple-300', 'Análisis residuos'],
-                ['bg-slate-100 border-slate-300',   'Gestión residuos'],
-                ['bg-amber-100 border-amber-300',   'Energía / PAC'],
-                ['bg-teal-100 border-teal-300',     'Pago PAC'],
-                ['bg-green-100 border-green-400',   'Hito campaña'],
-            ] as [$cls, $lbl])
-                <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 rounded border {{ $cls }}"></div>
-                    <span class="text-xs text-zinc-700">{{ $lbl }}</span>
                 </div>
             @endforeach
         </div>
