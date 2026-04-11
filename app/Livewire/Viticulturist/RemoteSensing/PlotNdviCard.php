@@ -105,7 +105,7 @@ class PlotNdviCard extends Component
     public function refreshData()
     {
         // Clear cache first
-        $service = new NasaEarthdataService();
+        $service = app(NasaEarthdataService::class);
         $service->clearCache($this->plot);
         
         $this->loadData();

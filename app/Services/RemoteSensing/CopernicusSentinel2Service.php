@@ -69,9 +69,10 @@ class CopernicusSentinel2Service
                 return $this->repository->getLatestForPlot($plot, $plotSigpacId);
             }
 
-            // Track Copernicus processing unit usage (estimate: ~1000 units per ha)
-            $estimatedUnits = (int) ceil($areaHa * 1000);
-            $this->rateLimitService->incrementCopernicusUsage($estimatedUnits);
+            // Track Copernicus processing unit usage.
+            // Statistical API aggregates pixels server-side — cost is ~1–5 PU per call
+            // regardless of parcel size. Using flat 5 PU per request as conservative estimate.
+            $this->rateLimitService->incrementCopernicusUsage(5);
 
             // Use the end of the interval as the image date
             // $best['interval'] is the full API interval object (has ['interval']['to'])

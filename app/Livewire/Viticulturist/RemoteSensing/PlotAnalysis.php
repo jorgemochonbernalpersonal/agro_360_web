@@ -204,7 +204,7 @@ class PlotAnalysis extends Component
     public function refreshData()
     {
         // Clear all caches
-        $nasaService = new NasaEarthdataService();
+        $nasaService = app(NasaEarthdataService::class);
         $nasaService->clearCache($this->plot);
         
         Cache::forget("weather_{$this->plot->id}");
