@@ -24,6 +24,7 @@ class Index extends Component
     public string $batch_number       = '';
     public int    $quantity_requested = 0;
     public string $notes              = '';
+    public ?int   $fromRequestId      = null;   // vinculación con SupervisorRequest
 
     protected $queryString = [
         'currentTab'    => ['except' => 'all', 'as' => 'tab'],
@@ -33,6 +34,15 @@ class Index extends Component
     public function mount(): void
     {
         $this->vintage = (string) now()->year;
+
+        if (request()->filled('from_winery')) {
+            $this->winery_id  = (string) request()->integer('from_winery');
+            $this->showCreate = true;
+        }
+
+        if (request()->filled('from_request')) {
+            $this->fromRequestId = request()->integer('from_request');
+        }
     }
 
     public function switchTab(string $tab): void
@@ -68,16 +78,17 @@ class Index extends Component
         }
 
         DoLabel::create([
-            'supervisor_id'      => $doId,
-            'winery_id'          => $this->winery_id,
-            'vintage'            => $this->vintage,
-            'batch_number'       => $this->batch_number ?: null,
-            'quantity_requested' => $this->quantity_requested,
-            'notes'              => $this->notes ?: null,
-            'requested_at'       => now(),
+            'supervisor_id'        => $doId,
+            'winery_id'            => $this->winery_id,
+            'supervisor_request_id'=> $this->fromRequestId,
+            'vintage'              => $this->vintage,
+            'batch_number'         => $this->batch_number ?: null,
+            'quantity_requested'   => $this->quantity_requested,
+            'notes'                => $this->notes ?: null,
+            'requested_at'         => now(),
         ]);
 
-        $this->reset(['batch_number', 'quantity_requested', 'notes']);
+        $this->reset(['batch_number', 'quantity_requested', 'notes', 'fromRequestId']);
         $this->showCreate = false;
         $this->toastSuccess('Solicitud de contraetiquetas registrada.');
     }

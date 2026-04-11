@@ -3,6 +3,7 @@
 namespace App\Livewire\Supervisor\Inspection;
 
 use App\Models\DoInspection;
+use App\Models\SupervisorRequest;
 use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use App\Livewire\Concerns\WithToastNotifications;
@@ -157,6 +158,25 @@ class Index extends Component
         $inspection = DoInspection::forSupervisor(Auth::id())->findOrFail($inspectionId);
         $inspection->delete();
         $this->toastSuccess('Inspección eliminada.');
+    }
+
+    public function createNonconformityFromInspection(int $inspectionId): void
+    {
+        $inspection = DoInspection::forSupervisor(Auth::id())
+            ->where('subject_type', 'winery')
+            ->where('result', DoInspection::RESULT_NON_COMPLIANT)
+            ->findOrFail($inspectionId);
+
+        SupervisorRequest::create([
+            'supervisor_id' => Auth::id(),
+            'winery_id'     => $inspection->subject_id,
+            'type'          => SupervisorRequest::TYPE_NONCONFORMITY,
+            'status'        => SupervisorRequest::STATUS_DRAFT,
+            'title'         => 'No conformidad — ' . ($inspection->reference_number ?? $inspection->inspection_date->format('d/m/Y')),
+            'notes'         => $inspection->findings ?: null,
+        ]);
+
+        $this->redirect(route('supervisor.requests.index'));
     }
 
     #[Layout('layouts.app')]

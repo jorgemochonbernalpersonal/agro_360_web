@@ -6,6 +6,7 @@ use App\Livewire\Auth\ClaimAccount;
 use App\Models\User;
 use App\Models\WineryViticulturist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -23,17 +24,42 @@ class ClaimAccountTest extends TestCase
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
+    /**
+     * Creates a ghost viticulturist with a hashed invitation token (as production
+     * code does) plus a WineryViticulturist relation (required by ClaimAccount::mount).
+     * The plain-text token is stored in $user->plainToken for use in component calls.
+     */
     private function makeGhostWithToken(array $overrides = []): User
     {
-        return User::factory()->create(array_merge([
+        $plainToken = Str::random(64);
+
+        // ClaimAccount::mount() requires a linked winery to set tokenValid = true.
+        $winery = User::factory()->create([
+            'role'              => 'winery',
+            'email_verified_at' => now(),
+        ]);
+
+        $user = User::factory()->create(array_merge([
             'role'                  => 'viticulturist',
             'can_login'             => false,
             'email'                 => 'viticultores.' . Str::uuid() . '@noemail.agro365.es',
-            'invitation_token'      => Str::random(64),
+            'invitation_token'      => Hash::make($plainToken), // production stores hashed
             'invitation_sent_at'    => now()->subHour(),
             'invitation_expires_at' => now()->addDays(7),
             'email_verified_at'     => null,
         ], $overrides));
+
+        WineryViticulturist::create([
+            'winery_id'        => $winery->id,
+            'viticulturist_id' => $user->id,
+            'source'           => WineryViticulturist::SOURCE_OWN,
+            'assigned_by'      => $winery->id,
+        ]);
+
+        // Expose plain-text token for passing to the Livewire component.
+        $user->plainToken = $plainToken;
+
+        return $user;
     }
 
     // ── mount: validación de token ─────────────────────────────────────────────
@@ -42,7 +68,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->assertSet('tokenValid', true);
     }
 
@@ -58,21 +84,22 @@ class ClaimAccountTest extends TestCase
             'invitation_expires_at' => now()->subDay(),
         ]);
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->assertSet('tokenValid', false);
     }
 
     public function test_token_belonging_to_already_active_user_is_invalid(): void
     {
         // Usuario con can_login=true → no es ghost → token no debe funcionar
+        $plainToken = Str::random(64);
         $user = User::factory()->create([
             'role'                  => 'viticulturist',
             'can_login'             => true,
-            'invitation_token'      => Str::random(64),
+            'invitation_token'      => Hash::make($plainToken),
             'invitation_expires_at' => now()->addDays(7),
         ]);
 
-        Livewire::test(ClaimAccount::class, ['token' => $user->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $plainToken])
             ->assertSet('tokenValid', false);
     }
 
@@ -80,7 +107,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken(['name' => 'Juan Viticultor']);
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->assertSet('name', 'Juan Viticultor');
     }
 
@@ -88,7 +115,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken(['email' => 'real@example.com']);
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->assertSet('email', 'real@example.com');
     }
 
@@ -98,7 +125,7 @@ class ClaimAccountTest extends TestCase
             'email' => 'viticultores.abc123@noemail.agro365.es',
         ]);
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->assertSet('email', '');
     }
 
@@ -108,7 +135,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan Viticultor')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -122,7 +149,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan Viticultor')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -136,7 +163,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan Viticultor')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -155,7 +182,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken(['name' => 'Nombre Antiguo']);
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Nombre Nuevo')
             ->set('email', 'nuevo@example.com')
             ->set('password', 'Password123!')
@@ -173,7 +200,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan Viticultor')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -187,7 +214,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan Viticultor')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -212,7 +239,7 @@ class ClaimAccountTest extends TestCase
             'assigned_by'      => $winery->id,
         ]);
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan Viticultor')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -232,7 +259,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', '')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -245,7 +272,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan')
             ->set('email', 'no-es-email')
             ->set('password', 'Password123!')
@@ -260,7 +287,7 @@ class ClaimAccountTest extends TestCase
 
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan')
             ->set('email', 'ocupado@example.com')
             ->set('password', 'Password123!')
@@ -273,7 +300,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan')
             ->set('email', 'juan@example.com')
             ->set('password', 'Password123!')
@@ -286,7 +313,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        Livewire::test(ClaimAccount::class, ['token' => $ghost->invitation_token])
+        Livewire::test(ClaimAccount::class, ['token' => $ghost->plainToken])
             ->set('name', 'Juan')
             ->set('email', 'juan@example.com')
             ->set('password', '123')
@@ -313,7 +340,7 @@ class ClaimAccountTest extends TestCase
     {
         $ghost = $this->makeGhostWithToken();
 
-        $this->get(route('auth.claim-account', $ghost->invitation_token))
+        $this->get(route('auth.claim-account', $ghost->plainToken))
             ->assertOk();
     }
 

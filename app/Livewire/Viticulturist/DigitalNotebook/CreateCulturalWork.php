@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;

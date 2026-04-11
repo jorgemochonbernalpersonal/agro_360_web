@@ -190,7 +190,7 @@ class DashboardTest extends SupervisorTestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         NotebookAccessRequest::create([
-            'winery_id'        => $supervisor->id,
+            'supervisor_id'    => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
             'status'           => NotebookAccessRequest::STATUS_PENDING,
             'requested_at'     => now(),
@@ -208,7 +208,7 @@ class DashboardTest extends SupervisorTestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
 
         NotebookAccessRequest::create([
-            'winery_id'        => $supervisor->id,
+            'supervisor_id'    => $supervisor->id,
             'viticulturist_id' => $viticulturist->id,
             'status'           => NotebookAccessRequest::STATUS_APPROVED,
             'requested_at'     => now(),

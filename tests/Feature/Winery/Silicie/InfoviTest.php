@@ -17,20 +17,21 @@ class InfoviTest extends WineryTestCase
             ->assertOk();
     }
 
-    public function test_defaults_to_current_year_and_month(): void
+    public function test_defaults_to_current_campaign(): void
     {
+        $expectedCampaign = (string) (now()->month >= 8 ? now()->year : now()->year - 1);
+
         Livewire::actingAs($this->makeWinery())
             ->test(Infovi::class)
-            ->assertSet('filterYear', (string) now()->year)
-            ->assertSet('filterMonth', (string) now()->month);
+            ->assertSet('filterCampaign', $expectedCampaign);
     }
 
-    public function test_can_filter_by_year(): void
+    public function test_can_filter_by_campaign(): void
     {
         Livewire::actingAs($this->makeWinery())
             ->test(Infovi::class)
-            ->set('filterYear', '2023')
-            ->assertSet('filterYear', '2023')
+            ->set('filterCampaign', '2023')
+            ->assertSet('filterCampaign', '2023')
             ->assertOk();
     }
 

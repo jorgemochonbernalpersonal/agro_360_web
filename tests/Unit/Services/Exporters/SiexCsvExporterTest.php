@@ -76,10 +76,7 @@ class SiexCsvExporterTest extends TestCase
         ]);
 
         // Crear uso SIGPAC
-        $sigpacUse = SigpacUse::create([
-            'code' => 'VI',
-            'description' => 'Viñedo',
-        ]);
+        $sigpacUse = SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
 
         // Crear parcela con SIGPAC
         $plot = Plot::factory()->create([

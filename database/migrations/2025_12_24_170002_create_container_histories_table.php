@@ -55,13 +55,10 @@ return new class extends Migration {
 
             $table->timestamps();
 
-            // Índices
-            $table->index('container_id');
-            $table->index('harvest_id');
+            // Índices (container_id, harvest_id, created_by omitidos: sus FKs ya crean índice)
             $table->index('wine_id');
             $table->index('operation_type');
             $table->index('start_date');
-            $table->index('created_by');
         });
     }
 

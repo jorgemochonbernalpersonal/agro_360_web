@@ -31,10 +31,9 @@ return new class extends Migration
             $table->foreign('autonomous_community_id')->references('id')->on('autonomous_communities')->onDelete('restrict');
             $table->foreign('province_id')->references('id')->on('provinces')->onDelete('restrict');
             $table->foreign('municipality_id')->references('id')->on('municipalities')->onDelete('restrict');
-            
-            $table->index('viticulturist_id');
+
+            // Note: viticulturist_id and municipality_id are already indexed by their FKs.
             $table->index('active');
-            $table->index('municipality_id');
         });
     }
 

@@ -109,8 +109,10 @@ class PestTest extends TestCase
 
         $pests = Pest::byType('pest')->get();
 
-        $this->assertCount(1, $pests);
-        $this->assertEquals('Plaga A', $pests->first()->name);
+        // All results must have type 'pest'; seeded records may also be present
+        $this->assertTrue($pests->every(fn ($p) => $p->type === 'pest'));
+        $this->assertTrue($pests->contains('name', 'Plaga A'));
+        $this->assertFalse($pests->contains('name', 'Enfermedad A'));
     }
 
     public function test_scope_in_risk_period_filters_by_month(): void
@@ -120,8 +122,9 @@ class PestTest extends TestCase
 
         $results = Pest::inRiskPeriod(7)->get();
 
-        $this->assertCount(1, $results);
-        $this->assertEquals('Riesgo Verano', $results->first()->name);
+        // Scope must include Riesgo Verano (has month 7) and exclude Riesgo Invierno
+        $this->assertTrue($results->contains('name', 'Riesgo Verano'));
+        $this->assertFalse($results->contains('name', 'Riesgo Invierno'));
     }
 
     // ── Accessors ─────────────────────────────────────────────────────────────

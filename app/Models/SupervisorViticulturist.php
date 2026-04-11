@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 class SupervisorViticulturist extends Model
 {
@@ -70,5 +71,16 @@ class SupervisorViticulturist extends Model
     public function hasNotebookAccess(): bool
     {
         return (bool) $this->cuaderno_access;
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (SupervisorViticulturist $sv) {
+            Cache::forget("viticulturist:{$sv->viticulturist_id}:has_supervisor");
+        });
+
+        static::deleted(function (SupervisorViticulturist $sv) {
+            Cache::forget("viticulturist:{$sv->viticulturist_id}:has_supervisor");
+        });
     }
 }

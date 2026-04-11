@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -56,7 +57,7 @@ class EditIrrigation extends Component
         
         if ($this->activity->activity_type !== 'irrigation') {
             $this->toastError('Esta actividad no es un riego.');
-            return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index');
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -65,7 +66,7 @@ class EditIrrigation extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError(' No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index');
         }
         
         $this->irrigation = $this->activity->irrigation;
@@ -246,7 +247,7 @@ class EditIrrigation extends Component
             });
 
             $this->toastSuccess('Riego actualizado correctamente.');
-            return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.irrigation.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar riego', [
                 'error' => $e->getMessage(),

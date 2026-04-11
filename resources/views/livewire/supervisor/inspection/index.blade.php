@@ -96,7 +96,7 @@
                     </td>
                     <td class="px-6 py-3 text-sm text-zinc-400">{{ $inspection->reference_number ?? '—' }}</td>
                     <td class="px-6 py-3 text-right">
-                        <div class="flex items-center justify-end gap-1">
+                        <div class="flex items-center justify-end gap-1 flex-wrap">
                             @if($inspection->status === 'scheduled')
                                 <button wire:click="updateStatus({{ $inspection->id }}, 'in_progress')"
                                     class="text-xs text-blue-600 hover:underline">Iniciar</button>
@@ -108,6 +108,14 @@
                             @if(in_array($inspection->status, ['scheduled', 'in_progress']))
                                 <button wire:click="updateStatus({{ $inspection->id }}, 'cancelled')"
                                     class="text-xs text-red-500 hover:underline ml-1">Cancelar</button>
+                            @endif
+                            @if($inspection->result === \App\Models\DoInspection::RESULT_NON_COMPLIANT && $inspection->subject_type === 'winery')
+                                <button wire:click="createNonconformityFromInspection({{ $inspection->id }})"
+                                    wire:confirm="¿Generar un acta de no conformidad para esta inspección? Se creará como borrador en Solicitudes."
+                                    class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-red-50 text-red-700 border border-red-200 rounded hover:bg-red-100 transition-colors ml-1">
+                                    <flux:icon icon="exclamation-triangle" class="w-3 h-3" />
+                                    Generar acta
+                                </button>
                             @endif
                             <button wire:click="openEdit({{ $inspection->id }})"
                                 class="text-xs text-zinc-500 hover:text-zinc-700 hover:underline ml-1">Editar</button>

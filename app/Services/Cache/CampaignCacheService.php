@@ -74,6 +74,7 @@ class CampaignCacheService
     protected function calculateStats(Campaign $campaign): array
     {
         return [
+            'campaign_id' => $campaign->id,
             'total_activities' => $campaign->activities()->count(),
             'activities_by_type' => $campaign->activities()
                 ->selectRaw('activity_type, COUNT(*) as count')

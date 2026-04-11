@@ -371,4 +371,130 @@
         @endif
     </x-agro.card>
 
+    {{-- ── Cuaderno DO ──────────────────────────────────────────────────── --}}
+    <x-agro.card>
+        <x-slot:header>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center gap-2">
+                    <flux:icon icon="book-open" class="size-4 text-indigo-500" />
+                    <span>Cuaderno DO</span>
+                    @if($wineryNotes->count() > 0)
+                        <span class="px-1.5 py-0.5 text-[10px] font-bold bg-zinc-100 text-zinc-500 rounded-full">{{ $wineryNotes->count() }}</span>
+                    @endif
+                </div>
+                <button wire:click="openNoteForm"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    <flux:icon icon="plus" class="size-3.5" />
+                    Añadir nota
+                </button>
+            </div>
+        </x-slot:header>
+
+        {{-- Formulario nueva nota --}}
+        @if($showNoteForm)
+            <div class="mb-4 p-4 bg-zinc-50 border border-zinc-200 rounded-xl space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">Tipo</label>
+                        <select wire:model="noteType" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                            @foreach($noteTypeLabels as $val => $label)
+                                <option value="{{ $val }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('noteType') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha</label>
+                        <input type="date" wire:model="noteDate" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                        @error('noteDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-zinc-600 mb-1">Contenido</label>
+                    <textarea wire:model="noteContent" rows="3" placeholder="Observaciones, acuerdos, incidencias…"
+                        class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"></textarea>
+                    @error('noteContent') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="flex gap-2">
+                    <button wire:click="saveNote" class="px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        Guardar
+                    </button>
+                    <button wire:click="closeNoteForm" class="px-4 py-1.5 text-sm font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-100 transition">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        @endif
+
+        {{-- Lista de notas --}}
+        @forelse($wineryNotes as $note)
+            @php
+                $nColor = $noteTypeColors[$note->type] ?? 'zinc';
+                $nIcon  = $noteTypeIcons[$note->type] ?? 'pencil-square';
+            @endphp
+
+            @if($editNoteId === $note->id)
+                {{-- Formulario edición inline --}}
+                <div class="py-3 border-b border-zinc-100 last:border-0">
+                    <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-600 mb-1">Tipo</label>
+                                <select wire:model="editNoteType" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                    @foreach($noteTypeLabels as $val => $label)
+                                        <option value="{{ $val }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('editNoteType') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-600 mb-1">Fecha</label>
+                                <input type="date" wire:model="editNoteDate" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+                                @error('editNoteDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                        <div>
+                            <textarea wire:model="editNoteContent" rows="3"
+                                class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"></textarea>
+                            @error('editNoteContent') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="flex gap-2">
+                            <button wire:click="updateNote" class="px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Guardar</button>
+                            <button wire:click="closeEditNote" class="px-3 py-1.5 text-xs font-medium text-zinc-600 border border-zinc-200 rounded-lg hover:bg-zinc-100 transition">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="flex items-start gap-3 py-3 border-b border-zinc-100 last:border-0 group">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center
+                        {{ $nColor === 'blue' ? 'bg-blue-100' : ($nColor === 'green' ? 'bg-green-100' : ($nColor === 'amber' ? 'bg-amber-100' : 'bg-zinc-100')) }}">
+                        <flux:icon icon="{{ $nIcon }}" class="size-4
+                            {{ $nColor === 'blue' ? 'text-blue-600' : ($nColor === 'green' ? 'text-green-600' : ($nColor === 'amber' ? 'text-amber-600' : 'text-zinc-500')) }}" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="text-xs font-semibold text-zinc-700">{{ $noteTypeLabels[$note->type] }}</span>
+                            <span class="text-xs text-zinc-400">{{ $note->note_date->format('d/m/Y') }}</span>
+                        </div>
+                        <p class="text-sm text-zinc-600 whitespace-pre-line">{{ $note->content }}</p>
+                    </div>
+                    <div class="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-all flex-shrink-0">
+                        <button wire:click="openEditNote({{ $note->id }})" class="p-1 text-zinc-400 hover:text-indigo-500 transition-colors">
+                            <flux:icon icon="pencil" class="size-4" />
+                        </button>
+                        <button wire:click="deleteNote({{ $note->id }})" wire:confirm="¿Eliminar esta nota?"
+                            class="p-1 text-zinc-400 hover:text-red-500 transition-colors">
+                            <flux:icon icon="trash" class="size-4" />
+                        </button>
+                    </div>
+                </div>
+            @endif
+        @empty
+            <div class="py-8 text-center">
+                <flux:icon icon="book-open" class="size-10 mx-auto text-zinc-300 mb-2" />
+                <p class="text-sm text-zinc-400">Sin notas. Añade observaciones, visitas o llamadas.</p>
+            </div>
+        @endforelse
+    </x-agro.card>
+
 </div>

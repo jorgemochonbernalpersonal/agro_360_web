@@ -5,7 +5,10 @@ namespace App\Livewire\Supervisor\Requests;
 use App\Models\SupervisorRequest;
 use App\Models\SupervisorWinery;
 use App\Models\User;
+use App\Notifications\SupervisorRequestResolvedNotification;
+use App\Notifications\SupervisorRequestSentNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -18,12 +21,16 @@ class Index extends Component
     public string $typeFilter   = '';
     public string $search       = '';
 
+    // ── Selección para bulk actions ───────────────────────────────────────────
+    public array  $selected        = [];
+
     // ── Formulario crear solicitud ────────────────────────────────────────────
     public bool   $showCreateModal = false;
     public string $formWineryId    = '';
     public string $formType        = '';
     public string $formTitle       = '';
     public string $formNotes       = '';
+    public string $formDueDate     = '';
 
     protected $queryString = [
         'statusFilter' => ['except' => ''],
@@ -38,6 +45,7 @@ class Index extends Component
             'formType'     => 'required|in:' . implode(',', array_keys(SupervisorRequest::TYPE_LABELS)),
             'formTitle'    => 'nullable|string|max:255',
             'formNotes'    => 'nullable|string',
+            'formDueDate'  => 'nullable|date|after:today',
         ];
     }
 
@@ -47,7 +55,7 @@ class Index extends Component
 
     public function openCreateModal(): void
     {
-        $this->reset(['formWineryId', 'formType', 'formTitle', 'formNotes']);
+        $this->reset(['formWineryId', 'formType', 'formTitle', 'formNotes', 'formDueDate']);
         $this->showCreateModal = true;
     }
 
@@ -71,6 +79,7 @@ class Index extends Component
             'type'          => $this->formType,
             'title'         => $this->formTitle ?: null,
             'notes'         => $this->formNotes ?: null,
+            'due_date'      => $this->formDueDate ?: null,
             'status'        => SupervisorRequest::STATUS_DRAFT,
         ]);
 
@@ -80,22 +89,40 @@ class Index extends Component
 
     public function send(int $requestId): void
     {
-        $request = SupervisorRequest::forSupervisor(Auth::id())->findOrFail($requestId);
+        $request = SupervisorRequest::forSupervisor(Auth::id())->with('winery')->findOrFail($requestId);
         $request->send();
+
+        // Notificar a la bodega + invalidar badges
+        $request->winery?->notify(new SupervisorRequestSentNotification($request));
+        Cache::forget("winery:{$request->winery_id}:pending_do_requests");
+        Cache::forget("supervisor:{$request->supervisor_id}:inbox_count");
+
         $this->dispatch('toast', message: 'Solicitud enviada a la bodega.', type: 'success');
     }
 
     public function approve(int $requestId): void
     {
-        $request = SupervisorRequest::forSupervisor(Auth::id())->findOrFail($requestId);
+        $request = SupervisorRequest::forSupervisor(Auth::id())->with('winery', 'supervisor')->findOrFail($requestId);
         $request->approve();
+
+        // Notificar a la bodega + invalidar badges
+        $request->winery?->notify(new SupervisorRequestResolvedNotification($request, SupervisorRequest::STATUS_APPROVED));
+        Cache::forget("winery:{$request->winery_id}:pending_do_requests");
+        Cache::forget("supervisor:{$request->supervisor_id}:inbox_count");
+
         $this->dispatch('toast', message: 'Solicitud aprobada.', type: 'success');
     }
 
     public function reject(int $requestId): void
     {
-        $request = SupervisorRequest::forSupervisor(Auth::id())->findOrFail($requestId);
+        $request = SupervisorRequest::forSupervisor(Auth::id())->with('winery', 'supervisor')->findOrFail($requestId);
         $request->reject();
+
+        // Notificar a la bodega + invalidar badges
+        $request->winery?->notify(new SupervisorRequestResolvedNotification($request, SupervisorRequest::STATUS_REJECTED));
+        Cache::forget("winery:{$request->winery_id}:pending_do_requests");
+        Cache::forget("supervisor:{$request->supervisor_id}:inbox_count");
+
         $this->dispatch('toast', message: 'Solicitud rechazada.', type: 'warning');
     }
 
@@ -103,7 +130,38 @@ class Index extends Component
     {
         $request = SupervisorRequest::forSupervisor(Auth::id())->findOrFail($requestId);
         $request->archive();
+        Cache::forget("winery:{$request->winery_id}:pending_do_requests");
         $this->dispatch('toast', message: 'Solicitud archivada.', type: 'success');
+    }
+
+    public function bulkArchive(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $count = SupervisorRequest::forSupervisor(Auth::id())
+            ->whereIn('id', $this->selected)
+            ->whereIn('status', [SupervisorRequest::STATUS_APPROVED, SupervisorRequest::STATUS_REJECTED])
+            ->get()
+            ->each(function (SupervisorRequest $req) {
+                $req->archive();
+                Cache::forget("winery:{$req->winery_id}:pending_do_requests");
+            })
+            ->count();
+
+        $this->selected = [];
+        $this->dispatch('toast', message: "{$count} solicitudes archivadas.", type: 'success');
+    }
+
+    public function deleteDraft(int $requestId): void
+    {
+        $request = SupervisorRequest::forSupervisor(Auth::id())
+            ->where('status', SupervisorRequest::STATUS_DRAFT)
+            ->findOrFail($requestId);
+
+        $request->delete();
+        $this->dispatch('toast', message: 'Borrador eliminado.', type: 'success');
     }
 
     #[Layout('layouts.app')]

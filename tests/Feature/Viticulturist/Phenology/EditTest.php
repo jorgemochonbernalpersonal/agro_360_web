@@ -47,7 +47,7 @@ class EditTest extends TestCase
         ]);
 
         $plot    = Plot::factory()->create(['viticulturist_id' => $viticulturist->id]);
-        $variety = GrapeVariety::create(['name' => 'Verdejo', 'code' => 'VER', 'color' => 'white']);
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Verdejo'], ['code' => 'VER', 'color' => 'white']);
 
         $planting = PlotPlanting::create([
             'plot_id'          => $plot->id,

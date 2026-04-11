@@ -1,4 +1,5 @@
-﻿<x-agro.form-card
+﻿<div>
+<x-agro.form-card
     title="Editar Maquinaria"
     :description="'Modifica los datos de ' . $machinery->name"
     :back-url="roleRoute('viticulturist.machinery.index')"
@@ -282,3 +283,4 @@
         />
     </form>
 </x-agro.form-card>
+</div>

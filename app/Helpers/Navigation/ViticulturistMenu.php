@@ -3,6 +3,7 @@
 namespace App\Helpers\Navigation;
 
 use App\Models\NotebookAccessRequest;
+use App\Models\SupervisorViticulturist;
 use Illuminate\Support\Facades\Cache;
 
 class ViticulturistMenu
@@ -31,6 +32,17 @@ class ViticulturistMenu
                 NotebookAccessRequest::where('viticulturist_id', $user->id)->where('status', NotebookAccessRequest::STATUS_PENDING)->count()
              )],
         ];
+
+        // Sección DO — solo si está adscrito a una denominación
+        $hasSupervisor = Cache::remember("viticulturist:{$user->id}:has_supervisor", 300,
+            fn () => SupervisorViticulturist::where('viticulturist_id', $user->id)->exists()
+        );
+
+        if ($hasSupervisor) {
+            $menu['denomination'] = [
+                ['icon' => 'building-office-2', 'label' => 'Mi Denominación', 'route' => 'viticulturist.denomination.index', 'active' => request()->routeIs('viticulturist.denomination.*')],
+            ];
+        }
 
         $menu['cuaderno_inputs']    = self::cuadernoInputs('viticulturist');
         $menu['registros_oficiales']= self::registrosOficiales('viticulturist');

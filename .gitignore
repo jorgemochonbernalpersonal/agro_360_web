@@ -44,6 +44,9 @@ Homestead.yaml
 env.*.example
 .env.backup
 
+# Claude Code (local settings — nunca commitear)
+/.claude/settings.local.json
+
 # IDE
 /.fleet
 /.idea

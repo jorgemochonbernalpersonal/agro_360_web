@@ -9,22 +9,29 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Three-bucket columns on wine_lots: available / reserved / sold
-        Schema::table('wine_lots', function (Blueprint $table) {
-            $table->decimal('reserved_quantity', 10, 3)->default(0)->after('available_quantity')
-                ->comment('Comprometido en facturas activas, pendiente de entrega');
-            $table->decimal('sold_quantity', 10, 3)->default(0)->after('reserved_quantity')
-                ->comment('Vendido y entregado definitivamente');
-        });
+        if (! Schema::hasColumn('wine_lots', 'reserved_quantity')) {
+            Schema::table('wine_lots', function (Blueprint $table) {
+                $table->decimal('reserved_quantity', 10, 3)->default(0)->after('available_quantity')
+                    ->comment('Comprometido en facturas activas, pendiente de entrega');
+                $table->decimal('sold_quantity', 10, 3)->default(0)->after('reserved_quantity')
+                    ->comment('Vendido y entregado definitivamente');
+            });
+        }
 
         // 2. Atomic sequential counters per winery user (locked per transaction)
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedInteger('wine_sale_seq')->default(0)->after('id')
-                ->comment('Contador para numeración de facturas de venta de vino');
-            $table->unsignedInteger('grape_purchase_seq')->default(0)->after('wine_sale_seq')
-                ->comment('Contador para numeración de liquidaciones de vendimia');
-        });
+        if (! Schema::hasColumn('users', 'wine_sale_seq')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->unsignedInteger('wine_sale_seq')->default(0)->after('id')
+                    ->comment('Contador para numeración de facturas de venta de vino');
+                $table->unsignedInteger('grape_purchase_seq')->default(0)->after('wine_sale_seq')
+                    ->comment('Contador para numeración de liquidaciones de vendimia');
+            });
+        }
 
         // 3. Stock movement audit log (equivalent to vinai2 HistoryStocks)
+        if (Schema::hasTable('invoice_stock_movements')) {
+            return;
+        }
         Schema::create('invoice_stock_movements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('invoice_id')->constrained('invoices')->onDelete('cascade');

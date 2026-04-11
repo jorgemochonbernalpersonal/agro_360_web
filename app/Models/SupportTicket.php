@@ -223,6 +223,14 @@ class SupportTicket extends Model
     }
 
     /**
+     * Obtener URL de la primera imagen adjunta (o null si no hay ninguna)
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_urls[0] ?? null;
+    }
+
+    /**
      * Obtener URLs de todas las imágenes adjuntas
      */
     public function getImageUrlsAttribute(): array

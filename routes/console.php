@@ -82,3 +82,8 @@ Schedule::command('notifications:send-digest')
     ->dailyAt('08:00')
     ->withoutOverlapping();
 
+// ⏰ Avisos de vencimiento de solicitudes DO (9:00 AM — 3 días y 1 día antes)
+Schedule::command('supervisor-requests:due-reminders')
+    ->dailyAt('09:00')
+    ->withoutOverlapping();
+

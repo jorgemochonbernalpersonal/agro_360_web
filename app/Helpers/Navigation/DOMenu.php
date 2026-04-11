@@ -2,14 +2,27 @@
 
 namespace App\Helpers\Navigation;
 
+use App\Models\SupervisorRequest;
+use Illuminate\Support\Facades\Cache;
+
 class DOMenu
 {
     public static function build($user): array
     {
         $menu = [];
 
+        $inboxCount = Cache::remember(
+            "supervisor:{$user->id}:inbox_count",
+            60,
+            fn () => SupervisorRequest::forSupervisor($user->id)
+                ->whereIn('status', [SupervisorRequest::STATUS_PENDING, SupervisorRequest::STATUS_IN_REVIEW])
+                ->count()
+        );
+
         $menu['main'] = [
-            ['icon' => 'squares-2x2', 'label' => 'Dashboard', 'route' => 'supervisor.dashboard', 'active' => request()->routeIs('supervisor.dashboard')],
+            ['icon' => 'squares-2x2',  'label' => 'Dashboard',          'route' => 'supervisor.dashboard',         'active' => request()->routeIs('supervisor.dashboard')],
+            ['icon' => 'inbox',         'label' => 'Solicitudes / Actas', 'route' => 'supervisor.requests.index',    'active' => request()->routeIs('supervisor.requests.*'),
+                'badge' => $inboxCount ?: null],
         ];
 
         $menu['do_census'] = [

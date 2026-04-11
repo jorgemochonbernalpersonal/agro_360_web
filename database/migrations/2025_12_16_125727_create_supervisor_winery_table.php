@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('supervisor_winery')) {
+            return;
+        }
+
         Schema::create('supervisor_winery', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('supervisor_id');
@@ -23,8 +27,7 @@ return new class extends Migration
             $table->foreign('assigned_by')->references('id')->on('users')->onDelete('set null');
 
             $table->unique(['supervisor_id', 'winery_id']);
-            $table->index('supervisor_id');
-            $table->index('winery_id');
+            // Note: supervisor_id and winery_id are already indexed by their FKs.
         });
     }
 

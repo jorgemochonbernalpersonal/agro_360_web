@@ -1,14 +1,6 @@
 services:
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: agro365_mailhog
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-    networks:
-      - agro365_network
-    restart: unless-stopped
 
+  # ── Base de datos desarrollo ───────────────────────────────────────────────
   mariadb:
     image: mariadb:11.8.3
     container_name: agro365_mariadb
@@ -18,7 +10,7 @@ services:
       MYSQL_USER: ${DB_USERNAME:-agro365}
       MYSQL_PASSWORD: ${DB_PASSWORD:-password}
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -26,6 +18,25 @@ services:
     restart: unless-stopped
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+  # ── Base de datos tests (MariaDB 11.4 LTS — sin ghost table bug) ───────────
+  mariadb_test:
+    image: mariadb:10.11
+    container_name: agro365_mariadb_test
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: agro365_test
+      MYSQL_USER: agro365
+      MYSQL_PASSWORD: password
+    ports:
+      - "3308:3306"
+    volumes:
+      - mariadb_test_data:/var/lib/mysql
+    networks:
+      - agro365_network
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # ── phpMyAdmin ─────────────────────────────────────────────────────────────
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: agro365_phpmyadmin
@@ -37,12 +48,23 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
       UPLOAD_LIMIT: 300M
     ports:
-      - "8081:80" # Web UI
+      - "8081:80"
     networks:
       - agro365_network
     restart: unless-stopped
     depends_on:
       - mariadb
+
+  # ── Mailhog (emails) ───────────────────────────────────────────────────────
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: agro365_mailhog
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - agro365_network
+    restart: unless-stopped
 
 networks:
   agro365_network:
@@ -50,4 +72,6 @@ networks:
 
 volumes:
   mariadb_data:
+    driver: local
+  mariadb_test_data:
     driver: local

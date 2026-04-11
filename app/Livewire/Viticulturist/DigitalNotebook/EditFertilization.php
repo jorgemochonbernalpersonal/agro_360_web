@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -58,7 +59,7 @@ class EditFertilization extends Component
         
         if ($this->activity->activity_type !== 'fertilization') {
             $this->toastError('Esta actividad no es una fertilización.');
-            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index');
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -67,7 +68,7 @@ class EditFertilization extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError('🔒 No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index');
         }
         
         $this->fertilization = $this->activity->fertilization;
@@ -265,7 +266,7 @@ class EditFertilization extends Component
             });
 
             $this->toastSuccess('Fertilización actualizada correctamente.');
-            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar fertilización', [
                 'error' => $e->getMessage(),

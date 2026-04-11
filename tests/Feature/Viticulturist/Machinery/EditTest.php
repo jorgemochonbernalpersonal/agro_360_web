@@ -21,7 +21,7 @@ class EditTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $type = MachineryType::create(['name' => 'Tractor', 'active' => true]);
+        $type = MachineryType::firstOrCreate(['name' => 'Tractor'], ['active' => true]);
 
         $machinery = Machinery::create([
             'name'              => 'Tractor Original',
@@ -56,7 +56,7 @@ class EditTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $type = MachineryType::create(['name' => 'Tractor', 'active' => true]);
+        $type = MachineryType::firstOrCreate(['name' => 'Tractor'], ['active' => true]);
 
         $machinery = Machinery::create([
             'name'              => 'Tractor Original',

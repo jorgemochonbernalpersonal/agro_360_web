@@ -21,7 +21,7 @@ class CreateTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $type = MachineryType::create(['name' => 'Tractor', 'active' => true]);
+        $type = MachineryType::firstOrCreate(['name' => 'Tractor'], ['active' => true]);
 
         $this->actingAs($viticulturist);
 

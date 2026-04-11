@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('wine_lots')) {
+            return;
+        }
+
         Schema::create('wine_lots', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
@@ -22,7 +26,7 @@ return new class extends Migration
             $table->boolean('archived')->default(false);
             $table->timestamps();
 
-            $table->index('user_id');
+            // Note: user_id is already indexed by its FK.
             $table->index('archived');
         });
     }

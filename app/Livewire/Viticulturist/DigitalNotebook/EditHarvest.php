@@ -16,6 +16,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -131,7 +132,7 @@ class EditHarvest extends Component
 
         if ($activity->isLocked()) {
             $this->toastError('No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            $this->viticulturistRoleRedirect('harvests.index', navigate: true);
+            $this->viticulturistRoleRedirect('harvests.index');
             return;
         }
 
@@ -637,7 +638,7 @@ class EditHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha actualizada correctamente.');
-            return $this->viticulturistRoleRedirect('digital-notebook.harvest.show', $this->harvest->id), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.harvest.show', $this->harvest->id);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar cosecha', [
                 'error' => $e->getMessage(),

@@ -55,7 +55,7 @@ class CreatePostHarvest extends Component
         $campaign = Campaign::getOrCreateActiveForYear(Auth::id());
         if (!$campaign) {
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create');
         }
         $this->campaign_id = $campaign->id;
     }
@@ -175,7 +175,7 @@ class CreatePostHarvest extends Component
             });
 
             $this->toastSuccess('Tratamiento post-vendimia registrado correctamente.');
-            return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.post-harvest.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar tratamiento post-vendimia', ['error' => $e->getMessage(), 'user_id' => Auth::id()]);
             $this->toastError('Error al registrar el tratamiento. Por favor, intenta de nuevo.');

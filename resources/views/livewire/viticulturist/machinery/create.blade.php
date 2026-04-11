@@ -1,4 +1,5 @@
-﻿<x-agro.form-card
+﻿<div>
+<x-agro.form-card
     title="Nueva Maquinaria"
     description="Registra una nueva maquinaria o equipo agricola"
     :back-url="roleRoute('viticulturist.machinery.index')"
@@ -274,3 +275,4 @@
         />
     </form>
 </x-agro.form-card>
+</div>

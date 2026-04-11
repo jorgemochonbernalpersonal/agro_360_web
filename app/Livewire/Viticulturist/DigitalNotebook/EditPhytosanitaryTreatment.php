@@ -15,6 +15,7 @@ use App\Models\FieldApplicator;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -77,7 +78,7 @@ class EditPhytosanitaryTreatment extends Component
 
         if ($this->activity->activity_type !== 'phytosanitary') {
             $this->toastError('Esta actividad no es un tratamiento fitosanitario.');
-            $this->viticulturistRoleRedirect('digital-notebook.treatment.index', navigate: true);
+            $this->viticulturistRoleRedirect('digital-notebook.treatment.index');
             return;
         }
 
@@ -87,7 +88,7 @@ class EditPhytosanitaryTreatment extends Component
 
         if ($this->activity->isLocked()) {
             $this->toastError('No se puede editar una actividad bloqueada (PAC, >' . config('activities.lock_days', 7) . ' días).');
-            $this->viticulturistRoleRedirect('digital-notebook.treatment.index', navigate: true);
+            $this->viticulturistRoleRedirect('digital-notebook.treatment.index');
             return;
         }
 
@@ -331,7 +332,7 @@ class EditPhytosanitaryTreatment extends Component
             });
 
             $this->toastSuccess('Tratamiento fitosanitario actualizado correctamente.');
-            $this->viticulturistRoleRedirect('digital-notebook.treatment.index', navigate: true);
+            $this->viticulturistRoleRedirect('digital-notebook.treatment.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar tratamiento fitosanitario', [
                 'error'       => $e->getMessage(),

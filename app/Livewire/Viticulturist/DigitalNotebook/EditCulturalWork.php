@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -52,7 +53,7 @@ class EditCulturalWork extends Component
         
         if ($this->activity->activity_type !== 'cultural') {
             $this->toastError('Esta actividad no es una labor cultural.');
-            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -61,7 +62,7 @@ class EditCulturalWork extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError(' No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
         }
         
         $this->culturalWork = $this->activity->culturalWork;
@@ -230,7 +231,7 @@ class EditCulturalWork extends Component
             });
 
             $this->toastSuccess('Labor cultural actualizada correctamente.');
-            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.cultural.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar labor cultural', [
                 'error' => $e->getMessage(),

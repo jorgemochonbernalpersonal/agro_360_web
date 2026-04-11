@@ -69,7 +69,7 @@ class CreatePhytosanitaryTreatment extends Component
     public $biological_control         = false;
     public $cultural_preventions       = false;
 
-    public function mount(): void
+    public function mount()
     {
         $this->authorizeCreateActivity();
 
@@ -196,7 +196,7 @@ class CreatePhytosanitaryTreatment extends Component
         }
     }
 
-    public function save(): void
+    public function save()
     {
         $this->validate();
 

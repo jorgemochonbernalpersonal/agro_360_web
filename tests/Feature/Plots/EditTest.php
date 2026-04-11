@@ -188,10 +188,7 @@ class EditTest extends TestCase
         $municipality = Municipality::where('province_id', $province->id)->first();
 
         // Crear SIGPAC para la parcela (requerido para winery)
-        $sigpacUse = \App\Models\SigpacUse::create([
-            'code' => 'VI',
-            'description' => 'Viñedo',
-        ]);
+        $sigpacUse = \App\Models\SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
         $sigpacCode = \App\Models\SigpacCode::create([
             'code' => 'TEST001',
             'description' => 'Código de prueba',

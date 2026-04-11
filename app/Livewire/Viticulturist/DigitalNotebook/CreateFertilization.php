@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -64,7 +65,7 @@ class CreateFertilization extends Component
         if (!$campaign) {
             // Si no se pudo obtener/crear campaña, redirigir
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create');
         }
         
         $this->campaign_id = $campaign->id;
@@ -233,7 +234,7 @@ class CreateFertilization extends Component
             });
 
             $this->toastSuccess('Fertilización registrada correctamente.');
-            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.fertilization.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar fertilización', [
                 'error' => $e->getMessage(),

@@ -13,6 +13,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -51,7 +52,7 @@ class EditObservation extends Component
         
         if ($this->activity->activity_type !== 'observation') {
             $this->toastError('Esta actividad no es una observación.');
-            return $this->viticulturistRoleRedirect('digital-notebook.observation.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.observation.index');
         }
         
         if (!Auth::user()->can('update', $this->activity)) {
@@ -60,7 +61,7 @@ class EditObservation extends Component
         
         if ($this->activity->isLocked()) {
             $this->toastError(' No se puede editar una actividad bloqueada. Las actividades se bloquean automáticamente después de ' . config('activities.lock_days', 7) . ' días para cumplimiento PAC.');
-            return $this->viticulturistRoleRedirect('digital-notebook.observation.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.observation.index');
         }
         
         $this->observation = $this->activity->observation;
@@ -228,7 +229,7 @@ class EditObservation extends Component
             });
 
             $this->toastSuccess('Observación actualizada correctamente.');
-            return $this->viticulturistRoleRedirect('digital-notebook.observation.index', navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook.observation.index');
         } catch (\Exception $e) {
             \Log::error('Error al actualizar observación', [
                 'error' => $e->getMessage(),

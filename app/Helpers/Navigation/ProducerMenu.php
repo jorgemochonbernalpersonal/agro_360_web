@@ -2,6 +2,8 @@
 
 namespace App\Helpers\Navigation;
 
+use App\Models\SupervisorRequest;
+use App\Models\SupervisorWinery;
 use Illuminate\Support\Facades\Cache;
 
 class ProducerMenu
@@ -98,7 +100,7 @@ class ProducerMenu
             ['icon' => 'shopping-cart',          'label' => 'Cosecha Comercializada', 'route' => 'producer.marketed-harvests.index', 'active' => request()->routeIs('producer.marketed-harvests.*')],
             ['icon' => 'table-cells',            'label' => 'Costes por Parcela',     'route' => 'producer.plot-costs.index',        'active' => request()->routeIs('producer.plot-costs*'), 'new' => true],
             ['icon' => 'users',                  'label' => 'Clientes',               'route' => 'producer.clients.index',           'active' => request()->routeIs('producer.clients.*')],
-            ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Viñedo',    'route' => 'producer.financial-stats',         'active' => request()->routeIs('producer.financial-stats')],
+            ['icon' => 'presentation-chart-bar', 'label' => 'Estadísticas Viñedo',    'route' => 'producer.financial-stats.index',   'active' => request()->routeIs('producer.financial-stats.index')],
         ];
 
         // ── Negocio bodega (usado por tab bodega del producer) ────────────────
@@ -133,6 +135,29 @@ class ProducerMenu
             ['icon' => 'globe-alt',               'label' => 'Exportación',            'route' => 'producer.exports.index',                 'active' => request()->routeIs('producer.exports*'), 'wip' => true, 'new' => true],
             ['icon' => 'sparkles',                'label' => 'Enoturismo',             'route' => 'producer.enotourism.index',              'active' => request()->routeIs('producer.enotourism*'), 'wip' => true, 'new' => true],
         ];
+
+        // ── Denominación de Origen (solo si tiene supervisor) ────────────────
+        $hasSupervisor = Cache::remember(
+            "winery:{$user->id}:has_supervisor",
+            300,
+            fn () => SupervisorWinery::where('winery_id', $user->id)->exists()
+        );
+
+        if ($hasSupervisor) {
+            $pendingDO = Cache::remember(
+                "winery:{$user->id}:pending_do_requests",
+                60,
+                fn () => SupervisorRequest::forWinery($user->id)
+                    ->whereIn('status', [SupervisorRequest::STATUS_PENDING, SupervisorRequest::STATUS_IN_REVIEW])
+                    ->count()
+            );
+
+            $menu['denomination'] = [
+                ['icon' => 'building-office-2', 'label' => 'Mi Denominación',  'route' => 'winery.denomination.index',          'active' => request()->routeIs('winery.denomination.index')],
+                ['icon' => 'document-text',     'label' => 'Solicitudes DO',   'route' => 'winery.denomination.requests.index', 'active' => request()->routeIs('winery.denomination.requests*'),
+                    'badge' => $pendingDO ?: null],
+            ];
+        }
 
         // ── Rail bottom ───────────────────────────────────────────────────────
         $railBottom = [

@@ -16,6 +16,7 @@ use App\Models\CrewMember;
 use App\Livewire\Concerns\WithViticulturistValidation;
 use App\Livewire\Concerns\WithToastNotifications;
 use App\Livewire\Concerns\WithUserFilters;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -112,7 +113,7 @@ class CreateHarvest extends Component
         
         if (!$campaign) {
             $this->toastError('No se pudo obtener la campaña activa.');
-            return $this->viticulturistRoleRedirect('campaign.create', navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.create');
         }
         
         $this->campaign_id = $campaign->id;
@@ -568,7 +569,7 @@ class CreateHarvest extends Component
             });
 
             $this->toastSuccess('Cosecha registrada correctamente.');
-            return $this->viticulturistRoleRedirect('harvests.index', navigate: true);
+            return $this->viticulturistRoleRedirect('harvests.index');
         } catch (\Exception $e) {
             \Log::error('Error al registrar cosecha', [
                 'error' => $e->getMessage(),

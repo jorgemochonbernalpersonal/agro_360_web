@@ -76,30 +76,32 @@ class IndexTest extends ViticulturistTestCase
 
     public function test_type_filter_pest_shows_only_pests(): void
     {
-        $this->makePest(['type' => 'pest', 'name' => 'Araña Roja']);
-        $this->makePest(['type' => 'disease', 'name' => 'Mildiu']);
+        // Use unique names to avoid collisions with seeder data
+        $this->makePest(['type' => 'pest', 'name' => 'TestPest_UniqueXYZ']);
+        $this->makePest(['type' => 'disease', 'name' => 'TestDisease_UniqueXYZ']);
 
         $viticulturist = $this->makeViticulturist();
         $this->actingAs($viticulturist);
 
         Livewire::test(Index::class)
             ->set('typeFilter', 'pest')
-            ->assertSee('Araña Roja')
-            ->assertDontSee('Mildiu');
+            ->assertSee('TestPest_UniqueXYZ')
+            ->assertDontSee('TestDisease_UniqueXYZ');
     }
 
     public function test_type_filter_disease_shows_only_diseases(): void
     {
-        $this->makePest(['type' => 'pest', 'name' => 'Araña Roja']);
-        $this->makePest(['type' => 'disease', 'name' => 'Mildiu']);
+        // Use unique names to avoid collisions with seeder data
+        $this->makePest(['type' => 'pest', 'name' => 'TestPest_UniqueXYZ']);
+        $this->makePest(['type' => 'disease', 'name' => 'TestDisease_UniqueXYZ']);
 
         $viticulturist = $this->makeViticulturist();
         $this->actingAs($viticulturist);
 
         Livewire::test(Index::class)
             ->set('typeFilter', 'disease')
-            ->assertSee('Mildiu')
-            ->assertDontSee('Araña Roja');
+            ->assertSee('TestDisease_UniqueXYZ')
+            ->assertDontSee('TestPest_UniqueXYZ');
     }
 
     // ── Risk Filter ───────────────────────────────────────────────────────────

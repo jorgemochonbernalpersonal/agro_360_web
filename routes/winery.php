@@ -44,11 +44,15 @@ Route::middleware(['role:winery,producer'])
         Route::get('/harvest-summary', \App\Livewire\Winery\Harvest\Summary\Index::class)->name('harvest-summary.index');
 
         // ── Aforos de viticultores (solo lectura) ─────────────────────
-        Route::get('/vitic-estimates', \App\Livewire\Winery\Harvest\ViticulturistEstimates\Index::class)->name('vitic-estimates.index');
+        Route::middleware('winery.ability:yield_forecasts')->group(function () {
+            Route::get('/vitic-estimates', \App\Livewire\Winery\Harvest\ViticulturistEstimates\Index::class)->name('vitic-estimates.index');
+        });
 
         // ── Análisis de calidad vendimia ───────────────────────────────
-        Route::get('/harvest-quality', \App\Livewire\Winery\Harvest\QualityAnalysis\Index::class)->name('harvest-quality.index');
-        Route::get('/harvest-quality/export/pdf', [\App\Http\Controllers\Winery\HarvestQualityController::class, 'exportPdf'])->name('harvest-quality.export-pdf');
+        Route::middleware('winery.ability:quality_analysis')->group(function () {
+            Route::get('/harvest-quality', \App\Livewire\Winery\Harvest\QualityAnalysis\Index::class)->name('harvest-quality.index');
+            Route::get('/harvest-quality/export/pdf', [\App\Http\Controllers\Winery\HarvestQualityController::class, 'exportPdf'])->name('harvest-quality.export-pdf');
+        });
 
         // ── Actividades de campo (solo lectura) ───────────────────────
         Route::get('/field-activities', \App\Livewire\Winery\FieldActivities\Index::class)->name('field-activities.index');
@@ -61,39 +65,45 @@ Route::middleware(['role:winery,producer'])
         });
 
         // ── Previsiones de vendimia (aforo bodega) ───────────────────
-        Route::get('/harvest-forecasts', \App\Livewire\Winery\Harvest\Forecasts\Index::class)->name('harvest-forecasts.index');
-        Route::get('/harvest-forecasts/create', \App\Livewire\Winery\Harvest\Forecasts\Create::class)->name('harvest-forecasts.create');
-        Route::get('/harvest-forecasts/{forecast}/edit', \App\Livewire\Winery\Harvest\Forecasts\Edit::class)->name('harvest-forecasts.edit');
+        Route::middleware('winery.ability:yield_forecasts')->group(function () {
+            Route::get('/harvest-forecasts', \App\Livewire\Winery\Harvest\Forecasts\Index::class)->name('harvest-forecasts.index');
+            Route::get('/harvest-forecasts/create', \App\Livewire\Winery\Harvest\Forecasts\Create::class)->name('harvest-forecasts.create');
+            Route::get('/harvest-forecasts/{forecast}/edit', \App\Livewire\Winery\Harvest\Forecasts\Edit::class)->name('harvest-forecasts.edit');
+        });
 
         // ── Recepción de uva ──────────────────────────────────────────
-        Route::get('/grape-reception', \App\Livewire\Winery\Harvest\Reception\Index::class)->name('grape-reception.index');
-        Route::get('/grape-reception/create', \App\Livewire\Winery\Harvest\Reception\Create::class)->name('grape-reception.create');
-        Route::get('/grape-reception/disputes', \App\Livewire\Winery\Harvest\Reception\Disputes::class)->name('grape-reception.disputes');
-        Route::get('/grape-reception/export/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdf'])->name('grape-reception.export-pdf');
-        Route::get('/grape-reception/export/excel', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportExcel'])->name('grape-reception.export-excel');
-        Route::get('/grape-reception/{harvest}', \App\Livewire\Winery\Harvest\Reception\Show::class)->name('grape-reception.show');
-        Route::get('/grape-reception/{harvest}/edit', \App\Livewire\Winery\Harvest\Reception\Edit::class)->name('grape-reception.edit');
-        Route::get('/grape-reception/{harvest}/assign', \App\Livewire\Winery\Harvest\Reception\Assign::class)->name('grape-reception.assign');
-        Route::get('/grape-reception/{harvest}/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdfSingle'])->name('grape-reception.export-pdf-single');
+        Route::middleware('winery.ability:harvest_reception')->group(function () {
+            Route::get('/grape-reception', \App\Livewire\Winery\Harvest\Reception\Index::class)->name('grape-reception.index');
+            Route::get('/grape-reception/create', \App\Livewire\Winery\Harvest\Reception\Create::class)->name('grape-reception.create');
+            Route::get('/grape-reception/disputes', \App\Livewire\Winery\Harvest\Reception\Disputes::class)->name('grape-reception.disputes');
+            Route::get('/grape-reception/export/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdf'])->name('grape-reception.export-pdf');
+            Route::get('/grape-reception/export/excel', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportExcel'])->name('grape-reception.export-excel');
+            Route::get('/grape-reception/{harvest}', \App\Livewire\Winery\Harvest\Reception\Show::class)->name('grape-reception.show');
+            Route::get('/grape-reception/{harvest}/edit', \App\Livewire\Winery\Harvest\Reception\Edit::class)->name('grape-reception.edit');
+            Route::get('/grape-reception/{harvest}/assign', \App\Livewire\Winery\Harvest\Reception\Assign::class)->name('grape-reception.assign');
+            Route::get('/grape-reception/{harvest}/pdf', [\App\Http\Controllers\Winery\HarvestReceptionController::class, 'exportPdfSingle'])->name('grape-reception.export-pdf-single');
+        });
 
         // ── Contenedores de bodega ────────────────────────────────────
-        Route::get('/containers', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('containers.index');
-        Route::get('/containers/analytics', \App\Livewire\Winery\Cellar\Containers\Analytics::class)->name('containers.analytics');
-        Route::get('/containers/map', \App\Livewire\Winery\Cellar\Containers\Map::class)->name('containers.map');
-        Route::get('/containers/create', \App\Livewire\Winery\Cellar\Containers\Create::class)->name('containers.create');
-        Route::get('/containers/{container}', \App\Livewire\Winery\Cellar\Containers\Show::class)->name('containers.show');
-        Route::get('/containers/{container}/edit', \App\Livewire\Winery\Cellar\Containers\Edit::class)->name('containers.edit');
-        Route::get('/containers/{container}/maintenance', \App\Livewire\Winery\Cellar\Containers\Maintenance\Index::class)->name('containers.maintenance.index');
-        Route::get('/containers/{container}/maintenance/create', \App\Livewire\Winery\Cellar\Containers\Maintenance\Create::class)->name('containers.maintenance.create');
-        Route::get('/containers/{container}/maintenance/{maintenance}/edit', \App\Livewire\Winery\Cellar\Containers\Maintenance\Edit::class)->name('containers.maintenance.edit');
-        Route::get('/containers/{container}/additives', \App\Livewire\Winery\Cellar\Containers\Additives\Index::class)->name('containers.additives.index');
-        Route::get('/containers/{container}/additives/create', \App\Livewire\Winery\Cellar\Containers\Additives\Create::class)->name('containers.additives.create');
-        Route::get('/containers/{container}/additives/{additive}/edit', \App\Livewire\Winery\Cellar\Containers\Additives\Edit::class)->name('containers.additives.edit');
+        Route::middleware('winery.ability:cellar_management')->group(function () {
+            Route::get('/containers', \App\Livewire\Winery\Cellar\Containers\Index::class)->name('containers.index');
+            Route::get('/containers/analytics', \App\Livewire\Winery\Cellar\Containers\Analytics::class)->name('containers.analytics');
+            Route::get('/containers/map', \App\Livewire\Winery\Cellar\Containers\Map::class)->name('containers.map');
+            Route::get('/containers/create', \App\Livewire\Winery\Cellar\Containers\Create::class)->name('containers.create');
+            Route::get('/containers/{container}', \App\Livewire\Winery\Cellar\Containers\Show::class)->name('containers.show');
+            Route::get('/containers/{container}/edit', \App\Livewire\Winery\Cellar\Containers\Edit::class)->name('containers.edit');
+            Route::get('/containers/{container}/maintenance', \App\Livewire\Winery\Cellar\Containers\Maintenance\Index::class)->name('containers.maintenance.index');
+            Route::get('/containers/{container}/maintenance/create', \App\Livewire\Winery\Cellar\Containers\Maintenance\Create::class)->name('containers.maintenance.create');
+            Route::get('/containers/{container}/maintenance/{maintenance}/edit', \App\Livewire\Winery\Cellar\Containers\Maintenance\Edit::class)->name('containers.maintenance.edit');
+            Route::get('/containers/{container}/additives', \App\Livewire\Winery\Cellar\Containers\Additives\Index::class)->name('containers.additives.index');
+            Route::get('/containers/{container}/additives/create', \App\Livewire\Winery\Cellar\Containers\Additives\Create::class)->name('containers.additives.create');
+            Route::get('/containers/{container}/additives/{additive}/edit', \App\Livewire\Winery\Cellar\Containers\Additives\Edit::class)->name('containers.additives.edit');
 
-        // ── Salas de bodega ───────────────────────────────────────────
-        Route::get('/container-rooms', \App\Livewire\Winery\Cellar\ContainerRooms\Index::class)->name('container-rooms.index');
-        Route::get('/container-rooms/create', \App\Livewire\Winery\Cellar\ContainerRooms\Create::class)->name('container-rooms.create');
-        Route::get('/container-rooms/{room}/edit', \App\Livewire\Winery\Cellar\ContainerRooms\Edit::class)->name('container-rooms.edit');
+            // ── Salas de bodega ───────────────────────────────────────────
+            Route::get('/container-rooms', \App\Livewire\Winery\Cellar\ContainerRooms\Index::class)->name('container-rooms.index');
+            Route::get('/container-rooms/create', \App\Livewire\Winery\Cellar\ContainerRooms\Create::class)->name('container-rooms.create');
+            Route::get('/container-rooms/{room}/edit', \App\Livewire\Winery\Cellar\ContainerRooms\Edit::class)->name('container-rooms.edit');
+        });
 
         // ── Insumos de bodega ─────────────────────────────────────────
         Route::get('/winery-supplies', \App\Livewire\Winery\WinerySupplies\Index::class)->name('winery-supplies.index');
@@ -101,14 +111,16 @@ Route::middleware(['role:winery,producer'])
         Route::get('/winery-supplies/{winerySupply}/edit', \App\Livewire\Winery\WinerySupplies\Edit::class)->name('winery-supplies.edit');
 
         // ── Vinos ─────────────────────────────────────────────────────────────
-        Route::get('/wines', \App\Livewire\Winery\Wines\Index::class)->name('wines.index');
-        Route::get('/wines/timeline', \App\Livewire\Winery\Wines\Timeline::class)->name('wines.timeline');
-        Route::get('/wines/create', \App\Livewire\Winery\Wines\Create::class)->name('wines.create');
-        Route::get('/wines/{wine}', \App\Livewire\Winery\Wines\Show::class)->name('wines.show');
-        Route::get('/wines/{wine}/edit', \App\Livewire\Winery\Wines\Edit::class)->name('wines.edit');
-        Route::get('/wines/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('wines.process.create');
-        Route::get('/wines/{wine}/process/{process}/edit', \App\Livewire\Winery\Wines\Process\Edit::class)->name('wines.process.edit');
-        Route::get('/wines/{wine}/traceability-pdf', [\App\Http\Controllers\Winery\WineTraceabilityController::class, 'exportPdf'])->name('wines.traceability-pdf');
+        Route::middleware('winery.ability:wine_process')->group(function () {
+            Route::get('/wines', \App\Livewire\Winery\Wines\Index::class)->name('wines.index');
+            Route::get('/wines/timeline', \App\Livewire\Winery\Wines\Timeline::class)->name('wines.timeline');
+            Route::get('/wines/create', \App\Livewire\Winery\Wines\Create::class)->name('wines.create');
+            Route::get('/wines/{wine}', \App\Livewire\Winery\Wines\Show::class)->name('wines.show');
+            Route::get('/wines/{wine}/edit', \App\Livewire\Winery\Wines\Edit::class)->name('wines.edit');
+            Route::get('/wines/{wine}/process/create', \App\Livewire\Winery\Wines\Process\Create::class)->name('wines.process.create');
+            Route::get('/wines/{wine}/process/{process}/edit', \App\Livewire\Winery\Wines\Process\Edit::class)->name('wines.process.edit');
+            Route::get('/wines/{wine}/traceability-pdf', [\App\Http\Controllers\Winery\WineTraceabilityController::class, 'exportPdf'])->name('wines.traceability-pdf');
+        });
 
         // ── Uva / mosto / vino externo (en construcción) ─────────────
         Route::get('/external-grape', \App\Livewire\Winery\ExternalGrape\Index::class)->name('external-grape.index');
@@ -139,30 +151,36 @@ Route::middleware(['role:winery,producer'])
         Route::get('/clients/{client}/edit', \App\Livewire\Clients\Edit::class)->name('clients.edit');
 
         // ── Facturación: venta de productos ──────────────────────────
-        Route::get('/invoices/products', \App\Livewire\Winery\Billing\ProductSale\Index::class)->name('invoices.products.index');
-        Route::get('/invoices/products/create', \App\Livewire\Winery\Billing\ProductSale\Create::class)->name('invoices.products.create');
-        Route::get('/invoices/products/{id}/edit', \App\Livewire\Winery\Billing\ProductSale\Edit::class)->name('invoices.products.edit');
-        Route::get('/invoices/products/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('invoices.products.pdf');
-        Route::get('/invoices/products/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->name('invoices.products.delivery-note-pdf');
-        Route::get('/invoices/products/{id}/albaran-valorado-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'valoradoNote'])->name('invoices.products.valorado-pdf');
+        Route::middleware('winery.ability:product_sales')->group(function () {
+            Route::get('/invoices/products', \App\Livewire\Winery\Billing\ProductSale\Index::class)->name('invoices.products.index');
+            Route::get('/invoices/products/create', \App\Livewire\Winery\Billing\ProductSale\Create::class)->name('invoices.products.create');
+            Route::get('/invoices/products/{id}/edit', \App\Livewire\Winery\Billing\ProductSale\Edit::class)->name('invoices.products.edit');
+            Route::get('/invoices/products/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('invoices.products.pdf');
+            Route::get('/invoices/products/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->name('invoices.products.delivery-note-pdf');
+            Route::get('/invoices/products/{id}/albaran-valorado-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'valoradoNote'])->name('invoices.products.valorado-pdf');
+        });
         // Compatibilidad URLs antiguas (wine-sale → products)
         Route::redirect('/invoices/wine-sale', '/winery/invoices/products')->name('invoices.wine-sale.index');
         Route::redirect('/invoices/wine-sale/create', '/winery/invoices/products/create')->name('invoices.wine-sale.create');
 
         // ── Facturación: liquidación de vendimia ──────────────────────
-        Route::get('/invoices/grape-purchase', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('invoices.grape-purchase.index');
-        Route::get('/invoices/grape-purchase/create', \App\Livewire\Winery\Billing\GrapePurchase\Create::class)->name('invoices.grape-purchase.create');
-        Route::get('/invoices/grape-purchase/{id}/edit', \App\Livewire\Winery\Billing\GrapePurchase\Edit::class)->name('invoices.grape-purchase.edit');
-        Route::get('/invoices/grape-purchase/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('invoices.grape-purchase.pdf');
-        Route::get('/invoices/grape-purchase/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->name('invoices.grape-purchase.delivery-note-pdf');
+        Route::middleware('winery.ability:grape_purchase_invoice')->group(function () {
+            Route::get('/invoices/grape-purchase', \App\Livewire\Winery\Billing\GrapePurchase\Index::class)->name('invoices.grape-purchase.index');
+            Route::get('/invoices/grape-purchase/create', \App\Livewire\Winery\Billing\GrapePurchase\Create::class)->name('invoices.grape-purchase.create');
+            Route::get('/invoices/grape-purchase/{id}/edit', \App\Livewire\Winery\Billing\GrapePurchase\Edit::class)->name('invoices.grape-purchase.edit');
+            Route::get('/invoices/grape-purchase/{id}/pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'invoice'])->name('invoices.grape-purchase.pdf');
+            Route::get('/invoices/grape-purchase/{id}/albaran-pdf', [\App\Http\Controllers\Winery\InvoicePdfController::class, 'deliveryNote'])->name('invoices.grape-purchase.delivery-note-pdf');
+        });
 
         // ── Elaboración de vino ───────────────────────────────────────
         Route::get('/wine-process', fn() => redirect()->route('winery.wines.index'))->name('wine-process.index');
 
         // ── Análisis de laboratorio ───────────────────────────────────
-        Route::get('/wine-analysis', \App\Livewire\Winery\WineAnalysis\Index::class)->name('wine-analysis.index');
-        Route::get('/wine-analysis/create', \App\Livewire\Winery\WineAnalysis\Create::class)->name('wine-analysis.create');
-        Route::get('/wine-analysis/{analysis}/edit', \App\Livewire\Winery\WineAnalysis\Edit::class)->name('wine-analysis.edit');
+        Route::middleware('winery.ability:wine_process')->group(function () {
+            Route::get('/wine-analysis', \App\Livewire\Winery\WineAnalysis\Index::class)->name('wine-analysis.index');
+            Route::get('/wine-analysis/create', \App\Livewire\Winery\WineAnalysis\Create::class)->name('wine-analysis.create');
+            Route::get('/wine-analysis/{analysis}/edit', \App\Livewire\Winery\WineAnalysis\Edit::class)->name('wine-analysis.edit');
+        });
 
         // ── Controles de Fermentación ─────────────────────────────────
         Route::get('/fermentation-controls', \App\Livewire\Winery\FermentationControls\Index::class)->name('fermentation-controls.index');
@@ -213,11 +231,13 @@ Route::middleware(['role:winery,producer'])
         Route::get('/bottling/{bottling}/edit', \App\Livewire\Winery\Bottling\Edit::class)->name('bottling.edit');
 
         // ── Lotes de etiquetas ────────────────────────────────────────
-        Route::get('/label-batches', \App\Livewire\Winery\LabelBatches\Index::class)->name('label-batches.index');
-        Route::get('/label-batches/create', \App\Livewire\Winery\LabelBatches\Create::class)->name('label-batches.create');
-        Route::get('/label-batches/{labelBatch}/edit', \App\Livewire\Winery\LabelBatches\Edit::class)->name('label-batches.edit');
-        Route::get('/label-batches/{labelBatch}/waste', \App\Livewire\Winery\LabelBatches\Waste\Index::class)->name('label-batches.waste.index');
-        Route::get('/label-batches/{labelBatch}/waste/create', \App\Livewire\Winery\LabelBatches\Waste\Create::class)->name('label-batches.waste.create');
+        Route::middleware('winery.ability:label_batches')->group(function () {
+            Route::get('/label-batches', \App\Livewire\Winery\LabelBatches\Index::class)->name('label-batches.index');
+            Route::get('/label-batches/create', \App\Livewire\Winery\LabelBatches\Create::class)->name('label-batches.create');
+            Route::get('/label-batches/{labelBatch}/edit', \App\Livewire\Winery\LabelBatches\Edit::class)->name('label-batches.edit');
+            Route::get('/label-batches/{labelBatch}/waste', \App\Livewire\Winery\LabelBatches\Waste\Index::class)->name('label-batches.waste.index');
+            Route::get('/label-batches/{labelBatch}/waste/create', \App\Livewire\Winery\LabelBatches\Waste\Create::class)->name('label-batches.waste.create');
+        });
 
         // ── Etiquetado ────────────────────────────────────────────────
         Route::get('/labeling', \App\Livewire\Winery\Labeling\Index::class)->name('labeling.index');
@@ -271,7 +291,9 @@ Route::middleware(['role:winery,producer'])
         Route::get('/alerts', \App\Livewire\Winery\Alerts\Dashboard::class)->name('alerts.index');
 
         // ── VeriFactu / facturación electrónica ───────────────────────
-        Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
+        Route::middleware('winery.ability:verifaktu')->group(function () {
+            Route::get('/verifactu', \App\Livewire\Winery\Verifactu\Dashboard::class)->name('verifactu.index');
+        });
 
         // ── Normativa bodega ──────────────────────────────────────────
         Route::get('/aica', \App\Livewire\Winery\UnderConstruction::class)

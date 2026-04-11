@@ -2,6 +2,8 @@
 
 namespace App\Helpers\Navigation;
 
+use App\Models\SupervisorRequest;
+use App\Models\SupervisorWinery;
 use App\Models\WineryViticulturist;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,6 +16,29 @@ class WineryMenu
         $menu['main'] = [
             ['icon' => 'home', 'label' => 'Dashboard', 'route' => 'winery.dashboard', 'active' => request()->routeIs('winery.dashboard')],
         ];
+
+        // ── Denominación de Origen (solo si la bodega tiene supervisor asignado) ──
+        $hasSupervisor = Cache::remember(
+            "winery:{$user->id}:has_supervisor",
+            300,
+            fn () => SupervisorWinery::where('winery_id', $user->id)->exists()
+        );
+
+        if ($hasSupervisor) {
+            $pendingDO = Cache::remember(
+                "winery:{$user->id}:pending_do_requests",
+                60,
+                fn () => SupervisorRequest::forWinery($user->id)
+                    ->whereIn('status', [SupervisorRequest::STATUS_PENDING, SupervisorRequest::STATUS_IN_REVIEW])
+                    ->count()
+            );
+
+            $menu['denomination'] = [
+                ['icon' => 'building-office-2', 'label' => 'Mi Denominación',   'route' => 'winery.denomination.index',    'active' => request()->routeIs('winery.denomination.index')],
+                ['icon' => 'document-text',     'label' => 'Solicitudes DO',    'route' => 'winery.denomination.requests.index', 'active' => request()->routeIs('winery.denomination.requests*'),
+                    'badge' => $pendingDO ?: null],
+            ];
+        }
 
         $hasViticulturists = Cache::remember(
             "winery:{$user->id}:has_viticulturists",
@@ -75,6 +100,13 @@ class WineryMenu
         $menu['resources'] = [
             ['icon' => 'building-storefront', 'label' => 'Insumos de Bodega', 'route' => 'winery.winery-supplies.index', 'active' => request()->routeIs('winery.winery-supplies*')],
             ['icon' => 'truck',               'label' => 'Proveedores',        'route' => 'winery.suppliers.index',       'active' => request()->routeIs('winery.suppliers*')],
+        ];
+
+        $menu['compliance'] = [
+            ['icon' => 'building-office', 'label' => 'Explotación RGSEAA',       'route' => 'winery.exploitations.index',             'active' => request()->routeIs('winery.exploitations.*'), 'new' => true],
+            ['icon' => 'shield-check',    'label' => 'Autorizaciones Comerciales','route' => 'winery.commercial-authorizations.index', 'active' => request()->routeIs('winery.commercial-authorizations.*'), 'new' => true],
+            ['icon' => 'identification',  'label' => 'Aplicadores ROPO',          'route' => 'winery.field-applicators.index',         'active' => request()->routeIs('winery.field-applicators.*'), 'new' => true],
+            ['icon' => 'cog-8-tooth',     'label' => 'Equipos ITB/ITEA',          'route' => 'winery.field-equipment.index',           'active' => request()->routeIs('winery.field-equipment.*'), 'new' => true],
         ];
 
         $menu['system'] = [

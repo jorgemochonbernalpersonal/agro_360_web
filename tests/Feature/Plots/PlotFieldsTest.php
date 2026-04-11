@@ -61,7 +61,7 @@ class PlotFieldsTest extends TestCase
 
         $plot->refresh();
 
-        $sigpacUse = SigpacUse::create(['code' => 'VI', 'description' => 'Viñedo']);
+        $sigpacUse = SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
         $plot->sigpacUses()->sync([$sigpacUse->id]);
 
         return [$viticulturist, $plot, $ac, $province, $municipality];

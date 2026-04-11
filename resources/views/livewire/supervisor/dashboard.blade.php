@@ -59,6 +59,18 @@
             <p class="text-2xl font-bold text-rose-600 leading-none">{{ number_format($issuedLabelsThisYear) }}</p>
             <p class="text-xs text-zinc-400 mt-0.5">Este año ({{ now()->year }})</p>
         </a>
+        <a href="{{ route('supervisor.requests.index') }}" wire:navigate
+            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm hover:border-blue-300 transition-colors">
+            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Solicitudes activas</p>
+            <p class="text-2xl font-bold text-blue-600 leading-none">{{ $pendingRequests }}</p>
+            <p class="text-xs text-zinc-400 mt-0.5">Pendientes + en revisión</p>
+        </a>
+        <a href="{{ route('supervisor.requests.index') }}" wire:navigate
+            class="block bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm {{ $overdueRequests > 0 ? 'border-red-300 bg-red-50/30' : '' }} hover:border-red-300 transition-colors">
+            <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest mb-1">Vencidas</p>
+            <p class="text-2xl font-bold {{ $overdueRequests > 0 ? 'text-red-600' : 'text-zinc-400' }} leading-none">{{ $overdueRequests }}</p>
+            <p class="text-xs text-zinc-400 mt-0.5">Con fecha límite superada</p>
+        </a>
     </div>
 
     {{-- Bloques de acceso rápido --}}
@@ -122,6 +134,14 @@
                 Operativa regulatoria
             </h2>
             <div class="space-y-1.5">
+                <a href="{{ route('supervisor.requests.index') }}" wire:navigate
+                   class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition group">
+                    <flux:icon icon="inbox" class="w-4 h-4 text-zinc-400 group-hover:text-blue-500 flex-shrink-0" />
+                    Solicitudes y actas
+                    @if($pendingRequests > 0)
+                        <span class="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-full">{{ $pendingRequests }}</span>
+                    @endif
+                </a>
                 <a href="{{ route('supervisor.qualification.index') }}" wire:navigate
                    class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition group">
                     <flux:icon icon="star" class="w-4 h-4 text-zinc-400 group-hover:text-yellow-500 flex-shrink-0" />

@@ -12,6 +12,7 @@ class DoLabel extends Model
     protected $fillable = [
         'supervisor_id',
         'winery_id',
+        'supervisor_request_id',
         'vintage',
         'batch_number',
         'quantity_requested',
@@ -62,6 +63,11 @@ class DoLabel extends Model
     public function issuedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'issued_by');
+    }
+
+    public function supervisorRequest(): BelongsTo
+    {
+        return $this->belongsTo(SupervisorRequest::class, 'supervisor_request_id');
     }
 
     public function scopeForSupervisor($query, int $supervisorId)

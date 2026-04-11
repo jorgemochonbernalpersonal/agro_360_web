@@ -64,12 +64,38 @@
         </flux:button>
     </div>
 
+    {{-- Bulk action bar --}}
+    @if(count($selected) > 0)
+        <div class="flex items-center gap-3 px-4 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-sm">
+            <span class="font-medium text-blue-700">{{ count($selected) }} seleccionadas</span>
+            <flux:button wire:click="bulkArchive"
+                wire:confirm="¿Archivar las {{ count($selected) }} solicitudes seleccionadas? Solo se archivarán las que estén aprobadas o rechazadas."
+                variant="primary" size="sm">
+                Archivar seleccionadas
+            </flux:button>
+            <button wire:click="$set('selected', [])" class="text-xs text-blue-500 hover:text-blue-700">Limpiar</button>
+        </div>
+    @endif
+
     {{-- Tabla --}}
-    <x-agro.data-table :headers="['Tipo', 'Bodega', 'Título', 'Estado', 'Fecha', '']">
+    <x-agro.data-table :headers="['', 'Tipo', 'Bodega', 'Título', 'Estado', 'Fecha', 'Vence', '']">
         @forelse($requests as $req)
             <x-agro.table-row>
                 <x-agro.table-cell>
-                    <span class="text-xs font-medium text-zinc-600">{{ $typeLabels[$req->type] ?? $req->type }}</span>
+                    @if(in_array($req->status, ['approved','rejected']))
+                        <input type="checkbox" wire:model="selected" value="{{ $req->id }}"
+                            class="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
+                    @endif
+                </x-agro.table-cell>
+                <x-agro.table-cell>
+                    <div class="flex items-center gap-1.5">
+                        @if(in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED))
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-200">Bodega</span>
+                        @else
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-50 text-violet-600 border border-violet-200">DO</span>
+                        @endif
+                        <span class="text-xs font-medium text-zinc-600">{{ $typeLabels[$req->type] ?? $req->type }}</span>
+                    </div>
                 </x-agro.table-cell>
                 <x-agro.table-cell>
                     <span class="text-sm text-zinc-800">{{ $req->winery->name }}</span>
@@ -84,6 +110,20 @@
                 <x-agro.table-cell>
                     <span class="text-xs text-zinc-400">{{ $req->created_at->format('d/m/Y') }}</span>
                 </x-agro.table-cell>
+                <x-agro.table-cell>
+                    @if($req->due_date)
+                        @if($req->isOverdue())
+                            <span class="inline-flex items-center gap-1 text-xs font-medium text-red-600">
+                                <flux:icon icon="exclamation-circle" class="w-3.5 h-3.5" />
+                                {{ $req->due_date->format('d/m/Y') }}
+                            </span>
+                        @else
+                            <span class="text-xs text-zinc-500">{{ $req->due_date->format('d/m/Y') }}</span>
+                        @endif
+                    @else
+                        <span class="text-xs text-zinc-300">—</span>
+                    @endif
+                </x-agro.table-cell>
                 <x-agro.table-cell align="right">
                     <div class="flex items-center justify-end gap-1">
                         @if($req->canBeSentBySupervisor())
@@ -92,8 +132,17 @@
                                 variant="primary" size="sm">
                                 Enviar
                             </flux:button>
+                            <flux:button wire:click="deleteDraft({{ $req->id }})"
+                                wire:confirm="¿Eliminar este borrador? Esta acción no se puede deshacer."
+                                variant="ghost" size="sm" icon="trash">
+                            </flux:button>
                         @endif
-                        @if($req->canBeResolvedBySupervisor())
+                        @php
+                            $canResolve = $req->canBeResolvedBySupervisor()
+                                || ($req->status === \App\Models\SupervisorRequest::STATUS_PENDING
+                                    && in_array($req->type, \App\Models\SupervisorRequest::WINERY_INITIATED));
+                        @endphp
+                        @if($canResolve)
                             <flux:button wire:click="approve({{ $req->id }})" variant="primary" size="sm">
                                 Aprobar
                             </flux:button>
@@ -102,6 +151,13 @@
                                 variant="danger" size="sm">
                                 Rechazar
                             </flux:button>
+                        @endif
+                        @if($req->type === \App\Models\SupervisorRequest::TYPE_LABEL_REQUEST && $req->status === \App\Models\SupervisorRequest::STATUS_APPROVED)
+                            <a href="{{ route('supervisor.labels.index', ['from_winery' => $req->winery_id, 'from_request' => $req->id]) }}"
+                               class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-green-50 text-green-700 border border-green-200 rounded-md hover:bg-green-100 transition-colors">
+                                <flux:icon icon="tag" class="w-3.5 h-3.5" />
+                                Crear contraetiqueta
+                            </a>
                         @endif
                         @if(in_array($req->status, ['approved','rejected']) && $req->status !== 'archived')
                             <flux:button wire:click="archive({{ $req->id }})" variant="ghost" size="sm">
@@ -113,7 +169,7 @@
             </x-agro.table-row>
         @empty
             <x-agro.table-row>
-                <td colspan="6" class="px-6 py-10 text-center text-sm text-zinc-400">
+                <td colspan="8" class="px-6 py-10 text-center text-sm text-zinc-400">
                     No hay solicitudes con estos filtros.
                 </td>
             </x-agro.table-row>
@@ -153,6 +209,12 @@
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1">Título (opcional)</label>
                     <flux:input wire:model="formTitle" placeholder="Ej: Calificación lote R-2026-001" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1">Fecha límite de respuesta (opcional)</label>
+                    <flux:input type="date" wire:model="formDueDate" :min="now()->addDay()->format('Y-m-d')" />
+                    @error('formDueDate') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>

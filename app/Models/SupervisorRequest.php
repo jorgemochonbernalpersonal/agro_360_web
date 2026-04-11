@@ -17,12 +17,14 @@ class SupervisorRequest extends Model
         'title',
         'notes',
         'response_notes',
+        'due_date',
         'sent_at',
         'responded_at',
         'resolved_at',
     ];
 
     protected $casts = [
+        'due_date'     => 'date',
         'sent_at'      => 'datetime',
         'responded_at' => 'datetime',
         'resolved_at'  => 'datetime',
@@ -103,6 +105,13 @@ class SupervisorRequest extends Model
         return $query->where('winery_id', $wineryId);
     }
 
+    // ── Relación inversa ─────────────────────────────────────────────────────
+
+    public function doLabel(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(DoLabel::class, 'supervisor_request_id');
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     public function typeLabel(): string
@@ -118,6 +127,13 @@ class SupervisorRequest extends Model
     public function statusColor(): string
     {
         return self::STATUS_COLORS[$this->status] ?? 'zinc';
+    }
+
+    public function isOverdue(): bool
+    {
+        return $this->due_date !== null
+            && $this->due_date->isPast()
+            && ! in_array($this->status, [self::STATUS_APPROVED, self::STATUS_REJECTED, self::STATUS_ARCHIVED]);
     }
 
     public function canBeSentBySupervisor(): bool

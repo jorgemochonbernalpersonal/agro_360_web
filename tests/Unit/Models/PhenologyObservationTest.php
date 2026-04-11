@@ -33,7 +33,7 @@ class PhenologyObservationTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        $variety = GrapeVariety::create(['name' => 'Tempranillo', 'code' => 'TEMP', 'color' => 'red']);
+        $variety = GrapeVariety::firstOrCreate(['name' => 'Tempranillo'], ['code' => 'TEMP', 'color' => 'red']);
 
         $planting = PlotPlanting::create([
             'plot_id'      => $plot->id,
@@ -96,7 +96,7 @@ class PhenologyObservationTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot          = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        $variety       = GrapeVariety::create(['name' => 'Merlot', 'code' => 'MER', 'color' => 'red']);
+        $variety       = GrapeVariety::firstOrCreate(['name' => 'Merlot'], ['code' => 'MER', 'color' => 'red']);
 
         $planting = PlotPlanting::create([
             'plot_id'          => $plot->id,
@@ -130,7 +130,7 @@ class PhenologyObservationTest extends TestCase
     {
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot          = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
-        $variety       = GrapeVariety::create(['name' => 'Garnacha', 'code' => 'GARN', 'color' => 'red']);
+        $variety       = GrapeVariety::firstOrCreate(['name' => 'Garnacha'], ['code' => 'GARN', 'color' => 'red']);
         $planting      = PlotPlanting::create([
             'plot_id'      => $plot->id,
             'grape_variety_id' => $variety->id,

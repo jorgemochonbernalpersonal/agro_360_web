@@ -5,10 +5,14 @@ namespace App\Livewire\Supervisor\Oversight\Wineries;
 use App\Models\Ability;
 use App\Models\SupervisorViticulturist;
 use App\Models\SupervisorWinery;
+use App\Models\SupervisorWineryNote;
 use App\Models\User;
 use App\Models\UserAbility;
 use App\Models\WineryViticulturist;
+use App\Notifications\ViticulturistAssignedToWineryNotification;
+use App\Notifications\WineryAbilityChangedNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -19,6 +23,17 @@ class Show extends Component
 
     public bool   $showAssignModal = false;
     public string $poolSearch      = '';
+
+    // ── Cuaderno DO ───────────────────────────────────────────────────────────
+    public bool   $showNoteForm  = false;
+    public string $noteType      = 'note';
+    public string $noteDate      = '';
+    public string $noteContent   = '';
+
+    public ?int   $editNoteId      = null;
+    public string $editNoteType    = 'note';
+    public string $editNoteDate    = '';
+    public string $editNoteContent = '';
 
     public function updatingPoolSearch(): void
     {
@@ -44,17 +59,26 @@ class Show extends Component
             ->where('viticulturist_id', $viticulturistId)
             ->firstOrFail();
 
-        WineryViticulturist::firstOrCreate(
-            [
-                'winery_id'        => $this->winery->id,
-                'viticulturist_id' => $viticulturistId,
-            ],
-            [
-                'source'        => WineryViticulturist::SOURCE_SUPERVISOR,
-                'supervisor_id' => Auth::id(),
-                'assigned_by'   => Auth::id(),
-            ]
-        );
+        [$relation, $created] = [
+            WineryViticulturist::firstOrCreate(
+                [
+                    'winery_id'        => $this->winery->id,
+                    'viticulturist_id' => $viticulturistId,
+                ],
+                [
+                    'source'        => WineryViticulturist::SOURCE_SUPERVISOR,
+                    'supervisor_id' => Auth::id(),
+                    'assigned_by'   => Auth::id(),
+                ]
+            ),
+            false,
+        ];
+
+        // Notificar al viticultor solo si es la primera asignación y tiene acceso
+        $viticulturist = User::find($viticulturistId);
+        if ($viticulturist?->can_login) {
+            $viticulturist->notify(new ViticulturistAssignedToWineryNotification($this->winery, Auth::user()));
+        }
 
         $this->dispatch('toast', message: 'Viticultor asignado a la bodega.', type: 'success');
     }
@@ -86,6 +110,7 @@ class Show extends Component
 
         if ($existing) {
             $existing->delete();
+            $this->winery->notify(new WineryAbilityChangedNotification($ability, false, Auth::user()->name));
             $this->dispatch('toast', message: "Módulo «{$ability->name}» desactivado.", type: 'warning');
         } else {
             UserAbility::create([
@@ -94,8 +119,11 @@ class Show extends Component
                 'granted_by' => Auth::id(),
                 'granted_at' => now(),
             ]);
+            $this->winery->notify(new WineryAbilityChangedNotification($ability, true, Auth::user()->name));
             $this->dispatch('toast', message: "Módulo «{$ability->name}» activado.", type: 'success');
         }
+
+        Cache::forget("winery:{$this->winery->id}:granted_abilities");
     }
 
     public function mount(User $winery): void
@@ -104,7 +132,99 @@ class Show extends Component
             ->where('winery_id', $winery->id)
             ->firstOrFail();
 
-        $this->winery = $winery;
+        $this->winery    = $winery;
+        $this->noteDate  = now()->format('Y-m-d');
+    }
+
+    // ── Cuaderno DO ───────────────────────────────────────────────────────────
+
+    public function openNoteForm(): void
+    {
+        $this->noteType    = 'note';
+        $this->noteDate    = now()->format('Y-m-d');
+        $this->noteContent = '';
+        $this->showNoteForm = true;
+        $this->resetValidation();
+    }
+
+    public function closeNoteForm(): void
+    {
+        $this->showNoteForm = false;
+        $this->resetValidation();
+    }
+
+    public function saveNote(): void
+    {
+        $this->validate([
+            'noteType'    => 'required|in:' . implode(',', array_keys(SupervisorWineryNote::TYPE_LABELS)),
+            'noteDate'    => 'required|date',
+            'noteContent' => 'required|string|max:2000',
+        ]);
+
+        SupervisorWinery::where('supervisor_id', Auth::id())
+            ->where('winery_id', $this->winery->id)
+            ->firstOrFail();
+
+        SupervisorWineryNote::create([
+            'supervisor_id' => Auth::id(),
+            'winery_id'     => $this->winery->id,
+            'type'          => $this->noteType,
+            'note_date'     => $this->noteDate,
+            'content'       => $this->noteContent,
+        ]);
+
+        $this->showNoteForm = false;
+        $this->dispatch('toast', message: 'Nota añadida al cuaderno.', type: 'success');
+    }
+
+    public function openEditNote(int $noteId): void
+    {
+        $note = SupervisorWineryNote::where('supervisor_id', Auth::id())
+            ->where('winery_id', $this->winery->id)
+            ->findOrFail($noteId);
+
+        $this->editNoteId      = $noteId;
+        $this->editNoteType    = $note->type;
+        $this->editNoteDate    = $note->note_date->format('Y-m-d');
+        $this->editNoteContent = $note->content;
+        $this->resetValidation();
+    }
+
+    public function closeEditNote(): void
+    {
+        $this->editNoteId = null;
+        $this->resetValidation();
+    }
+
+    public function updateNote(): void
+    {
+        $this->validate([
+            'editNoteType'    => 'required|in:' . implode(',', array_keys(SupervisorWineryNote::TYPE_LABELS)),
+            'editNoteDate'    => 'required|date',
+            'editNoteContent' => 'required|string|max:2000',
+        ]);
+
+        SupervisorWineryNote::where('supervisor_id', Auth::id())
+            ->where('winery_id', $this->winery->id)
+            ->findOrFail($this->editNoteId)
+            ->update([
+                'type'      => $this->editNoteType,
+                'note_date' => $this->editNoteDate,
+                'content'   => $this->editNoteContent,
+            ]);
+
+        $this->editNoteId = null;
+        $this->dispatch('toast', message: 'Nota actualizada.', type: 'success');
+    }
+
+    public function deleteNote(int $noteId): void
+    {
+        SupervisorWineryNote::where('supervisor_id', Auth::id())
+            ->where('winery_id', $this->winery->id)
+            ->findOrFail($noteId)
+            ->delete();
+
+        $this->dispatch('toast', message: 'Nota eliminada.', type: 'success');
     }
 
     public function toggleAccess(): void
@@ -241,6 +361,13 @@ class Show extends Component
         $allAbilities      = Ability::orderBy('module')->orderBy('name')->get();
         $grantedAbilityIds = UserAbility::where('user_id', $wineryId)->pluck('ability_id');
 
+        // ── Cuaderno DO ───────────────────────────────────────────────────────
+        $wineryNotes = SupervisorWineryNote::forSupervisor($supervisorId)
+            ->forWinery($wineryId)
+            ->orderByDesc('note_date')
+            ->orderByDesc('id')
+            ->get();
+
         return view('livewire.supervisor.oversight.wineries.show', [
             'viticulturistRelations' => $viticulturistRelations,
             'plotStatsByVit'         => $plotStatsByVit,
@@ -254,6 +381,10 @@ class Show extends Component
             'poolViticulturists'     => $poolViticulturists,
             'allAbilities'           => $allAbilities,
             'grantedAbilityIds'      => $grantedAbilityIds,
+            'wineryNotes'            => $wineryNotes,
+            'noteTypeLabels'         => SupervisorWineryNote::TYPE_LABELS,
+            'noteTypeIcons'          => SupervisorWineryNote::TYPE_ICONS,
+            'noteTypeColors'         => SupervisorWineryNote::TYPE_COLORS,
         ]);
     }
 }

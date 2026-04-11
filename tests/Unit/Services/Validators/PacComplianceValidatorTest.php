@@ -128,10 +128,7 @@ class PacComplianceValidatorTest extends TestCase
         ]);
 
         // Crear uso SIGPAC para evitar warnings
-        $sigpacUse = \App\Models\SigpacUse::create([
-            'code' => 'VI',
-            'description' => 'Viñedo',
-        ]);
+        $sigpacUse = \App\Models\SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
 
         $plot = Plot::factory()->create([
             'viticulturist_id' => $this->user->id,
@@ -166,10 +163,7 @@ class PacComplianceValidatorTest extends TestCase
         $sigpacCode = SigpacCode::create(['code' => str_repeat('1', 19)]);
         
         // Crear uso SIGPAC para evitar warnings
-        $sigpacUse = \App\Models\SigpacUse::create([
-            'code' => 'VI',
-            'description' => 'Viñedo',
-        ]);
+        $sigpacUse = \App\Models\SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
         
         $plot = Plot::factory()->create(['viticulturist_id' => $this->user->id]);
         $plot->sigpacCodes()->attach($sigpacCode->id);
@@ -244,10 +238,7 @@ class PacComplianceValidatorTest extends TestCase
         $sigpacCode = SigpacCode::create(['code' => str_repeat('1', 19)]);
         
         // Crear uso SIGPAC para evitar warnings
-        $sigpacUse = \App\Models\SigpacUse::create([
-            'code' => 'VI',
-            'description' => 'Viñedo',
-        ]);
+        $sigpacUse = \App\Models\SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
         
         $plotWithSigpac = Plot::factory()->create();
         $plotWithSigpac->sigpacCodes()->attach($sigpacCode->id);

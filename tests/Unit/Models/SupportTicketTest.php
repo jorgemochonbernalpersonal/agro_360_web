@@ -574,7 +574,7 @@ class SupportTicketTest extends TestCase
             'type' => 'bug',
             'status' => 'open',
             'priority' => 'medium',
-            'image' => 'tickets/test.jpg',
+            'images' => ['tickets/test.jpg'],
         ]);
 
         $url = $ticket->image_url;

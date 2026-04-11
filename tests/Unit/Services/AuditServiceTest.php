@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Plot;
 use App\Services\AuditService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use Tests\WithGeographyData;
 
@@ -124,8 +125,8 @@ class AuditServiceTest extends TestCase
 
         Plot::factory()->create(['viticulturist_id' => $user->id]);
 
-        // Modificar fecha de un log para que sea antiguo
-        AuditLog::first()->update(['created_at' => now()->subDays(400)]);
+        // Modificar fecha de un log para que sea antiguo (via DB para evitar fillable guards)
+        DB::table('audit_logs')->limit(1)->update(['created_at' => now()->subDays(400)]);
 
         $deleted = $this->service->cleanOldLogs(365);
 

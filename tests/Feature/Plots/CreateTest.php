@@ -316,10 +316,7 @@ class CreateTest extends TestCase
         $municipality = Municipality::where('province_id', $province->id)->first();
 
         // Crear SIGPAC para winery (requerido)
-        $sigpacUse = SigpacUse::create([
-            'code' => 'VI',
-            'description' => 'Viñedo',
-        ]);
+        $sigpacUse = SigpacUse::firstOrCreate(['code' => 'VI'], ['description' => 'Viñedo']);
         $sigpacCode = SigpacCode::create([
             'code' => 'TEST001',
             'description' => 'Código de prueba',

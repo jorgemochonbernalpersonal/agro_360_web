@@ -32,11 +32,10 @@ class GrapeVarietyTest extends TestCase
         $viticulturist = User::factory()->create(['role' => 'viticulturist']);
         $plot = Plot::factory()->state(['viticulturist_id' => $viticulturist->id])->create();
 
-        $variety = GrapeVariety::create([
-            'name' => 'Tempranillo',
-            'code' => 'TEMP',
-            'color' => 'red',
-        ]);
+        $variety = GrapeVariety::firstOrCreate(
+            ['name' => 'Tempranillo'],
+            ['code' => 'TEMP', 'color' => 'red']
+        );
 
         PlotPlanting::create([
             'plot_id' => $plot->id,
@@ -57,6 +56,9 @@ class GrapeVarietyTest extends TestCase
 
     public function test_scopes_active_and_by_color_filter_correctly(): void
     {
+        // Clear seeder data so scope assertions can check exact results.
+        GrapeVariety::query()->delete();
+
         $redActive = GrapeVariety::create([
             'name' => 'Tempranillo',
             'code' => 'TEMP',
