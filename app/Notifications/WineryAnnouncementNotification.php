@@ -3,11 +3,12 @@
 namespace App\Notifications;
 
 use App\Models\WineryAnnouncement;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class WineryAnnouncementNotification extends Notification
+class WineryAnnouncementNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

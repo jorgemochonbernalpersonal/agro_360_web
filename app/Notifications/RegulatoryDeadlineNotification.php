@@ -4,11 +4,12 @@ namespace App\Notifications;
 
 use App\Notifications\Concerns\RespectsPreferences;
 use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RegulatoryDeadlineNotification extends Notification
+class RegulatoryDeadlineNotification extends Notification implements ShouldQueue
 {
     use Queueable, RespectsPreferences;
 

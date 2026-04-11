@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -9,7 +10,7 @@ use Illuminate\Support\HtmlString;
 use App\Models\User;
 use App\Support\AppLink;
 
-class ViticulturistInvitationNotification extends Notification
+class ViticulturistInvitationNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

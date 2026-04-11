@@ -6,11 +6,12 @@ use App\Models\NotebookAccessRequest;
 use App\Models\User;
 use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NotebookAccessRespondedNotification extends Notification
+class NotebookAccessRespondedNotification extends Notification implements ShouldQueue
 {
     use Queueable, RespectsPreferences;
 

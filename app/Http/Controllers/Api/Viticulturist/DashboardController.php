@@ -20,9 +20,12 @@ class DashboardController extends Controller
         $userId = $user->id;
 
         // ── Plots ─────────────────────────────────────────────────────────────
-        $plots       = Plot::where('viticulturist_id', $userId)->where('active', true)->get();
-        $totalArea   = $plots->sum(fn ($p) => (float) $p->area);
-        $organicArea = $plots->where('is_organic', true)->sum(fn ($p) => (float) $p->area);
+        $plotStats = Plot::where('viticulturist_id', $userId)
+            ->where('active', true)
+            ->selectRaw('COUNT(*) as total, SUM(area) as total_area, SUM(CASE WHEN is_organic = 1 THEN area ELSE 0 END) as organic_area')
+            ->first();
+        $totalArea   = (float) ($plotStats->total_area ?? 0);
+        $organicArea = (float) ($plotStats->organic_area ?? 0);
 
         // ── Active campaign ────────────────────────────────────────────────────
         $activeCampaign = Campaign::forViticulturist($userId)->active()->first();
@@ -52,7 +55,7 @@ class DashboardController extends Controller
         return response()->json([
             'campaign_year' => $currentYear,
             'plots' => [
-                'total'        => $plots->count(),
+                'total'        => (int) ($plotStats->total ?? 0),
                 'total_area'   => round($totalArea, 2),
                 'organic_area' => round($organicArea, 2),
             ],

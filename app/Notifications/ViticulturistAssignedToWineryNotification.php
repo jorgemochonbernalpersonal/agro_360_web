@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\User;
 use App\Notifications\Concerns\RespectsPreferences;
 use App\Support\AppLink;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -12,7 +13,7 @@ use Illuminate\Notifications\Notification;
 /**
  * Notifica al VITICULTOR cuando el supervisor lo asigna a una bodega.
  */
-class ViticulturistAssignedToWineryNotification extends Notification
+class ViticulturistAssignedToWineryNotification extends Notification implements ShouldQueue
 {
     use Queueable, RespectsPreferences;
 
