@@ -27,9 +27,9 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
         $this->info('🛰️  Starting Sentinel-2 update for all sigpac parcels...');
         $this->newLine();
 
-        // One job per sigpac parcel (multipart_plot_sigpac row with geometry) for plots with active subs
+        // One job per sigpac parcel (multipart_plot_sigpac row with geometry)
         $query = MultipartPlotSigpac::whereNotNull('plot_geometry_id')
-            ->whereHas('plot.viticulturist.activeSubscription')
+            ->whereHas('plot')
             ->with('plot')
             ->orderBy('plot_id')
             ->orderBy('id');
