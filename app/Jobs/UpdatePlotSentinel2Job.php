@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Queue job that fetches Sentinel-2 vegetation indices for a single plot.
- * Replaces UpdatePlotNdviJob (MODIS 250m) with Sentinel-2 (10m).
+ * Uses plain integer IDs to avoid Eloquent model serialization issues.
  */
 class UpdatePlotSentinel2Job implements ShouldQueue
 {
@@ -24,25 +24,34 @@ class UpdatePlotSentinel2Job implements ShouldQueue
     public int $backoff = 120;
 
     public function __construct(
-        public readonly Plot $plot,
+        public readonly int $plotId,
         public readonly ?int $plotSigpacId = null,
     ) {}
 
     public function handle(CopernicusSentinel2Service $service): void
     {
-        $result = $service->fetchAndStore($this->plot, $this->plotSigpacId);
+        $plot = Plot::find($this->plotId);
+
+        if (!$plot) {
+            Log::warning('UpdatePlotSentinel2Job: plot not found', [
+                'plot_id' => $this->plotId,
+            ]);
+            return;
+        }
+
+        $result = $service->fetchAndStore($plot, $this->plotSigpacId);
 
         if ($result) {
             Log::info('UpdatePlotSentinel2Job completed', [
-                'plot_id'    => $this->plot->id,
+                'plot_id'        => $this->plotId,
                 'plot_sigpac_id' => $this->plotSigpacId,
-                'ndvi'       => $result->ndvi_mean,
-                'gndvi'      => $result->gndvi,
-                'image_date' => $result->image_date?->toDateString(),
+                'ndvi'           => $result->ndvi_mean,
+                'gndvi'          => $result->gndvi,
+                'image_date'     => $result->image_date?->toDateString(),
             ]);
         } else {
             Log::warning('UpdatePlotSentinel2Job: no data returned', [
-                'plot_id'    => $this->plot->id,
+                'plot_id'        => $this->plotId,
                 'plot_sigpac_id' => $this->plotSigpacId,
             ]);
         }
@@ -51,9 +60,9 @@ class UpdatePlotSentinel2Job implements ShouldQueue
     public function failed(\Throwable $e): void
     {
         Log::error('UpdatePlotSentinel2Job permanently failed', [
-            'plot_id'    => $this->plot->id,
+            'plot_id'        => $this->plotId,
             'plot_sigpac_id' => $this->plotSigpacId,
-            'error'      => $e->getMessage(),
+            'error'          => $e->getMessage(),
         ]);
     }
 }

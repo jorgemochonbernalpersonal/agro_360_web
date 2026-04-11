@@ -278,11 +278,11 @@ class ExecutiveDashboard extends Component
 
             if ($sigpacs->isNotEmpty()) {
                 foreach ($sigpacs as $sigpacId) {
-                    UpdatePlotSentinel2Job::dispatch($plot, $sigpacId)
+                    UpdatePlotSentinel2Job::dispatch($plot->id, $sigpacId)
                         ->onQueue('remote-sensing');
                 }
             } else {
-                UpdatePlotSentinel2Job::dispatch($plot)
+                UpdatePlotSentinel2Job::dispatch($plot->id)
                     ->onQueue('remote-sensing');
             }
 

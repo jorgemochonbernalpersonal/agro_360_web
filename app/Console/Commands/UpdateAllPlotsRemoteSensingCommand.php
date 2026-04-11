@@ -30,7 +30,6 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
         // One job per sigpac parcel (multipart_plot_sigpac row with geometry)
         $query = MultipartPlotSigpac::whereNotNull('plot_geometry_id')
             ->whereHas('plot')
-            ->with('plot')
             ->orderBy('plot_id')
             ->orderBy('id');
 
@@ -58,7 +57,7 @@ class UpdateAllPlotsRemoteSensingCommand extends Command
 
         foreach ($plotSigpacs as $plotSigpac) {
             try {
-                UpdatePlotSentinel2Job::dispatch($plotSigpac->plot, $plotSigpac->id)
+                UpdatePlotSentinel2Job::dispatch($plotSigpac->plot_id, $plotSigpac->id)
                     ->onQueue($queueName)
                     ->delay(now()->addSeconds($delay * $queued));
 
