@@ -40,14 +40,11 @@ class ViticulturistDemoSeeder_test extends Seeder
         $this->command->info('🌿 ═══════════════════════════════════════════════');
         $this->command->info('');
 
-        // ── 0. Verificar usuarios ─────────────────────────────────────────────
+        // ── 0. Verificar / crear usuarios demo ───────────────────────────────
+        $this->ensureDemoUsers($now);
+
         $vit    = DB::table('users')->find(self::VIT_USER_ID);
         $winery = DB::table('users')->find(self::WINERY_USER_ID);
-
-        if (! $vit || ! $winery) {
-            $this->command->error('❌ Faltan los usuarios id=1 (winery) o id=2 (viticultor). Créalos primero.');
-            return;
-        }
         $this->command->info("✅ Viticultor: {$vit->email}");
         $this->command->info("✅ Bodega:     {$winery->email}");
 
@@ -197,6 +194,43 @@ class ViticulturistDemoSeeder_test extends Seeder
         $this->command->info("    ✓");
     }
 
+    // ─── 0b. Ensure demo users exist ─────────────────────────────────────────
+
+    private function ensureDemoUsers($now): void
+    {
+        if (! DB::table('users')->where('id', self::WINERY_USER_ID)->exists()) {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            DB::table('users')->insert([
+                'id'                => self::WINERY_USER_ID,
+                'name'              => 'Bodega Agaete Demo',
+                'email'             => 'demo_winery@agro365.es',
+                'email_verified_at' => $now,
+                'password'          => bcrypt('password'),
+                'role'              => 'winery',
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ]);
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            $this->command->info('  ✅ Usuario winery creado (id=' . self::WINERY_USER_ID . ')');
+        }
+
+        if (! DB::table('users')->where('id', self::VIT_USER_ID)->exists()) {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            DB::table('users')->insert([
+                'id'                => self::VIT_USER_ID,
+                'name'              => 'Viticultor Agaete Demo',
+                'email'             => 'demo_viticulturist@agro365.es',
+                'email_verified_at' => $now,
+                'password'          => bcrypt('password'),
+                'role'              => 'viticulturist',
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ]);
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            $this->command->info('  ✅ Usuario viticulturist creado (id=' . self::VIT_USER_ID . ')');
+        }
+    }
+
     // ─── 1. Cleanup ───────────────────────────────────────────────────────────
 
     private function cleanup(): void
@@ -290,9 +324,6 @@ class ViticulturistDemoSeeder_test extends Seeder
         }
         DB::table('exploitations')->where('viticulturist_id', $vitId)->delete();
 
-        // Clientes (user_id)
-        DB::table('clients')->where('user_id', $vitId)->delete();
-
         // Subcontrataciones
         DB::table('subcontractings')->where('viticulturist_id', $vitId)->delete();
 
@@ -342,7 +373,7 @@ class ViticulturistDemoSeeder_test extends Seeder
         DB::table('supplies')->where('viticulturist_id', $vitId)->delete();
         DB::table('warehouses')->where('user_id', $vitId)->delete();
 
-        // Facturas
+        // Facturas (antes que clients por FK)
         $invoiceIds = DB::table('invoices')->where('user_id', $vitId)->pluck('id');
         if ($invoiceIds->isNotEmpty()) {
             DB::table('invoice_items')->whereIn('invoice_id', $invoiceIds)->delete();
@@ -354,6 +385,9 @@ class ViticulturistDemoSeeder_test extends Seeder
             DB::table('invoice_items')->whereIn('invoice_id', $liqIds)->delete();
             DB::table('invoices')->whereIn('id', $liqIds)->delete();
         }
+
+        // Clientes (después de invoices)
+        DB::table('clients')->where('user_id', $vitId)->delete();
 
         // Gestión Territorial (catálogos propios del usuario)
         DB::table('sites')->where('user_id', $vitId)->delete();
@@ -2609,11 +2643,12 @@ class ViticulturistDemoSeeder_test extends Seeder
             ->pluck('id');
 
         if ($activityIds->isNotEmpty()) {
-            $harvestRows = DB::table('harvests')
-                ->whereIn('activity_id', $activityIds)
-                ->orderBy('harvest_start_date')
+            $harvestRows = DB::table('harvests as h')
+                ->join('agricultural_activities as a', 'h.activity_id', '=', 'a.id')
+                ->whereIn('h.activity_id', $activityIds)
+                ->orderBy('h.harvest_start_date')
                 ->limit(10)
-                ->get(['id', 'harvest_start_date', 'total_weight', 'campaign_id']);
+                ->get(['h.id', 'h.harvest_start_date', 'h.total_weight', 'a.campaign_id']);
 
             $destinations = [
                 ['own_winery', 'Bodega Agaete Artesana SL', '14.00', 'REGA-GC-0421'],
@@ -2837,44 +2872,37 @@ class ViticulturistDemoSeeder_test extends Seeder
         ]);
 
         // ── Suministros (10) ──────────────────────────────────────────────────
+        // columns: name, commercial_name, supply_type, unit, initial_stock, current_stock, min_stock_alert, expiry_date
         $suppliesData = [
-            ['Biohumus Sólido',         null, 'fertilizer', 'kg',  500.0, 320.0, 50.0,  null,         5.2,  null, null, null, null, null, 2.8,  null],
-            ['Nitrato Amónico 33.5%',   null, 'fertilizer', 'kg',  250.0, 180.0, 25.0,  '2026-12-31', 33.5, null, null, null, null, null, null, null],
-            ['Sulfato Potásico',         null, 'fertilizer', 'kg',  200.0, 140.0, 20.0,  '2026-12-31', null, null, 50.0, null, null, null, null, null],
-            ['Fosfato Monoamónico DAP', null, 'fertilizer', 'kg',  150.0,  80.0, 15.0,  '2026-09-30', 18.0, 46.0, null, null, null, null, null, null],
-            ['Humus de Lombriz Líquido', null, 'fertilizer', 'L',   100.0,  60.0, 10.0,  null,         3.0,  null, 2.0,  null, 12.0, null, 2.2,  null],
-            ['Sulfato de Magnesio',      null, 'fertilizer', 'kg',   80.0,  50.0,  8.0,  '2027-06-30', null, null, null, null, null, 13.0, null, null],
-            ['Semilla Cubierta Vegetal', null, 'seed',       'kg',   30.0,  18.0,  5.0,  '2026-08-31', null, null, null, null, null, null, null, null],
-            ['Caldo Bordelés',           null, 'postharvest','kg',   25.0,  15.0,  3.0,  '2026-06-30', null, null, null, null, null, null, null, null],
-            ['Cal Viva Desinfección',    null, 'other',      'kg',   50.0,  30.0,  5.0,  null,         null, null, null, null, null, null, null, null],
-            ['Bentonita Enológica',      null, 'other',      'kg',   20.0,  12.0,  2.0,  '2027-03-31', null, null, null, null, null, null, null, null],
+            ['Biohumus Sólido',          null, 'fertilizer', 'kg',  500.0, 320.0, 50.0,  null        ],
+            ['Nitrato Amónico 33.5%',    null, 'fertilizer', 'kg',  250.0, 180.0, 25.0,  '2026-12-31'],
+            ['Sulfato Potásico',          null, 'fertilizer', 'kg',  200.0, 140.0, 20.0,  '2026-12-31'],
+            ['Fosfato Monoamónico DAP',  null, 'fertilizer', 'kg',  150.0,  80.0, 15.0,  '2026-09-30'],
+            ['Humus de Lombriz Líquido', null, 'fertilizer', 'L',   100.0,  60.0, 10.0,  null        ],
+            ['Sulfato de Magnesio',       null, 'fertilizer', 'kg',   80.0,  50.0,  8.0,  '2027-06-30'],
+            ['Semilla Cubierta Vegetal',  null, 'seed',       'kg',   30.0,  18.0,  5.0,  '2026-08-31'],
+            ['Caldo Bordelés',            null, 'postharvest','kg',   25.0,  15.0,  3.0,  '2026-06-30'],
+            ['Cal Viva Desinfección',     null, 'other',      'kg',   50.0,  30.0,  5.0,  null        ],
+            ['Bentonita Enológica',       null, 'other',      'kg',   20.0,  12.0,  2.0,  '2027-03-31'],
         ];
         $supplyIds = [];
-        foreach ($suppliesData as [$name, $commName, $type, $unit, $initial, $current, $minAlert, $expiry, $n, $p, $k, $cao, $mgo, $so3, $om, $extra]) {
+        foreach ($suppliesData as [$name, $commName, $type, $unit, $initial, $current, $minAlert, $expiry]) {
             $supplyIds[] = DB::table('supplies')->insertGetId([
-                'viticulturist_id'            => $vitId,
-                'warehouse_id'                => $warehouseId,
-                'phytosanitary_product_id'    => null,
-                'name'                        => $name,
-                'commercial_name'             => $commName,
-                'registration_number'         => null,
-                'supply_type'                 => $type,
-                'unit_of_measurement'         => $unit,
-                'initial_stock'               => $initial,
-                'current_stock'               => $current,
-                'min_stock_alert'             => $minAlert,
-                'expiry_date'                 => $expiry,
-                'nutrient_n'                  => $n,
-                'nutrient_p2o5'               => $p,
-                'nutrient_k2o'                => $k,
-                'nutrient_cao'                => $cao,
-                'nutrient_mgo'                => $mgo,
-                'nutrient_so3'                => $so3,
-                'organic_matter'              => $om,
-                'notes'                       => null,
-                'active'                      => true,
-                'created_at'                  => $now,
-                'updated_at'                  => $now,
+                'viticulturist_id'   => $vitId,
+                'warehouse_id'       => $warehouseId,
+                'name'               => $name,
+                'commercial_name'    => $commName,
+                'registration_number'=> null,
+                'supply_type'        => $type,
+                'unit_of_measurement'=> $unit,
+                'initial_stock'      => $initial,
+                'current_stock'      => $current,
+                'min_stock_alert'    => $minAlert,
+                'expiry_date'        => $expiry,
+                'notes'              => null,
+                'active'             => true,
+                'created_at'         => $now,
+                'updated_at'         => $now,
             ]);
         }
 
@@ -2984,7 +3012,11 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // Obtener harvests del viticultor para vincular items
         $actIds = DB::table('agricultural_activities')->where('viticulturist_id', $vitId)->pluck('id');
-        $harvests = DB::table('harvests')->whereIn('activity_id', $actIds)->orderBy('harvest_start_date')->get(['id', 'total_weight', 'harvest_start_date', 'campaign_id']);
+        $harvests = DB::table('harvests as h')
+            ->join('agricultural_activities as a', 'h.activity_id', '=', 'a.id')
+            ->whereIn('h.activity_id', $actIds)
+            ->orderBy('h.harvest_start_date')
+            ->get(['h.id', 'h.total_weight', 'h.harvest_start_date', 'a.campaign_id']);
 
         // ── Facturas Venta Cosecha (6) — user_id = viticulturist ──────────────
         $harvestSales = [
@@ -3011,7 +3043,7 @@ class ViticulturistDemoSeeder_test extends Seeder
                 'viticulturist_id'         => null,
                 'invoice_number'           => $makeNum(),
                 'invoice_date'             => $date,
-                'due_date'                 => date('Y-m-d', strtotime($date . ' +30 days')),
+                'payment_date'             => date('Y-m-d', strtotime($date . ' +30 days')),
                 'subtotal'                 => $subtotal,
                 'discount_amount'          => 0,
                 'tax_base'                 => $subtotal,
@@ -3091,7 +3123,7 @@ class ViticulturistDemoSeeder_test extends Seeder
                 'viticulturist_id'         => $vitId,
                 'invoice_number'           => 'LIQ-' . substr($date, 0, 4) . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
                 'invoice_date'             => $date,
-                'due_date'                 => date('Y-m-d', strtotime($date . ' +15 days')),
+                'payment_date'             => date('Y-m-d', strtotime($date . ' +15 days')),
                 'subtotal'                 => $subtotal,
                 'discount_amount'          => 0,
                 'tax_base'                 => $subtotal,
@@ -3182,7 +3214,7 @@ class ViticulturistDemoSeeder_test extends Seeder
         ] as [$name, $code, $desc]) {
             DB::table('valleys')->insertOrIgnore([
                 'user_id' => $vitId, 'name' => $name, 'code' => $code,
-                'description' => $desc, 'active' => true,
+                'description_valley' => $desc, 'active' => true,
                 'created_at' => $now, 'updated_at' => $now,
             ]);
         }
@@ -3225,11 +3257,11 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // ── Tipos de Propiedad (2) ────────────────────────────────────────────
         foreach ([
-            ['Propiedad familiar heredada',  'Finca transmitida por herencia familiar. Sin cargas.'],
-            ['Arrendamiento a largo plazo',  'Contrato de arrendamiento rústico > 5 años.'],
-        ] as [$name, $desc]) {
+            'Propiedad familiar heredada',
+            'Arrendamiento a largo plazo',
+        ] as $name) {
             DB::table('property_types')->insertOrIgnore([
-                'user_id' => $vitId, 'name' => $name, 'description' => $desc,
+                'user_id' => $vitId, 'name' => $name,
                 'active' => true, 'created_at' => $now, 'updated_at' => $now,
             ]);
         }
