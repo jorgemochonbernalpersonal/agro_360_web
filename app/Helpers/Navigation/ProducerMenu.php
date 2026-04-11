@@ -28,10 +28,10 @@ class ProducerMenu
         ];
 
         // ── Viñedo: Cuaderno de Campo ─────────────────────────────────────────
-        $menu['cuaderno_inputs'] = ViticulturistMenu::cuadernoInputs('producer', 'Vendimia Campo');
+        $menu['notebook_inputs'] = ViticulturistMenu::notebookInputs('producer', 'Vendimia Campo');
 
         // ── Viñedo: Registros Oficiales ───────────────────────────────────────
-        $menu['registros_oficiales'] = ViticulturistMenu::registrosOficiales('producer');
+        $menu['official_records'] = ViticulturistMenu::officialRecords('producer');
 
         // ── Bodega: Vendimia ──────────────────────────────────────────────────
         $harvestItems = [
@@ -53,10 +53,10 @@ class ProducerMenu
         $menu['harvest'] = $harvestItems;
 
         // ── Bodega: Elaboración ───────────────────────────────────────────────
-        $menu['cellar_elab'] = WineryMenu::cellarElab('producer', operacionesAfterSalas: true);
+        $menu['cellar_elaboration'] = WineryMenu::cellarElaboration('producer', operacionesAfterSalas: true);
 
         // ── Bodega: Salida + Insumos + Alertas ────────────────────────────────
-        $menu['cellar_salida'] = WineryMenu::cellarSalida('producer', [
+        $menu['cellar_output'] = WineryMenu::cellarOutput('producer', [
             ['divider' => true],
             ['icon' => 'building-storefront', 'label' => 'Insumos de Bodega', 'route' => 'producer.winery-supplies.index', 'active' => request()->routeIs('producer.winery-supplies*')],
             ['icon' => 'truck',               'label' => 'Proveedores',        'route' => 'producer.suppliers.index',       'active' => request()->routeIs('producer.suppliers*')],
@@ -65,10 +65,10 @@ class ProducerMenu
         ]);
 
         // ── Bodega: Normativa ─────────────────────────────────────────────────
-        $menu['winery_normativa'] = WineryMenu::wineryNormativa('producer', silicieWip: true, includeDocumentos: true);
+        $menu['winery_compliance'] = WineryMenu::wineryCompliance('producer', silicieWip: true, includeDocumentos: true);
 
         // ── Parcelas (unión viñedo + bodega) ──────────────────────────────────
-        $menu['finca'] = [
+        $menu['estate'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',            'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                     'active' => request()->routeIs('sigpac.*')],

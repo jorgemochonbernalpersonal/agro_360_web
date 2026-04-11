@@ -133,7 +133,7 @@ class WineryPlotLifecycleSeeder extends Seeder
 
         $this->cleanup($vitId);
 
-        // ── Asegurar vínculo winery + cuaderno_access ────────────────────────
+        // ── Asegurar vínculo winery + notebook_access ────────────────────────
         $this->ensureWineryLink($vitId, $now);
 
         // ── Asegurar campañas del viticultor ─────────────────────────────────
@@ -322,8 +322,8 @@ class WineryPlotLifecycleSeeder extends Seeder
                 'viticulturist_id'   => $vitId,
                 'assigned_by'        => self::WINERY_USER_ID,
                 'source'             => 'own',
-                'cuaderno_access'    => true,
-                'cuaderno_granted_at'=> $now,
+                'notebook_access'    => true,
+                'notebook_granted_at'=> $now,
                 'created_at'         => $now,
                 'updated_at'         => $now,
             ]);
@@ -331,7 +331,7 @@ class WineryPlotLifecycleSeeder extends Seeder
             DB::table('winery_viticulturist')
                 ->where('winery_id', self::WINERY_USER_ID)
                 ->where('viticulturist_id', $vitId)
-                ->update(['cuaderno_access' => true, 'cuaderno_granted_at' => $now]);
+                ->update(['notebook_access' => true, 'notebook_granted_at' => $now]);
         }
     }
 

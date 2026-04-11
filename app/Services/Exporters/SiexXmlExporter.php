@@ -50,11 +50,11 @@ class SiexXmlExporter
         $root->appendChild($metadata);
         
         // Información del viticultor
-        $viticultor = $xml->createElement('Viticultor');
-        $this->addElement($xml, $viticultor, 'Nombre', $user->name);
-        $this->addElement($xml, $viticultor, 'Email', $user->email);
-        $root->appendChild($viticultor);
-        
+        $viticulturistEl = $xml->createElement('Viticultor');
+        $this->addElement($xml, $viticulturistEl, 'Nombre', $user->name);
+        $this->addElement($xml, $viticulturistEl, 'Email', $user->email);
+        $root->appendChild($viticulturistEl);
+
         // Periodo del informe
         $periodo = $xml->createElement('Periodo');
         $this->addElement($xml, $periodo, 'FechaInicio', $report->period_start->format('Y-m-d'));
@@ -190,18 +190,18 @@ class SiexXmlExporter
         $root->appendChild($metadata);
         
         // Información del viticultor
-        $viticultor = $xml->createElement('Viticultor');
-        $this->addElement($xml, $viticultor, 'Nombre', $user->name);
-        $this->addElement($xml, $viticultor, 'Email', $user->email);
-        $root->appendChild($viticultor);
-        
+        $viticulturistEl = $xml->createElement('Viticultor');
+        $this->addElement($xml, $viticulturistEl, 'Nombre', $user->name);
+        $this->addElement($xml, $viticulturistEl, 'Email', $user->email);
+        $root->appendChild($viticulturistEl);
+
         // Campaña
-        $campana = $xml->createElement('Campana');
+        $campaignEl = $xml->createElement('Campana');
         $campaignName = $report->report_metadata['campaign_name'] ?? 'N/A';
-        $this->addElement($xml, $campana, 'Nombre', $campaignName);
-        $this->addElement($xml, $campana, 'FechaInicio', $report->period_start->format('Y-m-d'));
-        $this->addElement($xml, $campana, 'FechaFin', $report->period_end->format('Y-m-d'));
-        $root->appendChild($campana);
+        $this->addElement($xml, $campaignEl, 'Nombre', $campaignName);
+        $this->addElement($xml, $campaignEl, 'FechaInicio', $report->period_start->format('Y-m-d'));
+        $this->addElement($xml, $campaignEl, 'FechaFin', $report->period_end->format('Y-m-d'));
+        $root->appendChild($campaignEl);
         
         // Estadísticas
         $estadisticas = $xml->createElement('Estadisticas');
@@ -283,13 +283,13 @@ class SiexXmlExporter
 
             // Si es cosecha, añadir detalles trazabilidad (PAC)
             if ($activity->activity_type === 'harvest' && $activity->harvest) {
-                $cosecha = $xml->createElement('CosechaPAC');
+                $harvestEl = $xml->createElement('CosechaPAC');
                 $h = $activity->harvest;
-                if ($h->transport_document_number) $this->addElement($xml, $cosecha, 'DocumentoTransporte', $h->transport_document_number);
-                if ($h->destination_rega_code) $this->addElement($xml, $cosecha, 'REGADestino', $h->destination_rega_code);
-                if ($h->vehicle_plate) $this->addElement($xml, $cosecha, 'Matricula', $h->vehicle_plate);
-                
-                $actividadElement->appendChild($cosecha);
+                if ($h->transport_document_number) $this->addElement($xml, $harvestEl, 'DocumentoTransporte', $h->transport_document_number);
+                if ($h->destination_rega_code) $this->addElement($xml, $harvestEl, 'REGADestino', $h->destination_rega_code);
+                if ($h->vehicle_plate) $this->addElement($xml, $harvestEl, 'Matricula', $h->vehicle_plate);
+
+                $actividadElement->appendChild($harvestEl);
             }
             
             $actividadElement->appendChild($detalles);

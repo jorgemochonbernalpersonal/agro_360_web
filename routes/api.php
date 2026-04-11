@@ -176,11 +176,11 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
 
         // SILICIE
         Route::get('/silicie',                [SilicieController::class, 'index'])->middleware('throttle:30,1');
-        Route::get('/silicie/entradas',       [SilicieController::class, 'entradas'])->middleware('throttle:30,1');
-        Route::get('/silicie/elaboracion',    [SilicieController::class, 'elaboracion'])->middleware('throttle:30,1');
-        Route::get('/silicie/existencias',    [SilicieController::class, 'existencias'])->middleware('throttle:30,1');
-        Route::get('/silicie/salidas',        [SilicieController::class, 'salidas'])->middleware('throttle:30,1');
-        Route::get('/silicie/apertura',       [SilicieController::class, 'apertura'])->middleware('throttle:30,1');
+        Route::get('/silicie/entries',       [SilicieController::class, 'entries'])->middleware('throttle:30,1');
+        Route::get('/silicie/elaboration',    [SilicieController::class, 'elaboration'])->middleware('throttle:30,1');
+        Route::get('/silicie/inventory',    [SilicieController::class, 'inventory'])->middleware('throttle:30,1');
+        Route::get('/silicie/outputs',        [SilicieController::class, 'outputs'])->middleware('throttle:30,1');
+        Route::get('/silicie/opening',       [SilicieController::class, 'opening'])->middleware('throttle:30,1');
         Route::post('/silicie/snapshot',      [SilicieController::class, 'snapshot'])->middleware('throttle:10,1');
         Route::get('/silicie/export',         [SilicieController::class, 'export'])->middleware('throttle:10,1');
 

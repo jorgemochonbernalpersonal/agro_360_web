@@ -90,7 +90,7 @@ class Index extends Component
             ->where('supervisor_id', Auth::id())
             ->firstOrFail();
 
-        // Also revoke the cuaderno_access flag on the relation
+        // Also revoke the notebook_access flag on the relation
         $relation = \App\Models\SupervisorViticulturist::where('supervisor_id', Auth::id())
             ->where('viticulturist_id', $request->viticulturist_id)
             ->first();

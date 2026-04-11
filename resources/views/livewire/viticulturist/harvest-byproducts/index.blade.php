@@ -50,7 +50,7 @@
                 />
                 <x-agro.stat-card
                     label="Orujo + Hollejo"
-                    :value="number_format($stats['orujo_kg'], 0, ',', '.') . ' kg'"
+                    :value="number_format($stats['pomace_kg'], 0, ',', '.') . ' kg'"
                     description="Campaña seleccionada"
                     icon="cube"
                     color="amber"
@@ -161,15 +161,15 @@
                     @php
                         $delay = min($loop->index * 50, 300);
                         $typeColor = match($entry->byproduct_type) {
-                            'orujo'  => ['bg' => 'bg-amber-100',  'icon' => 'text-amber-600'],
-                            'raspon' => ['bg' => 'bg-orange-100', 'icon' => 'text-orange-600'],
-                            'lia'    => ['bg' => 'bg-yellow-100', 'icon' => 'text-yellow-600'],
+                            'pomace' => ['bg' => 'bg-amber-100',  'icon' => 'text-amber-600'],
+                            'stem'   => ['bg' => 'bg-orange-100', 'icon' => 'text-orange-600'],
+                            'lees'   => ['bg' => 'bg-yellow-100', 'icon' => 'text-yellow-600'],
                             default  => ['bg' => 'bg-zinc-100',   'icon' => 'text-zinc-400'],
                         };
                         $typeBadgeClass = match($entry->byproduct_type) {
-                            'orujo'  => 'bg-amber-100 text-amber-700',
-                            'raspon' => 'bg-orange-100 text-orange-700',
-                            'lia'    => 'bg-yellow-100 text-yellow-700',
+                            'pomace' => 'bg-amber-100 text-amber-700',
+                            'stem'   => 'bg-orange-100 text-orange-700',
+                            'lees'   => 'bg-yellow-100 text-yellow-700',
                             default  => 'bg-zinc-100 text-zinc-500',
                         };
                     @endphp

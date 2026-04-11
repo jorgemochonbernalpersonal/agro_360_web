@@ -46,7 +46,7 @@ class SilicieController extends Controller
 
     // ─── GET /winery/silicie/entradas ─────────────────────────────────────────
 
-    public function entradas(Request $request): JsonResponse
+    public function entries(Request $request): JsonResponse
     {
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
@@ -109,7 +109,7 @@ class SilicieController extends Controller
 
     // ─── GET /winery/silicie/elaboracion ──────────────────────────────────────
 
-    public function elaboracion(Request $request): JsonResponse
+    public function elaboration(Request $request): JsonResponse
     {
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
@@ -166,7 +166,7 @@ class SilicieController extends Controller
 
     // ─── GET /winery/silicie/existencias ──────────────────────────────────────
 
-    public function existencias(Request $request): JsonResponse
+    public function inventory(Request $request): JsonResponse
     {
         $user     = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
@@ -243,7 +243,7 @@ class SilicieController extends Controller
 
     // ─── GET /winery/silicie/salidas ──────────────────────────────────────────
 
-    public function salidas(Request $request): JsonResponse
+    public function outputs(Request $request): JsonResponse
     {
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
@@ -322,7 +322,7 @@ class SilicieController extends Controller
 
     // ─── GET /winery/silicie/apertura ─────────────────────────────────────────
 
-    public function apertura(Request $request): JsonResponse
+    public function opening(Request $request): JsonResponse
     {
         $user = $request->user();
         abort_unless($user->hasWineryAccess(), 403);
@@ -473,33 +473,33 @@ class SilicieController extends Controller
 
     private function buildStats(int $wineryId, int $vintage): array
     {
-        $kgRecibidos = DB::table('harvests')
+        $kgReceived = DB::table('harvests')
             ->where('winery_id', $wineryId)
             ->where('vintage', $vintage)
             ->sum('total_weight');
 
-        $litrosBodega = DB::table('container_current_states as ccs')
+        $wineryLiters = DB::table('container_current_states as ccs')
             ->join('containers as c', 'c.id', '=', 'ccs.container_id')
             ->where('c.user_id', $wineryId)
             ->where('ccs.current_quantity', '>', 0)
             ->sum('ccs.current_quantity');
 
-        $vinosActivos = Wine::where('user_id', $wineryId)
+        $activeWines = Wine::where('user_id', $wineryId)
             ->where('vintage', $vintage)
             ->whereIn('status', ['in_progress', 'aged'])
             ->count();
 
-        $salidas = DB::table('invoices')
+        $outputs = DB::table('invoices')
             ->where('user_id', $wineryId)
             ->whereIn('status', ['sent', 'paid'])
             ->whereYear('invoice_date', $vintage)
             ->count();
 
         return [
-            'kg_recibidos'  => (float) $kgRecibidos,
-            'litros_bodega' => (float) $litrosBodega,
-            'vinos_activos' => (int) $vinosActivos,
-            'salidas'       => (int) $salidas,
+            'kg_received'   => (float) $kgReceived,
+            'winery_liters' => (float) $wineryLiters,
+            'active_wines'  => (int) $activeWines,
+            'outputs'       => (int) $outputs,
         ];
     }
 }

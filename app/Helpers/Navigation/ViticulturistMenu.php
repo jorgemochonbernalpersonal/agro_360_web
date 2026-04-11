@@ -28,7 +28,7 @@ class ViticulturistMenu
         ];
 
         // ── Relación con Bodega ───────────────────────────────────────────────
-        $menu['bodega_rel'] = [
+        $menu['winery_rel'] = [
             ['icon' => 'megaphone',              'label' => 'Avisos de Bodegas',          'route' => 'viticulturist.announcements',          'active' => request()->routeIs('viticulturist.announcements')],
             ['icon' => 'chat-bubble-left-right', 'label' => 'Comunicación con Bodega',    'route' => 'viticulturist.winery-messages.index',  'active' => request()->routeIs('viticulturist.winery-messages*')],
             ['icon' => 'lock-closed',            'label' => 'Acceso Bodegas al Cuaderno', 'route' => 'viticulturist.winery-access.index',   'active' => request()->routeIs('viticulturist.winery-access*'),
@@ -49,11 +49,11 @@ class ViticulturistMenu
         }
 
         // ── Cuaderno + Registros Oficiales ────────────────────────────────────
-        $menu['cuaderno_inputs']     = self::cuadernoInputs('viticulturist');
-        $menu['registros_oficiales'] = self::registrosOficiales('viticulturist');
+        $menu['notebook_inputs'] = self::notebookInputs('viticulturist');
+        $menu['official_records'] = self::officialRecords('viticulturist');
 
         // ── Finca ─────────────────────────────────────────────────────────────
-        $menu['finca'] = [
+        $menu['estate'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'plots.index',                           'active' => request()->routeIs('plots.*') && !request()->routeIs('plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',                 'active' => request()->routeIs('plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                          'active' => request()->routeIs('sigpac.*')],
@@ -96,7 +96,7 @@ class ViticulturistMenu
 
     // ── Secciones compartidas (usadas también por ProducerMenu) ───────────────
 
-    public static function cuadernoInputs(string $prefix, string $vendimiaLabel = 'Vendimia'): array
+    public static function notebookInputs(string $prefix, string $harvestLabel = 'Vendimia'): array
     {
         return [
             ['icon' => 'book-open',          'label' => 'Cuaderno Digital',    'route' => "{$prefix}.digital-notebook",                     'active' => request()->routeIs("{$prefix}.digital-notebook") && !request()->routeIs("{$prefix}.digital-notebook.*")],
@@ -111,12 +111,12 @@ class ViticulturistMenu
             ['icon' => 'archive-box',        'label' => 'Post-Vendimia',       'route' => "{$prefix}.digital-notebook.post-harvest.index",  'active' => request()->routeIs("{$prefix}.digital-notebook.post-harvest.*")],
             ['icon' => 'chart-bar-square',   'label' => 'Rendimientos Estimados', 'route' => "{$prefix}.digital-notebook.estimated-yields.index", 'active' => request()->routeIs("{$prefix}.digital-notebook.estimated-yields.*")],
             ['divider' => true],
-            ['icon' => 'archive-box-arrow-down', 'label' => $vendimiaLabel,      'route' => "{$prefix}.harvests.index",        'active' => request()->routeIs("{$prefix}.harvests.*")],
+            ['icon' => 'archive-box-arrow-down', 'label' => $harvestLabel,      'route' => "{$prefix}.harvests.index",        'active' => request()->routeIs("{$prefix}.harvests.*")],
             ['icon' => 'bug-ant',                'label' => 'Gestión de Plagas', 'route' => "{$prefix}.pest-management.index", 'active' => request()->routeIs("{$prefix}.pest-management.*")],
         ];
     }
 
-    public static function registrosOficiales(string $prefix): array
+    public static function officialRecords(string $prefix): array
     {
         return [
             ['icon' => 'chart-bar',                'label' => 'Cumplimiento Cuaderno',    'route' => "{$prefix}.pac-compliance",                'active' => request()->routeIs("{$prefix}.pac-compliance")],

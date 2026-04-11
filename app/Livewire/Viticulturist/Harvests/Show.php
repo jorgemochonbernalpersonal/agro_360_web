@@ -87,7 +87,7 @@ class Show extends Component
     {
         $viticulturistId = Auth::id();
 
-        $cuadernoHarvests = Harvest::with(['activity'])
+        $notebookHarvests = Harvest::with(['activity'])
             ->whereHas('activity', fn ($q) => $q->where('viticulturist_id', $viticulturistId))
             ->where('plot_planting_id', $this->planting->id)
             ->where('vintage', $this->vintageYear)
@@ -110,11 +110,11 @@ class Show extends Component
             ->orderBy('delivery_date')
             ->get();
 
-        $totalCuaderno    = (float) $cuadernoHarvests->sum('total_weight');
+        $totalNotebook    = (float) $notebookHarvests->sum('total_weight');
         $totalWinery      = (float) $wineryReceptions->sum('total_weight');
         $totalDeclared    = (float) $declaredDeliveries->where('disqualified', false)->sum('delivered_kg');
-        $globalDiscrepancy = $totalCuaderno > 0 && $totalWinery > 0
-            ? round(abs($totalCuaderno - $totalWinery), 1)
+        $globalDiscrepancy = $totalNotebook > 0 && $totalWinery > 0
+            ? round(abs($totalNotebook - $totalWinery), 1)
             : null;
 
         // Cupo PAC
@@ -126,10 +126,10 @@ class Show extends Component
         $cupoExceeded = $cupoPct !== null && $cupoPct > 100;
 
         return view('livewire.viticulturist.harvests.show', [
-            'cuadernoHarvests'   => $cuadernoHarvests,
+            'notebookHarvests'   => $notebookHarvests,
             'wineryReceptions'   => $wineryReceptions,
             'declaredDeliveries' => $declaredDeliveries,
-            'totalCuaderno'      => $totalCuaderno,
+            'totalNotebook'      => $totalNotebook,
             'totalWinery'        => $totalWinery,
             'totalDeclared'      => $totalDeclared,
             'globalDiscrepancy'  => $globalDiscrepancy,

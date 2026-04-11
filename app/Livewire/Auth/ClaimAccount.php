@@ -114,8 +114,8 @@ class ClaimAccount extends Component
             WineryViticulturist::where('viticulturist_id', $this->pendingUser->id)
                 ->whereNotNull('winery_id')
                 ->update([
-                    'cuaderno_access'     => true,
-                    'cuaderno_granted_at' => now(),
+                    'notebook_access'     => true,
+                    'notebook_granted_at' => now(),
                 ]);
         }
 

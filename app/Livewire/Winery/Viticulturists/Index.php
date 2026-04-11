@@ -130,7 +130,7 @@ class Index extends AbstractIndex
             ->firstOrFail();
 
         // Revocar acceso al cuaderno si estaba concedido
-        if ($relation->cuaderno_access) {
+        if ($relation->notebook_access) {
             $relation->revokeNotebookAccess();
         }
 
@@ -163,7 +163,7 @@ class Index extends AbstractIndex
             'pending'       => (clone $base)->whereHas('viticulturist', fn($q) => $q->where('can_login', false))->count(),
             'own'           => (clone $base)->where('source', 'own')->count(),
             'supervisor'    => (clone $base)->where('source', 'supervisor')->count(),
-            'with_cuaderno' => (clone $base)->where('cuaderno_access', true)->count(),
+            'with_notebook' => (clone $base)->where('notebook_access', true)->count(),
         ];
 
         // Pool: supervisor viticultors not yet assigned to this winery

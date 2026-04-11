@@ -39,7 +39,7 @@ class WineryViticulturistObserver
     /**
      * Sync changes to viticultor_assignments:
      * - winery_id null→value: self-registered viticulturist linked to a winery for the first time
-     * - cuaderno_access/granted_at/revoked_at: notebook access changes
+     * - notebook_access/granted_at/revoked_at: notebook access changes
      */
     public function updated(WineryViticulturist $rel): void
     {
@@ -63,7 +63,7 @@ class WineryViticulturistObserver
             return;
         }
 
-        if (!$rel->wasChanged(['cuaderno_access', 'cuaderno_granted_at', 'cuaderno_revoked_at'])) {
+        if (!$rel->wasChanged(['notebook_access', 'notebook_granted_at', 'notebook_revoked_at'])) {
             return;
         }
 
@@ -82,9 +82,9 @@ class WineryViticulturistObserver
         }
 
         $assignment->update([
-            'cuaderno_access'     => $rel->cuaderno_access ?? false,
-            'cuaderno_granted_at' => $rel->cuaderno_granted_at,
-            'cuaderno_revoked_at' => $rel->cuaderno_revoked_at,
+            'notebook_access'     => $rel->notebook_access ?? false,
+            'notebook_granted_at' => $rel->notebook_granted_at,
+            'notebook_revoked_at' => $rel->notebook_revoked_at,
         ]);
     }
 

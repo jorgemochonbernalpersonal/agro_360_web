@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Viticulturist\BodegaMessages;
+namespace App\Livewire\Viticulturist\WineryMessages;
 
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -42,7 +42,7 @@ class Index extends Component
             ])
             ->count();
 
-        return view('livewire.viticulturist.bodega-messages.index', [
+        return view('livewire.viticulturist.winery-messages.index', [
             'notifications' => $notifications,
             'unreadCount'   => $unreadCount,
         ])->layout('layouts.app');

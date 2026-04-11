@@ -14,20 +14,20 @@ class ViticultoristAssignment extends Model
         'organization_id',
         'assigned_by_org_id',
         'assigned_by_user_id',
-        'cuaderno_access',
-        'cuaderno_granted_at',
-        'cuaderno_revoked_at',
+        'notebook_access',
+        'notebook_granted_at',
+        'notebook_revoked_at',
     ];
 
     protected $casts = [
-        'cuaderno_access'     => 'boolean',
-        'cuaderno_granted_at' => 'datetime',
-        'cuaderno_revoked_at' => 'datetime',
+        'notebook_access'     => 'boolean',
+        'notebook_granted_at' => 'datetime',
+        'notebook_revoked_at' => 'datetime',
     ];
 
     // ── Relationships ────────────────────────────────────────────────────────
 
-    public function viticultor(): BelongsTo
+    public function viticulturist(): BelongsTo
     {
         return $this->belongsTo(User::class, 'viticultor_id');
     }
@@ -52,17 +52,17 @@ class ViticultoristAssignment extends Model
     public function grantNotebookAccess(): void
     {
         $this->update([
-            'cuaderno_access'     => true,
-            'cuaderno_granted_at' => now(),
-            'cuaderno_revoked_at' => null,
+            'notebook_access'     => true,
+            'notebook_granted_at' => now(),
+            'notebook_revoked_at' => null,
         ]);
     }
 
     public function revokeNotebookAccess(): void
     {
         $this->update([
-            'cuaderno_access'     => false,
-            'cuaderno_revoked_at' => now(),
+            'notebook_access'     => false,
+            'notebook_revoked_at' => now(),
         ]);
     }
 
@@ -70,7 +70,7 @@ class ViticultoristAssignment extends Model
 
     public function hasNotebookAccess(): bool
     {
-        return $this->cuaderno_access;
+        return $this->notebook_access;
     }
 
     /**
@@ -90,7 +90,7 @@ class ViticultoristAssignment extends Model
 
     public function scopeWithNotebookAccess($query)
     {
-        return $query->where('cuaderno_access', true);
+        return $query->where('notebook_access', true);
     }
 
     public function scopeAssignedByDO($query)

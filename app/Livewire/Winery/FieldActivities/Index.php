@@ -39,7 +39,7 @@ class Index extends Component
         // Ghost viticulturists (can_login=false) cannot fill their own notebook,
         // so they are excluded from this view regardless.
         $viticulturistIds = WineryViticulturist::where('winery_id', $wineryId)
-            ->where('cuaderno_access', true)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         if (Auth::user()->isProducer()) {
@@ -48,7 +48,7 @@ class Index extends Component
 
         // Viticulturists linked but without cuaderno consent, for the warning banner
         $withoutCuadernoAccess = WineryViticulturist::where('winery_id', $wineryId)
-            ->where('cuaderno_access', false)
+            ->where('notebook_access', false)
             ->whereHas('viticulturist', fn($q) => $q->where('can_login', true))
             ->with('viticulturist:id,name')
             ->get()

@@ -85,7 +85,7 @@ class Index extends Component
         if ($type === 'supervisor') {
             $relation = SupervisorViticulturist::where('supervisor_id', $id)
                 ->where('viticulturist_id', Auth::id())
-                ->where('cuaderno_access', true)
+                ->where('notebook_access', true)
                 ->firstOrFail();
 
             $relation->revokeNotebookAccess();
@@ -100,7 +100,7 @@ class Index extends Component
         } else {
             $relation = WineryViticulturist::where('winery_id', $id)
                 ->where('viticulturist_id', Auth::id())
-                ->where('cuaderno_access', true)
+                ->where('notebook_access', true)
                 ->firstOrFail();
 
             $relation->revokeNotebookAccess();
@@ -134,26 +134,26 @@ class Index extends Component
         // Granted: both winery and supervisor accesses normalized for the view
         $grantedWineries = WineryViticulturist::with('winery')
             ->where('viticulturist_id', $viticulturistId)
-            ->where('cuaderno_access', true)
-            ->orderBy('cuaderno_granted_at', 'desc')
+            ->where('notebook_access', true)
+            ->orderBy('notebook_granted_at', 'desc')
             ->get()
             ->map(fn($r) => (object) [
                 'id'         => $r->winery_id,
                 'type'       => 'winery',
                 'name'       => $r->winery?->name,
-                'granted_at' => $r->cuaderno_granted_at,
+                'granted_at' => $r->notebook_granted_at,
             ])->toBase();
 
         $grantedSupervisors = SupervisorViticulturist::with('supervisor')
             ->where('viticulturist_id', $viticulturistId)
-            ->where('cuaderno_access', true)
-            ->orderBy('cuaderno_granted_at', 'desc')
+            ->where('notebook_access', true)
+            ->orderBy('notebook_granted_at', 'desc')
             ->get()
             ->map(fn($r) => (object) [
                 'id'         => $r->supervisor_id,
                 'type'       => 'supervisor',
                 'name'       => $r->supervisor?->name,
-                'granted_at' => $r->cuaderno_granted_at,
+                'granted_at' => $r->notebook_granted_at,
             ])->toBase();
 
         $granted = $grantedWineries->merge($grantedSupervisors)

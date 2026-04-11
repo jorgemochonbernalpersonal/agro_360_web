@@ -258,7 +258,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
 
         // Almacén de Insumos (unificado: Fitosanitarios + Otros Insumos + Almacenes)
         Route::prefix('warehouse')->name('warehouse.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\Almacen\Index::class)->name('index');
+            Route::get('/', \App\Livewire\Viticulturist\Warehouse\Index::class)->name('index');
             Route::get('/stock/analytics', \App\Livewire\Viticulturist\Inventory\Analytics::class)->name('stock.analytics');
             Route::get('/stock/export', function () {
                 $export = new \App\Exports\InventoryExport(auth()->id());
@@ -495,7 +495,7 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
         Route::get('/notifications', \App\Livewire\Viticulturist\Notifications\Index::class)
             ->name('notifications.index');
 
-        Route::get('/winery-messages', \App\Livewire\Viticulturist\BodegaMessages\Index::class)
+        Route::get('/winery-messages', \App\Livewire\Viticulturist\WineryMessages\Index::class)
             ->name('winery-messages.index');
 
         // ── Subcontratación ───────────────────────────────────────────

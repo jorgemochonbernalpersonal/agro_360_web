@@ -231,14 +231,14 @@
 
         <div class="flex items-center justify-between gap-4">
             <div class="flex items-start gap-3">
-                @if($relation->cuaderno_access)
+                @if($relation->notebook_access)
                     <div class="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
                         <flux:icon icon="check-circle" class="size-5 text-green-600" />
                     </div>
                     <div>
                         <p class="text-sm font-medium text-zinc-900">Acceso concedido</p>
                         <p class="text-xs text-zinc-400">
-                            Desde {{ $relation->cuaderno_granted_at?->format('d/m/Y') ?? '—' }}
+                            Desde {{ $relation->notebook_granted_at?->format('d/m/Y') ?? '—' }}
                             · Puedes ver las actividades del viticultor en el cuaderno de campo.
                         </p>
                     </div>
@@ -274,8 +274,8 @@
                         <p class="text-sm font-medium text-zinc-700">Sin acceso al cuaderno</p>
                         <p class="text-xs text-zinc-400">
                             El viticultor no ha concedido acceso a sus actividades de campo.
-                            @if($relation->cuaderno_revoked_at)
-                                Revocado el {{ $relation->cuaderno_revoked_at->format('d/m/Y') }}.
+                            @if($relation->notebook_revoked_at)
+                                Revocado el {{ $relation->notebook_revoked_at->format('d/m/Y') }}.
                             @endif
                         </p>
                     </div>
@@ -284,7 +284,7 @@
 
             @if($isOwn)
             <div class="shrink-0">
-                @if($relation->cuaderno_access)
+                @if($relation->notebook_access)
                     {{-- Access granted: viticulturist controls revocation --}}
                 @elseif($accessRequest?->isPending())
                     <flux:button
@@ -310,7 +310,7 @@
             @endif
         </div>
 
-        @if($relation->cuaderno_access)
+        @if($relation->notebook_access)
             <div class="mt-3 pt-3 border-t border-zinc-100">
                 <p class="text-xs text-zinc-400">
                     <flux:icon icon="information-circle" class="size-3.5 inline-block mr-1" />

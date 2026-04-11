@@ -484,7 +484,7 @@ class WinerySilicieDataSeeder extends Seeder
         // 6. SUBPRODUCTOS distribuidos 2023-2026 (Libro IV)
         // ═══════════════════════════════════════════════════════════════════
 
-        $subproductTypes = ['orujo', 'lías', 'vinaza'];
+        $subproductTypes = ['pomace', 'lees', 'vinasse'];
         $destinations    = ['alcohol', 'animal_feed', 'composting', 'distillery'];
         $totalSubproducts = 0;
 
@@ -496,7 +496,7 @@ class WinerySilicieDataSeeder extends Seeder
                 $count = mt_rand(1, 3);
                 for ($i = 0; $i < $count; $i++) {
                     $wine  = $yearWines[$i % count($yearWines)];
-                    $month = $spType === 'orujo' ? mt_rand(9, 11) : mt_rand(1, 12);
+                    $month = $spType === 'pomace' ? mt_rand(9, 11) : mt_rand(1, 12);
                     if ($year === 2026 && $month > 3) $month = mt_rand(1, 3);
 
                     DB::table('wine_subproducts')->insert([

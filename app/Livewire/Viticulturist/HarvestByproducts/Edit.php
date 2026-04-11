@@ -12,9 +12,9 @@ class Edit extends AbstractEdit
 
     public string $campaign_id        = '';
     public string $date               = '';
-    public string $byproduct_type     = 'orujo';
+    public string $byproduct_type     = 'pomace';
     public string $quantity_kg        = '';
-    public string $destination_type   = 'cooperativa';
+    public string $destination_type   = 'cooperative';
     public string $destination_name   = '';
     public string $document_reference = '';
     public string $notes              = '';

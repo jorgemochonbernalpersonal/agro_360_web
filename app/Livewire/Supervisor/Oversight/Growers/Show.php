@@ -51,7 +51,7 @@ class Show extends Component
             ->get();
 
         // Acceso cuaderno: alguna de esas relaciones tiene acceso concedido
-        $hasNotebookAccess = $wineryRelations->where('cuaderno_access', true)->isNotEmpty();
+        $hasNotebookAccess = $wineryRelations->where('notebook_access', true)->isNotEmpty();
 
         // Últimas actividades del cuaderno (solo si hay acceso)
         $recentActivities = collect();

@@ -33,7 +33,7 @@ class ViticulturistController extends Controller
             'can_login'              => (bool) $vit->can_login,
             'source'                 => $rel->source,
             'notes'                  => $rel->notes,
-            'notebook_access'        => (bool) $rel->cuaderno_access,
+            'notebook_access'        => (bool) $rel->notebook_access,
             'has_pending_invitation' => $hasPending,
             'invitation_sent_at'     => $vit->invitation_sent_at?->toIso8601String(),
             'invitation_expires_at'  => $vit->invitation_expires_at?->toIso8601String(),

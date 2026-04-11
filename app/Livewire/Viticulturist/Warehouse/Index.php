@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Viticulturist\Almacen;
+namespace App\Livewire\Viticulturist\Warehouse;
 
 use App\Models\Campaign;
 use App\Models\PhytosanitaryProduct;
@@ -104,7 +104,7 @@ class Index extends Component
 
     // ── Insumos filter methods ────────────────────────────────
 
-    public function clearInsumoFilters(): void
+    public function clearSupplyFilters(): void
     {
         $this->sup_search = '';
         $this->sup_type   = '';

@@ -15,7 +15,7 @@ class Dashboard extends Component
 {
     public string $filterVintage    = '';
     public string $filterFiscalYear = '';
-    public string $currentTab       = 'entradas';
+    public string $currentTab       = 'entries';
     public bool   $showExportGuide  = false;
 
     public function mount(): void
@@ -118,11 +118,11 @@ class Dashboard extends Component
 
         // ── Datos del tab activo ──────────────────────────────────────────
         $tabData = match ($this->currentTab) {
-            'entradas'    => $this->queryEntradas($wineryId, $vintage),
-            'elaboracion' => $this->queryElaboracion($wineryId, $vintage),
-            'existencias' => $this->queryExistencias($wineryId),
-            'salidas'     => $this->querySalidas($wineryId, $vintage),
-            'apertura'    => $this->buildFiscalYearOpeningBalances($wineryId, $fiscalYear),
+            'entries'    => $this->queryEntries($wineryId, $vintage),
+            'elaboration' => $this->queryElaboration($wineryId, $vintage),
+            'inventory'  => $this->queryInventory($wineryId),
+            'outputs'    => $this->queryOutputs($wineryId, $vintage),
+            'opening'    => $this->buildFiscalYearOpeningBalances($wineryId, $fiscalYear),
             default       => [],
         };
 
@@ -149,7 +149,7 @@ class Dashboard extends Component
 
     // ── Libro I — Entradas ────────────────────────────────────────────────
 
-    private function queryEntradas(int $wineryId, int $vintage): array
+    private function queryEntries(int $wineryId, int $vintage): array
     {
         $recepciones = DB::table('harvests as h')
             ->where('h.winery_id', $wineryId)
@@ -201,7 +201,7 @@ class Dashboard extends Component
 
     // ── Libro II — Elaboración ────────────────────────────────────────────
 
-    private function queryElaboracion(int $wineryId, int $vintage): array
+    private function queryElaboration(int $wineryId, int $vintage): array
     {
         $steps = DB::table('wine_process_details as wpd')
             ->join('wines as w', 'w.id', '=', 'wpd.wine_id')
@@ -248,7 +248,7 @@ class Dashboard extends Component
 
     // ── Libro III — Existencias ────────────────────────────────────────────
 
-    private function queryExistencias(int $wineryId): array
+    private function queryInventory(int $wineryId): array
     {
         // Cosecha (uva) por contenedor
         $stockHarvest = DB::table('containers as c')
@@ -322,7 +322,7 @@ class Dashboard extends Component
 
     // ── Libro IV — Salidas ────────────────────────────────────────────────
 
-    private function querySalidas(int $wineryId, int $vintage): array
+    private function queryOutputs(int $wineryId, int $vintage): array
     {
         // Ventas (facturas)
         $ventas = DB::table('invoices as i')
@@ -477,28 +477,28 @@ class Dashboard extends Component
 
     private function buildStats(int $wineryId, int $vintage): array
     {
-        $kgRecibidos = DB::table('harvests')
+        $kgReceived = DB::table('harvests')
             ->where('winery_id', $wineryId)
             ->where('vintage', $vintage)
             ->sum('total_weight');
 
-        $litrosBodega = DB::table('container_current_states as ccs')
+        $wineryLiters = DB::table('container_current_states as ccs')
             ->join('containers as c', 'c.id', '=', 'ccs.container_id')
             ->where('c.user_id', $wineryId)
             ->where('ccs.current_quantity', '>', 0)
             ->sum('ccs.current_quantity');
 
-        $vinosActivos = Wine::where('user_id', $wineryId)
+        $activeWines = Wine::where('user_id', $wineryId)
             ->where('vintage', $vintage)
             ->whereIn('status', ['in_progress', 'aged'])
             ->count();
 
-        $salidas = DB::table('invoices')
+        $outputs = DB::table('invoices')
             ->where('user_id', $wineryId)
             ->whereIn('status', ['sent', 'paid'])
             ->whereYear('invoice_date', $vintage)
             ->count();
 
-        return compact('kgRecibidos', 'litrosBodega', 'vinosActivos', 'salidas');
+        return compact('kgReceived', 'wineryLiters', 'activeWines', 'outputs');
     }
 }

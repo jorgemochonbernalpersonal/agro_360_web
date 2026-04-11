@@ -52,7 +52,7 @@ class Index extends Component
         // Viticultores con acceso al cuaderno concedido por este supervisor
         $accessibleVitIds = WineryViticulturist::where('supervisor_id', $supervisorId)
             ->where('source', WineryViticulturist::SOURCE_SUPERVISOR)
-            ->where('cuaderno_access', true)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id')
             ->unique();
 

@@ -180,7 +180,7 @@
                     <div class="px-4 py-2.5 border-b border-zinc-100 last:border-0">
                         <div class="text-sm font-medium text-zinc-700">{{ $rel->winery?->name ?? '—' }}</div>
                         <div class="flex items-center gap-2 mt-0.5">
-                            @if($rel->cuaderno_access)
+                            @if($rel->notebook_access)
                                 <span class="text-xs text-emerald-600">Cuaderno: concedido</span>
                             @else
                                 <span class="text-xs text-zinc-400">Cuaderno: sin acceso</span>

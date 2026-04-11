@@ -11,7 +11,7 @@ class NotificationPreferencesService
      * Cada categoría tiene: label, description, canales disponibles, canales por defecto.
      */
     public const CATEGORIES = [
-        'campo' => [
+        'field' => [
             'label' => 'Campo y Cuaderno',
             'items' => [
                 'withdrawal_period' => [
@@ -40,7 +40,7 @@ class NotificationPreferencesService
                 ],
             ],
         ],
-        'bodega' => [
+        'winery' => [
             'label' => 'Bodega',
             'items' => [
                 'container_maintenance' => [
@@ -63,7 +63,7 @@ class NotificationPreferencesService
                 ],
             ],
         ],
-        'negocio' => [
+        'business' => [
             'label' => 'Negocio',
             'items' => [
                 'payment' => [
@@ -92,7 +92,7 @@ class NotificationPreferencesService
                 ],
             ],
         ],
-        'sistema' => [
+        'system' => [
             'label' => 'Sistema',
             'items' => [
                 'subscription' => [
@@ -162,10 +162,10 @@ class NotificationPreferencesService
     public static function getCategoriesForRole(string $role): array
     {
         $roleSections = match ($role) {
-            'viticulturist' => ['campo', 'negocio', 'sistema'],
-            'winery' => ['bodega', 'negocio', 'sistema'],
-            'producer' => ['campo', 'bodega', 'negocio', 'sistema'],
-            default => ['sistema'],
+            'viticulturist' => ['field', 'business', 'system'],
+            'winery' => ['winery', 'business', 'system'],
+            'producer' => ['campo', 'winery', 'business', 'system'],
+            default => ['system'],
         };
 
         return array_intersect_key(self::CATEGORIES, array_flip($roleSections));

@@ -117,10 +117,10 @@ class WineryFieldActivitiesSeeder extends Seeder
 
         $now = now();
 
-        // Obtener viticultores demo vinculados con cuaderno_access
+        // Obtener viticultores demo vinculados con notebook_access
         $viticulturistIds = DB::table('winery_viticulturist')
             ->where('winery_id', self::WINERY_USER_ID)
-            ->where('cuaderno_access', true)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id')
             ->toArray();
 

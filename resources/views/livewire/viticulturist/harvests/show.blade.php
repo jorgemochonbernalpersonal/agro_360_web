@@ -10,7 +10,7 @@
     <div class="{{ $cupoKg ? 'grid-cols-4' : 'grid-cols-3' }} grid gap-4">
         <x-agro.stat-card
             label="Cosechado (cuaderno)"
-            :value="$totalCuaderno > 0 ? number_format($totalCuaderno, 0) . ' kg' : '—'"
+            :value="$totalNotebook > 0 ? number_format($totalNotebook, 0) . ' kg' : '—'"
             icon="document-text"
             color="agro"
         />
@@ -332,14 +332,14 @@
                     <p class="text-xs text-zinc-400">Cosechas anotadas en tu cuaderno digital</p>
                 </div>
                 <span class="ml-auto text-xs font-semibold text-agro-700">
-                    {{ number_format($totalCuaderno, 0) }} kg total
+                    {{ number_format($totalNotebook, 0) }} kg total
                 </span>
             </div>
         </x-slot:header>
 
-        @if($cuadernoHarvests->count() > 0)
+        @if($notebookHarvests->count() > 0)
             <div class="divide-y divide-zinc-100">
-                @foreach($cuadernoHarvests as $harvest)
+                @foreach($notebookHarvests as $harvest)
                     <div class="py-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                         <div>
                             <p class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide mb-0.5">Fecha</p>

@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WineSubproduct extends Model
 {
     const TYPES = [
-        'orujo'  => 'Orujo',
-        'lias'   => 'Lías',
-        'vinaza' => 'Vinaza',
+        'pomace'  => 'Orujo',
+        'lees'   => 'Lías',
+        'vinasse' => 'Vinaza',
         'other'  => 'Otro subproducto',
     ];
 
@@ -73,9 +73,9 @@ class WineSubproduct extends Model
     public function getTypeBadgeColorAttribute(): string
     {
         return match ($this->type) {
-            'orujo'  => 'amber',
-            'lias'   => 'blue',
-            'vinaza' => 'purple',
+            'pomace'  => 'amber',
+            'lees'   => 'blue',
+            'vinasse' => 'purple',
             default  => 'zinc',
         };
     }

@@ -45,9 +45,9 @@ class SilicieCsvExporter
         'rose_wine'   => '22042199', // Vino rosado >2L
         'sparkling'   => '22041000', // Vino espumoso
         'fortified'   => '22042199', // Vino licoroso
-        'orujo'       => '2308',     // Orujo de uva — no sujeto
-        'lias'        => '2307',     // Lías de vino — no sujeto
-        'vinaza'      => '2307',     // Vinaza — asimilado lías
+        'pomace'      => '2308',     // Orujo de uva — no sujeto
+        'lees'        => '2307',     // Lías de vino — no sujeto
+        'vinasse'     => '2307',     // Vinaza — asimilado lías
     ];
 
     // ── Unidades SILICIE ───────────────────────────────────────────────────
@@ -267,7 +267,7 @@ class SilicieCsvExporter
             ->get();
 
         foreach ($subproducts as $s) {
-            $ncCode = self::NC_CODES[$s->type] ?? self::NC_CODES['orujo'];
+            $ncCode = self::NC_CODES[$s->type] ?? self::NC_CODES['pomace'];
             $type   = $s->destination === 'distillery' ? 'A28' : 'A08';
 
             $rows[] = [

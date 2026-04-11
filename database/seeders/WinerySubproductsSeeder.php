@@ -39,10 +39,10 @@ class WinerySubproductsSeeder extends Seeder
 
         $subproductTypes = [
             // [type, destination, destination_name_idx, qty_pct]
-            ['orujo',  'distillery',       0, 0.12],  // ~12% del peso de uva
+            ['pomace', 'distillery',       0, 0.12],  // ~12% del peso de uva
             ['lias',   'authorized_plant', 2, 0.03],  // ~3% del volumen en kg
-            ['vinaza', 'authorized_plant', 2, 0.05],  // ~5%
-            ['orujo',  'own_use',          null, 0.02],  // compostaje propio
+            ['vinasse', 'authorized_plant', 2, 0.05],  // ~5%
+            ['pomace', 'own_use',          null, 0.02],  // compostaje propio
         ];
 
         $rows = [];
@@ -64,9 +64,9 @@ class WinerySubproductsSeeder extends Seeder
                 'destination_name'      => $stData[2] !== null ? $destinatarios[$stData[2]] : null,
                 'lot_number'            => 'SUB-' . $wine->internal_code . '-' . $wine->vintage . '-' . str_pad($idx + 1, 3, '0', STR_PAD_LEFT),
                 'notes'                 => match ($stData[0]) {
-                    'orujo'  => 'Orujo escurrido separado tras primer prensado. Entregado con albarán.',
+                    'pomace'  => 'Orujo escurrido separado tras primer prensado. Entregado con albarán.',
                     'lias'   => 'Lías gruesas post-trasiego. Gestionadas como subproducto autorizado.',
-                    'vinaza' => 'Aguas de lavado de depósitos. Tratamiento externo en planta autorizada.',
+                    'vinasse' => 'Aguas de lavado de depósitos. Tratamiento externo en planta autorizada.',
                     default  => null,
                 },
                 'created_by'            => self::WINERY_USER_ID,

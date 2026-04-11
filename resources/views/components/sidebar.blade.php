@@ -5,91 +5,89 @@
 
     // Paleta de colores por capítulo (accent RGB para usar en CSS inline)
     $chapterColors = [
-        'campana'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // verde
-        'bodega_rel'=> ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // violeta claro
-        'cuaderno'  => ['accent' => '#c2855a', 'bg' => 'rgba(194,133,90,0.12)', 'border' => 'rgba(194,133,90,0.5)'],   // tierra
-        'registros' => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)', 'border' => 'rgba(96,165,250,0.5)'],   // azul
-        'finca'     => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)', 'border' => 'rgba(34,211,238,0.5)'],   // cyan
-        'recursos'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
-        'normativa' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
-        'pac'       => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
-        'negocio'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
-        'sistema'   => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
-        // do
-        'do_censo'        => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // indigo
-        'do_viticultores' => ['accent' => '#34d399', 'bg' => 'rgba(52,211,153,0.12)',  'border' => 'rgba(52,211,153,0.5)'],   // emerald
-        'do_campanas'     => ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'],   // amber
-        'do_sup_bodegas'  => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // blue
-        'do_sup_vitic'    => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
-        'do_calificacion' => ['accent' => '#facc15', 'bg' => 'rgba(250,204,21,0.12)',  'border' => 'rgba(250,204,21,0.5)'],   // yellow
-        'do_etiquetas'    => ['accent' => '#fb7185', 'bg' => 'rgba(251,113,133,0.12)', 'border' => 'rgba(251,113,133,0.5)'],  // rose
+        'campaign'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // verde
+        'winery_rel' => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // violeta claro
+        'notebook'   => ['accent' => '#c2855a', 'bg' => 'rgba(194,133,90,0.12)',  'border' => 'rgba(194,133,90,0.5)'],   // tierra
+        'records'    => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
+        'estate'     => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
+        'resources'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
+        'compliance' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
+        'pac'        => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
+        'business'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
+        'system'     => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
+        // do — individual (legacy, kept for reference)
+        'do_census'       => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // indigo
+        'do_growers'      => ['accent' => '#34d399', 'bg' => 'rgba(52,211,153,0.12)',  'border' => 'rgba(52,211,153,0.5)'],   // emerald
+        'do_campaigns'    => ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'],   // amber
+        'do_sup_wineries' => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // blue
+        'do_sup_growers'  => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
+        'do_qualification' => ['accent' => '#facc15', 'bg' => 'rgba(250,204,21,0.12)', 'border' => 'rgba(250,204,21,0.5)'],   // yellow
+        'do_labels'       => ['accent' => '#fb7185', 'bg' => 'rgba(251,113,133,0.12)', 'border' => 'rgba(251,113,133,0.5)'],  // rose
         'do_control'      => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // red
-        'do_normativa_do' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violet
-        'do_territorio'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
-        'do_estadisticas' => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
-        'do_negocio_do'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // green
-        'do_sistema'      => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
-        // do mega-chapters (8 agrupados)
-        'do_registro'      => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // indigo
-        'do_supervision'   => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
-        'do_campanas_gral' => ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'],   // amber
-        'do_calidad'       => ['accent' => '#facc15', 'bg' => 'rgba(250,204,21,0.12)',  'border' => 'rgba(250,204,21,0.5)'],   // yellow
-        'do_control_gral'  => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // red
-        'do_territorio'    => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
-        'do_estadisticas'  => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
-        'do_admin'         => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
+        'do_compliance'   => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violet
+        'do_territory'    => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
+        'do_statistics'   => ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // purple
+        'do_business'     => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // green
+        'do_system'       => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
+        // do mega-chapters
+        'do_registry'          => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // indigo
+        'do_supervision'       => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)',  'border' => 'rgba(34,211,238,0.5)'],   // cyan
+        'do_campaigns_general' => ['accent' => '#fbbf24', 'bg' => 'rgba(251,191,36,0.12)',  'border' => 'rgba(251,191,36,0.5)'],   // amber
+        'do_quality'           => ['accent' => '#facc15', 'bg' => 'rgba(250,204,21,0.12)',  'border' => 'rgba(250,204,21,0.5)'],   // yellow
+        'do_control_general'   => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // red
+        'do_admin'             => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
         // winery
-        'vendimia'  => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
-        'bodega'    => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino (elab+salida unificado)
-        'territorio'=> ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
+        'harvest'   => ['accent' => '#f472b6', 'bg' => 'rgba(244,114,182,0.12)', 'border' => 'rgba(244,114,182,0.5)'],  // rosa
+        'bodega'    => ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'],  // rojo vino
+        'territory' => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'],   // azul
     ];
-    $chapterColors['normativa_w'] = $chapterColors['normativa'];
-    $chapterColors['negocio_w']   = $chapterColors['negocio'];
+    $chapterColors['compliance_w'] = $chapterColors['compliance'];
+    $chapterColors['business_w']   = $chapterColors['business'];
 
     $viticulturistChapters = [
-        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
-        ['key' => 'bodega_rel','icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['bodega_rel', 'denomination'], 'section_labels' => ['bodega_rel' => 'Comunicación', 'denomination' => 'Denominación']],
-        ['key' => 'cuaderno',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
-        ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['registros_oficiales']],
-        ['key' => 'finca',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['finca']],
+        ['key' => 'campaign',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
+        ['key' => 'winery_rel','icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => 'Comunicación', 'denomination' => 'Denominación']],
+        ['key' => 'notebook',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['notebook_inputs']],
+        ['key' => 'records', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['official_records']],
+        ['key' => 'estate',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['estate']],
         ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
-        ['key' => 'normativa', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
+        ['key' => 'compliance', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
         ['key' => 'pac',       'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
-        ['key' => 'negocio',   'icon' => 'calculator',               'label' => 'Negocio',              'sections' => ['billing']],
+        ['key' => 'business',   'icon' => 'calculator',               'label' => 'Negocio',              'sections' => ['billing']],
     ];
 
     $wineryChapters = [
-        ['key' => 'vendimia',  'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia', 'sections' => ['harvest']],
-        ['key' => 'bodega',    'icon' => 'beaker',                  'label' => 'Bodega',   'sections' => ['cellar_elab', 'cellar_salida'], 'section_labels' => ['cellar_elab' => 'Elaboración', 'cellar_salida' => 'Salida']],
-        ['key' => 'territorio','icon' => 'map',                     'label' => 'Parcelas', 'sections' => ['territory']],
-        ['key' => 'normativa', 'icon' => 'shield-check',            'label' => 'Normativa','sections' => ['winery_normativa']],
-        ['key' => 'negocio',   'icon' => 'calculator',              'label' => 'Negocio',  'sections' => ['billing']],
-        ['key' => 'sistema',   'icon' => 'cog-6-tooth',             'label' => 'Sistema',  'sections' => ['resources', 'system']],
+        ['key' => 'harvest',  'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia', 'sections' => ['harvest']],
+        ['key' => 'bodega',    'icon' => 'beaker',                  'label' => 'Bodega',   'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => 'Elaboración', 'cellar_output' => 'Salida']],
+        ['key' => 'territory','icon' => 'map',                     'label' => 'Parcelas', 'sections' => ['territory']],
+        ['key' => 'compliance', 'icon' => 'shield-check',            'label' => 'Normativa','sections' => ['winery_compliance']],
+        ['key' => 'business',   'icon' => 'calculator',              'label' => 'Negocio',  'sections' => ['billing']],
+        ['key' => 'system',   'icon' => 'cog-6-tooth',             'label' => 'Sistema',  'sections' => ['resources', 'system']],
     ];
 
     // ── Producer: capítulos viñedo (incluye Parcelas y Negocio Viñedo) ────────
     $producerViticulturistChapters = [
-        ['key' => 'finca',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['finca']],
-        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
-        ['key' => 'cuaderno',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
-        ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['registros_oficiales']],
+        ['key' => 'estate',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['estate']],
+        ['key' => 'campaign',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
+        ['key' => 'notebook',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['notebook_inputs']],
+        ['key' => 'records', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['official_records']],
         ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
-        ['key' => 'normativa', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
+        ['key' => 'compliance', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
         ['key' => 'pac',       'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
-        ['key' => 'negocio',   'icon' => 'calculator',               'label' => 'Negocio Viñedo',       'sections' => ['billing']],
+        ['key' => 'business',   'icon' => 'calculator',               'label' => 'Negocio Viñedo',       'sections' => ['billing']],
     ];
 
     // ── Producer: capítulos bodega (incluye Negocio Bodega) ──────────────────
     $producerWineryChapters = [
-        ['key' => 'vendimia',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',        'sections' => ['harvest']],
-        ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',          'sections' => ['cellar_elab', 'cellar_salida'], 'section_labels' => ['cellar_elab' => 'Elaboración', 'cellar_salida' => 'Salida']],
-        ['key' => 'normativa_w','icon' => 'shield-check',            'label' => 'Normativa Bodega','sections' => ['winery_normativa']],
-        ['key' => 'negocio_w',  'icon' => 'calculator',              'label' => 'Negocio Bodega',  'sections' => ['winery_billing']],
+        ['key' => 'harvest',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',        'sections' => ['harvest']],
+        ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',          'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => 'Elaboración', 'cellar_output' => 'Salida']],
+        ['key' => 'compliance_w','icon' => 'shield-check',            'label' => 'Normativa Bodega','sections' => ['winery_compliance']],
+        ['key' => 'business_w',  'icon' => 'calculator',              'label' => 'Negocio Bodega',  'sections' => ['winery_billing']],
     ];
 
     $doChapters = [
         [
-            'key'            => 'do_registro',
+            'key'            => 'do_registry',
             'icon'           => 'users',
             'label'          => 'Registro',
             'sections'       => ['do_census', 'do_growers'],
@@ -103,33 +101,33 @@
             'section_labels' => ['do_oversight_wineries' => 'Bodegas', 'do_oversight_growers' => 'Viticultores'],
         ],
         [
-            'key'            => 'do_campanas_gral',
+            'key'            => 'do_campaigns_general',
             'icon'           => 'flag',
             'label'          => 'Campañas',
             'sections'       => ['do_campaigns'],
         ],
         [
-            'key'            => 'do_calidad',
+            'key'            => 'do_quality',
             'icon'           => 'star',
             'label'          => 'Calidad',
             'sections'       => ['do_qualification', 'do_labels'],
             'section_labels' => ['do_qualification' => 'Calificación', 'do_labels' => 'Contraetiquetas'],
         ],
         [
-            'key'            => 'do_control_gral',
+            'key'            => 'do_control_general',
             'icon'           => 'shield-check',
             'label'          => 'Control',
             'sections'       => ['do_inspection', 'do_regulation'],
             'section_labels' => ['do_inspection' => 'Inspección', 'do_regulation' => 'Normativa'],
         ],
         [
-            'key'            => 'do_territorio',
+            'key'            => 'do_territory',
             'icon'           => 'map',
             'label'          => 'Territorio',
             'sections'       => ['do_territory'],
         ],
         [
-            'key'            => 'do_estadisticas',
+            'key'            => 'do_statistics',
             'icon'           => 'chart-bar',
             'label'          => 'Estadísticas',
             'sections'       => ['do_statistics'],
@@ -255,7 +253,7 @@
         <div x-show="producerTab === 'vineyard'"
              class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
         @foreach($producerViticulturistChapters as $ch)
-            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['system']; $isActive = ($activeChapterKey === $ch['key']); @endphp
             <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
@@ -270,7 +268,7 @@
         <div x-show="producerTab === 'bodega'"
              class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
         @foreach($producerWineryChapters as $ch)
-            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['system']; $isActive = ($activeChapterKey === $ch['key']); @endphp
             <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
@@ -285,7 +283,7 @@
         {{-- Otros roles: capítulos directos --}}
         <div class="flex-1 flex flex-col items-center gap-1 overflow-y-auto overflow-x-hidden w-full py-0.5 rail-chapters-scroll">
         @foreach($chapters as $ch)
-            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema']; $isActive = ($activeChapterKey === $ch['key']); @endphp
+            @php $color = $chapterColors[$ch['key']] ?? $chapterColors['system']; $isActive = ($activeChapterKey === $ch['key']); @endphp
             <button type="button" x-on:click="$store.nav.toggle('{{ $ch['key'] }}')" title="{{ $ch['label'] }}"
                 class="notebook-tab flex-shrink-0 relative group flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200"
                 :class="$store.nav.open === '{{ $ch['key'] }}' ? 'tab-open' : ''"
@@ -346,7 +344,7 @@
     <div class="hidden lg:block">
     @foreach($chapters as $ch)
         @php
-            $color = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
+            $color = $chapterColors[$ch['key']] ?? $chapterColors['system'];
             $chapterItems = [];
             $activeSections  = array_filter($ch['sections'], fn($k) => isset($menu[$k]));
             $isFirstSection  = true;
@@ -539,7 +537,7 @@
             <nav class="flex-1 overflow-y-auto py-1">
                 @foreach($chapters as $ch)
                     @php
-                        $color  = $chapterColors[$ch['key']] ?? $chapterColors['sistema'];
+                        $color  = $chapterColors[$ch['key']] ?? $chapterColors['system'];
                         $chItems = [];
                         $activeSecsMob  = array_filter($ch['sections'], fn($k) => isset($menu[$k]));
                         $isFirstSecMob  = true;

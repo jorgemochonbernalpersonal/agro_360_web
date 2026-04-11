@@ -86,25 +86,25 @@
     <div class="grid grid-cols-2 gap-4">
         <x-agro.stat-card
             label="Kg recibidos (añada {{ $vintage }})"
-            :value="number_format($stats['kgRecibidos'], 0, ',', '.') . ' kg'"
+            :value="number_format($stats['kgReceived'], 0, ',', '.') . ' kg'"
             icon="archive-box-arrow-down"
             color="agro"
         />
         <x-agro.stat-card
             label="Litros en bodega (hoy)"
-            :value="number_format($stats['litrosBodega'], 0, ',', '.') . ' L'"
+            :value="number_format($stats['wineryLiters'], 0, ',', '.') . ' L'"
             icon="beaker"
             color="blue"
         />
         <x-agro.stat-card
             label="Vinos activos (añada {{ $vintage }})"
-            :value="$stats['vinosActivos']"
+            :value="$stats['activeWines']"
             icon="funnel"
             color="violet"
         />
         <x-agro.stat-card
             label="Expediciones facturadas ({{ $vintage }})"
-            :value="$stats['salidas']"
+            :value="$stats['outputs']"
             icon="arrow-up-tray"
             color="amber"
         />
@@ -115,11 +115,11 @@
         <x-slot:header>
             <div class="flex flex-wrap gap-1">
                 @foreach([
-                    'entradas'    => ['label' => 'Libro I — Entradas',      'icon' => 'archive-box-arrow-down'],
-                    'elaboracion' => ['label' => 'Libro II — Elaboración',   'icon' => 'beaker'],
-                    'existencias' => ['label' => 'Libro III — Existencias',  'icon' => 'squares-2x2'],
-                    'salidas'     => ['label' => 'Libro IV — Salidas',       'icon' => 'arrow-up-tray'],
-                    'apertura'    => ['label' => 'Apertura ejercicio',        'icon' => 'calendar-days'],
+                    'entries'    => ['label' => 'Libro I — Entradas',      'icon' => 'archive-box-arrow-down'],
+                    'elaboration' => ['label' => 'Libro II — Elaboración',   'icon' => 'beaker'],
+                    'inventory'  => ['label' => 'Libro III — Existencias',  'icon' => 'squares-2x2'],
+                    'outputs'    => ['label' => 'Libro IV — Salidas',       'icon' => 'arrow-up-tray'],
+                    'opening'    => ['label' => 'Apertura ejercicio',        'icon' => 'calendar-days'],
                 ] as $tab => $meta)
                     <button
                         wire:click="switchTab('{{ $tab }}')"
@@ -138,7 +138,7 @@
         {{-- ══════════════════════════════════════════════════════════════ --}}
         {{-- LIBRO I — ENTRADAS                                            --}}
         {{-- ══════════════════════════════════════════════════════════════ --}}
-        @if($currentTab === 'entradas')
+        @if($currentTab === 'entries')
             @php $recepciones = $tabData['recepciones']; $externas = $tabData['externas']; $totals = $tabData['totals']; @endphp
 
             <div class="px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-1 border-b border-zinc-100 bg-zinc-50/50">
@@ -237,7 +237,7 @@
         {{-- ══════════════════════════════════════════════════════════════ --}}
         {{-- LIBRO II — ELABORACIÓN                                        --}}
         {{-- ══════════════════════════════════════════════════════════════ --}}
-        @if($currentTab === 'elaboracion')
+        @if($currentTab === 'elaboration')
             @php $steps = $tabData['steps']; $losses = $tabData['losses']; @endphp
 
             {{-- Proceso enológico --}}
@@ -327,7 +327,7 @@
         {{-- ══════════════════════════════════════════════════════════════ --}}
         {{-- LIBRO III — EXISTENCIAS                                       --}}
         {{-- ══════════════════════════════════════════════════════════════ --}}
-        @if($currentTab === 'existencias')
+        @if($currentTab === 'inventory')
             @php $byWine = $tabData['byWine']; $totals = $tabData['totals']; $lastSnapshot = $tabData['lastSnapshot']; @endphp
 
             <div class="px-4 py-3 flex items-center justify-between border-b border-zinc-100 bg-zinc-50/50">
@@ -387,7 +387,7 @@
         {{-- ══════════════════════════════════════════════════════════════ --}}
         {{-- LIBRO IV — SALIDAS                                            --}}
         {{-- ══════════════════════════════════════════════════════════════ --}}
-        @if($currentTab === 'salidas')
+        @if($currentTab === 'outputs')
             @php
                 $ventas       = $tabData['ventas'];
                 $perdidas     = $tabData['perdidas'];
@@ -509,7 +509,7 @@
         {{-- ══════════════════════════════════════════════════════════════ --}}
         {{-- APERTURA EJERCICIO — A22 SILICIE 2.0                          --}}
         {{-- ══════════════════════════════════════════════════════════════ --}}
-        @if($currentTab === 'apertura')
+        @if($currentTab === 'opening')
             @php $ab = $tabData; @endphp
 
             <div class="px-4 py-3 flex flex-wrap items-center gap-4 border-b border-zinc-100 bg-zinc-50/50">

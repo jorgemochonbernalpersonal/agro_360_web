@@ -362,7 +362,7 @@
                         </span>
                     @endif
 
-                    <button wire:click="clearInsumoFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">Limpiar todo</button>
+                    <button wire:click="clearSupplyFilters" class="text-xs text-zinc-400 hover:text-zinc-600 underline">Limpiar todo</button>
                 </div>
             @endif
         </div>
@@ -376,7 +376,7 @@
             >
                 @if($sup_search || $sup_type || $sup_low)
                     <x-slot:action>
-                        <flux:button wire:click="clearInsumoFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
+                        <flux:button wire:click="clearSupplyFilters" variant="outline" icon="x-mark">Limpiar filtros</flux:button>
                     </x-slot:action>
                 @else
                     <x-slot:action>
@@ -678,7 +678,7 @@
             <flux:checkbox wire:model.live="sup_low" label="Solo stock bajo" description="Muestra solo insumos por debajo del mínimo" />
         </div>
         <div class="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between rounded-b-2xl">
-            <button wire:click="clearInsumoFilters" x-on:click="$dispatch('close-modal', 'almacen-sup-filters')"
+            <button wire:click="clearSupplyFilters" x-on:click="$dispatch('close-modal', 'almacen-sup-filters')"
                     class="text-sm text-zinc-500 hover:text-zinc-700 transition-colors">
                 Limpiar filtros
             </button>

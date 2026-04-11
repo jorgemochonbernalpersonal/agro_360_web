@@ -68,9 +68,9 @@ class WineryMenu
             ];
         }
 
-        $menu['cellar_elab']     = self::cellarElab('winery');
-        $menu['cellar_salida']   = self::cellarSalida('winery');
-        $menu['winery_normativa']= self::wineryNormativa('winery');
+        $menu['cellar_elaboration'] = self::cellarElaboration('winery');
+        $menu['cellar_output']      = self::cellarOutput('winery');
+        $menu['winery_compliance']  = self::wineryCompliance('winery');
 
         $menu['territory'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'winery.plots.index',             'active' => request()->routeIs('winery.plots*') && !request()->routeIs('plots.plantings.*')],
@@ -125,7 +125,7 @@ class WineryMenu
      * @param bool $operacionesAfterSalas  true = Operaciones de Bodega aparece justo después
      *                                     de Salas (orden Producer); false = al final (orden Winery)
      */
-    public static function cellarElab(string $prefix, bool $operacionesAfterSalas = false): array
+    public static function cellarElaboration(string $prefix, bool $operacionesAfterSalas = false): array
     {
         $operaciones = ['icon' => 'calendar-days', 'label' => 'Operaciones de Bodega', 'route' => "{$prefix}.cellar-operations.index", 'active' => request()->routeIs("{$prefix}.cellar-operations*"), 'new' => true];
 
@@ -158,7 +158,7 @@ class WineryMenu
     /**
      * @param array $extraItems  Items adicionales a añadir al final (con divider incluido si se necesita)
      */
-    public static function cellarSalida(string $prefix, array $extraItems = []): array
+    public static function cellarOutput(string $prefix, array $extraItems = []): array
     {
         $items = [
             ['icon' => 'archive-box',             'label' => 'Productos',               'route' => "{$prefix}.product-lots.index",    'active' => request()->routeIs("{$prefix}.product-lots*") && !request()->routeIs("{$prefix}.product-lots.audit")],
@@ -177,7 +177,7 @@ class WineryMenu
      * @param bool $silicieWip       true = SILICIE e INFOVI marcados como wip (Producer aún no los tiene activos)
      * @param bool $includeDocumentos true = añade "Documentos Bodega" al final (Producer lo tiene en esta sección)
      */
-    public static function wineryNormativa(string $prefix, bool $silicieWip = false, bool $includeDocumentos = false): array
+    public static function wineryCompliance(string $prefix, bool $silicieWip = false, bool $includeDocumentos = false): array
     {
         $items = [
             ['icon' => 'document-chart-bar', 'label' => 'SILICIE',                       'route' => "{$prefix}.silicie.dashboard",              'active' => request()->routeIs("{$prefix}.silicie.dashboard") || request()->routeIs("{$prefix}.silicie.movements*"), 'wip' => $silicieWip],

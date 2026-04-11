@@ -597,7 +597,7 @@ Route::middleware(['role:producer', 'check.beta'])
         });
 
         Route::prefix('warehouse')->name('warehouse.')->group(function () {
-            Route::get('/', \App\Livewire\Viticulturist\Almacen\Index::class)->name('index');
+            Route::get('/', \App\Livewire\Viticulturist\Warehouse\Index::class)->name('index');
             Route::get('/stock/analytics', \App\Livewire\Viticulturist\Inventory\Analytics::class)->name('stock.analytics');
             Route::get('/stock/create', \App\Livewire\Viticulturist\Inventory\CreateStock::class)->name('stock.create');
             Route::get('/stock/{stock}/edit', \App\Livewire\Viticulturist\Inventory\EditStock::class)->name('stock.edit');

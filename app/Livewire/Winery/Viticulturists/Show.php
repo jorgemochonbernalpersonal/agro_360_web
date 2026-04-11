@@ -118,7 +118,7 @@ class Show extends Component
             return;
         }
 
-        if ($this->relation->cuaderno_access) {
+        if ($this->relation->notebook_access) {
             $this->toastInfo('Esta bodega ya tiene acceso al cuaderno.');
             return;
         }

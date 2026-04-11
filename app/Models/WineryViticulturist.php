@@ -17,15 +17,15 @@ class WineryViticulturist extends Model
         'supervisor_id',
         'parent_viticulturist_id',
         'notes',
-        'cuaderno_access',
-        'cuaderno_granted_at',
-        'cuaderno_revoked_at',
+        'notebook_access',
+        'notebook_granted_at',
+        'notebook_revoked_at',
     ];
 
     protected $casts = [
-        'cuaderno_access'    => 'boolean',
-        'cuaderno_granted_at' => 'datetime',
-        'cuaderno_revoked_at' => 'datetime',
+        'notebook_access'    => 'boolean',
+        'notebook_granted_at' => 'datetime',
+        'notebook_revoked_at' => 'datetime',
     ];
 
     /**
@@ -82,9 +82,9 @@ class WineryViticulturist extends Model
     public function grantNotebookAccess(): void
     {
         $this->update([
-            'cuaderno_access'     => true,
-            'cuaderno_granted_at' => now(),
-            'cuaderno_revoked_at' => null,
+            'notebook_access'     => true,
+            'notebook_granted_at' => now(),
+            'notebook_revoked_at' => null,
         ]);
     }
 
@@ -94,8 +94,8 @@ class WineryViticulturist extends Model
     public function revokeNotebookAccess(): void
     {
         $this->update([
-            'cuaderno_access'     => false,
-            'cuaderno_revoked_at' => now(),
+            'notebook_access'     => false,
+            'notebook_revoked_at' => now(),
         ]);
     }
 

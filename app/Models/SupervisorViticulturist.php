@@ -14,15 +14,15 @@ class SupervisorViticulturist extends Model
         'supervisor_id',
         'viticulturist_id',
         'assigned_by',
-        'cuaderno_access',
-        'cuaderno_granted_at',
-        'cuaderno_revoked_at',
+        'notebook_access',
+        'notebook_granted_at',
+        'notebook_revoked_at',
     ];
 
     protected $casts = [
-        'cuaderno_access'     => 'boolean',
-        'cuaderno_granted_at' => 'datetime',
-        'cuaderno_revoked_at' => 'datetime',
+        'notebook_access'     => 'boolean',
+        'notebook_granted_at' => 'datetime',
+        'notebook_revoked_at' => 'datetime',
     ];
 
     /**
@@ -54,23 +54,23 @@ class SupervisorViticulturist extends Model
     public function grantNotebookAccess(): void
     {
         $this->update([
-            'cuaderno_access'     => true,
-            'cuaderno_granted_at' => now(),
-            'cuaderno_revoked_at' => null,
+            'notebook_access'     => true,
+            'notebook_granted_at' => now(),
+            'notebook_revoked_at' => null,
         ]);
     }
 
     public function revokeNotebookAccess(): void
     {
         $this->update([
-            'cuaderno_access'     => false,
-            'cuaderno_revoked_at' => now(),
+            'notebook_access'     => false,
+            'notebook_revoked_at' => now(),
         ]);
     }
 
     public function hasNotebookAccess(): bool
     {
-        return (bool) $this->cuaderno_access;
+        return (bool) $this->notebook_access;
     }
 
     protected static function booted(): void

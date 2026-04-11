@@ -100,9 +100,9 @@ class Index extends AbstractIndex
             'active'     => (clone $baseQuery)->where('active', true)->count(),
             'archived'   => (clone $baseQuery)->where('active', false)->count(),
             'total_kg'   => $activeQ->sum('quantity_kg'),
-            'orujo_kg'   => (clone $activeQ)->where('byproduct_type', 'orujo')->sum('quantity_kg'),
-            'raspon_kg'  => (clone $activeQ)->where('byproduct_type', 'raspon')->sum('quantity_kg'),
-            'lia_kg'     => (clone $activeQ)->where('byproduct_type', 'lia')->sum('quantity_kg'),
+            'pomace_kg'  => (clone $activeQ)->where('byproduct_type', 'pomace')->sum('quantity_kg'),
+            'stem_kg'    => (clone $activeQ)->where('byproduct_type', 'stem')->sum('quantity_kg'),
+            'lees_kg'    => (clone $activeQ)->where('byproduct_type', 'lees')->sum('quantity_kg'),
         ];
 
         return [

@@ -50,7 +50,7 @@
                 />
                 <x-agro.stat-card
                     label="Con cuaderno"
-                    :value="$stats['with_cuaderno']"
+                    :value="$stats['with_notebook']"
                     description="'Acceso al cuaderno de campo'"
                     icon="book-open"
                     color="orange"
@@ -209,7 +209,7 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-zinc-500">Cuaderno</span>
-                                    @if($relation->cuaderno_access)
+                                    @if($relation->notebook_access)
                                         <flux:badge color="green" icon="book-open" size="sm">Acceso</flux:badge>
                                     @else
                                         <flux:badge icon="lock-closed" size="sm">Sin acceso</flux:badge>

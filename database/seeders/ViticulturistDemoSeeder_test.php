@@ -495,8 +495,8 @@ class ViticulturistDemoSeeder_test extends Seeder
             'winery_id'        => self::WINERY_USER_ID,
             'viticulturist_id' => self::VIT_USER_ID,
             'source'           => 'own',
-            'cuaderno_access'  => true,
-            'cuaderno_granted_at' => $now,
+            'notebook_access'  => true,
+            'notebook_granted_at' => $now,
             'assigned_by'      => self::WINERY_USER_ID,
             'notes'            => 'Viticultor principal. Explotación familiar Agaete.',
             'created_at'       => $now,
@@ -2361,18 +2361,18 @@ class ViticulturistDemoSeeder_test extends Seeder
 
         // ── Subproductos Vendimia (12) ────────────────────────────────────────
         $bpData = [
-            [$c24, '2024-09-05', 'orujo',  'destileria',         4200.0, 'Destilados GC SL',      'DES-2024-0041'],
-            [$c24, '2024-09-05', 'raspon', 'compostaje',          820.0, 'Compostería Agaete',    null],
-            [$c24, '2024-09-10', 'orujo',  'cooperativa',        1800.0, 'Coop. Vitivinícola',    'COOP-2024-0088'],
-            [$c24, '2024-09-15', 'lia',    'destileria',          380.0, 'Destilados GC SL',      'DES-2024-0052'],
-            [$c25, '2025-09-03', 'orujo',  'destileria',         4600.0, 'Destilados GC SL',      'DES-2025-0038'],
-            [$c25, '2025-09-03', 'raspon', 'compostaje',          890.0, 'Compostería Agaete',    null],
-            [$c25, '2025-09-08', 'orujo',  'cooperativa',        2100.0, 'Coop. Vitivinícola',    'COOP-2025-0091'],
-            [$c25, '2025-09-12', 'lia',    'destileria',          420.0, 'Destilados GC SL',      'DES-2025-0049'],
-            [$c26, '2026-04-01', 'otro',   'vertedero_autorizado', 120.0, 'Vertedero Municipal GC','VER-2026-0012'],
-            [$c26, '2026-04-05', 'raspon', 'compostaje',          180.0, 'Compostería Agaete',    null],
-            [$c26, '2026-04-05', 'otro',   'compostaje',           95.0, 'Compostería Agaete',    null],
-            [$c26, '2026-04-10', 'lia',    'destileria',           50.0, 'Destilados GC SL',      null],
+            [$c24, '2024-09-05', 'pomace', 'distillery',         4200.0, 'Destilados GC SL',      'DES-2024-0041'],
+            [$c24, '2024-09-05', 'stem',   'composting',          820.0, 'Compostería Agaete',    null],
+            [$c24, '2024-09-10', 'pomace', 'cooperative',        1800.0, 'Coop. Vitivinícola',    'COOP-2024-0088'],
+            [$c24, '2024-09-15', 'lees',   'distillery',          380.0, 'Destilados GC SL',      'DES-2024-0052'],
+            [$c25, '2025-09-03', 'pomace', 'distillery',         4600.0, 'Destilados GC SL',      'DES-2025-0038'],
+            [$c25, '2025-09-03', 'stem',   'composting',          890.0, 'Compostería Agaete',    null],
+            [$c25, '2025-09-08', 'pomace', 'cooperative',        2100.0, 'Coop. Vitivinícola',    'COOP-2025-0091'],
+            [$c25, '2025-09-12', 'lees',   'distillery',          420.0, 'Destilados GC SL',      'DES-2025-0049'],
+            [$c26, '2026-04-01', 'other',  'authorized_landfill', 120.0, 'Vertedero Municipal GC','VER-2026-0012'],
+            [$c26, '2026-04-05', 'stem',   'composting',          180.0, 'Compostería Agaete',    null],
+            [$c26, '2026-04-05', 'other',  'composting',           95.0, 'Compostería Agaete',    null],
+            [$c26, '2026-04-10', 'lees',   'distillery',           50.0, 'Destilados GC SL',      null],
         ];
         foreach ($bpData as [$cId, $date, $type, $dest, $qty, $destName, $docRef]) {
             DB::table('harvest_byproducts')->insert([

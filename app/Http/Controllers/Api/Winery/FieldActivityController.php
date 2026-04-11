@@ -13,7 +13,7 @@ class FieldActivityController extends Controller
 {
     /**
      * Actividades de campo de los viticultores vinculados (solo lectura).
-     * Solo muestra actividades de viticultores con cuaderno_access = true.
+     * Solo muestra actividades de viticultores con notebook_access = true.
      */
     public function index(Request $request): JsonResponse
     {
@@ -21,7 +21,7 @@ class FieldActivityController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
-            ->where('cuaderno_access', true)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         if ($viticulturistIds->isEmpty()) {
@@ -77,7 +77,7 @@ class FieldActivityController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $viticulturistIds = WineryViticulturist::where('winery_id', $user->id)
-            ->where('cuaderno_access', true)
+            ->where('notebook_access', true)
             ->pluck('viticulturist_id');
 
         $activity = AgriculturalActivity::whereIn('viticulturist_id', $viticulturistIds)
