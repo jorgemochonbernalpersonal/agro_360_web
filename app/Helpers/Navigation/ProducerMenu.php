@@ -21,12 +21,10 @@ class ProducerMenu
         ];
 
         // ── Viñedo: Campaña ───────────────────────────────────────────────────
-        $menu['operations'] = [
-            ['icon' => 'clipboard-document-list', 'label' => 'Campañas',              'route' => 'producer.campaign.index',                     'active' => request()->routeIs('producer.campaign*') && !request()->routeIs('producer.campaign-documents.*') && !request()->routeIs('producer.campaign-sign.*')],
-            ['icon' => 'folder-open',             'label' => 'Documentos de Campaña', 'route' => 'producer.campaign-documents.index',           'active' => request()->routeIs('producer.campaign-documents.*')],
-            ['icon' => 'check-badge',             'label' => 'Firma y Cierre',        'route' => 'producer.campaign-sign.index',                'active' => request()->routeIs('producer.campaign-sign.*')],
-            ['divider' => true],
-            ['icon' => 'chart-bar-square',        'label' => 'Rendimientos Estimados','route' => 'producer.digital-notebook.estimated-yields.index', 'active' => request()->routeIs('producer.digital-notebook.estimated-yields.*')],
+        $menu['campaigns'] = [
+            ['icon' => 'clipboard-document-list', 'label' => 'Campañas',              'route' => 'producer.campaign.index',           'active' => request()->routeIs('producer.campaign*') && !request()->routeIs('producer.campaign-documents.*') && !request()->routeIs('producer.campaign-sign.*')],
+            ['icon' => 'folder-open',             'label' => 'Documentos de Campaña', 'route' => 'producer.campaign-documents.index', 'active' => request()->routeIs('producer.campaign-documents.*')],
+            ['icon' => 'check-badge',             'label' => 'Firma y Cierre',        'route' => 'producer.campaign-sign.index',      'active' => request()->routeIs('producer.campaign-sign.*')],
         ];
 
         // ── Viñedo: Cuaderno de Campo ─────────────────────────────────────────
@@ -70,7 +68,7 @@ class ProducerMenu
         $menu['winery_normativa'] = WineryMenu::wineryNormativa('producer', silicieWip: true, includeDocumentos: true);
 
         // ── Parcelas (unión viñedo + bodega) ──────────────────────────────────
-        $menu['plots_analysis'] = [
+        $menu['finca'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',            'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                     'active' => request()->routeIs('sigpac.*')],

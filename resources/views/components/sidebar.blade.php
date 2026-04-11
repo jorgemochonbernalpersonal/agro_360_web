@@ -6,9 +6,10 @@
     // Paleta de colores por capítulo (accent RGB para usar en CSS inline)
     $chapterColors = [
         'campana'   => ['accent' => '#4ade80', 'bg' => 'rgba(74,222,128,0.12)',  'border' => 'rgba(74,222,128,0.5)'],   // verde
+        'bodega_rel'=> ['accent' => '#a78bfa', 'bg' => 'rgba(167,139,250,0.12)', 'border' => 'rgba(167,139,250,0.5)'],  // violeta claro
         'cuaderno'  => ['accent' => '#c2855a', 'bg' => 'rgba(194,133,90,0.12)', 'border' => 'rgba(194,133,90,0.5)'],   // tierra
         'registros' => ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)', 'border' => 'rgba(96,165,250,0.5)'],   // azul
-        'parcelas'  => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)', 'border' => 'rgba(34,211,238,0.5)'],   // cyan
+        'finca'     => ['accent' => '#22d3ee', 'bg' => 'rgba(34,211,238,0.12)', 'border' => 'rgba(34,211,238,0.5)'],   // cyan
         'recursos'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
         'normativa' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
         'pac'       => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
@@ -45,10 +46,11 @@
     ];
 
     $viticulturistChapters = [
-        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['operations']],
+        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
+        ['key' => 'bodega_rel','icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['bodega_rel', 'denomination']],
         ['key' => 'cuaderno',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
         ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['registros_oficiales']],
-        ['key' => 'parcelas',  'icon' => 'map',                      'label' => 'Parcelas',             'sections' => ['plots_analysis']],
+        ['key' => 'finca',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['finca']],
         ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
         ['key' => 'normativa', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
         ['key' => 'pac',       'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
@@ -67,8 +69,8 @@
 
     // ── Producer: capítulos viñedo (incluye Parcelas y Negocio Viñedo) ────────
     $producerViticulturistChapters = [
-        ['key' => 'parcelas',  'icon' => 'map',                      'label' => 'Parcelas',             'sections' => ['plots_analysis']],
-        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['operations']],
+        ['key' => 'finca',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['finca']],
+        ['key' => 'campana',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
         ['key' => 'cuaderno',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['cuaderno_inputs']],
         ['key' => 'registros', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['registros_oficiales']],
         ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
