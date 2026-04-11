@@ -203,6 +203,81 @@
         </div>
     </x-agro.card>
 
+    {{-- Esta semana --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        {{-- Próximas (hoy → +6 días) --}}
+        <x-agro.card>
+            <div class="flex items-center gap-2 mb-4">
+                <flux:icon icon="arrow-right-circle" class="size-5 text-agro-600" />
+                <h3 class="text-sm font-semibold text-zinc-800">Próximos 7 días</h3>
+            </div>
+            @if($upcomingActivities->isEmpty())
+                <p class="text-sm text-zinc-400 text-center py-4">Sin actividades programadas</p>
+            @else
+                <div class="space-y-2">
+                    @foreach($upcomingActivities as $activity)
+                        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors">
+                            <div class="flex-shrink-0 w-10 text-center">
+                                <div class="text-xs font-bold text-zinc-700 leading-none">
+                                    {{ Carbon\Carbon::parse($activity->activity_date)->format('d') }}
+                                </div>
+                                <div class="text-xs text-zinc-400 uppercase">
+                                    {{ Carbon\Carbon::parse($activity->activity_date)->locale('es')->isoFormat('ddd') }}
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="inline-block text-xs px-2 py-0.5 rounded-full border font-medium {{ $this->getActivityTypeColor($activity->activity_type) }}">
+                                    {{ $this->getActivityTypeLabel($activity->activity_type) }}
+                                </span>
+                                <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $activity->plot->name ?? '—' }}</p>
+                            </div>
+                            @if(Carbon\Carbon::parse($activity->activity_date)->isToday())
+                                <span class="text-xs font-bold text-agro-600 bg-agro-50 px-2 py-0.5 rounded-full flex-shrink-0">Hoy</span>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </x-agro.card>
+
+        {{-- Recientes (últimos 6 días) --}}
+        <x-agro.card>
+            <div class="flex items-center gap-2 mb-4">
+                <flux:icon icon="clock" class="size-5 text-zinc-500" />
+                <h3 class="text-sm font-semibold text-zinc-800">Últimos 6 días</h3>
+            </div>
+            @if($recentActivities->isEmpty())
+                <p class="text-sm text-zinc-400 text-center py-4">Sin actividades recientes</p>
+            @else
+                <div class="space-y-2">
+                    @foreach($recentActivities as $activity)
+                        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors">
+                            <div class="flex-shrink-0 w-10 text-center">
+                                <div class="text-xs font-bold text-zinc-500 leading-none">
+                                    {{ Carbon\Carbon::parse($activity->activity_date)->format('d') }}
+                                </div>
+                                <div class="text-xs text-zinc-400 uppercase">
+                                    {{ Carbon\Carbon::parse($activity->activity_date)->locale('es')->isoFormat('ddd') }}
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="inline-block text-xs px-2 py-0.5 rounded-full border font-medium {{ $this->getActivityTypeColor($activity->activity_type) }}">
+                                    {{ $this->getActivityTypeLabel($activity->activity_type) }}
+                                </span>
+                                <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $activity->plot->name ?? '—' }}</p>
+                            </div>
+                            <span class="text-xs text-zinc-400 flex-shrink-0">
+                                {{ Carbon\Carbon::parse($activity->activity_date)->diffForHumans(['locale' => 'es', 'short' => true]) }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </x-agro.card>
+
+    </div>
+
     {{-- Modal: Detalle del Día --}}
     @if($showActivityModal)
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" wire:click="closeModal">
@@ -225,6 +300,24 @@
                                         <span class="font-bold">{{ $this->getActivityTypeLabel($activity->activity_type) }}</span>
                                         <span class="text-sm text-zinc-600 ml-2">{{ $activity->plot->name }}</span>
                                     </div>
+                                    @php
+                                        $editRoute = match($activity->activity_type) {
+                                            'phytosanitary' => route('viticulturist.digital-notebook.treatment.edit', $activity),
+                                            'fertilization' => route('viticulturist.digital-notebook.fertilization.edit', $activity),
+                                            'irrigation'    => route('viticulturist.digital-notebook.irrigation.edit', $activity),
+                                            'cultural', 'pruning' => route('viticulturist.digital-notebook.cultural.edit', $activity),
+                                            'observation'   => route('viticulturist.digital-notebook.observation.edit', $activity),
+                                            'harvest'       => route('viticulturist.digital-notebook.harvest.edit', $activity->harvest ?? $activity),
+                                            'post_harvest'  => route('viticulturist.digital-notebook.post-harvest.edit', $activity),
+                                            default         => null,
+                                        };
+                                    @endphp
+                                    @if($editRoute)
+                                        <a href="{{ $editRoute }}" class="flex items-center gap-1 text-xs font-semibold opacity-70 hover:opacity-100 transition-opacity">
+                                            <flux:icon icon="pencil-square" class="size-4" />
+                                            Editar
+                                        </a>
+                                    @endif
                                 </div>
 
                                 @if($activity->phytosanitaryTreatment)

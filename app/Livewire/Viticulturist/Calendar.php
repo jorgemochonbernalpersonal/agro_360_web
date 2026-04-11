@@ -336,6 +336,48 @@ class Calendar extends Component
     }
 
     // ─────────────────────────────────────────────
+    // Próximas actividades (7 días desde hoy)
+    // ─────────────────────────────────────────────
+
+    public function getUpcomingActivities()
+    {
+        $user  = Auth::user();
+        $today = Carbon::today();
+        $end   = $today->copy()->addDays(6)->endOfDay();
+
+        $query = AgriculturalActivity::forViticulturist($user->id)
+            ->whereBetween('activity_date', [$today, $end])
+            ->with(['plot', 'phytosanitaryTreatment.product', 'fertilization',
+                    'irrigation', 'culturalWork', 'observation'])
+            ->orderBy('activity_date');
+
+        if ($this->selectedCampaign) {
+            $query->forCampaign($this->selectedCampaign);
+        }
+
+        return $query->get();
+    }
+
+    public function getRecentActivities()
+    {
+        $user      = Auth::user();
+        $today     = Carbon::today();
+        $weekStart = $today->copy()->subDays(6)->startOfDay();
+
+        $query = AgriculturalActivity::forViticulturist($user->id)
+            ->whereBetween('activity_date', [$weekStart, $today->copy()->subDay()->endOfDay()])
+            ->with(['plot'])
+            ->orderByDesc('activity_date')
+            ->limit(5);
+
+        if ($this->selectedCampaign) {
+            $query->forCampaign($this->selectedCampaign);
+        }
+
+        return $query->get();
+    }
+
+    // ─────────────────────────────────────────────
     // Construcción del grid
     // ─────────────────────────────────────────────
 
@@ -492,12 +534,14 @@ class Calendar extends Component
         $monthName = ucfirst(Carbon::create($this->currentYear, $this->currentMonth, 1)->locale('es')->monthName);
 
         return view('livewire.viticulturist.calendar', [
-            'plots'           => $plots,
-            'campaigns'       => $campaigns,
-            'currentCampaign' => $currentCampaign,
-            'calendarDays'    => $calendarDays,
-            'stats'           => $stats,
-            'monthName'       => $monthName,
+            'plots'              => $plots,
+            'campaigns'          => $campaigns,
+            'currentCampaign'    => $currentCampaign,
+            'calendarDays'       => $calendarDays,
+            'stats'              => $stats,
+            'monthName'          => $monthName,
+            'upcomingActivities' => $this->getUpcomingActivities(),
+            'recentActivities'   => $this->getRecentActivities(),
         ]);
     }
 }
