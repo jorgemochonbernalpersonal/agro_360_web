@@ -302,13 +302,13 @@
                                     </div>
                                     @php
                                         $editRoute = match($activity->activity_type) {
-                                            'phytosanitary' => route('viticulturist.digital-notebook.treatment.edit', $activity),
-                                            'fertilization' => route('viticulturist.digital-notebook.fertilization.edit', $activity),
-                                            'irrigation'    => route('viticulturist.digital-notebook.irrigation.edit', $activity),
-                                            'cultural', 'pruning' => route('viticulturist.digital-notebook.cultural.edit', $activity),
-                                            'observation'   => route('viticulturist.digital-notebook.observation.edit', $activity),
-                                            'harvest'       => route('viticulturist.digital-notebook.harvest.edit', $activity->harvest ?? $activity),
-                                            'post_harvest'  => route('viticulturist.digital-notebook.post-harvest.edit', $activity),
+                                            'phytosanitary' => route("{$routePrefix}.digital-notebook.treatment.edit", $activity),
+                                            'fertilization' => route("{$routePrefix}.digital-notebook.fertilization.edit", $activity),
+                                            'irrigation'    => route("{$routePrefix}.digital-notebook.irrigation.edit", $activity),
+                                            'cultural', 'pruning' => route("{$routePrefix}.digital-notebook.cultural.edit", $activity),
+                                            'observation'   => route("{$routePrefix}.digital-notebook.observation.edit", $activity),
+                                            'harvest'       => route("{$routePrefix}.digital-notebook.harvest.edit", $activity->harvest ?? $activity),
+                                            'post_harvest'  => route("{$routePrefix}.digital-notebook.post-harvest.edit", $activity),
                                             default         => null,
                                         };
                                     @endphp

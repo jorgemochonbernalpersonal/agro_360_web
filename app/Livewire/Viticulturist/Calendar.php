@@ -84,6 +84,11 @@ class Calendar extends Component
         $this->loadActivitiesForDate($date);
     }
 
+    private function routePrefix(): string
+    {
+        return Auth::user()->role === 'producer' ? 'producer' : 'viticulturist';
+    }
+
     public function loadActivitiesForDate($date)
     {
         $user  = Auth::user();
@@ -542,6 +547,7 @@ class Calendar extends Component
             'monthName'          => $monthName,
             'upcomingActivities' => $this->getUpcomingActivities(),
             'recentActivities'   => $this->getRecentActivities(),
+            'routePrefix'        => $this->routePrefix(),
         ]);
     }
 }
