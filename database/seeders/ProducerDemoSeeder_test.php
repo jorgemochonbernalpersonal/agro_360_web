@@ -1063,37 +1063,34 @@ class ProducerDemoSeeder_test extends Seeder
         // 15 depósitos acero
         for ($i = 1; $i <= 15; $i++) {
             $containers[] = [
-                'user_id'      => $uid,
-                'name'         => sprintf('Depósito D%02d', $i),
-                'type_id'      => $deposito,
-                'capacity'     => [5000, 8000, 10000, 12000, 6000][$i % 5],
-                'status'       => 'available',
-                'location'     => 'Nave elaboración',
-                'created_at'   => $now, 'updated_at' => $now,
+                'user_id'     => $uid,
+                'name'        => sprintf('Depósito D%02d', $i),
+                'type_id'     => $deposito,
+                'capacity'    => [5000, 8000, 10000, 12000, 6000][$i % 5],
+                'description' => 'Nave elaboración',
+                'created_at'  => $now, 'updated_at' => $now,
             ];
         }
         // 10 barricas
         for ($i = 1; $i <= 10; $i++) {
             $containers[] = [
-                'user_id'    => $uid,
-                'name'       => sprintf('Barrica B%02d', $i),
-                'type_id'    => $barrica,
-                'capacity'   => 225,
-                'status'     => 'available',
-                'location'   => 'Sala barricas',
-                'created_at' => $now, 'updated_at' => $now,
+                'user_id'     => $uid,
+                'name'        => sprintf('Barrica B%02d', $i),
+                'type_id'     => $barrica,
+                'capacity'    => 225,
+                'description' => 'Sala barricas',
+                'created_at'  => $now, 'updated_at' => $now,
             ];
         }
         // 5 depósitos polivalentes (campo + bodega)
         for ($i = 1; $i <= 5; $i++) {
             $containers[] = [
-                'user_id'    => $uid,
-                'name'       => sprintf('Bins Vendimia BV%02d', $i),
-                'type_id'    => $polivalent,
-                'capacity'   => 800,
-                'status'     => 'available',
-                'location'   => 'Patio exterior',
-                'created_at' => $now, 'updated_at' => $now,
+                'user_id'     => $uid,
+                'name'        => sprintf('Bins Vendimia BV%02d', $i),
+                'type_id'     => $polivalent,
+                'capacity'    => 800,
+                'description' => 'Patio exterior',
+                'created_at'  => $now, 'updated_at' => $now,
             ];
         }
 
