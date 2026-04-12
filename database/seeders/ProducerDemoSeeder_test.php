@@ -1158,22 +1158,22 @@ class ProducerDemoSeeder_test extends Seeder
 
     private function createWineTransfers(array $wineIds, array $containerIds, $now): void
     {
-        $uid = self::PRODUCER_USER_ID;
+        $uid    = self::PRODUCER_USER_ID;
+        $unitId = DB::table('units_of_measurement')->where('symbol', 'L')->value('id') ?? 1;
         foreach (array_slice($wineIds, 0, 4) as $wi => $wineId) {
             $fromId = $containerIds[$wi]      ?? $containerIds[0];
             $toId   = $containerIds[$wi + 15] ?? $containerIds[1];
             DB::table('wine_transfers')->insert([
-                'wine_id'             => $wineId,
-                'from_container_id'   => $fromId,
-                'to_container_id'     => $toId,
-                'transfer_date'       => '2025-10-' . str_pad(5 + $wi * 3, 2, '0', STR_PAD_LEFT),
-                'volume_liters'       => 800.0 + $wi * 200,
-                'temperature'        => 16.0,
-                'reason'              => 'Traslado post-fermentación a depósito limpio.',
-                'notes'               => 'Sin incidencias.',
-                'status'              => 'completed',
-                'created_by'          => $uid,
-                'created_at'          => $now, 'updated_at' => $now,
+                'wine_id'               => $wineId,
+                'from_container_id'     => $fromId,
+                'to_container_id'       => $toId,
+                'transfer_date'         => '2025-10-' . str_pad(5 + $wi * 3, 2, '0', STR_PAD_LEFT),
+                'quantity'              => 800.0 + $wi * 200,
+                'unit_of_measurement_id'=> $unitId,
+                'transfer_type'         => 'racking',
+                'notes'                 => 'Traslado post-fermentación a depósito limpio. Sin incidencias.',
+                'created_by'            => $uid,
+                'created_at'            => $now, 'updated_at' => $now,
             ]);
         }
     }
@@ -1183,18 +1183,19 @@ class ProducerDemoSeeder_test extends Seeder
     private function createWineLosses(array $wineIds, array $containerIds, $now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        $reasons = ['evaporacion', 'limpieza', 'muestreo', 'evaporacion', 'limpieza'];
+        $lossTypes = ['evaporation', 'other', 'sampling', 'evaporation', 'other'];
+        $unitId    = DB::table('units_of_measurement')->where('symbol', 'L')->value('id') ?? 1;
         foreach (array_slice($wineIds, 0, 5) as $wi => $wineId) {
             DB::table('wine_losses')->insert([
-                'wine_id'       => $wineId,
-                'container_id'  => $containerIds[$wi] ?? $containerIds[0],
-                'loss_date'     => '2025-11-' . str_pad(5 + $wi * 4, 2, '0', STR_PAD_LEFT),
-                'volume_liters' => 20.0 + $wi * 5,
-                'reason'        => $reasons[$wi],
-                'notes'         => 'Merma registrada.',
-                'status'        => 'completed',
-                'created_by'    => $uid,
-                'created_at'    => $now, 'updated_at' => $now,
+                'wine_id'               => $wineId,
+                'container_id'          => $containerIds[$wi] ?? $containerIds[0],
+                'loss_date'             => '2025-11-' . str_pad(5 + $wi * 4, 2, '0', STR_PAD_LEFT),
+                'quantity'              => 20.0 + $wi * 5,
+                'unit_of_measurement_id'=> $unitId,
+                'loss_type'             => $lossTypes[$wi],
+                'notes'                 => 'Merma registrada.',
+                'created_by'            => $uid,
+                'created_at'            => $now, 'updated_at' => $now,
             ]);
         }
     }
@@ -1211,29 +1212,35 @@ class ProducerDemoSeeder_test extends Seeder
             ['wine_id' => $wineIds[1], 'date' => '2026-02-15', 'bottles' => 2300, 'vol' => 0.75, 'liters' => 1725.0, 'notes' => 'Crianza 6 meses. Embotellado tras madera.'],
         ];
         foreach ($bottlings as $i => $b) {
+            $lotNumber  = 'LOT-' . date('Ymd', strtotime($b['date'])) . '-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT);
             $bottlingId = DB::table('wine_bottlings')->insertGetId([
                 'user_id'          => $uid,
                 'wine_id'          => $b['wine_id'],
                 'container_id'     => $containerIds[$i] ?? $containerIds[0],
                 'bottling_date'    => $b['date'],
-                'bottle_count'     => $b['bottles'],
-                'bottle_volume_ml' => $b['vol'] * 1000,
-                'total_liters'     => $b['liters'],
-                'status'           => 'completed',
+                'bottle_format'    => '750',
+                'quantity_bottles' => $b['bottles'],
+                'quantity_liters'  => $b['liters'],
+                'lot_number'       => $lotNumber,
                 'notes'            => $b['notes'],
+                'created_by'       => $uid,
                 'created_at'       => $now, 'updated_at' => $now,
             ]);
             // Lote de producto
+            $lotQty = round($b['liters'], 3);
             DB::table('wine_lots')->insert([
-                'user_id'        => $uid,
-                'wine_id'        => $b['wine_id'],
-                'bottling_id'    => $bottlingId,
-                'lot_number'     => 'LOT-' . date('Ymd', strtotime($b['date'])) . '-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
-                'bottle_count'   => $b['bottles'],
-                'available_count' => $b['bottles'],
-                'status'         => 'available',
-                'production_date' => $b['date'],
-                'created_at'     => $now, 'updated_at' => $now,
+                'user_id'           => $uid,
+                'wine_id'           => $b['wine_id'],
+                'name'              => $lotNumber,
+                'vintage'           => (int)substr($b['date'], 0, 4),
+                'wine_type'         => 'tinto',
+                'quantity'          => $lotQty,
+                'initial_quantity'  => $lotQty,
+                'available_quantity'=> $lotQty,
+                'unit'              => 'litros',
+                'bottling_date'     => $b['date'],
+                'archived'          => false,
+                'created_at'        => $now, 'updated_at' => $now,
             ]);
         }
     }
