@@ -818,12 +818,12 @@ class ProducerDemoSeeder_test extends Seeder
         [$prod0, $prod1, $prod2, $prod3, $prod4] = $productIds;
 
         $pests = [
-            ['name' => 'Polilla del racimo (Orotava)',          'scientific_name' => 'Lobesia botrana',        'pest_type' => 'insecto',  'risk_level' => 'high',   'control_methods' => ['biologico','quimico'],  'product_id' => $prod2, 'created_by' => $uid],
-            ['name' => 'Mildiu de la vid (Orotava)',            'scientific_name' => 'Plasmopara viticola',    'pest_type' => 'hongo',    'risk_level' => 'high',   'control_methods' => ['quimico','cultural'],   'product_id' => $prod0, 'created_by' => $uid],
-            ['name' => 'Oídio de la vid (Orotava)',             'scientific_name' => 'Erysiphe necator',       'pest_type' => 'hongo',    'risk_level' => 'medium', 'control_methods' => ['quimico','cultural'],   'product_id' => $prod1, 'created_by' => $uid],
-            ['name' => 'Araña roja (Orotava)',                  'scientific_name' => 'Panonychus ulmi',        'pest_type' => 'acaro',    'risk_level' => 'medium', 'control_methods' => ['biologico','quimico'],  'product_id' => $prod4, 'created_by' => $uid],
-            ['name' => 'Botrytis / Podredumbre gris (Orotava)', 'scientific_name' => 'Botrytis cinerea',       'pest_type' => 'hongo',    'risk_level' => 'medium', 'control_methods' => ['cultural','quimico'],   'product_id' => $prod1, 'created_by' => $uid],
-            ['name' => 'Excoriosis (Orotava)',                  'scientific_name' => 'Phomopsis viticola',     'pest_type' => 'hongo',    'risk_level' => 'low',    'control_methods' => ['cultural','quimico'],   'product_id' => $prod3, 'created_by' => $uid],
+            ['name' => 'Polilla del racimo (Orotava)',          'scientific_name' => 'Lobesia botrana',     'type' => 'pest',    'control_methods' => ['biologico','quimico'],  'product_id' => $prod2],
+            ['name' => 'Mildiu de la vid (Orotava)',            'scientific_name' => 'Plasmopara viticola', 'type' => 'disease', 'control_methods' => ['quimico','cultural'],   'product_id' => $prod0],
+            ['name' => 'Oídio de la vid (Orotava)',             'scientific_name' => 'Erysiphe necator',    'type' => 'disease', 'control_methods' => ['quimico','cultural'],   'product_id' => $prod1],
+            ['name' => 'Araña roja (Orotava)',                  'scientific_name' => 'Panonychus ulmi',     'type' => 'pest',    'control_methods' => ['biologico','quimico'],  'product_id' => $prod4],
+            ['name' => 'Botrytis / Podredumbre gris (Orotava)', 'scientific_name' => 'Botrytis cinerea',    'type' => 'disease', 'control_methods' => ['cultural','quimico'],   'product_id' => $prod1],
+            ['name' => 'Excoriosis (Orotava)',                  'scientific_name' => 'Phomopsis viticola',  'type' => 'disease', 'control_methods' => ['cultural','quimico'],   'product_id' => $prod3],
         ];
 
         $ids = [];
@@ -833,7 +833,6 @@ class ProducerDemoSeeder_test extends Seeder
             $pestId = DB::table('pests')->insertGetId(array_merge($p, [
                 'control_methods' => json_encode($p['control_methods']),
                 'active'          => true,
-                'municipality_id' => self::MUNICIPALITY_ID,
                 'created_at'      => $now, 'updated_at' => $now,
             ]));
             DB::table('pest_product_effectiveness')->insert([
