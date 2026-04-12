@@ -57,43 +57,37 @@ class ViticulturistDemoSeeder_test extends Seeder
             $productIds = $this->createProducts($now);
         });
 
-        // ── 3. Vincular viticultor ↔ bodega ────────────────────────────────────
-        $wvId = 0;
-        $this->step('Vínculo bodega–viticultor', function () use ($now, &$wvId) {
-            $wvId = $this->linkToWinery($now);
-        });
-
-        // ── 4. Parcelas + SIGPAC + Geometría (JSON completo) ─────────────────
+        // ── 3. Parcelas + SIGPAC + Geometría (JSON completo) ─────────────────
         $plotIds = [];
         $this->step('Parcelas + SIGPAC + geometría (460 recintos Gran Canaria)', function () use ($now, &$plotIds) {
             $plotIds = $this->createPlotsWithSigpac($now);
         });
 
-        // ── 5. Plantaciones ────────────────────────────────────────────────────
+        // ── 4. Plantaciones ────────────────────────────────────────────────────
         $plantingIds = [];
         $this->step('Plantaciones (10)', function () use ($now, $plotIds, &$plantingIds) {
             $plantingIds = $this->createPlantings($plotIds, $now);
         });
 
-        // ── 6. Campañas ────────────────────────────────────────────────────────
+        // ── 5. Campañas ────────────────────────────────────────────────────────
         $campaign2024Id = 0;
         $campaign2025Id = 0;
         $campaign2026Id = 0;
-        $this->step('Campañas (2024 cerrada + 2025 cerrada + 2026 activa)', function () use ($now, $wvId, &$campaign2024Id, &$campaign2025Id, &$campaign2026Id) {
-            [$campaign2024Id, $campaign2025Id, $campaign2026Id] = $this->createCampaigns($wvId, $now);
+        $this->step('Campañas (2024 cerrada + 2025 cerrada + 2026 activa)', function () use ($now, &$campaign2024Id, &$campaign2025Id, &$campaign2026Id) {
+            [$campaign2024Id, $campaign2025Id, $campaign2026Id] = $this->createCampaigns($now);
         });
 
-        // ── 7. Actividades de campo ────────────────────────────────────────────
-        $this->step('Actividades 2024 (~42)', function () use ($now, $plotIds, $plantingIds, $productIds, $wvId, $campaign2024Id) {
-            $this->createActivities2024($plotIds, $plantingIds, $productIds, $wvId, $campaign2024Id, $now);
+        // ── 6. Actividades de campo ────────────────────────────────────────────
+        $this->step('Actividades 2024 (~42)', function () use ($now, $plotIds, $plantingIds, $productIds, $campaign2024Id) {
+            $this->createActivities2024($plotIds, $plantingIds, $productIds, $campaign2024Id, $now);
         });
 
-        $this->step('Actividades 2025 (~23)', function () use ($now, $plotIds, $plantingIds, $productIds, $wvId, $campaign2025Id) {
-            $this->createActivities2025($plotIds, $plantingIds, $productIds, $wvId, $campaign2025Id, $now);
+        $this->step('Actividades 2025 (~23)', function () use ($now, $plotIds, $plantingIds, $productIds, $campaign2025Id) {
+            $this->createActivities2025($plotIds, $plantingIds, $productIds, $campaign2025Id, $now);
         });
 
-        $this->step('Actividades 2026 (~20)', function () use ($now, $plotIds, $plantingIds, $productIds, $wvId, $campaign2026Id) {
-            $this->createActivities2026($plotIds, $plantingIds, $productIds, $wvId, $campaign2026Id, $now);
+        $this->step('Actividades 2026 (~20)', function () use ($now, $plotIds, $plantingIds, $productIds, $campaign2026Id) {
+            $this->createActivities2026($plotIds, $plantingIds, $productIds, $campaign2026Id, $now);
         });
 
         // ── 8. Fenología ───────────────────────────────────────────────────────
@@ -793,11 +787,11 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     // ─── 6. Campañas ──────────────────────────────────────────────────────────
 
-    private function createCampaigns(int $wvId, $now): array
+    private function createCampaigns($now): array
     {
         $base = [
             'viticulturist_id'         => self::VIT_USER_ID,
-            'winery_viticulturist_id'  => $wvId,
+            'winery_viticulturist_id'  => null,
             'mid_validation_signed'    => false,
             'final_validation_signed'  => false,
             'created_at'               => $now,
@@ -844,14 +838,14 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     private function createActivities2024(
         array $plotIds, array $plantingIds, array $productIds,
-        int $wvId, int $campaignId, $now
+        int $campaignId, $now
     ): void {
         [$mildiuId, $oidioId, $mixtoId, $insectId, $cobreId] = $productIds;
 
         // Helper: insertar actividad y devolver su ID
         $act = fn(array $data) => DB::table('agricultural_activities')->insertGetId(array_merge([
             'viticulturist_id'        => self::VIT_USER_ID,
-            'winery_viticulturist_id' => $wvId,
+            'winery_viticulturist_id' => null,
             'campaign_id'             => $campaignId,
             'is_locked'               => false,
             'created_at'              => $now,
@@ -1139,13 +1133,13 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     private function createActivities2025(
         array $plotIds, array $plantingIds, array $productIds,
-        int $wvId, int $campaignId, $now
+        int $campaignId, $now
     ): void {
         [$mildiuId, $oidioId, $mixtoId, $insectId, $cobreId] = $productIds;
 
         $act = fn(array $data) => DB::table('agricultural_activities')->insertGetId(array_merge([
             'viticulturist_id'        => self::VIT_USER_ID,
-            'winery_viticulturist_id' => $wvId,
+            'winery_viticulturist_id' => null,
             'campaign_id'             => $campaignId,
             'is_locked'               => false,
             'created_at'              => $now,
@@ -1352,13 +1346,13 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     private function createActivities2026(
         array $plotIds, array $plantingIds, array $productIds,
-        int $wvId, int $campaignId, $now
+        int $campaignId, $now
     ): void {
         [$mildiuId, $oidioId, $mixtoId, $insectId, $cobreId] = $productIds;
 
         $act = fn(array $data) => DB::table('agricultural_activities')->insertGetId(array_merge([
             'viticulturist_id'        => self::VIT_USER_ID,
-            'winery_viticulturist_id' => $wvId,
+            'winery_viticulturist_id' => null,
             'campaign_id'             => $campaignId,
             'is_locked'               => false,
             'created_at'              => $now,
