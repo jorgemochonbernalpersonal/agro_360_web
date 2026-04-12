@@ -1324,15 +1324,16 @@ class ProducerDemoSeeder_test extends Seeder
         foreach (array_slice($wineIds, 0, 6) as $wi => $wineId) {
             $n = $notes[$wi];
             DB::table('wine_tasting_notes')->insert([
-                'user_id'       => $uid,
-                'wine_id'       => $wineId,
-                'tasting_date'  => '2025-12-' . str_pad(1 + $wi * 3, 2, '0', STR_PAD_LEFT),
-                'taster_name'   => 'Productor La Orotava',
-                'color_notes'   => $n['color'],
-                'aroma_notes'   => $n['aroma'],
-                'palate_notes'  => $n['palate'],
-                'overall_score' => $n['score'],
-                'created_at'    => $now, 'updated_at' => $now,
+                'user_id'            => $uid,
+                'wine_id'            => $wineId,
+                'evaluation_date'    => '2025-12-' . str_pad(1 + $wi * 3, 2, '0', STR_PAD_LEFT),
+                'evaluator_name'     => 'Productor La Orotava',
+                'visual_color'       => $n['color'],
+                'aroma_descriptors'  => $n['aroma'],
+                'overall_conclusion' => $n['palate'],
+                'overall_score'      => $n['score'],
+                'created_by'         => $uid,
+                'created_at'         => $now, 'updated_at' => $now,
             ]);
         }
     }
