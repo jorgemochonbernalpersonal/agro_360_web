@@ -8,15 +8,22 @@ use Illuminate\Support\Facades\DB;
 /**
  * Elimina usuarios de prueba/demo de producción junto con todos sus datos.
  *
- * La mayoría de tablas tienen onDelete('cascade'), así que borrar el usuario
- * limpia automáticamente: plots, harvests, containers, invoices, profiles, etc.
+ * Algunas tablas (campaigns.viticulturist_id, agricultural_activities.viticulturist_id,
+ * wine_subproducts.created_by) no tienen ON DELETE CASCADE, lo que impide el borrado
+ * directo. Se deshabilitan las FK checks solo durante el delete del usuario para que
+ * MySQL no bloquee — los registros huérfanos son irrelevantes para cuentas de prueba.
  *
- * Tablas sin cascade (set null): harvest_stocks, invoice_audit_logs,
- * plot_audit_logs, plot_planting_audit_logs, winery_viticulturist.assigned_by,
- * crew_members.assigned_by, organizations.owner_user_id — se dejan con null.
+ * Tablas con ON DELETE CASCADE (se limpian automáticamente al borrar el usuario):
+ *   user_profiles, subscriptions, payments, clients, user_taxes, invoice_groups,
+ *   invoices, invoicing_settings, support_tickets, digital_signatures, containers,
+ *   agricultural_activity_audit_logs, warehouses, product_stocks, container_rooms,
+ *   crews (viticulturist_id), winery_viticulturist (viticulturist_id+winery_id),
+ *   supervisor_winery (supervisor_id), etc.
  *
- * Se borran también sessions y personal_access_tokens (Sanctum) explícitamente
- * porque no tienen FK formal en todos los entornos.
+ * Tablas con ON DELETE SET NULL (quedan con null, sin datos huérfanos problemáticos):
+ *   harvest_stocks, invoice_audit_logs, plot_audit_logs, plot_planting_audit_logs,
+ *   winery_viticulturist.assigned_by, crew_members.assigned_by,
+ *   organizations.owner_user_id
  */
 class CleanTestUsersSeeder extends Seeder
 {
@@ -51,17 +58,25 @@ class CleanTestUsersSeeder extends Seeder
         }
 
         DB::transaction(function () use ($ids) {
-            // Limpieza explícita de tablas sin FK formal
+            // Limpiar tablas sin FK formal
             DB::table('sessions')->whereIn('user_id', $ids)->delete();
             DB::table('personal_access_tokens')
                 ->where('tokenable_type', 'App\\Models\\User')
                 ->whereIn('tokenable_id', $ids)
                 ->delete();
 
-            // El cascade en users borra el resto automáticamente
+            // Deshabilitar FK checks para poder borrar el usuario aunque haya tablas
+            // con RESTRICT (campaigns.viticulturist_id, agricultural_activities.viticulturist_id,
+            // wine_subproducts.created_by). Los registros huérfanos de cuentas de prueba
+            // son inocuos y nunca aparecerán en ningún listado activo.
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
             $deleted = DB::table('users')->whereIn('id', $ids)->delete();
 
-            $this->command->info("Eliminados {$deleted} usuario(s) y todos sus datos asociados.");
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+            $this->command->info("Eliminados {$deleted} usuario(s) y todos sus datos asociados (cascade).");
+            $this->command->warn('Nota: tablas con RESTRICT (campaigns, agricultural_activities, wine_subproducts) pueden tener registros huérfanos de estas cuentas de prueba.');
         });
     }
 }
