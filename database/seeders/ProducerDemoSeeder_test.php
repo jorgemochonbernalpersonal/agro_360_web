@@ -1255,11 +1255,11 @@ class ProducerDemoSeeder_test extends Seeder
     {
         $uid = self::PRODUCER_USER_ID;
         $clients = [
-            ['company_name' => 'Restaurantes Canarios SL',     'email' => 'compras@restcanarios.es',  'phone' => '922100001', 'nif' => 'B38100001'],
-            ['company_name' => 'Distribuidora Atlántico SLU',  'email' => 'pedidos@disatlantico.es',  'phone' => '922100002', 'nif' => 'B38100002'],
-            ['first_name' => 'Pedro', 'last_name' => 'Suárez Martín', 'email' => 'pedro.suarez@gmail.com', 'phone' => '608100001', 'nif' => '45100001T'],
-            ['company_name' => 'Wine Export Tenerife SL',      'email' => 'export@wineexporttf.es',   'phone' => '922100003', 'nif' => 'B38100003'],
-            ['first_name' => 'Laura', 'last_name' => 'Álvarez Pérez', 'email' => 'laura.alvarez@gmail.com', 'phone' => '608100002', 'nif' => '45100002P'],
+            ['client_type' => 'company',    'company_name' => 'Restaurantes Canarios SL',    'company_document' => 'B38100001', 'email' => 'compras@restcanarios.es',  'phone' => '922100001'],
+            ['client_type' => 'company',    'company_name' => 'Distribuidora Atlántico SLU', 'company_document' => 'B38100002', 'email' => 'pedidos@disatlantico.es',  'phone' => '922100002'],
+            ['client_type' => 'individual', 'first_name' => 'Pedro', 'last_name' => 'Suárez Martín',   'particular_document' => '45100001T', 'email' => 'pedro.suarez@gmail.com',   'phone' => '608100001'],
+            ['client_type' => 'company',    'company_name' => 'Wine Export Tenerife SL',     'company_document' => 'B38100003', 'email' => 'export@wineexporttf.es',   'phone' => '922100003'],
+            ['client_type' => 'individual', 'first_name' => 'Laura', 'last_name' => 'Álvarez Pérez',   'particular_document' => '45100002P', 'email' => 'laura.alvarez@gmail.com',  'phone' => '608100002'],
         ];
         foreach ($clients as $c) {
             DB::table('clients')->insert(array_merge($c, [
