@@ -770,7 +770,6 @@ class ProducerDemoSeeder_test extends Seeder
         DB::table('observations')->insert([
             'activity_id'               => $actId,
             'observation_type'          => 'phenology',
-            'phenological_stage'        => 'bud_break',
             'affected_area_percentage'  => 0.00,
             'threshold_exceeded'        => false,
             'description'               => 'Inicio brotación 15-20% yemas. Normal para la altitud.',
@@ -784,18 +783,18 @@ class ProducerDemoSeeder_test extends Seeder
     {
         $uid = self::PRODUCER_USER_ID;
         $stages2025 = [
-            ['stage' => 'bud_break',     'date' => '2025-03-10', 'note' => 'Brotación inicio. Temp acumuladas normales.'],
-            ['stage' => 'flowering',      'date' => '2025-04-28', 'note' => 'Floración plena. Sin heladas.'],
-            ['stage' => 'fruit_set',      'date' => '2025-05-18', 'note' => 'Cuajado normal. 70% flores.'],
-            ['stage' => 'veraison',       'date' => '2025-07-25', 'note' => 'Envero. Cambio de color homogéneo.'],
-            ['stage' => 'harvest_mature', 'date' => '2025-09-08', 'note' => 'Madurez óptima. Brix 22-24.'],
+            ['stage' => 'budbreak',     'date' => '2025-03-10', 'note' => 'Brotación inicio. Temp acumuladas normales.'],
+            ['stage' => 'flowering',    'date' => '2025-04-28', 'note' => 'Floración plena. Sin heladas.'],
+            ['stage' => 'fruit_set',    'date' => '2025-05-18', 'note' => 'Cuajado normal. 70% flores.'],
+            ['stage' => 'veraison',     'date' => '2025-07-25', 'note' => 'Envero. Cambio de color homogéneo.'],
+            ['stage' => 'harvest',      'date' => '2025-09-08', 'note' => 'Madurez óptima. Brix 22-24.'],
         ];
         foreach ($plantingIds as $i => $plantingId) {
             foreach ($stages2025 as $s) {
                 DB::table('phenology_observations')->insert([
                     'viticulturist_id' => $uid, 'plot_planting_id' => $plantingId,
-                    'campaign_id' => $c2025, 'phenological_stage' => $s['stage'],
-                    'observation_date' => $s['date'], 'notes' => $s['note'],
+                    'campaign_id' => $c2025, 'event' => $s['stage'],
+                    'obs_date' => $s['date'], 'notes' => $s['note'],
                     'created_at' => $now, 'updated_at' => $now,
                 ]);
             }
@@ -804,8 +803,8 @@ class ProducerDemoSeeder_test extends Seeder
         foreach (array_slice($plantingIds, 0, 2) as $plantingId) {
             DB::table('phenology_observations')->insert([
                 'viticulturist_id' => $uid, 'plot_planting_id' => $plantingId,
-                'campaign_id' => $c2026, 'phenological_stage' => 'bud_break',
-                'observation_date' => '2026-03-15', 'notes' => 'Brotación 2026 en curso.',
+                'campaign_id' => $c2026, 'event' => 'budbreak',
+                'obs_date' => '2026-03-15', 'notes' => 'Brotación 2026 en curso.',
                 'created_at' => $now, 'updated_at' => $now,
             ]);
         }
