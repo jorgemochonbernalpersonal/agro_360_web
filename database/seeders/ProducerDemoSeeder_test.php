@@ -1280,18 +1280,19 @@ class ProducerDemoSeeder_test extends Seeder
         ];
 
         foreach ($invoiceData as $i => $inv) {
-            $clientId = $clients[$inv['client_idx']] ?? $clients->first();
+            $clientId  = $clients[$inv['client_idx']] ?? $clients->first();
             $invoiceId = DB::table('invoices')->insertGetId([
-                'user_id'      => $uid,
-                'client_id'    => $clientId,
-                'campaign_id'  => $campaignId,
-                'invoice_type' => $inv['type'],
+                'user_id'        => $uid,
+                'client_id'      => $clientId,
                 'invoice_number' => 'F-' . date('Y', strtotime($inv['date'])) . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
-                'invoice_date' => $inv['date'],
-                'status'       => 'paid',
-                'total_amount' => $inv['total'],
-                'notes'        => $inv['desc'],
-                'created_at'   => $now, 'updated_at' => $now,
+                'invoice_date'   => $inv['date'],
+                'status'         => 'paid',
+                'payment_status' => 'paid',
+                'subtotal'       => $inv['total'],
+                'tax_base'       => $inv['total'],
+                'total_amount'   => $inv['total'],
+                'observations'   => $inv['desc'],
+                'created_at'     => $now, 'updated_at' => $now,
             ]);
             DB::table('invoice_items')->insert([
                 'invoice_id'  => $invoiceId,
@@ -1300,7 +1301,8 @@ class ProducerDemoSeeder_test extends Seeder
                 'quantity'    => 1,
                 'unit'        => 'partida',
                 'unit_price'  => $inv['total'],
-                'total_price' => $inv['total'],
+                'subtotal'    => $inv['total'],
+                'total'       => $inv['total'],
                 'created_at'  => $now, 'updated_at' => $now,
             ]);
         }
