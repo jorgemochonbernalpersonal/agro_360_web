@@ -72,6 +72,7 @@ class WineryMenu
         $menu['cellar_output']      = self::cellarOutput('winery');
         $menu['winery_compliance']  = self::wineryCompliance('winery');
 
+        // ── Parcelas ──────────────────────────────────────────────────────
         $menu['territory'] = [
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'winery.plots.index',             'active' => request()->routeIs('winery.plots*') && !request()->routeIs('plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',          'active' => request()->routeIs('plots.plantings.*')],
@@ -79,10 +80,13 @@ class WineryMenu
             ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial', 'route' => 'plots.territory',                'active' => request()->routeIs('plots.territory')],
             ['divider' => true],
             ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'winery.field-activities.index',  'active' => request()->routeIs('winery.field-activities*')],
-            ['divider' => true],
-            ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',       'active' => request()->routeIs('remote-sensing.*')],
-            ['icon' => 'cloud',               'label' => 'Meteorología',        'route' => 'winery.meteorology.index',       'active' => request()->routeIs('winery.meteorology*'), 'wip' => true, 'new' => true],
-            ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas', 'route' => 'winery.plot-environments.index', 'active' => request()->routeIs('winery.plot-environments*')],
+        ];
+
+        // ── Análisis de Finca ─────────────────────────────────────────────
+        $menu['analytics'] = [
+            ['icon' => 'globe-alt',         'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',              'active' => request()->routeIs('remote-sensing.*')],
+            ['icon' => 'cloud',             'label' => 'Meteorología',        'route' => 'winery.meteorology.index',              'active' => request()->routeIs('winery.meteorology*'), 'new' => true],
+            ['icon' => 'viewfinder-circle', 'label' => 'Entorno de Parcelas', 'route' => 'winery.plot-environments.index',        'active' => request()->routeIs('winery.plot-environments*')],
         ];
 
         $menu['billing'] = [
@@ -97,23 +101,31 @@ class WineryMenu
             ['icon' => 'sparkles',                'label' => 'Enoturismo',              'route' => 'winery.enotourism.index',              'active' => request()->routeIs('winery.enotourism*'), 'wip' => true, 'new' => true],
         ];
 
-        $menu['resources'] = [
+        // ── Insumos, Proveedores y Alertas ────────────────────────────────
+        $menu['winery_resources'] = [
             ['icon' => 'building-storefront', 'label' => 'Insumos de Bodega', 'route' => 'winery.winery-supplies.index', 'active' => request()->routeIs('winery.winery-supplies*')],
             ['icon' => 'truck',               'label' => 'Proveedores',        'route' => 'winery.suppliers.index',       'active' => request()->routeIs('winery.suppliers*')],
+            ['divider' => true],
+            ['icon' => 'bell-alert',          'label' => 'Centro de Alertas',  'route' => 'winery.alerts.index',          'active' => request()->routeIs('winery.alerts*'), 'new' => true],
         ];
 
-        $menu['compliance'] = [
+        // ── Documentos ────────────────────────────────────────────────────
+        $menu['winery_docs'] = [
+            ['icon' => 'folder-open', 'label' => 'Documentos Bodega', 'route' => 'winery.documents.index', 'active' => request()->routeIs('winery.documents*')],
+        ];
+
+        // ── Registros y Autorizaciones ────────────────────────────────────
+        $menu['registrations'] = [
             ['icon' => 'building-office', 'label' => 'Explotación RGSEAA',       'route' => 'winery.exploitations.index',             'active' => request()->routeIs('winery.exploitations.*'), 'new' => true],
             ['icon' => 'shield-check',    'label' => 'Autorizaciones Comerciales','route' => 'winery.commercial-authorizations.index', 'active' => request()->routeIs('winery.commercial-authorizations.*'), 'new' => true],
             ['icon' => 'identification',  'label' => 'Aplicadores ROPO',          'route' => 'winery.field-applicators.index',         'active' => request()->routeIs('winery.field-applicators.*'), 'new' => true],
             ['icon' => 'cog-8-tooth',     'label' => 'Equipos ITB/ITEA',          'route' => 'winery.field-equipment.index',           'active' => request()->routeIs('winery.field-equipment.*'), 'new' => true],
         ];
 
+        // ── Rail bottom / Sistema ─────────────────────────────────────────
         $menu['system'] = [
-            ['icon' => 'cog-6-tooth', 'label' => 'Configuración',       'route' => 'winery.settings',             'active' => request()->routeIs('winery.settings')],
-            ['icon' => 'megaphone',   'label' => 'Avisos a Viticultores','route' => 'winery.announcements.index',  'active' => request()->routeIs('winery.announcements*'), 'new' => true],
-            ['icon' => 'bell-alert',  'label' => 'Centro de Alertas',   'route' => 'winery.alerts.index',         'active' => request()->routeIs('winery.alerts*'), 'new' => true],
-            ['icon' => 'folder-open', 'label' => 'Documentos Bodega',   'route' => 'winery.documents.index',      'active' => request()->routeIs('winery.documents*')],
+            ['icon' => 'cog-6-tooth', 'label' => 'Configuración',       'route' => 'winery.settings',            'active' => request()->routeIs('winery.settings')],
+            ['icon' => 'megaphone',   'label' => 'Avisos a Viticultores','route' => 'winery.announcements.index', 'active' => request()->routeIs('winery.announcements*'), 'new' => true],
         ];
 
         return $menu;

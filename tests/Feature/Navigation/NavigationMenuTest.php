@@ -37,7 +37,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $expected = ['main', 'operations', 'cuaderno_inputs', 'registros_oficiales', 'plots_analysis', 'resources', 'compliance', 'pac', 'billing', 'rail_bottom'];
+        $expected = ['main', 'campaigns', 'winery_rel', 'notebook_inputs', 'monitoring', 'environmental', 'declarations', 'estate', 'analytics', 'resources', 'compliance', 'pac', 'billing', 'rail_bottom'];
         foreach ($expected as $section) {
             $this->assertArrayHasKey($section, $menu, "Viticulturist debe tener la sección '{$section}'");
         }
@@ -50,7 +50,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $wineryOnly = ['harvest', 'cellar_elab', 'cellar_salida', 'territory', 'winery_normativa', 'winery_billing', 'system'];
+        $wineryOnly = ['harvest', 'cellar_elaboration', 'cellar_output', 'territory', 'winery_compliance', 'winery_resources', 'winery_docs', 'registrations', 'system'];
         foreach ($wineryOnly as $section) {
             $this->assertArrayNotHasKey($section, $menu, "Viticulturist NO debe tener la sección winery '{$section}'");
         }
@@ -69,25 +69,25 @@ class NavigationMenuTest extends TestCase
         $this->assertContains('viticulturist.notifications.index', $routes);
     }
 
-    public function test_viticulturist_operations_includes_cuaderno_access(): void
+    public function test_viticulturist_winery_rel_includes_access_and_messages(): void
     {
         $viticulturist = $this->makeViticulturist();
         $this->actingAs($viticulturist);
 
         $menu = NavigationHelper::getMenu();
-        $routes = array_column($menu['operations'], 'route');
+        $routes = array_column($menu['winery_rel'], 'route');
 
         $this->assertContains('viticulturist.winery-access.index', $routes);
         $this->assertContains('viticulturist.bodega-messages.index', $routes);
     }
 
-    public function test_viticulturist_cuaderno_inputs_starts_with_overview(): void
+    public function test_viticulturist_notebook_inputs_starts_with_overview(): void
     {
         $viticulturist = $this->makeViticulturist();
         $this->actingAs($viticulturist);
 
         $menu = NavigationHelper::getMenu();
-        $first = $menu['cuaderno_inputs'][0];
+        $first = $menu['notebook_inputs'][0];
 
         $this->assertSame('viticulturist.digital-notebook', $first['route']);
         $this->assertSame('Cuaderno Digital', $first['label']);
@@ -116,7 +116,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $expected = ['main', 'harvest', 'cellar_elab', 'cellar_salida', 'territory', 'resources', 'billing', 'winery_normativa', 'compliance', 'system'];
+        $expected = ['main', 'harvest', 'cellar_elaboration', 'cellar_output', 'winery_compliance', 'territory', 'analytics', 'billing', 'winery_resources', 'winery_docs', 'registrations', 'system'];
         foreach ($expected as $section) {
             $this->assertArrayHasKey($section, $menu, "Winery debe tener la sección '{$section}'");
         }
@@ -129,7 +129,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $viticulturistOnly = ['operations', 'cuaderno_inputs', 'registros_oficiales', 'plots_analysis', 'pac', 'rail_bottom'];
+        $viticulturistOnly = ['campaigns', 'winery_rel', 'notebook_inputs', 'pac', 'rail_bottom'];
         foreach ($viticulturistOnly as $section) {
             $this->assertArrayNotHasKey($section, $menu, "Winery NO debe tener la sección '{$section}'");
         }
@@ -157,7 +157,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $vineyardSections = ['operations', 'cuaderno_inputs', 'registros_oficiales', 'plots_analysis', 'resources', 'compliance', 'pac', 'billing'];
+        $vineyardSections = ['campaigns', 'notebook_inputs', 'monitoring', 'environmental', 'declarations', 'estate', 'analytics', 'resources', 'compliance', 'pac', 'billing'];
         foreach ($vineyardSections as $section) {
             $this->assertArrayHasKey($section, $menu, "Producer debe tener la sección viñedo '{$section}'");
         }
@@ -170,7 +170,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $winerySections = ['harvest', 'cellar_elab', 'cellar_salida', 'winery_normativa', 'winery_billing'];
+        $winerySections = ['harvest', 'cellar_elaboration', 'cellar_output', 'winery_compliance', 'winery_resources', 'winery_docs', 'winery_billing'];
         foreach ($winerySections as $section) {
             $this->assertArrayHasKey($section, $menu, "Producer debe tener la sección bodega '{$section}'");
         }
@@ -189,28 +189,26 @@ class NavigationMenuTest extends TestCase
         $this->assertNotContains('viticulturist.dashboard', $routes);
     }
 
-    public function test_producer_cuaderno_inputs_starts_with_overview(): void
+    public function test_producer_notebook_inputs_starts_with_overview(): void
     {
         $producer = $this->makeProducer();
         $this->actingAs($producer);
 
         $menu = NavigationHelper::getMenu();
-        $first = $menu['cuaderno_inputs'][0];
+        $first = $menu['notebook_inputs'][0];
 
         $this->assertSame('producer.digital-notebook', $first['route']);
     }
 
-    public function test_producer_has_no_winery_bodega_messages(): void
+    public function test_producer_has_no_winery_rel_section(): void
     {
         // Producer es la bodega, por lo que no tiene 'Comunicación con Bodega' ni 'Acceso Bodegas al Cuaderno'
         $producer = $this->makeProducer();
         $this->actingAs($producer);
 
         $menu = NavigationHelper::getMenu();
-        $operationsRoutes = array_column($menu['operations'], 'route');
 
-        $this->assertNotContains('producer.bodega-messages.index', $operationsRoutes);
-        $this->assertNotContains('producer.winery-access.index', $operationsRoutes);
+        $this->assertArrayNotHasKey('winery_rel', $menu);
     }
 
     public function test_producer_winery_billing_has_no_verifactu_duplicate(): void
@@ -273,7 +271,7 @@ class NavigationMenuTest extends TestCase
 
         $menu = NavigationHelper::getMenu();
 
-        $otherRoleSections = ['operations', 'cuaderno_inputs', 'harvest', 'cellar_elab', 'billing', 'pac'];
+        $otherRoleSections = ['campaigns', 'notebook_inputs', 'harvest', 'cellar_elaboration', 'billing', 'pac'];
         foreach ($otherRoleSections as $section) {
             $this->assertArrayNotHasKey($section, $menu, "Supervisor NO debe tener '{$section}'");
         }

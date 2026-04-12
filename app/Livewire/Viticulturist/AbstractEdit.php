@@ -17,6 +17,17 @@ abstract class AbstractEdit extends SharedAbstractEdit
     }
 
     /**
+     * Returns the route prefix for the current user's role (viticulturist or producer).
+     */
+    protected function rolePrefix(): string
+    {
+        return match(Auth::user()?->role) {
+            'producer' => 'producer',
+            default    => 'viticulturist',
+        };
+    }
+
+    /**
      * Aborts with 403 if the model does not belong to the authenticated user.
      */
     protected function authorizeOwnership(Model $model): void

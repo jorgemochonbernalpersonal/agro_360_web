@@ -25,18 +25,29 @@ class ProducerMenu
             ['icon' => 'clipboard-document-list', 'label' => 'Campañas',              'route' => 'producer.campaign.index',           'active' => request()->routeIs('producer.campaign*') && !request()->routeIs('producer.campaign-documents.*') && !request()->routeIs('producer.campaign-sign.*')],
             ['icon' => 'folder-open',             'label' => 'Documentos de Campaña', 'route' => 'producer.campaign-documents.index', 'active' => request()->routeIs('producer.campaign-documents.*')],
             ['icon' => 'check-badge',             'label' => 'Firma y Cierre',        'route' => 'producer.campaign-sign.index',      'active' => request()->routeIs('producer.campaign-sign.*')],
+            ['divider' => true],
+            ['icon' => 'squares-plus',     'label' => 'Dashboard Integrado',   'route' => 'producer.integrated-campaign',    'active' => request()->routeIs('producer.integrated-campaign'), 'new' => true],
+            ['icon' => 'queue-list',       'label' => 'Plan de Trabajos',      'route' => 'producer.planned-works.index',    'active' => request()->routeIs('producer.planned-works.*'),    'new' => true],
+            ['icon' => 'chart-bar-square', 'label' => 'Comparativa de Campañas','route' => 'producer.campaign-comparison',   'active' => request()->routeIs('producer.campaign-comparison'), 'new' => true],
         ];
 
         // ── Viñedo: Cuaderno de Campo ─────────────────────────────────────────
         $menu['notebook_inputs'] = ViticulturistMenu::notebookInputs('producer', 'Vendimia Campo');
 
-        // ── Viñedo: Registros Oficiales ───────────────────────────────────────
-        $menu['official_records'] = ViticulturistMenu::officialRecords('producer');
+        // ── Viñedo: Seguimiento (plagas + alertas) ───────────────────────────
+        $menu['monitoring'] = ViticulturistMenu::monitoring('producer');
+
+        // ── Viñedo: Medioambiente ─────────────────────────────────────────────
+        $menu['environmental'] = ViticulturistMenu::environmental('producer');
+
+        // ── Viñedo: Declaraciones y Certificaciones ───────────────────────────
+        $menu['declarations'] = ViticulturistMenu::officialDeclarations('producer');
 
         // ── Bodega: Vendimia ──────────────────────────────────────────────────
         $harvestItems = [
-            ['icon' => 'chart-bar',               'label' => 'Cuadro de Mando',    'route' => 'producer.harvest-summary.index',    'active' => request()->routeIs('producer.harvest-summary*')],
-            ['icon' => 'eye',                     'label' => 'Panel Visual',       'route' => 'producer.visual',                   'active' => request()->routeIs('producer.visual')],
+            ['icon' => 'chart-bar',               'label' => 'Cuadro de Mando',        'route' => 'producer.harvest-summary.index',    'active' => request()->routeIs('producer.harvest-summary*')],
+            ['icon' => 'eye',                     'label' => 'Panel Visual',           'route' => 'producer.visual',                   'active' => request()->routeIs('producer.visual')],
+            ['icon' => 'arrow-trending-up',       'label' => 'Trazabilidad Completa', 'route' => 'producer.full-traceability',        'active' => request()->routeIs('producer.full-traceability'), 'new' => true],
             ['icon' => 'clipboard-document-list', 'label' => 'Campañas Bodega',   'route' => 'producer.winery-campaigns.index',   'active' => request()->routeIs('producer.winery-campaigns*')],
             ['icon' => 'clipboard-document-list', 'label' => 'Previsiones',        'route' => 'producer.harvest-forecasts.index',  'active' => request()->routeIs('producer.harvest-forecasts*')],
             ['icon' => 'archive-box-arrow-down',  'label' => 'Recepciones',        'route' => 'producer.grape-reception.index',    'active' => request()->routeIs('producer.grape-reception*') && !request()->routeIs('producer.grape-reception.disputes')],
@@ -55,30 +66,44 @@ class ProducerMenu
         // ── Bodega: Elaboración ───────────────────────────────────────────────
         $menu['cellar_elaboration'] = WineryMenu::cellarElaboration('producer', operacionesAfterSalas: true);
 
-        // ── Bodega: Salida + Insumos + Alertas ────────────────────────────────
-        $menu['cellar_output'] = WineryMenu::cellarOutput('producer', [
-            ['divider' => true],
+        // ── Bodega: Salida ────────────────────────────────────────────────────
+        $menu['cellar_output'] = WineryMenu::cellarOutput('producer');
+
+        // ── Bodega: Normativa ─────────────────────────────────────────────────
+        $menu['winery_compliance'] = WineryMenu::wineryCompliance('producer', silicieWip: true);
+
+        // ── Bodega: Insumos, Proveedores y Alertas ────────────────────────────
+        $menu['winery_resources'] = [
             ['icon' => 'building-storefront', 'label' => 'Insumos de Bodega', 'route' => 'producer.winery-supplies.index', 'active' => request()->routeIs('producer.winery-supplies*')],
             ['icon' => 'truck',               'label' => 'Proveedores',        'route' => 'producer.suppliers.index',       'active' => request()->routeIs('producer.suppliers*')],
             ['divider' => true],
             ['icon' => 'bell-alert',          'label' => 'Centro de Alertas',  'route' => 'producer.alerts.index',          'active' => request()->routeIs('producer.alerts*'), 'new' => true],
-        ]);
+        ];
 
-        // ── Bodega: Normativa ─────────────────────────────────────────────────
-        $menu['winery_compliance'] = WineryMenu::wineryCompliance('producer', silicieWip: true, includeDocumentos: true);
+        // ── Bodega: Documentos ────────────────────────────────────────────────
+        $menu['winery_docs'] = [
+            ['icon' => 'folder-open', 'label' => 'Documentos Bodega', 'route' => 'producer.documents.index', 'active' => request()->routeIs('producer.documents*')],
+        ];
 
         // ── Parcelas (unión viñedo + bodega) ──────────────────────────────────
         $menu['estate'] = [
+            ['icon' => 'squares-plus',        'label' => 'Panel de Finca',      'route' => 'producer.integrated-estate',       'active' => request()->routeIs('producer.integrated-estate'), 'new' => true],
+            ['divider' => true],
             ['icon' => 'map',                 'label' => 'Parcelas',            'route' => 'producer.plots.index',             'active' => request()->routeIs('producer.plots.*') && !request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'book-open',           'label' => 'Plantaciones',        'route' => 'plots.plantings.index',            'active' => request()->routeIs('plots.plantings.*') || request()->routeIs('producer.plots.plantings.*')],
             ['icon' => 'map-pin',             'label' => 'SIGPAC',              'route' => 'sigpac.codes',                     'active' => request()->routeIs('sigpac.*')],
             ['icon' => 'globe-europe-africa', 'label' => 'Gestión Territorial', 'route' => 'plots.territory',                  'active' => request()->routeIs('plots.territory')],
             ['divider' => true],
-            ['icon' => 'globe-alt',           'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',         'active' => request()->routeIs('remote-sensing.*')],
-            ['icon' => 'cloud',               'label' => 'Meteorología',        'route' => 'producer.meteorology.index',       'active' => request()->routeIs('producer.meteorology*'), 'new' => true],
-            ['icon' => 'viewfinder-circle',   'label' => 'Entorno de Parcelas', 'route' => 'producer.plot-environments.index', 'active' => request()->routeIs('producer.plot-environments.*')],
-            ['divider' => true],
             ['icon' => 'pencil-square',       'label' => 'Actividades de Campo','route' => 'producer.field-activities.index',  'active' => request()->routeIs('producer.field-activities*')],
+        ];
+
+        // ── Análisis de Finca ─────────────────────────────────────────────────
+        $menu['analytics'] = [
+            ['icon' => 'globe-alt',         'label' => 'Teledetección',       'route' => 'remote-sensing.dashboard',              'active' => request()->routeIs('remote-sensing.*')],
+            ['icon' => 'cloud',             'label' => 'Meteorología',        'route' => 'producer.meteorology.index',            'active' => request()->routeIs('producer.meteorology*'), 'new' => true],
+            ['icon' => 'viewfinder-circle', 'label' => 'Entorno de Parcelas', 'route' => 'producer.plot-environments.index',      'active' => request()->routeIs('producer.plot-environments.*')],
+            ['divider' => true],
+            ['icon' => 'beaker',            'label' => 'Análisis de Suelo',   'route' => 'producer.soil-analyses.index',          'active' => request()->routeIs('producer.soil-analyses.*'), 'new' => true],
         ];
 
         // ── Recursos ──────────────────────────────────────────────────────────

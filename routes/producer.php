@@ -312,11 +312,8 @@ Route::middleware(['role:producer', 'check.beta'])
         // ── Centro de Alertas ─────────────────────────────────────────────
         Route::get('/alerts', \App\Livewire\Winery\Alerts\Dashboard::class)->name('alerts.index');
 
-        // ── Meteorología (en construcción) ────────────────────────────────
-        Route::get('/meteorology', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('meteorology.index')
-            ->defaults('module', 'Meteorología')
-            ->defaults('icon', 'cloud');
+        // ── Meteorología ──────────────────────────────────────────────────
+        Route::get('/meteorology', \App\Livewire\Producer\Meteorology\Index::class)->name('meteorology.index');
 
         // ── Normativa bodega ──────────────────────────────────────────────
         Route::get('/silicie', \App\Livewire\Winery\UnderConstruction::class)
@@ -717,5 +714,52 @@ Route::middleware(['role:producer', 'check.beta'])
 
         // ── Inventario (redirect a winery-supplies) ──────────────────────
         Route::get('/inventory', fn() => redirect()->route('producer.winery-supplies.index'))->name('inventory.index');
+
+        // ── Plan de Trabajos ──────────────────────────────────────────
+        Route::prefix('planned-works')->name('planned-works.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PlannedWorks\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PlannedWorks\Create::class)->name('create');
+            Route::get('/{plannedWork}/edit', \App\Livewire\Viticulturist\PlannedWorks\Edit::class)->name('edit');
+        });
+
+        // ── Alertas Fitosanitarias ────────────────────────────────────
+        Route::prefix('phytosanitary-alerts')->name('phytosanitary-alerts.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PhytosanitaryAlerts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PhytosanitaryAlerts\Create::class)->name('create');
+            Route::get('/{phytosanitaryAlert}/edit', \App\Livewire\Viticulturist\PhytosanitaryAlerts\Edit::class)->name('edit');
+        });
+
+        // ── Análisis de Suelo ─────────────────────────────────────────
+        Route::prefix('soil-analyses')->name('soil-analyses.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\SoilAnalyses\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\SoilAnalyses\Create::class)->name('create');
+            Route::get('/{soilAnalysis}/edit', \App\Livewire\Viticulturist\SoilAnalyses\Edit::class)->name('edit');
+        });
+
+        // ── Biodiversidad y Cubiertas ─────────────────────────────────
+        Route::prefix('biodiversity-records')->name('biodiversity-records.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\BiodiversityRecords\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\BiodiversityRecords\Create::class)->name('create');
+            Route::get('/{biodiversityRecord}/edit', \App\Livewire\Viticulturist\BiodiversityRecords\Edit::class)->name('edit');
+        });
+
+        // ── Comparativa entre Campañas ────────────────────────────────
+        Route::get('/campaign-comparison', \App\Livewire\Viticulturist\CampaignComparison\Index::class)->name('campaign-comparison');
+
+        // ── Trazabilidad de Uva ───────────────────────────────────────
+        Route::get('/grape-traceability', \App\Livewire\Viticulturist\GrapeTraceability\Index::class)->name('grape-traceability');
+
+        // ══════════════════════════════════════════════════════════════
+        // VISTAS UNIFICADAS — solo producer (cruzan viñedo + bodega)
+        // ══════════════════════════════════════════════════════════════
+
+        // ── Panel de Finca Integral ──────────────────────────────────
+        Route::get('/integrated-estate', \App\Livewire\Producer\IntegratedEstate\Index::class)->name('integrated-estate');
+
+        // ── Trazabilidad Cepa a Botella ──────────────────────────────
+        Route::get('/full-traceability', \App\Livewire\Producer\FullTraceability\Index::class)->name('full-traceability');
+
+        // ── Dashboard Integrado de Campaña ───────────────────────────
+        Route::get('/integrated-campaign', \App\Livewire\Producer\IntegratedCampaign\Index::class)->name('integrated-campaign');
 
     });

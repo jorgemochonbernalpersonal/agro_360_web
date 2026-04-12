@@ -13,6 +13,10 @@
         'resources'  => ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'],   // naranja
         'compliance' => ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'],  // violeta
         'pac'        => ['accent' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.12)',  'border' => 'rgba(245,158,11,0.5)'],   // ámbar
+        'monitoring'    => ['accent' => '#fb7185', 'bg' => 'rgba(251,113,133,0.12)', 'border' => 'rgba(251,113,133,0.5)'],  // rosa
+        'environmental' => ['accent' => '#34d399', 'bg' => 'rgba(52,211,153,0.12)',  'border' => 'rgba(52,211,153,0.5)'],   // esmeralda
+        'declarations'  => ['accent' => '#818cf8', 'bg' => 'rgba(129,140,248,0.12)', 'border' => 'rgba(129,140,248,0.5)'],  // índigo
+        'analytics'     => ['accent' => '#38bdf8', 'bg' => 'rgba(56,189,248,0.12)',  'border' => 'rgba(56,189,248,0.5)'],   // sky
         'business'   => ['accent' => '#2dd4bf', 'bg' => 'rgba(45,212,191,0.12)',  'border' => 'rgba(45,212,191,0.5)'],   // teal
         'system'     => ['accent' => '#94a3b8', 'bg' => 'rgba(148,163,184,0.12)', 'border' => 'rgba(148,163,184,0.5)'],  // slate
         // do — individual (legacy, kept for reference)
@@ -43,46 +47,60 @@
     ];
     $chapterColors['compliance_w'] = $chapterColors['compliance'];
     $chapterColors['business_w']   = $chapterColors['business'];
+    $chapterColors['winery_res']   = ['accent' => '#fb923c', 'bg' => 'rgba(251,146,60,0.12)',  'border' => 'rgba(251,146,60,0.5)'];   // naranja (insumos)
+    $chapterColors['elaboration']  = ['accent' => '#f87171', 'bg' => 'rgba(248,113,113,0.12)', 'border' => 'rgba(248,113,113,0.5)'];  // rojo vino (hereda bodega)
+    $chapterColors['output']       = ['accent' => '#c084fc', 'bg' => 'rgba(192,132,252,0.12)', 'border' => 'rgba(192,132,252,0.5)'];  // violeta (producto)
+    $chapterColors['analytics_w']  = ['accent' => '#60a5fa', 'bg' => 'rgba(96,165,250,0.12)',  'border' => 'rgba(96,165,250,0.5)'];   // azul (análisis)
 
     $viticulturistChapters = [
-        ['key' => 'campaign',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
-        ['key' => 'winery_rel','icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => 'Comunicación', 'denomination' => 'Denominación']],
-        ['key' => 'notebook',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['notebook_inputs']],
-        ['key' => 'records', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['official_records']],
-        ['key' => 'estate',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['estate']],
-        ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
-        ['key' => 'compliance', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
-        ['key' => 'pac',       'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
-        ['key' => 'business',   'icon' => 'calculator',               'label' => 'Negocio',              'sections' => ['billing']],
+        ['key' => 'campaign',      'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
+        ['key' => 'winery_rel',    'icon' => 'building-office-2',        'label' => 'Bodega',               'sections' => ['winery_rel', 'denomination'], 'section_labels' => ['winery_rel' => 'Comunicación', 'denomination' => 'Denominación']],
+        ['key' => 'notebook',      'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['notebook_inputs']],
+        ['key' => 'monitoring',    'icon' => 'shield-exclamation',       'label' => 'Seguimiento',          'sections' => ['monitoring']],
+        ['key' => 'environmental', 'icon' => 'leaf',                     'label' => 'Medioambiente',        'sections' => ['environmental']],
+        ['key' => 'declarations',  'icon' => 'clipboard-document-check', 'label' => 'Declaraciones',        'sections' => ['declarations']],
+        ['key' => 'estate',        'icon' => 'map',                      'label' => 'Finca',                'sections' => ['estate']],
+        ['key' => 'analytics',     'icon' => 'chart-bar-square',         'label' => 'Análisis',             'sections' => ['analytics']],
+        ['key' => 'resources',     'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
+        ['key' => 'compliance',    'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
+        ['key' => 'pac',           'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
+        ['key' => 'business',      'icon' => 'calculator',               'label' => 'Negocio',              'sections' => ['billing']],
     ];
 
     $wineryChapters = [
-        ['key' => 'harvest',  'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia', 'sections' => ['harvest']],
-        ['key' => 'bodega',    'icon' => 'beaker',                  'label' => 'Bodega',   'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => 'Elaboración', 'cellar_output' => 'Salida']],
-        ['key' => 'territory','icon' => 'map',                     'label' => 'Parcelas', 'sections' => ['territory']],
-        ['key' => 'compliance', 'icon' => 'shield-check',            'label' => 'Normativa','sections' => ['winery_compliance']],
-        ['key' => 'business',   'icon' => 'calculator',              'label' => 'Negocio',  'sections' => ['billing']],
-        ['key' => 'system',   'icon' => 'cog-6-tooth',             'label' => 'Sistema',  'sections' => ['resources', 'system']],
+        ['key' => 'harvest',      'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',      'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => 'Vendimia', 'denomination' => 'Denominación de Origen']],
+        ['key' => 'elaboration',  'icon' => 'beaker',                 'label' => 'Elaboración',   'sections' => ['cellar_elaboration']],
+        ['key' => 'output',       'icon' => 'archive-box',            'label' => 'Producto',      'sections' => ['cellar_output']],
+        ['key' => 'territory',    'icon' => 'map',                    'label' => 'Parcelas',      'sections' => ['territory']],
+        ['key' => 'analytics_w',  'icon' => 'chart-bar-square',       'label' => 'Análisis',      'sections' => ['analytics']],
+        ['key' => 'compliance',   'icon' => 'shield-check',           'label' => 'Normativa',     'sections' => ['winery_compliance', 'registrations'], 'section_labels' => ['winery_compliance' => 'Normativa Bodega', 'registrations' => 'Registros y Autorizaciones']],
+        ['key' => 'business',     'icon' => 'calculator',             'label' => 'Negocio',       'sections' => ['billing']],
+        ['key' => 'winery_res',   'icon' => 'building-storefront',    'label' => 'Insumos',       'sections' => ['winery_resources', 'winery_docs'], 'section_labels' => ['winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos']],
+        ['key' => 'system',       'icon' => 'cog-6-tooth',            'label' => 'Sistema',       'sections' => ['system']],
     ];
 
-    // ── Producer: capítulos viñedo (incluye Parcelas y Negocio Viñedo) ────────
+    // ── Producer: capítulos viñedo (alineado con viticulturist: 11 capítulos) ─
     $producerViticulturistChapters = [
-        ['key' => 'estate',     'icon' => 'map',                      'label' => 'Finca',                'sections' => ['estate']],
-        ['key' => 'campaign',   'icon' => 'pencil-square',            'label' => 'Campaña',              'sections' => ['campaigns']],
-        ['key' => 'notebook',  'icon' => 'document-text',            'label' => 'Cuaderno de Campo',    'sections' => ['notebook_inputs']],
-        ['key' => 'records', 'icon' => 'clipboard-document-check', 'label' => 'Registros Oficiales',  'sections' => ['official_records']],
-        ['key' => 'recursos',  'icon' => 'wrench-screwdriver',       'label' => 'Recursos',             'sections' => ['resources']],
-        ['key' => 'compliance', 'icon' => 'shield-check',             'label' => 'Normativa',            'sections' => ['compliance']],
-        ['key' => 'pac',       'icon' => 'document-chart-bar',       'label' => 'PAC',                  'sections' => ['pac']],
-        ['key' => 'business',   'icon' => 'calculator',               'label' => 'Negocio Viñedo',       'sections' => ['billing']],
+        ['key' => 'estate',        'icon' => 'map',                      'label' => 'Finca',           'sections' => ['estate']],
+        ['key' => 'campaign',      'icon' => 'pencil-square',            'label' => 'Campaña',         'sections' => ['campaigns']],
+        ['key' => 'notebook',      'icon' => 'document-text',            'label' => 'Cuaderno de Campo','sections' => ['notebook_inputs']],
+        ['key' => 'monitoring',    'icon' => 'shield-exclamation',       'label' => 'Seguimiento',     'sections' => ['monitoring']],
+        ['key' => 'environmental', 'icon' => 'leaf',                     'label' => 'Medioambiente',   'sections' => ['environmental']],
+        ['key' => 'declarations',  'icon' => 'clipboard-document-check', 'label' => 'Declaraciones',   'sections' => ['declarations']],
+        ['key' => 'analytics',     'icon' => 'chart-bar-square',         'label' => 'Análisis',        'sections' => ['analytics']],
+        ['key' => 'recursos',      'icon' => 'wrench-screwdriver',       'label' => 'Recursos',        'sections' => ['resources']],
+        ['key' => 'compliance',    'icon' => 'shield-check',             'label' => 'Normativa',       'sections' => ['compliance']],
+        ['key' => 'pac',           'icon' => 'document-chart-bar',       'label' => 'PAC',             'sections' => ['pac']],
+        ['key' => 'business',      'icon' => 'calculator',               'label' => 'Negocio Viñedo',  'sections' => ['billing']],
     ];
 
-    // ── Producer: capítulos bodega (incluye Negocio Bodega) ──────────────────
+    // ── Producer: capítulos bodega (7 capítulos, denominación condicional) ───
     $producerWineryChapters = [
-        ['key' => 'harvest',   'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',        'sections' => ['harvest']],
-        ['key' => 'bodega',     'icon' => 'beaker',                  'label' => 'Bodega',          'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => 'Elaboración', 'cellar_output' => 'Salida']],
-        ['key' => 'compliance_w','icon' => 'shield-check',            'label' => 'Normativa Bodega','sections' => ['winery_compliance']],
-        ['key' => 'business_w',  'icon' => 'calculator',              'label' => 'Negocio Bodega',  'sections' => ['winery_billing']],
+        ['key' => 'harvest',       'icon' => 'archive-box-arrow-down', 'label' => 'Vendimia',         'sections' => ['harvest', 'denomination'], 'section_labels' => ['harvest' => 'Vendimia', 'denomination' => 'Denominación de Origen']],
+        ['key' => 'bodega',        'icon' => 'beaker',                 'label' => 'Bodega',           'sections' => ['cellar_elaboration', 'cellar_output'], 'section_labels' => ['cellar_elaboration' => 'Elaboración', 'cellar_output' => 'Salida']],
+        ['key' => 'winery_res',    'icon' => 'building-storefront',    'label' => 'Insumos',          'sections' => ['winery_resources', 'winery_docs'], 'section_labels' => ['winery_resources' => 'Insumos y Proveedores', 'winery_docs' => 'Documentos']],
+        ['key' => 'compliance_w',  'icon' => 'shield-check',           'label' => 'Normativa Bodega', 'sections' => ['winery_compliance']],
+        ['key' => 'business_w',    'icon' => 'calculator',             'label' => 'Negocio Bodega',   'sections' => ['winery_billing']],
     ];
 
     $doChapters = [

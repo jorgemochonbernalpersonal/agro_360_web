@@ -256,6 +256,13 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/', \App\Livewire\Viticulturist\CampaignSign\Index::class)->name('index');
         });
 
+        // ── Plan de Trabajos ──────────────────────────────────────────
+        Route::prefix('planned-works')->name('planned-works.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PlannedWorks\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PlannedWorks\Create::class)->name('create');
+            Route::get('/{plannedWork}/edit', \App\Livewire\Viticulturist\PlannedWorks\Edit::class)->name('edit');
+        });
+
         // Almacén de Insumos (unificado: Fitosanitarios + Otros Insumos + Almacenes)
         Route::prefix('warehouse')->name('warehouse.')->group(function () {
             Route::get('/', \App\Livewire\Viticulturist\Warehouse\Index::class)->name('index');
@@ -541,6 +548,33 @@ Route::middleware(['role:viticulturist,producer', 'check.beta'])
             Route::get('/create', \App\Livewire\Viticulturist\FertilizationPlans\Create::class)->name('create');
             Route::get('/{plan}/edit', \App\Livewire\Viticulturist\FertilizationPlans\Edit::class)->name('edit');
         });
+
+        // ── Alertas Fitosanitarias ─────────────────────────────────
+        Route::prefix('phytosanitary-alerts')->name('phytosanitary-alerts.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\PhytosanitaryAlerts\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\PhytosanitaryAlerts\Create::class)->name('create');
+            Route::get('/{phytosanitaryAlert}/edit', \App\Livewire\Viticulturist\PhytosanitaryAlerts\Edit::class)->name('edit');
+        });
+
+        // ── Análisis de Suelo ─────────────────────────────────────────
+        Route::prefix('soil-analyses')->name('soil-analyses.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\SoilAnalyses\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\SoilAnalyses\Create::class)->name('create');
+            Route::get('/{soilAnalysis}/edit', \App\Livewire\Viticulturist\SoilAnalyses\Edit::class)->name('edit');
+        });
+
+        // ── Biodiversidad y Cubiertas ─────────────────────────────────
+        Route::prefix('biodiversity-records')->name('biodiversity-records.')->group(function () {
+            Route::get('/', \App\Livewire\Viticulturist\BiodiversityRecords\Index::class)->name('index');
+            Route::get('/create', \App\Livewire\Viticulturist\BiodiversityRecords\Create::class)->name('create');
+            Route::get('/{biodiversityRecord}/edit', \App\Livewire\Viticulturist\BiodiversityRecords\Edit::class)->name('edit');
+        });
+
+        // ── Comparativa entre Campañas ────────────────────────────────
+        Route::get('/campaign-comparison', \App\Livewire\Viticulturist\CampaignComparison\Index::class)->name('campaign-comparison');
+
+        // ── Trazabilidad de Uva ───────────────────────────────────────
+        Route::get('/grape-traceability', \App\Livewire\Viticulturist\GrapeTraceability\Index::class)->name('grape-traceability');
 
         }); // end require.complete
     });

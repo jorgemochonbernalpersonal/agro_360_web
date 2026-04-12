@@ -278,11 +278,8 @@ Route::middleware(['role:winery,producer'])
             Route::get('/{operation}/edit', \App\Livewire\Winery\CellarOperations\Edit::class)->name('edit');
         });
 
-        // ── Meteorología (en construcción) ────────────────────────────
-        Route::get('/meteorology', \App\Livewire\Winery\UnderConstruction::class)
-            ->name('meteorology.index')
-            ->defaults('module', 'Meteorología')
-            ->defaults('icon', 'cloud');
+        // ── Meteorología ──────────────────────────────────────────────
+        Route::get('/meteorology', \App\Livewire\Winery\Meteorology\Index::class)->name('meteorology.index');
 
         // ── Avisos a Viticultores ────────────────────────────────────
         Route::get('/announcements', \App\Livewire\Winery\Announcements\Index::class)->name('announcements.index');
