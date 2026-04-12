@@ -1138,19 +1138,17 @@ class ProducerDemoSeeder_test extends Seeder
             $containerId = $containerIds[$wi] ?? $containerIds[0];
             foreach ($dates as $di => $date) {
                 DB::table('wine_fermentation_controls')->insert([
-                    'wine_id'         => $wineId,
-                    'container_id'    => $containerId,
-                    'control_date'    => $date,
-                    'temperature'     => 18.0 + $di * 0.5 + $wi * 0.3,
-                    'density'         => round(1080 - $di * 20 - $wi * 5, 1),
-                    'brix'            => round(22.0 - $di * 3.5, 1),
-                    'ph'              => round(3.3 + $di * 0.05, 2),
-                    'total_acidity'   => round(5.8 - $di * 0.1, 1),
+                    'wine_id'          => $wineId,
+                    'container_id'     => $containerId,
+                    'control_date'     => $date . ' 08:00:00',
+                    'temperature'      => round(18.0 + $di * 0.5 + $wi * 0.3, 2),
+                    'density'          => round(1.080 - $di * 0.020 - $wi * 0.005, 4),
+                    'brix_degree'      => round(22.0 - $di * 3.5, 2),
+                    'ph'               => round(3.3 + $di * 0.05, 2),
                     'volatile_acidity' => round(0.15 + $di * 0.03, 2),
-                    'free_so2'        => 20 + $di * 2,
-                    'notes'           => "Fermentación normal. Día " . ($di + 1) . ".",
-                    'created_by'      => $uid,
-                    'created_at'      => $now, 'updated_at' => $now,
+                    'notes'            => "Fermentación normal. Día " . ($di + 1) . ".",
+                    'created_by'       => $uid,
+                    'created_at'       => $now, 'updated_at' => $now,
                 ]);
             }
         }
