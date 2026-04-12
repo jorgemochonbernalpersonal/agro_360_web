@@ -932,42 +932,41 @@ class ProducerDemoSeeder_test extends Seeder
         $uid = self::PRODUCER_USER_ID;
         // Aplicadores ROPO
         foreach ([
-            ['Juan Carlos Hernández', '22.05.2025', 'ROPO-TF-001'],
-            ['María Pérez González',   '15.09.2024', 'ROPO-TF-002'],
-        ] as [$name, $expiry, $cert]) {
+            ['Juan Carlos Hernández', '2025-05-22', 'ROPO-TF-001'],
+            ['María Pérez González',   '2024-09-15', 'ROPO-TF-002'],
+        ] as [$name, $expiry, $ropo]) {
             DB::table('field_applicators')->insert([
-                'viticulturist_id'  => $uid, 'name' => $name,
-                'certificate_number' => $cert,
-                'certificate_expiry' => $expiry,
-                'certificate_type'   => 'nivel_basico',
-                'active'             => true,
-                'created_at'         => $now, 'updated_at' => $now,
+                'viticulturist_id' => $uid,
+                'name'             => $name,
+                'ropo_number'      => $ropo,
+                'ropo_category'    => 'basic',
+                'ropo_expiry_date' => $expiry,
+                'active'           => true,
+                'created_at'       => $now, 'updated_at' => $now,
             ]);
         }
         // Equipos ITB
         DB::table('field_equipment')->insert([
             'viticulturist_id'    => $uid,
-            'equipment_name'      => 'Pulverizador Hardi Ranger 600L',
+            'name'                => 'Pulverizador Hardi Ranger 600L',
             'equipment_type'      => 'sprayer',
-            'serial_number'       => 'HD-TF-2019-001',
-            'inspection_date'     => '2024-11-10',
-            'next_inspection_date' => '2026-11-10',
-            'inspection_passed'   => true,
+            'registration_number' => 'HD-TF-2019-001',
+            'last_inspection_date'=> '2024-11-10',
+            'next_inspection_date'=> '2026-11-10',
             'active'              => true,
             'created_at'          => $now, 'updated_at' => $now,
         ]);
         // Seguro agrario
         DB::table('agri_insurances')->insert([
-            'viticulturist_id'  => $uid,
-            'policy_number'     => 'AGS-2025-TF-' . $uid,
-            'insurer'           => 'AGROSEGURO',
-            'coverage_type'     => 'cosecha_vid',
-            'insured_area'      => 3.80,
-            'premium_amount'    => 1240.00,
-            'start_date'        => '2025-01-01',
-            'end_date'          => '2025-12-31',
-            'active'            => true,
-            'created_at'        => $now, 'updated_at' => $now,
+            'viticulturist_id' => $uid,
+            'policy_number'    => 'AGS-2025-TF-' . $uid,
+            'insurance_company'=> 'AGROSEGURO',
+            'coverage_type'    => 'comprehensive',
+            'premium'          => 1240.00,
+            'start_date'       => '2025-01-01',
+            'end_date'         => '2025-12-31',
+            'status'           => 'expired',
+            'created_at'       => $now, 'updated_at' => $now,
         ]);
     }
 
