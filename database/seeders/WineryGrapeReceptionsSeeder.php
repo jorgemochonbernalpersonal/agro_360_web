@@ -22,6 +22,22 @@ class WineryGrapeReceptionsSeeder extends Seeder
     private const WINERY_USER_ID   = 1;
     private const DEMO_EMAIL_SUFFIX = '@viticultor.agro365.demo';
 
+    // ── Geografía (Gran Canaria) ─────────────────────────────────────────────────
+    private const AC_ID       = 5;    // Canarias
+    private const PROVINCE_ID = 14;   // Las Palmas
+
+    private const MUN_DB_IDS = [
+        'Agaete'   => 5243,
+        'Artenara' => 5246,
+        'Arucas'   => 5247,
+        'Firgas'   => 5249,
+        'Gáldar'   => 5250,
+        'Guía'     => 5251,
+        'Ingenio'  => 5253,
+    ];
+
+    private const PREFIJOS = ['Finca', 'Parcela', 'Viña', 'Viñedo', 'Pago', 'Suerte', 'Lote'];
+
     // ── Demo viticulturists ──────────────────────────────────────────────────────
 
     private const VITICULTURISTS = [
@@ -235,6 +251,10 @@ class WineryGrapeReceptionsSeeder extends Seeder
             }
         }
 
+        $totalPlots = DB::table('plots')
+            ->whereIn('viticulturist_id', array_column($viticulturistIds, 'user_id'))
+            ->count();
+        $this->command->info("✅ Parcelas SIGPAC: {$totalPlots} recintos Gran Canaria (6 viticultores, ~76-77 cada uno)");
         $this->command->info("✅ Recepciones de uva: {$totalHarvests} recepciones en {$totalBatches} lotes (6 viticultores, vendimias 2023-2025)");
     }
 
@@ -298,10 +318,9 @@ class WineryGrapeReceptionsSeeder extends Seeder
         object $municipality,
         array $varietyIds
     ): array {
-        $result = [];
-
+        // ── Pass 1: users + winery links + campaigns ─────────────────────────────
+        $configs = [];
         foreach (self::VITICULTURISTS as $vitDef) {
-            // Find or create user
             $userId = DB::table('users')
                 ->where('email', $vitDef['email'])
                 ->value('id');
@@ -318,7 +337,6 @@ class WineryGrapeReceptionsSeeder extends Seeder
                 ]);
             }
 
-            // Link to winery if not already linked
             $linked = DB::table('winery_viticulturist')
                 ->where('winery_id', self::WINERY_USER_ID)
                 ->where('viticulturist_id', $userId)
@@ -326,24 +344,22 @@ class WineryGrapeReceptionsSeeder extends Seeder
 
             if (!$linked) {
                 DB::table('winery_viticulturist')->insert([
-                    'winery_id'          => self::WINERY_USER_ID,
-                    'viticulturist_id'   => $userId,
-                    'assigned_by'        => self::WINERY_USER_ID,
-                    'source'             => 'own',
-                    'notebook_access'    => true,
-                    'notebook_granted_at'=> $now,
-                    'created_at'         => $now,
-                    'updated_at'         => $now,
+                    'winery_id'           => self::WINERY_USER_ID,
+                    'viticulturist_id'    => $userId,
+                    'assigned_by'         => self::WINERY_USER_ID,
+                    'source'              => 'own',
+                    'notebook_access'     => true,
+                    'notebook_granted_at' => $now,
+                    'created_at'          => $now,
+                    'updated_at'          => $now,
                 ]);
             } else {
-                // Ensure notebook_access is enabled for field-activities page
                 DB::table('winery_viticulturist')
                     ->where('winery_id', self::WINERY_USER_ID)
                     ->where('viticulturist_id', $userId)
                     ->update(['notebook_access' => true, 'notebook_granted_at' => $now]);
             }
 
-            // Campaigns per viticulturist: 2023 (inactive), 2024 (inactive), 2025 (active)
             $campaigns = [];
             foreach ([2023 => false, 2024 => false, 2025 => true] as $year => $active) {
                 $campId = DB::table('campaigns')
@@ -352,39 +368,44 @@ class WineryGrapeReceptionsSeeder extends Seeder
                     ->value('id');
                 if (!$campId) {
                     $campId = DB::table('campaigns')->insertGetId([
-                        'name'              => "Campaña {$year}",
-                        'year'              => $year,
-                        'viticulturist_id'  => $userId,
-                        'start_date'        => "{$year}-08-01",
-                        'end_date'          => "{$year}-11-30",
-                        'active'            => $active,
-                        'created_at'        => $now,
-                        'updated_at'        => $now,
+                        'name'             => "Campaña {$year}",
+                        'year'             => $year,
+                        'viticulturist_id' => $userId,
+                        'start_date'       => "{$year}-08-01",
+                        'end_date'         => "{$year}-11-30",
+                        'active'           => $active,
+                        'created_at'       => $now,
+                        'updated_at'       => $now,
                     ]);
                 }
                 $campaigns[$year] = $campId;
             }
 
-            // Plots and plantings
-            $plantings = [];
-            foreach ($vitDef['plots'] as $plotDef) {
-                $plotId = DB::table('plots')
-                    ->where('viticulturist_id', $userId)
-                    ->where('name', $plotDef['name'])
-                    ->value('id');
+            $configs[] = [
+                'user_id'   => $userId,
+                'vitDef'    => $vitDef,
+                'campaigns' => $campaigns,
+            ];
+        }
 
+        // ── Pass 2: 460 SIGPAC plots distributed round-robin among viticulturists ─
+        $userIds     = array_column($configs, 'user_id');
+        $userPlotIds = $this->createSigpacPlotsForViticulturists(
+            $userIds, $province, $community, $municipality, $now
+        );
+
+        // ── Pass 3: plantings for first 2 SIGPAC plots per viticulturist ────────
+        $result = [];
+        foreach ($configs as $config) {
+            $userId    = $config['user_id'];
+            $vitDef    = $config['vitDef'];
+            $myPlotIds = $userPlotIds[$userId] ?? [];
+
+            $plantings = [];
+            foreach ($vitDef['plots'] as $plotIdx => $plotDef) {
+                $plotId = $myPlotIds[$plotIdx] ?? null;
                 if (!$plotId) {
-                    $plotId = DB::table('plots')->insertGetId([
-                        'name'                   => $plotDef['name'],
-                        'viticulturist_id'        => $userId,
-                        'area'                    => $plotDef['area'],
-                        'active'                  => true,
-                        'autonomous_community_id' => $community->id,
-                        'province_id'             => $province->id,
-                        'municipality_id'         => $municipality->id,
-                        'created_at'              => $now,
-                        'updated_at'              => $now,
-                    ]);
+                    continue;
                 }
 
                 $areaPerVariety = round($plotDef['area'] / count($plotDef['varieties']), 3);
@@ -401,28 +422,25 @@ class WineryGrapeReceptionsSeeder extends Seeder
                         ->value('id');
 
                     if (!$plantingId) {
-                        $plantingYear = mt_rand(2005, 2018);
-                        // harvest_limit_kg = area × rendimiento regulado DO (~7000-8500 kg/ha)
                         $harvestLimitKg = round($areaPerVariety * mt_rand(7000, 8500));
-
                         $plantingId = DB::table('plot_plantings')->insertGetId([
-                            'plot_id'           => $plotId,
-                            'grape_variety_id'  => $varietyId,
-                            'area_planted'      => $areaPerVariety,
-                            'planting_year'     => $plantingYear,
-                            'harvest_limit_kg'  => $harvestLimitKg,
-                            'status'            => 'active',
-                            'irrigated'         => false,
-                            'created_at'        => $now,
-                            'updated_at'        => $now,
+                            'plot_id'          => $plotId,
+                            'grape_variety_id' => $varietyId,
+                            'area_planted'     => $areaPerVariety,
+                            'planting_year'    => mt_rand(2005, 2018),
+                            'harvest_limit_kg' => $harvestLimitKg,
+                            'status'           => 'active',
+                            'irrigated'        => false,
+                            'created_at'       => $now,
+                            'updated_at'       => $now,
                         ]);
                     }
 
                     $plantings[] = [
-                        'id'            => $plantingId,
-                        'variety_name'  => $varietyName,
-                        'variety_params'=> self::VARIETY_PARAMS[$varietyName],
-                        'area'          => $areaPerVariety,
+                        'id'             => $plantingId,
+                        'variety_name'   => $varietyName,
+                        'variety_params' => self::VARIETY_PARAMS[$varietyName],
+                        'area'           => $areaPerVariety,
                     ];
                 }
             }
@@ -431,11 +449,111 @@ class WineryGrapeReceptionsSeeder extends Seeder
                 'user_id'   => $userId,
                 'name'      => $vitDef['name'],
                 'plantings' => $plantings,
-                'campaigns' => $campaigns,
+                'campaigns' => $config['campaigns'],
             ];
         }
 
         return $result;
+    }
+
+    /**
+     * Carga sigpac_gran_canaria.json y distribuye los 460 recintos de forma
+     * round-robin entre los viticultores dados. Crea plot, sigpac_code (idempotente),
+     * plot_geometry y multipart_plot_sigpac para cada recinto.
+     *
+     * @return array<int,int[]>  [ userId => [plotId, ...], ... ]
+     */
+    private function createSigpacPlotsForViticulturists(
+        array  $userIds,
+        object $province,
+        object $community,
+        object $municipality,
+        \Carbon\Carbon $now
+    ): array {
+        $jsonPath = database_path('seeders/data/sigpac_gran_canaria.json');
+        $recs     = json_decode(file_get_contents($jsonPath), true);
+
+        $userPlotIds = array_fill_keys($userIds, []);
+        $count       = count($userIds);
+
+        foreach ($recs as $index => $rec) {
+            $userId  = $userIds[$index % $count];
+            $ineCode = $rec['ine_code'];
+            $polygon   = str_pad($rec['polygon'],  3, '0', STR_PAD_LEFT);
+            $parcel    = str_pad($rec['parcel'],   5, '0', STR_PAD_LEFT);
+            $enclosure = str_pad($rec['recinto'],  3, '0', STR_PAD_LEFT);
+
+            $code = sprintf(
+                '05%02d%03d000000%03d%05d%03d',
+                35,
+                (int) $ineCode,
+                $rec['polygon'],
+                $rec['parcel'],
+                $rec['recinto']
+            );
+
+            // sigpac_code — idempotente: puede existir del ViticulturistDemoSeeder
+            $existing = DB::table('sigpac_code')
+                ->where('code_province',     '35')
+                ->where('code_municipality', str_pad($ineCode, 3, '0', STR_PAD_LEFT))
+                ->where('code_polygon',      $polygon)
+                ->where('code_plot',         $parcel)
+                ->where('code_enclosure',    $enclosure)
+                ->first();
+
+            $sigpacId = $existing
+                ? $existing->id
+                : DB::table('sigpac_code')->insertGetId([
+                    'code_autonomous_community' => '05',
+                    'code_province'             => '35',
+                    'code_municipality'         => str_pad($ineCode, 3, '0', STR_PAD_LEFT),
+                    'code_aggregate'            => '000',
+                    'code_zone'                 => '000',
+                    'code_polygon'              => $polygon,
+                    'code_plot'                 => $parcel,
+                    'code_enclosure'            => $enclosure,
+                    'code'                      => $code,
+                    'created_at'                => $now,
+                    'updated_at'                => $now,
+                ]);
+
+            // plot_geometry con WKT real
+            $geomId = DB::table('plot_geometry')->insertGetId([
+                'coordinates' => DB::raw("ST_GeomFromText('" . $rec['wkt'] . "', 4326)"),
+                'centroid'    => DB::raw("ST_Centroid(ST_GeomFromText('" . $rec['wkt'] . "', 4326))"),
+                'created_at'  => $now,
+                'updated_at'  => $now,
+            ]);
+
+            $prefijo  = self::PREFIJOS[$index % count(self::PREFIJOS)];
+            $munShort = explode(' ', $rec['mun_name'])[0];
+            $plotName = "{$prefijo} {$munShort} " . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            $munDbId  = self::MUN_DB_IDS[$rec['mun_name']] ?? $municipality->id;
+
+            $plotId = DB::table('plots')->insertGetId([
+                'name'                    => $plotName,
+                'viticulturist_id'        => $userId,
+                'area'                    => $rec['area_ha'] > 0 ? $rec['area_ha'] : round(mt_rand(10, 350) / 100, 2),
+                'active'                  => true,
+                'autonomous_community_id' => $community->id,
+                'province_id'             => $province->id,
+                'municipality_id'         => $munDbId,
+                'created_at'              => $now,
+                'updated_at'              => $now,
+            ]);
+
+            DB::table('multipart_plot_sigpac')->insert([
+                'plot_id'          => $plotId,
+                'sigpac_code_id'   => $sigpacId,
+                'plot_geometry_id' => $geomId,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+
+            $userPlotIds[$userId][] = $plotId;
+        }
+
+        return $userPlotIds;
     }
 
     // ── Data generation helpers ───────────────────────────────────────────────────
@@ -578,12 +696,19 @@ class WineryGrapeReceptionsSeeder extends Seeder
                 ->pluck('id');
 
             if ($plotIds->isNotEmpty()) {
-                DB::table('plot_plantings')
+                // Collect geometry IDs before removing the join records
+                $geomIds = DB::table('multipart_plot_sigpac')
                     ->whereIn('plot_id', $plotIds)
-                    ->delete();
-                DB::table('plots')
-                    ->whereIn('id', $plotIds)
-                    ->delete();
+                    ->pluck('plot_geometry_id');
+
+                DB::table('multipart_plot_sigpac')->whereIn('plot_id', $plotIds)->delete();
+
+                if ($geomIds->isNotEmpty()) {
+                    DB::table('plot_geometry')->whereIn('id', $geomIds)->delete();
+                }
+
+                DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->delete();
+                DB::table('plots')->whereIn('id', $plotIds)->delete();
             }
 
             // Remove demo users
