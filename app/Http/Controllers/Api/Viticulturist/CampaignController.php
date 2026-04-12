@@ -63,6 +63,7 @@ class CampaignController extends Controller
                 'total'        => $activities->total(),
                 'current_page' => $activities->currentPage(),
                 'last_page'    => $activities->lastPage(),
+                'has_more'     => $activities->hasMorePages(),
             ],
         ]);
     }

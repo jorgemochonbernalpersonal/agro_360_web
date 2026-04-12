@@ -50,8 +50,11 @@ use App\Http\Controllers\Api\Winery\VerifactuController;
 use App\Http\Controllers\Api\Winery\EconomicSummaryController;
 use App\Http\Controllers\Api\Winery\HarvestSummaryController;
 use App\Http\Controllers\Api\Viticulturist\CampaignController;
+use App\Http\Controllers\Api\Viticulturist\ComplianceController;
 use App\Http\Controllers\Api\Viticulturist\DashboardController as ViticulturistDashboard;
+use App\Http\Controllers\Api\Viticulturist\EstimatedYieldController;
 use App\Http\Controllers\Api\Viticulturist\NotebookController;
+use App\Http\Controllers\Api\Viticulturist\PestController;
 use App\Http\Controllers\Api\Viticulturist\PlotController;
 use App\Http\Controllers\Api\Supervisor\DashboardController as SupervisorDashboard;
 use App\Http\Controllers\Api\Supervisor\OversightController;
@@ -80,7 +83,7 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
     Route::post('/logout',          [AuthController::class, 'logout'])->middleware('throttle:10,1');
     Route::post('/logout-all',      [AuthController::class, 'logoutAll'])->middleware('throttle:10,1');
     Route::delete('/account',       [AuthController::class, 'deleteAccount'])->middleware('throttle:5,1');
-    Route::post('/refresh',         [AuthController::class, 'refresh'])->middleware('throttle:30,1');
+    Route::post('/refresh',         [AuthController::class, 'refresh'])->middleware('throttle:10,1');
     Route::post('/email/resend',    [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
 
     // ── Winery / Producer ─────────────────────────────────────────────────────
@@ -489,12 +492,33 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/campaigns/active',          [CampaignController::class, 'active'])->middleware('throttle:60,1');
         Route::get('/campaigns/{id}/activities', [CampaignController::class, 'activities'])->middleware('throttle:60,1');
 
-        // Cuaderno de campo
+        // Cuaderno — estimated-yields (ruta estática ANTES de los wildcards)
+        Route::get('/notebook/estimated-yields',  [EstimatedYieldController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/notebook/estimated-yields', [EstimatedYieldController::class, 'store'])->middleware('throttle:30,1');
+
+        // Cuaderno — listados por tipo usando parámetro con where() (cacheable, sin closures)
+        Route::get('/notebook/{notebook_type}', [NotebookController::class, 'indexOfType'])
+            ->where('notebook_type', 'treatments|fertilizations|irrigations|observations|harvests|cultural-works|pruning|post-harvest-treatments')
+            ->middleware('throttle:60,1');
+
+        // Cuaderno — creación por tipo extendido (pruning, cultural-works, post-harvest)
+        Route::post('/notebook/{notebook_type}', [NotebookController::class, 'storeTyped'])
+            ->where('notebook_type', 'pruning|cultural-works|post-harvest-treatments')
+            ->middleware('throttle:30,1');
+
+        // Cuaderno — CRUD genérico (wildcard numérico DESPUÉS de los tipados)
         Route::get('/notebook',         [NotebookController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/notebook',        [NotebookController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/notebook/{id}',    [NotebookController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/notebook/{id}',    [NotebookController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/notebook/{id}', [NotebookController::class, 'destroy'])->middleware('throttle:30,1');
+        Route::post('/notebook',        [NotebookController::class, 'store'])->middleware('throttle:30,1');
+        Route::get('/notebook/{id}',    [NotebookController::class, 'show'])->where('id', '[0-9]+')->middleware('throttle:60,1');
+        Route::put('/notebook/{id}',    [NotebookController::class, 'update'])->where('id', '[0-9]+')->middleware('throttle:30,1');
+        Route::delete('/notebook/{id}', [NotebookController::class, 'destroy'])->where('id', '[0-9]+')->middleware('throttle:30,1');
+
+        // Gestión de plagas
+        Route::get('/pests',      [PestController::class, 'index'])->middleware('throttle:60,1');
+        Route::get('/pests/{id}', [PestController::class, 'show'])->middleware('throttle:60,1');
+
+        // Cumplimiento PAC
+        Route::get('/compliance', [ComplianceController::class, 'index'])->middleware('throttle:30,1');
 
         // Teledetección NDVI
         Route::get('/plots/{plot}/ndvi', [RemoteSensingController::class, 'getPlotNdviColors'])->middleware('throttle:30,1');

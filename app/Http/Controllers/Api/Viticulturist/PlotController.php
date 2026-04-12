@@ -54,6 +54,7 @@ class PlotController extends Controller
                 'per_page'     => $plots->perPage(),
                 'current_page' => $plots->currentPage(),
                 'last_page'    => $plots->lastPage(),
+                'has_more'     => $plots->hasMorePages(),
                 'total_area'   => round((float) $areaStats->total_area, 2),
                 'organic_area' => round((float) $areaStats->organic_area, 2),
             ],
@@ -101,12 +102,11 @@ class PlotController extends Controller
         $user = $request->user();
         abort_unless($user->hasViticulturistAccess(), 403);
 
-        $plots = Plot::where('viticulturist_id', $user->id)
+        // Sólo los IDs del viticulturist (consulta ligera, sin cargar todos los campos)
+        $plotIds = Plot::where('viticulturist_id', $user->id)
             ->where('active', true)
-            ->orderBy('name')
-            ->get(['id', 'name', 'area', 'viticulturist_id']);
-
-        $plotIds = $plots->pluck('id')->all();
+            ->pluck('id')
+            ->all();
 
         if (empty($plotIds)) {
             return response()->json(['plots' => []]);
@@ -117,7 +117,7 @@ class PlotController extends Controller
 
         $sql = "SELECT mps.plot_id, sc.code,
                         ST_AsText(pg.coordinates) AS coordinates_wkt,
-                        ST_AsText(pg.centroid) AS centroid_wkt
+                        ST_AsText(pg.centroid)    AS centroid_wkt
                  FROM   multipart_plot_sigpac mps
                  JOIN   sigpac_code   sc ON mps.sigpac_code_id  = sc.id
                  JOIN   plot_geometry pg ON mps.plot_geometry_id = pg.id
@@ -128,8 +128,8 @@ class PlotController extends Controller
             $parts = array_map('floatval', explode(',', $request->query('bbox')));
             if (count($parts) === 4) {
                 [$south, $west, $north, $east] = $parts;
-                $bboxWkt = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
-                $sql    .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
+                $bboxWkt  = "POLYGON(($west $south,$east $south,$east $north,$west $north,$west $south))";
+                $sql     .= ' AND ST_Intersects(pg.coordinates, ST_GeomFromText(?, 4326))';
                 $params[] = $bboxWkt;
             }
         }
@@ -137,22 +137,36 @@ class PlotController extends Controller
         $rows             = DB::select($sql, $params);
         $geometriesByPlot = collect($rows)->groupBy('plot_id');
 
-        $result = $plots->map(function ($plot) use ($geometriesByPlot) {
-            $geos       = $geometriesByPlot->get($plot->id, collect());
-            $geometries = $geos->map(fn ($row) => [
-                'sigpac_code' => $row->code,
-                'centroid'    => $this->parseCentroidWkt($row->centroid_wkt),
-                'coordinates' => $this->parsePolygonWkt($row->coordinates_wkt),
-            ])->values();
+        if ($geometriesByPlot->isEmpty()) {
+            return response()->json(['plots' => []]);
+        }
+
+        // Cargar metadatos sólo para parcelas con geometría — evita traer datos de
+        // parcelas sin geometría que el filtro PHP descartaría después
+        $relevantIds = $geometriesByPlot->keys()->all();
+        $plotMeta    = Plot::whereIn('id', $relevantIds)
+            ->orderBy('name')
+            ->get(['id', 'name', 'area'])
+            ->keyBy('id');
+
+        $result = $geometriesByPlot->map(function ($geos, $plotId) use ($plotMeta) {
+            $plot = $plotMeta->get($plotId);
+            if (! $plot) {
+                return null;
+            }
 
             return [
-                'plot_id'      => $plot->id,
+                'plot_id'      => (int) $plotId,
                 'plot_name'    => $plot->name,
                 'area'         => (float) $plot->area,
-                'has_geometry' => $geometries->isNotEmpty(),
-                'geometries'   => $geometries,
+                'has_geometry' => true,
+                'geometries'   => $geos->map(fn ($row) => [
+                    'sigpac_code' => $row->code,
+                    'centroid'    => $this->parseCentroidWkt($row->centroid_wkt),
+                    'coordinates' => $this->parsePolygonWkt($row->coordinates_wkt),
+                ])->values(),
             ];
-        })->filter(fn ($p) => $p['has_geometry'])->values();
+        })->filter()->sortBy('plot_name')->values();
 
         return response()->json(['plots' => $result]);
     }
@@ -168,9 +182,10 @@ class PlotController extends Controller
             ->with(['province', 'municipality', 'plantings.grapeVariety'])
             ->findOrFail($id);
 
-        $centroids = $this->batchCentroids([$plot->id]);
-        $plot->centroid_data = $centroids[$plot->id] ?? null;
-        $plot->has_geometry  = isset($centroids[$plot->id]);
+        // Query directa para un único plot — evita el overhead de batchCentroids con GROUP BY
+        $centroid            = $this->singleCentroid($plot->id);
+        $plot->centroid_data = $centroid;
+        $plot->has_geometry  = $centroid !== null;
 
         return response()->json(['data' => new PlotResource($plot)]);
     }
@@ -297,6 +312,24 @@ class PlotController extends Controller
         }
 
         return $result;
+    }
+
+    /**
+     * Centroid de una única parcela — query directa sin GROUP BY overhead.
+     */
+    private function singleCentroid(int $plotId): ?array
+    {
+        $row = DB::selectOne(
+            "SELECT ST_AsText(pg.centroid) AS centroid_wkt
+             FROM   multipart_plot_sigpac mps
+             JOIN   plot_geometry pg ON mps.plot_geometry_id = pg.id
+             WHERE  mps.plot_id = ?
+             AND    pg.centroid IS NOT NULL
+             LIMIT  1",
+            [$plotId]
+        );
+
+        return $row ? $this->parseCentroidWkt($row->centroid_wkt) : null;
     }
 
     private function parseCentroidWkt(?string $wkt): ?array

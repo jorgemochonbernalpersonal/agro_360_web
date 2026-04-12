@@ -15,9 +15,16 @@ use App\Models\Plot;
 use App\Models\PostHarvestTreatment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class NotebookController extends Controller
 {
+    /** Invalida el cache del dashboard cuando cambian actividades del cuaderno. */
+    private function bustDashboardCache(int $userId): void
+    {
+        Cache::forget("vit_dashboard:{$userId}:" . now()->year);
+    }
+
     // ─── Relaciones a cargar según tipo ───────────────────────────────────────
 
     private const DETAIL_RELATIONS = [
@@ -66,6 +73,7 @@ class NotebookController extends Controller
                 'total'        => $activities->total(),
                 'current_page' => $activities->currentPage(),
                 'last_page'    => $activities->lastPage(),
+                'has_more'     => $activities->hasMorePages(),
             ],
         ]);
     }
@@ -121,8 +129,9 @@ class NotebookController extends Controller
         ]);
 
         $this->createDetails($activity, $validated);
-
         $this->loadDetails($activity);
+
+        $this->bustDashboardCache($user->id);
 
         return response()->json(['data' => new ActivityResource($activity)], 201);
     }
@@ -151,9 +160,11 @@ class NotebookController extends Controller
 
         $this->updateDetails($activity, $validated);
 
-        $this->loadDetails($activity->fresh(['plot', 'campaign']));
+        // Un único fresh() — evita dos queries de recarga del mismo modelo
+        $activity = $activity->fresh(['plot', 'campaign']);
+        $this->loadDetails($activity);
 
-        return response()->json(['data' => new ActivityResource($activity->fresh(['plot', 'campaign']))]);
+        return response()->json(['data' => new ActivityResource($activity)]);
     }
 
     // ─── DELETE /viticulturist/notebook/{id} ──────────────────────────────────
@@ -171,7 +182,57 @@ class NotebookController extends Controller
 
         $activity->delete();
 
+        $this->bustDashboardCache($user->id);
+
         return response()->json(['message' => 'Actividad eliminada correctamente.']);
+    }
+
+    // Mapa de slug de ruta → activity_type interno
+    private const TYPE_SLUG_MAP = [
+        'treatments'              => 'phytosanitary',
+        'fertilizations'          => 'fertilization',
+        'irrigations'             => 'irrigation',
+        'observations'            => 'observation',
+        'harvests'                => 'harvest',
+        'cultural-works'          => 'cultural',
+        'pruning'                 => 'pruning',
+        'post-harvest-treatments' => 'post_harvest',
+    ];
+
+    // ─── GET /viticulturist/notebook/{notebook_type} ──────────────────────────
+    // Listado por tipo para el cliente móvil. Parámetro tipado sin closures
+    // para compatibilidad con route:cache.
+
+    public function indexOfType(Request $request, string $notebookType): JsonResponse
+    {
+        $type = self::TYPE_SLUG_MAP[$notebookType] ?? $notebookType;
+        $request->merge(['type' => $type]);
+        return $this->index($request);
+    }
+
+    // ─── POST /viticulturist/notebook/{notebook_type} ─────────────────────────
+    // Creación por tipo: inyecta activity_type y normaliza alias de campos
+    // del cliente móvil ('date' → 'activity_date', 'buds_per_vine' → ...).
+
+    public function storeTyped(Request $request, string $notebookType): JsonResponse
+    {
+        $activityType = self::TYPE_SLUG_MAP[$notebookType] ?? $notebookType;
+
+        $extra = ['activity_type' => $activityType];
+
+        // Alias de fecha: el cliente móvil puede enviar 'date' en vez de 'activity_date'
+        if (! $request->has('activity_date') && $request->has('date')) {
+            $extra['activity_date'] = $request->input('date');
+        }
+
+        // Alias de campo poda: el cliente móvil envía 'buds_per_vine'
+        if (! $request->has('productive_buds_per_hectare') && $request->has('buds_per_vine')) {
+            $extra['productive_buds_per_hectare'] = $request->input('buds_per_vine');
+        }
+
+        $request->merge($extra);
+
+        return $this->store($request);
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -349,22 +410,48 @@ class NotebookController extends Controller
 
     private function updateDetails(AgriculturalActivity $activity, array $data): void
     {
-        $detailFields = array_diff_key($data, array_flip([
-            'activity_date', 'phenological_stage', 'weather_conditions', 'temperature', 'notes',
-        ]));
+        $allowedFields = match ($activity->activity_type) {
+            'phytosanitary' => [
+                'product_id', 'pest_id', 'dose_per_hectare', 'total_dose', 'area_treated',
+                'application_method', 'treatment_justification', 'applicator_ropo_number', 'reentry_period_days',
+            ],
+            'fertilization' => [
+                'fertilizer_type', 'fertilizer_name', 'quantity', 'application_method',
+                'area_applied', 'nitrogen_uf', 'phosphorus_uf', 'potassium_uf',
+            ],
+            'irrigation' => [
+                'water_volume', 'water_volume_unit', 'irrigation_method', 'duration_minutes',
+                'is_fertirrigation', 'fertilizer_product', 'fertilizer_dose_per_ha',
+            ],
+            'cultural', 'pruning' => [
+                'work_type', 'hours_worked', 'workers_count', 'residue_management', 'description',
+                'pruning_type', 'productive_buds_per_hectare',
+            ],
+            'observation' => [
+                'pest_id', 'observation_type', 'description', 'severity', 'affected_area_percentage',
+                'threshold_exceeded', 'follow_up_date', 'action_taken',
+            ],
+            'post_harvest' => [
+                'application_type', 'product_id', 'treated_area_ha', 'dose_per_hectare',
+                'water_volume_liters', 'reentry_interval_hours',
+            ],
+            default => [],
+        };
+
+        $detailFields = array_intersect_key($data, array_flip($allowedFields));
 
         if (empty($detailFields)) {
             return;
         }
 
         match ($activity->activity_type) {
-            'phytosanitary' => $activity->phytosanitaryTreatment?->update($detailFields),
-            'fertilization' => $activity->fertilization?->update($detailFields),
-            'irrigation'    => $activity->irrigation?->update($detailFields),
+            'phytosanitary'       => $activity->phytosanitaryTreatment?->update($detailFields),
+            'fertilization'       => $activity->fertilization?->update($detailFields),
+            'irrigation'          => $activity->irrigation?->update($detailFields),
             'cultural', 'pruning' => $activity->culturalWork?->update($detailFields),
-            'observation'   => $activity->observation?->update($detailFields),
-            'post_harvest'  => $activity->postHarvestTreatment?->update($detailFields),
-            default         => null,
+            'observation'         => $activity->observation?->update($detailFields),
+            'post_harvest'        => $activity->postHarvestTreatment?->update($detailFields),
+            default               => null,
         };
     }
 

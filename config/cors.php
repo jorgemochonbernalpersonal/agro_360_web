@@ -10,9 +10,9 @@ return [
     | Usar ['*'] para permitir todos los orígenes (no recomendado en producción).
     |
     */
-    'allowed_origins' => env('CORS_ALLOWED_ORIGINS', '*') === '*' 
-        ? ['*'] 
-        : explode(',', env('CORS_ALLOWED_ORIGINS', 'http://localhost:3000')),
+    'allowed_origins' => env('CORS_ALLOWED_ORIGINS') !== null
+        ? (env('CORS_ALLOWED_ORIGINS') === '*' ? ['*'] : explode(',', env('CORS_ALLOWED_ORIGINS', '')))
+        : (in_array(env('APP_ENV', 'production'), ['local', 'testing']) ? ['*'] : []),
 
     /*
     |--------------------------------------------------------------------------

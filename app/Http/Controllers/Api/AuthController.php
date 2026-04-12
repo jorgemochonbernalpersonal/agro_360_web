@@ -42,7 +42,7 @@ class AuthController extends Controller
         $user->notify(new \App\Notifications\MobileVerifyEmailNotification());
 
         $device = $validated['device_name'] ?? 'mobile';
-        $token  = $user->createToken($device, ['*'], now()->addDays(30))->plainTextToken;
+        $token  = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
 
         SecurityLogger::logSecurityEvent('register_success', [
             'user_id' => $user->id,
@@ -127,7 +127,7 @@ class AuthController extends Controller
         // Revocar token previo del mismo dispositivo para no acumular
         $user->tokens()->where('name', $device)->delete();
 
-        $token = $user->createToken($device, ['*'], now()->addDays(30))->plainTextToken;
+        $token = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
 
         return response()->json([
             'token'      => $token,
@@ -194,7 +194,7 @@ class AuthController extends Controller
         ]);
 
         $device = $validated['device_name'] ?? 'mobile';
-        $token  = $user->fresh()->createToken($device, ['*'], now()->addDays(30))->plainTextToken;
+        $token  = $user->fresh()->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
 
         return response()->json([
             'token'      => $token,
@@ -305,7 +305,7 @@ class AuthController extends Controller
 
         $currentToken->delete();
 
-        $token = $user->createToken($device, ['*'], now()->addDays(30))->plainTextToken;
+        $token = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
 
         return response()->json([
             'token'      => $token,

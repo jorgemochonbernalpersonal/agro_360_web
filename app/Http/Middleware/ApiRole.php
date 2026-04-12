@@ -13,7 +13,10 @@ class ApiRole
     {
         $user = $request->user();
 
-        if (empty($roles) || in_array($user->role, $roles)) {
+        $roleMatch  = empty($roles) || in_array($user->role, $roles);
+        $tokenMatch = empty($roles) || collect($roles)->contains(fn ($r) => $user->tokenCan($r));
+
+        if ($roleMatch && $tokenMatch) {
             return $next($request);
         }
 
