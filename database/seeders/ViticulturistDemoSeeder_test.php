@@ -856,7 +856,7 @@ class ViticulturistDemoSeeder_test extends Seeder
         $pruningDates = ['2024-01-08', '2024-01-10', '2024-01-15', '2024-01-17', '2024-01-22'];
         $pruningTypes = ['guyot', 'guyot', 'vaso', 'guyot', 'vaso'];
 
-        foreach ($plotIds as $i => $plotId) {
+        foreach (array_slice($plotIds, 0, 5) as $i => $plotId) {
             $aId = $act([
                 'plot_id'             => $plotId,
                 'activity_type'       => 'pruning',
@@ -1149,7 +1149,7 @@ class ViticulturistDemoSeeder_test extends Seeder
         // ── Podas (Ene 2025) ───────────────────────────────────────────────────
         $pruningDates2025 = ['2025-01-07', '2025-01-09', '2025-01-14', '2025-01-16', '2025-01-21'];
 
-        foreach ($plotIds as $i => $plotId) {
+        foreach (array_slice($plotIds, 0, 5) as $i => $plotId) {
             $aId = $act([
                 'plot_id'            => $plotId,
                 'activity_type'      => 'pruning',
@@ -1363,7 +1363,7 @@ class ViticulturistDemoSeeder_test extends Seeder
         $pruningDates = ['2026-01-06', '2026-01-08', '2026-01-13', '2026-01-15', '2026-01-20'];
         $pruningTypes = ['vaso', 'guyot', 'vaso', 'guyot', 'vaso'];
 
-        foreach ($plotIds as $i => $plotId) {
+        foreach (array_slice($plotIds, 0, 5) as $i => $plotId) {
             $aId = $act([
                 'plot_id'            => $plotId,
                 'activity_type'      => 'pruning',
