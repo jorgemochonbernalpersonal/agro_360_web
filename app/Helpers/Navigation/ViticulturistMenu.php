@@ -16,8 +16,6 @@ class ViticulturistMenu
         $menu['main'] = [
             ['icon' => 'home',         'label' => 'Dashboard',      'route' => 'viticulturist.dashboard',           'active' => request()->routeIs('viticulturist.dashboard')],
             ['icon' => 'calendar-days','label' => 'Calendario',     'route' => 'viticulturist.calendar',            'active' => request()->routeIs('viticulturist.calendar')],
-            ['icon' => 'bell',         'label' => 'Notificaciones', 'route' => 'viticulturist.notifications.index', 'active' => request()->routeIs('viticulturist.notifications*'),
-             'badge' => Cache::remember("nav_badge_notifications_{$user->id}", 60, fn() => $user->unreadNotifications()->count())],
         ];
 
         // ── Campaña ───────────────────────────────────────────────────────────

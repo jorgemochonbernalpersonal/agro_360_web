@@ -17,7 +17,6 @@ class ProducerMenu
             ['icon' => 'squares-2x2',  'label' => 'Vista general',  'route' => 'producer.dashboard',            'active' => request()->routeIs('producer.dashboard')],
             ['icon' => 'calendar-days','label' => 'Calendario',     'route' => 'producer.calendar',             'active' => request()->routeIs('producer.calendar')],
             ['icon' => 'bolt',         'label' => 'Entrada Rápida', 'route' => 'producer.quick-entry',          'active' => request()->routeIs('producer.quick-entry')],
-            ['icon' => 'bell',         'label' => 'Notificaciones', 'route' => 'producer.notifications.index',  'active' => request()->routeIs('producer.notifications*')],
         ];
 
         // ── Viñedo: Campaña ───────────────────────────────────────────────────
