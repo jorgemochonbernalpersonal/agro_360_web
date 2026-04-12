@@ -909,18 +909,18 @@ class ProducerDemoSeeder_test extends Seeder
     {
         $uid = self::PRODUCER_USER_ID;
         $id = DB::table('exploitations')->insertGetId([
-            'viticulturist_id'  => $uid,
-            'name'              => 'Explotación Viticultora-Bodeguera La Orotava',
-            'exploitation_code' => 'SIEX-TF-' . $uid,
-            'registration_number' => 'REA-TF-2026-' . $uid,
-            'nif'               => 'B38765432',
-            'address'           => 'Camino Real de La Orotava, 12',
-            'municipality_id'   => self::MUNICIPALITY_ID,
-            'province_id'       => self::PROVINCE_ID,
-            'total_area'        => 3.80,
-            'vineyards_area'    => 3.80,
-            'active'            => true,
-            'created_at'        => $now, 'updated_at' => $now,
+            'viticulturist_id'          => $uid,
+            'exploitation_name'         => 'Explotación Viticultora-Bodeguera La Orotava',
+            'rea_code'                  => 'REA-TF-2026-' . $uid,
+            'siex_exploitation_id'      => 'SIEX-TF-' . $uid,
+            'holder_name'               => 'Productor Demo La Orotava',
+            'holder_nif'                => 'B38765432',
+            'is_ecological'             => false,
+            'is_integrated_production'  => false,
+            'is_quality_scheme'         => true,
+            'quality_scheme_desc'       => 'DO Valle de La Orotava',
+            'active'                    => true,
+            'created_at'                => $now, 'updated_at' => $now,
         ]);
         return [$id];
     }
