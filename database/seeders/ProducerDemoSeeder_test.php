@@ -1017,25 +1017,32 @@ class ProducerDemoSeeder_test extends Seeder
     {
         $uid = self::PRODUCER_USER_ID;
         $warehouseId = DB::table('warehouses')->insertGetId([
-            'user_id'    => $uid, 'name' => 'Almacén La Orotava',
-            'address'    => 'Camino Real, 12 — La Orotava',
-            'capacity'   => 5000.00, 'capacity_unit' => 'kg',
+            'user_id'    => $uid,
+            'name'       => 'Almacén La Orotava',
+            'location'   => 'Camino Real, 12 — La Orotava',
             'active'     => true,
             'created_at' => $now, 'updated_at' => $now,
         ]);
         foreach ($productIds as $i => $prodId) {
+            $qty = 8.0 + $i * 2;
             $stockId = DB::table('product_stocks')->insertGetId([
-                'warehouse_id'   => $warehouseId, 'user_id' => $uid,
-                'product_id'     => $prodId, 'product_type' => 'phytosanitary',
-                'quantity'       => 8.0 + $i * 2, 'unit' => 'kg',
-                'min_stock'      => 2.0,
-                'created_at'     => $now, 'updated_at' => $now,
+                'warehouse_id' => $warehouseId,
+                'user_id'      => $uid,
+                'product_id'   => $prodId,
+                'quantity'     => $qty,
+                'unit'         => 'kg',
+                'active'       => true,
+                'created_at'   => $now, 'updated_at' => $now,
             ]);
             DB::table('product_stock_movements')->insert([
-                'stock_id' => $stockId, 'movement_type' => 'in',
-                'quantity' => 8.0 + $i * 2, 'unit' => 'kg',
-                'movement_date' => '2025-03-01', 'notes' => 'Compra inicio temporada 2025.',
-                'created_at' => $now, 'updated_at' => $now,
+                'stock_id'        => $stockId,
+                'user_id'         => $uid,
+                'movement_type'   => 'purchase',
+                'quantity_change'  => $qty,
+                'quantity_before'  => 0,
+                'quantity_after'   => $qty,
+                'notes'            => 'Compra inicio temporada 2025.',
+                'created_at'       => $now, 'updated_at' => $now,
             ]);
         }
     }
