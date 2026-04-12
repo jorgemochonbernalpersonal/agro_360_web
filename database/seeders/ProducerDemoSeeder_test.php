@@ -658,9 +658,9 @@ class ProducerDemoSeeder_test extends Seeder
                     'created_at' => $now, 'updated_at' => $now,
                 ]);
                 DB::table('irrigations')->insert([
-                    'activity_id' => $actId, 'irrigation_type' => 'goteo',
-                    'duration_hours' => 4.0, 'water_volume' => 800,
-                    'water_volume_unit' => 'litros',
+                    'activity_id' => $actId, 'irrigation_method' => 'goteo',
+                    'duration_minutes' => 240, 'water_volume' => 800,
+                    'water_volume_unit' => 'L',
                     'water_source' => 'Red de riego agrícola',
                     'is_fertirrigation' => false,
                     'created_at' => $now, 'updated_at' => $now,
