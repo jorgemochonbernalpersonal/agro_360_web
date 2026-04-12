@@ -1107,21 +1107,21 @@ class ProducerDemoSeeder_test extends Seeder
     {
         $uid = self::PRODUCER_USER_ID;
         $wines = [
-            ['name' => 'Orotava Tinto Joven 2025',    'wine_type' => 'tinto',    'vintage_year' => 2025, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Listán Negro 80%, Baboso Negro 20%', 'volume_liters' => 3200.0, 'alcohol_content' => 13.5, 'description' => 'Tinto joven frutal. Sin crianza.'],
-            ['name' => 'Orotava Tinto Crianza 2024',  'wine_type' => 'tinto',    'vintage_year' => 2024, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Listán Negro 70%, Baboso Negro 30%', 'volume_liters' => 1800.0, 'alcohol_content' => 14.0, 'description' => '6 meses barrica francesa.'],
-            ['name' => 'Orotava Baboso de Autor 2024','wine_type' => 'tinto',    'vintage_year' => 2024, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Baboso Negro 100%', 'volume_liters' => 800.0,  'alcohol_content' => 14.5, 'description' => 'Vino de autor. 10 meses barrica nueva.'],
-            ['name' => 'Orotava Blanco Marmajuelo 2025','wine_type' => 'blanco', 'vintage_year' => 2025, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Marmajuelo 100%', 'volume_liters' => 2400.0, 'alcohol_content' => 12.5, 'description' => 'Blanco fresco y aromático. Sin madera.'],
-            ['name' => 'Orotava Vijariego 2025',      'wine_type' => 'blanco',   'vintage_year' => 2025, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Vijariego 100%',  'volume_liters' => 1600.0, 'alcohol_content' => 12.0, 'description' => 'Blanco varietal. Elaborado en frío.'],
-            ['name' => 'Orotava Rosado 2025',         'wine_type' => 'rosado',   'vintage_year' => 2025, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Listán Negro 100%','volume_liters' => 1200.0, 'alcohol_content' => 13.0, 'description' => 'Rosado de sangrado. Salmon intenso.'],
-            ['name' => 'Orotava Listán Blanco 2025',  'wine_type' => 'blanco',   'vintage_year' => 2025, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Listán Blanco 100%','volume_liters' => 900.0, 'alcohol_content' => 12.5, 'description' => 'Blanco tradicional. Suave y equilibrado.'],
-            ['name' => 'Orotava Ecológico Tinto 2024','wine_type' => 'tinto',    'vintage_year' => 2024, 'designation_of_origin' => 'DO Tacoronte-Acentejo', 'grape_varieties' => 'Baboso Negro 60%, Listán Negro 40%', 'volume_liters' => 600.0, 'alcohol_content' => 13.8, 'description' => 'Vino ecológico certificado.'],
+            ['name' => 'Orotava Tinto Joven 2025',     'wine_type' => 'red',   'vintage' => 2025, 'variety' => 'Listán Negro 80%, Baboso Negro 20%', 'volume_liters' => 3200.0, 'notes' => 'DO Tacoronte-Acentejo. Tinto joven frutal. Sin crianza.'],
+            ['name' => 'Orotava Tinto Crianza 2024',   'wine_type' => 'red',   'vintage' => 2024, 'variety' => 'Listán Negro 70%, Baboso Negro 30%', 'volume_liters' => 1800.0, 'notes' => 'DO Tacoronte-Acentejo. 6 meses barrica francesa.'],
+            ['name' => 'Orotava Baboso de Autor 2024', 'wine_type' => 'red',   'vintage' => 2024, 'variety' => 'Baboso Negro 100%',                  'volume_liters' => 800.0,  'notes' => 'DO Tacoronte-Acentejo. Vino de autor. 10 meses barrica nueva.'],
+            ['name' => 'Orotava Blanco Marmajuelo 2025','wine_type' => 'white', 'vintage' => 2025, 'variety' => 'Marmajuelo 100%',                   'volume_liters' => 2400.0, 'notes' => 'DO Tacoronte-Acentejo. Blanco fresco y aromático. Sin madera.'],
+            ['name' => 'Orotava Vijariego 2025',       'wine_type' => 'white', 'vintage' => 2025, 'variety' => 'Vijariego 100%',                     'volume_liters' => 1600.0, 'notes' => 'DO Tacoronte-Acentejo. Blanco varietal. Elaborado en frío.'],
+            ['name' => 'Orotava Rosado 2025',          'wine_type' => 'rose',  'vintage' => 2025, 'variety' => 'Listán Negro 100%',                  'volume_liters' => 1200.0, 'notes' => 'DO Tacoronte-Acentejo. Rosado de sangrado. Salmón intenso.'],
+            ['name' => 'Orotava Listán Blanco 2025',   'wine_type' => 'white', 'vintage' => 2025, 'variety' => 'Listán Blanco 100%',                 'volume_liters' => 900.0,  'notes' => 'DO Tacoronte-Acentejo. Blanco tradicional. Suave y equilibrado.'],
+            ['name' => 'Orotava Ecológico Tinto 2024', 'wine_type' => 'red',   'vintage' => 2024, 'variety' => 'Baboso Negro 60%, Listán Negro 40%', 'volume_liters' => 600.0,  'notes' => 'DO Tacoronte-Acentejo. Vino ecológico certificado.'],
         ];
 
         $ids = [];
         foreach ($wines as $w) {
             $ids[] = DB::table('wines')->insertGetId(array_merge($w, [
                 'user_id'    => $uid,
-                'active'     => true,
+                'status'     => 'in_progress',
                 'created_at' => $now, 'updated_at' => $now,
             ]));
         }
