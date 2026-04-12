@@ -578,8 +578,8 @@ class ProducerDemoSeeder_test extends Seeder
         $uid = self::PRODUCER_USER_ID;
         [$prod0, $prod1, $prod2, $prod3, $prod4] = $productIds;
 
-        // Poda
-        foreach ($plotIds as $i => $pid) {
+        // Poda (solo los primeros 4 plots que tienen plantaciones)
+        foreach (array_slice($plotIds, 0, 4) as $i => $pid) {
             $actId = DB::table('agricultural_activities')->insertGetId([
                 'viticulturist_id'        => $uid,
                 'winery_viticulturist_id' => $wvId,
@@ -671,9 +671,9 @@ class ProducerDemoSeeder_test extends Seeder
             'created_at' => $now, 'updated_at' => $now,
         ]);
 
-        // Vendimia 2025
+        // Vendimia 2025 (solo los primeros 4 plots que tienen plantaciones)
         $containerVendimia = DB::table('containers')->where('user_id', $uid)->value('id');
-        foreach ($plotIds as $i => $pid) {
+        foreach (array_slice($plotIds, 0, 4) as $i => $pid) {
             $actId = DB::table('agricultural_activities')->insertGetId([
                 'viticulturist_id' => $uid, 'winery_viticulturist_id' => $wvId,
                 'campaign_id' => $campaignId, 'plot_id' => $pid,
