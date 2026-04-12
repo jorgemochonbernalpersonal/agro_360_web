@@ -509,8 +509,7 @@ class ProducerDemoSeeder_test extends Seeder
                 'plot_planting_id'        => $plantingIds[$i * 2],
                 'activity_type'           => 'pruning',
                 'activity_date'           => '2025-02-' . str_pad($i * 5 + 5, 2, '0', STR_PAD_LEFT),
-                'description'             => 'Poda de invierno. Carga ajustada a 8 yemas/cepa.',
-                'notes'                   => 'Condiciones secas. Sin incidencias.',
+                'notes'                   => 'Poda de invierno. Carga ajustada a 8 yemas/cepa.',
                 'created_at'              => $now, 'updated_at' => $now,
             ]);
             DB::table('cultural_works')->insert([
@@ -530,7 +529,7 @@ class ProducerDemoSeeder_test extends Seeder
             'campaign_id' => $campaignId, 'plot_id' => $plotIds[0],
             'plot_planting_id' => $plantingIds[0],
             'activity_type' => 'phytosanitary_treatment', 'activity_date' => '2025-04-15',
-            'description' => 'Tratamiento preventivo mildiu. Brotación 4-5 hojas.',
+            'notes' => 'Tratamiento preventivo mildiu. Brotación 4-5 hojas.',
             'created_at' => $now, 'updated_at' => $now,
         ]);
         DB::table('phytosanitary_treatments')->insert([
@@ -549,7 +548,7 @@ class ProducerDemoSeeder_test extends Seeder
             'campaign_id' => $campaignId, 'plot_id' => $plotIds[1],
             'plot_planting_id' => $plantingIds[2],
             'activity_type' => 'phytosanitary_treatment', 'activity_date' => '2025-05-10',
-            'description' => 'Tratamiento oídio. Racimos visibles.',
+            'notes' => 'Tratamiento oídio. Racimos visibles.',
             'created_at' => $now, 'updated_at' => $now,
         ]);
         DB::table('phytosanitary_treatments')->insert([
@@ -570,7 +569,7 @@ class ProducerDemoSeeder_test extends Seeder
                     'campaign_id' => $campaignId, 'plot_id' => $plotIds[$i],
                     'plot_planting_id' => $plantingIds[$i * 2],
                     'activity_type' => 'irrigation', 'activity_date' => $date,
-                    'description' => 'Riego de apoyo por goteo.',
+                    'notes' => 'Riego de apoyo por goteo.',
                     'created_at' => $now, 'updated_at' => $now,
                 ]);
                 DB::table('irrigations')->insert([
@@ -590,7 +589,7 @@ class ProducerDemoSeeder_test extends Seeder
             'campaign_id' => $campaignId, 'plot_id' => $plotIds[0],
             'plot_planting_id' => $plantingIds[0],
             'activity_type' => 'fertilization', 'activity_date' => '2025-03-20',
-            'description' => 'Abonado de fondo. Incorporación al suelo.',
+            'notes' => 'Abonado de fondo. Incorporación al suelo.',
             'created_at' => $now, 'updated_at' => $now,
         ]);
         DB::table('fertilizations')->insert([
@@ -611,7 +610,7 @@ class ProducerDemoSeeder_test extends Seeder
                 'campaign_id' => $campaignId, 'plot_id' => $pid,
                 'plot_planting_id' => $plantingIds[$i * 2],
                 'activity_type' => 'harvest', 'activity_date' => '2025-09-' . str_pad(10 + $i * 3, 2, '0', STR_PAD_LEFT),
-                'description' => 'Vendimia manual. Selección de racimos.',
+                'notes' => 'Vendimia manual. Selección de racimos.',
                 'created_at' => $now, 'updated_at' => $now,
             ]);
             $weight = [920, 780, 640, 1000][$i];
@@ -642,7 +641,7 @@ class ProducerDemoSeeder_test extends Seeder
             'campaign_id' => $campaignId, 'plot_id' => $plotIds[0],
             'plot_planting_id' => $plantingIds[0],
             'activity_type' => 'post_harvest_treatment', 'activity_date' => '2025-10-20',
-            'description' => 'Tratamiento post-vendimia. Protección de heridas de poda.',
+            'notes' => 'Tratamiento post-vendimia. Protección de heridas de poda.',
             'created_at' => $now, 'updated_at' => $now,
         ]);
         DB::table('post_harvest_treatments')->insert([
@@ -670,7 +669,7 @@ class ProducerDemoSeeder_test extends Seeder
                 'campaign_id' => $campaignId, 'plot_id' => $plotIds[$i],
                 'plot_planting_id' => $plantingIds[$i * 2],
                 'activity_type' => 'pruning', 'activity_date' => '2026-02-' . str_pad($i * 4 + 3, 2, '0', STR_PAD_LEFT),
-                'description' => 'Poda de invierno 2026. Carga 7-8 yemas/cepa.',
+                'notes' => 'Poda de invierno 2026. Carga 7-8 yemas/cepa.',
                 'created_at' => $now, 'updated_at' => $now,
             ]);
             DB::table('cultural_works')->insert([
@@ -687,7 +686,7 @@ class ProducerDemoSeeder_test extends Seeder
             'campaign_id' => $campaignId, 'plot_id' => $plotIds[3],
             'plot_planting_id' => $plantingIds[6],
             'activity_type' => 'phytosanitary_treatment', 'activity_date' => '2026-04-05',
-            'description' => 'Tratamiento preventivo mildiu. Inicio brotación.',
+            'notes' => 'Tratamiento preventivo mildiu. Inicio brotación.',
             'created_at' => $now, 'updated_at' => $now,
         ]);
         DB::table('phytosanitary_treatments')->insert([
@@ -706,7 +705,7 @@ class ProducerDemoSeeder_test extends Seeder
             'campaign_id' => $campaignId, 'plot_id' => $plotIds[0],
             'plot_planting_id' => $plantingIds[0],
             'activity_type' => 'observation', 'activity_date' => '2026-03-28',
-            'description' => 'Observación inicio brotación.',
+            'notes' => 'Observación inicio brotación.',
             'created_at' => $now, 'updated_at' => $now,
         ]);
         DB::table('observations')->insert([
@@ -1222,6 +1221,7 @@ class ProducerDemoSeeder_test extends Seeder
             ]);
             DB::table('invoice_items')->insert([
                 'invoice_id'  => $invoiceId,
+                'name'        => $inv['desc'],
                 'description' => $inv['desc'],
                 'quantity'    => 1,
                 'unit'        => 'partida',
