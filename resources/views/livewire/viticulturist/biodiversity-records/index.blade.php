@@ -218,7 +218,7 @@
                             {{-- Especies --}}
                             @if($entry->species)
                                 <div class="flex items-start gap-2 text-sm text-zinc-600">
-                                    <flux:icon icon="leaf" class="size-4 text-zinc-400 shrink-0 mt-0.5" />
+                                    <flux:icon icon="globe-europe-africa" class="size-4 text-zinc-400 shrink-0 mt-0.5" />
                                     <span class="line-clamp-2">{{ $entry->species }}</span>
                                 </div>
                             @endif

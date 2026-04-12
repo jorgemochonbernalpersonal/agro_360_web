@@ -313,6 +313,12 @@ Route::middleware(['role:winery,producer'])
         Route::get('/eco-certifications/create', \App\Livewire\Winery\EcoCertifications\Create::class)->name('eco-certifications.create');
         Route::get('/eco-certifications/{ecoCertification}/edit', \App\Livewire\Winery\EcoCertifications\Edit::class)->name('eco-certifications.edit');
 
+        // ── Registros y Autorizaciones ────────────────────────────────
+        Route::get('/exploitations', \App\Livewire\Winery\UnderConstruction::class)->name('exploitations.index');
+        Route::get('/commercial-authorizations', \App\Livewire\Winery\UnderConstruction::class)->name('commercial-authorizations.index');
+        Route::get('/field-applicators', \App\Livewire\Winery\UnderConstruction::class)->name('field-applicators.index');
+        Route::get('/field-equipment', \App\Livewire\Winery\UnderConstruction::class)->name('field-equipment.index');
+
         // ── Configuración ─────────────────────────────────────────────
         Route::get('/settings', \App\Livewire\Winery\Settings::class)->name('settings');
     });
