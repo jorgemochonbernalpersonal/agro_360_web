@@ -328,14 +328,6 @@ class ProducerDemoSeeder_test extends Seeder
         $wineIds = DB::table('wines')->where('user_id', $uid)->pluck('id');
         if ($wineIds->isNotEmpty()) {
             DB::table('wine_fermentation_controls')->whereIn('wine_id', $wineIds)->delete();
-            $transferIds = DB::table('wine_transfers')->whereIn('wine_id', $wineIds)->pluck('id');
-            if ($transferIds->isNotEmpty()) {
-                DB::table('container_histories')
-                    ->whereIn('reference_id', $transferIds)
-                    ->whereIn('operation_type', ['wine_transfer_in', 'wine_transfer_out',
-                        'wine_transfer_revert_in', 'wine_transfer_revert_out'])
-                    ->delete();
-            }
             DB::table('wine_transfers')->whereIn('wine_id', $wineIds)->delete();
             DB::table('wine_losses')->whereIn('wine_id', $wineIds)->delete();
             DB::table('wine_tasting_notes')->whereIn('wine_id', $wineIds)->delete();
