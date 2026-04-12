@@ -836,11 +836,11 @@ class ProducerDemoSeeder_test extends Seeder
                 'created_at'      => $now, 'updated_at' => $now,
             ]));
             DB::table('pest_product_effectiveness')->insert([
-                'pest_id'         => $pestId,
-                'product_id'      => $productEff,
-                'effectiveness'   => 'high',
-                'notes'           => 'Eficacia contrastada en condiciones locales.',
-                'created_at'      => $now, 'updated_at' => $now,
+                'pest_id'            => $pestId,
+                'product_id'         => $productEff,
+                'effectiveness_rating' => 4,
+                'notes'              => 'Eficacia contrastada en condiciones locales.',
+                'created_at'         => $now, 'updated_at' => $now,
             ]);
             $ids[] = $pestId;
         }
