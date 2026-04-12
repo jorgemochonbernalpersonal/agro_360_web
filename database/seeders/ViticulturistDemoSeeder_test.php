@@ -69,6 +69,11 @@ class ViticulturistDemoSeeder_test extends Seeder
             $plotIds = $this->createPlots($now);
         });
 
+        // ── 4b. SIGPAC ─────────────────────────────────────────────────────────
+        $this->step('SIGPAC + multipart_plot_sigpac (5)', function () use ($plotIds) {
+            $this->createSigpacCodesForPlots($plotIds);
+        });
+
         // ── 5. Plantaciones ────────────────────────────────────────────────────
         $plantingIds = [];
         $this->step('Plantaciones (10)', function () use ($now, $plotIds, &$plantingIds) {
@@ -267,6 +272,7 @@ class ViticulturistDemoSeeder_test extends Seeder
         // Parcelas y plantaciones (cascada por FK)
         $plotIds = DB::table('plots')->where('viticulturist_id', $vitId)->pluck('id');
         if ($plotIds->isNotEmpty()) {
+            DB::table('multipart_plot_sigpac')->whereIn('plot_id', $plotIds)->delete();
             DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->delete();
             DB::table('plots')->whereIn('id', $plotIds)->delete();
         }
@@ -574,6 +580,61 @@ class ViticulturistDemoSeeder_test extends Seeder
             $ids[] = DB::table('plots')->insertGetId(array_merge($base, $plot));
         }
         return $ids;
+    }
+
+    // ─── 4b. SIGPAC ───────────────────────────────────────────────────────────
+
+    private function createSigpacCodesForPlots(array $plotIds): void
+    {
+        foreach ($plotIds as $index => $plotId) {
+            $polygon   = str_pad($index + 1, 2, '0', STR_PAD_LEFT);           // 01, 02…
+            $parcel    = str_pad(($index * 5) + 1, 5, '0', STR_PAD_LEFT);    // 00001, 00006…
+            $enclosure = '001';
+
+            $codeFields = [
+                'code_autonomous_community' => str_pad(self::AC_ID, 2, '0', STR_PAD_LEFT),
+                'code_province'             => str_pad(self::PROVINCE_ID, 2, '0', STR_PAD_LEFT),
+                'code_municipality'         => str_pad(self::MUNICIPALITY_ID, 3, '0', STR_PAD_LEFT),
+                'code_aggregate'            => '0',
+                'code_zone'                 => '0',
+                'code_polygon'              => $polygon,
+                'code_plot'                 => $parcel,
+                'code_enclosure'            => $enclosure,
+            ];
+
+            $fullCode = \App\Models\SigpacCode::buildCodeFromFields($codeFields);
+
+            $sigpacCode = \App\Models\SigpacCode::firstOrCreate(
+                [
+                    'code_autonomous_community' => $codeFields['code_autonomous_community'],
+                    'code_province'             => $codeFields['code_province'],
+                    'code_municipality'         => $codeFields['code_municipality'],
+                    'code_polygon'              => $polygon,
+                    'code_plot'                 => $parcel,
+                    'code_enclosure'            => $enclosure,
+                ],
+                [
+                    'code_aggregate' => '0',
+                    'code_zone'      => '0',
+                    'code'           => $fullCode,
+                ]
+            );
+
+            $exists = DB::table('multipart_plot_sigpac')
+                ->where('plot_id', $plotId)
+                ->where('sigpac_code_id', $sigpacCode->id)
+                ->exists();
+
+            if (!$exists) {
+                DB::table('multipart_plot_sigpac')->insert([
+                    'plot_id'          => $plotId,
+                    'sigpac_code_id'   => $sigpacCode->id,
+                    'plot_geometry_id' => null,
+                    'created_at'       => now(),
+                    'updated_at'       => now(),
+                ]);
+            }
+        }
     }
 
     // ─── 5. Plantaciones ──────────────────────────────────────────────────────

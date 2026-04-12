@@ -81,6 +81,11 @@ class ProducerDemoSeeder_test extends Seeder
             $plotIds = $this->createPlots($now);
         });
 
+        // 4b. SIGPAC
+        $this->step('SIGPAC + multipart_plot_sigpac (4)', function () use ($plotIds) {
+            $this->createSigpacCodesForPlots($plotIds);
+        });
+
         // 5. Plantaciones
         $plantingIds = [];
         $this->step('Plantaciones (8)', function () use ($now, $plotIds, &$plantingIds) {
@@ -260,6 +265,7 @@ class ProducerDemoSeeder_test extends Seeder
             if ($plantingIds->isNotEmpty()) {
                 DB::table('estimated_yields')->whereIn('plot_planting_id', $plantingIds)->delete();
             }
+            DB::table('multipart_plot_sigpac')->whereIn('plot_id', $plotIds)->delete();
             DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->delete();
             DB::table('plots')->whereIn('id', $plotIds)->delete();
         }
@@ -417,6 +423,61 @@ class ProducerDemoSeeder_test extends Seeder
         return $ids;
     }
 
+    // ─── 4b. SIGPAC ───────────────────────────────────────────────────────────
+
+    private function createSigpacCodesForPlots(array $plotIds): void
+    {
+        foreach ($plotIds as $index => $plotId) {
+            $polygon   = str_pad($index + 1, 2, '0', STR_PAD_LEFT);
+            $parcel    = str_pad(($index * 5) + 1, 5, '0', STR_PAD_LEFT);
+            $enclosure = '001';
+
+            $codeFields = [
+                'code_autonomous_community' => str_pad(self::AC_ID, 2, '0', STR_PAD_LEFT),
+                'code_province'             => str_pad(self::PROVINCE_ID, 2, '0', STR_PAD_LEFT),
+                'code_municipality'         => str_pad(self::MUNICIPALITY_ID, 3, '0', STR_PAD_LEFT),
+                'code_aggregate'            => '0',
+                'code_zone'                 => '0',
+                'code_polygon'              => $polygon,
+                'code_plot'                 => $parcel,
+                'code_enclosure'            => $enclosure,
+            ];
+
+            $fullCode = \App\Models\SigpacCode::buildCodeFromFields($codeFields);
+
+            $sigpacCode = \App\Models\SigpacCode::firstOrCreate(
+                [
+                    'code_autonomous_community' => $codeFields['code_autonomous_community'],
+                    'code_province'             => $codeFields['code_province'],
+                    'code_municipality'         => $codeFields['code_municipality'],
+                    'code_polygon'              => $polygon,
+                    'code_plot'                 => $parcel,
+                    'code_enclosure'            => $enclosure,
+                ],
+                [
+                    'code_aggregate' => '0',
+                    'code_zone'      => '0',
+                    'code'           => $fullCode,
+                ]
+            );
+
+            $exists = DB::table('multipart_plot_sigpac')
+                ->where('plot_id', $plotId)
+                ->where('sigpac_code_id', $sigpacCode->id)
+                ->exists();
+
+            if (!$exists) {
+                DB::table('multipart_plot_sigpac')->insert([
+                    'plot_id'          => $plotId,
+                    'sigpac_code_id'   => $sigpacCode->id,
+                    'plot_geometry_id' => null,
+                    'created_at'       => now(),
+                    'updated_at'       => now(),
+                ]);
+            }
+        }
+    }
+
     // ─── 5. Plantaciones ──────────────────────────────────────────────────────
 
     private function createPlantings(array $plotIds, $now): array
@@ -515,10 +576,9 @@ class ProducerDemoSeeder_test extends Seeder
             DB::table('cultural_works')->insert([
                 'activity_id'         => $actId,
                 'work_type'           => 'pruning',
-                'equipment_used'      => 'Tijera manual + tijera neumática',
-                'labor_hours'         => 6.0,
+                'description'         => 'Tijera manual + tijera neumática. Sin incidencias.',
+                'hours_worked'        => 6.0,
                 'residue_management'  => 'triturado_superficie',
-                'notes'               => 'Sin incidencias.',
                 'created_at'          => $now, 'updated_at' => $now,
             ]);
         }
@@ -674,7 +734,7 @@ class ProducerDemoSeeder_test extends Seeder
             ]);
             DB::table('cultural_works')->insert([
                 'activity_id' => $actId, 'work_type' => 'pruning',
-                'equipment_used' => 'Tijera neumática', 'labor_hours' => 5.5,
+                'description' => 'Tijera neumática', 'hours_worked' => 5.5,
                 'residue_management' => 'triturado_incorporado',
                 'created_at' => $now, 'updated_at' => $now,
             ]);
