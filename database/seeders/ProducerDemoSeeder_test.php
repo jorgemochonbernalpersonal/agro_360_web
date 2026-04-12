@@ -884,14 +884,14 @@ class ProducerDemoSeeder_test extends Seeder
     {
         $uid = self::PRODUCER_USER_ID;
         $machines = [
-            ['name' => 'Tractor Kubota M5091',         'brand' => 'Kubota',    'model' => 'M5091',          'year' => 2018, 'type' => 'tractor',              'power_kw' => 67,  'registration' => 'TF-001-P'],
-            ['name' => 'Pulverizador Hardi 600L',      'brand' => 'Hardi',     'model' => 'Ranger 600',     'year' => 2019, 'type' => 'sprayer',              'power_kw' => null,'registration' => null],
-            ['name' => 'Tijera Neumática Infaco',       'brand' => 'Infaco',    'model' => 'Electrocoup F3015','year' => 2021,'type' => 'pruning_equipment',   'power_kw' => null,'registration' => null],
-            ['name' => 'Remolque agrícola 3t',          'brand' => 'Fautras',   'model' => 'Plateau 3T',     'year' => 2017, 'type' => 'trailer',             'power_kw' => null,'registration' => 'TF-002-P'],
-            ['name' => 'Despalilladora-estrujadora',   'brand' => 'Diemme',    'model' => 'GD 20',          'year' => 2020, 'type' => 'harvesting_machine',  'power_kw' => 4,   'registration' => null],
-            ['name' => 'Prensa neumática 20 hl',        'brand' => 'Della Toffola','model' => 'PA 20',       'year' => 2020, 'type' => 'press',               'power_kw' => 5,   'registration' => null],
-            ['name' => 'Bomba de trasiego centrífuga',  'brand' => 'Velo',      'model' => 'CM 50',          'year' => 2019, 'type' => 'pump',                'power_kw' => 2.2, 'registration' => null],
-            ['name' => 'Equipo de frío 5000 kcal/h',   'brand' => 'Cofrimell', 'model' => 'CF-5000',        'year' => 2021, 'type' => 'cooling_equipment',   'power_kw' => 6,   'registration' => null],
+            ['name' => 'Tractor Kubota M5091',         'brand' => 'Kubota',    'model' => 'M5091',          'year' => 2018, 'type' => 'tractor',           'roma_registration' => 'TF-001-P'],
+            ['name' => 'Pulverizador Hardi 600L',      'brand' => 'Hardi',     'model' => 'Ranger 600',     'year' => 2019, 'type' => 'sprayer',           'roma_registration' => null],
+            ['name' => 'Tijera Neumática Infaco',      'brand' => 'Infaco',    'model' => 'Electrocoup F3015','year' => 2021,'type' => 'pruning_equipment', 'roma_registration' => null],
+            ['name' => 'Remolque agrícola 3t',         'brand' => 'Fautras',   'model' => 'Plateau 3T',     'year' => 2017, 'type' => 'trailer',           'roma_registration' => 'TF-002-P'],
+            ['name' => 'Despalilladora-estrujadora',   'brand' => 'Diemme',    'model' => 'GD 20',          'year' => 2020, 'type' => 'harvesting_machine','roma_registration' => null],
+            ['name' => 'Prensa neumática 20 hl',       'brand' => 'Della Toffola','model' => 'PA 20',       'year' => 2020, 'type' => 'press',             'roma_registration' => null],
+            ['name' => 'Bomba de trasiego centrífuga', 'brand' => 'Velo',      'model' => 'CM 50',          'year' => 2019, 'type' => 'pump',              'roma_registration' => null],
+            ['name' => 'Equipo de frío 5000 kcal/h',  'brand' => 'Cofrimell', 'model' => 'CF-5000',        'year' => 2021, 'type' => 'cooling_equipment', 'roma_registration' => null],
         ];
         $ids = [];
         foreach ($machines as $m) {
