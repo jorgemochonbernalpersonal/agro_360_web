@@ -684,23 +684,17 @@ class ProducerDemoSeeder_test extends Seeder
             ]);
             $weight = [920, 780, 640, 1000][$i];
             DB::table('harvests')->insert([
-                'activity_id'       => $actId,
-                'winery_id'         => $uid,
-                'viticulturist_id'  => $uid,
-                'plot_id'           => $pid,
-                'plot_planting_id'  => $plantingIds[$i * 2],
-                'campaign_id'       => $campaignId,
-                'container_id'      => $containerVendimia ?: null,
-                'harvest_date'      => '2025-09-' . str_pad(10 + $i * 3, 2, '0', STR_PAD_LEFT),
-                'quantity_kg'       => $weight,
-                'brix'              => 22.5 + $i * 0.5,
-                'ph'                => 3.35 + $i * 0.02,
-                'total_acidity'     => 5.8 - $i * 0.1,
-                'status'            => 'completed',
-                'harvest_type'      => 'manual',
-                'sanitary_state'    => 'optimo',
-                'notes'             => 'Uva sana. Sin podredumbre.',
-                'created_at'        => $now, 'updated_at' => $now,
+                'activity_id'        => $actId,
+                'plot_planting_id'   => $plantingIds[$i * 2],
+                'harvest_start_date' => '2025-09-' . str_pad(10 + $i * 3, 2, '0', STR_PAD_LEFT),
+                'total_weight'       => $weight,
+                'brix_degree'        => 22.5 + $i * 0.5,
+                'ph_level'           => 3.35 + $i * 0.02,
+                'acidity_level'      => 5.8 - $i * 0.1,
+                'status'             => 'active',
+                'health_status'      => 'sano',
+                'notes'              => 'Uva sana. Sin podredumbre.',
+                'created_at'         => $now, 'updated_at' => $now,
             ]);
         }
 
