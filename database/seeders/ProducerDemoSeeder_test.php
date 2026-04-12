@@ -975,28 +975,35 @@ class ProducerDemoSeeder_test extends Seeder
     private function createPAC(array $plotIds, int $c2025, int $c2026, $now): void
     {
         $uid = self::PRODUCER_USER_ID;
-        foreach ([[$c2025, '2025', $plotIds], [$c2026, '2026', array_slice($plotIds, 0, 3)]] as [$campaignId, $year, $pids]) {
+        foreach ([['2025', $plotIds], ['2026', array_slice($plotIds, 0, 3)]] as [$year, $pids]) {
             $declId = DB::table('pac_declarations')->insertGetId([
-                'viticulturist_id' => $uid, 'campaign_id'  => $campaignId,
-                'declaration_year' => (int)$year, 'status' => $year === '2025' ? 'approved' : 'draft',
-                'total_area'       => 3.80, 'eligible_area' => 3.70,
-                'submitted_at'     => $year === '2025' ? "{$year}-04-20 10:00:00" : null,
-                'notes'            => "Solicitud PAC {$year}.",
-                'created_at'       => $now, 'updated_at' => $now,
+                'viticulturist_id'   => $uid,
+                'year'               => (int)$year,
+                'status'             => $year === '2025' ? 'approved' : 'draft',
+                'total_declared_area'=> 3.80,
+                'total_eligible_area'=> 3.70,
+                'submitted_at'       => $year === '2025' ? "{$year}-04-20 10:00:00" : null,
+                'notes'              => "Solicitud PAC {$year}.",
+                'created_at'         => $now, 'updated_at' => $now,
             ]);
             foreach ($pids as $plotId) {
                 DB::table('pac_declaration_items')->insert([
-                    'declaration_id' => $declId, 'plot_id' => $plotId,
-                    'declared_area'  => 0.95, 'eligible_area' => 0.92,
-                    'land_use_code'  => 'VID', 'eco_scheme'    => 'ECO-01',
-                    'created_at'     => $now,  'updated_at'    => $now,
+                    'declaration_id' => $declId,
+                    'plot_id'        => $plotId,
+                    'declared_area'  => 0.95,
+                    'eligible_area'  => 0.92,
+                    'eco_schemes'    => json_encode(['ECO-01']),
+                    'created_at'     => $now, 'updated_at' => $now,
                 ]);
             }
             if ($year === '2025') {
                 DB::table('pac_payments')->insert([
-                    'viticulturist_id' => $uid, 'campaign_id' => $campaignId,
-                    'payment_type'     => 'base_payment', 'amount' => 1850.00,
-                    'payment_date'     => '2025-12-10',   'status' => 'received',
+                    'viticulturist_id' => $uid,
+                    'declaration_id'   => $declId,
+                    'year'             => 2025,
+                    'payment_type'     => 'basic_payment',
+                    'amount'           => 1850.00,
+                    'payment_date'     => '2025-12-10',
                     'reference'        => "PAC-{$year}-TF-{$uid}",
                     'created_at'       => $now, 'updated_at' => $now,
                 ]);
