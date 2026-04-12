@@ -625,11 +625,8 @@ class ProducerDemoSeeder_test extends Seeder
         ]);
         DB::table('phytosanitary_treatments')->insert([
             'activity_id' => $actId, 'product_id' => $prod0,
-            'dose' => 2.5, 'dose_unit' => 'kg/ha', 'water_volume' => 600,
-            'application_method' => 'pulverizador_hidraulico',
-            'equipment' => 'Pulverizador de 600L', 'operator' => 'Productor',
-            'weather_conditions' => 'Temp 18°C. HR 65%. Sin lluvia.',
-            'reentry_interval_hours' => 24, 'pre_harvest_interval_days' => 28,
+            'dose_per_hectare' => 2.5, 'application_method' => 'pulverizador_hidraulico',
+            'target_pest' => 'Mildiu', 'humidity' => 65.0,
             'created_at' => $now, 'updated_at' => $now,
         ]);
 
@@ -644,11 +641,8 @@ class ProducerDemoSeeder_test extends Seeder
         ]);
         DB::table('phytosanitary_treatments')->insert([
             'activity_id' => $actId, 'product_id' => $prod1,
-            'dose' => 0.3, 'dose_unit' => 'l/ha', 'water_volume' => 500,
-            'application_method' => 'pulverizador_hidraulico',
-            'equipment' => 'Pulverizador de 400L', 'operator' => 'Productor',
-            'weather_conditions' => 'Temp 20°C. Seco.',
-            'reentry_interval_hours' => 24, 'pre_harvest_interval_days' => 21,
+            'dose_per_hectare' => 0.3, 'application_method' => 'pulverizador_hidraulico',
+            'target_pest' => 'Oídio', 'humidity' => 40.0,
             'created_at' => $now, 'updated_at' => $now,
         ]);
 
@@ -685,11 +679,8 @@ class ProducerDemoSeeder_test extends Seeder
         ]);
         DB::table('fertilizations')->insert([
             'activity_id' => $actId, 'fertilizer_name' => 'NPK 8-15-15',
-            'fertilizer_type' => 'mineral', 'n_content' => 8.0,
-            'p_content' => 15.0, 'k_content' => 15.0,
-            'dose' => 300.0, 'dose_unit' => 'kg/ha',
-            'application_method' => 'incorporado_suelo',
-            'justification' => 'Análisis de suelo 2024. Deficiencia en P y K.',
+            'fertilizer_type' => 'mineral', 'npk_ratio' => '8-15-15',
+            'quantity' => 300.0, 'application_method' => 'incorporado_suelo',
             'created_at' => $now, 'updated_at' => $now,
         ]);
 
@@ -737,11 +728,10 @@ class ProducerDemoSeeder_test extends Seeder
         ]);
         DB::table('post_harvest_treatments')->insert([
             'activity_id' => $actId, 'product_id' => $prod3,
-            'treatment_type' => 'fungicida',
-            'dose' => 1.5, 'dose_unit' => 'kg/ha',
-            'application_method' => 'pulverizador',
-            'objective' => 'Prevención de excoriosis y eutipiosis.',
-            'reentry_interval_hours' => 24,
+            'application_type' => 'trunk_treatment',
+            'treated_area_ha' => 1.200,
+            'dose_per_hectare' => 1.5, 'dose_unit' => 'kg/ha',
+            'notes' => 'Prevención de excoriosis y eutipiosis.',
             'created_at' => $now, 'updated_at' => $now,
         ]);
     }
@@ -782,11 +772,8 @@ class ProducerDemoSeeder_test extends Seeder
         ]);
         DB::table('phytosanitary_treatments')->insert([
             'activity_id' => $actId, 'product_id' => $prod0,
-            'dose' => 2.5, 'dose_unit' => 'kg/ha', 'water_volume' => 600,
-            'application_method' => 'pulverizador_hidraulico',
-            'equipment' => 'Pulverizador 600L', 'operator' => 'Productor',
-            'weather_conditions' => 'Temp 17°C. HR 70%.',
-            'reentry_interval_hours' => 24, 'pre_harvest_interval_days' => 28,
+            'dose_per_hectare' => 2.5, 'application_method' => 'pulverizador_hidraulico',
+            'target_pest' => 'Mildiu', 'humidity' => 70.0,
             'created_at' => $now, 'updated_at' => $now,
         ]);
 
