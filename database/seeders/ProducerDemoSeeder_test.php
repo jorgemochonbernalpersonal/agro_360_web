@@ -325,7 +325,6 @@ class ProducerDemoSeeder_test extends Seeder
         DB::table('property_types')->where('user_id', $uid)->delete();
 
         // ── Lado bodega ───────────────────────────────────────────────────────
-        DB::table('containers')->where('user_id', $uid)->delete();
         $wineIds = DB::table('wines')->where('user_id', $uid)->pluck('id');
         if ($wineIds->isNotEmpty()) {
             DB::table('wine_fermentation_controls')->whereIn('wine_id', $wineIds)->delete();
@@ -347,6 +346,11 @@ class ProducerDemoSeeder_test extends Seeder
             DB::table('wine_lots')->whereIn('bottling_id', $bottlingIds)->delete();
         }
         DB::table('wine_bottlings')->where('user_id', $uid)->delete();
+        // Delete wine_lots not linked to bottlings (standalone lots)
+        DB::table('wine_lots')->where('user_id', $uid)->delete();
+        // Containers AFTER all wine data (FK RESTRICT on wine_fermentation_controls, wine_transfers)
+        DB::table('container_histories')->where('user_id', $uid)->delete();
+        DB::table('containers')->where('user_id', $uid)->delete();
         // Facturas (antes que clients)
         $invoiceIds = DB::table('invoices')->where('user_id', $uid)->pluck('id');
         if ($invoiceIds->isNotEmpty()) {
