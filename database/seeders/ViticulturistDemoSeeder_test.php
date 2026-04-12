@@ -272,7 +272,17 @@ class ViticulturistDemoSeeder_test extends Seeder
         // Parcelas y plantaciones (cascada por FK)
         $plotIds = DB::table('plots')->where('viticulturist_id', $vitId)->pluck('id');
         if ($plotIds->isNotEmpty()) {
+            // Limpiar SIGPAC y geometrías
+            $sigpacLinks = DB::table('multipart_plot_sigpac')->whereIn('plot_id', $plotIds)->get();
+            $geomIds     = $sigpacLinks->pluck('plot_geometry_id')->filter()->values();
+            $sigpacIds   = $sigpacLinks->pluck('sigpac_code_id')->filter()->values();
             DB::table('multipart_plot_sigpac')->whereIn('plot_id', $plotIds)->delete();
+            if ($geomIds->isNotEmpty()) {
+                DB::table('plot_geometry')->whereIn('id', $geomIds)->delete();
+            }
+            if ($sigpacIds->isNotEmpty()) {
+                DB::table('sigpac_code')->whereIn('id', $sigpacIds)->delete();
+            }
             DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->delete();
             DB::table('plots')->whereIn('id', $plotIds)->delete();
         }
@@ -586,52 +596,78 @@ class ViticulturistDemoSeeder_test extends Seeder
 
     private function createSigpacCodesForPlots(array $plotIds): void
     {
+        $now = now();
+
+        // Cargar los primeros N recintos del JSON real de Gran Canaria (Agaete)
+        $jsonPath  = database_path('seeders/data/sigpac_gran_canaria.json');
+        $allRecs   = json_decode(file_get_contents($jsonPath), true);
+        $recs      = array_slice($allRecs, 0, count($plotIds)); // 1 recinto por parcela
+
         foreach ($plotIds as $index => $plotId) {
-            $polygon   = str_pad($index + 1, 2, '0', STR_PAD_LEFT);           // 01, 02…
-            $parcel    = str_pad(($index * 5) + 1, 5, '0', STR_PAD_LEFT);    // 00001, 00006…
-            $enclosure = '001';
+            $rec = $recs[$index];
 
-            $codeFields = [
-                'code_autonomous_community' => str_pad(self::AC_ID, 2, '0', STR_PAD_LEFT),
-                'code_province'             => str_pad(self::PROVINCE_ID, 2, '0', STR_PAD_LEFT),
-                'code_municipality'         => str_pad(self::MUNICIPALITY_ID, 3, '0', STR_PAD_LEFT),
-                'code_aggregate'            => '0',
-                'code_zone'                 => '0',
-                'code_polygon'              => $polygon,
-                'code_plot'                 => $parcel,
-                'code_enclosure'            => $enclosure,
-            ];
+            $ineCode  = $rec['ine_code'];
+            $polygon  = str_pad($rec['polygon'],  3, '0', STR_PAD_LEFT);
+            $parcel   = str_pad($rec['parcel'],   5, '0', STR_PAD_LEFT);
+            $enclosure= str_pad($rec['recinto'],  3, '0', STR_PAD_LEFT);
 
-            $fullCode = \App\Models\SigpacCode::buildCodeFromFields($codeFields);
+            $code = sprintf(
+                '05%02d%03d000000%03d%05d%03d',
+                35,              // province Gran Canaria
+                (int) $ineCode,
+                $rec['polygon'],
+                $rec['parcel'],
+                $rec['recinto']
+            );
 
-            $sigpacCode = \App\Models\SigpacCode::firstOrCreate(
-                [
-                    'code_autonomous_community' => $codeFields['code_autonomous_community'],
-                    'code_province'             => $codeFields['code_province'],
-                    'code_municipality'         => $codeFields['code_municipality'],
+            // Upsert sigpac_code (idempotente)
+            $existing = DB::table('sigpac_code')
+                ->where('code_province',    '35')
+                ->where('code_municipality', str_pad($ineCode, 3, '0', STR_PAD_LEFT))
+                ->where('code_polygon',      $polygon)
+                ->where('code_plot',         $parcel)
+                ->where('code_enclosure',    $enclosure)
+                ->first();
+
+            if ($existing) {
+                $sigpacId = $existing->id;
+            } else {
+                $sigpacId = DB::table('sigpac_code')->insertGetId([
+                    'code_autonomous_community' => '05',
+                    'code_province'             => '35',
+                    'code_municipality'         => str_pad($ineCode, 3, '0', STR_PAD_LEFT),
+                    'code_aggregate'            => '000',
+                    'code_zone'                 => '000',
                     'code_polygon'              => $polygon,
                     'code_plot'                 => $parcel,
                     'code_enclosure'            => $enclosure,
-                ],
-                [
-                    'code_aggregate' => '0',
-                    'code_zone'      => '0',
-                    'code'           => $fullCode,
-                ]
-            );
+                    'code'                      => $code,
+                    'created_at'                => $now,
+                    'updated_at'                => $now,
+                ]);
+            }
 
+            // Geometría real WKT
+            $geomId = DB::table('plot_geometry')->insertGetId([
+                'coordinates' => DB::raw("ST_GeomFromText('" . $rec['wkt'] . "', 4326)"),
+                'centroid'    => DB::raw("ST_Centroid(ST_GeomFromText('" . $rec['wkt'] . "', 4326))"),
+                'created_at'  => $now,
+                'updated_at'  => $now,
+            ]);
+
+            // multipart_plot_sigpac con geometría real
             $exists = DB::table('multipart_plot_sigpac')
                 ->where('plot_id', $plotId)
-                ->where('sigpac_code_id', $sigpacCode->id)
+                ->where('sigpac_code_id', $sigpacId)
                 ->exists();
 
             if (!$exists) {
                 DB::table('multipart_plot_sigpac')->insert([
                     'plot_id'          => $plotId,
-                    'sigpac_code_id'   => $sigpacCode->id,
-                    'plot_geometry_id' => null,
-                    'created_at'       => now(),
-                    'updated_at'       => now(),
+                    'sigpac_code_id'   => $sigpacId,
+                    'plot_geometry_id' => $geomId,
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
                 ]);
             }
         }

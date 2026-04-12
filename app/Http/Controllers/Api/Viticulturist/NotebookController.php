@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Viticulturist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\ActivityResource;
+use App\Http\Resources\Api\MobileNotebookResource;
 use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use App\Models\CulturalWork;
@@ -200,14 +201,56 @@ class NotebookController extends Controller
     ];
 
     // ─── GET /viticulturist/notebook/{notebook_type} ──────────────────────────
-    // Listado por tipo para el cliente móvil. Parámetro tipado sin closures
-    // para compatibilidad con route:cache.
+    // Listado por tipo para el cliente móvil. Devuelve formato plano alineado
+    // con los DTOs Kotlin. Carga las relaciones de detalle correctas por tipo.
+
+    private const MOBILE_RELATIONS = [
+        'phytosanitary' => ['plot', 'phytosanitaryTreatment.product'],
+        'irrigation'    => ['plot', 'irrigation'],
+        'observation'   => ['plot', 'observation'],
+        'harvest'       => ['plot', 'harvest', 'plotPlanting.grapeVariety'],
+        'cultural'      => ['plot', 'culturalWork'],
+        'pruning'       => ['plot', 'culturalWork'],
+        'post_harvest'  => ['plot', 'postHarvestTreatment.product'],
+    ];
 
     public function indexOfType(Request $request, string $notebookType): JsonResponse
     {
-        $type = self::TYPE_SLUG_MAP[$notebookType] ?? $notebookType;
-        $request->merge(['type' => $type]);
-        return $this->index($request);
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $type = self::TYPE_SLUG_MAP[$notebookType] ?? null;
+        if (! $type) {
+            return response()->json(['message' => 'Tipo de actividad no válido.'], 404);
+        }
+
+        $request->validate([
+            'plot_id'  => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $relations = self::MOBILE_RELATIONS[$type] ?? ['plot'];
+
+        $query = AgriculturalActivity::forViticulturist($user->id)
+            ->ofType($type)
+            ->with($relations);
+
+        if ($request->filled('plot_id')) {
+            $query->forPlot((int) $request->plot_id);
+        }
+
+        $activities = $query->orderByDesc('activity_date')
+            ->paginate($request->integer('per_page', 15));
+
+        return response()->json([
+            'data' => MobileNotebookResource::collection($activities->items()),
+            'meta' => [
+                'total'        => $activities->total(),
+                'current_page' => $activities->currentPage(),
+                'last_page'    => $activities->lastPage(),
+                'has_more'     => $activities->hasMorePages(),
+            ],
+        ]);
     }
 
     // ─── POST /viticulturist/notebook/{notebook_type} ─────────────────────────

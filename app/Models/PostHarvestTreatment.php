@@ -45,7 +45,7 @@ class PostHarvestTreatment extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(PhytosanitaryProduct::class, 'product_id');
     }
 
     public function getApplicationTypeLabelAttribute(): string
