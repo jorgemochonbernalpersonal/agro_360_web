@@ -349,7 +349,7 @@ class ProducerDemoSeeder_test extends Seeder
         // Delete wine_lots not linked to bottlings (standalone lots)
         DB::table('wine_lots')->where('user_id', $uid)->delete();
         // Containers AFTER all wine data (FK RESTRICT on wine_fermentation_controls, wine_transfers)
-        DB::table('container_histories')->where('user_id', $uid)->delete();
+        // container_histories has cascade on container_id — no manual delete needed
         DB::table('containers')->where('user_id', $uid)->delete();
         // Facturas (antes que clients)
         $invoiceIds = DB::table('invoices')->where('user_id', $uid)->pluck('id');
