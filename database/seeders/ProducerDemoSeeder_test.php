@@ -75,15 +75,10 @@ class ProducerDemoSeeder_test extends Seeder
             $wvId = $this->createSelfLink($now);
         });
 
-        // 4. Parcelas
+        // 4. Parcelas + SIGPAC + Geometría (JSON completo)
         $plotIds = [];
-        $this->step('Parcelas (4)', function () use ($now, &$plotIds) {
-            $plotIds = $this->createPlots($now);
-        });
-
-        // 4b. SIGPAC
-        $this->step('SIGPAC + multipart_plot_sigpac (4)', function () use ($plotIds) {
-            $this->createSigpacCodesForPlots($plotIds);
+        $this->step('Parcelas + SIGPAC + geometría (460 recintos Gran Canaria)', function () use ($now, &$plotIds) {
+            $plotIds = $this->createPlotsWithSigpac($now);
         });
 
         // 5. Plantaciones
@@ -402,49 +397,30 @@ class ProducerDemoSeeder_test extends Seeder
         ]);
     }
 
-    // ─── 4. Parcelas ──────────────────────────────────────────────────────────
+    // ─── 4. Parcelas + SIGPAC + Geometría ────────────────────────────────────
+    // 460 recintos del JSON asignados todos a viticulturist_id=339.
 
-    private function createPlots($now): array
+    private const MUN_DB_IDS = [
+        'Agaete'   => 5243,
+        'Agüimes'  => 5244,
+        'Artenara' => 5247,
+        'Arucas'   => 5248,
+        'Firgas'   => 5250,
+        'Gáldar'   => 5251,
+        'Ingenio'  => 5253,
+    ];
+
+    private const PREFIJOS = ['Finca', 'Parcela', 'Viña', 'Viñedo', 'Pago', 'Suerte', 'Lote'];
+
+    private function createPlotsWithSigpac($now): array
     {
-        $base = [
-            'viticulturist_id'        => self::PRODUCER_USER_ID,
-            'autonomous_community_id' => self::AC_ID,
-            'province_id'             => self::PROVINCE_ID,
-            'municipality_id'         => self::MUNICIPALITY_ID,
-            'active'                  => true,
-            'is_locked'               => false,
-            'alert_email_enabled'     => false,
-            'created_at'              => $now,
-            'updated_at'              => $now,
-        ];
-
-        $plots = [
-            ['name' => 'Finca El Teide',      'area' => 1.200, 'pac_eligible_area' => 1.180, 'is_organic' => false, 'training_system_id' => 2, 'plantation_year' => 2008, 'description' => 'Espaldera en ladera volcánica. Orientación S-SW. Riego por goteo.'],
-            ['name' => 'Viña La Caldera',     'area' => 0.850, 'pac_eligible_area' => 0.820, 'is_organic' => false, 'training_system_id' => 1, 'plantation_year' => 1995, 'description' => 'Vaso tradicional. Suelo volcánico rojizo. Alta altitud (780 m).'],
-            ['name' => 'Pago Las Cañadas',    'area' => 0.700, 'pac_eligible_area' => 0.680, 'is_organic' => true,  'training_system_id' => 1, 'plantation_year' => 2003, 'description' => 'Producción ecológica certificada. Varietales tintos.'],
-            ['name' => 'Finca Aguamansa',     'area' => 1.050, 'pac_eligible_area' => 1.020, 'is_organic' => false, 'training_system_id' => 2, 'plantation_year' => 2012, 'description' => 'Joven plantación en espaldera. Alta productividad. Varietales blancos.'],
-        ];
+        $jsonPath = database_path('seeders/data/sigpac_gran_canaria.json');
+        $recs     = json_decode(file_get_contents($jsonPath), true);
 
         $ids = [];
-        foreach ($plots as $plot) {
-            $ids[] = DB::table('plots')->insertGetId(array_merge($base, $plot));
-        }
-        return $ids;
-    }
 
-    // ─── 4b. SIGPAC ───────────────────────────────────────────────────────────
-
-    private function createSigpacCodesForPlots(array $plotIds): void
-    {
-        $now = now();
-
-        $jsonPath = database_path('seeders/data/sigpac_gran_canaria.json');
-        $allRecs  = json_decode(file_get_contents($jsonPath), true);
-        $recs     = array_slice($allRecs, 0, count($plotIds));
-
-        foreach ($plotIds as $index => $plotId) {
-            $rec = $recs[$index];
-
+        foreach ($recs as $index => $rec) {
+            $munDbId   = self::MUN_DB_IDS[$rec['mun_name']] ?? 5243;
             $ineCode   = $rec['ine_code'];
             $polygon   = str_pad($rec['polygon'],  3, '0', STR_PAD_LEFT);
             $parcel    = str_pad($rec['parcel'],   5, '0', STR_PAD_LEFT);
@@ -467,10 +443,9 @@ class ProducerDemoSeeder_test extends Seeder
                 ->where('code_enclosure',    $enclosure)
                 ->first();
 
-            if ($existing) {
-                $sigpacId = $existing->id;
-            } else {
-                $sigpacId = DB::table('sigpac_code')->insertGetId([
+            $sigpacId = $existing
+                ? $existing->id
+                : DB::table('sigpac_code')->insertGetId([
                     'code_autonomous_community' => '05',
                     'code_province'             => '35',
                     'code_municipality'         => str_pad($ineCode, 3, '0', STR_PAD_LEFT),
@@ -483,7 +458,6 @@ class ProducerDemoSeeder_test extends Seeder
                     'created_at'                => $now,
                     'updated_at'                => $now,
                 ]);
-            }
 
             $geomId = DB::table('plot_geometry')->insertGetId([
                 'coordinates' => DB::raw("ST_GeomFromText('" . $rec['wkt'] . "', 4326)"),
@@ -492,21 +466,34 @@ class ProducerDemoSeeder_test extends Seeder
                 'updated_at'  => $now,
             ]);
 
-            $exists = DB::table('multipart_plot_sigpac')
-                ->where('plot_id', $plotId)
-                ->where('sigpac_code_id', $sigpacId)
-                ->exists();
+            $prefijo  = self::PREFIJOS[$index % count(self::PREFIJOS)];
+            $munShort = explode(' ', $rec['mun_name'])[0];
+            $plotName = "$prefijo $munShort " . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
 
-            if (!$exists) {
-                DB::table('multipart_plot_sigpac')->insert([
-                    'plot_id'          => $plotId,
-                    'sigpac_code_id'   => $sigpacId,
-                    'plot_geometry_id' => $geomId,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
-                ]);
-            }
+            $plotId = DB::table('plots')->insertGetId([
+                'name'                    => $plotName,
+                'viticulturist_id'        => self::PRODUCER_USER_ID,
+                'area'                    => $rec['area_ha'] > 0 ? $rec['area_ha'] : round(mt_rand(10, 350) / 100, 2),
+                'active'                  => true,
+                'autonomous_community_id' => self::AC_ID,
+                'province_id'             => self::PROVINCE_ID,
+                'municipality_id'         => $munDbId,
+                'created_at'              => $now,
+                'updated_at'              => $now,
+            ]);
+
+            DB::table('multipart_plot_sigpac')->insert([
+                'plot_id'          => $plotId,
+                'sigpac_code_id'   => $sigpacId,
+                'plot_geometry_id' => $geomId,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+
+            $ids[] = $plotId;
         }
+
+        return $ids;
     }
 
     // ─── 5. Plantaciones ──────────────────────────────────────────────────────

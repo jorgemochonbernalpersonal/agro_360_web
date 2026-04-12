@@ -63,15 +63,10 @@ class ViticulturistDemoSeeder_test extends Seeder
             $wvId = $this->linkToWinery($now);
         });
 
-        // ── 4. Parcelas ────────────────────────────────────────────────────────
+        // ── 4. Parcelas + SIGPAC + Geometría (JSON completo) ─────────────────
         $plotIds = [];
-        $this->step('Parcelas (5)', function () use ($now, &$plotIds) {
-            $plotIds = $this->createPlots($now);
-        });
-
-        // ── 4b. SIGPAC ─────────────────────────────────────────────────────────
-        $this->step('SIGPAC + multipart_plot_sigpac (5)', function () use ($plotIds) {
-            $this->createSigpacCodesForPlots($plotIds);
+        $this->step('Parcelas + SIGPAC + geometría (460 recintos Gran Canaria)', function () use ($now, &$plotIds) {
+            $plotIds = $this->createPlotsWithSigpac($now);
         });
 
         // ── 5. Plantaciones ────────────────────────────────────────────────────
@@ -520,119 +515,57 @@ class ViticulturistDemoSeeder_test extends Seeder
         ]);
     }
 
-    // ─── 4. Parcelas ──────────────────────────────────────────────────────────
+    // ─── 4. Parcelas + SIGPAC + Geometría ────────────────────────────────────
+    // Igual que AgaetePlotsSeeder pero todos los 460 recintos asignados al
+    // mismo viticulturist_id=338 (sin usuarios ficticios).
 
-    private function createPlots($now): array
+    private const MUN_DB_IDS = [
+        'Agaete'   => 5243,
+        'Agüimes'  => 5244,
+        'Artenara' => 5247,
+        'Arucas'   => 5248,
+        'Firgas'   => 5250,
+        'Gáldar'   => 5251,
+        'Ingenio'  => 5253,
+    ];
+
+    private const PREFIJOS = ['Finca', 'Parcela', 'Viña', 'Viñedo', 'Pago', 'Suerte', 'Lote'];
+
+    private function createPlotsWithSigpac($now): array
     {
-        $base = [
-            'viticulturist_id'       => self::VIT_USER_ID,
-            'autonomous_community_id' => self::AC_ID,
-            'province_id'            => self::PROVINCE_ID,
-            'municipality_id'        => self::MUNICIPALITY_ID,
-            'active'                 => true,
-            'is_locked'              => false,
-            'alert_email_enabled'    => false,
-            'created_at'             => $now,
-            'updated_at'             => $now,
-        ];
-
-        // training_system_id: 1=Vaso, 2=Espaldera simple
-        $plots = [
-            [
-                'name'               => 'Viña La Montañeta',
-                'area'               => 0.850,
-                'pac_eligible_area'  => 0.820,
-                'is_organic'         => false,
-                'training_system_id' => 1, // Vaso
-                'plantation_year'    => 1998,
-                'description'        => 'Parcela en ladera con suelo volcánico. Orientación N-NE.',
-            ],
-            [
-                'name'               => 'Finca Los Llanos',
-                'area'               => 1.200,
-                'pac_eligible_area'  => 1.180,
-                'is_organic'         => false,
-                'training_system_id' => 2, // Espaldera
-                'plantation_year'    => 2005,
-                'description'        => 'Finca en zona llana con riego por goteo. Alta productividad.',
-            ],
-            [
-                'name'               => 'Parcela El Risco',
-                'area'               => 0.650,
-                'pac_eligible_area'  => 0.610,
-                'is_organic'         => false,
-                'training_system_id' => 1, // Vaso
-                'plantation_year'    => 1992,
-                'description'        => 'Viña de alta montaña en terreno volcánico escarpado.',
-            ],
-            [
-                'name'               => 'Pago La Umbría',
-                'area'               => 0.920,
-                'pac_eligible_area'  => 0.900,
-                'is_organic'         => false,
-                'training_system_id' => 2, // Espaldera
-                'plantation_year'    => 2010,
-                'description'        => 'Parcela orientada al sur. Suelo arenoso. Moscatel aromático.',
-            ],
-            [
-                'name'               => 'Viñedo Las Pozas',
-                'area'               => 1.100,
-                'pac_eligible_area'  => 1.080,
-                'is_organic'         => true,
-                'training_system_id' => 1, // Vaso
-                'plantation_year'    => 2001,
-                'description'        => 'Producción ecológica certificada. Sin fitosanitarios de síntesis.',
-            ],
-        ];
+        $jsonPath = database_path('seeders/data/sigpac_gran_canaria.json');
+        $recs     = json_decode(file_get_contents($jsonPath), true);
 
         $ids = [];
-        foreach ($plots as $plot) {
-            $ids[] = DB::table('plots')->insertGetId(array_merge($base, $plot));
-        }
-        return $ids;
-    }
 
-    // ─── 4b. SIGPAC ───────────────────────────────────────────────────────────
-
-    private function createSigpacCodesForPlots(array $plotIds): void
-    {
-        $now = now();
-
-        // Cargar los primeros N recintos del JSON real de Gran Canaria (Agaete)
-        $jsonPath  = database_path('seeders/data/sigpac_gran_canaria.json');
-        $allRecs   = json_decode(file_get_contents($jsonPath), true);
-        $recs      = array_slice($allRecs, 0, count($plotIds)); // 1 recinto por parcela
-
-        foreach ($plotIds as $index => $plotId) {
-            $rec = $recs[$index];
-
-            $ineCode  = $rec['ine_code'];
-            $polygon  = str_pad($rec['polygon'],  3, '0', STR_PAD_LEFT);
-            $parcel   = str_pad($rec['parcel'],   5, '0', STR_PAD_LEFT);
-            $enclosure= str_pad($rec['recinto'],  3, '0', STR_PAD_LEFT);
+        foreach ($recs as $index => $rec) {
+            $munDbId   = self::MUN_DB_IDS[$rec['mun_name']] ?? 5243;
+            $ineCode   = $rec['ine_code'];
+            $polygon   = str_pad($rec['polygon'],  3, '0', STR_PAD_LEFT);
+            $parcel    = str_pad($rec['parcel'],   5, '0', STR_PAD_LEFT);
+            $enclosure = str_pad($rec['recinto'],  3, '0', STR_PAD_LEFT);
 
             $code = sprintf(
                 '05%02d%03d000000%03d%05d%03d',
-                35,              // province Gran Canaria
+                35,
                 (int) $ineCode,
                 $rec['polygon'],
                 $rec['parcel'],
                 $rec['recinto']
             );
 
-            // Upsert sigpac_code (idempotente)
+            // sigpac_code (idempotente)
             $existing = DB::table('sigpac_code')
-                ->where('code_province',    '35')
+                ->where('code_province',     '35')
                 ->where('code_municipality', str_pad($ineCode, 3, '0', STR_PAD_LEFT))
                 ->where('code_polygon',      $polygon)
                 ->where('code_plot',         $parcel)
                 ->where('code_enclosure',    $enclosure)
                 ->first();
 
-            if ($existing) {
-                $sigpacId = $existing->id;
-            } else {
-                $sigpacId = DB::table('sigpac_code')->insertGetId([
+            $sigpacId = $existing
+                ? $existing->id
+                : DB::table('sigpac_code')->insertGetId([
                     'code_autonomous_community' => '05',
                     'code_province'             => '35',
                     'code_municipality'         => str_pad($ineCode, 3, '0', STR_PAD_LEFT),
@@ -645,9 +578,8 @@ class ViticulturistDemoSeeder_test extends Seeder
                     'created_at'                => $now,
                     'updated_at'                => $now,
                 ]);
-            }
 
-            // Geometría real WKT
+            // plot_geometry con WKT real
             $geomId = DB::table('plot_geometry')->insertGetId([
                 'coordinates' => DB::raw("ST_GeomFromText('" . $rec['wkt'] . "', 4326)"),
                 'centroid'    => DB::raw("ST_Centroid(ST_GeomFromText('" . $rec['wkt'] . "', 4326))"),
@@ -655,22 +587,36 @@ class ViticulturistDemoSeeder_test extends Seeder
                 'updated_at'  => $now,
             ]);
 
-            // multipart_plot_sigpac con geometría real
-            $exists = DB::table('multipart_plot_sigpac')
-                ->where('plot_id', $plotId)
-                ->where('sigpac_code_id', $sigpacId)
-                ->exists();
+            // plot
+            $prefijo  = self::PREFIJOS[$index % count(self::PREFIJOS)];
+            $munShort = explode(' ', $rec['mun_name'])[0];
+            $plotName = "$prefijo $munShort " . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
 
-            if (!$exists) {
-                DB::table('multipart_plot_sigpac')->insert([
-                    'plot_id'          => $plotId,
-                    'sigpac_code_id'   => $sigpacId,
-                    'plot_geometry_id' => $geomId,
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
-                ]);
-            }
+            $plotId = DB::table('plots')->insertGetId([
+                'name'                    => $plotName,
+                'viticulturist_id'        => self::VIT_USER_ID,
+                'area'                    => $rec['area_ha'] > 0 ? $rec['area_ha'] : round(mt_rand(10, 350) / 100, 2),
+                'active'                  => true,
+                'autonomous_community_id' => self::AC_ID,
+                'province_id'             => self::PROVINCE_ID,
+                'municipality_id'         => $munDbId,
+                'created_at'              => $now,
+                'updated_at'              => $now,
+            ]);
+
+            // multipart_plot_sigpac
+            DB::table('multipart_plot_sigpac')->insert([
+                'plot_id'          => $plotId,
+                'sigpac_code_id'   => $sigpacId,
+                'plot_geometry_id' => $geomId,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+
+            $ids[] = $plotId;
         }
+
+        return $ids;
     }
 
     // ─── 5. Plantaciones ──────────────────────────────────────────────────────
