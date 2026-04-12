@@ -856,18 +856,24 @@ class ProducerDemoSeeder_test extends Seeder
         $yields2026 = [2200, 1850, 1550, 2000, 1450, 1350, 2500, 2300];
         foreach ($plantingIds as $i => $pid) {
             DB::table('estimated_yields')->insert([
-                'plot_planting_id' => $pid, 'campaign_id' => $c2025,
-                'estimated_by'     => $uid, 'estimated_kg' => $yields2025[$i] ?? 1600,
-                'estimation_date'  => '2025-07-15', 'method' => 'conteo_racimos',
-                'notes'            => 'Aforo verano 2025.',
-                'created_at'       => $now, 'updated_at' => $now,
+                'plot_planting_id'           => $pid, 'campaign_id' => $c2025,
+                'estimated_by'               => $uid,
+                'estimated_total_yield'      => $yields2025[$i] ?? 1600,
+                'estimated_yield_per_hectare'=> 1500,
+                'estimation_date'            => '2025-07-15',
+                'estimation_method'          => 'sampling',
+                'notes'                      => 'Aforo verano 2025.',
+                'created_at'                 => $now, 'updated_at' => $now,
             ]);
             DB::table('estimated_yields')->insert([
-                'plot_planting_id' => $pid, 'campaign_id' => $c2026,
-                'estimated_by'     => $uid, 'estimated_kg' => $yields2026[$i] ?? 1700,
-                'estimation_date'  => '2026-04-01', 'method' => 'historico',
-                'notes'            => 'Estimación inicial basada en histórico.',
-                'created_at'       => $now, 'updated_at' => $now,
+                'plot_planting_id'           => $pid, 'campaign_id' => $c2026,
+                'estimated_by'               => $uid,
+                'estimated_total_yield'      => $yields2026[$i] ?? 1700,
+                'estimated_yield_per_hectare'=> 1500,
+                'estimation_date'            => '2026-04-01',
+                'estimation_method'          => 'historical',
+                'notes'                      => 'Estimación inicial basada en histórico.',
+                'created_at'                 => $now, 'updated_at' => $now,
             ]);
         }
     }
