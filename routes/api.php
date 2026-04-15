@@ -56,6 +56,27 @@ use App\Http\Controllers\Api\Viticulturist\EstimatedYieldController;
 use App\Http\Controllers\Api\Viticulturist\NotebookController;
 use App\Http\Controllers\Api\Viticulturist\PestController;
 use App\Http\Controllers\Api\Viticulturist\PlotController;
+use App\Http\Controllers\Api\Viticulturist\PhenologyObservationController;
+use App\Http\Controllers\Api\Viticulturist\PlotCostController;
+use App\Http\Controllers\Api\Viticulturist\EnergyUsageController;
+use App\Http\Controllers\Api\Viticulturist\HarvestDeclarationController;
+use App\Http\Controllers\Api\Viticulturist\CampaignDocumentController;
+use App\Http\Controllers\Api\Viticulturist\SoilAnalysisController;
+use App\Http\Controllers\Api\Viticulturist\BiodiversityRecordController;
+use App\Http\Controllers\Api\Viticulturist\ResidueManagementController;
+use App\Http\Controllers\Api\Viticulturist\ResidueAnalysisController;
+use App\Http\Controllers\Api\Viticulturist\PlannedWorkController;
+use App\Http\Controllers\Api\Viticulturist\FertilizationPlanController;
+use App\Http\Controllers\Api\Viticulturist\PhytosanitaryAlertController;
+use App\Http\Controllers\Api\Viticulturist\WaterConcessionController;
+use App\Http\Controllers\Api\Viticulturist\SubcontractingController;
+use App\Http\Controllers\Api\Viticulturist\PlotEnvironmentController;
+use App\Http\Controllers\Api\Viticulturist\WarehouseController;
+use App\Http\Controllers\Api\Viticulturist\MachineryController;
+use App\Http\Controllers\Api\Viticulturist\PhytosanitaryProductController;
+use App\Http\Controllers\Api\Viticulturist\CrewController;
+use App\Http\Controllers\Api\Viticulturist\FieldApplicatorController;
+use App\Http\Controllers\Api\Viticulturist\FieldEquipmentController;
 use App\Http\Controllers\Api\Supervisor\DashboardController as SupervisorDashboard;
 use App\Http\Controllers\Api\Supervisor\OversightController;
 use Illuminate\Support\Facades\Route;
@@ -523,6 +544,69 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Teledetección NDVI
         Route::get('/plots/{plot}/ndvi', [RemoteSensingController::class, 'getPlotNdviColors'])->middleware('throttle:30,1');
         Route::get('/ndvi',              [RemoteSensingController::class, 'getAllPlotsNdvi'])->middleware('throttle:30,1');
+
+        // ── Fenología ────────────────────────────────────────────────────────
+        Route::get('/phenology', [PhenologyObservationController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Costes parcela ───────────────────────────────────────────────────
+        Route::get('/plot-costs', [PlotCostController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Consumo energía ──────────────────────────────────────────────────
+        Route::get('/energy-usages', [EnergyUsageController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Declaraciones cosecha ────────────────────────────────────────────
+        Route::get('/harvest-declarations', [HarvestDeclarationController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Documentos campaña ───────────────────────────────────────────────
+        Route::get('/campaign-documents', [CampaignDocumentController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Análisis suelo ───────────────────────────────────────────────────
+        Route::get('/soil-analyses', [SoilAnalysisController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Biodiversidad ────────────────────────────────────────────────────
+        Route::get('/biodiversity-records', [BiodiversityRecordController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Gestión residuos ─────────────────────────────────────────────────
+        Route::get('/residue-managements', [ResidueManagementController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Análisis residuos ────────────────────────────────────────────────
+        Route::get('/residue-analyses', [ResidueAnalysisController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Trabajos planeados ───────────────────────────────────────────────
+        Route::get('/planned-works', [PlannedWorkController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Planes fertilización ─────────────────────────────────────────────
+        Route::get('/fertilization-plans', [FertilizationPlanController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Alertas fitosanitarias ───────────────────────────────────────────
+        Route::get('/phytosanitary-alerts', [PhytosanitaryAlertController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Concesiones agua ─────────────────────────────────────────────────
+        Route::get('/water-concessions', [WaterConcessionController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Subcontratación ──────────────────────────────────────────────────
+        Route::get('/subcontracting', [SubcontractingController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Entorno parcelas ─────────────────────────────────────────────────
+        Route::get('/plot-environments', [PlotEnvironmentController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Almacén / Stock ──────────────────────────────────────────────────
+        Route::get('/warehouse', [WarehouseController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Maquinaria ───────────────────────────────────────────────────────
+        Route::get('/machinery', [MachineryController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Productos fitosanitarios ─────────────────────────────────────────
+        Route::get('/phytosanitary-products', [PhytosanitaryProductController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Cuadrillas / Personal ────────────────────────────────────────────
+        Route::get('/crews', [CrewController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Aplicadores ROPO ─────────────────────────────────────────────────
+        Route::get('/field-applicators', [FieldApplicatorController::class, 'index'])->middleware('throttle:60,1');
+
+        // ── Equipos campo ────────────────────────────────────────────────────
+        Route::get('/field-equipment', [FieldEquipmentController::class, 'index'])->middleware('throttle:60,1');
     });
 
     // ── Supervisor ────────────────────────────────────────────────────────────
