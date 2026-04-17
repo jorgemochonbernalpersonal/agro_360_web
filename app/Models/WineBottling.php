@@ -37,8 +37,9 @@ class WineBottling extends Model
     ];
 
     protected $casts = [
-        'bottling_date'   => 'date',
-        'quantity_liters' => 'decimal:3',
+        'bottling_date'    => 'date',
+        'quantity_liters'  => 'decimal:3',
+        'quantity_bottles' => 'integer',
     ];
 
     public function user(): BelongsTo

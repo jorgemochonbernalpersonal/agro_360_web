@@ -43,7 +43,8 @@ class EditTest extends WineryTestCase
 
     private function attachHarvest(Invoice $invoice, Harvest $harvest): InvoiceItem
     {
-        return InvoiceItem::create([
+        // withoutEvents: GrapePurchase tests cover invoice state, not HarvestStock movements.
+        return InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
             'invoice_id'   => $invoice->id,
             'harvest_id'   => $harvest->id,
             'concept_type' => 'harvest',
@@ -55,14 +56,15 @@ class EditTest extends WineryTestCase
             'tax_base'     => 225,
             'tax_amount'   => 4.5,
             'total'        => 220.5,
-        ]);
+        ]));
     }
 
     // ── Happy path ────────────────────────────────────────────────────────────
 
     public function test_updates_invoice_and_recalculates_totals(): void
     {
-        $harvest = $this->makeWineryReception(['total_weight' => 500]);
+        // total_weight=2000 so HarvestStock has enough available to reserve the new qty (1000kg)
+        $harvest = $this->makeWineryReception(['total_weight' => 2000]);
         $invoice = $this->makeInvoice();
         $this->attachHarvest($invoice, $harvest);
 

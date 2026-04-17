@@ -13,6 +13,7 @@ use App\Models\WineBottling;
 use App\Models\WineProcessDetail;
 use App\Models\WinerySupply;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -165,19 +166,19 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'                => ['required', 'exists:wines,id'],
-            'container_id'           => ['nullable', 'exists:containers,id'],
+            'wine_id'                => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'container_id'           => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
             'bottling_date'          => ['required', 'date'],
             'bottle_format'          => ['required', 'string', 'max:20'],
             'quantity_bottles'       => ['required', 'integer', 'min:1'],
             'quantity_liters'        => ['required', 'numeric', 'min:0.001'],
             'lot_number'             => ['nullable', 'string', 'max:100'],
-            'oenologist_id'          => ['nullable', 'exists:oenologists,id'],
+            'oenologist_id'          => ['nullable', Rule::exists('oenologists', 'id')->where('user_id', Auth::id())],
             'wine_process_detail_id' => ['nullable', 'exists:wine_process_details,id'],
-            'product_lot_id'         => ['nullable', 'exists:wine_lots,id'],
+            'product_lot_id'         => ['nullable', Rule::exists('wine_lots', 'id')->where('user_id', Auth::id())],
             'notes'                  => ['nullable', 'string'],
             'supplies'               => ['array'],
-            'supplies.*.winery_supply_id'       => ['nullable', 'exists:winery_supplies,id'],
+            'supplies.*.winery_supply_id'       => ['nullable', Rule::exists('winery_supplies', 'id')->where('user_id', Auth::id())],
             'supplies.*.supply_name'            => ['required_unless:supplies,', 'nullable', 'string', 'max:255'],
             'supplies.*.quantity'               => ['required_unless:supplies,', 'nullable', 'numeric', 'min:0'],
             'supplies.*.unit_of_measurement_id' => ['nullable', 'exists:units_of_measurement,id'],

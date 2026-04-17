@@ -399,11 +399,13 @@ class GrapePurchaseInvoiceController extends Controller
 
         $subtotal  = $items->sum(fn ($i) => (float) $i->subtotal);
         $taxAmount = $items->sum(fn ($i) => (float) $i->tax_amount);
+        $taxBase   = $items->sum(fn ($i) => (float) ($i->tax_base ?? $i->subtotal));
 
         $invoice->update([
             'subtotal'     => round($subtotal, 3),
+            'tax_base'     => round($taxBase, 3),
             'tax_amount'   => round($taxAmount, 3),
-            'total_amount' => round($subtotal + $taxAmount, 3),
+            'total_amount' => round($subtotal - $taxAmount, 3),
         ]);
     }
 }

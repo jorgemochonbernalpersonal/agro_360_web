@@ -169,7 +169,7 @@ class DashboardAlertsService
         foreach ($candidates as $d) {
             if ($d >= $today->toDateString()) {
                 $date  = Carbon::parse($d);
-                $month = $date->month === 12 ? 'noviembre' : 'julio';
+                $month = $date->month === 12 ? 'diciembre' : 'agosto';
                 return [[
                     'label' => 'Declaración ampliada ' . $month . ' ' . $date->year,
                     'date'  => $d,

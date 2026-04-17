@@ -8,6 +8,7 @@ use App\Models\GrapeVariety;
 use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Edit extends Component
@@ -69,7 +70,7 @@ class Edit extends Component
             'entry_date'        => 'required|date',
             'harvest_date'      => 'nullable|date',
             'expiration_date'   => 'nullable|date',
-            'container_id'      => 'nullable|exists:containers,id',
+            'container_id'      => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
             'notes'             => 'nullable|string',
             'status'            => 'required|in:available,used,archived',
         ];

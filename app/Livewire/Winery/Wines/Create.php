@@ -7,6 +7,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Oenologist;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Create extends Component
@@ -41,7 +42,7 @@ class Create extends Component
             'internal_code' => ['nullable', 'string', 'max:100'],
             'is_must'       => ['boolean'],
             'is_organic'    => ['boolean'],
-            'oenologist_id' => ['nullable', 'exists:oenologists,id'],
+            'oenologist_id' => ['nullable', Rule::exists('oenologists', 'id')->where('user_id', Auth::id())],
             'notes'         => ['nullable', 'string'],
         ];
     }

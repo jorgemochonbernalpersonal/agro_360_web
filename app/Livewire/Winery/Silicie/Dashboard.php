@@ -39,6 +39,7 @@ class Dashboard extends Component
             ->join('containers as c', 'c.id', '=', 'ccs.container_id')
             ->join('wines as w', 'w.id', '=', 'ccs.wine_id')
             ->where('c.user_id', $wineryId)
+            ->where('w.user_id', $wineryId)
             ->where('ccs.current_quantity', '>', 0)
             ->select([
                 'w.id as wine_id',
@@ -126,16 +127,8 @@ class Dashboard extends Component
             default       => [],
         };
 
-        // Fiscal years for apertura tab
-        $fiscalYears = DB::table('harvests')
-            ->where('winery_id', $wineryId)
-            ->select('vintage')->distinct()
-            ->orderByDesc('vintage')
-            ->pluck('vintage');
-
-        if ($fiscalYears->isEmpty()) {
-            $fiscalYears = collect([now()->year]);
-        }
+        // Fiscal years for apertura tab — same set as vintages
+        $fiscalYears = $vintages;
 
         return view('livewire.winery.silicie.dashboard', [
             'stats'       => $stats,
@@ -312,8 +305,9 @@ class Dashboard extends Component
             'wine_count'      => $stock->pluck('wine_id')->filter()->unique()->count(),
         ];
 
-        // Último snapshot disponible
+        // Último snapshot disponible (excluye mostos — solo vino elaborado)
         $lastSnapshot = WineStockSnapshot::where('user_id', $wineryId)
+            ->where('is_must', false)
             ->orderByDesc('snapshot_date')
             ->value('snapshot_date');
 

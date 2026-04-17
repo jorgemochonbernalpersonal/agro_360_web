@@ -116,16 +116,16 @@ class ProductStockService
             if ($restoreFromSold > 0) {
                 $lot->decrement('sold_quantity', $restoreFromSold);
             }
-            self::log($invoice, $item, $lot, $qty, 'cancel', 'sold', 'available');
+            $lot->increment('available_quantity', $restoreFromSold);
+            self::log($invoice, $item, $lot, $restoreFromSold, 'cancel', 'sold', 'available');
         } else {
             $restoreFromReserved = min($qty, max(0, (float) $lot->reserved_quantity));
             if ($restoreFromReserved > 0) {
                 $lot->decrement('reserved_quantity', $restoreFromReserved);
             }
-            self::log($invoice, $item, $lot, $qty, 'cancel', 'reserved', 'available');
+            $lot->increment('available_quantity', $restoreFromReserved);
+            self::log($invoice, $item, $lot, $restoreFromReserved, 'cancel', 'reserved', 'available');
         }
-
-        $lot->increment('available_quantity', $qty);
     }
 
     private static function log(

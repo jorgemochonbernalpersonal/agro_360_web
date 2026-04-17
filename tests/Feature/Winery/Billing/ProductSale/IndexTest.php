@@ -163,6 +163,25 @@ class IndexTest extends WineryTestCase
         $this->assertNotEmpty($fresh->invoice_number);
     }
 
+    public function test_emitir_does_not_move_stock_to_sold(): void
+    {
+        // New flow: draft→sent is a document-only transition; stock stays reserved.
+        // Only delivery_status→delivered should move stock to sold.
+        $lot     = $this->makeLot(500); // makeInvoice reserves 6 → 494 available, 6 reserved
+        $invoice = $this->makeInvoice($lot);
+
+        Livewire::test(Index::class)
+            ->set('emitirId', $invoice->id)
+            ->set('emitirDate', '2024-10-31')
+            ->call('confirmEmitir');
+
+        $this->assertEquals('sent', $invoice->fresh()->status);
+        // Stock must NOT have moved: still reserved, not sold
+        $this->assertEquals(494, (float) $lot->fresh()->available_quantity);
+        $this->assertEquals(6,   (float) $lot->fresh()->reserved_quantity);
+        $this->assertEquals(0,   (float) $lot->fresh()->sold_quantity);
+    }
+
     public function test_emitir_already_sent_invoice_does_nothing(): void
     {
         $lot     = $this->makeLot();
@@ -230,6 +249,43 @@ class IndexTest extends WineryTestCase
             ->call('cancel', $invoice->id);
 
         $this->assertEquals('draft', $invoice->fresh()->status);
+    }
+
+    public function test_cancel_delivered_invoice_is_rejected(): void
+    {
+        // Delivered invoices cannot be cancelled directly — a corrective invoice is required.
+        // The cancel() action must guard against this to prevent a hard observer exception
+        // (InvoiceObserver blocks delivery_status: delivered → cancelled).
+        $lot = $this->makeLot(494, 0);
+        $lot->update(['sold_quantity' => 6]);
+
+        $client  = $this->makeClient();
+        $invoice = Invoice::create([
+            'user_id'            => $this->winery->id,
+            'client_id'          => $client->id,
+            'invoice_type'       => 'wine_sale',
+            'delivery_note_code' => 'ALB-2024-0010',
+            'order_date'         => '2024-10-01',
+            'status'             => 'draft',
+            'payment_status'     => 'unpaid',
+            'delivery_status'    => 'delivered',
+            'subtotal'           => 75,
+            'discount_amount'    => 0,
+            'tax_base'           => 75,
+            'tax_amount'         => 15.75,
+            'total_amount'       => 90.75,
+        ]);
+
+        Livewire::test(Index::class)
+            ->call('cancel', $invoice->id);
+
+        // Invoice must remain unchanged — cancel blocked, corrective invoice required
+        $fresh = $invoice->fresh();
+        $this->assertEquals('draft',     $fresh->status);
+        $this->assertEquals('delivered', $fresh->delivery_status);
+        // Stock also unchanged
+        $this->assertEquals(494, (float) $lot->fresh()->available_quantity);
+        $this->assertEquals(6,   (float) $lot->fresh()->sold_quantity);
     }
 
     public function test_cancel_other_winerys_invoice_does_nothing(): void

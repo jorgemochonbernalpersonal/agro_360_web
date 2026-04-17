@@ -43,7 +43,8 @@ class IndexTest extends WineryTestCase
     {
         $harvest = $this->makeWineryReception();
 
-        return InvoiceItem::create([
+        // withoutEvents: GrapePurchase tests cover invoice state, not HarvestStock movements.
+        return InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
             'invoice_id'   => $invoice->id,
             'harvest_id'   => $harvest->id,
             'concept_type' => 'harvest',
@@ -55,7 +56,7 @@ class IndexTest extends WineryTestCase
             'tax_base'     => 225,
             'tax_amount'   => 4.5,
             'total'        => 220.5,
-        ]);
+        ]));
     }
 
     // ── Visibility ────────────────────────────────────────────────────────────
@@ -142,12 +143,15 @@ class IndexTest extends WineryTestCase
     {
         $invoice = $this->makeInvoice();
         $item    = $this->attachHarvest($invoice);
-        $harvestId = $item->harvest_id;
 
         Livewire::test(Index::class)
             ->call('cancel', $invoice->id);
 
-        $this->assertEquals('cancelled', $invoice->fresh()->status);
+        $fresh = $invoice->fresh();
+        $this->assertEquals('cancelled', $fresh->status);
+        // New flow: delivery_status must also be set to cancelled
+        // so InvoiceObserver::restoreDeliveryStock() is triggered
+        $this->assertEquals('cancelled', $fresh->delivery_status);
     }
 
     public function test_cancel_frees_harvest_for_new_invoice(): void

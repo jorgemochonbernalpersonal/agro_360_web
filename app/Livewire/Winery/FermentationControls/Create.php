@@ -7,6 +7,7 @@ use App\Models\Container;
 use App\Models\Wine;
 use App\Models\WineFermentationControl;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Create extends Component
@@ -32,8 +33,8 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'          => ['required', 'exists:wines,id'],
-            'container_id'     => ['required', 'exists:containers,id'],
+            'wine_id'          => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'container_id'     => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
             'control_date'     => ['required', 'date'],
             'temperature'      => ['nullable', 'numeric', 'min:-20', 'max:60'],
             'brix_degree'      => ['nullable', 'numeric', 'min:0', 'max:100'],

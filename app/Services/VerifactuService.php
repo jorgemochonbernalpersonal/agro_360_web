@@ -42,10 +42,11 @@ class VerifactuService
             $response = $this->sendToAeat($signedXml, $invoice);
 
             // 5. Parse response
-            $csv       = $response->RespuestaLinea[0]->CSV ?? null;
-            $errorCode = $response->RespuestaLinea[0]->CodigoErrorRegistro ?? null;
-            $errorDesc = $response->RespuestaLinea[0]->DescripcionErrorRegistro ?? null;
-            $isOk      = $response->EstadoEnvio === 'Correcto' && !$errorCode;
+            $linea     = $response->RespuestaLinea[0] ?? null;
+            $csv       = $linea?->CSV ?? null;
+            $errorCode = $linea?->CodigoErrorRegistro ?? null;
+            $errorDesc = $linea?->DescripcionErrorRegistro ?? null;
+            $isOk      = ($response->EstadoEnvio ?? '') === 'Correcto' && !$errorCode;
 
             // 6. Log in sif_records (store huella for chaining)
             SifRecord::create([
@@ -114,10 +115,11 @@ class VerifactuService
             $signedXml    = $this->signXml($xml);
             $response     = $this->sendToAeat($signedXml, $invoice);
 
-            $csv       = $response->RespuestaLinea[0]->CSV ?? null;
-            $errorCode = $response->RespuestaLinea[0]->CodigoErrorRegistro ?? null;
-            $errorDesc = $response->RespuestaLinea[0]->DescripcionErrorRegistro ?? null;
-            $isOk      = $response->EstadoEnvio === 'Correcto' && !$errorCode;
+            $linea     = $response->RespuestaLinea[0] ?? null;
+            $csv       = $linea?->CSV ?? null;
+            $errorCode = $linea?->CodigoErrorRegistro ?? null;
+            $errorDesc = $linea?->DescripcionErrorRegistro ?? null;
+            $isOk      = ($response->EstadoEnvio ?? '') === 'Correcto' && !$errorCode;
 
             SifRecord::create([
                 'invoice_id'    => $invoice->id,

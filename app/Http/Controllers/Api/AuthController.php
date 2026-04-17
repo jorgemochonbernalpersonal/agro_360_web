@@ -9,6 +9,7 @@ use App\Services\SecurityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -373,6 +374,93 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Si el correo está registrado, recibirás un enlace de recuperación.',
+        ]);
+    }
+
+    // ─── POST /auth/google ────────────────────────────────────────────────────
+
+    public function loginWithGoogle(Request $request): JsonResponse
+    {
+        $request->validate([
+            'id_token'    => 'required|string',
+            'device_name' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-_. ]+$/'],
+        ]);
+
+        // Verificar el ID token con Google
+        $response = Http::timeout(10)->get('https://oauth2.googleapis.com/tokeninfo', [
+            'id_token' => $request->id_token,
+        ]);
+
+        if (! $response->successful()) {
+            return response()->json(['message' => 'Token de Google inválido.'], 422);
+        }
+
+        $payload = $response->json();
+
+        // Verificar que el token es para esta app
+        $clientId = config('services.google.client_id');
+        if ($clientId && ($payload['aud'] ?? '') !== $clientId) {
+            return response()->json(['message' => 'Token de Google inválido.'], 422);
+        }
+
+        $googleId = $payload['sub'] ?? null;
+        $email    = $payload['email'] ?? null;
+        $name     = $payload['name'] ?? null;
+
+        if (! $googleId || ! $email) {
+            return response()->json(['message' => 'No se pudo obtener la información del perfil de Google.'], 422);
+        }
+
+        // Buscar usuario por google_id o email
+        $user = User::where('google_id', $googleId)->first()
+            ?? User::where('email', $email)->first();
+
+        if ($user) {
+            // Cuenta desactivada manualmente
+            if (! $user->can_login) {
+                return response()->json(['message' => 'Cuenta desactivada. Contacta con soporte.'], 403);
+            }
+
+            // Vincular google_id si aún no lo tiene
+            if (! $user->google_id) {
+                $user->update(['google_id' => $googleId]);
+            }
+        } else {
+            // Crear nuevo usuario — Google ya verificó el email
+            $user = User::create([
+                'name'              => $name ?? $email,
+                'email'             => $email,
+                'google_id'         => $googleId,
+                'password'          => Hash::make(str()->random(32)), // password inutilizable
+                'role'              => 'winery',
+                'can_login'         => true,
+                'email_verified_at' => now(),
+            ]);
+
+            SecurityLogger::logSecurityEvent('register_google', [
+                'user_id' => $user->id,
+                'email'   => $email,
+            ]);
+        }
+
+        // Beta expirada
+        if ($user->betaExpired() && ! $user->hasBasicFreeAccess()) {
+            return response()->json([
+                'message'      => 'Tu periodo de prueba ha finalizado. Renueva tu suscripción para continuar usando Agro365.',
+                'beta_expired' => true,
+            ], 403);
+        }
+
+        $device = $request->device_name ?? 'mobile';
+        $user->tokens()->where('name', $device)->delete();
+        $token = $user->createToken($device, [$user->role], now()->addDays(30))->plainTextToken;
+
+        SecurityLogger::logSecurityEvent('login_google', ['user_id' => $user->id]);
+
+        return response()->json([
+            'token'      => $token,
+            'expires_in' => 30 * 24 * 60 * 60,
+            'user'       => new UserResource($user->fresh()->load('profile')),
         ]);
     }
 

@@ -6,6 +6,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\Wine;
 use App\Models\WineAnalysis;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Edit extends Component
@@ -71,7 +72,7 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'            => ['nullable', 'exists:wines,id'],
+            'wine_id'            => ['nullable', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
             'analysis_type'      => ['required', 'in:' . implode(',', array_keys(WineAnalysis::ANALYSIS_TYPES))],
             'analysis_date'      => ['required', 'date'],
             'laboratory'         => ['nullable', 'string', 'max:200'],

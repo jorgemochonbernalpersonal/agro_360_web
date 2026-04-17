@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class InvoiceController extends Controller
 {
@@ -64,7 +65,7 @@ class InvoiceController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $validated = $request->validate([
-            'client_id'      => 'required|integer|exists:clients,id',
+            'client_id'      => ['required', 'integer', Rule::exists('clients', 'id')->where('user_id', $user->id)],
             'invoice_number' => 'required|string|max:50',
             'invoice_date'   => 'required|date',
             'invoice_type'   => 'nullable|string|in:standard,corrective,receipt',

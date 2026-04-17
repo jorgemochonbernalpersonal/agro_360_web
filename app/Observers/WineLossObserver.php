@@ -18,7 +18,16 @@ class WineLossObserver
     {
         $wine = $loss->wine;
         if ($wine) {
-            $wine->volume_liters = max(0, (float) $wine->volume_liters - (float) $loss->quantity);
+            $lossQty = (float) $loss->quantity;
+            $currentVolume = (float) $wine->volume_liters;
+
+            if ($lossQty > $currentVolume) {
+                throw new \RuntimeException(
+                    "La merma ({$lossQty} L) supera el volumen actual del vino «{$wine->name}» ({$currentVolume} L)."
+                );
+            }
+
+            $wine->volume_liters = $currentVolume - $lossQty;
             $wine->saveQuietly();
         }
     }

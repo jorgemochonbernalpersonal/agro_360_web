@@ -208,6 +208,11 @@ class Index extends AbstractIndex
             return;
         }
 
+        if ($invoice->delivery_status === 'delivered') {
+            $this->toastError('No se puede cancelar directamente un albarán entregado. Crea una factura rectificativa.');
+            return;
+        }
+
         try {
             DB::transaction(function () use ($invoice) {
                 ProductStockService::moveForInvoice($invoice, 'cancel');
@@ -283,6 +288,13 @@ class Index extends AbstractIndex
         $original = $this->findInvoice($this->correctiveId, ['items.wineLot']);
         if (!$original || $original->status !== 'sent') {
             $this->toastError('La factura original ya no es válida para rectificar.');
+            $this->closeCorrectiveModal();
+            return;
+        }
+
+        // Guard: only the owner can create a corrective
+        if ((int) $original->user_id !== Auth::id()) {
+            $this->toastError('No tienes permiso para rectificar esta factura.');
             $this->closeCorrectiveModal();
             return;
         }

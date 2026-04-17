@@ -49,7 +49,11 @@ class Index extends AbstractIndex
             return;
         }
 
-        $invoice->update(['status' => 'cancelled']);
+        // Cancelar status + delivery_status → el observer libera stock de cosecha
+        $invoice->update([
+            'status'          => 'cancelled',
+            'delivery_status' => 'cancelled',
+        ]);
         $this->toastSuccess('Liquidación cancelada. Las recepciones quedan disponibles para una nueva liquidación.');
     }
 

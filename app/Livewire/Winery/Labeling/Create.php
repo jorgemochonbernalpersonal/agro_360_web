@@ -10,6 +10,7 @@ use App\Models\WineBottling;
 use App\Models\WineLabeling;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -97,9 +98,9 @@ class Create extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'          => ['required', 'exists:wines,id'],
-            'wine_bottling_id' => ['nullable', 'exists:wine_bottlings,id'],
-            'label_batch_id'   => ['nullable', 'exists:label_batches,id'],
+            'wine_id'          => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'wine_bottling_id' => ['nullable', Rule::exists('wine_bottlings', 'id')->where('user_id', Auth::id())],
+            'label_batch_id'   => ['nullable', Rule::exists('label_batches', 'id')->where('user_id', Auth::id())],
             'labeling_date'    => ['required', 'date'],
             'quantity_labeled' => ['required', 'integer', 'min:1'],
             'from_number'      => ['nullable', 'integer', 'min:1'],

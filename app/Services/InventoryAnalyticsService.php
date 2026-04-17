@@ -72,13 +72,17 @@ class InventoryAnalyticsService
 
         $projections = [];
 
+        // Pre-load avg daily consumption for all stocks in one query
+        $stockIds = $stocks->pluck('id');
+        $consumptionMap = ProductStockMovement::whereIn('stock_id', $stockIds)
+            ->where('movement_type', 'consumption')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('stock_id')
+            ->selectRaw('stock_id, SUM(ABS(quantity_change)) / 30 as avg_daily')
+            ->pluck('avg_daily', 'stock_id');
+
         foreach ($stocks as $stock) {
-            // Consumo promedio últimos 30 días
-            $avgDailyConsumption = ProductStockMovement::where('stock_id', $stock->id)
-                ->where('movement_type', 'consumption')
-                ->where('created_at', '>=', now()->subDays(30))
-                ->selectRaw('SUM(ABS(quantity_change)) / 30 as avg_daily')
-                ->value('avg_daily');
+            $avgDailyConsumption = $consumptionMap[$stock->id] ?? 0;
 
             if ($avgDailyConsumption && $avgDailyConsumption > 0) {
                 $daysUntilEmpty = $stock->quantity / $avgDailyConsumption;

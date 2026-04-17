@@ -415,11 +415,10 @@ class ContainerStockService
             $lastStock = $this->ensureInitialStock($harvest, $item->invoice->user_id ?? null);
 
             if ($lastStock->available_qty < $item->quantity) {
-                Log::warning('[ContainerStockService] Stock insuficiente al reservar — se permite stock negativo (validar en UI)', [
-                    'harvest_id' => $harvest->id,
-                    'available'  => $lastStock->available_qty,
-                    'requested'  => $item->quantity,
-                ]);
+                throw new \RuntimeException(
+                    "Stock insuficiente para cosecha #{$harvest->id}: " .
+                    "disponible {$lastStock->available_qty} kg, solicitado {$item->quantity} kg."
+                );
             }
 
             $newAvailable = $lastStock->available_qty - $item->quantity;
@@ -763,6 +762,13 @@ class ContainerStockService
         DB::transaction(function () use ($harvest, $item, $invoiceRef) {
             $lastStock = $this->ensureInitialStock($harvest, $item->invoice->user_id ?? null);
 
+            if ($lastStock->available_qty < $item->quantity) {
+                throw new \RuntimeException(
+                    "Stock insuficiente para venta directa de cosecha #{$harvest->id}: " .
+                    "disponible {$lastStock->available_qty} kg, solicitado {$item->quantity} kg."
+                );
+            }
+
             $newAvailable = $lastStock->available_qty - $item->quantity;
             $newSold      = $lastStock->sold_qty + $item->quantity;
 
@@ -838,6 +844,12 @@ class ContainerStockService
 
             if ($invoiceStatus === 'draft') {
                 // Ajuste de reserva
+                if ($diff > 0 && $lastStock->available_qty < $diff) {
+                    throw new \RuntimeException(
+                        "Stock insuficiente para ajustar reserva de cosecha #{$harvest->id}: " .
+                        "disponible {$lastStock->available_qty} kg, incremento {$diff} kg."
+                    );
+                }
                 $newReserved  = $lastStock->reserved_qty + $diff;
                 $newAvailable = $lastStock->available_qty - $diff;
 

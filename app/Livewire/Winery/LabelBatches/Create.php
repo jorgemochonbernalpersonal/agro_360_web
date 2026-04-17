@@ -7,6 +7,7 @@ use App\Livewire\Concerns\WithToastNotifications;
 use App\Models\LabelBatch;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -40,7 +41,7 @@ class Create extends Component
     {
         return [
             'name'         => ['required', 'string', 'max:255'],
-            'wine_id'      => ['nullable', 'exists:wines,id'],
+            'wine_id'      => ['nullable', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
             'source'       => ['required', 'in:own,do_assigned,other'],
             'start_number' => ['required', 'integer', 'min:1'],
             'end_number'   => ['required', 'integer', 'min:1', 'gte:start_number'],

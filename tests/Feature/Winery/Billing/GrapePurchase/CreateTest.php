@@ -198,7 +198,8 @@ class CreateTest extends WineryTestCase
             'tax_amount'      => 0,
             'total_amount'    => 0,
         ]);
-        InvoiceItem::create([
+        // withoutEvents: bypass InvoiceItemObserver to avoid HarvestStock side-effects
+        InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
             'invoice_id'   => $existing->id,
             'harvest_id'   => $harvest->id,
             'concept_type' => 'harvest',
@@ -210,7 +211,7 @@ class CreateTest extends WineryTestCase
             'tax_base'     => 225,
             'tax_amount'   => 4.5,
             'total'        => 220.5,
-        ]);
+        ]));
 
         Livewire::test(Create::class)
             ->set('viticulturist_id', (string) $this->viticulturist->id)
@@ -240,7 +241,8 @@ class CreateTest extends WineryTestCase
             'tax_amount'      => 0,
             'total_amount'    => 0,
         ]);
-        InvoiceItem::create([
+        // withoutEvents: invoice is cancelled, observer would skip anyway, but explicit is clearer
+        InvoiceItem::withoutEvents(fn () => InvoiceItem::create([
             'invoice_id'   => $cancelled->id,
             'harvest_id'   => $harvest->id,
             'concept_type' => 'harvest',
@@ -252,7 +254,7 @@ class CreateTest extends WineryTestCase
             'tax_base'     => 225,
             'tax_amount'   => 4.5,
             'total'        => 220.5,
-        ]);
+        ]));
 
         Livewire::test(Create::class)
             ->set('viticulturist_id', (string) $this->viticulturist->id)

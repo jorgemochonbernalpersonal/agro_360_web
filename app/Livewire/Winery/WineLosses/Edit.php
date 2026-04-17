@@ -9,6 +9,7 @@ use App\Models\Wine;
 use App\Models\WineLoss;
 use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Edit extends Component
@@ -56,8 +57,8 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'                => ['required', 'exists:wines,id'],
-            'container_id'           => ['nullable', 'exists:containers,id'],
+            'wine_id'                => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'container_id'           => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
             'loss_type'              => ['required', 'in:' . implode(',', array_keys(WineLoss::LOSS_TYPES))],
             'loss_authorization'     => ['nullable', 'in:' . implode(',', array_keys(WineLoss::LOSS_AUTHORIZATIONS))],
             'regulatory_reference'   => ['nullable', 'string', 'max:255'],

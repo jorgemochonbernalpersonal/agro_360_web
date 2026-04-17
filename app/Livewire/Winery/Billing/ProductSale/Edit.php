@@ -383,7 +383,8 @@ class Edit extends Component
 
         try {
             DB::transaction(function () use ($client, $taxRates) {
-                // 1. Restaurar stock de todos los ítems con lote
+                // 1. Recargar items frescos del DB antes de restaurar stock
+                $this->invoice->load('items.wineLot');
                 ProductStockService::moveForInvoice($this->invoice, 'cancel');
 
                 // 2. Borrar líneas antiguas

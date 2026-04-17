@@ -9,6 +9,7 @@ use App\Models\ProductLot;
 use App\Models\Wine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -198,7 +199,7 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'            => 'nullable|exists:wines,id',
+            'wine_id'            => ['nullable', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
             'name'               => 'required|string|max:255',
             'vintage'            => 'nullable|integer|min:1900|max:' . (now()->year + 1),
             'wine_type'          => 'required|in:tinto,blanco,rosado,espumoso,otro',

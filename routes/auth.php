@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Livewire\Auth\Login;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
@@ -40,6 +41,12 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, string $id, 
     // Web sin sesión (incógnito / otro dispositivo) → login (ya está verificado)
     return redirect()->route('login');
 })->middleware(['signed'])->name('verification.verify');
+
+// ─── Google OAuth ─────────────────────────────────────────────────────────────
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');

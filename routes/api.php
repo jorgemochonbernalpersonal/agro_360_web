@@ -85,6 +85,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register',        [AuthController::class, 'register'])->middleware('throttle:5,1');
 Route::post('/login',           [AuthController::class, 'login'])->middleware('throttle:10,1');
+Route::post('/auth/google',     [AuthController::class, 'loginWithGoogle'])->middleware('throttle:10,1');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1');
 Route::post('/reset-password',  [AuthController::class, 'resetPassword'])->middleware('throttle:5,1');
 Route::post('/claim-account',   [AuthController::class, 'claimAccount'])->middleware('throttle:5,1');
@@ -125,36 +126,42 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/field-activities/{id}', [FieldActivityController::class, 'show'])->middleware('throttle:60,1');
 
         // Contenedores
-        Route::get('/containers',                           [ContainerController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/containers',                          [ContainerController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/containers/fleet-analytics',           [ContainerHistoryController::class, 'fleetAnalytics'])->middleware('throttle:30,1');
-        Route::get('/containers/{id}',                      [ContainerController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/containers/{id}',                      [ContainerController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/containers/{id}',                   [ContainerController::class, 'destroy'])->middleware('throttle:60,1');
-        Route::get('/containers/{id}/history',              [ContainerHistoryController::class, 'index'])->middleware('throttle:60,1');
-        Route::get('/containers/{id}/analytics',            [ContainerHistoryController::class, 'analytics'])->middleware('throttle:30,1');
+        Route::middleware('winery.ability:cellar_management')->group(function () {
+            Route::get('/containers',                           [ContainerController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/containers',                          [ContainerController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/containers/fleet-analytics',           [ContainerHistoryController::class, 'fleetAnalytics'])->middleware('throttle:30,1');
+            Route::get('/containers/{id}',                      [ContainerController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/containers/{id}',                      [ContainerController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/containers/{id}',                   [ContainerController::class, 'destroy'])->middleware('throttle:60,1');
+            Route::get('/containers/{id}/history',              [ContainerHistoryController::class, 'index'])->middleware('throttle:60,1');
+            Route::get('/containers/{id}/analytics',            [ContainerHistoryController::class, 'analytics'])->middleware('throttle:30,1');
+        });
 
         // Vinos
-        Route::get('/wines',                                [WineController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/wines',                               [WineController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/wines/{id}',                           [WineController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/wines/{id}',                           [WineController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/wines/{id}',                        [WineController::class, 'destroy'])->middleware('throttle:60,1');
-        Route::get('/wines/{id}/fermentation-controls',     [WineController::class, 'fermentationControls'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:wine_process')->group(function () {
+            Route::get('/wines',                                [WineController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/wines',                               [WineController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/wines/{id}',                           [WineController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/wines/{id}',                           [WineController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/wines/{id}',                        [WineController::class, 'destroy'])->middleware('throttle:60,1');
+            Route::get('/wines/{id}/fermentation-controls',     [WineController::class, 'fermentationControls'])->middleware('throttle:60,1');
 
-        // Controles de fermentación
-        Route::get('/fermentation-controls',         [FermentationControlController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/fermentation-controls',        [FermentationControlController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/fermentation-controls/{id}',    [FermentationControlController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/fermentation-controls/{id}',    [FermentationControlController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/fermentation-controls/{id}', [FermentationControlController::class, 'destroy'])->middleware('throttle:60,1');
+            // Controles de fermentación
+            Route::get('/fermentation-controls',         [FermentationControlController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/fermentation-controls',        [FermentationControlController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/fermentation-controls/{id}',    [FermentationControlController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/fermentation-controls/{id}',    [FermentationControlController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/fermentation-controls/{id}', [FermentationControlController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Recepción de uva
-        Route::get('/grape-receptions',         [GrapeReceptionController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/grape-receptions',        [GrapeReceptionController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/grape-receptions/{id}',    [GrapeReceptionController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/grape-receptions/{id}',    [GrapeReceptionController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/grape-receptions/{id}', [GrapeReceptionController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:harvest_reception')->group(function () {
+            Route::get('/grape-receptions',         [GrapeReceptionController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/grape-receptions',        [GrapeReceptionController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/grape-receptions/{id}',    [GrapeReceptionController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/grape-receptions/{id}',    [GrapeReceptionController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/grape-receptions/{id}', [GrapeReceptionController::class, 'destroy'])->middleware('throttle:60,1');
+        });
         // Viticultores
         Route::get('/viticulturists',                [ViticulturistController::class, 'index'])->middleware('throttle:60,1');
         Route::post('/viticulturists',               [ViticulturistController::class, 'store'])->middleware('throttle:30,1');
@@ -166,21 +173,25 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::delete('/viticulturists/{id}/invite', [ViticulturistController::class, 'revokeInvite'])->middleware('throttle:10,1');
 
         // Trasvases y mermas
-        Route::get('/transfers',         [WineProcessController::class, 'indexTransfers'])->middleware('throttle:60,1');
-        Route::post('/transfers',        [WineProcessController::class, 'storeTransfer'])->middleware('throttle:60,1');
-        Route::put('/transfers/{id}',    [WineProcessController::class, 'updateTransfer'])->middleware('throttle:60,1');
-        Route::delete('/transfers/{id}', [WineProcessController::class, 'destroyTransfer'])->middleware('throttle:60,1');
-        Route::get('/losses',            [WineProcessController::class, 'indexLosses'])->middleware('throttle:60,1');
-        Route::post('/losses',           [WineProcessController::class, 'storeLoss'])->middleware('throttle:60,1');
-        Route::put('/losses/{id}',       [WineProcessController::class, 'updateLoss'])->middleware('throttle:60,1');
-        Route::delete('/losses/{id}',    [WineProcessController::class, 'destroyLoss'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:wine_process')->group(function () {
+            Route::get('/transfers',         [WineProcessController::class, 'indexTransfers'])->middleware('throttle:60,1');
+            Route::post('/transfers',        [WineProcessController::class, 'storeTransfer'])->middleware('throttle:60,1');
+            Route::put('/transfers/{id}',    [WineProcessController::class, 'updateTransfer'])->middleware('throttle:60,1');
+            Route::delete('/transfers/{id}', [WineProcessController::class, 'destroyTransfer'])->middleware('throttle:60,1');
+            Route::get('/losses',            [WineProcessController::class, 'indexLosses'])->middleware('throttle:60,1');
+            Route::post('/losses',           [WineProcessController::class, 'storeLoss'])->middleware('throttle:60,1');
+            Route::put('/losses/{id}',       [WineProcessController::class, 'updateLoss'])->middleware('throttle:60,1');
+            Route::delete('/losses/{id}',    [WineProcessController::class, 'destroyLoss'])->middleware('throttle:60,1');
+        });
 
         // Facturas
-        Route::get('/invoices',         [InvoiceController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/invoices',        [InvoiceController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/invoices/{id}',    [InvoiceController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/invoices/{id}',    [InvoiceController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:product_sales')->group(function () {
+            Route::get('/invoices',         [InvoiceController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/invoices',        [InvoiceController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/invoices/{id}',    [InvoiceController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/invoices/{id}',    [InvoiceController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Clientes
         Route::get('/clients',         [ClientController::class, 'index'])->middleware('throttle:60,1');
@@ -213,30 +224,34 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/infovi/threshold', [InfoviController::class, 'threshold'])->middleware('throttle:30,1');
 
         // Liquidaciones (facturas de compra de uva)
-        Route::get('/grape-invoices',                                    [GrapePurchaseInvoiceController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/grape-invoices',                                   [GrapePurchaseInvoiceController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/grape-invoices/{id}',                               [GrapePurchaseInvoiceController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/grape-invoices/{id}',                               [GrapePurchaseInvoiceController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/grape-invoices/{id}',                            [GrapePurchaseInvoiceController::class, 'destroy'])->middleware('throttle:60,1');
-        Route::post('/grape-invoices/{id}/items',                        [GrapePurchaseInvoiceController::class, 'addItem'])->middleware('throttle:60,1');
-        Route::put('/grape-invoices/{id}/items/{itemId}',                [GrapePurchaseInvoiceController::class, 'updateItem'])->middleware('throttle:60,1');
-        Route::delete('/grape-invoices/{id}/items/{itemId}',             [GrapePurchaseInvoiceController::class, 'removeItem'])->middleware('throttle:60,1');
-        Route::post('/grape-invoices/{id}/confirm',                      [GrapePurchaseInvoiceController::class, 'confirm'])->middleware('throttle:30,1');
-        Route::post('/grape-invoices/{id}/mark-paid',                    [GrapePurchaseInvoiceController::class, 'markPaid'])->middleware('throttle:30,1');
+        Route::middleware('winery.ability:grape_purchase_invoice')->group(function () {
+            Route::get('/grape-invoices',                                    [GrapePurchaseInvoiceController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/grape-invoices',                                   [GrapePurchaseInvoiceController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/grape-invoices/{id}',                               [GrapePurchaseInvoiceController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/grape-invoices/{id}',                               [GrapePurchaseInvoiceController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/grape-invoices/{id}',                            [GrapePurchaseInvoiceController::class, 'destroy'])->middleware('throttle:60,1');
+            Route::post('/grape-invoices/{id}/items',                        [GrapePurchaseInvoiceController::class, 'addItem'])->middleware('throttle:60,1');
+            Route::put('/grape-invoices/{id}/items/{itemId}',                [GrapePurchaseInvoiceController::class, 'updateItem'])->middleware('throttle:60,1');
+            Route::delete('/grape-invoices/{id}/items/{itemId}',             [GrapePurchaseInvoiceController::class, 'removeItem'])->middleware('throttle:60,1');
+            Route::post('/grape-invoices/{id}/confirm',                      [GrapePurchaseInvoiceController::class, 'confirm'])->middleware('throttle:30,1');
+            Route::post('/grape-invoices/{id}/mark-paid',                    [GrapePurchaseInvoiceController::class, 'markPaid'])->middleware('throttle:30,1');
+        });
 
         // Lotes de producto
-        Route::get('/product-lots',         [ProductLotController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/product-lots',        [ProductLotController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/product-lots/{id}',    [ProductLotController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/product-lots/{id}',    [ProductLotController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/product-lots/{id}', [ProductLotController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:product_sales')->group(function () {
+            Route::get('/product-lots',         [ProductLotController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/product-lots',        [ProductLotController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/product-lots/{id}',    [ProductLotController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/product-lots/{id}',    [ProductLotController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/product-lots/{id}', [ProductLotController::class, 'destroy'])->middleware('throttle:60,1');
 
-        // Embotellado
-        Route::get('/bottlings',         [BottlingController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/bottlings',        [BottlingController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/bottlings/{id}',    [BottlingController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/bottlings/{id}',    [BottlingController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/bottlings/{id}', [BottlingController::class, 'destroy'])->middleware('throttle:60,1');
+            // Embotellado
+            Route::get('/bottlings',         [BottlingController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/bottlings',        [BottlingController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/bottlings/{id}',    [BottlingController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/bottlings/{id}',    [BottlingController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/bottlings/{id}', [BottlingController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Pasos de proceso de vino
         Route::get('/wines/{id}/process',          [WineProcessStepController::class, 'index'])->middleware('throttle:60,1');
@@ -246,11 +261,13 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::post('/process/{id}/complete',      [WineProcessStepController::class, 'complete'])->middleware('throttle:60,1');
 
         // Análisis de vino
-        Route::get('/wine-analysis',         [WineAnalysisController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/wine-analysis',        [WineAnalysisController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/wine-analysis/{id}',    [WineAnalysisController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/wine-analysis/{id}',    [WineAnalysisController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/wine-analysis/{id}', [WineAnalysisController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:quality_analysis')->group(function () {
+            Route::get('/wine-analysis',         [WineAnalysisController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/wine-analysis',        [WineAnalysisController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/wine-analysis/{id}',    [WineAnalysisController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/wine-analysis/{id}',    [WineAnalysisController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/wine-analysis/{id}', [WineAnalysisController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Enólogos
         Route::get('/oenologists',         [OenologistController::class, 'index'])->middleware('throttle:60,1');
@@ -302,18 +319,20 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::delete('/subproducts/{id}', [WineSubproductController::class, 'destroy'])->middleware('throttle:60,1');
 
         // Lotes de etiquetas
-        Route::get('/label-batches',         [LabelBatchController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/label-batches',        [LabelBatchController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/label-batches/{id}',    [LabelBatchController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/label-batches/{id}',    [LabelBatchController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/label-batches/{id}', [LabelBatchController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:label_batches')->group(function () {
+            Route::get('/label-batches',         [LabelBatchController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/label-batches',        [LabelBatchController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/label-batches/{id}',    [LabelBatchController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/label-batches/{id}',    [LabelBatchController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/label-batches/{id}', [LabelBatchController::class, 'destroy'])->middleware('throttle:60,1');
 
-        // Etiquetado
-        Route::get('/labelings',         [LabelingController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/labelings',        [LabelingController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/labelings/{id}',    [LabelingController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/labelings/{id}',    [LabelingController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/labelings/{id}', [LabelingController::class, 'destroy'])->middleware('throttle:60,1');
+            // Etiquetado
+            Route::get('/labelings',         [LabelingController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/labelings',        [LabelingController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/labelings/{id}',    [LabelingController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/labelings/{id}',    [LabelingController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/labelings/{id}', [LabelingController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Registros sanitarios
         Route::get('/sanitary-registrations',         [SanitaryRegistrationController::class, 'index'])->middleware('throttle:60,1');
@@ -345,11 +364,13 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::post('/cellar-operations/{id}/complete', [CellarOperationController::class, 'complete'])->middleware('throttle:60,1');
 
         // Aforos / Previsiones de rendimiento
-        Route::get('/yield-forecasts',         [YieldForecastController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/yield-forecasts',        [YieldForecastController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/yield-forecasts/{id}',    [YieldForecastController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/yield-forecasts/{id}',    [YieldForecastController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/yield-forecasts/{id}', [YieldForecastController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:yield_forecasts')->group(function () {
+            Route::get('/yield-forecasts',         [YieldForecastController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/yield-forecasts',        [YieldForecastController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/yield-forecasts/{id}',    [YieldForecastController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/yield-forecasts/{id}',    [YieldForecastController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/yield-forecasts/{id}', [YieldForecastController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Certificaciones ecológicas
         Route::get('/eco-certifications',         [EcoCertificationController::class, 'index'])->middleware('throttle:60,1');
@@ -410,10 +431,12 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/do/documents',           [DenominationOfOriginController::class, 'documents'])->middleware('throttle:60,1');
 
         // VeriFactu (facturación electrónica AEAT)
-        Route::get('/verifactu',                   [VerifactuController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/verifactu/submit',           [VerifactuController::class, 'submit'])->middleware('throttle:30,1');
-        Route::get('/verifactu/{id}',              [VerifactuController::class, 'show'])->middleware('throttle:60,1');
-        Route::post('/verifactu/{id}/cancel',      [VerifactuController::class, 'cancel'])->middleware('throttle:30,1');
+        Route::middleware('winery.ability:verifaktu')->group(function () {
+            Route::get('/verifactu',                   [VerifactuController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/verifactu/submit',           [VerifactuController::class, 'submit'])->middleware('throttle:30,1');
+            Route::get('/verifactu/{id}',              [VerifactuController::class, 'show'])->middleware('throttle:60,1');
+            Route::post('/verifactu/{id}/cancel',      [VerifactuController::class, 'cancel'])->middleware('throttle:30,1');
+        });
 
         // ── Alias routes (nombres distintos entre web y API móvil) ─────────────
 
@@ -421,24 +444,30 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::get('/harvest-summary', HarvestSummaryController::class)->middleware('throttle:30,1');
 
         // Aforos / estimaciones de viticultores
-        Route::get('/vitic-estimates',      [YieldForecastController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/vitic-estimates',     [YieldForecastController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/vitic-estimates/{id}', [YieldForecastController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/vitic-estimates/{id}', [YieldForecastController::class, 'update'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:yield_forecasts')->group(function () {
+            Route::get('/vitic-estimates',      [YieldForecastController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/vitic-estimates',     [YieldForecastController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/vitic-estimates/{id}', [YieldForecastController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/vitic-estimates/{id}', [YieldForecastController::class, 'update'])->middleware('throttle:60,1');
+        });
 
         // Análisis de calidad de vendimia (alias de wine-analysis)
-        Route::get('/harvest-quality',         [WineAnalysisController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/harvest-quality',        [WineAnalysisController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/harvest-quality/{id}',    [WineAnalysisController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/harvest-quality/{id}',    [WineAnalysisController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/harvest-quality/{id}', [WineAnalysisController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:quality_analysis')->group(function () {
+            Route::get('/harvest-quality',         [WineAnalysisController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/harvest-quality',        [WineAnalysisController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/harvest-quality/{id}',    [WineAnalysisController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/harvest-quality/{id}',    [WineAnalysisController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/harvest-quality/{id}', [WineAnalysisController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Previsiones de vendimia (alias de yield-forecasts)
-        Route::get('/harvest-forecasts',         [YieldForecastController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/harvest-forecasts',        [YieldForecastController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/harvest-forecasts/{id}',    [YieldForecastController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/harvest-forecasts/{id}',    [YieldForecastController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/harvest-forecasts/{id}', [YieldForecastController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:yield_forecasts')->group(function () {
+            Route::get('/harvest-forecasts',         [YieldForecastController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/harvest-forecasts',        [YieldForecastController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/harvest-forecasts/{id}',    [YieldForecastController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/harvest-forecasts/{id}',    [YieldForecastController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/harvest-forecasts/{id}', [YieldForecastController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Mantenimiento por contenedor (alias nombrado en singular, ya existe el plural)
         Route::get('/containers/{id}/maintenance', [ContainerMaintenanceController::class, 'byContainer'])->middleware('throttle:60,1');
@@ -468,26 +497,32 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         Route::delete('/external-grape/{id}', [ExternalGrapePurchaseController::class, 'destroy'])->middleware('throttle:60,1');
 
         // Embotellado (alias singular)
-        Route::get('/bottling',         [BottlingController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/bottling',        [BottlingController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/bottling/{id}',    [BottlingController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/bottling/{id}',    [BottlingController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/bottling/{id}', [BottlingController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:product_sales')->group(function () {
+            Route::get('/bottling',         [BottlingController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/bottling',        [BottlingController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/bottling/{id}',    [BottlingController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/bottling/{id}',    [BottlingController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/bottling/{id}', [BottlingController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Etiquetado (alias singular)
-        Route::get('/labeling',         [LabelingController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/labeling',        [LabelingController::class, 'store'])->middleware('throttle:60,1');
-        Route::put('/labeling/{id}',    [LabelingController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/labeling/{id}', [LabelingController::class, 'destroy'])->middleware('throttle:60,1');
+        Route::middleware('winery.ability:label_batches')->group(function () {
+            Route::get('/labeling',         [LabelingController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/labeling',        [LabelingController::class, 'store'])->middleware('throttle:60,1');
+            Route::put('/labeling/{id}',    [LabelingController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/labeling/{id}', [LabelingController::class, 'destroy'])->middleware('throttle:60,1');
+        });
 
         // Facturas de compra de uva (alias ruta web)
-        Route::get('/invoices/grape-purchase',                    [GrapePurchaseInvoiceController::class, 'index'])->middleware('throttle:60,1');
-        Route::post('/invoices/grape-purchase',                   [GrapePurchaseInvoiceController::class, 'store'])->middleware('throttle:60,1');
-        Route::get('/invoices/grape-purchase/{id}',               [GrapePurchaseInvoiceController::class, 'show'])->middleware('throttle:60,1');
-        Route::put('/invoices/grape-purchase/{id}',               [GrapePurchaseInvoiceController::class, 'update'])->middleware('throttle:60,1');
-        Route::delete('/invoices/grape-purchase/{id}',            [GrapePurchaseInvoiceController::class, 'destroy'])->middleware('throttle:60,1');
-        Route::post('/invoices/grape-purchase/{id}/confirm',      [GrapePurchaseInvoiceController::class, 'confirm'])->middleware('throttle:30,1');
-        Route::post('/invoices/grape-purchase/{id}/mark-paid',    [GrapePurchaseInvoiceController::class, 'markPaid'])->middleware('throttle:30,1');
+        Route::middleware('winery.ability:grape_purchase_invoice')->group(function () {
+            Route::get('/invoices/grape-purchase',                    [GrapePurchaseInvoiceController::class, 'index'])->middleware('throttle:60,1');
+            Route::post('/invoices/grape-purchase',                   [GrapePurchaseInvoiceController::class, 'store'])->middleware('throttle:60,1');
+            Route::get('/invoices/grape-purchase/{id}',               [GrapePurchaseInvoiceController::class, 'show'])->middleware('throttle:60,1');
+            Route::put('/invoices/grape-purchase/{id}',               [GrapePurchaseInvoiceController::class, 'update'])->middleware('throttle:60,1');
+            Route::delete('/invoices/grape-purchase/{id}',            [GrapePurchaseInvoiceController::class, 'destroy'])->middleware('throttle:60,1');
+            Route::post('/invoices/grape-purchase/{id}/confirm',      [GrapePurchaseInvoiceController::class, 'confirm'])->middleware('throttle:30,1');
+            Route::post('/invoices/grape-purchase/{id}/mark-paid',    [GrapePurchaseInvoiceController::class, 'markPaid'])->middleware('throttle:30,1');
+        });
 
         // Resumen y estadísticas económicas (alias)
         Route::get('/financial-summary', EconomicSummaryController::class)->middleware('throttle:30,1');

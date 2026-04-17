@@ -129,6 +129,13 @@ class InvoiceObserver
     // Transiciones de estado
     // -------------------------------------------------------------------------
 
+    /**
+     * Cambio de delivery_status: trigger principal de movimientos de stock.
+     *
+     * Modelo Vinai2: delivery_status controla stock FÍSICO.
+     *   - pending → delivered: reserved → sold (las mercancías salen)
+     *   - * → cancelled: restore a available (las mercancías vuelven)
+     */
     protected function handleDeliveryStatusChange(Invoice $invoice, string $oldStatus, string $newStatus): void
     {
         // Registrar fecha de albarán al entregar
@@ -136,36 +143,37 @@ class InvoiceObserver
             $invoice->updateQuietly(['delivery_note_date' => now()]);
         }
 
-        // El estado de entrega es puramente informativo: NO mueve stock.
-        // Los movimientos de stock los gestiona exclusivamente invoice.status.
-        // Los guards de transición prohibida están en updating().
-    }
-
-    protected function handleStatusChange(Invoice $invoice, string $oldStatus, string $newStatus): void
-    {
         $invoice->load('items.harvest');
 
-        // draft → sent: confirmar ventas (el invoice_number ya se asigna al crear)
-        // Fallback: si la factura no tiene número (facturas antiguas), generarlo aquí
+        if ($newStatus === 'delivered' && $oldStatus !== 'delivered') {
+            $this->confirmDeliveryStock($invoice);
+        } elseif ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+            $this->restoreDeliveryStock($invoice, $oldStatus);
+        }
+    }
+
+    /**
+     * Cambio de status: controla el DOCUMENTO, NO el stock.
+     *
+     * draft → sent: asignar número de factura + snapshot de facturación.
+     * → cancelled: liberar stock como fallback de seguridad.
+     */
+    protected function handleStatusChange(Invoice $invoice, string $oldStatus, string $newStatus): void
+    {
+        // draft → sent: solo papeleo (número + snapshot), NO mueve stock
         if ($oldStatus === 'draft' && $newStatus === 'sent') {
             if (! $invoice->invoice_number) {
                 $settings      = \App\Models\InvoicingSetting::getOrCreateForUser($invoice->user_id);
                 $invoiceNumber = $settings->generateAndIncrementInvoiceCode();
                 $invoice->updateQuietly(['invoice_number' => $invoiceNumber]);
             }
-            // Re-captura el snapshot con los datos del cliente en el momento de emisión.
-            // Sobreescribe el snapshot inicial para reflejar cualquier cambio posterior al borrador.
             $this->populateBillingSnapshot($invoice);
-            $this->convertReservationsToSales($invoice);
         }
 
-        // sent → draft: revertir ventas a reservas
-        elseif ($oldStatus === 'sent' && $newStatus === 'draft') {
-            $this->convertSalesToReservations($invoice);
-        }
-
-        // Cualquier estado → cancelled: liberar stock
-        // (el guard que impide cancelar si oldStatus=sent está en updating())
+        // Cualquier estado → cancelled: liberar stock (safety net)
+        // El guard que impide cancelar si oldStatus=sent está en updating().
+        // Normalmente el stock se libera vía delivery_status → cancelled,
+        // pero si alguien cancela un draft sin cambiar delivery_status, cubrimos aquí.
         elseif ($newStatus === 'cancelled') {
             $this->releaseAllStock($invoice, $oldStatus);
         }
@@ -184,7 +192,11 @@ class InvoiceObserver
     // Helpers de stock
     // -------------------------------------------------------------------------
 
-    protected function convertReservationsToSales(Invoice $invoice): void
+    /**
+     * Entrega confirmada: reserved → sold para items de cosecha.
+     * (Los items de producto/wine_lot se gestionan por ProductStockService en los componentes.)
+     */
+    protected function confirmDeliveryStock(Invoice $invoice): void
     {
         DB::transaction(function () use ($invoice) {
             foreach ($invoice->items as $item) {
@@ -199,26 +211,33 @@ class InvoiceObserver
             }
         });
 
-        Log::info('[InvoiceObserver] Reservas convertidas a ventas', [
+        Log::info('[InvoiceObserver] Stock de cosecha confirmado por entrega', [
             'invoice_id'     => $invoice->id,
             'invoice_number' => $invoice->invoice_number,
         ]);
     }
 
-    protected function convertSalesToReservations(Invoice $invoice): void
+    /**
+     * Entrega cancelada: restore stock de cosecha según delivery_status anterior.
+     */
+    protected function restoreDeliveryStock(Invoice $invoice, string $oldDeliveryStatus): void
     {
-        DB::transaction(function () use ($invoice) {
+        // Si ya estaba entregado, el stock está en sold → volver a available
+        // Si estaba pending, el stock está en reserved → volver a available
+        $fromStatus = $oldDeliveryStatus === 'delivered' ? 'sent' : 'draft';
+
+        DB::transaction(function () use ($invoice, $fromStatus) {
             foreach ($invoice->items as $item) {
                 if (! $item->harvest_id) {
                     continue;
                 }
-                $this->stockService->revertSaleToReservation($item->harvest, $item);
+                $this->stockService->releaseFromInvoice($item->harvest, $item, $fromStatus);
             }
         });
 
-        Log::info('[InvoiceObserver] Ventas revertidas a reservas', [
-            'invoice_id'     => $invoice->id,
-            'invoice_number' => $invoice->invoice_number,
+        Log::info('[InvoiceObserver] Stock de cosecha restaurado por cancelación de entrega', [
+            'invoice_id'          => $invoice->id,
+            'old_delivery_status' => $oldDeliveryStatus,
         ]);
     }
 

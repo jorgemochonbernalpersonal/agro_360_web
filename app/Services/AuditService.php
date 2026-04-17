@@ -15,6 +15,7 @@ class AuditService
     {
         return AuditLog::forModel($modelType, $modelId)
             ->with('user')
+            ->latest()
             ->limit($limit)
             ->get();
     }
@@ -26,6 +27,7 @@ class AuditService
     {
         return AuditLog::byUser($user->id)
             ->with('auditable')
+            ->latest()
             ->limit($limit)
             ->get();
     }
@@ -48,6 +50,7 @@ class AuditService
     {
         return AuditLog::whereBetween('created_at', [$start, $end])
             ->with(['user', 'auditable'])
+            ->orderBy('created_at')
             ->get();
     }
 
@@ -94,6 +97,7 @@ class AuditService
             ->whereIn('auditable_type', $criticalModels)
             ->whereBetween('created_at', [$start, $end])
             ->with('auditable')
+            ->orderBy('created_at')
             ->get();
 
         return [
@@ -125,6 +129,10 @@ class AuditService
      */
     public function cleanOldLogs(int $daysToKeep = 365): int
     {
+        if ($daysToKeep < 30) {
+            throw new \InvalidArgumentException('No se pueden eliminar logs con menos de 30 días de antigüedad.');
+        }
+
         $cutoffDate = now()->subDays($daysToKeep);
 
         return AuditLog::where('created_at', '<', $cutoffDate)->delete();
@@ -150,6 +158,12 @@ class AuditService
             ];
         }
 
-        return implode("\n", array_map(fn($row) => implode(';', $row), $csv));
+        return implode("\n", array_map(
+            fn($row) => implode(';', array_map(
+                fn($field) => '"' . str_replace('"', '""', (string) $field) . '"',
+                $row
+            )),
+            $csv
+        ));
     }
 }

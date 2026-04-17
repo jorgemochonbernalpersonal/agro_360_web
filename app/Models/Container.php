@@ -203,17 +203,22 @@ class Container extends Model
             return false;
         }
 
-        $this->used_capacity += $quantity;
-        return $this->save();
+        $this->increment('used_capacity', $quantity);
+        $this->refresh();
+        return true;
     }
 
     /**
-     * Decrementar capacidad usada
+     * Decrementar capacidad usada (atómico)
      */
     public function decrementUsedCapacity(float $quantity): bool
     {
-        $this->used_capacity = max(0, $this->used_capacity - $quantity);
-        return $this->save();
+        $actual = min($quantity, (float) $this->used_capacity);
+        if ($actual > 0) {
+            $this->decrement('used_capacity', $actual);
+            $this->refresh();
+        }
+        return true;
     }
 
     /**

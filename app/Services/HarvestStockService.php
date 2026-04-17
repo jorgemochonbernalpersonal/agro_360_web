@@ -251,7 +251,7 @@ class HarvestStockService
             'invoice_item_id'  => $item->id,
             'movement_type'    => $movementType,
             'quantity_change'  => $quantityChange,
-            'quantity_after'   => $buckets['available_qty'],
+            'quantity_after'   => $buckets['available_qty'] + $buckets['reserved_qty'] + $buckets['sold_qty'],
             'available_qty'    => $buckets['available_qty'],
             'reserved_qty'     => $buckets['reserved_qty'],
             'sold_qty'         => $buckets['sold_qty'],

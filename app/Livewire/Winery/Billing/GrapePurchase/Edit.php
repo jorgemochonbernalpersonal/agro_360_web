@@ -193,7 +193,9 @@ class Edit extends Component
                     }
 
                     // Double-invoicing guard: exclude THIS invoice from the check
+                    // Lock invoice_items to prevent race condition
                     if ($harvest->invoiceItems()
+                            ->lockForUpdate()
                             ->where('concept_type', 'harvest')
                             ->whereHas('invoice', fn ($q) =>
                                 $q->where('status', '!=', 'cancelled')

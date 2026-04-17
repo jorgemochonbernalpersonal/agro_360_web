@@ -298,7 +298,7 @@ class Create extends Component
             'harvest_time'               => ['nullable', 'date_format:H:i'],
             'container_id'               => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())->where('unit', 'kg')],
             'disqualified'               => ['boolean'],
-            'disqualified_reason'        => ['nullable', 'string', 'max:500'],
+            'disqualified_reason'        => ['required_if:disqualified,true', 'nullable', 'string', 'max:500'],
             'notes'                      => ['nullable', 'string'],
         ];
     }
@@ -350,7 +350,7 @@ class Create extends Component
 
         $weight = (float) $this->total_weight;
 
-        // Validar capacidad antes de la transacción
+        // Pre-check rápido (la validación real con lock se hace dentro del transaction)
         if (! $container->hasAvailableCapacity($weight)) {
             $this->addError('container_id',
                 "El contenedor «{$container->name}» no tiene capacidad suficiente. " .

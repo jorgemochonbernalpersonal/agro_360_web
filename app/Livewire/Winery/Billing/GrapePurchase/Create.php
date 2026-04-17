@@ -134,6 +134,7 @@ class Create extends Component
                 $taxAmount    += $lineTax;
             }
 
+            // tax_rate en compra de uva = retención IRPF (se resta del pago al viticultor)
             $total = $subtotal - $taxAmount;
 
             // ── Create invoice ────────────────────────────────────────────────────────
@@ -179,7 +180,9 @@ class Create extends Component
                 }
 
                 // Double-guard: harvest must not be included in any active (non-cancelled) invoice
+                // Lock invoice_items to prevent race condition on concurrent requests
                 if ($harvest->invoiceItems()
+                        ->lockForUpdate()
                         ->where('concept_type', 'harvest')
                         ->whereHas('invoice', fn($q) => $q->where('status', '!=', 'cancelled'))
                         ->exists()) {

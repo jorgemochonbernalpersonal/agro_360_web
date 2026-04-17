@@ -50,7 +50,13 @@ class WineContainerStockService
             if ($transfer->from_container_id) {
                 $fromContainer = Container::find($transfer->from_container_id);
                 if ($fromContainer) {
-                    $fromContainer->wine_volume_liters = max(0, $fromContainer->wine_volume_liters - $qty);
+                    if ((float) $fromContainer->wine_volume_liters < $qty) {
+                        throw new \RuntimeException(
+                            "El contenedor «{$fromContainer->name}» no tiene suficiente vino: " .
+                            "disponible {$fromContainer->wine_volume_liters} L, solicitado {$qty} L."
+                        );
+                    }
+                    $fromContainer->wine_volume_liters = $fromContainer->wine_volume_liters - $qty;
                     $fromContainer->save();
 
                     $this->updateCurrentState($fromContainer, null, -$qty);
@@ -97,7 +103,17 @@ class WineContainerStockService
             ]);
             Container::whereIn('id', $containerIds)->lockForUpdate()->get();
 
-            // ── Origen: restaurar ───────────────────────────────────────────
+            // ── Destino: restar PRIMERO (para que updateCurrentState calcule bien) ─
+            $toContainer = Container::find($transfer->to_container_id);
+            if ($toContainer) {
+                $toContainer->wine_volume_liters = max(0, $toContainer->wine_volume_liters - $qty);
+                $toContainer->save();
+
+                $this->updateCurrentState($toContainer, null, -$qty);
+                $this->recordHistory($toContainer, $transfer, 'wine_transfer_revert_out', -$qty);
+            }
+
+            // ── Origen: restaurar con el wine_id original ────────────────────
             if ($transfer->from_container_id) {
                 $fromContainer = Container::find($transfer->from_container_id);
                 if ($fromContainer) {
@@ -107,16 +123,6 @@ class WineContainerStockService
                     $this->updateCurrentState($fromContainer, $transfer->wine_id, $qty);
                     $this->recordHistory($fromContainer, $transfer, 'wine_transfer_revert_in', $qty);
                 }
-            }
-
-            // ── Destino: restar ─────────────────────────────────────────────
-            $toContainer = Container::find($transfer->to_container_id);
-            if ($toContainer) {
-                $toContainer->wine_volume_liters = max(0, $toContainer->wine_volume_liters - $qty);
-                $toContainer->save();
-
-                $this->updateCurrentState($toContainer, null, -$qty);
-                $this->recordHistory($toContainer, $transfer, 'wine_transfer_revert_out', -$qty);
             }
 
             Log::info('[WineContainerStockService] Trasvase revertido', [
@@ -164,8 +170,9 @@ class WineContainerStockService
             $container->wine_volume_liters = 0;
             $container->save();
 
-            // Limpiar wine_id del estado actual
-            $state = ContainerCurrentState::firstOrNew(['container_id' => $container->id]);
+            // Limpiar wine_id del estado actual (locked via container above)
+            $state = ContainerCurrentState::lockForUpdate()
+                ->firstOrNew(['container_id' => $container->id]);
             $state->wine_id          = null;
             $state->last_movement_at = now();
             $state->last_movement_by = Auth::id();
@@ -240,7 +247,14 @@ class WineContainerStockService
                 return;
             }
 
-            $container->wine_volume_liters = max(0, $container->wine_volume_liters - $qty);
+            if ((float) $container->wine_volume_liters < $qty) {
+                throw new \RuntimeException(
+                    "El contenedor «{$container->name}» no tiene suficiente vino para la merma: " .
+                    "disponible {$container->wine_volume_liters} L, merma {$qty} L."
+                );
+            }
+
+            $container->wine_volume_liters = $container->wine_volume_liters - $qty;
             $container->save();
 
             $this->updateCurrentState($container, null, -$qty);
@@ -406,7 +420,8 @@ class WineContainerStockService
      */
     private function updateCurrentState(Container $container, ?int $wineId, float $delta): void
     {
-        $state = ContainerCurrentState::firstOrNew(['container_id' => $container->id]);
+        $state = ContainerCurrentState::lockForUpdate()
+            ->firstOrNew(['container_id' => $container->id]);
 
         // Si hay delta positivo (entrada de vino), actualizar wine_id
         if ($delta > 0 && $wineId) {

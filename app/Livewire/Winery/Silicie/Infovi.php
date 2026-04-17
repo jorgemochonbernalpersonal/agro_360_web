@@ -103,7 +103,7 @@ class Infovi extends Component
             ->selectRaw('DISTINCT vintage')
             ->orderByDesc('vintage')
             ->pluck('vintage')
-            ->map(fn ($v) => (int) $v >= 8 ? $v : $v - 1) // normalise to campaign start year
+            ->map(fn ($v) => (int) $v) // vintage year = campaign start year (Aug Y → Jul Y+1)
             ->unique()
             ->values();
 

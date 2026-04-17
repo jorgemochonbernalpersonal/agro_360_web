@@ -10,6 +10,7 @@ use App\Models\Wine;
 use App\Models\WineTransfer;
 use App\Services\WineContainerStockService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Edit extends Component
@@ -58,9 +59,9 @@ class Edit extends Component
     protected function rules(): array
     {
         return [
-            'wine_id'                => ['required', 'exists:wines,id'],
-            'from_container_id'      => ['nullable', 'exists:containers,id'],
-            'to_container_id'        => ['required', 'exists:containers,id'],
+            'wine_id'                => ['required', Rule::exists('wines', 'id')->where('user_id', Auth::id())],
+            'from_container_id'      => ['nullable', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
+            'to_container_id'        => ['required', Rule::exists('containers', 'id')->where('user_id', Auth::id())],
             'quantity'               => ['required', 'numeric', 'min:0.001'],
             'unit_of_measurement_id' => ['required', 'exists:units_of_measurement,id'],
             'transfer_type'          => ['required', 'in:' . implode(',', array_keys(WineTransfer::TRANSFER_TYPES))],
