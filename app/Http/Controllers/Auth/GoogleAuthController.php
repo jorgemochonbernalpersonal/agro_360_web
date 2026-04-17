@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\SecurityLogger;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
@@ -54,7 +56,7 @@ class GoogleAuthController extends Controller
                 'email'             => strtolower($googleUser->getEmail()),
                 'google_id'         => $googleUser->getId(),
                 'email_verified_at' => now(), // Google already verified the email
-                'password'          => null,  // No password for OAuth users
+                'password'          => Hash::make(Str::random(32)),
                 'role'              => 'viticulturist',
             ]);
         }
