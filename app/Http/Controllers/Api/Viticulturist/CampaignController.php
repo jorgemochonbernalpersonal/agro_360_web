@@ -9,6 +9,7 @@ use App\Models\AgriculturalActivity;
 use App\Models\Campaign;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CampaignController extends Controller
 {
@@ -66,5 +67,60 @@ class CampaignController extends Controller
                 'has_more'     => $activities->hasMorePages(),
             ],
         ]);
+    }
+
+    // ─── GET /viticulturist/campaigns/compare ────────────────────────────────
+
+    public function compare(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $campaigns = Campaign::forViticulturist($user->id)
+            ->orderByDesc('year')
+            ->get();
+
+        $data = $campaigns->map(function (Campaign $campaign) {
+            $activities = AgriculturalActivity::forCampaign($campaign->id);
+
+            return [
+                'id'               => $campaign->id,
+                'name'             => $campaign->name,
+                'year'             => $campaign->year,
+                'active'           => (bool) $campaign->active,
+                'locked'           => $campaign->locked_at !== null,
+                'start_date'       => $campaign->start_date?->toDateString(),
+                'end_date'         => $campaign->end_date?->toDateString(),
+                'total_activities' => (clone $activities)->count(),
+                'treatments'       => (clone $activities)->where('activity_type', 'treatment')->count(),
+                'irrigations'      => (clone $activities)->where('activity_type', 'irrigation')->count(),
+                'harvests'         => (clone $activities)->where('activity_type', 'harvest')->count(),
+                'observations'     => (clone $activities)->where('activity_type', 'observation')->count(),
+                'plots_used'       => (clone $activities)->distinct('plot_id')->count('plot_id'),
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
+
+    // ─── POST /viticulturist/campaigns/{id}/lock ─────────────────────────────
+
+    public function lock(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->hasViticulturistAccess(), 403);
+
+        $campaign = Campaign::forViticulturist($user->id)->findOrFail($id);
+
+        if ($campaign->locked_at) {
+            return response()->json(['message' => 'La campaña ya está cerrada.'], 422);
+        }
+
+        $campaign->update([
+            'locked_at' => now(),
+            'active'    => false,
+        ]);
+
+        return response()->json(['data' => new CampaignResource($campaign->fresh())]);
     }
 }

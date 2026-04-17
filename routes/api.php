@@ -546,7 +546,12 @@ Route::middleware(['auth:sanctum', 'check.can_login'])->group(function () {
         // Campañas
         Route::get('/campaigns',                 [CampaignController::class, 'index'])->middleware('throttle:60,1');
         Route::get('/campaigns/active',          [CampaignController::class, 'active'])->middleware('throttle:60,1');
+        Route::get('/campaigns/compare',         [CampaignController::class, 'compare'])->middleware('throttle:30,1');
         Route::get('/campaigns/{id}/activities', [CampaignController::class, 'activities'])->middleware('throttle:60,1');
+        Route::post('/campaigns/{id}/lock',      [CampaignController::class, 'lock'])->middleware('throttle:10,1');
+
+        // Meteorología
+        Route::get('/weather', [\App\Http\Controllers\Api\Viticulturist\WeatherController::class, 'index'])->middleware('throttle:30,1');
 
         // Cuaderno — estimated-yields (ruta estática ANTES de los wildcards)
         Route::get('/notebook/estimated-yields',  [EstimatedYieldController::class, 'index'])->middleware('throttle:60,1');
