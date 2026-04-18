@@ -100,7 +100,7 @@ class Index extends Component
             'entries'   => $entries,
             'stats'     => $stats,
             'campaigns' => Campaign::where('viticulturist_id', $userId)->orderByDesc('year')->get(['id', 'name', 'year']),
-            'plots'     => Plot::where('user_id', $userId)->orderBy('name')->get(['id', 'name']),
+            'plots'     => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
         ]);
     }
 }
