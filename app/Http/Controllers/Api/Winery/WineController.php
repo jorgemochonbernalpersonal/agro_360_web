@@ -23,9 +23,8 @@ class WineController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
-            'status'   => 'nullable|string|in:' . implode(',', array_keys(Wine::STATUSES)),
-            'vintage'  => 'nullable|integer|min:1900|max:' . (now()->year + 2),
-            'per_page' => 'nullable|integer|min:1|max:100',
+            'status'  => 'nullable|string|in:' . implode(',', array_keys(Wine::STATUSES)),
+            'vintage' => 'nullable|integer|min:1900|max:' . (now()->year + 2),
         ]);
 
         $base = Wine::forUser($user->id);
