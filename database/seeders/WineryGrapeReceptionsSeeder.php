@@ -707,6 +707,7 @@ class WineryGrapeReceptionsSeeder extends Seeder
                     DB::table('plot_geometry')->whereIn('id', $geomIds)->delete();
                 }
 
+                DB::table('agricultural_activities')->whereIn('plot_id', $plotIds)->delete();
                 DB::table('plot_plantings')->whereIn('plot_id', $plotIds)->delete();
                 DB::table('plots')->whereIn('id', $plotIds)->delete();
             }
