@@ -34,7 +34,7 @@ class Index extends Component
             ->orderByDesc('year')
             ->get(['id', 'name', 'year']);
 
-        $plots = Plot::where('user_id', $userId)->orderBy('name')->get(['id', 'name']);
+        $plots = Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']);
 
         $wines = Wine::where('user_id', $userId)
             ->orderByDesc('vintage')

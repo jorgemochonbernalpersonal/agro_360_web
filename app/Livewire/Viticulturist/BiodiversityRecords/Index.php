@@ -88,7 +88,7 @@ class Index extends AbstractIndex
         return [
             'entries'     => $entries,
             'recordTypes' => BiodiversityRecord::RECORD_TYPES,
-            'plots'       => Plot::where('user_id', $userId)->orderBy('name')->get(['id', 'name']),
+            'plots'       => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
             'campaigns'   => Campaign::forViticulturist($userId)->orderByDesc('year')->get(['id', 'name', 'year']),
             'stats'       => $stats,
         ];

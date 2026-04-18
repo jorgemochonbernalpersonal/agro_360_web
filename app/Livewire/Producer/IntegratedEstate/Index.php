@@ -19,7 +19,7 @@ class Index extends Component
     public function mount(): void
     {
         $active = Campaign::where('viticulturist_id', Auth::id())
-            ->where('status', 'active')
+            ->where('active', true)
             ->orderByDesc('year')
             ->first();
 
@@ -33,7 +33,7 @@ class Index extends Component
             ->orderByDesc('year')
             ->get(['id', 'name', 'year']);
 
-        $plotsQuery = Plot::where('user_id', $userId)->orderBy('name');
+        $plotsQuery = Plot::where('viticulturist_id', $userId)->orderBy('name');
         $plots      = $plotsQuery->get(['id', 'name', 'municipality', 'area_ha']);
 
         $data = $this->filterCampaign
@@ -55,7 +55,7 @@ class Index extends Component
         $plotFilter = $this->filterPlot ? (int) $this->filterPlot : null;
 
         // ── Parcelas con plantaciones y último dato de teledetección ──────
-        $plotsQuery = Plot::where('user_id', $userId)
+        $plotsQuery = Plot::where('viticulturist_id', $userId)
             ->with([
                 'plantings' => fn ($q) => $q->with('grapeVariety:id,name')
                     ->whereNull('removal_date')

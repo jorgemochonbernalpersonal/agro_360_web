@@ -66,7 +66,7 @@ class Create extends AbstractCreate
             'priorities' => PlannedWork::PRIORITIES,
             'campaigns'  => Campaign::where('viticulturist_id', $this->viticulturistId())
                                 ->orderByDesc('year')->get(['id', 'name', 'year']),
-            'plots'      => Plot::where('user_id', $this->viticulturistId())
+            'plots'      => Plot::where('viticulturist_id', $this->viticulturistId())
                                 ->orderBy('name')->get(['id', 'name', 'municipality']),
         ];
     }

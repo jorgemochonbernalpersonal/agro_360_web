@@ -135,7 +135,7 @@ class Index extends AbstractIndex
             'stats'      => $stats,
             'categories' => PlannedWork::CATEGORIES,
             'priorities' => PlannedWork::PRIORITIES,
-            'plots'      => \App\Models\Plot::where('user_id', $userId)->orderBy('name')->get(['id', 'name']),
+            'plots'      => \App\Models\Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']),
             'campaigns'  => \App\Models\Campaign::where('viticulturist_id', $userId)->orderByDesc('year')->get(['id', 'name', 'year']),
         ];
     }

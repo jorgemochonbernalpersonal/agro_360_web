@@ -19,7 +19,7 @@ class Index extends Component
 
     public function mount(): void
     {
-        $firstPlot = Plot::where('user_id', Auth::id())
+        $firstPlot = Plot::where('viticulturist_id', Auth::id())
             ->orderBy('name')
             ->first();
 
@@ -40,7 +40,7 @@ class Index extends Component
     public function loadWeatherData(bool $forceRefresh = false): void
     {
         $this->error = '';
-        $plot = Plot::where('user_id', Auth::id())->find($this->selectedPlot);
+        $plot = Plot::where('viticulturist_id', Auth::id())->find($this->selectedPlot);
 
         if (! $plot) {
             $this->error = 'Parcela no encontrada.';
@@ -77,7 +77,7 @@ class Index extends Component
         $this->showForecast = ! $this->showForecast;
 
         if ($this->showForecast && empty($this->forecast)) {
-            $plot = Plot::where('user_id', Auth::id())->find($this->selectedPlot);
+            $plot = Plot::where('viticulturist_id', Auth::id())->find($this->selectedPlot);
             if ($plot) {
                 $service = new WeatherService();
                 $result = $service->getForecast($plot, 7);
@@ -112,7 +112,7 @@ class Index extends Component
 
     public function render()
     {
-        $plots = Plot::where('user_id', Auth::id())
+        $plots = Plot::where('viticulturist_id', Auth::id())
             ->orderBy('name')
             ->get(['id', 'name', 'municipality', 'surface_area']);
 

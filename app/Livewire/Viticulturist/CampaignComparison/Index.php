@@ -31,7 +31,7 @@ class Index extends Component
     {
         $userId    = Auth::id();
         $campaigns = $this->getUserCampaigns();
-        $plots     = Plot::where('user_id', $userId)->orderBy('name')->get(['id', 'name']);
+        $plots     = Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name']);
 
         $dataA = $this->campaignA ? $this->buildCampaignData((int) $this->campaignA, $userId) : null;
         $dataB = $this->campaignB ? $this->buildCampaignData((int) $this->campaignB, $userId) : null;

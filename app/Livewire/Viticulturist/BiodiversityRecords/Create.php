@@ -61,7 +61,7 @@ class Create extends AbstractCreate
 
         return [
             'recordTypes' => BiodiversityRecord::RECORD_TYPES,
-            'plots'       => Plot::where('user_id', $userId)->orderBy('name')->get(['id', 'name', 'municipality']),
+            'plots'       => Plot::where('viticulturist_id', $userId)->orderBy('name')->get(['id', 'name', 'municipality']),
             'campaigns'   => Campaign::forViticulturist($userId)->orderByDesc('year')->get(['id', 'name', 'year']),
         ];
     }
