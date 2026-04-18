@@ -25,7 +25,7 @@ class WeatherController extends Controller
             'plot_id' => 'required|integer|exists:plots,id',
         ]);
 
-        $plot = Plot::where('user_id', $user->id)->findOrFail($request->plot_id);
+        $plot = Plot::where('viticulturist_id', $user->id)->findOrFail($request->plot_id);
 
         $current  = $this->weatherService->getCurrentWeather($plot);
         $forecast = $this->weatherService->getForecast($plot, 7);
