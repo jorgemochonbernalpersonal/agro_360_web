@@ -18,8 +18,7 @@ class WineAdditiveController extends Controller
         abort_unless($user->hasWineryAccess(), 403);
 
         $request->validate([
-            'wine_id'  => 'nullable|integer',
-            'per_page' => 'nullable|integer|min:1|max:100',
+            'wine_id' => 'nullable|integer',
         ]);
 
         $query = WineAdditive::whereHas('wine', fn ($q) => $q->where('user_id', $user->id))

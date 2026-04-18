@@ -129,6 +129,10 @@ class WineryDemoSeeder_test extends Seeder
         // Paso 25b: Ciclo de vida completo de parcela demo (plot_id=1521)
         $this->runStep('Ciclo de vida parcela 1521', WineryPlotLifecycleSeeder::class);
 
+        // Paso 25d: Aditivos enológicos
+        $this->command->info('  ▶ Aditivos enológicos...');
+        $this->seedAdditives();
+
         // Paso 26-28: Cumplimiento y documentación
         $this->runStep('Cumplimiento regulatorio',   WineryComplianceSeeder::class);
         $this->runStep('Documentos de bodega',       WineryDocumentsSeeder::class);
@@ -143,6 +147,79 @@ class WineryDemoSeeder_test extends Seeder
         $this->printSummary();
         $this->command->info('🍷 ══════════════════════════════════════════════');
         $this->command->info('');
+    }
+
+    private function seedAdditives(): void
+    {
+        DB::table('wine_additives')->whereIn(
+            'wine_id',
+            DB::table('wines')->where('user_id', self::WINERY_USER_ID)->pluck('id')
+        )->delete();
+
+        $wines = DB::table('wines')
+            ->where('user_id', self::WINERY_USER_ID)
+            ->whereNotIn('status', ['cancelled'])
+            ->pluck('id')
+            ->toArray();
+
+        if (empty($wines)) return;
+
+        $oenologistId = DB::table('oenologists')
+            ->where('user_id', self::WINERY_USER_ID)
+            ->value('id');
+
+        $supplyId = DB::table('winery_supplies')
+            ->where('user_id', self::WINERY_USER_ID)
+            ->value('id');
+
+        $unitId = DB::table('units_of_measurement')
+            ->where('symbol', 'g')
+            ->value('id');
+
+        $additivesCatalog = [
+            ['name' => 'Metabisulfito de potasio (SO₂)',  'qty' => 5.0,   'notes' => 'Dosis estándar de protección antioxidante'],
+            ['name' => 'Bentonita',                        'qty' => 80.0,  'notes' => 'Clarificación proteica'],
+            ['name' => 'Levaduras seleccionadas EC1118',  'qty' => 20.0,  'notes' => 'Inoculación fermentación alcohólica'],
+            ['name' => 'Nutrientes (DAP)',                 'qty' => 15.0,  'notes' => 'Fosfato diamónico para nutrición de levaduras'],
+            ['name' => 'Ácido tartárico',                  'qty' => 50.0,  'notes' => 'Corrección de acidez'],
+            ['name' => 'Taninos enológicos',               'qty' => 10.0,  'notes' => 'Mejora de estructura y color'],
+            ['name' => 'Enzimas pectolíticas',             'qty' => 3.0,   'notes' => 'Maceración enzimática pre-fermentativa'],
+            ['name' => 'Gelatina enológica',               'qty' => 5.0,   'notes' => 'Clarificación de vinos tintos'],
+            ['name' => 'Cola de pez (isinglass)',          'qty' => 2.0,   'notes' => 'Clarificación de vinos blancos'],
+            ['name' => 'Carbón enológico activado',        'qty' => 25.0,  'notes' => 'Decoloración y eliminación de aromas defectuosos'],
+        ];
+
+        $rows = [];
+        $now  = now();
+
+        foreach ($wines as $idx => $wineId) {
+            // 2–4 aditivos por vino
+            $count  = 2 + ($idx % 3);
+            $picked = array_slice($additivesCatalog, ($idx * 2) % count($additivesCatalog));
+            $picked = array_slice($picked, 0, $count);
+
+            foreach ($picked as $i => $add) {
+                $rows[] = [
+                    'wine_id'                => $wineId,
+                    'winery_supply_id'       => ($i === 0 && $supplyId) ? $supplyId : null,
+                    'oenologist_id'          => ($i % 2 === 0 && $oenologistId) ? $oenologistId : null,
+                    'unit_of_measurement_id' => $unitId,
+                    'additive_name'          => $add['name'],
+                    'quantity'               => $add['qty'],
+                    'application_date'       => now()->subDays(($idx + 1) * 5 + $i * 3)->format('Y-m-d'),
+                    'notes'                  => $add['notes'],
+                    'created_by'             => self::WINERY_USER_ID,
+                    'created_at'             => $now,
+                    'updated_at'             => $now,
+                ];
+            }
+        }
+
+        foreach (array_chunk($rows, 50) as $chunk) {
+            DB::table('wine_additives')->insert($chunk);
+        }
+
+        $this->command->info('  ✅ Aditivos enológicos: ' . count($rows) . ' registros creados');
     }
 
     private function runStep(string $label, string $class): void
