@@ -119,12 +119,14 @@ class OnboardingChecklist extends Component
 
     private function getStepRoute(string $step): string
     {
+        $prefix = Auth::user()->isProducer() ? 'producer' : 'viticulturist';
+
         return match ($step) {
-            OnboardingProgress::STEP_REVIEW_CAMPAIGN => route('viticulturist.campaign.index'),
+            OnboardingProgress::STEP_REVIEW_CAMPAIGN => route("{$prefix}.campaign.index"),
             OnboardingProgress::STEP_CREATE_PLOT => route('plots.create'),
-            OnboardingProgress::STEP_ADD_PRODUCTS => route('viticulturist.phytosanitary-products.index'),
-            OnboardingProgress::STEP_REGISTER_ACTIVITY => route('viticulturist.digital-notebook'),
-            default => route('viticulturist.dashboard'),
+            OnboardingProgress::STEP_ADD_PRODUCTS => route("{$prefix}.phytosanitary-products.index"),
+            OnboardingProgress::STEP_REGISTER_ACTIVITY => route("{$prefix}.digital-notebook"),
+            default => route("{$prefix}.dashboard"),
         };
     }
 

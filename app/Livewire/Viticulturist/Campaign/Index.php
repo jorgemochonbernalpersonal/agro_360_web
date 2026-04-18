@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist\Campaign;
 
 use App\Models\Campaign;
 use App\Models\EstimatedYield;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
-    use WithPagination, WithToastNotifications;
+    use WithPagination, WithToastNotifications, WithRoleAwareRedirect;
 
     public $currentTab = 'active'; // 'active', 'inactive'
     public $search = '';
@@ -69,7 +70,7 @@ class Index extends Component
         } else {
             $campaign->activate();
             session()->flash('campaign_activated', "Campaña {$campaign->year} activada. Ya puedes registrar actividades.");
-            return $this->redirect(route('viticulturist.digital-notebook'), navigate: true);
+            return $this->viticulturistRoleRedirect('digital-notebook');
         }
     }
 

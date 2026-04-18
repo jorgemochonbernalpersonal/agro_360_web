@@ -4,6 +4,7 @@ namespace App\Livewire\Viticulturist;
 
 use App\Models\Campaign;
 use App\Repositories\AgriculturalActivityRepository;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DigitalNotebook extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public $selectedCampaign = null;
 
@@ -35,7 +36,7 @@ class DigitalNotebook extends Component
 
             if (!$campaign) {
                 $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-                $this->redirect(route('viticulturist.campaign.index'), navigate: true);
+                $this->viticulturistRoleRedirect('campaign.index');
                 return;
             }
 

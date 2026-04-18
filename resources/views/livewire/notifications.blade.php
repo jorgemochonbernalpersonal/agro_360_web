@@ -198,7 +198,7 @@
         @if($notifications->count() > 0)
             <div class="px-4 py-2 border-t border-zinc-200 bg-zinc-50">
                 <a
-                    href="{{ route('viticulturist.official-reports.index') }}"
+                    href="{{ roleRoute('official-reports.index') }}"
                     wire:navigate
                     @click="open = false"
                     class="block text-center text-sm font-medium text-agro-600 hover:text-agro-700"

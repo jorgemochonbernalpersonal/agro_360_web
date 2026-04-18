@@ -13,6 +13,7 @@ use App\Models\ResidueManagement;
 use App\Models\EnergyUsage;
 use App\Models\PacDeclaration;
 use App\Models\PacPayment;
+use App\Livewire\Concerns\WithRoleAwareRedirect;
 use App\Livewire\Concerns\WithToastNotifications;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -21,7 +22,7 @@ use Carbon\Carbon;
 
 class Calendar extends Component
 {
-    use WithToastNotifications;
+    use WithToastNotifications, WithRoleAwareRedirect;
 
     public $selectedCampaign = null;
     public $activityType = null;
@@ -47,7 +48,7 @@ class Calendar extends Component
 
         if (!$campaign) {
             $this->toastError('No se pudo obtener la campaña activa. Por favor, crea una campaña primero.');
-            return $this->redirect(route('viticulturist.campaign.index'), navigate: true);
+            return $this->viticulturistRoleRedirect('campaign.index');
         }
 
         $this->selectedCampaign = $campaign->id;

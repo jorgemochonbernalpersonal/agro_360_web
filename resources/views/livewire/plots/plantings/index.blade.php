@@ -280,12 +280,12 @@
                                     </a>
                                 @endcan
                                 @if(auth()->user()->hasViticulturistAccess())
-                                <a href="{{ route('viticulturist.phenology.index', ['filter_planting_id' => $planting->id]) }}"
+                                <a href="{{ roleRoute('phenology.index', ['filter_planting_id' => $planting->id]) }}"
                                    class="{{ $btnBase }}"
                                    title="Ver fenología">
                                     <flux:icon icon="sun" class="size-4" />
                                 </a>
-                                <a href="{{ route('viticulturist.phenology.create', ['planting_id' => $planting->id]) }}"
+                                <a href="{{ roleRoute('phenology.create', ['planting_id' => $planting->id]) }}"
                                    class="{{ $btnBase }}"
                                    title="Registrar estadio fenológico">
                                     <flux:icon icon="plus-circle" class="size-4" />

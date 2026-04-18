@@ -40,7 +40,8 @@ class IntegratedCampaignController extends Controller
                 COALESCE(SUM(total_weight), 0) as total_kg,
                 AVG(baume_degree) as avg_baume,
                 AVG(brix_degree) as avg_brix,
-                AVG(ph_level) as avg_ph
+                AVG(ph_level) as avg_ph,
+                AVG(price_per_kg) as avg_price_per_kg
             ')
             ->first();
 
